@@ -6,20 +6,20 @@
 import { getFormattedAddress } from '../utils';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-export const CHAIN_CONFIG = {
-  KAH: { name: 'kusamaassethub', prefix: 2 },
-  PAH: { name: 'polkadotassethub', prefix: 0 }
+export const SUPPORTED_NFT_CHAINS = {
+  'Kusama Asset Hub': { name: 'kusamaassethub', prefix: 2 },
+  'Polkadot Asset Hub': { name: 'polkadotassethub', prefix: 0 }
 };
 
 /**
  * Fetches NFT or unique items for a given chain and set of addresses
  * @param {Object} api - The API instance for interacting with the blockchain
  * @param {string[]} addresses - Array of addresses to fetch items for
- * @param {string} chain - The chain identifier (e.g., 'PAH' or 'KAH')
+ * @param {string} chainName - The chain identifier
  * @param {boolean} isNft - Whether to fetch NFTs (true) or uniques (false)
  * @returns {Promise<Array>} Array of item information
  */
-async function fetchItems (api, addresses, chain, isNft) {
+async function fetchItems (api, addresses, chainName, isNft) {
   // Determine which query method to use based on item type
   const queryMethod = isNft ? api.query.nfts.item : api.query.uniques.asset;
   const entries = await queryMethod.entries();
@@ -78,7 +78,7 @@ async function fetchItems (api, addresses, chain, isNft) {
   }
 
   return myItems.map(({ ids: { collectionId, itemId }, itemInfo }, index) => ({
-    chain, // PAH, KAH
+    chainName,
     collectionId,
     creator: isNft ? String(itemInfo.deposit.account) : creators?.[collectionId],
     data: metadata[index],
@@ -93,13 +93,13 @@ async function fetchItems (api, addresses, chain, isNft) {
  * Fetches both NFTs and uniques for a given chain
  * @param {Object} api - The API instance for interacting with the blockchain
  * @param {string[]} addresses - Array of addresses to fetch items for
- * @param {string} chain - The chain identifier (e.g., 'PAH' or 'KAH')
+ * @param {string} chainName - The chain identifier
  * @returns {Promise<Array>} Combined array of NFTs and uniques
  */
-async function fetchNFTsForChain (api, addresses, chain) {
+async function fetchNFTsForChain (api, addresses, chainName) {
   const [nfts, uniques] = await Promise.all([
-    fetchItems(api, addresses, chain, true),
-    fetchItems(api, addresses, chain, false)
+    fetchItems(api, addresses, chainName, true),
+    fetchItems(api, addresses, chainName, false)
   ]);
 
   return [...nfts, ...uniques];
@@ -111,22 +111,22 @@ async function fetchNFTsForChain (api, addresses, chain) {
  * @returns {Promise<Array>} Combined array of all NFTs and uniques across all chains
  */
 async function getNFTs (addresses) {
-  const chains = Object.entries(CHAIN_CONFIG);
+  const chainNames = Object.entries(SUPPORTED_NFT_CHAINS);
 
-  // Initialize API connections for all chains
-  const apiPromises = chains.map(async ([chain, { name, prefix }]) => {
+  // Initialize API connections for all chainNames
+  const apiPromises = chainNames.map(async ([chainName, { name, prefix }]) => {
     const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
     const endpoints = getChainEndpoints(name, undefined);
 
-    return fastestEndpoint(endpoints).then(({ api, connections }) => ({ api, chain, connections, formattedAddresses }));
+    return fastestEndpoint(endpoints).then(({ api, connections }) => ({ api, chainName, connections, formattedAddresses }));
   });
 
   const apis = await Promise.all(apiPromises);
 
   try {
     // Fetch NFTs and uniques for all chains in parallel
-    const items = await Promise.all(apis.map(({ api, chain, formattedAddresses }) =>
-      fetchNFTsForChain(api, formattedAddresses, chain)
+    const items = await Promise.all(apis.map(({ api, chainName, formattedAddresses }) =>
+      fetchNFTsForChain(api, formattedAddresses, chainName)
     ));
 
     return items.flat();

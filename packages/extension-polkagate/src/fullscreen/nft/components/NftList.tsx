@@ -15,12 +15,12 @@ import Item from './Item';
 const UNAVAILABLE_HEIGHT = 320;
 const LIST_HEIGHT = innerHeight - UNAVAILABLE_HEIGHT;
 
-export default function ItemsList ({ items, itemsDetail }: ItemsListProps): React.ReactElement {
+export default function NftList ({ itemsDetail, nfts }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', gap: '30px', height: LIST_HEIGHT, maxHeight: LIST_HEIGHT, overflowY: 'scroll', p: '20px 40px' }}>
-      {items === undefined &&
+      {nfts === undefined &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Progress
             gridSize={120}
@@ -29,7 +29,7 @@ export default function ItemsList ({ items, itemsDetail }: ItemsListProps): Reac
           />
         </Grid>
       }
-      {items?.map((nftInfo) => (
+      {nfts?.map((nftInfo) => (
         <Item
           itemInformation={nftInfo}
           itemsDetail={itemsDetail}
@@ -37,14 +37,14 @@ export default function ItemsList ({ items, itemsDetail }: ItemsListProps): Reac
         />
       ))
       }
-      {items === null &&
+      {nfts === null &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Typography fontSize='16px' fontWeight={400}>
             {t('You do not own any NFTs/Uniques')}!
           </Typography>
         </Grid>
       }
-      {items && items.length === 0 &&
+      {nfts && nfts.length === 0 &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Typography fontSize='16px' fontWeight={400}>
             {t('No items match your current filter criteria')}!

@@ -14,7 +14,8 @@ import { useParams } from 'react-router';
 
 import { Identity, Progress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { useInfo } from '../../../hooks';
+import { useApiWithChain2, useInfo, useMetadata } from '../../../hooks';
+import { getAssetHubByChainName } from '../../../hooks/useReferendum';
 import { KODADOT_URL } from '../../../util/constants';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
@@ -63,7 +64,7 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
         </Typography>
       }
       {accountId && api && chain &&
-        <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '18px', maxWidth: '350px', width: '350px' }} />
+        <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '16px', maxWidth: '350px', width: '350px' }} />
       }
       {link &&
         <Link href={link} target='_blank' underline='hover'>
@@ -133,27 +134,17 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   }
 };
 
-export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chain: network, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chainName, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
-  const { api, chain, decimal, token } = useInfo(address);
+  const { decimal, token } = useInfo(address);
+  //@ts-ignore
+  const api = useApiWithChain2(getAssetHubByChainName(chainName));
+  const genesisHash = api?.genesisHash.toHex();
+  const chain = useMetadata(genesisHash, true);
 
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
-
-  const networkName = useMemo(() => {
-    switch (network) {
-      case 'KAH':
-        return 'Kusama Asset Hub';
-      case 'PAH':
-        return 'Polkadot Asset Hub';
-      case 'WAH':
-        return 'Westend Asset Hub';
-
-      default:
-        return '';
-    }
-  }, [network]);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
@@ -206,7 +197,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
               }
               <Detail
                 divider={!!description}
-                text={networkName}
+                text={chainName}
                 title={t('Network')}
               />
               {collectionId !== undefined &&

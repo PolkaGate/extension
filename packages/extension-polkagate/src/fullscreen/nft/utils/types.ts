@@ -7,7 +7,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 export interface ItemInformation {
   collectionId?: string;
-  chain: 'PAH' | 'KAH' | 'WAH'; // polkadot, kusama or westend asset hubs
+  chainName: string; // polkadot, kusama or westend asset hubs
   itemId?: string;
   data?: string;
   isNft: boolean;
@@ -85,7 +85,7 @@ export interface DetailProp {
 }
 
 export interface ItemsListProps {
-  items: ItemInformation[] | null | undefined;
+  nfts: ItemInformation[] | null | undefined;
   itemsDetail: ItemsDetail;
 }
 

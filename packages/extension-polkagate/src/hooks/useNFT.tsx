@@ -9,7 +9,7 @@ import { AccountContext } from '../components';
 import { useTranslation } from '../components/translate';
 import { getFormattedAddress, isHexToBn } from '../util/utils';
 // eslint-disable-next-line import/extensions
-import { CHAIN_CONFIG } from '../util/workers/getNFTs';
+import { SUPPORTED_NFT_CHAINS } from '../util/workers/getNFTs';
 import useAlerts from './useAlerts';
 
 export default function useNFT (address: string): ItemInformation[] | null | undefined {
@@ -18,7 +18,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
   const { notify } = useAlerts();
 
   const myFormattedAddresses = useMemo(() =>
-    Object.values(CHAIN_CONFIG).map(({ prefix }) =>
+    Object.values(SUPPORTED_NFT_CHAINS).map(({ prefix }) =>
       getFormattedAddress(address, undefined, prefix)
     ), [address]);
 

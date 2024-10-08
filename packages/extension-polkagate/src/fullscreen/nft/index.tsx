@@ -16,7 +16,7 @@ import { useFullscreen, useNFT, useTranslation } from '../../hooks';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
-import ItemsList from './components/ItemsList';
+import NftList from './components/NftList';
 import Tabs from './components/Tabs';
 import { fetchItemMetadata } from './utils/util';
 
@@ -32,7 +32,7 @@ function NFT (): React.ReactElement {
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
 
-  const items = useNFT(address);
+  const nfts = useNFT(address);
 
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
   const [itemsDetail, setItemsDetail] = useState<ItemsDetail>({});
@@ -48,18 +48,18 @@ function NFT (): React.ReactElement {
   }, [address, reset]);
 
   useEffect(() => {
-    if (items) {
+    if (nfts) {
       setStep(STEPS.INDEX);
 
-      items.forEach((item) => {
-        fetchItemMetadata(item, setItemsDetail).catch(console.error);
+      nfts.forEach((nft) => {
+        fetchItemMetadata(nft, setItemsDetail).catch(console.error);
       });
 
       return;
     }
 
     setStep(STEPS.CHECK_SCREEN);
-  }, [items]);
+  }, [nfts]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -99,12 +99,12 @@ function NFT (): React.ReactElement {
                 {t('On NFT / Unique Album page you can watch all of your created or owned NFT/unique items.')}
               </Typography>
               <Tabs
-                items={items}
+                items={nfts}
                 setItemsToShow={setItemsToShow}
               />
-              <ItemsList
-                items={itemsToShow}
+              <NftList
                 itemsDetail={itemsDetail}
+                nfts={itemsToShow}
               />
             </>
           }
