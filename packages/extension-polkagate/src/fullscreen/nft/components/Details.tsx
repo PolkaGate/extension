@@ -15,18 +15,19 @@ import { useParams } from 'react-router';
 import { Identity, Progress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo } from '../../../hooks';
+import { KODADOT_URL } from '../../../util/constants';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
-import { KODADOT_URL } from '../../../util/constants';
 
-export const Detail = React.memo(function Detail({ accountId, api, chain, decimal, divider = true, inline = true, price, text, title, token, link, linkName }: DetailProp) {
+export const Detail = React.memo(function Detail ({ accountId, api, chain, decimal, divider = true, inline = true, link, linkName, price, text, title, token }: DetailProp) {
   const { t } = useTranslation();
   const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
   const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
   const notListed = price !== undefined && price === null;
+  const isDescription = !title;
 
   return (
     <Grid container item justifyContent='space-between'>
@@ -34,7 +35,7 @@ export const Detail = React.memo(function Detail({ accountId, api, chain, decima
         <Divider sx={{ bgcolor: 'divider', height: '1px', m: '8px auto', width: '100%' }} />
       }
       {title &&
-        <Typography fontSize='16px' fontWeight={500} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
+        <Typography fontSize='14px' fontWeight={400} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
           {title}:
         </Typography>
       }
@@ -48,12 +49,12 @@ export const Detail = React.memo(function Detail({ accountId, api, chain, decima
         />
       }
       {notListed &&
-        <Typography fontSize='16px' fontWeight={400} textAlign='left'>
+        <Typography fontSize='14px' fontWeight={400} textAlign='left'>
           {t('Not listed')}
         </Typography>
       }
       {text &&
-        <Typography fontSize='16px' fontWeight={400} sx={{ '> p': { m: 0 } }} textAlign='justify'>
+        <Typography fontSize='14px' fontWeight={isDescription ? 400 : 500} sx={{ '> p': { m: 0 } }} textAlign='justify'>
           <ReactMarkdown
             linkTarget='_blank'
           >
@@ -65,7 +66,7 @@ export const Detail = React.memo(function Detail({ accountId, api, chain, decima
         <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '18px', maxWidth: '350px', width: '350px' }} />
       }
       {link &&
-        <Link href={link} underline='hover' target='_blank'>
+        <Link href={link} target='_blank' underline='hover'>
           {linkName}
         </Link>
       }
@@ -195,19 +196,21 @@ export default function Details({ details: { animation_url, animationContentType
             </Grid>
             <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '460px', overflowY: 'scroll', p: '15px 20px', width: '390px' }}>
               {description &&
-                <Detail
-                  divider={false}
-                  inline={false}
-                  text={description}
-                />
+                <Grid item sx={{ pb: '15px' }}>
+                  <Detail
+                    divider={false}
+                    inline={false}
+                    text={description}
+                  />
+                </Grid>
               }
               <Detail
-                title={t('Network')}
+                divider={!!description}
                 text={networkName}
+                title={t('Network')}
               />
               {collectionId !== undefined &&
                 <Detail
-                  divider={!!description}
                   text={collectionId}
                   title={t('Collection ID')}
                 />
