@@ -136,7 +136,7 @@ const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: bo
           isBalanceOutdated={isBalanceOutdated}
         />
       }
-      <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
+      <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />
       {hideNumbers
         ? <Box
           component='img'

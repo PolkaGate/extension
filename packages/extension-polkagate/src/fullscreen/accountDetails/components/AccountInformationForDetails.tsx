@@ -79,7 +79,7 @@ interface BalanceRowJSXType {
 const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: BalanceRowJSXType) => (
   <Grid alignItems='center' container fontSize='28px' item xs>
     <Balance balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} />
-    <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '30px', mx: '10px', my: 'auto' }} />
+    <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '30px', mx: '10px', my: 'auto' }} />
     <Price balanceToShow={balanceToShow} isPriceOutdated={isPriceOutdated} price={price} />
   </Grid>
 );
