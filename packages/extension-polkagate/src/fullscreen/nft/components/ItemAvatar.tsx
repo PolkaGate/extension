@@ -5,11 +5,12 @@
 
 import type { ItemAvatarProp } from '../utils/types';
 
+import { faGem } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { NFTIcon } from '../../../components';
 import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from '../utils/constants';
 import { WithLoading } from './Details';
 
@@ -63,10 +64,10 @@ export default function ItemAvatar ({ height = '220px', image, onFullscreen, wid
         </>
       }
       {image === null &&
-        <NFTIcon
-          color={theme.palette.backgroundFL.primary}
-          height={70}
-          width={70}
+        <FontAwesomeIcon
+          color={theme.palette.text.primary}
+          fontSize='70px'
+          icon={faGem}
         />
       }
     </Grid>

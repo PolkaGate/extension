@@ -15,14 +15,14 @@ import { useParams } from 'react-router';
 import { Identity, Progress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useInfo } from '../../../hooks';
+import { KODADOT_URL } from '../../../util/constants';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
-import { KODADOT_URL } from '../../../util/constants';
 
-export const Detail = React.memo(function Detail({ accountId, api, chain, decimal, divider = true, inline = true, price, text, title, token, link, linkName }: DetailProp) {
+export const Detail = React.memo(function Detail ({ accountId, api, chain, decimal, divider = true, inline = true, link, linkName, price, text, title, token }: DetailProp) {
   const { t } = useTranslation();
   const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
   const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
@@ -65,7 +65,7 @@ export const Detail = React.memo(function Detail({ accountId, api, chain, decima
         <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '18px', maxWidth: '350px', width: '350px' }} />
       }
       {link &&
-        <Link href={link} underline='hover' target='_blank'>
+        <Link href={link} target='_blank' underline='hover'>
           {linkName}
         </Link>
       }
@@ -132,7 +132,7 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   }
 };
 
-export default function Details({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chain: network, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chain: network, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
@@ -152,7 +152,7 @@ export default function Details({ details: { animation_url, animationContentType
       default:
         return '';
     }
-  }, []);
+  }, [network]);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
@@ -202,12 +202,12 @@ export default function Details({ details: { animation_url, animationContentType
                 />
               }
               <Detail
-                title={t('Network')}
+                divider={!!description}
                 text={networkName}
+                title={t('Network')}
               />
               {collectionId !== undefined &&
                 <Detail
-                  divider={!!description}
                   text={collectionId}
                   title={t('Collection ID')}
                 />

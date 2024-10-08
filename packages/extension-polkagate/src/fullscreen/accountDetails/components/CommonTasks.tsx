@@ -6,7 +6,7 @@
 import type { BalancesInfo } from 'extension-polkagate/src/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
-import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faGem, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -16,7 +16,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { NFTIcon, PoolStakingIcon } from '../../../components';
+import { PoolStakingIcon } from '../../../components';
 import { useApi, useTranslation } from '../../../hooks';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import { popupNumbers } from '..';
@@ -256,10 +256,10 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
         <TaskButton
           disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
           icon={
-            <NFTIcon
+            <FontAwesomeIcon
               color={theme.palette.text.primary}
-              height={24}
-              width={24}
+              fontSize='28px'
+              icon={faGem}
             />
           }
           onClick={onNFTAlbum}

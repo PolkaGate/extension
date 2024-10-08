@@ -82,7 +82,6 @@ export { default as Steps } from './Steps';
 export { default as EndRecoveryIcon } from './SVG/EndRecoveryIcon';
 export { default as HideIcon } from './SVG/HideIcon';
 export { default as MakeRecoverableIcon } from './SVG/MakeRecoverableIcon';
-export { default as NFTIcon } from './SVG/NFT';
 export { default as PoolStakingIcon } from './SVG/PoolStakingIcon';
 export { default as RescueRecoveryIcon } from './SVG/RescueRecoveryIcon';
 export { default as ShowIcon } from './SVG/ShowIcon';

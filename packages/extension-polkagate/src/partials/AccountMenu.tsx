@@ -5,13 +5,13 @@
 
 import type { HexString } from '@polkadot/util/types';
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
+import { faAddressCard, faGem } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, NFTIcon, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
+import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
 import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
 import { useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
@@ -140,10 +140,10 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
       <MenuItem
         disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
         iconComponent={
-          <NFTIcon
+          <FontAwesomeIcon
             color={theme.palette.text.primary}
-            height={24}
-            width={24}
+            fontSize='22px'
+            icon={faGem}
           />
         }
         onClick={onNFTAlbum}
