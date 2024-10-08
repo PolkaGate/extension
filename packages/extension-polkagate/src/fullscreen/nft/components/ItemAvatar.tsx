@@ -38,6 +38,10 @@ export default function ItemAvatar ({ height = '220px', image, onFullscreen, wid
               sx={{
                 display: showLoading ? 'none' : 'initial',
                 height: '100%',
+                img: {
+                  objectFit: 'contain',
+                  objectPosition: 'center'
+                },
                 pointerEvents: 'none',
                 width: '100%'
               }}
