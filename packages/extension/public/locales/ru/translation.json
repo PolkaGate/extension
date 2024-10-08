@@ -1387,5 +1387,8 @@
   "Check": "Проверить",
   "Chain Information": "Информация о сети",
   "No information found from this RPC node!": "Информация с этого узла RPC не найдена!",
-  "Add a new chain": "Добавить новую сеть"
+  "Add a new chain": "Добавить новую сеть",
+  "Invalid endpoint format!": "Неверный формат конечной точки!",
+  "The chain already exists, no need to add it again!": "Цепь уже существует, нет необходимости добавлять её снова!",
+  "Click to hide all the profile accounts from websites!": "Нажмите, чтобы скрыть все аккаунты профиля с веб-сайтов!"
 }
