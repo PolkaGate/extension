@@ -133,7 +133,7 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   }
 };
 
-export default function Details({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chain: network, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chain: network, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
@@ -153,7 +153,7 @@ export default function Details({ details: { animation_url, animationContentType
       default:
         return '';
     }
-  }, []);
+  }, [network]);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 

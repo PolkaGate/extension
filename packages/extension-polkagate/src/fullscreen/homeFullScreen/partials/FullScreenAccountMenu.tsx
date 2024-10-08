@@ -3,12 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
+import { faAddressCard, faGem } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionContext, MenuItem, NFTIcon, SocialRecoveryIcon, VaadinIcon } from '../../../components';
+import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 import { POPUPS_NUMBER } from './AccountInformationForHome';
@@ -121,10 +121,10 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
       <MenuItem
         disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
         iconComponent={
-          <NFTIcon
+          <FontAwesomeIcon
             color={theme.palette.text.primary}
-            height={24}
-            width={24}
+            fontSize='20px'
+            icon={faGem}
           />
         }
         onClick={onNFTAlbum}
@@ -166,7 +166,7 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={ vaadinIconStyle } />
+          <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}

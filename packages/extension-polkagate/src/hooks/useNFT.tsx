@@ -3,7 +3,7 @@
 
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
 
-import { useCallback, useContext, useEffect, useMemo,useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountContext } from '../components';
 import { useTranslation } from '../components/translate';

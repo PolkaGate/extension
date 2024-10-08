@@ -5,12 +5,13 @@
 
 import type { ItemInformation, ItemsDetail } from './utils/types';
 
+import { faGem } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { Warning } from '../../components';
-import NFTIcon from '../../components/SVG/NFT';
 import { useFullscreen, useNFT, useTranslation } from '../../hooks';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
@@ -68,7 +69,13 @@ function NFT (): React.ReactElement {
           <Bread />
           <Title
             height='100px'
-            logo={<NFTIcon color={theme.palette.text.primary} height={50} width={50} />}
+            logo={
+              <FontAwesomeIcon
+                color={theme.palette.text.primary}
+                fontSize='50px'
+                icon={faGem}
+              />
+            }
             padding='0px'
             text={t('NFT / Unique Album')}
           />
