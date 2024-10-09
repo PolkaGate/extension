@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable camelcase */
 
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { DetailItemProps, DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
@@ -12,7 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
 
-import { Identity, Progress, ShowBalance } from '../../../components';
+import { Identity, Progress, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useApiWithChain2, useInfo, useMetadata } from '../../../hooks';
 import { getAssetHubByChainName } from '../../../hooks/useReferendum';
@@ -63,8 +64,13 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
           </ReactMarkdown>
         </Typography>
       }
-      {accountId && api && chain &&
-        <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '16px', maxWidth: '350px', width: '350px' }} />
+      {accountId &&
+      <>
+        {api && chain
+          ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '16px', maxWidth: '350px', width: '350px' }} />
+          : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '16px', width: 'fit-content' }} />
+        }
+      </>
       }
       {link &&
         <Link href={link} target='_blank' underline='hover'>
@@ -139,8 +145,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
   const { decimal, token } = useInfo(address);
-  //@ts-ignore
-  const api = useApiWithChain2(getAssetHubByChainName(chainName));
+  const api = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
   const genesisHash = api?.genesisHash.toHex();
   const chain = useMetadata(genesisHash, true);
 
