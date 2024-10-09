@@ -17,9 +17,8 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { BN_ONE } from '@polkadot/util';
 
-import { ShortAddress } from '../../../../components';
+import { AccountWithProxyInConfirmation } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';
@@ -64,9 +63,9 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
       return;
     }
 
-    const batchAll = api && api.tx['utility']['batchAll'];
-    const chilled = api && api.tx['nominationPools']['chill'];
-    const poolSetState = api && api.tx['nominationPools']['setState']; // (poolId, state)
+    const batchAll = api?.tx['utility']['batchAll'];
+    const chilled = api?.tx['nominationPools']['chill'];
+    const poolSetState = api?.tx['nominationPools']['setState']; // (poolId, state)
 
     const poolId = pool.poolId.toString();
 
@@ -137,30 +136,13 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
             txInfo={txInfo}
           >
             <>
-              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t('Account holder:')}
-                </Typography>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {txInfo.from.name}
-                </Typography>
-                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                  <ShortAddress
-                    address={txInfo.from.address}
-                    inParentheses
-                    style={{ fontSize: '16px' }}
-                  />
-                </Grid>
-              </Grid>
-              {txInfo.throughProxy &&
-                <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-                </Grid>
-              }
+              <AccountWithProxyInConfirmation
+                txInfo={txInfo}
+              />
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
               <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t('Pool:')}
+                  {t('Pool')}:
                 </Typography>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {pool.metadata}
@@ -169,7 +151,7 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
               <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t('New pool state:')}
+                  {t('New pool state')}:
                 </Typography>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {state}

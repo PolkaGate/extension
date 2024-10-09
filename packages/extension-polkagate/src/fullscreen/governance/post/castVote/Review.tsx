@@ -20,9 +20,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
 import DisplayValue from './partial/DisplayValue';
@@ -46,7 +45,7 @@ interface Props {
 export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chain, decimal, token } = useInfo(address);
+  const { chain, decimal, token } = useInfo(address);
   const ref = useRef(null);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -133,26 +132,13 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
             {t('Think twice before removing your vote. It may affect the outcome.')}
           </Warning>
         }
-        <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t('Account holder')}
-          </Typography>
-          <Identity
-            address={address}
-            api={api}
-            chain={chain as any}
-            direction='row'
-            identiconSize={35}
-            showSocial={false}
-            style={{ maxWidth: '100%', width: 'fit-content' }}
-            withShortAddress
-          />
-        </Grid>
-        {selectedProxyAddress &&
-          <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
-          </Grid>
-        }
+        <AccountHolderWithProxy
+          address={address}
+          chain={chain}
+          direction ='row'
+          selectedProxyAddress={selectedProxyAddress}
+          style={{ m: 'auto', pt: isPasswordError ? 0 : '10px' }}
+        />
         <DisplayValue title={t('Vote')}>
           <VoteStatus vote={voteInformation.voteType} />
         </DisplayValue>

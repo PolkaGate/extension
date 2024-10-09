@@ -138,7 +138,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
                 selectedProxyAddress={selectedProxyAddress}
                 showDivider
                 style={{ mt: '-5px' }}
-                title={t('Account holder')}
+                title={t('Account')}
               />
               <AmountFee
                 address={address}

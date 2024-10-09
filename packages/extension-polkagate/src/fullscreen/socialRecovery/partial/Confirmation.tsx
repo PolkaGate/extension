@@ -1,26 +1,25 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { BN } from '@polkadot/util';
+import type { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
+import type { TxInfo } from '../../../util/types';
+import type { AddressWithIdentity } from '../components/SelectTrustedFriend';
+import type { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { BN } from '@polkadot/util';
-
-import { Identity, Motion, PButton, ShortAddress } from '../../../components';
+import { DisplayInfo, Identity, Motion, PButton, ShortAddress } from '../../../components';
 import { useToken, useTranslation } from '../../../hooks';
-import { ActiveRecoveryFor } from '../../../hooks/useActiveRecoveries';
 import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import type { TxInfo } from '../../../util/types';
 import { amountToHuman, pgBoxShadow } from '../../../util/utils';
-import { AddressWithIdentity } from '../components/SelectTrustedFriend';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
-import type { RecoveryConfigType, SocialRecoveryModes } from '../util/types';
 import { STEPS } from '..';
 
 interface Props {
@@ -38,38 +37,13 @@ interface Props {
   activeLost: ActiveRecoveryFor | null | undefined;
 }
 
-interface DisplayInfoProps {
-  caption: string;
-  value: string | undefined;
-  showDivider?: boolean;
-  fontSize?: string;
-  fontWeight?: number;
-}
-
 interface AccountWithTitleProps {
   title: string;
   address: string | undefined;
   accountInformation: DeriveAccountInfo | undefined;
 }
 
-export const DisplayInfo = ({ caption, fontSize, fontWeight, showDivider = true, value }: DisplayInfoProps): React.ReactElement => {
-  return (
-    <>{value &&
-      <Grid alignItems='center' container direction='column' justifyContent='center'>
-        <Grid container item width='fit-content'>
-          <Typography fontSize={fontSize ?? '16px'} fontWeight={fontWeight ?? 400} lineHeight='40px' pr='5px'>{caption}</Typography>
-          <Typography fontSize={fontSize ?? '16px'} fontWeight={fontWeight ?? 400} lineHeight='40px'>{value}</Typography>
-        </Grid>
-        {showDivider &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-          </Grid>}
-      </Grid>
-    }</>
-  );
-};
-
-export default function Confirmation({ WithdrawDetails, activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
+export default function Confirmation ({ WithdrawDetails, activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(txInfo.from.address);
@@ -98,16 +72,16 @@ export default function Confirmation({ WithdrawDetails, activeLost, decimal, dep
 
   const MakeRecoverableDetail = () => (
     <>
-      {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && recoveryConfig &&
-        recoveryConfig.friends.addresses.map((friend, index) => (
-          <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-            <AccountWithTitle
-              accountInformation={recoveryConfig.friends.infos?.at(index)}
-              address={friend}
-              title={t(`Trusted friend ${index + 1}`)}
-            />
-          </Grid>
-        ))}
+      {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && 
+      recoveryConfig?.friends.addresses.map((friend, index) => (
+        <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+          <AccountWithTitle
+            accountInformation={recoveryConfig.friends.infos?.at(index)}
+            address={friend}
+            title={t(`Trusted friend ${index + 1}`)}
+          />
+        </Grid>
+      ))}
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>
@@ -131,7 +105,7 @@ export default function Confirmation({ WithdrawDetails, activeLost, decimal, dep
       <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), pb: '8px' }}>
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
           success={txInfo.success}
         />
         {txInfo?.failureText &&
@@ -147,7 +121,7 @@ export default function Confirmation({ WithdrawDetails, activeLost, decimal, dep
               : vouchRecoveryInfo?.rescuer.address}
             title={mode === 'VouchRecovery'
               ? t('Rescuer account')
-              : t('Account holder')}
+              : t('Account')}
           />
         </Grid>
         {txInfo.throughProxy &&

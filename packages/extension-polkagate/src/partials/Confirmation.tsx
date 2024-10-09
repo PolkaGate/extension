@@ -49,32 +49,18 @@ export default function Confirmation ({ children, headerTitle, onPrimaryBtnClick
         <SubTitle label={txInfo.success ? subtitle || t('Completed') : t('Failed')} />
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
           success={txInfo.success}
         />
         {txInfo?.failureText &&
-          <Typography
-            fontSize='16px'
-            fontWeight={400}
-            m='auto'
-            sx={{
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: '2',
-              display: '-webkit-box',
-              mb: '15px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
-            }}
-            textAlign='center'
-            width='92%'
-          >
+          <Typography fontSize='16px' fontWeight={400} m='auto' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' width='92%'>
             {txInfo.failureText}
           </Typography>
         }
         {children}
         <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t('Fee:')}
+            {t('Fee')}:
           </Typography>
           <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
             {fee?.toHuman() as string ?? '00.00'}
@@ -84,7 +70,7 @@ export default function Confirmation ({ children, headerTitle, onPrimaryBtnClick
         {!!txInfo?.block &&
           <Grid alignItems='end' container justifyContent='center'>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t('Block:')}
+              {t('Block')}:
             </Typography>
             <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               #{txInfo.block}
@@ -94,7 +80,7 @@ export default function Confirmation ({ children, headerTitle, onPrimaryBtnClick
         {txInfo?.txHash &&
           <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '75%' }}>
             <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-              {t('Hash:')}
+              {t('Hash')}:
             </Typography>
             <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
               <ShortAddress

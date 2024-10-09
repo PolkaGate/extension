@@ -1,6 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -8,13 +11,12 @@ import React from 'react';
 import { ShortAddress } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ThroughProxy from '../../../partials/ThroughProxy';
-import type { TxInfo } from '../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
 }
 
-export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
+export default function SendTxDetail ({ txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = txInfo.api.registry.chainTokens[0];
 
@@ -22,7 +24,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
     <>
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('From:')}
+          {t('From:')}
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}
@@ -30,8 +32,8 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShortAddress
             address={txInfo.from.address}
-            style={{ fontSize: '16px' }}
             inParentheses
+            style={{ fontSize: '16px' }}
           />
         </Grid>
       </Grid>
@@ -49,14 +51,14 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
       }
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t<string>('To:')}
+          {t('To:')}
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {txInfo.to.name}
+          {txInfo?.to?.name}
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           <ShortAddress
-            address={txInfo.to.address}
+            address={txInfo?.to?.address}
             inParentheses
             showCopy
             style={{ fontSize: '16px' }}
@@ -76,7 +78,7 @@ export default function SendTxDetail({ txInfo }: Props): React.ReactElement {
           fontWeight={400}
           lineHeight='23px'
         >
-          {t<string>('Amount:')}
+          {t('Amount:')}
         </Typography>
         <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
           {`${txInfo.amount} ${token}`}

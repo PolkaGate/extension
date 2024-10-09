@@ -75,7 +75,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
         <WrongPasswordAlert />
       }
       <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), mb: '20px', p: '1% 3%' }}>
-        <DisplayValue title={t('Account holder')} topDivider={false}>
+        <DisplayValue title={t('Account')} topDivider={false}>
           <Grid alignItems='center' container item justifyContent='center' sx={{ height: '42px', width: '600px' }}>
             <Identity
               address={address}

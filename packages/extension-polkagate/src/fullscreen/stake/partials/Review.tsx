@@ -127,7 +127,7 @@ export default function Review ({ address, inputs, onClose, setRefresh, setStep,
               chain={chain}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
-              title={t('Account holder')}
+              title={t('Account')}
             />
             <>
               {inputs?.extraInfo?.['payee'] &&

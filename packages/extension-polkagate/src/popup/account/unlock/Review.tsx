@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,27 +9,28 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { ISubmittableResult } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../hooks/useAccountLocks';
+import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 
 import { useTheme } from '@emotion/react';
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, isBn } from '@polkadot/util';
+import { BN_ONE, isBn } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
-import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
-import type { Lock } from '../../../hooks/useAccountLocks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import { signAndSend } from '../../../util/api';
 import { PROXY_TYPE } from '../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import Confirmation from './Confirmation';
-import type { Chain } from '@polkadot/extension-chains/types';
-import type { Balance } from '@polkadot/types/interfaces';
 
 interface Props {
   address: string;
@@ -43,16 +43,15 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
+export default function Review ({ address, api, classToUnlock, setRefresh, setShow, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
   const theme = useTheme();
+
+  const { chain, decimal, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
-  const chain = useChain(address);
   const name = useAccountDisplay(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -92,7 +91,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
     setParams(params as any);
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     batchAll(params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
@@ -172,7 +171,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Unlocking')}
+          text={t('Unlocking')}
         />
         {isPasswordError &&
           <WrongPasswordAlert />
@@ -185,7 +184,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             style={{ mt: '-5px' }}
-            title={t('Account holder')}
+            title={t('Account')}
           />
           <AmountFee
             address={address}
@@ -200,7 +199,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
             <Warning
               theme={theme}
             >
-              {t<string>('The rest will be available when the corresponding locks have expired.')}
+              {t('The rest will be available when the corresponding locks have expired.')}
             </Warning>
           }
         </Container>
@@ -209,7 +208,7 @@ export default function Review({ address, api, classToUnlock, setRefresh, setSho
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unlockRef}
           proxiedAddress={formatted}

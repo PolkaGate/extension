@@ -1,12 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { Balance } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
+import type { ISubmittableResult } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import type { Proxy, TxInfo } from '../../util/types';
+import type { AddressWithIdentity } from './components/SelectTrustedFriend';
 import type { InitiateRecoveryConfig, RecoveryConfigType, SocialRecoveryModes, WithdrawInfo } from './util/types';
 
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
@@ -15,16 +23,10 @@ import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { ISubmittableResult } from '@polkadot/types/types';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { CanPayErrorAlert, EndRecoveryIcon, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
 import { useCanPayFeeAndDeposit, useCurrentBlockNumber, useInfo } from '../../hooks';
-import type { ActiveRecoveryFor } from '../../hooks/useActiveRecoveries';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
@@ -33,12 +35,10 @@ import { pgBoxShadow } from '../../util/utils';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
 import { toTitleCase } from '../governance/utils/util';
-import type { AddressWithIdentity } from './components/SelectTrustedFriend';
 import Confirmation from './partial/Confirmation';
 import TrustedFriendsDisplay from './partial/TrustedFriendsDisplay';
 import recoveryDelayPeriod from './util/recoveryDelayPeriod';
 import { STEPS } from '.';
-import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 interface Props {
   address: string;
@@ -62,7 +62,7 @@ interface Props {
 
 const dateTimeFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' } as Intl.DateTimeFormatOptions;
 
-export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
+export default function Review ({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, formatted } = useInfo(address);
@@ -76,22 +76,22 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const batchAll = api && api.tx['utility']['batchAll'];
-  const removeRecovery = api && api.tx['recovery']['removeRecovery'];
-  const createRecovery = api && api.tx['recovery']['createRecovery'];
-  const initiateRecovery = api && api.tx['recovery']['initiateRecovery'];
-  const closeRecovery = api && api.tx['recovery']['closeRecovery'];
-  const vouchRecovery = api && api.tx['recovery']['vouchRecovery'];
-  const claimRecovery = api && api.tx['recovery']['claimRecovery'];
-  const asRecovered = api && api.tx['recovery']['asRecovered'];
-  const chill = api && api.tx['staking']['chill'];
-  const unbonded = api && api.tx['staking']['unbond'];
-  const redeem = api && api.tx['staking']['withdrawUnbonded'];
-  const poolRedeem = api && api.tx['nominationPools']['withdrawUnbonded'];
-  const transferAll = api && api.tx['balances']['transferAll']; // [rescuer.accountId, false]
-  const clearIdentity = api && api.tx['identity']['clearIdentity'];
-  const removeProxies = api && api.tx['proxy']['removeProxies'];
-  const unbond = api && api.tx['nominationPools']['unbond'];
+  const batchAll = api?.tx['utility']['batchAll'];
+  const removeRecovery = api?.tx['recovery']['removeRecovery'];
+  const createRecovery = api?.tx['recovery']['createRecovery'];
+  const initiateRecovery = api?.tx['recovery']['initiateRecovery'];
+  const closeRecovery = api?.tx['recovery']['closeRecovery'];
+  const vouchRecovery = api?.tx['recovery']['vouchRecovery'];
+  const claimRecovery = api?.tx['recovery']['claimRecovery'];
+  const asRecovered = api?.tx['recovery']['asRecovered'];
+  const chill = api?.tx['staking']['chill'];
+  const unbonded = api?.tx['staking']['unbond'];
+  const redeem = api?.tx['staking']['withdrawUnbonded'];
+  const poolRedeem = api?.tx['nominationPools']['withdrawUnbonded'];
+  const transferAll = api?.tx['balances']['transferAll']; // [rescuer.accountId, false]
+  const clearIdentity = api?.tx['identity']['clearIdentity'];
+  const removeProxies = api?.tx['proxy']['removeProxies'];
+  const unbond = api?.tx['nominationPools']['unbond'];
 
   const depositToPay = useMemo(() => {
     if (['CloseRecovery', 'RemoveRecovery', 'VouchRecovery', 'Withdraw'].includes(mode ?? '')) {
@@ -175,7 +175,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     // eslint-disable-next-line no-void
@@ -236,8 +236,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
                 <Typography fontSize='16px' fontWeight={400}>
                   {step === STEPS.REVIEW
-                    ? t<string>('Funds available to be withdrawn now')
-                    : t<string>('Withdrawn Funds')}
+                    ? t('Funds available to be withdrawn now')
+                    : t('Withdrawn Funds')}
                 </Typography>
                 {toBeWithdrawn.map((item, index) => (
                   <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
@@ -258,8 +258,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 <Grid container item justifyContent='center' sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' } }}>
                   <Typography fontSize='16px' fontWeight={400}>
                     {step === STEPS.REVIEW
-                      ? t<string>('Funds available to withdraw later')
-                      : t<string>('Funds will be withdrawn later')}
+                      ? t('Funds available to withdraw later')
+                      : t('Funds will be withdrawn later')}
                   </Typography>
                   {toBeWithdrawnLater.map((item, index) => (
                     <Grid container item justifyContent='space-between' key={index} sx={{ fontSize: '20px', fontWeight: 400, py: '5px' }}>
@@ -304,7 +304,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
     <>
       <Typography sx={{ maxHeight: '300px', maxWidth: '500px', overflowY: 'scroll' }} variant='body2'>
         <Grid container spacing={1} sx={{ '> div:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'background.paper' } }}>
-          {lostAccountAddress?.friends && lostAccountAddress.friends.addresses.map((friend, index) =>
+          {lostAccountAddress?.friends?.addresses.map((friend, index) =>
             <Grid alignItems='center' container item key={index} pb='3px'>
               <Typography fontSize='14px' fontWeight={400} pr='8px'>
                 {`Trusted friend ${index + 1}`}:
@@ -453,8 +453,8 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
               <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'InitiateRecovery' || mode === 'VouchRecovery'
-                    ? t<string>('Rescuer account')
-                    : t<string>('Account holder')}
+                    ? t('Rescuer account')
+                    : t('Account')}
                 </Typography>
                 <Identity
                   accountInfo={mode === 'VouchRecovery' ? vouchRecoveryInfo?.rescuer.accountIdentity : undefined}
@@ -462,7 +462,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                     ? address
                     : vouchRecoveryInfo?.rescuer.address}
                   api={api}
-                  chain={chain as any}
+                  chain={chain}
                   direction='row'
                   identiconSize={31}
                   showSocial={false}
@@ -507,6 +507,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                   <TrustedFriendsDisplay
                     api={api}
                     chain={chain as any}
+                    //@ts-ignore
                     friends={recoveryInfo.friends.map((friend) => String(friend))}
                   />
                 </>
@@ -524,7 +525,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                           ? vouchRecoveryInfo?.lost.accountIdentity
                           : undefined}
                       api={api}
-                      chain={chain as any}
+                      chain={chain}
                       direction='row'
                       formatted={mode === 'InitiateRecovery' || mode === 'Withdraw'
                         ? lostAccountAddress?.address
@@ -552,7 +553,7 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                         </Typography>
                         <Identity
                           api={api}
-                          chain={chain as any}
+                          chain={chain}
                           direction='row'
                           formatted={activeLost.rescuer}
                           identiconSize={31}
@@ -584,14 +585,14 @@ export default function Review({ activeLost, address, allActiveRecoveries, api, 
                 <DisplayValue
                   childrenFontSize='24px'
                   title={mode === 'RemoveRecovery'
-                    ? t<string>('Releasing deposit')
+                    ? t('Releasing deposit')
                     : mode === 'InitiateRecovery'
-                      ? t<string>('Initiation Deposit')
+                      ? t('Initiation Deposit')
                       : mode === 'CloseRecovery'
-                        ? t<string>('Deposit they made')
+                        ? t('Deposit they made')
                         : mode === 'Withdraw'
-                          ? t<string>('Initiation recovery deposit to be released')
-                          : t<string>('Total Deposit')}
+                          ? t('Initiation recovery deposit to be released')
+                          : t('Total Deposit')}
                 >
                   <ShowBalance
                     api={api}

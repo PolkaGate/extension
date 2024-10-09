@@ -1,24 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import type { TxInfo } from '../../../../../util/types';
+import type { ChangesProps } from '.';
+
+import { Divider } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { ShortAddress } from '../../../../../components';
+import { AccountWithProxyInConfirmation, DisplayInfo } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
-import { ThroughProxy } from '../../../../../partials';
-import type { TxInfo } from '../../../../../util/types';
-import { ChangesProps } from '.';
 
 interface Props {
   txInfo: TxInfo;
   changes: ChangesProps | undefined;
 }
 
-export default function TxDetail({ changes, txInfo }: Props): React.ReactElement {
+export default function TxDetail ({ changes, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const changedRoles = useMemo(() => {
@@ -44,43 +43,11 @@ export default function TxDetail({ changes, txInfo }: Props): React.ReactElement
     return _changes;
   }, [changes?.commission]);
 
-  const DisplayInfo = ({ caption, showDivider = true, value }: { caption: string, value: string | number, showDivider?: boolean }) => {
-    return (
-      <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-        <Grid container item width='fit-content'>
-          <Typography lineHeight='40px' pr='5px'>{caption}:</Typography>
-          <Typography lineHeight='40px'>{value}</Typography>
-        </Grid>
-        {showDivider &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-          </Grid>}
-      </Grid>
-    );
-  };
-
   return (
     <>
-      <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          {t('Account holder:')}
-        </Typography>
-        <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-          {txInfo.from.name}
-        </Typography>
-        <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-          <ShortAddress
-            address={txInfo.from.address}
-            inParentheses
-            style={{ fontSize: '16px' }}
-          />
-        </Grid>
-      </Grid>
-      {txInfo.throughProxy &&
-        <Grid container m='auto' maxWidth='92%'>
-          <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-        </Grid>
-      }
+      <AccountWithProxyInConfirmation
+        txInfo={txInfo}
+      />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
       {changes?.newPoolName !== undefined &&
         <DisplayInfo
@@ -103,7 +70,7 @@ export default function TxDetail({ changes, txInfo }: Props): React.ReactElement
             ? value.length > 10
               ? `${String(value).slice(0, 4)} ... ${String(value).slice(-4)}`
               : value
-            : value ?? t('Removed')
+            : value as unknown as string ?? t('Removed')
           }
         />
       )}

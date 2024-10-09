@@ -26,6 +26,7 @@ interface Props {
   direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
+  inParentheses?: boolean;
   judgement?: unknown;
   name?: string;
   noIdenticon?: boolean;
@@ -39,7 +40,7 @@ interface Props {
   subIdOnly?: boolean;
 }
 
-function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -153,13 +154,13 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
         {withShortAddress && direction === 'row' &&
           <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
-            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
+            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
           </Grid>
         }
         {_showSocial &&

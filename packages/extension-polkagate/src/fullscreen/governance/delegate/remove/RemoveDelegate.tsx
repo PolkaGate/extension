@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,20 +10,20 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, TxInfo } from '../../../../util/types';
+import type { AlreadyDelegateInformation, DelegateInformation} from '..';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
 import { useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import ReferendaTable from '../partial/ReferendaTable';
 import TracksList from '../partial/TracksList';
-import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
+import { STEPS } from '..';
 
 interface Props {
   address: string | undefined;
@@ -39,25 +38,27 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate ({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+
   const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
+  const ref = useRef<HTMLDivElement | null>(null);
+
   const delegateeAddress = classicDelegateInformation
     ? classicDelegateInformation.delegateeAddress
     : mixedDelegateInformation
       ? mixedDelegateInformation.delegatee
       : undefined;
   const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
-  const ref = useRef(null);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const undelegate = api && api.tx['convictionVoting']['undelegate'];
-  const batch = api && api.tx['utility']['batchAll'];
+  const undelegate = api?.tx['convictionVoting']['undelegate'];
+  const batch = api?.tx['utility']['batchAll'];
 
   const delegatedTracks = useMemo(() => {
     if (classicDelegateInformation) {
@@ -80,8 +81,8 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
   }, [delegatedTracks]);
 
   useEffect(() => {
-    if (ref) {
-      setModalHeight(ref.current?.offsetHeight as number);
+    if (ref?.current?.offsetHeight) {
+      setModalHeight(ref.current.offsetHeight);
     }
   }, [setModalHeight]);
 
@@ -94,7 +95,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
 
     if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     params.length === 1
@@ -128,27 +129,14 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t('Account Holder')}
-          </Typography>
-          <Identity
-            address={address}
-            api={api}
-            chain={chain as any}
-            direction='row'
-            identiconSize={31}
-            showShortAddress
-            showSocial={false}
-            style={{ maxWidth: '100%', width: 'fit-content' }}
-            withShortAddress
-          />
-        </Grid>
-        {selectedProxyAddress &&
-          <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
-          </Grid>
-        }
+        <AccountHolderWithProxy
+          address={address}
+          chain={chain}
+          direction='row'
+          selectedProxyAddress={selectedProxyAddress}
+          style={{ mt: '-5px' }}
+          title={t('Account')}
+        />
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: 'auto', my: '5px', width: '170px' }} />
         <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
           <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
@@ -156,7 +144,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
           </Typography>
           <Identity
             api={api}
-            chain={chain as any}
+            chain={chain}
             direction='row'
             formatted={delegateeAddress}
             identiconSize={31}
@@ -205,7 +193,7 @@ export default function RemoveDelegate({ address, classicDelegateInformation, fo
         </DisplayValue>
         <Grid container item pt='10px'>
           <SignArea2
-            address={address}
+            address={address as string}
             call={tx}
             disabled={!delegatedTracks || delegatedTracks.length === 0}
             extraInfo={extraInfo}

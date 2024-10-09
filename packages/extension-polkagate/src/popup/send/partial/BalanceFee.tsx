@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,13 +9,12 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { BalancesInfo } from '../../../util/types';
 
 import { Grid } from '@mui/material';
 import React from 'react';
-
-import { BN } from '@polkadot/util';
 
 import { ShowBalance } from '../../../components';
 import { useDecimal, useToken } from '../../../hooks';
@@ -25,16 +23,16 @@ import { getValue } from '../../account/util';
 
 interface Props {
   address?: string;
-  type: string;
-  balances: DeriveBalancesAll | null | undefined;
+  type: string | undefined;
+  balances: BalancesInfo | null | undefined;
   fee: Balance | undefined;
   api: ApiPromise | undefined;
-  balance?: BN | undefined
+  balance?: BN | null | undefined
 
 }
 
-export default function BalanceFee({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
-  const value = balance ?? getValue(type, balances);
+export default function BalanceFee ({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
+  const value = balance ?? (type ? getValue(type, balances) : undefined);
   const token = useToken(address);
   const decimal = useDecimal(address);
 

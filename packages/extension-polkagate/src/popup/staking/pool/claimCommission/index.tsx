@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,20 +8,20 @@
  * this component opens withdraw rewards review page
  * */
 
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import { To } from '../../../send/Review';
 import TxDetail from '../rewards/partials/TxDetail';
@@ -34,7 +33,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ClaimCommission({ address, pool, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission ({ address, pool, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -43,6 +42,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
 
   const poolId = pool.poolId;
   const amount = useMemo(() => new BN(pool.rewardPool?.totalCommissionPending || 0), [pool.rewardPool?.totalCommissionPending]);
+  //@ts-ignore
   const payee = pool.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
 
   const [password, setPassword] = useState<string | undefined>();
@@ -52,12 +52,12 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const tx = api && api.tx['nominationPools']['claimCommission'];
+  const tx = api?.tx['nominationPools']['claimCommission'];
+  const estimatedFee = useEstimatedFee(address, tx, [poolId]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -71,21 +71,9 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
 
-  useEffect((): void => {
-    if (!api || !formatted) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    tx(poolId).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted, api, poolId]);
-
   const submit = useCallback(async () => {
     try {
-      if (!formatted) {
+      if (!formatted || !api || !tx) {
         return;
       }
 
@@ -135,7 +123,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Withdraw Commission')}
+          text={t('Withdraw Commission')}
         />
         {isPasswordError &&
           <WrongPasswordAlert />
@@ -144,7 +132,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain as any}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
           />
@@ -172,7 +160,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={submit}
           proxiedAddress={formatted}
@@ -201,7 +189,7 @@ export default function ClaimCommission({ address, pool, setShow, show }: Props)
             txInfo={txInfo}
           >
             <TxDetail
-              label={t<string>('Withdrawn amount')}
+              label={t('Withdrawn amount')}
               txInfo={txInfo}
             />
           </Confirmation>)

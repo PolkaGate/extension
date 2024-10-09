@@ -80,7 +80,7 @@ export default function Confirmation ({ handleDone, txInfo }: Props): React.Reac
         <SubTitle label={txInfo.success ? t('Completed') : t('Failed')} style={{ paddingTop: '25px' }} />
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
           success={txInfo.success}
         />
         {txInfo?.failureText &&

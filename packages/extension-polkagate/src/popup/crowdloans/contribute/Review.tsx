@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /**
@@ -8,23 +7,23 @@
  * this component opens contribute to crowdloan review page
  * */
 
+import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { BN } from '@polkadot/util';
+import type { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 
-import { AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, ShortAddress, Warning } from '../../../components';
+import { AccountHolderWithProxy, AccountWithProxyInConfirmation, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, Warning } from '../../../components';
 import { useAccountDisplay, useChain, useProxies, useTranslation } from '../../../hooks';
-import { Confirmation, HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../partials';
+import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import { broadcast } from '../../../util/api';
 import { PROXY_TYPE } from '../../../util/constants';
-import type { Crowdloan, Proxy, ProxyItem, TxInfo } from '../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util/utils';
 import ParachainInfo from '../partials/ParachainInfo';
 import ShowParachainBrief from '../partials/ShowParachainBrief';
@@ -44,7 +43,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Review({ api, contributionAmount, crowdloanToContribute, crowdloansId, currentBlockNumber, decimal, estimatedFee, formatted, myContribution, setShowReview, showReview, token }: Props): React.ReactElement {
+export default function Review ({ api, contributionAmount, crowdloanToContribute, crowdloansId, currentBlockNumber, decimal, estimatedFee, formatted, myContribution, setShowReview, showReview, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const address = getSubstrateAddress(formatted);
@@ -53,7 +52,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
   const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
 
-  const contribute = api && api.tx['crowdloan']['contribute'];
+  const contribute = api?.tx['crowdloan']['contribute'];
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
@@ -132,7 +131,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           shortBorder
           showBackArrow
           showClose
-          text={t<string>('Contribute')}
+          text={t('Contribute')}
           withSteps={{ current: 2, total: 2 }}
         />
         {isPasswordError &&
@@ -143,22 +142,22 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
               isDanger
               theme={theme}
             >
-              {t<string>('You’ve used an incorrect password. Try again.')}
+              {t('You’ve used an incorrect password. Try again.')}
             </Warning>
           </Grid>
         }
         <SubTitle
-          label={t<string>('Review')}
+          label={t('Review')}
         />
         <AccountHolderWithProxy
-          address={address as string}
-          chain={chain as any}
+          address={address}
+          chain={chain}
           selectedProxyAddress={selectedProxyAddress}
           showDivider
           style={{ m: 'auto', width: '90%' }}
         />
         <Typography fontSize='16px' fontWeight={300} textAlign='center'>
-          {t<string>('Amount')}
+          {t('Amount')}
         </Typography>
         <Grid alignItems='center' container item justifyContent='center' >
           <Grid item>
@@ -170,7 +169,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
         </Grid>
         <Grid container justifyContent='center'>
           <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-            {t<string>('Fee:')}
+            {t('Fee:')}
           </Typography>
           <Grid item lineHeight='22px' pl='5px'>
             <FormatBalance api={api as ApiPromise} decimalPoint={4} value={estimatedFee} />
@@ -187,7 +186,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           api={api}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={goContribute}
           proxiedAddress={formatted}
@@ -231,26 +230,13 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
           txInfo={txInfo}
         >
           <>
-            <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {t<string>('Account holder')}:
-              </Typography>
-              <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                {txInfo.from.name}
-              </Typography>
-              <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
-              </Grid>
-            </Grid>
-            {txInfo.throughProxy &&
-              <Grid container m='auto' maxWidth='92%'>
-                <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-              </Grid>
-            }
+            <AccountWithProxyInConfirmation
+              txInfo={txInfo}
+            />
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {t<string>('Parachain')}:
+                {t('Parachain')}:
               </Typography>
               <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
                 {getName(crowdloanToContribute.fund.paraId) ?? `Unknown(${crowdloanToContribute.fund.paraId})`}
@@ -259,7 +245,7 @@ export default function Review({ api, contributionAmount, crowdloanToContribute,
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
             <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', width: '90%' }}>
               <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                {t<string>('Amount')}:
+                {t('Amount')}:
               </Typography>
               <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
                 {`${txInfo.amount} ${token}`}
