@@ -105,6 +105,11 @@ export const SOCIAL_RECOVERY_CHAINS = [
   KUSAMA_GENESIS_HASH
 ];
 
+export const NFT_CHAINS = [
+  STATEMINE_GENESIS_HASH,
+  STATEMINT_GENESIS_HASH
+];
+
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
   ...RELAY_CHAINS_GENESISHASH
@@ -243,3 +248,5 @@ export const AUTO_MODE = {
   text: 'Auto Mode',
   value: 'AutoMode'
 };
+
+export const KODADOT_URL = 'https://kodadot.xyz';
