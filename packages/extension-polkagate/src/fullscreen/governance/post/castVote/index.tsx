@@ -121,6 +121,9 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
       case STEPS.ABOUT:
         return t('About Voting');
 
+      case STEPS.CHECK_SCREEN:
+        return t('Checking');
+
       case STEPS.INDEX:
         return t(hasVoted ? 'Modify Your Vote' : 'Cast Your Vote');
 
