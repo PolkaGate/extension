@@ -77,7 +77,7 @@ function NFT (): React.ReactElement {
               />
             }
             padding='0px'
-            text={t('NFT / Unique Album')}
+            text={t('NFT Album')}
           />
           {step === STEPS.UNSUPPORTED &&
             <Grid alignItems='center' container direction='column' display='block' item>
@@ -96,7 +96,7 @@ function NFT (): React.ReactElement {
           {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
             <>
               <Typography fontSize='14px' fontWeight={400}>
-                {t('On NFT / Unique Album page you can watch all of your created or owned NFT/unique items.')}
+                {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
               </Typography>
               <Tabs
                 items={nfts}
