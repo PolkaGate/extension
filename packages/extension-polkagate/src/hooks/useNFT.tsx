@@ -66,7 +66,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
     );
   }, [myFormattedAddresses, filterItemsByAddress]);
 
-  const getNFTs = useCallback(() => {
+  const fetchNFTs = useCallback(() => {
     setFetching(true);
     const getNFTsWorker: Worker = new Worker(new URL('../util/workers/getNFTs.js', import.meta.url));
 
@@ -109,9 +109,9 @@ export default function useNFT (address: string): ItemInformation[] | null | und
 
   useEffect(() => {
     if (!fetching && addresses && addresses.length > 0) {
-      getNFTs();
+      fetchNFTs();
     }
-  }, [addresses, fetching, getNFTs]);
+  }, [addresses, fetching, fetchNFTs]);
 
   useEffect(() => {
     setNfts(undefined);
