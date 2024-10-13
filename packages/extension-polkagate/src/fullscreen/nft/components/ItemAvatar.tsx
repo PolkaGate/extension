@@ -9,7 +9,7 @@ import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from '../utils/constants';
 import { WithLoading } from './Details';
