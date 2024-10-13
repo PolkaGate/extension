@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.18.3](https://github.com/polkagate/extension/compare/v0.18.2...v0.18.3) (2024-10-13)
+
+
+### Bug Fixes
+
+* add label to cast vote checking progress ([#1587](https://github.com/polkagate/extension/issues/1587)) ([c746ea6](https://github.com/polkagate/extension/commit/c746ea61d46aa44ee5b9e7a647ac3b30ac76a557))
+
 ## [0.18.2](https://github.com/polkagate/extension/compare/v0.18.1...v0.18.2) (2024-10-08)
 
 
