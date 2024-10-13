@@ -47,7 +47,7 @@ export default function NftList ({ itemsDetail, nfts }: ItemsListProps): React.R
       {nfts && nfts.length === 0 &&
         <Grid alignItems='center' container item justifyContent='center'>
           <Typography fontSize='16px' fontWeight={400}>
-            {t('No items match your current filter criteria')}!
+            {t('Nothing to Show')}!
           </Typography>
         </Grid>
       }

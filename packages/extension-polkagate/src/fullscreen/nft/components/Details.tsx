@@ -69,8 +69,8 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
       {accountId &&
         <>
           {api && chain
-            ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '16px', maxWidth: '350px', width: '350px' }} />
-            : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '16px', width: 'fit-content' }} />
+            ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={15} showShortAddress style={{ fontSize: '14px', maxWidth: '200px' }} />
+            : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '14px', width: 'fit-content' }} />
           }
         </>
       }
@@ -85,7 +85,13 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
 
 export const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.ReactElement }) => (
   <>
-    {!loaded && <Progress pt={0} />}
+    {!loaded &&
+    <Progress
+      gridSize={50}
+      pt={0}
+      type='grid'
+    />
+    }
     {children}
   </>
 );
