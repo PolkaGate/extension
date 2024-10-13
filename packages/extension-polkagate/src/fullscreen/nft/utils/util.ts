@@ -24,9 +24,9 @@ export const getContentUrl = (url: string | undefined) => {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const fetchWithRetry = async (url: string, attempt = 0): Promise<Response> => {
+export const fetchWithRetry = async (url: string, attempt = 0): Promise<Response> => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: 'force-cache' });
 
     if (response.status === 429) { // Too Many Requests
       throw new Error('Rate limited');

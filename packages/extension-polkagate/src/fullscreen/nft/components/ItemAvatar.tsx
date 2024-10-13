@@ -9,12 +9,23 @@ import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from '../utils/constants';
 import { WithLoading } from './Details';
 
-export default function ItemAvatar ({ height = '220px', image, onFullscreen, width = '190px' }: ItemAvatarProp): React.ReactElement {
+const SIZE = {
+  large: {
+    height: '400px',
+    width: '320px'
+  },
+  small: {
+    height: '220px',
+    width: '190px'
+  }
+};
+
+export default function ItemAvatar ({ image, onFullscreen, size = 'small' }: ItemAvatarProp): React.ReactElement {
   const theme = useTheme();
   const [showLoading, setShowLoading] = useState<boolean>(true);
 
@@ -25,7 +36,7 @@ export default function ItemAvatar ({ height = '220px', image, onFullscreen, wid
   }, []);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDarkMode ? ALT_NFT_BGCOLOR_DARK : ALT_NFT_BGCOLOR_LIGHT, borderRadius: '10px 10px 5px 5px', height, overflow: 'hidden', width }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDarkMode ? ALT_NFT_BGCOLOR_DARK : ALT_NFT_BGCOLOR_LIGHT, borderRadius: size === 'small' ? '10px 10px 5px 5px' : '10px', height: SIZE[size].height, overflow: 'hidden', width: SIZE[size].width }}>
       {image &&
         <>
           <WithLoading

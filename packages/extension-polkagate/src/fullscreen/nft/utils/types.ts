@@ -51,14 +51,14 @@ export interface ItemProps {
 
 export interface ItemAvatarProp {
   image: string | null | undefined;
-  height?: string;
-  width?: string;
   onFullscreen?: () => void;
+  size?: 'small' | 'large';
 }
 
 export interface FullscreenNftModalProps {
-  image: string | null | undefined;
+  source: string | null | undefined;
   onClose: () => void;
+  iFrame?: boolean;
   open: boolean;
 }
 

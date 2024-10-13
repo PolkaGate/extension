@@ -9,7 +9,9 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Box, IconButton, Modal, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 
-export default function ItemFullscreenModal ({ image, onClose, open }: FullscreenNftModalProps): React.ReactElement {
+const MAX_SIZE = '1080px';
+
+export default function ItemFullscreenModal({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
   const theme = useTheme();
 
   // Listen to fullscreen change events to track exit from fullscreen mode
@@ -33,18 +35,17 @@ export default function ItemFullscreenModal ({ image, onClose, open }: Fullscree
 
   return (
     <Modal onClose={onClose} open={open} slotProps={{ backdrop: { style: { backgroundColor: theme.palette.background.paper } } }} sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
-      <Box sx={{ maxHeight: '90vh', maxWidth: '90vw', position: 'relative' }}>
+      <Box sx={{ maxHeight: '100vh', maxWidth: '100vw', position: 'relative' }}>
         <IconButton
           onClick={onClose}
           sx={{ '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' }, backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', position: 'absolute', right: 8, top: 8 }}
         >
           <CloseIcon />
         </IconButton>
-        <img
-          alt='NFT Fullscreen'
-          src={image || ''}
-          style={{ border: '2px solid', borderColor: theme.palette.primary.main, maxHeight: '90vh', maxWidth: '90vw', objectFit: 'contain' }}
-        />
+        {iFrame
+          ? <iframe id='frame' src={source || ''} style={{ border: 'none', height: '95vh', objectFit: 'contain', pointerEvents: 'none', width: MAX_SIZE }} title='HTML Content' />
+          : <img alt='NFT Fullscreen' src={source || ''} style={{ border: '2px solid', borderColor: theme.palette.primary.main, maxWidth: MAX_SIZE, objectFit: 'contain' }} />
+        }
       </Box>
     </Modal>
   );

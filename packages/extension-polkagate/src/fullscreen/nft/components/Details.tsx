@@ -65,12 +65,12 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
         </Typography>
       }
       {accountId &&
-      <>
-        {api && chain
-          ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '16px', maxWidth: '350px', width: '350px' }} />
-          : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '16px', width: 'fit-content' }} />
-        }
-      </>
+        <>
+          {api && chain
+            ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={30} showShortAddress style={{ fontSize: '16px', maxWidth: '350px', width: '350px' }} />
+            : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '16px', width: 'fit-content' }} />
+          }
+        </>
       }
       {link &&
         <Link href={link} target='_blank' underline='hover'>
@@ -98,15 +98,20 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   if (animation_url && animationContentType === 'text/html') {
     return (
       <>
-        {!loaded && <Progress />}
+        {!loaded &&
+          <Grid container item sx={{ left: '23%', position: 'absolute', top: '42%', width: 'fit-content', zIndex: 100 }}>
+            <Progress />
+          </Grid>
+        }
         <iframe
           onLoad={onLoaded}
           src={animation_url}
           style={{
             border: 'none',
-            height: '100%',
+            height: '460px',
+            objectFit: 'contain',
             pointerEvents: 'none',
-            width: '100%'
+            width: '300px'
           }}
           title='HTML Content'
         />
@@ -120,9 +125,8 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
     return (
       <Grid container direction='column' item rowGap='20px' width='320px'>
         <ItemAvatar
-          height='400px'
           image={image}
-          width='320px'
+          size='large'
         />
         <AudioPlayer audioUrl={animation_url} />
       </Grid>
@@ -130,9 +134,8 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   } else if (image && imageContentType?.startsWith('image')) {
     return (
       <ItemAvatar
-        height='400px'
         image={image}
-        width='320px'
+        size='large'
       />
     );
   } else {
@@ -152,6 +155,14 @@ export default function Details ({ details: { animation_url, animationContentTyp
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
+
+  const { iFrame, source } = useMemo(() => {
+    if (animation_url && animationContentType === 'text/html') {
+      return { iFrame: true, source: animation_url };
+    } else {
+      return { iFrame: false, source: image };
+    }
+  }, [animationContentType, animation_url, image]);
 
   const openFullscreen = useCallback(() => {
     document.documentElement.requestFullscreen().catch(console.error);
@@ -270,11 +281,14 @@ export default function Details ({ details: { animation_url, animationContentTyp
           </Grid>
         </Grid>
       </DraggableModal>
-      <ItemFullscreenModal
-        image={image}
-        onClose={closeFullscreen}
-        open={showFullscreen}
-      />
+      {showFullscreen &&
+        <ItemFullscreenModal
+          iFrame={iFrame}
+          onClose={closeFullscreen}
+          open={showFullscreen}
+          source={source}
+        />
+      }
     </>
   );
 }
