@@ -11,7 +11,7 @@ import React, { useCallback, useEffect } from 'react';
 
 const MAX_SIZE = '1080px';
 
-export default function ItemFullscreenModal({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
+export default function ItemFullscreenModal ({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
   const theme = useTheme();
 
   // Listen to fullscreen change events to track exit from fullscreen mode
@@ -44,7 +44,7 @@ export default function ItemFullscreenModal({ iFrame, onClose, open, source }: F
         </IconButton>
         {iFrame
           ? <iframe id='frame' src={source || ''} style={{ border: 'none', height: '95vh', objectFit: 'contain', pointerEvents: 'none', width: MAX_SIZE }} title='HTML Content' />
-          : <img alt='NFT Fullscreen' src={source || ''} style={{ border: '2px solid', borderColor: theme.palette.primary.main, maxWidth: MAX_SIZE, objectFit: 'contain' }} />
+          : <img alt='NFT Fullscreen' src={source || ''} style={{ height: '95vh', objectFit: 'contain', width: MAX_SIZE }} />
         }
       </Box>
     </Modal>

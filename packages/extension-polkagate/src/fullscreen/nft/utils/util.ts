@@ -128,8 +128,7 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
      * interface for the rest of the application to work with.
      */
     if (!('image' in itemMetadata) && 'mediaUri' in itemMetadata) {
-      itemMetadata.image = itemMetadata.mediaUri as string;
-      delete itemMetadata.mediaUri;
+      itemMetadata.image = itemMetadata.mediaUri;
     }
 
     const nftImageContent = itemMetadata.image

@@ -40,6 +40,7 @@ export interface ItemMetadata {
   metadataLink: string;
   imageContentType?: string;
   animationContentType?: string;
+  mediaUri?: string;
 }
 
 export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;

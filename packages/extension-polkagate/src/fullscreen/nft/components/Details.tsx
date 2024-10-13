@@ -9,7 +9,7 @@ import type { DetailItemProps, DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
 
@@ -20,6 +20,8 @@ import { getAssetHubByChainName } from '../../../hooks/useReferendum';
 import { KODADOT_URL } from '../../../util/constants';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
+import { IPFS_GATEWAY } from '../utils/constants';
+import { fetchWithRetry, getContentUrl } from '../utils/util';
 import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
@@ -143,7 +145,7 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
   }
 };
 
-export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, metadataLink, name }, itemInformation: { chainName, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, mediaUri, metadataLink, name }, itemInformation: { chainName, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string | undefined }>();
@@ -153,16 +155,57 @@ export default function Details ({ details: { animation_url, animationContentTyp
   const chain = useMetadata(genesisHash, true);
 
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
+  const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
+  const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
+  useEffect(() => {
+    const getUniqueGif = async () => {
+      if (isNft || !mediaUri) {
+        setGifSource(null);
+
+        return;
+      }
+
+      const { isIPFS, sanitizedUrl } = getContentUrl(mediaUri);
+
+      if (!isIPFS) {
+        setGifSource(null);
+
+        return;
+      }
+
+      const ipfsURL = IPFS_GATEWAY + sanitizedUrl;
+
+      const content = await fetchWithRetry(ipfsURL, 1);
+      const contentType = content.headers.get('content-type');
+
+      if (!contentType?.includes('gif')) {
+        setGifSource(null);
+
+        return;
+      }
+
+      const blob = await content.blob();
+      const gifURL = URL.createObjectURL(blob);
+
+      setGifHash(sanitizedUrl);
+      setGifSource(gifURL);
+    };
+
+    getUniqueGif().catch(console.error);
+  }, [mediaUri, isNft]);
+
   const { iFrame, source } = useMemo(() => {
-    if (animation_url && animationContentType === 'text/html') {
+    if (gifSource) {
+      return { iFrame: false, source: gifSource };
+    } else if (animation_url && animationContentType === 'text/html') {
       return { iFrame: true, source: animation_url };
     } else {
       return { iFrame: false, source: image };
     }
-  }, [animationContentType, animation_url, image]);
+  }, [animationContentType, animation_url, gifSource, image]);
 
   const openFullscreen = useCallback(() => {
     document.documentElement.requestFullscreen().catch(console.error);
@@ -197,7 +240,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
               <Item
                 animationContentType={animationContentType}
                 animation_url={animation_url}
-                image={image}
+                image={gifSource || image}
                 imageContentType={imageContentType}
               />
             </Grid>
@@ -246,6 +289,12 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 <Detail
                   text={`[${animationContentType}](${animation_url})`}
                   title={animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
+                />
+              }
+              {gifSource &&
+                <Detail
+                  text={`[image/gif](${IPFS_GATEWAY + gifHash})`}
+                  title={t('Media')}
                 />
               }
               <Detail
