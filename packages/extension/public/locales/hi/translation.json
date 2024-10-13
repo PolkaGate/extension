@@ -1389,5 +1389,8 @@
   "Check": "जांचें",
   "Chain Information": "चेन की जानकारी",
   "No information found from this RPC node!": "इस RPC नोड से कोई जानकारी नहीं मिली!",
-  "Add a new chain": "नई चेन जोड़ें"
+  "Add a new chain": "नई चेन जोड़ें",
+  "Invalid endpoint format!": "अमान्य एंडपॉइंट प्रारूप!",
+  "The chain already exists, no need to add it again!": "चेन पहले से मौजूद है, इसे फिर से जोड़ने की आवश्यकता नहीं है!",
+  "Click to hide all the profile accounts from websites!": "वेबसाइटों से सभी प्रोफ़ाइल खातों को छिपाने के लिए क्लिक करें!"
 }

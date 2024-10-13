@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.18.3](https://github.com/polkagate/extension/compare/v0.18.2...v0.18.3) (2024-10-13)
+
+
+### Bug Fixes
+
+* add label to cast vote checking progress ([#1587](https://github.com/polkagate/extension/issues/1587)) ([c746ea6](https://github.com/polkagate/extension/commit/c746ea61d46aa44ee5b9e7a647ac3b30ac76a557))
+
+## [0.18.2](https://github.com/polkagate/extension/compare/v0.18.1...v0.18.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* tab switch issue while language is other than EN ([facec10](https://github.com/polkagate/extension/commit/facec1023d987d10e9e0ff49a303d975a4dace60))
+
 ## [0.18.1](https://github.com/polkagate/extension/compare/v0.18.0...v0.18.1) (2024-10-07)
 
 

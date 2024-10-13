@@ -140,7 +140,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
                 <Grid container item justifyContent='space-between' key={index} mt='5px'>
                   <Grid alignItems='center' container item width='fit-content'>
                     <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-                    <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+                    <Typography fontSize='16px' fontWeight={500} pl='5px' width='60px'>
                       {token}
                     </Typography>
                   </Grid>

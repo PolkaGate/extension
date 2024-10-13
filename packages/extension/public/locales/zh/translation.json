@@ -1396,5 +1396,8 @@
   "Check": "检查",
   "Chain Information": "链信息",
   "No information found from this RPC node!": "未从此 RPC 节点找到信息！",
-  "Add a new chain": "添加新链"
+  "Add a new chain": "添加新链",
+  "Invalid endpoint format!": "अमान्य एंडपॉइंट प्रारूप!",
+  "The chain already exists, no need to add it again!": "चेन पहले से मौजूद है, इसे फिर से जोड़ने की आवश्यकता नहीं है!",
+  "Click to hide all the profile accounts from websites!": "वेबसाइटों से सभी प्रोफ़ाइल खातों को छिपाने के लिए क्लिक करें!"
 }

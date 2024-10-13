@@ -47,7 +47,7 @@ export default function useProfileAccounts (initialAccountList: AccountsOrder[] 
 
     let accounts;
 
-    switch (_profile) {
+    switch (t(_profile)) {
       case t(PROFILE_TAGS.ALL):
         return setProfileAccounts(initialAccountList);
 

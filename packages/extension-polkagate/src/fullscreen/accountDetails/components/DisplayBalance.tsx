@@ -41,7 +41,7 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, op
             withCurrency
           />
         </Grid>
-        <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
+        <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '35px', mx: '10px', my: 'auto' }} />
         <FormatPrice
           amount={amount}
           decimals={decimal}
