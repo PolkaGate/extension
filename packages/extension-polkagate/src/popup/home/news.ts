@@ -10,7 +10,7 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.14.0',
+    version: '0.18.2',
     notes: [
       'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it manually using an RPC endpoint address.',
       'BTC, ETH  and DOT as currency: View your token balance equivalent in BTC, ETH, DOT and other fiat currencies.',
