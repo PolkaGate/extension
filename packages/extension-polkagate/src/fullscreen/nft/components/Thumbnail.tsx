@@ -13,7 +13,7 @@ import Details, { Detail } from './Details';
 import ItemAvatar from './ItemAvatar';
 import ItemSkeleton from './ItemSkeleton';
 
-export default function Item ({ itemInformation, itemsDetail }: ItemProps): React.ReactElement {
+export default function Thumbnail ({ itemInformation, itemsDetail }: ItemProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [showDetail, setShowDetail] = useState<boolean>(false);

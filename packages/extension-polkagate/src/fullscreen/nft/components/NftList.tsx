@@ -10,7 +10,7 @@ import React from 'react';
 
 import Progress from '../../../components/Progress';
 import useTranslation from '../../../hooks/useTranslation';
-import Item from './Item';
+import Thumbnail from './Thumbnail';
 
 const UNAVAILABLE_HEIGHT = 320;
 const LIST_HEIGHT = innerHeight - UNAVAILABLE_HEIGHT;
@@ -35,7 +35,7 @@ export default function NftList ({ itemsDetail, nfts }: ItemsListProps): React.R
         </Grid>
       }
       {nfts?.map((nftInfo) => (
-        <Item
+        <Thumbnail
           itemInformation={nftInfo}
           itemsDetail={itemsDetail}
           key={nftInfo.itemId}
