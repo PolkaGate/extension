@@ -23,8 +23,8 @@ import { DraggableModal } from '../../governance/components/DraggableModal';
 import { IPFS_GATEWAY } from '../utils/constants';
 import { fetchWithRetry, getContentUrl } from '../utils/util';
 import AudioPlayer from './AudioPlayer';
+import FullScreenNFT from './FullScreenNFT';
 import ItemAvatar from './ItemAvatar';
-import ItemFullscreenModal from './ItemFullScreenModal';
 
 export const Detail = React.memo(
   function Detail ({ accountId, api, chain, decimal, divider = true, inline = true, isThumbnail, link, linkName, price, text, title, token }: DetailProp) {
@@ -156,9 +156,11 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
 export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, mediaUri, metadataLink, name }, itemInformation: { chainName, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const { address } = useParams<{ address: string | undefined }>();
   const { decimal, token } = useInfo(address);
   const api = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
+
   const genesisHash = api?.genesisHash.toHex();
   const chain = useMetadata(genesisHash, true);
 
@@ -339,7 +341,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
         </Grid>
       </DraggableModal>
       {showFullscreen &&
-        <ItemFullscreenModal
+        <FullScreenNFT
           iFrame={iFrame}
           onClose={closeFullscreen}
           open={showFullscreen}
