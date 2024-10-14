@@ -42,7 +42,7 @@ export default function Thumbnail ({ itemInformation, itemsDetail }: ItemProps):
               />
               <Grid container item px='8px'>
                 {itemDetail?.name &&
-                  <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '190px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
+                  <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '190px', overflow: 'hidden', py: '15px', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
                     {itemDetail.name}
                   </Typography>
                 }
