@@ -76,6 +76,7 @@ export interface DetailProp {
   title?: string;
   text?: string;
   inline?: boolean;
+  isThumbnail?: boolean;
   accountId?: string;
   api?: ApiPromise;
   chain?: Chain | null;

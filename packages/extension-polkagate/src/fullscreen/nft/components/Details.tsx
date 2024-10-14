@@ -26,24 +26,26 @@ import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 import ItemFullscreenModal from './ItemFullScreenModal';
 
-export const Detail = React.memo(function Detail ({ accountId, api, chain, decimal, divider = true, inline = true, link, linkName, price, text, title, token }: DetailProp) {
-  const { t } = useTranslation();
-  const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
-  const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
-  const notListed = price !== undefined && price === null;
-  const isDescription = !title;
+export const Detail = React.memo(
+  function Detail ({ accountId, api, chain, decimal, divider = true, inline = true, isThumbnail, link, linkName, price, text, title, token }: DetailProp) {
+    const { t } = useTranslation();
 
-  return (
-    <Grid container item justifyContent='space-between'>
-      {divider &&
+    const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
+    const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
+    const notListed = price !== undefined && price === null;
+    const isDescription = !title;
+
+    return (
+      <Grid container item justifyContent='space-between'>
+        {divider && !isThumbnail &&
         <Divider sx={{ bgcolor: 'divider', height: '1px', m: '8px auto', width: '100%' }} />
-      }
-      {title &&
-        <Typography fontSize='14px' fontWeight={400} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
+        }
+        {title &&
+        <Typography fontSize={ isThumbnail ? '13px' : '14px'} fontWeight={400} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
           {title}:
         </Typography>
-      }
-      {price &&
+        }
+        {price &&
         <ShowBalance
           balance={priceAsBN}
           decimal={decimal}
@@ -51,13 +53,13 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
           token={token}
           withCurrency
         />
-      }
-      {notListed &&
+        }
+        {notListed &&
         <Typography fontSize='14px' fontWeight={400} textAlign='left'>
           {t('Not listed')}
         </Typography>
-      }
-      {text &&
+        }
+        {text &&
         <Typography fontSize='14px' fontWeight={isDescription ? 400 : 500} sx={{ '> p': { m: 0 } }} textAlign='justify'>
           <ReactMarkdown
             linkTarget='_blank'
@@ -65,23 +67,23 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
             {String(text)}
           </ReactMarkdown>
         </Typography>
-      }
-      {accountId &&
+        }
+        {accountId &&
         <>
           {api && chain
             ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={15} showShortAddress style={{ fontSize: '14px', maxWidth: '200px' }} />
             : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '14px', width: 'fit-content' }} />
           }
         </>
-      }
-      {link &&
+        }
+        {link &&
         <Link href={link} target='_blank' underline='hover'>
           {linkName}
         </Link>
-      }
-    </Grid>
-  );
-});
+        }
+      </Grid>
+    );
+  });
 
 export const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.ReactElement }) => (
   <>

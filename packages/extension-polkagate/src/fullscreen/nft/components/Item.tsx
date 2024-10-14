@@ -48,14 +48,14 @@ export default function Item ({ itemInformation, itemsDetail }: ItemProps): Reac
                 }
                 {itemInformation?.collectionId &&
                   <Detail
-                    divider={false}
+                    isThumbnail
                     text={itemInformation.collectionId}
                     title={t('Collection ID')}
                   />
                 }
                 {itemInformation?.itemId &&
                   <Detail
-                    divider={false}
+                    isThumbnail
                     text={itemInformation?.itemId}
                     title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
                   />
