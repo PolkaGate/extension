@@ -21,22 +21,32 @@ export const SUPPORTED_NFT_CHAINS = {
  */
 async function fetchItems (api, addresses, chainName, isNft) {
   // Determine which query method to use based on item type
-  const queryMethod = isNft ? api.query.nfts.item : api.query.uniques.asset;
-  const entries = await queryMethod.entries();
+  const queryMethod = isNft ? api.query.nfts.account : api.query.uniques.account;
+  const requests = addresses.map(async (address) => await queryMethod.entries(address));
+  const entries = await Promise.all(requests);
 
-  const myItems = entries
-    .filter(([, itemInfo]) => {
-      const info = itemInfo.toPrimitive();
-      const owner = isNft ? [String(info.deposit.account), String(info.owner)] : [info?.owner?.toString()];
+  // owner, collection id, nft id
+  const itemsInfo = entries
+    .flat()
+    .map(([key, _info]) => {
+      const info = key.args.map((k) => k.toPrimitive());
 
-      return addresses.some((address) => owner.includes(address));
-    })
-    .map(([itemIds, itemInfo]) => {
-      const [collectionId, itemId] = itemIds.toHuman().map((id) => id.replaceAll(',', ''));
+      info.shift(); // first item is the address which we do not need it to fetch the item information
+
+      return info;
+    });
+
+  const itemInfoQueryMethod = isNft ? api.query.nfts.item : api.query.uniques.asset;
+
+  const itemsInformation = await Promise.all(itemsInfo.map(async (itemInfo) => await itemInfoQueryMethod(...itemInfo)))
+
+  const myItems = itemsInformation
+    .map((item, index) => {
+      const [collectionId, itemId] = itemsInfo[index];
 
       return {
         ids: { collectionId, itemId },
-        itemInfo: itemInfo.toPrimitive()
+        itemInfo: item.toPrimitive()
       };
     });
 

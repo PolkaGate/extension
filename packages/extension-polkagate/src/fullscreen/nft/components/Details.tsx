@@ -62,7 +62,7 @@ export const Detail = React.memo(function Detail ({ accountId, api, chain, decim
           <ReactMarkdown
             linkTarget='_blank'
           >
-            {text}
+            {String(text)}
           </ReactMarkdown>
         </Typography>
       }
