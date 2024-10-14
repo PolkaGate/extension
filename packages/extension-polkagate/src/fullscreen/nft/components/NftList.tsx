@@ -20,13 +20,18 @@ export default function NftList ({ itemsDetail, nfts }: ItemsListProps): React.R
 
   return (
     <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', gap: '30px', height: LIST_HEIGHT, maxHeight: LIST_HEIGHT, overflowY: 'scroll', p: '20px 40px' }}>
-      {nfts === undefined &&
+      {!nfts &&
         <Grid alignItems='center' container item justifyContent='center'>
-          <Progress
-            gridSize={120}
-            title={t('Looking for NFTs/Uniques!')}
-            type='grid'
-          />
+          {nfts === undefined
+            ? <Progress
+              gridSize={120}
+              title={t('Looking for NFTs/Uniques!')}
+              type='grid'
+            />
+            : <Typography fontSize='16px' fontWeight={400}>
+              {t('You do not own any NFTs/Uniques')}!
+            </Typography>
+          }
         </Grid>
       }
       {nfts?.map((nftInfo) => (
@@ -36,13 +41,6 @@ export default function NftList ({ itemsDetail, nfts }: ItemsListProps): React.R
           key={nftInfo.itemId}
         />
       ))
-      }
-      {nfts === null &&
-        <Grid alignItems='center' container item justifyContent='center'>
-          <Typography fontSize='16px' fontWeight={400}>
-            {t('You do not own any NFTs/Uniques')}!
-          </Typography>
-        </Grid>
       }
       {nfts && nfts.length === 0 &&
         <Grid alignItems='center' container item justifyContent='center'>
