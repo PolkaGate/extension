@@ -51,7 +51,11 @@ async function fetchItems (api, addresses, chainName, isNft) {
       : api.query.uniques.instanceMetadataOf(ids.collectionId, ids.itemId)
   );
   const metadataRequests = await Promise.all(metadataPromises);
-  const metadata = metadataRequests.map((metadata) => metadata.toPrimitive()?.data.toString());
+  const metadata = metadataRequests.map((metadata) => {
+    const data = metadata.toPrimitive()?.data;
+
+    return data ? data.toString() : null;
+  });
 
   // Fetch prices for NFTs
   let prices = null;
@@ -60,7 +64,11 @@ async function fetchItems (api, addresses, chainName, isNft) {
     const pricePromises = myItems.map(({ ids }) => api.query.nfts.itemPriceOf(ids.collectionId, ids.itemId));
     const priceRequests = await Promise.all(pricePromises);
 
-    prices = priceRequests.map((price) => price.toPrimitive()?.[0]);
+    prices = priceRequests.map((price) => {
+      const priceData = price.toPrimitive();
+
+      return priceData ? priceData[0] : null;
+    });
   }
 
   // Fetch creators for uniques
@@ -118,18 +126,37 @@ async function getNFTs (addresses) {
     const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
     const endpoints = getChainEndpoints(name, undefined);
 
-    return fastestEndpoint(endpoints).then(({ api, connections }) => ({ api, chainName, connections, formattedAddresses }));
+    const { api, connections } = await fastestEndpoint(endpoints);
+
+    return ({ api, chainName, connections, formattedAddresses, originalAddresses: addresses });
   });
 
   const apis = await Promise.all(apiPromises);
 
   try {
     // Fetch NFTs and uniques for all chains in parallel
-    const items = await Promise.all(apis.map(({ api, chainName, formattedAddresses }) =>
-      fetchNFTsForChain(api, formattedAddresses, chainName)
+    const itemsByChain = await Promise.all(apis.map(({ api, chainName, formattedAddresses, originalAddresses }) =>
+      fetchNFTsForChain(api, formattedAddresses, chainName, originalAddresses)
     ));
 
-    return items.flat();
+    // Organize items by address
+    const itemsByAddress = addresses.reduce((acc, address) => {
+      acc[address] = [];
+
+      return acc;
+    }, {});
+
+    itemsByChain.flat().forEach((item) => {
+      const matchingAddress = addresses.find((addr) =>
+        [item.owner, item.creator].includes(getFormattedAddress(addr, undefined, SUPPORTED_NFT_CHAINS[item.chainName].prefix))
+      );
+
+      if (matchingAddress) {
+        itemsByAddress[matchingAddress].push(item);
+      }
+    });
+
+    return itemsByAddress;
   } finally {
     // Ensure all websocket connections are closed
     apis.forEach(({ connections }) => closeWebsockets(connections));
@@ -157,6 +184,9 @@ onmessage = async (e) => {
 
       if (tryCount === 5) {
         postMessage(undefined);
+      } else {
+        // Wait for a delay before retrying (e.g., exponential backoff)
+        await new Promise((resolve) => setTimeout(resolve, tryCount * 1000));
       }
     }
   }

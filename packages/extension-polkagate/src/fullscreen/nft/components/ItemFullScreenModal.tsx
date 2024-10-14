@@ -10,6 +10,7 @@ import { Box, IconButton, Modal, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 
 const MAX_SIZE = '1080px';
+const MAX_FRAME_SIZE = '910px';
 
 export default function ItemFullscreenModal ({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
   const theme = useTheme();
@@ -43,7 +44,7 @@ export default function ItemFullscreenModal ({ iFrame, onClose, open, source }: 
           <CloseIcon />
         </IconButton>
         {iFrame
-          ? <iframe id='frame' src={source || ''} style={{ border: 'none', height: '95vh', objectFit: 'contain', pointerEvents: 'none', width: MAX_SIZE }} title='HTML Content' />
+          ? <iframe id='frame' src={source || ''} style={{ border: 'none', height: '95vh', objectFit: 'contain', pointerEvents: 'none', width: MAX_FRAME_SIZE }} title='HTML Content' />
           : <img alt='NFT Fullscreen' src={source || ''} style={{ height: '95vh', objectFit: 'contain', width: MAX_SIZE }} />
         }
       </Box>

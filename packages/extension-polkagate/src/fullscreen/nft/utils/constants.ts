@@ -15,7 +15,6 @@ export const WEB3_STORAGE_IPFS_GATEWAY = 'https://w3s.link/ipfs/';
 export const CRUST_IPFS_GATEWAY = 'https://crustwebsites.net/ipfs/';
 export const CF_IPFS_GATEWAY = 'https://cf-ipfs.com/ipfs/';
 export const ETERNUM_IPFS_GATEWAY = 'https://ipfs.eternum.io/ipfs/';
-export const IPFS_INFURA_IPFS_GATEWAY = 'https://ipfs.infura.io/ipfs/';
 export const HARDBIN_IPFS_GATEWAY = 'https://hardbin.com/ipfs/';
 export const FOREVERLAND_IPFS_GATEWAY = 'https://4everland.io/ipfs/';
 
@@ -31,7 +30,6 @@ export const IPFS_GATEWAYS = [
   CRUST_IPFS_GATEWAY,
   CF_IPFS_GATEWAY,
   ETERNUM_IPFS_GATEWAY,
-  IPFS_INFURA_IPFS_GATEWAY,
   HARDBIN_IPFS_GATEWAY,
   FOREVERLAND_IPFS_GATEWAY
 ];

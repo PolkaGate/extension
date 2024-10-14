@@ -16,6 +16,8 @@ export interface ItemInformation {
   price?: number | null | undefined;
 }
 
+export type SavedNftItems = Record<string, ItemInformation[]>;
+
 export interface FilterSectionProps {
   items: ItemInformation[] | null | undefined;
   setItemsToShow: React.Dispatch<React.SetStateAction<ItemInformation[] | null | undefined>>;
