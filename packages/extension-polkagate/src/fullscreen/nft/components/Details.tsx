@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router';
 
-import { Identity, Progress, ShortAddress, ShowBalance } from '../../../components';
+import { Identity, Progress, ShortAddress, ShowBalance, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useApiWithChain2, useInfo, useMetadata } from '../../../hooks';
 import { getAssetHubByChainName } from '../../../hooks/useReferendum';
@@ -26,8 +26,8 @@ import AudioPlayer from './AudioPlayer';
 import FullScreenNFT from './FullScreenNFT';
 import ItemAvatar from './ItemAvatar';
 
-export const Detail = React.memo(
-  function Detail ({ accountId, api, chain, decimal, divider = true, inline = true, isThumbnail, link, linkName, price, text, title, token }: DetailProp) {
+export const InfoRow = React.memo(
+  function InfoRow ({ accountId, api, chain, decimal, divider = true, inline = true, isThumbnail, link, linkName, price, text, title, token }: DetailProp) {
     const { t } = useTranslation();
 
     const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
@@ -257,64 +257,64 @@ export default function Details ({ details: { animation_url, animationContentTyp
             <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '460px', overflowY: 'scroll', p: '15px 20px', width: '390px' }}>
               {description &&
                 <Grid item sx={{ pb: '15px' }}>
-                  <Detail
+                  <InfoRow
                     divider={false}
                     inline={false}
                     text={description}
                   />
                 </Grid>
               }
-              <Detail
+              <InfoRow
                 divider={!!description}
                 text={chainName}
                 title={t('Network')}
               />
               {collectionId !== undefined &&
-                <Detail
+                <InfoRow
                   text={collectionId}
                   title={t('Collection ID')}
                 />
               }
               {itemId !== undefined &&
-                <Detail
+                <InfoRow
                   divider={!!collectionId || !!description}
                   text={itemId}
                   title={isNft ? t('NFT ID') : t('Unique ID')}
                 />
               }
               {metadataLink &&
-                <Detail
+                <InfoRow
                   divider={!!itemId}
                   text={`[application/json](${metadataLink})`}
                   title={t('Metadata')}
                 />
               }
               {image &&
-                <Detail
+                <InfoRow
                   text={`[${imageContentType}](${image})`}
                   title={t('Image')}
                 />
               }
               {animation_url &&
-                <Detail
+                <InfoRow
                   text={`[${animationContentType}](${animation_url})`}
                   title={animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
                 />
               }
               {gifSource &&
-                <Detail
+                <InfoRow
                   text={`[image/gif](${IPFS_GATEWAY + gifHash})`}
                   title={t('Media')}
                 />
               }
-              <Detail
+              <InfoRow
                 decimal={decimal}
                 price={price}
                 title={t('Price')}
                 token={token}
               />
               {creator &&
-                <Detail
+                <InfoRow
                   accountId={creator}
                   api={api}
                   chain={chain}
@@ -322,7 +322,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 />
               }
               {owner &&
-                <Detail
+                <InfoRow
                   accountId={owner}
                   api={api}
                   chain={chain}
@@ -330,7 +330,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 />
               }
               {owner &&
-                <Detail
+                <InfoRow
                   link={KODADOT_URL}
                   linkName='Kodadot'
                   title={t('Sell on')}
@@ -338,6 +338,15 @@ export default function Details ({ details: { animation_url, animationContentTyp
               }
             </Grid>
           </Grid>
+          <TwoButtons
+            ml='0'
+            mt='40px'
+            onPrimaryClick={openFullscreen}
+            onSecondaryClick={closeDetail}
+            primaryBtnText={t('View in Full Screen')}
+            secondaryBtnText={t('Close')}
+            width='100%'
+          />
         </Grid>
       </DraggableModal>
       {showFullscreen &&

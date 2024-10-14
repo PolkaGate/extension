@@ -9,7 +9,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '../../../components/translate';
-import Details, { Detail } from './Details';
+import Details, { InfoRow } from './Details';
 import ItemAvatar from './ItemAvatar';
 import ItemSkeleton from './ItemSkeleton';
 
@@ -47,14 +47,14 @@ export default function Thumbnail ({ itemInformation, itemsDetail }: ItemProps):
                   </Typography>
                 }
                 {itemInformation?.collectionId &&
-                  <Detail
+                  <InfoRow
                     isThumbnail
                     text={itemInformation.collectionId}
                     title={t('Collection ID')}
                   />
                 }
                 {itemInformation?.itemId &&
-                  <Detail
+                  <InfoRow
                     isThumbnail
                     text={itemInformation?.itemId}
                     title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
