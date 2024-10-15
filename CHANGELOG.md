@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.18.4](https://github.com/polkagate/extension/compare/v0.18.3...v0.18.4) (2024-10-15)
+
+
+### Bug Fixes
+
+* adjust button position in vote confirmation ([7d35cc2](https://github.com/polkagate/extension/commit/7d35cc222692327557c90ed00ad6bc23af57eb28))
+
 ## [0.18.3](https://github.com/polkagate/extension/compare/v0.18.2...v0.18.3) (2024-10-13)
 
 
