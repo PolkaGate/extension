@@ -5,7 +5,9 @@
 
 import type { ItemInformation, ItemsDetail } from '../../nft/utils/types';
 
-import { Avatar, AvatarGroup, Grid, Skeleton } from '@mui/material';
+import { Avatar, AvatarGroup, Grid, useTheme } from '@mui/material';
+//@ts-ignore
+import { Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { fetchItemMetadata } from '../../nft/utils/util';
@@ -19,6 +21,8 @@ interface NftGroupedProps {
 }
 
 function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactElement {
+  const theme = useTheme();
+
   const [itemsDetails, setItemsDetails] = useState<ItemsDetail>({});
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -49,8 +53,6 @@ function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactEleme
   }, [itemsToShow]);
 
   useEffect(() => {
-    console.log('looooooop');
-
     if (!itemsToShow || itemsToShow?.length === 0) {
       return;
     }
@@ -69,16 +71,34 @@ function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactEleme
   if (isLoading) {
     return (
       <Grid alignItems='center' container item px='10px' width='fit-content'>
-        <Skeleton height={30} variant='circular' width={30} />
+        <Wordpress
+          color={theme.palette.text.disabled}
+          size={31}
+          timingFunction='linear'
+        />
       </Grid>
     );
   }
 
   return (
     <Grid alignItems='center' container item onClick={goToNft} sx={{ cursor: 'pointer', mx: '10px', width: 'fit-content' }}>
-      <AvatarGroup sx={{ '& .MuiAvatarGroup-avatar': { border: '1px solid', borderColor: 'primary.main', fontSize: '12px', height: '30px', width: '30px' } }} total={accountNft?.length}>
+      <AvatarGroup
+        sx={{
+          '& .MuiAvatarGroup-avatar': {
+            border: '1px solid',
+            borderColor: 'divider',
+            fontSize: '12px',
+            height: '30px',
+            width: '30px'
+          },
+          '& .MuiAvatarGroup-avatar:nth-last-of-type(3)': {
+            color: 'text.primary'
+          }
+        }}
+        total={accountNft?.length}
+      >
         {nftsToDisplay?.map((image, index) => (
-          <Avatar alt='NFT' key={index} src={image ?? undefined} style={{ border: '1px solid', borderColor: 'primary.main', height: '30px', width: '30px' }} />
+          <Avatar alt='NFT' key={index} src={image ?? undefined} style={{ height: '30px', width: '30px' }} />
         ))}
       </AvatarGroup>
     </Grid>
