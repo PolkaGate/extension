@@ -11,11 +11,10 @@ import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-mat
 import { Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { useParams } from 'react-router';
 
 import { Identity, Progress, ShortAddress, ShowBalance, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { useApiWithChain2, useInfo, useMetadata } from '../../../hooks';
+import { useApiWithChain2, useMetadata } from '../../../hooks';
 import { getAssetHubByChainName } from '../../../hooks/useReferendum';
 import { KODADOT_URL } from '../../../util/constants';
 import { amountToMachine } from '../../../util/utils';
@@ -27,10 +26,12 @@ import FullScreenNFT from './FullScreenNFT';
 import ItemAvatar from './ItemAvatar';
 
 export const InfoRow = React.memo(
-  function InfoRow ({ accountId, api, chain, decimal, divider = true, inline = true, isThumbnail, link, linkName, price, text, title, token }: DetailProp) {
+  function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThumbnail, link, linkName, price, text, title }: DetailProp) {
     const { t } = useTranslation();
+    const decimal = api?.registry.chainDecimals[0];
+    const token = api?.registry.chainTokens[0];
 
-    const convertedAmount = useMemo(() => price && decimal ? (price / 10 ** decimal).toString() : null, [decimal, price]);
+    const convertedAmount = useMemo(() => price && decimal ? (price.toNumber() / 10 ** decimal).toString() : null, [decimal, price]);
     const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
     const notListed = price !== undefined && price === null;
     const isDescription = !title;
@@ -157,8 +158,6 @@ export default function Details ({ details: { animation_url, animationContentTyp
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const { address } = useParams<{ address: string | undefined }>();
-  const { decimal, token } = useInfo(address);
   const api = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
 
   const genesisHash = api?.genesisHash.toHex();
@@ -308,10 +307,9 @@ export default function Details ({ details: { animation_url, animationContentTyp
                 />
               }
               <InfoRow
-                decimal={decimal}
+                api={api}
                 price={price}
                 title={t('Price')}
-                token={token}
               />
               {creator &&
                 <InfoRow

@@ -1428,5 +1428,8 @@
   "Unable to fetch NFT/Unique items!": "",
   "Media": "",
   "Checking": "",
-  "Nothing to Show": ""
+  "Nothing to Show": "",
+  "View in Full Screen": "",
+  "NFT Album": "",
+  "Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.": ""
 }

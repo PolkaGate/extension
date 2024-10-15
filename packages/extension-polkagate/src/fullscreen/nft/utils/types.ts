@@ -80,8 +80,6 @@ export interface DetailProp {
   api?: ApiPromise;
   chain?: Chain | null;
   price?: BN | null;
-  decimal?: number;
-  token?: string;
   divider?: boolean;
   link?: string;
   linkName?: string;
