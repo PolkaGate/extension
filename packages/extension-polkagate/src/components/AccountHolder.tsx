@@ -11,24 +11,26 @@ import { Identity, ShortAddress } from '.';
 
 interface Props {
   address: string | undefined;
+  direction?: 'row' | 'column' ;
   style?: SxProps<Theme> | undefined;
   title?: string;
 }
 
-function AccountHolder ({ address, style, title }: Props): React.ReactElement {
+function AccountHolder ({ address, direction = 'column', style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
   const { api, formatted } = useInfo(address);
 
   return (
-    <Grid alignItems='center' container direction='column' justifyContent='center' py='5px' sx={style}>
+    <Grid alignItems='center' container direction= 'column' justifyContent='center' py='5px' sx={style}>
       <Typography fontSize='16px' fontWeight={isExtensionPopup ? 300 : 400} height='18px' textAlign='center'>
-        {title ?? t('Account holder')}
+        {title ?? t('Account')}
       </Typography>
       <Identity
         address={address}
         api={api}
+        direction= {direction}
         identiconSize={31}
         showSocial={false}
         style={{

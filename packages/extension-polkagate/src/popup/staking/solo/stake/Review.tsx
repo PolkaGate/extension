@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,26 +10,25 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Container, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Identity, Infotip, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useFormatted, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { PROXY_TYPE, SYSTEM_SUGGESTION_TEXT } from '../../../../util/constants';
-import type { Proxy, ProxyItem, SoloSettings, TxInfo, ValidatorInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import RewardsDestination from './partials/RewardDestination';
 import ShowValidators from './partials/ShowValidators';
@@ -52,13 +50,13 @@ interface Props {
   selectedValidators: ValidatorInfo[] | null | undefined;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
+export default function Review ({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountDisplay(address);
-  const token = useToken(address);
-  const formatted = useFormatted(address);
+  const { formatted, token } = useInfo(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -119,7 +117,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       const extrinsic = batchCall || tx(...params);
       const ptx = selectedProxy ? api.tx['proxy']['proxy'](settings.stashId, selectedProxy.proxyType, extrinsic) : extrinsic;
 
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, settings.stashId);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, String(settings.stashId));
 
       const info = {
         action: 'Solo Staking',
@@ -156,7 +154,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
       <Typography fontSize='16px' fontWeight={300} textAlign='center'>
         {t('Controller account')}
       </Typography>
-      <Identity chain={chain as any} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
+      <Identity chain={chain} formatted={settings.controllerId} identiconSize={31} style={{ height: '35px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
       <ShortAddress address={settings.controllerId} />
       <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
     </Grid>
@@ -183,11 +181,11 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain as any}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             style={{ mt: '-5px' }}
-            title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account holder')}
+            title={settings.controllerId !== settings.stashId ? t('Stash account') : t('Account')}
           />
           {settings.controllerId !== settings.stashId &&
             <Controller />
@@ -263,7 +261,7 @@ export default function Review({ address, amount, api, chain, estimatedFee, isFi
           </Confirmation>)
         }
         {showSelectedValidators && !!selectedValidators?.length &&
-          <ShowValidators address={address} api={api} chain={chain as any} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
+          <ShowValidators address={address} api={api} chain={chain} selectedValidators={selectedValidators} setShowSelectedValidators={setShowSelectedValidators} showSelectedValidators={showSelectedValidators} staked={total} />
         }
       </Popup>
     </Motion>
