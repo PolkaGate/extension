@@ -10,6 +10,7 @@ import { Avatar, AvatarGroup, Grid, useTheme } from '@mui/material';
 import { Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import Infotip2 from '../../../components/Infotip2';
 import { fetchItemMetadata } from '../../nft/utils/util';
 import { openOrFocusTab } from './CommonTasks';
 
@@ -82,25 +83,27 @@ function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactEleme
 
   return (
     <Grid alignItems='center' container item onClick={goToNft} sx={{ cursor: 'pointer', mx: '10px', width: 'fit-content' }}>
-      <AvatarGroup
-        sx={{
-          '& .MuiAvatarGroup-avatar': {
-            border: '1px solid',
-            borderColor: 'divider',
-            fontSize: '12px',
-            height: '30px',
-            width: '30px'
-          },
-          '& .MuiAvatarGroup-avatar:nth-last-of-type(3)': {
-            color: 'text.primary'
-          }
-        }}
-        total={accountNft?.length}
-      >
-        {nftsToDisplay?.map((image, index) => (
-          <Avatar alt='NFT' key={index} src={image ?? undefined} style={{ height: '30px', width: '30px' }} />
-        ))}
-      </AvatarGroup>
+      <Infotip2 text='NFTs'>
+        <AvatarGroup
+          sx={{
+            '& .MuiAvatarGroup-avatar': {
+              border: '1px solid',
+              borderColor: 'divider',
+              fontSize: '12px',
+              height: '30px',
+              width: '30px'
+            },
+            '& .MuiAvatarGroup-avatar:nth-last-of-type(3)': {
+              color: 'text.primary'
+            }
+          }}
+          total={accountNft?.length}
+        >
+          {nftsToDisplay?.map((image, index) => (
+            <Avatar alt='NFT' key={index} src={image ?? undefined} style={{ height: '30px', width: '30px' }} />
+          ))}
+        </AvatarGroup>
+      </Infotip2>
     </Grid>
   );
 }
