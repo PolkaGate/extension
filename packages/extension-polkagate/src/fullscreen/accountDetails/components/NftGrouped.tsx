@@ -83,7 +83,7 @@ function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactEleme
 
   return (
     <Grid alignItems='center' container item onClick={goToNft} sx={{ cursor: 'pointer', mx: '10px', width: 'fit-content' }}>
-      <Infotip2 text='NFTs'>
+      <Infotip2 text={accountNft && accountNft.length === 1 ? 'NFT' : 'NFTs'}>
         <AvatarGroup
           sx={{
             '& .MuiAvatarGroup-avatar': {
