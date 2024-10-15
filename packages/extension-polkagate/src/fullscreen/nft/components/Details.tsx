@@ -110,8 +110,8 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
     return (
       <>
         {!loaded &&
-          <Grid container item sx={{ left: '23%', position: 'absolute', top: '42%', width: 'fit-content', zIndex: 100 }}>
-            <Progress />
+          <Grid container item sx={{ left: '15%', position: 'absolute', top: '25%', width: 'fit-content', zIndex: 100 }}>
+            <Progress type='grid' />
           </Grid>
         }
         <iframe
