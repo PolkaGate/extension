@@ -103,8 +103,9 @@ export default function Confirmation ({ address, alterType, handleClose, txInfo,
       }
       <PButton
         _ml={0}
+        _mt='15px'
         _onClick={handleClose}
-        _width={90}
+        _width={100}
         left='5%'
         text={txInfo.success ? t('Done') : t('Close')}
       />
