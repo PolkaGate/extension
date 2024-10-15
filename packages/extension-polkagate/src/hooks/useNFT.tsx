@@ -1,7 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ItemInformation, SavedNftItems } from '../fullscreen/nft/utils/types';
+import type React from 'react';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { ItemInformation } from '../fullscreen/nft/utils/types';
+import type { NftItemsContextType } from '../util/types';
 
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
@@ -10,7 +13,7 @@ import { useTranslation } from '../components/translate';
 import { isHexToBn } from '../util/utils';
 import useAlerts from './useAlerts';
 
-export default function useNFT (address: string): ItemInformation[] | null | undefined {
+export default function useNFT (address: string | undefined, accountsFromContext?: AccountJson[] | null, setNftItems?: React.Dispatch<React.SetStateAction<NftItemsContextType | undefined>>): ItemInformation[] | null | undefined {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const { notify } = useAlerts();
@@ -19,36 +22,39 @@ export default function useNFT (address: string): ItemInformation[] | null | und
   const [fetching, setFetching] = useState<boolean>(false);
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
 
-  const addresses = accounts.map(({ address: accountAddress }) => accountAddress);
+  const addresses = (accountsFromContext || accounts || []).map(({ address: accountAddress }) => accountAddress);
 
-  const saveToStorage = useCallback(async (data: SavedNftItems) => {
+  const saveToStorage = useCallback(async (data: NftItemsContextType) => {
     await chrome.storage.local.set({ nftItems: JSON.stringify(data) });
   }, []);
 
-  const getFromStorage = useCallback(async (): Promise<SavedNftItems | null> => {
+  const getFromStorage = useCallback(async (): Promise<NftItemsContextType | null> => {
     const result = await chrome.storage.local.get(['nftItems']);
 
     if (result['nftItems']) {
-      return JSON.parse(result['nftItems'] as string) as SavedNftItems;
+      return JSON.parse(result['nftItems'] as string) as NftItemsContextType;
     }
 
     return null;
   }, []);
 
-  const processAndSetNFTs = useCallback((data: SavedNftItems) => {
+  const processAndSetNFTs = useCallback((data: NftItemsContextType) => {
+    for (const account in data) {
+      data[account].forEach((nftItem) => {
+        if (nftItem.price) {
+          nftItem.price = isHexToBn(nftItem.price.toString());
+        }
+      });
+    }
+
     if (!address) {
+      setNftItems?.(data);
+
       return;
     }
 
     if (address in data) {
       const items = data[address];
-
-      items.forEach((nftItem) => {
-        if (nftItem.price) {
-          // @ts-ignore
-          nftItem.price = isHexToBn(nftItem.price);
-        }
-      });
 
       setNfts(
         items.length
@@ -58,7 +64,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
     } else {
       setNfts(undefined);
     }
-  }, [address]);
+  }, [address, setNftItems]);
 
   const fetchNFTs = useCallback(() => {
     setFetching(true);
@@ -82,10 +88,10 @@ export default function useNFT (address: string): ItemInformation[] | null | und
         return;
       }
 
-      let parsedNFTsInfo: SavedNftItems;
+      let parsedNFTsInfo: NftItemsContextType;
 
       try {
-        parsedNFTsInfo = JSON.parse(NFTs) as SavedNftItems;
+        parsedNFTsInfo = JSON.parse(NFTs) as NftItemsContextType;
       } catch (error) {
         console.error('Failed to parse NFTs JSON:', error);
         setNfts(null);
@@ -100,6 +106,9 @@ export default function useNFT (address: string): ItemInformation[] | null | und
       // Save all fetched items to Chrome storage
       saveToStorage(parsedNFTsInfo).catch(console.error);
 
+      // Set context
+      setNftItems?.(parsedNFTsInfo);
+
       if (currentAddressRef.current !== address) {
         // Address has changed, no need to process and set setNFTs state
         // setFetching(false);
@@ -112,7 +121,7 @@ export default function useNFT (address: string): ItemInformation[] | null | und
       // setFetching(false);
       getNFTsWorker.terminate();
     };
-  }, [address, addresses, notify, processAndSetNFTs, saveToStorage, t]);
+  }, [address, addresses, notify, processAndSetNFTs, saveToStorage, setNftItems, t]);
 
   useEffect(() => {
     if (!fetching && addresses && addresses.length > 0) {

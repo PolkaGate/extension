@@ -4,6 +4,7 @@
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
 
 export interface ItemInformation {
   collectionId?: string;
@@ -13,10 +14,8 @@ export interface ItemInformation {
   isNft: boolean;
   creator: string | undefined;
   owner: string;
-  price?: number | null | undefined;
+  price?: BN | null | undefined;
 }
-
-export type SavedNftItems = Record<string, ItemInformation[]>;
 
 export interface FilterSectionProps {
   items: ItemInformation[] | null | undefined;
@@ -80,7 +79,7 @@ export interface DetailProp {
   accountId?: string;
   api?: ApiPromise;
   chain?: Chain | null;
-  price?: number | null;
+  price?: BN | null;
   decimal?: number;
   token?: string;
   divider?: boolean;

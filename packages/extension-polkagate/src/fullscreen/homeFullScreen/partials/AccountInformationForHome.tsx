@@ -10,13 +10,13 @@ import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { type BN, noop } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import { Identicon, Identity, NftItemsContext, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -25,6 +25,7 @@ import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
 import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import NftGrouped from '../../accountDetails/components/NftGrouped';
 import DeriveAccountModal from '../../partials/DeriveAccountModal';
 import ExportAccountModal from '../../partials/ExportAccountModal';
 import ForgetAccountModal from '../../partials/ForgetAccountModal';
@@ -40,7 +41,12 @@ interface AddressDetailsProps {
   isChild?: boolean;
 }
 
-interface AccountButtonType { text: string, onClick: () => void, icon: React.ReactNode }
+interface AccountButtonType {
+  text: string;
+  onClick: () => void;
+  icon: React.ReactNode;
+  collapse?: boolean;
+}
 
 export enum POPUPS_NUMBER {
   DERIVE_ACCOUNT,
@@ -50,17 +56,24 @@ export enum POPUPS_NUMBER {
   MANAGE_PROFILE
 }
 
-const AccountButton = ({ icon, onClick, text }: AccountButtonType) => {
+const AccountButton = ({ collapse = false, icon, onClick, text }: AccountButtonType) => {
   const theme = useTheme();
+
+  const collapsedStyle = collapse
+    ? {
+      '&:first-child': { '> span': { m: 0 }, m: '0px', minWidth: '48px' },
+      '> span': { m: 0 }
+    }
+    : {};
 
   return (
     <Button
       endIcon={icon}
       onClick={onClick}
-      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
+      sx={{ ...collapsedStyle, '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', minWidth: '48px', textTransform: 'none', width: 'fit-content' }}
       variant='text'
     >
-      {text}
+      {collapse ? '' : text}
     </Button>
   );
 };
@@ -94,9 +107,22 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
 function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const nftItems = useContext(NftItemsContext);
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
+
+  const accountNft = useMemo(() => {
+    if (!nftItems || !address) {
+      return undefined;
+    }
+
+    if (address in nftItems && nftItems[address].length > 0) {
+      return nftItems[address];
+    }
+
+    return null;
+  }, [address, nftItems]);
 
   const accountInfo = useIdentity(genesisHash, formatted);
 
@@ -196,23 +222,32 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
         <Grid container item justifyContent='flex-end' minHeight='50px'>
           <Divider sx={{ bgcolor: 'divider', height: '1px', mr: '5px', my: '15px', width: '100%' }} />
           <Grid container item xs>
-            {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
-              <AOC
-                accountAssets={assetsToShow}
+            <Grid container item xs>
+              {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
+                <AOC
+                  accountAssets={assetsToShow}
+                  address={address}
+                  hideNumbers={hideNumbers}
+                  mode='Home'
+                  onclick={onAssetBoxClicked}
+                  selectedAsset={selectedAsset}
+                />
+              }
+            </Grid>
+            <Grid container item width='fit-content'>
+              <NftGrouped
+                accountNft={accountNft}
                 address={address}
-                hideNumbers={hideNumbers}
-                mode='Home'
-                onclick={onAssetBoxClicked}
-                selectedAsset={selectedAsset}
               />
-            }
+            </Grid>
           </Grid>
           <Grid alignItems='center' container item width='fit-content'>
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', mx: accountNft ? '5px' : undefined, my: 'auto', width: '1px' }} />
             <FullScreenAccountMenu
               address={address}
               baseButton={
                 <AccountButton
+                  collapse={!!accountNft}
                   icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />}
                   onClick={noop}
                   text={t('Settings')}
@@ -220,8 +255,9 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
               }
               setDisplayPopup={setDisplayPopup}
             />
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: accountNft ? '5px' : '15px', my: 'auto', width: '1px' }} />
             <AccountButton
+              collapse={!!accountNft}
               icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />}
               onClick={goToDetails}
               text={t('Details')}
