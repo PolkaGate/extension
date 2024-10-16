@@ -1400,5 +1400,6 @@
   "Add a new chain": "",
   "Invalid endpoint format!": "",
   "The chain already exists, no need to add it again!": "",
-  "Click to hide all the profile accounts from websites!": ""
+  "Click to hide all the profile accounts from websites!": "",
+  "Checking": ""
 }
