@@ -8,6 +8,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
+import { useChain } from '../hooks';
 import ThroughProxy from '../partials/ThroughProxy';
 import { AccountHolder } from '.';
 
@@ -17,20 +18,24 @@ interface Props {
   style?: SxProps<Theme> | undefined;
   selectedProxyAddress?: string;
   title?: string;
-  chain: Chain | null | undefined;
+  chain?: Chain | null | undefined;
+  direction?: 'row' | 'column' ;
 }
 
-function AccountHolderWithProxy ({ address, chain, selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
+function AccountHolderWithProxy ({ address, chain, direction = 'column', selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
+  const _chain = useChain(address);
+
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ fontWeight: 300, letterSpacing: '-0.015em', pt: '5px', ...style }}>
       <AccountHolder
         address={address}
+        direction={direction}
         title={title}
       />
       {selectedProxyAddress &&
         <ThroughProxy
           address={selectedProxyAddress}
-          chain={chain}
+          chain={chain || _chain}
           showDivider
           style={{ pb: '5px' }}
         />

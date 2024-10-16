@@ -141,7 +141,7 @@ export default function Review ({ address, api, chain, changes, formatted, pool,
               chain={chain}
               selectedProxyAddress={selectedProxyAddress}
               style={{ mt: 'auto' }}
-              title={t('Account holder')}
+              title={t('Account')}
             />
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
             {changes?.newPoolName !== undefined &&

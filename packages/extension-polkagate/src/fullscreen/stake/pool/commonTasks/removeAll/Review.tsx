@@ -151,10 +151,10 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           }
           <AccountHolderWithProxy
             address={address}
-            chain={chain as any}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             style={{ mt: 'auto' }}
-            title={t('Account holder')}
+            title={t('Account')}
           />
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '240px' }} />
           {mode === 'UnbondAll'
@@ -172,7 +172,7 @@ export default function Review ({ address, api, chain, mode, pool, poolMembers, 
           }
           <ShowPool
             api={api}
-            chain={chain as any}
+            chain={chain}
             label=''
             mode='Default'
             pool={pool}

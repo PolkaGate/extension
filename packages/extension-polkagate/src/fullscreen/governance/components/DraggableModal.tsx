@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Modal, useTheme } from '@mui/material';
@@ -28,12 +27,12 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
   const [modalPosition, setModalPosition] = useState({ x: initialX, y: initialY });
   const [dragStartPosition, setDragStartPosition] = useState({ x: 0, y: 0 });
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = useCallback((e: { clientX: number; clientY: number; }) => {
     setIsDragging(true);
     setDragStartPosition({ x: e.clientX, y: e.clientY });
-  };
+  }, []);
 
-  const _onClose = useCallback((event, reason) => {
+  const _onClose = useCallback((_event: unknown, reason: string) => {
     if (reason && reason === 'backdropClick') {
       return;
     }
@@ -41,24 +40,27 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
     onClose();
   }, [onClose]);
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = useCallback((e: { clientX: number; clientY: number; }) => {
     if (isDragging) {
       const dx = e.clientX - dragStartPosition.x;
       const dy = e.clientY - dragStartPosition.y;
 
       setModalPosition((prevPosition) => ({
         x: prevPosition.x + dx,
-        y: prevPosition.y + dy,
+        y: prevPosition.y + dy
       }));
       setDragStartPosition({ x: e.clientX, y: e.clientY });
     }
   }, [dragStartPosition, isDragging]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   const style = {
+    '&:focus': {
+      outline: 'none' // Remove outline when Box is focused
+    },
     bgcolor: 'background.default',
     border: isDarkMode ? '0.5px solid' : 'none',
     borderColor: 'secondary.light',
@@ -73,10 +75,7 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
     pt: 2,
     px: 4,
     top: modalPosition.y,
-    width: `${width}px`,
-    '&:focus': {
-      outline: 'none' // Remove outline when Box is focused
-    }
+    width: `${width}px`
   };
 
   return (

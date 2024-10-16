@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
 import type { MemberPoints, MyPoolInfo, TxInfo } from '../../../../../util/types';
 
 import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
@@ -14,14 +15,11 @@ import { Divider, Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { ThroughProxy } from '@polkadot/extension-polkagate/src/partials';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
-import { PButton, ShortAddress } from '../../../../../components';
+import { AccountWithProxyInConfirmation, PButton } from '../../../../../components';
 import { useFormatted, useTranslation } from '../../../../../hooks';
 import { usePoolMembers } from '../../../../../hooks/usePoolMembers';
 import { ModalTitle } from '../../../solo/commonTasks/configurePayee';
@@ -67,7 +65,7 @@ const remainingTime = (seconds: number) => {
 
 export type Mode = 'UnbondAll' | 'RemoveAll';
 
-export default function RemoveAll({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function RemoveAll ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 
@@ -132,7 +130,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
   }, [remainingEraToKick, needsUnboundAll, members, sessionInfo, sessionInfo?.currentEra]);
 
   useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
+    api?.derive.session?.progress().then((sessionInfo) => {
       setSessionInfo({
         currentEra: Number(sessionInfo.currentEra),
         eraLength: Number(sessionInfo.eraLength),
@@ -166,13 +164,13 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
 
   const RemainingTime = () => (
     <Grid container justifyContent='center'>
-      <Typography fontSize='16px' fontWeight={300}>{t<string>('Time left to be able to remove all')}</Typography>
+      <Typography fontSize='16px' fontWeight={300}>{t('Time left to be able to remove all')}</Typography>
       <Grid container justifyContent='center' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: 'auto', py: '30px', width: '92%' }}>
-        {remainingTimeCounter?.dayCounter > 0 &&
+        {remainingTimeCounter?.dayCounter && remainingTimeCounter.dayCounter > 0 &&
           <Typography fontSize='28px' fontWeight={400} textAlign='center'>
-            {remainingTimeCounter?.dayCounter > 1
-              ? t<string>('days and')
-              : t<string>('day and')}
+            {remainingTimeCounter.dayCounter > 1
+              ? t('days and')
+              : t('day and')}
           </Typography>
         }
         <Typography fontSize='28px' fontWeight={400} px='2px' textAlign='center'>
@@ -220,7 +218,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
           <>
             <Grid container direction='column' m='20px auto'>
               <Typography fontSize='14px' fontWeight={300} textAlign='left'>
-                {t<string>('To remove all members')}:
+                {t('To remove all members')}:
               </Typography>
               <Grid alignItems='center' container item lineHeight='28px' pl='5px' pt='15px'>
                 {status > 1
@@ -229,7 +227,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
                     1
                   </Typography>}
                 <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-                  {t<string>('Unstake all members’ tokens')}
+                  {t('Unstake all members’ tokens')}
                 </Typography>
               </Grid>
               <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
@@ -239,7 +237,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
                   </Typography>
                   : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
                 <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-                  {t<string>('Wait for unstaking locking period')}
+                  {t('Wait for unstaking locking period')}
                 </Typography>
               </Grid>
               <Grid alignItems='center' container item lineHeight='28px' pl='5px'>
@@ -249,7 +247,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
                   </Typography>
                   : <CheckCircleOutlineSharpIcon sx={{ bgcolor: 'success.main', borderRadius: '50%', color: '#fff', fontSize: '20px', ml: '-1px' }} />}
                 <Typography fontSize='14px' fontWeight={300} lineHeight='inherit' pl='5px'>
-                  {t<string>('Come back here, and remove all')}
+                  {t('Come back here, and remove all')}
                 </Typography>
               </Grid>
             </Grid>
@@ -259,7 +257,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
                   <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={75} />
                 </Grid>
                 <Typography fontSize='15px' fontWeight={300} m='20px auto 0' textAlign='center'>
-                  {t<string>('Loading pool members information...')}
+                  {t('Loading pool members information...')}
                 </Typography>
               </>
             }
@@ -274,7 +272,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
                     _mt='0'
                     _onClick={goUnstakeAll}
                     disabled={!needsUnboundAll}
-                    text={t<string>('Unstake All ({{members}})', { replace: { members: (poolMembers && poolMembers.length - 1) ?? '...' } })}
+                    text={t('Unstake All ({{members}})', { replace: { members: (poolMembers && poolMembers.length - 1) ?? '...' } })}
                   />
                 </Grid>}
               {(status !== 4) &&
@@ -283,8 +281,8 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
                     _ml={0}
                     _mt='20px'
                     _onClick={goRemoveAll}
-                    disabled={!members || RemoveAllBtnDisabled}
-                    text={t<string>('Remove All')}
+                    disabled={!members || !!RemoveAllBtnDisabled}
+                    text={t('Remove All')}
                   />
                 </Grid>}
             </Grid>
@@ -293,7 +291,7 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
           <Review
             address={address}
             api={api}
-            chain={chain as any}
+            chain={chain}
             mode={mode}
             pool={pool}
             poolMembers={members}
@@ -313,30 +311,13 @@ export default function RemoveAll({ address, api, chain, onClose, pool, setRefre
             txInfo={txInfo}
           >
             <>
-              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account holder:')}
-                </Typography>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {txInfo.from.name}
-                </Typography>
-                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                  <ShortAddress
-                    address={txInfo.from.address}
-                    inParentheses
-                    style={{ fontSize: '16px' }}
-                  />
-                </Grid>
-              </Grid>
-              {txInfo.throughProxy &&
-                <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-                </Grid>
-              }
+              <AccountWithProxyInConfirmation
+                txInfo={txInfo}
+              />
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
               <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Pool:')}
+                  {t('Pool')}:
                 </Typography>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {pool.metadata}

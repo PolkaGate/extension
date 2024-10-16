@@ -1,26 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Balance } from '@polkadot/types/interfaces';
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+//@ts-ignore
 import type { PalletIdentityLegacyIdentityInfo } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 import type { BalancesInfo, Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import { PEOPLE_CHAINS, PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
-import { BN, BN_ONE } from '@polkadot/util';
 
 import { CanPayErrorAlert, Identity, Motion, ShowBalance, SignArea2, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useInfo, useProxies } from '../../hooks';
+import { useCanPayFeeAndDeposit, useEstimatedFee, useInfo, useProxies } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { pgBoxShadow } from '../../util/utils';
@@ -53,7 +51,7 @@ interface Props {
   selectedRegistrarName: string | undefined;
 }
 
-export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -62,7 +60,6 @@ export default function Review({ address, api, chain, depositToPay, depositValue
   const isPeopleChainEnabled = PEOPLE_CHAINS.includes(chainName || '');
   const isOnPeopleChain = chainName?.toLowerCase()?.includes('people');
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -71,17 +68,15 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay, balances);
-
-  const setIdentity = api && api.tx['identity']['setIdentity'];
-  const clearIdentity = api && api.tx['identity']['clearIdentity'];
-  const setSubs = api && api.tx['identity']['setSubs'];
-  const requestJudgement = api && api.tx['identity']['requestJudgement'];
-  const cancelRequest = api && api.tx['identity']['cancelRequest'];
+  const setIdentity = api?.tx['identity']['setIdentity'];
+  const clearIdentity = api?.tx['identity']['clearIdentity'];
+  const setSubs = api?.tx['identity']['setSubs'];
+  const requestJudgement = api?.tx['identity']['requestJudgement'];
+  const cancelRequest = api?.tx['identity']['cancelRequest'];
 
   useEffect(() => {
-    formatted && api && api.derive.balances?.all(formatted).then((b) => {
-      setBalances(b);
+    formatted && api?.derive.balances?.all(formatted).then((b) => {
+      setBalances(b as BalancesInfo);
     });
   }, [api, formatted]);
 
@@ -92,6 +87,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
     return subIdsParams.map((subs) => ({
       address: subs[0],
+      //@ts-ignore
       name: subs[1]?.raw as string
     })) as SubIdAccountsToSubmit;
   }, [mode, subIdsParams]);
@@ -124,28 +120,14 @@ export default function Review({ address, api, chain, depositToPay, depositValue
     return undefined;
   }, [cancelRequest, clearIdentity, infoParams, maxFeeAmount, mode, requestJudgement, selectedRegistrar, setIdentity, setSubs, subIdsParams]);
 
+  const estimatedFee = useEstimatedFee(address, tx);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxyAddress, estimatedFee, depositToPay, balances);
+
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
-
-  useEffect(() => {
-    if (!formatted || !tx) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    tx.paymentInfo(formatted)
-      .then((i) => setEstimatedFee(i?.partialFee))
-      .catch((error) => {
-        console.error(' error while fetching fee:', error);
-        setEstimatedFee(api?.createType('Balance', BN_ONE));
-      });
-  }, [api, formatted, tx]);
 
   const extraInfo = useMemo(() => ({
     action: 'Manage Identity',
@@ -240,7 +222,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
                   {mode === 'ManageSubId'
                     ? t('Parent account')
-                    : t('Account holder')}
+                    : t('Account')}
                 </Typography>
                 <Identity
                   address={address}
