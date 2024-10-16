@@ -10,6 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.18.5',
+    notes: [
+      'Show No Internet Sign: Display a disconnected icon if the extension cannot access the internet.'
+    ]
+  },
+  {
     version: '0.18.2',
     notes: [
       'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it manually using an RPC endpoint address.',
