@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.19.0](https://github.com/polkagate/extension/compare/v0.18.4...v0.19.0) (2024-10-16)
+
+
+### Features
+
+* add no internet alert ([#1589](https://github.com/polkagate/extension/issues/1589)) ([6b02c7e](https://github.com/polkagate/extension/commit/6b02c7e025f85c7f7d0e1a399d1d2dcf990363f0))
+
 ## [0.18.4](https://github.com/polkagate/extension/compare/v0.18.3...v0.18.4) (2024-10-15)
 
 
