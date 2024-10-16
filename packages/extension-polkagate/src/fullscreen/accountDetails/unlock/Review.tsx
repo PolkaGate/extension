@@ -58,7 +58,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
-  const [step, setStep] = useState<number>(STEPS.REVIEW);
+  const [step, setStep] = useState<number>(STEPS.INDEX);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
 
@@ -113,7 +113,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
     setDisplayPopup(undefined);
   }, [setDisplayPopup]);
 
-  const closeProxy = useCallback(() => setStep(STEPS.REVIEW), []);
+  const closeProxy = useCallback(() => setStep(STEPS.INDEX), []);
 
   return (
     <DraggableModal onClose={onClose} open={show}>
@@ -128,7 +128,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
+        {[STEPS.INDEX, STEPS.SIGN_QR].includes(step) &&
           <>
             <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
             <Container disableGutters sx={{ px: '30px' }}>
