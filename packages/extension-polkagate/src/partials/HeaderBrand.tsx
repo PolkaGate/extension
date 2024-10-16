@@ -13,6 +13,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { logoBlack, logoWhite } from '../assets/logos';
 import { ActionContext, FullScreenIcon, Steps, VaadinIcon } from '../components';
+import InternetConnectivity from '../fullscreen/governance/InternetConnectivity';
 import useOutsideClick from '../hooks/useOutsideClick';
 import ConnectedDappIcon from './ConnectedDappIcon';
 import Menu from './Menu';
@@ -62,7 +63,8 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
             strokeWidth: 1.5,
             visibility: showBackArrow ? 'visible' : 'hidden'
           }}
-        />}
+        />
+      }
       {!showBackArrow && showBrand &&
         <Grid item sx={{ position: 'relative', width: 'fit-content' }}>
           <Box
@@ -71,6 +73,9 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
             sx={{ height: 52, width: 52 }}
           />
           <ConnectedDappIcon />
+          <Grid item sx={{ left: '-20px', position: 'absolute', top: 0 }}>
+            <InternetConnectivity />
+          </Grid>
         </Grid>
       }
     </Grid>
