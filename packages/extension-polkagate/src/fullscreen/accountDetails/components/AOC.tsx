@@ -133,6 +133,8 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
     }
   }, [accountAssets]);
 
+  const shouldShowCursor = useMemo(() => (mode === 'Detail' && accountAssets && accountAssets.length > 5) || (mode !== 'Detail' && accountAssets && accountAssets.length > 6), [accountAssets, mode]);
+
   return (
     <Grid container item>
       <Typography fontSize='18px' fontWeight={400} mt='13px' px='10px' width='fit-content'>
@@ -157,7 +159,7 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
         </Collapse>
       </Grid>
       {!!accountAssets?.length &&
-        <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
+        <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: shouldShowCursor ? 'pointer' : 'default', width: '65px' }}>
           {mode === 'Detail'
             ? accountAssets.length > 5 &&
             <>

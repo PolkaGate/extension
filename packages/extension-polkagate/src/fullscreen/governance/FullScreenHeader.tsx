@@ -19,7 +19,7 @@ import { MAX_WIDTH } from './utils/consts';
 import InternetConnectivity from './InternetConnectivity';
 
 interface Props {
-  page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'accountDetails' | 'proxyManagement';
+  page?: 'governance' | 'manageIdentity' | 'send' | 'stake' | 'socialRecovery' | 'accountDetails' | 'proxyManagement' | 'nft';
   noChainSwitch?: boolean;
   noAccountDropDown?: boolean;
   _otherComponents?: React.JSX.Element;
@@ -65,6 +65,8 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
         return onAction(`/accountfs/${selectedAddress}/0`);
       case 'send':
         return onAction(`/send/${selectedAddress}/${NATIVE_TOKEN_ASSET_ID}`);
+      case 'nft':
+        return onAction(`/nft/${selectedAddress}`);
       default:
         return null;
     }
