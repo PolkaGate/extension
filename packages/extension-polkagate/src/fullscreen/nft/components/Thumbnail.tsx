@@ -5,7 +5,7 @@
 
 import type { ItemProps } from '../utils/types';
 
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '../../../components/translate';
@@ -36,13 +36,20 @@ export default function Thumbnail ({ itemInformation, itemsDetail }: ItemProps):
             </Grid>
           }
           {displayNft &&
-            <>
+            <Box
+              sx={{
+                '&:hover': {
+                  boxShadow: 3,
+                  transform: 'translateY(-2px)'
+                },
+                transition: '0.3s'
+              }}>
               <ItemAvatar
                 image={itemDetail?.image}
               />
               <Grid container item px='8px'>
                 {itemDetail?.name &&
-                  <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '190px', overflow: 'hidden', py: '15px', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
+                  <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '174px', overflow: 'hidden', py: '15px', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
                     {itemDetail.name}
                   </Typography>
                 }
@@ -61,7 +68,7 @@ export default function Thumbnail ({ itemInformation, itemsDetail }: ItemProps):
                   />
                 }
               </Grid>
-            </>
+            </Box>
           }
         </Grid>
       }
