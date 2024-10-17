@@ -167,6 +167,19 @@ export default function Details ({ details: { animation_url, animationContentTyp
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
+  const chainNameSymbol = () => {
+    switch (chainName) {
+      case 'Polkadot Asset Hub':
+        return 'ahp';
+      case 'Kusama Asset Hub':
+        return 'ahk';
+      default:
+        return '';
+    }
+  };
+
+  const NFT_URL_ON_KODADOT = `${KODADOT_URL}/${chainNameSymbol()}/gallery/${collectionId}-${itemId}`;
+
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
   useEffect(() => {
@@ -329,9 +342,9 @@ export default function Details ({ details: { animation_url, animationContentTyp
               }
               {owner &&
                 <InfoRow
-                  link={KODADOT_URL}
+                  link={NFT_URL_ON_KODADOT}
                   linkName='Kodadot'
-                  title={t('Sell on')}
+                  title={t('View on')}
                 />
               }
             </Grid>
