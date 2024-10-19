@@ -15,10 +15,10 @@ import { ShortAddress, ShowBalance, ShowValue } from '../../components';
 import { useInfo, useTranslation } from '../../hooks';
 import useStyles from './styles/styles';
 import { kusama } from './tracks/kusama';
+import { polkadot } from './tracks/polkadot';
 import { blockToX, toSnakeCase, toTitleCase } from './utils/util';
 import { Separator } from './AllReferendaStats';
 import ThresholdCurves from './Curves';
-import { polkadot } from './tracks/polkadot';
 
 interface Props {
   address: string;
