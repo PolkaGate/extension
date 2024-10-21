@@ -1,20 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
+
+import type { DecidingCount } from '../../hooks/useDecidingCount';
+import type { Track } from './utils/types';
 
 import { Container, Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React from 'react';
 
 import { ShortAddress, ShowBalance, ShowValue } from '../../components';
-import { useApi, useDecimal, useToken, useTranslation } from '../../hooks';
-import { DecidingCount } from '../../hooks/useDecidingCount';
-import { Track } from '../../hooks/useTracks';
+import { useInfo, useTranslation } from '../../hooks';
 import useStyles from './styles/styles';
 import { kusama } from './tracks/kusama';
+import { polkadot } from './tracks/polkadot';
 import { blockToX, toSnakeCase, toTitleCase } from './utils/util';
 import { Separator } from './AllReferendaStats';
 import ThresholdCurves from './Curves';
@@ -27,20 +28,19 @@ interface Props {
   track: Track | undefined;
 }
 
-const findItemDecidingCount = (item: string, decidingCounts: DecidingCount[] | undefined): number | undefined => {
+const findItemDecidingCount = (item: string, decidingCounts: DecidingCount | undefined): number => {
   if (!decidingCounts) {
-    return undefined;
+    return 0;
   }
 
   const filtered = decidingCounts.referenda.concat(decidingCounts.fellowship).find(([key]) =>
     key === item.toLowerCase().replace(' ', '_') ||
     key === item.toLowerCase());
 
-  return filtered?.[1];
+  return filtered?.[1] || 0;
 };
 
-export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valueStyle = { fontSize: '18px', fontWeight: 500 }, labelStyle = { fontSize: '16px', fontWeight: 400 } }
-  : { asShortAddress?: boolean, label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: any, valueStyle?: SxProps<Theme> }) => {
+export const LabelValue = ({ asShortAddress, label, labelStyle = { fontSize: '16px', fontWeight: 400 }, noBorder, style, value, valueStyle = { fontSize: '18px', fontWeight: 500 } }: { asShortAddress?: boolean, label: string, labelStyle?: SxProps<Theme>, noBorder?: boolean, style?: SxProps<Theme>, value: unknown, valueStyle?: SxProps<Theme> }) => {
   const theme = useTheme();
 
   return (
@@ -50,25 +50,26 @@ export const LabelValue = ({ asShortAddress, label, value, noBorder, style, valu
         borderBottomColor: `${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : theme.palette.text.disabled}`, ...style
       }}>
       <Grid item sx={{ ...labelStyle }}>
-        <Typography >
+        <Typography>
           {label}
         </Typography>
       </Grid>
       <Grid item sx={{ '> .MuiSkeleton-root': { display: 'block' }, ...valueStyle }}>
         {asShortAddress
-          ? <ShortAddress address={value} showCopy charsCount={30} />
-          : <ShowValue value={value} />
+          ? <ShortAddress address={value as string} charsCount={30} showCopy />
+          : <ShowValue value={value as string | number} />
         }
       </Grid>
     </Grid>
   );
 };
 
-export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
+export function TrackStats ({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const api = useApi(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+
+  const { api, decimal, token } = useInfo(address);
+
+  const chainGovInfo = token === 'KSM' ? kusama : polkadot;
   const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
   const secondBreakpoint = !useMediaQuery('(min-width:675px)');
   const styles = useStyles(firstBreakpoint, secondBreakpoint);
@@ -88,7 +89,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             </Grid>
             <Grid container item>
               <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-                {kusama[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
+                {chainGovInfo[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
               </Typography>
             </Grid>
           </Grid>
@@ -96,7 +97,7 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
             <Grid container item sx={styles.trackStatsChild}>
               <LabelValue
                 label={t('Remaining Slots')}
-                value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding}`}
+                value={decidingCounts && track?.[1]?.maxDeciding && `${track[1].maxDeciding as unknown as number - findItemDecidingCount(selectedSubMenu, decidingCounts)} out of ${track?.[1]?.maxDeciding as unknown as number}`}
               />
               <LabelValue
                 label={t('Prepare Period')}

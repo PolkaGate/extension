@@ -5,15 +5,12 @@ import type { Track } from '../fullscreen/governance/utils/types';
 
 import { useMemo } from 'react';
 
-import { useApi, useChain } from '.';
+import { useInfo } from '.';
 
 interface TracksType { fellowshipTracks: Track[] | undefined, tracks: Track[] | undefined }
 
 export default function useTracks (address: string | undefined): TracksType {
-  const api = useApi(address);
-  const chain = useChain(address);
-  // const chainName = useChainName(address);
-  // const [savedTracks, setSavedTracks] = useState<string[]>([]);
+  const { api, chain } = useInfo(address);
 
   const tracks: TracksType = useMemo(() => {
     if (chain?.genesisHash !== api?.genesisHash?.toString()) {
@@ -29,5 +26,5 @@ export default function useTracks (address: string | undefined): TracksType {
     };
   }, [api, chain?.genesisHash]);
 
-  return tracks;// || savedTracks;
+  return tracks;
 }
