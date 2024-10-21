@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { FilterSectionProps } from '../utils/types';
+import type { FilterSectionProps, ItemInformation } from '../utils/types';
 
 import { Divider, Tab, Tabs as MUITabs } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -25,36 +25,56 @@ function Tabs ({ items, setItemsToShow }: FilterSectionProps): React.ReactElemen
     setTab(newValue);
   }, []);
 
-  const nfts = items?.filter(({ isNft }) => isNft);
-  const uniques = items?.filter(({ isNft }) => !isNft);
+  const sorter = useCallback((itemA: ItemInformation, itemB: ItemInformation) => {
+    if (itemA.data == null && itemB.data == null) {
+      return 0;
+    }
 
-  const filteredItems = useMemo(() => {
+    if (itemA.data == null) {
+      return 1;
+    }
+
+    if (itemB.data == null) {
+      return -1;
+    }
+
+    return 0;
+  }, []);
+
+  const nfts = useMemo(() => items?.filter(({ isNft }) => isNft), [items]);
+  const uniques = useMemo(() => items?.filter(({ isNft }) => !isNft), [items]);
+
+  useEffect(() => {
     if (items === undefined || items?.length === 0) {
-      return undefined;
+      setItemsToShow(undefined);
+
+      return;
     }
 
     if (items === null) {
-      return null;
+      setItemsToShow(null);
+
+      return;
     }
 
     switch (tab) {
       case TabsNumber.NFT:
-        return nfts;
+        setItemsToShow([...(nfts ?? [])]?.sort(sorter));
+        break;
 
       case TabsNumber.UNIQUE:
-        return uniques;
+        setItemsToShow(uniques?.sort(sorter));
+        break;
 
       case TabsNumber.ALL:
-        return items;
+        setItemsToShow([...items].sort(sorter));
+        break;
 
       default:
-        return items;
+        setItemsToShow([...items].sort(sorter));
+        break;
     }
-  }, [items, nfts, tab, uniques]);
-
-  useEffect(() => {
-    setItemsToShow(filteredItems);
-  }, [filteredItems, filteredItems?.length, setItemsToShow]);
+  }, [items, items?.length, nfts, setItemsToShow, sorter, tab, uniques]);
 
   return (
     <MUITabs centered onChange={handleChange} sx={{ mt: '20px' }} value={tab}>

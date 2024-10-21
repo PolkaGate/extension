@@ -37,3 +37,11 @@ export const IPFS_GATEWAYS = [
 export const MAX_RETRY_ATTEMPTS = IPFS_GATEWAYS.length;
 export const INITIAL_BACKOFF_TIME = 1000; // 1 second
 export const MAX_BACKOFF_TIME = 10000; // 10 seconds
+
+export const SUPPORTED_NFT_CHAINS = {
+  'Kusama Asset Hub': { name: 'kusamaassethub', prefix: 2 },
+  'Polkadot Asset Hub': { name: 'polkadotassethub', prefix: 0 }
+};
+
+export const THUMBNAIL_HEIGHT = '340px';
+export const THUMBNAIL_WIDTH = '190px';

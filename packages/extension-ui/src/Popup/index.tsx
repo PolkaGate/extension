@@ -144,7 +144,7 @@ export default function Popup (): React.ReactElement {
 
   const assetsOnChains = useAssetsBalances(accounts, setAlerts, genesisHashOptionsCtx, userAddedChainCtx);
 
-  useNFT(undefined, accounts, setNftItems);
+  useNFT(accounts, setNftItems);
 
   const set = useCallback((change: Fetching) => {
     setFetching(change);

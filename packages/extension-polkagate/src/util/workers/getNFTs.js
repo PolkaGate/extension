@@ -3,17 +3,64 @@
 
 // @ts-nocheck
 
+import { SUPPORTED_NFT_CHAINS } from '../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../utils';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
 
-export const SUPPORTED_NFT_CHAINS = {
-  'Kusama Asset Hub': { name: 'kusamaassethub', prefix: 2 },
-  'Polkadot Asset Hub': { name: 'polkadotassethub', prefix: 0 }
-};
+/**
+ * Fetches NFT or unique collections for a given chain and set of addresses
+ * @param {ApiPromise} api - The API instance for interacting with the blockchain
+ * @param {string[]} addresses - Array of addresses to fetch items for
+ * @param {string} chainName - The chain identifier
+ * @param {boolean} isNft - Whether to fetch NFT collections (true) or unique collections (false)
+ * @returns {Promise<ItemInformation[]>} Array of collection information
+ */
+async function fetchCollections (api, addresses, chainName, isNft) {
+  // Determine which query method to use based on item type
+  const queryMethod = isNft ? api.query.nfts.collectionAccount : api.query.uniques.classAccount;
+  const requests = addresses.map(async (address) => await queryMethod.entries(address));
+  const entries = await Promise.all(requests);
+
+  // collection id
+  const collectionsId = entries
+    .flat()
+    .map(([key, _info]) => {
+      const info = key.args.map((k) => k.toPrimitive());
+
+      info.shift(); // first item is the address which we do not need it to fetch the collection information
+
+      return info[0];
+    });
+
+  const collectionInfoQueryMethod = isNft ? [api.query.nfts.collection, api.query.nfts.collectionMetadataOf] : [api.query.uniques.class, api.query.uniques.classMetadataOf];
+  const collectionsInformation =
+    await Promise.all(collectionsId.map((collectionId) =>
+      Promise.all([collectionInfoQueryMethod[0](collectionId), collectionInfoQueryMethod[1](collectionId)]))
+    );
+
+  const myCollections = collectionsInformation
+    .map(([collection, collectionMetadata], index) => {
+      const collectionId = collectionsId[index];
+      const { items, owner } = collection.toPrimitive();
+      const collectionMetadataInfo = collectionMetadata?.toPrimitive();
+
+      return {
+        chainName,
+        collectionId,
+        data: collectionMetadataInfo?.data ?? null,
+        isCollection: true,
+        isNft,
+        items,
+        owner: String(owner)
+      };
+    });
+
+  return myCollections;
+}
 
 /**
  * Fetches NFT or unique items for a given chain and set of addresses
- * @param {Object} api - The API instance for interacting with the blockchain
+ * @param {ApiPromise} api - The API instance for interacting with the blockchain
  * @param {string[]} addresses - Array of addresses to fetch items for
  * @param {string} chainName - The chain identifier
  * @param {boolean} isNft - Whether to fetch NFTs (true) or uniques (false)
@@ -38,7 +85,7 @@ async function fetchItems (api, addresses, chainName, isNft) {
 
   const itemInfoQueryMethod = isNft ? api.query.nfts.item : api.query.uniques.asset;
 
-  const itemsInformation = await Promise.all(itemsInfo.map(async (itemInfo) => await itemInfoQueryMethod(...itemInfo)))
+  const itemsInformation = await Promise.all(itemsInfo.map(async (itemInfo) => await itemInfoQueryMethod(...itemInfo)));
 
   const myItems = itemsInformation
     .map((item, index) => {
@@ -95,38 +142,42 @@ async function fetchItems (api, addresses, chainName, isNft) {
     }, {});
   }
 
-  return myItems.map(({ ids: { collectionId, itemId }, itemInfo }, index) => ({
-    chainName,
-    collectionId,
-    creator: isNft ? String(itemInfo.deposit.account) : creators?.[collectionId],
-    data: metadata[index],
-    isNft,
-    itemId,
-    owner: isNft ? String(itemInfo.owner) : itemInfo?.owner?.toString(),
-    price: prices?.[index] ?? null
-  }));
+  return myItems
+    .map(({ ids: { collectionId, itemId }, itemInfo }, index) => ({
+      chainName,
+      collectionId,
+      creator: isNft ? String(itemInfo.deposit.account) : creators?.[collectionId],
+      data: metadata[index],
+      isCollection: false,
+      isNft,
+      itemId,
+      owner: isNft ? String(itemInfo.owner) : itemInfo?.owner?.toString(),
+      price: prices?.[index] ?? null
+    }));
 }
 
 /**
  * Fetches both NFTs and uniques for a given chain
- * @param {Object} api - The API instance for interacting with the blockchain
+ * @param {ApiPromise} api - The API instance for interacting with the blockchain
  * @param {string[]} addresses - Array of addresses to fetch items for
  * @param {string} chainName - The chain identifier
- * @returns {Promise<Array>} Combined array of NFTs and uniques
+ * @returns {Promise<ItemInformation[]>} Combined array of NFTs and uniques
  */
 async function fetchNFTsForChain (api, addresses, chainName) {
-  const [nfts, uniques] = await Promise.all([
+  const [nfts, uniques, nftCollections, uniqueCollections] = await Promise.all([
     fetchItems(api, addresses, chainName, true),
-    fetchItems(api, addresses, chainName, false)
+    fetchItems(api, addresses, chainName, false),
+    fetchCollections(api, addresses, chainName, true),
+    fetchCollections(api, addresses, chainName, false)
   ]);
 
-  return [...nfts, ...uniques];
+  return [...nftCollections, ...uniqueCollections, ...nfts, ...uniques];
 }
 
 /**
  * Fetches all NFTs and uniques across all configured chains
  * @param {string[]} addresses - Array of addresses to fetch items for
- * @returns {Promise<Array>} Combined array of all NFTs and uniques across all chains
+ * @returns {Promise<Record<string, ItemInformation[]>>} Combined array of all NFT and unique items and collections across all chains, categorized by addresses
  */
 async function getNFTs (addresses) {
   const chainNames = Object.entries(SUPPORTED_NFT_CHAINS);

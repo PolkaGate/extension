@@ -3,21 +3,24 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation, ItemsDetail } from './utils/types';
 
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Warning } from '../../components';
-import { useFullscreen, useNFT, useTranslation } from '../../hooks';
+import { NftItemsContext, Warning } from '../../components';
+import { useApiWithChain2, useFullscreen, useTranslation } from '../../hooks';
+import { getAssetHubByChainName } from '../../hooks/useReferendum';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import NftList from './components/NftList';
 import Tabs from './components/Tabs';
+import { SUPPORTED_NFT_CHAINS } from './utils/constants';
 import { fetchItemMetadata } from './utils/util';
 
 enum STEPS {
@@ -31,12 +34,33 @@ function NFT (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
+  const nfts = useContext(NftItemsContext);
 
-  const nfts = useNFT(address);
+  const myNfts = useMemo(() => {
+    if (!nfts) {
+      return undefined;
+    }
+
+    if (nfts[address]?.length > 0) {
+      return nfts[address];
+    }
+
+    return null;
+  }, [address, nfts]);
 
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
   const [itemsDetail, setItemsDetail] = useState<ItemsDetail>({});
   const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
+
+  const chainNames = Object.keys(SUPPORTED_NFT_CHAINS);
+
+  const apis = Object.fromEntries(
+    chainNames.map((chainName) => [
+      chainName,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useApiWithChain2(getAssetHubByChainName(chainName) as Chain)
+    ])
+  );
 
   const reset = useCallback(() => {
     setItemsDetail({});
@@ -48,10 +72,10 @@ function NFT (): React.ReactElement {
   }, [address, reset]);
 
   useEffect(() => {
-    if (nfts) {
+    if (myNfts) {
       setStep(STEPS.INDEX);
 
-      nfts.forEach((nft) => {
+      myNfts.forEach((nft) => {
         fetchItemMetadata(nft, setItemsDetail).catch(console.error);
       });
 
@@ -59,7 +83,7 @@ function NFT (): React.ReactElement {
     }
 
     setStep(STEPS.CHECK_SCREEN);
-  }, [nfts]);
+  }, [myNfts]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -99,10 +123,11 @@ function NFT (): React.ReactElement {
                 {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
               </Typography>
               <Tabs
-                items={nfts}
+                items={myNfts}
                 setItemsToShow={setItemsToShow}
               />
               <NftList
+                apis={apis}
                 itemsDetail={itemsDetail}
                 nfts={itemsToShow}
               />

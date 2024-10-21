@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable camelcase */
 
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { DetailItemProps, DetailProp, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
@@ -14,8 +13,7 @@ import ReactMarkdown from 'react-markdown';
 
 import { Identity, Progress, ShortAddress, ShowBalance, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import { useApiWithChain2, useMetadata } from '../../../hooks';
-import { getAssetHubByChainName } from '../../../hooks/useReferendum';
+import { useMetadata } from '../../../hooks';
 import { KODADOT_URL } from '../../../util/constants';
 import { amountToMachine } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
@@ -39,48 +37,48 @@ export const InfoRow = React.memo(
     return (
       <Grid container item justifyContent='space-between'>
         {divider && !isThumbnail &&
-        <Divider sx={{ bgcolor: 'divider', height: '1px', m: '8px auto', width: '100%' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '1px', m: '8px auto', width: '100%' }} />
         }
         {title &&
-        <Typography fontSize={ isThumbnail ? '13px' : '14px'} fontWeight={400} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
-          {title}:
-        </Typography>
+          <Typography fontSize={isThumbnail ? '13px' : '14px'} fontWeight={400} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
+            {title}:
+          </Typography>
         }
         {price &&
-        <ShowBalance
-          balance={priceAsBN}
-          decimal={decimal}
-          decimalPoint={3}
-          token={token}
-          withCurrency
-        />
+          <ShowBalance
+            balance={priceAsBN}
+            decimal={decimal}
+            decimalPoint={3}
+            token={token}
+            withCurrency
+          />
         }
         {notListed &&
-        <Typography fontSize='14px' fontWeight={400} textAlign='left'>
-          {t('Not listed')}
-        </Typography>
+          <Typography fontSize='14px' fontWeight={400} textAlign='left'>
+            {t('Not listed')}
+          </Typography>
         }
         {text &&
-        <Typography fontSize='14px' fontWeight={isDescription ? 400 : 500} sx={{ '> p': { m: 0 } }} textAlign='justify'>
-          <ReactMarkdown
-            linkTarget='_blank'
-          >
-            {String(text)}
-          </ReactMarkdown>
-        </Typography>
+          <Typography fontSize='14px' fontWeight={isDescription ? 400 : 500} sx={{ '> p': { m: 0 } }} textAlign='justify'>
+            <ReactMarkdown
+              linkTarget='_blank'
+            >
+              {String(text)}
+            </ReactMarkdown>
+          </Typography>
         }
         {accountId &&
-        <>
-          {api && chain
-            ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={15} showShortAddress style={{ fontSize: '14px', maxWidth: '200px' }} />
-            : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '14px', width: 'fit-content' }} />
-          }
-        </>
+          <>
+            {api && chain
+              ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={15} showShortAddress style={{ fontSize: '14px', maxWidth: '200px' }} />
+              : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '14px', width: 'fit-content' }} />
+            }
+          </>
         }
         {link &&
-        <Link href={link} target='_blank' underline='hover'>
-          {linkName}
-        </Link>
+          <Link href={link} target='_blank' underline='hover'>
+            {linkName}
+          </Link>
         }
       </Grid>
     );
@@ -89,17 +87,17 @@ export const InfoRow = React.memo(
 export const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.ReactElement }) => (
   <>
     {!loaded &&
-    <Progress
-      gridSize={50}
-      pt={0}
-      type='grid'
-    />
+      <Progress
+        gridSize={50}
+        pt={0}
+        type='grid'
+      />
     }
     {children}
   </>
 );
 
-const Item = ({ animation_url, animationContentType, image, imageContentType }: DetailItemProps) => {
+const Item = ({ animation_url, animationContentType, image, imageContentType, setShowFullscreenDisabled }: DetailItemProps) => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   const onLoaded = useCallback(() => {
@@ -150,15 +148,20 @@ const Item = ({ animation_url, animationContentType, image, imageContentType }: 
       />
     );
   } else {
-    return <Progress />;
+    setShowFullscreenDisabled(true);
+
+    return (
+      <ItemAvatar
+        image={null}
+        size='large'
+      />
+    );
   }
 };
 
-export default function Details ({ details: { animation_url, animationContentType, description, image, imageContentType, mediaUri, metadataLink, name }, itemInformation: { chainName, collectionId, creator, isNft, itemId, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ api, details, itemInformation: { chainName, collectionId, creator, isCollection, isNft, itemId, items, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
-  const api = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
 
   const genesisHash = api?.genesisHash.toHex();
   const chain = useMetadata(genesisHash, true);
@@ -166,8 +169,9 @@ export default function Details ({ details: { animation_url, animationContentTyp
   const [showFullscreen, setShowFullscreen] = useState<boolean>(false);
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
+  const [showFullscreenDisabled, setShowFullscreenDisabled] = useState<boolean>(false);
 
-  const chainNameSymbol = () => {
+  const chainNameSymbol = useCallback(() => {
     switch (chainName) {
       case 'Polkadot Asset Hub':
         return 'ahp';
@@ -176,21 +180,27 @@ export default function Details ({ details: { animation_url, animationContentTyp
       default:
         return '';
     }
-  };
+  }, [chainName]);
 
-  const NFT_URL_ON_KODADOT = `${KODADOT_URL}/${chainNameSymbol()}/gallery/${collectionId}-${itemId}`;
+  const NFT_URL_ON_KODADOT = useMemo(() => {
+    if (isCollection) {
+      return `${KODADOT_URL}/${chainNameSymbol()}/collection/${collectionId}`;
+    } else {
+      return `${KODADOT_URL}/${chainNameSymbol()}/gallery/${collectionId}-${itemId}`;
+    }
+  }, [chainNameSymbol, collectionId, isCollection, itemId]);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
   useEffect(() => {
     const getUniqueGif = async () => {
-      if (isNft || !mediaUri) {
+      if (isNft || !details?.mediaUri) {
         setGifSource(null);
 
         return;
       }
 
-      const { isIPFS, sanitizedUrl } = getContentUrl(mediaUri);
+      const { isIPFS, sanitizedUrl } = getContentUrl(details.mediaUri);
 
       if (!isIPFS) {
         setGifSource(null);
@@ -217,22 +227,26 @@ export default function Details ({ details: { animation_url, animationContentTyp
     };
 
     getUniqueGif().catch(console.error);
-  }, [mediaUri, isNft]);
+  }, [details?.mediaUri, isNft]);
 
   const { iFrame, source } = useMemo(() => {
     if (gifSource) {
       return { iFrame: false, source: gifSource };
-    } else if (animation_url && animationContentType === 'text/html') {
-      return { iFrame: true, source: animation_url };
+    } else if (details?.animation_url && details?.animationContentType === 'text/html') {
+      return { iFrame: true, source: details?.animation_url };
     } else {
-      return { iFrame: false, source: image };
+      return { iFrame: false, source: details?.image };
     }
-  }, [animationContentType, animation_url, gifSource, image]);
+  }, [details?.animationContentType, details?.animation_url, gifSource, details?.image]);
 
   const openFullscreen = useCallback(() => {
+    if (showFullscreenDisabled) {
+      return;
+    }
+
     document.documentElement.requestFullscreen().catch(console.error);
     setShowFullscreen(true);
-  }, []);
+  }, [showFullscreenDisabled]);
 
   const closeFullscreen = useCallback(() => {
     setShowFullscreen(false);
@@ -246,10 +260,10 @@ export default function Details ({ details: { animation_url, animationContentTyp
         <Grid container item>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', mb: '20px' }}>
             <Typography fontSize='20px' fontWeight={500} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
-              {name ?? (isNft ? t('NFT Detail') : t('Unique Detail'))}
+              {details?.name ?? (isNft ? t('NFT Detail') : t('Unique Detail'))}
             </Typography>
             <Grid item>
-              <IconButton onClick={openFullscreen} sx={{ mr: 1 }}>
+              <IconButton disabled={showFullscreenDisabled} onClick={openFullscreen} sx={{ mr: 1 }}>
                 <OpenInFullIcon sx={{ color: 'primary.main' }} />
               </IconButton>
               <IconButton onClick={closeDetail}>
@@ -260,24 +274,25 @@ export default function Details ({ details: { animation_url, animationContentTyp
           <Grid container item justifyContent='space-between' width='740px'>
             <Grid alignItems='center' container item width='fit-content'>
               <Item
-                animationContentType={animationContentType}
-                animation_url={animation_url}
-                image={gifSource || image}
-                imageContentType={imageContentType}
+                animationContentType={details?.animationContentType}
+                animation_url={details?.animation_url}
+                image={gifSource || details?.image}
+                imageContentType={details?.imageContentType}
+                setShowFullscreenDisabled={setShowFullscreenDisabled}
               />
             </Grid>
             <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '460px', overflowY: 'scroll', p: '15px 20px', width: '390px' }}>
-              {description &&
+              {details?.description &&
                 <Grid item sx={{ pb: '15px' }}>
                   <InfoRow
                     divider={false}
                     inline={false}
-                    text={description}
+                    text={details.description}
                   />
                 </Grid>
               }
               <InfoRow
-                divider={!!description}
+                divider={!!details?.description}
                 text={chainName}
                 title={t('Network')}
               />
@@ -287,30 +302,37 @@ export default function Details ({ details: { animation_url, animationContentTyp
                   title={t('Collection ID')}
                 />
               }
+              {items !== undefined &&
+                <InfoRow
+                  divider={!!collectionId}
+                  text={items.toString()}
+                  title={t('Items')}
+                />
+              }
               {itemId !== undefined &&
                 <InfoRow
-                  divider={!!collectionId || !!description}
+                  divider={!!collectionId || !!details?.description}
                   text={itemId}
                   title={isNft ? t('NFT ID') : t('Unique ID')}
                 />
               }
-              {metadataLink &&
+              {details?.metadataLink &&
                 <InfoRow
-                  divider={!!itemId}
-                  text={`[application/json](${metadataLink})`}
+                  divider={!!itemId || items !== undefined}
+                  text={`[application/json](${details.metadataLink})`}
                   title={t('Metadata')}
                 />
               }
-              {image &&
+              {details?.image &&
                 <InfoRow
-                  text={`[${imageContentType}](${image})`}
+                  text={`[${details?.imageContentType}](${details.image})`}
                   title={t('Image')}
                 />
               }
-              {animation_url &&
+              {details?.animation_url &&
                 <InfoRow
-                  text={`[${animationContentType}](${animation_url})`}
-                  title={animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
+                  text={`[${details?.animationContentType}](${details?.animation_url})`}
+                  title={details?.animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
                 />
               }
               {gifSource &&
@@ -319,11 +341,13 @@ export default function Details ({ details: { animation_url, animationContentTyp
                   title={t('Media')}
                 />
               }
-              <InfoRow
-                api={api}
-                price={price}
-                title={t('Price')}
-              />
+              {!isCollection &&
+                <InfoRow
+                  api={api}
+                  price={price}
+                  title={t('Price')}
+                />
+              }
               {creator &&
                 <InfoRow
                   accountId={creator}
@@ -350,6 +374,7 @@ export default function Details ({ details: { animation_url, animationContentTyp
             </Grid>
           </Grid>
           <TwoButtons
+            disabled={showFullscreenDisabled}
             ml='0'
             mt='40px'
             onPrimaryClick={openFullscreen}

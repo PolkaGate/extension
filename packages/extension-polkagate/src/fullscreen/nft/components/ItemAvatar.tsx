@@ -21,7 +21,7 @@ const SIZE = {
   },
   small: {
     height: '220px',
-    width: '190px'
+    width: '188px'
   }
 };
 

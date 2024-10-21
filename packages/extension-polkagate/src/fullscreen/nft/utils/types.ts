@@ -12,9 +12,11 @@ export interface ItemInformation {
   itemId?: string;
   data?: string;
   isNft: boolean;
-  creator: string | undefined;
+  isCollection: boolean;
+  creator?: string | undefined;
   owner: string;
   price?: BN | null | undefined;
+  items?: number;
 }
 
 export interface FilterSectionProps {
@@ -32,7 +34,7 @@ export interface CheckboxButtonProps {
 interface Attribute { label: string; value: string }
 
 export interface ItemMetadata {
-  animation_url?: string;
+  animation_url?: string | null;
   name?: string | undefined;
   description?: string | undefined;
   image?: string | null | undefined;
@@ -46,9 +48,10 @@ export interface ItemMetadata {
 
 export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;
 
-export interface ItemProps {
+export interface ThumbnailProps {
   itemInformation: ItemInformation | undefined;
   itemsDetail: ItemsDetail;
+  api: ApiPromise | undefined;
 }
 
 export interface ItemAvatarProp {
@@ -65,7 +68,8 @@ export interface FullscreenNftModalProps {
 }
 
 export interface DetailsProp {
-  details: ItemMetadata;
+  api: ApiPromise | undefined;
+  details: ItemMetadata | null;
   itemInformation: ItemInformation;
   show: boolean;
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
@@ -88,6 +92,7 @@ export interface DetailProp {
 export interface ItemsListProps {
   nfts: ItemInformation[] | null | undefined;
   itemsDetail: ItemsDetail;
+  apis: Record<string, ApiPromise | undefined>;
 }
 
 export interface DataType {
@@ -98,10 +103,11 @@ export interface DataType {
 export type NftsPrices = [number, string | null] | null;
 
 export interface DetailItemProps {
-  animation_url: string | undefined;
+  animation_url: string | null | undefined;
   animationContentType: string | undefined;
   imageContentType: string | undefined;
   image: string | null | undefined;
+  setShowFullscreenDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface AudioPlayerProps {

@@ -7,7 +7,7 @@ import type { DataType, ItemInformation, ItemMetadata, ItemsDetail } from './typ
 import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_BACKOFF_TIME, MAX_RETRY_ATTEMPTS } from './constants';
 
 export const getContentUrl = (url: string | undefined) => {
-  if (!url) {
+  if (!url || url.length < 10) {
     return { isIPFS: false, sanitizedUrl: undefined };
   }
 
@@ -142,8 +142,8 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
     const detail = {
       ...itemMetadata,
       animationContentType: nftAnimationContent?.contentType,
-      animation_url: nftAnimationContent?.url,
-      image: nftImageContent?.url,
+      animation_url: nftAnimationContent?.url ?? null,
+      image: nftImageContent?.url ?? null,
       imageContentType: nftImageContent?.contentType
     };
 
