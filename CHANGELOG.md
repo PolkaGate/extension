@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.19.1](https://github.com/polkagate/extension/compare/v0.19.0...v0.19.1) (2024-10-21)
+
+
+### Bug Fixes
+
+* referenda tracks Max ([#1591](https://github.com/polkagate/extension/issues/1591)) ([268a5eb](https://github.com/polkagate/extension/commit/268a5eb2578f677f2ce3233fc3cdd66defd76691))
+
 # [0.19.0](https://github.com/polkagate/extension/compare/v0.18.4...v0.19.0) (2024-10-16)
 
 
