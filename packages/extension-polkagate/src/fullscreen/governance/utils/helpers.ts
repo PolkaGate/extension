@@ -25,7 +25,6 @@ export interface Statistics {
   'OriginsCount': number
 }
 
-
 interface DataSS {
   items: CommentItemSS[];
   page: number;
@@ -101,7 +100,11 @@ interface ReactionSS {
   parentCid: string,
   reaction: number,
   updatedAt: string,
-  user: null
+  user: {
+    address: string;
+    publicKey: string;
+    username: string;
+  } | null
 }
 
 export interface VoteType {
@@ -460,7 +463,7 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
     const formattedComments = comments.items.map(({ _id, author, content, createdAt, proposer, reactions, replies, updatedAt }) => ({
       commentSource: 'SS',
       comment_reactions: {
-        '👍': { count: reactions.length, usernames: reactions[0]?.user },
+        '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
         '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
       },
       content,
@@ -475,7 +478,7 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
         id: _id,
         proposer,
         reply_reactions: {
-          '👍': { count: reactions.length, usernames: reactions[0]?.user },
+          '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
           '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
         },
         updated_at: updatedAt,
