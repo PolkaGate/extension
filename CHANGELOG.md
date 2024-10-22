@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.19.2](https://github.com/polkagate/extension/compare/v0.19.1...v0.19.2) (2024-10-22)
+
+
+### Bug Fixes
+
+* fix displaying reaction issue ([#1596](https://github.com/polkagate/extension/issues/1596)) ([1a0e8a9](https://github.com/polkagate/extension/commit/1a0e8a9e50999972426b3b9dcf3fef293234f1d9))
+
 ## [0.19.1](https://github.com/polkagate/extension/compare/v0.19.0...v0.19.1) (2024-10-21)
 
 
