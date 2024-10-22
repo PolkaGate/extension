@@ -444,7 +444,6 @@ export default function Governance (): React.ReactElement {
                                   : !!referenda?.length && referendumCount[topMenu] && referenda.length < (referendumCount[topMenu] || 0)
                                     ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
                                       <div id='observerObj' style={{ height: '1px' }} />
-                                      {t('Loaded {{count}} out of {{referendumCount}} referenda. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                                     </Typography>
                                     : <Typography color='text.disabled' fontSize='15px'>
                                       {t('No more referenda to load.')}
@@ -454,6 +453,9 @@ export default function Governance (): React.ReactElement {
                               : isLoadingMore &&
                               <Grid container justifyContent='center'>
                                 <HorizontalWaiting color={theme.palette.primary.main} />
+                                <Typography color='secondary.contrastText' fontSize='13px' display='block' width="100%" textAlign="center">
+                                  {t('Loaded {{count}} out of {{referendumCount}} referenda ...', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
+                                </Typography>
                               </Grid>
                           }
                         </>
