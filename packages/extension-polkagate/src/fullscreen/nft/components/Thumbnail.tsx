@@ -20,7 +20,17 @@ export default function Thumbnail ({ api, itemInformation, itemsDetail }: Thumbn
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const itemDetail = useMemo(() => itemsDetail[`${itemInformation?.collectionId} - ${itemInformation?.itemId}`], [itemInformation?.collectionId, itemInformation?.itemId, itemsDetail]);
+  const itemDetail = useMemo(() => {
+    if (!itemInformation) {
+      return undefined;
+    }
+
+    const id = itemInformation.isCollection
+      ? `${itemInformation.collectionId}`
+      : `${itemInformation.collectionId} - ${itemInformation.itemId}`;
+
+    return itemsDetail[id];
+  }, [itemInformation, itemsDetail]);
   const displayNft = useMemo(() => (itemDetail || (itemDetail === null && itemInformation?.data)), [itemInformation?.data, itemDetail]);
 
   const openNftDetail = useCallback(() => setShowDetail(true), []);

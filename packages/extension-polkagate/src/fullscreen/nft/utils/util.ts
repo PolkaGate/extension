@@ -98,12 +98,16 @@ export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = 
 };
 
 export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (value: React.SetStateAction<ItemsDetail>) => void) => {
+  const id = item.isCollection
+    ? `${item.collectionId}`
+    : `${item.collectionId} - ${item.itemId}`;
+
   try {
     // if data in empty or null or undefined so the item detail gonna be null, means nothing to display
     if (!item.data) {
       setItemsDetail((perv) => ({
         ...perv,
-        [`${item.collectionId} - ${item.itemId}`]: null
+        [id]: null
       }));
 
       return;
@@ -114,7 +118,7 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
     if (!itemMetadata) {
       setItemsDetail((perv) => ({
         ...perv,
-        [`${item.collectionId} - ${item.itemId}`]: null
+        [id]: null
       }));
 
       return;
@@ -149,13 +153,13 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
 
     setItemsDetail((perv) => ({
       ...perv,
-      [`${item.collectionId} - ${item.itemId}`]: detail
+      [id]: detail
     }));
   } catch (error) {
     console.error('Error fetching NFT metadata:', error);
     setItemsDetail((perv) => ({
       ...perv,
-      [`${item.collectionId} - ${item.itemId}`]: null
+      [id]: null
     }));
   }
 };
