@@ -37,7 +37,7 @@ function NFT (): React.ReactElement {
   const nfts = useContext(NftItemsContext);
 
   const myNfts = useMemo(() => {
-    if (!nfts) {
+    if (!nfts || !(address in nfts)) {
       return undefined;
     }
 
