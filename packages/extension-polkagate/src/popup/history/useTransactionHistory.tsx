@@ -183,8 +183,6 @@ export default function useTransactionHistory (address: string | undefined, tabI
     const observerCallback = async (entries: IntersectionObserverEntry[]): Promise<void> => {
       const [entry] = entries;
 
-      console.log('entry.isIntersecting:', entry.isIntersecting)
-      
       if (!entry.isIntersecting) {
         return; // If the observer object is not in view, do nothing
       }
