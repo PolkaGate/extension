@@ -395,13 +395,13 @@ interface RefListSb {
   }[];
 }
 
-export async function getReferendumsListSb (chainName: string, type: TopMenu, listingLimit = 30): Promise<RefListSb | null> {
+export async function getReferendumsListSb (chainName: string, type: 'referenda' | 'fellowship', listingLimit = 30): Promise<RefListSb | null> {
   console.log('Getting ref list from sb ...');
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendums`,
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLowerCase()}/referendums`,
         {
           // page:1,
           row: listingLimit

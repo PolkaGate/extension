@@ -1,15 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Count } from '../../../hooks/useDecidingCount';
 
 import { AdminPanelSettings as AdminsIcon, BorderAll as All, Groups3 as Groups3Icon, List as ListIcon } from '@mui/icons-material/';
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Count } from '../../../hooks/useDecidingCount';
 import { MAX_WIDTH } from '../utils/consts';
 import { findItemDecidingCount } from './ReferendaMenu';
 
@@ -21,7 +21,7 @@ interface Props {
 
 }
 
-export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+export default function FellowshipMenu ({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   const history = useHistory();
   const theme = useTheme();
 
@@ -29,7 +29,7 @@ export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, s
     setMenuOpen(false);
   }, [setMenuOpen]);
 
-  function MenuItem({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
+  function MenuItem ({ borderWidth = '2px', clickable = true, fontWeight, icon, item, top = false, width = '18%' }: { item: string, icon?: React.ReactElement, top?: boolean, width?: string, borderWidth?: string, fontWeight?: number, clickable?: boolean }): React.ReactElement {
     const decidingCount = findItemDecidingCount(item, decidingCounts);
 
     const onSubMenuClick = useCallback(() => {
@@ -44,7 +44,9 @@ export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, s
     return (
       <Grid alignItems='center' container item
         sx={{
-          borderBottom: top && `${borderWidth} solid`,
+          '&:hover': clickable ? { fontWeight: 700, textDecoration: 'underline' } : undefined,
+          borderBottom: top ? `${borderWidth} solid` : undefined,
+          borderColor: 'primary.main',
           color: clickable
             ? (theme.palette.mode === 'light'
               ? 'secondary.main'
@@ -53,7 +55,11 @@ export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, s
               ? 'text.primary'
               : 'action.focus'
             ),
-          cursor: clickable && 'pointer', fontSize: '18px', width, borderColor: 'primary.main', mr: '20px', py: '5px', '&:hover': clickable && { fontWeight: 700, textDecoration: 'underline' }
+          cursor: clickable ? 'pointer' : undefined,
+          fontSize: '18px',
+          mr: '20px',
+          py: '5px',
+          width
         }}>
         {icon}
         <Typography onClick={onSubMenuClick} sx={{ display: 'inline-block', fontWeight: fontWeight || 'inherit' }}>

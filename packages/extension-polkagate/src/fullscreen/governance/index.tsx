@@ -1,13 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { u32 } from '@polkadot/types-codec';
 import type { LatestReferenda } from './utils/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
+// @ts-ignore
 import { CubeGrid } from 'better-react-spinkit';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -34,7 +34,7 @@ export type Fellowship = [string, number];
 export default function Governance (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const { state } = useLocation();
+  const { state } = useLocation() as unknown as {state: {selectedSubMenu?: string}};
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
   const api = useApi(address);
@@ -48,7 +48,7 @@ export default function Governance (): React.ReactElement {
 
   const pageTrackRef = useRef({ listFinished: false, page: 1, subMenu: 'All', topMenu });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu as string || 'All');
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<{ referenda: number | undefined, fellowship: number | undefined }>({ fellowship: undefined, referenda: undefined });
   const [referenda, setReferenda] = useState<LatestReferenda[] | null>();
   const [filteredReferenda, setFilteredReferenda] = useState<LatestReferenda[] | null>();
@@ -77,7 +77,7 @@ export default function Governance (): React.ReactElement {
     fetchJson();
   }, []);
 
-  const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber() as number;
+  const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber()!;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
     if (!tracks && !fellowshipTracks) {
@@ -131,7 +131,7 @@ export default function Governance (): React.ReactElement {
       return;
     }
 
-    if (!api.consts.referenda || !api.query.referenda) {
+    if (!api.consts['referenda'] || !api.query['referenda']) {
       console.log('OpenGov is not supported on this chain');
       setNotSupportedChain(true);
       // to reset refs on non supported chain, or when chain has changed
@@ -143,19 +143,23 @@ export default function Governance (): React.ReactElement {
 
     setNotSupportedChain(false);
 
-    api.query.referenda.referendumCount().then((count) => {
-      referendumCount.referenda = count?.toNumber();
+    api.query['referenda']['referendumCount']().then((count) => {
+      referendumCount.referenda = (count as u32)?.toNumber();
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
 
-    api.query.fellowshipReferenda && api.query.fellowshipReferenda.referendumCount().then((count) => {
-      referendumCount.fellowship = count?.toNumber();
+    api.query['fellowshipReferenda']?.['referendumCount']().then((count) => {
+      referendumCount.fellowship = (count as u32)?.toNumber();
       setReferendumCount({ ...referendumCount });
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, chainName]);
 
   const addFellowshipOriginsFromSb = useCallback(async (resPA: LatestReferenda[]): Promise<LatestReferenda[] | undefined> => {
+    if (!chainName) {
+      return;
+    }
+
     const resSb = await getReferendumsListSb(chainName, topMenu, pageTrackRef.current.page * LATEST_REFERENDA_LIMIT_TO_LOAD_PER_REQUEST);
 
     if (resSb) {
@@ -297,8 +301,9 @@ export default function Governance (): React.ReactElement {
       return;
     }
 
-    api.query.fellowshipCollective && api.query.fellowshipCollective.members.entries().then((keys) => {
+    api.query['fellowshipCollective']?.['members'].entries().then((keys) => {
       const fellowships = keys.map(([{ args: [id] }, option]) => {
+        //@ts-ignore
         return [id.toString(), option?.value?.rank?.toNumber()] as Fellowship;
       });
 
@@ -311,6 +316,47 @@ export default function Governance (): React.ReactElement {
     pageTrackRef.current = { ...pageTrackRef.current, page: pageTrackRef.current.page + 1 };
     setGetMore(pageTrackRef.current.page);
   }, [pageTrackRef]);
+
+  const observerInstance = useRef<IntersectionObserver>();
+  const target = document.getElementById('observerObj');
+
+  useEffect(() => {
+    const observerCallback = (entries: IntersectionObserverEntry[]): void => {
+      const [entry] = entries;
+
+      if (!entry.isIntersecting) {
+        return; // If the observer object is not in view, do nothing
+      }
+
+      if (isLoadingMore) {
+        return; // If already fetching, do nothing
+      }
+
+      if (pageTrackRef.current.listFinished) {
+        observerInstance.current?.disconnect();
+
+        return;
+      }
+
+      getMoreReferenda();
+    };
+
+    const options = {
+      root: document.getElementById('scrollArea'),
+      rootMargin: '0px',
+      threshold: 1.0 // Trigger when 100% of the target (observerObj) is visible
+    };
+
+    observerInstance.current = new IntersectionObserver(observerCallback, options);
+
+    if (target) {
+      observerInstance.current.observe(target); // Start observing the target
+    }
+
+    return () => {
+      observerInstance.current?.disconnect();
+    };
+  }, [chainName, getMoreReferenda, isLoadingMore, target]);
 
   return (
     <>
@@ -335,16 +381,19 @@ export default function Governance (): React.ReactElement {
             decidingCounts={decidingCounts}
             menuOpen={menuOpen}
             setMenuOpen={setMenuOpen}
+            // @ts-ignore
             setSelectedSubMenu={setSelectedSubMenu}
           />
           <Container disableGutters sx={{ maxWidth: 'inherit' }}>
             <Bread
               address={address}
+              // @ts-ignore
               setSelectedSubMenu={setSelectedSubMenu}
               subMenu={selectedSubMenu}
+              // @ts-ignore
               topMenu={topMenu}
             />
-            <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', px: '10px' }}>
+            <Container disableGutters id='scrollArea' sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll', px: '10px' }}>
               {selectedSubMenu === 'All'
                 ? <AllReferendaStats
                   address={address}
@@ -389,11 +438,12 @@ export default function Governance (): React.ReactElement {
                             !isLoadingMore
                               ? <Grid container item justifyContent='center' sx={{ '&:hover': { cursor: 'pointer' }, pb: '15px' }}>
                                 {notSupportedChain
-                                  ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda} pt='50px'>
+                                  ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} pt='50px'>
                                     {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
                                   </Typography>
                                   : !!referenda?.length && referendumCount[topMenu] && referenda.length < (referendumCount[topMenu] || 0)
                                     ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
+                                      <div id='observerObj' style={{ height: '1px' }} />
                                       {t('Loaded {{count}} out of {{referendumCount}} referenda. Click here to load more', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                                     </Typography>
                                     : <Typography color='text.disabled' fontSize='15px'>
