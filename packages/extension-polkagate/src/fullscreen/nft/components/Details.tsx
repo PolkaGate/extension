@@ -30,8 +30,8 @@ export const InfoRow = React.memo(
     const token = api?.registry.chainTokens[0];
 
     const convertedAmount = useMemo(() => price && decimal ? (price.toNumber() / 10 ** decimal).toString() : null, [decimal, price]);
-    const priceAsBN = convertedAmount ? amountToMachine(convertedAmount, decimal) : null;
-    const notListed = price !== undefined && price === null;
+    const priceAsBN = useMemo(() => convertedAmount ? amountToMachine(convertedAmount, decimal) : null, [convertedAmount, decimal]);
+    const notListed = price === null;
     const isDescription = !title;
 
     return (
@@ -100,11 +100,15 @@ export const WithLoading = ({ children, loaded }: { loaded: boolean, children: R
 const Item = ({ animation_url, animationContentType, image, imageContentType, setShowFullscreenDisabled }: DetailItemProps) => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
+  const isHtmlContent = animation_url && animationContentType === 'text/html';
+  const isAudioOnly = !image && animation_url && animationContentType?.startsWith('audio');
+  const isImageWithAudio = image && imageContentType?.startsWith('image') && animation_url && animationContentType?.startsWith('audio');
+
   const onLoaded = useCallback(() => {
     setLoaded(true);
   }, []);
 
-  if (animation_url && animationContentType === 'text/html') {
+  if (isHtmlContent) {
     return (
       <>
         {!loaded &&
@@ -126,11 +130,11 @@ const Item = ({ animation_url, animationContentType, image, imageContentType, se
         />
       </>
     );
-  } else if (!image && animation_url && animationContentType?.startsWith('audio')) {
+  } else if (isAudioOnly) {
     return (
       <AudioPlayer audioUrl={animation_url} />
     );
-  } else if (image && imageContentType?.startsWith('image') && animation_url && animationContentType?.startsWith('audio')) {
+  } else if (isImageWithAudio) {
     return (
       <Grid container direction='column' item rowGap='20px' width='320px'>
         <ItemAvatar

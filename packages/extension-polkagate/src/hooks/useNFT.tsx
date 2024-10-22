@@ -17,6 +17,7 @@ export default function useNFT (accountsFromContext: AccountJson[] | null, setNf
 
   const [fetching, setFetching] = useState<boolean>(false);
 
+  const isWhitelistedPath = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs') || window.location.hash.startsWith('#/nft');
   const addresses = (accountsFromContext || []).map(({ address: accountAddress }) => accountAddress);
 
   const saveToStorage = useCallback(async (data: NftItemsContextType) => {
@@ -95,10 +96,10 @@ export default function useNFT (accountsFromContext: AccountJson[] | null, setNf
   }, [notify, processAndSetNFTs, saveToStorage, t]);
 
   useEffect(() => {
-    if (!fetching && addresses && addresses.length > 0) {
+    if (!fetching && addresses && addresses.length > 0 && isWhitelistedPath) {
       fetchNFTs(addresses);
     }
-  }, [addresses, fetching, fetchNFTs]);
+  }, [addresses, fetching, fetchNFTs, isWhitelistedPath]);
 
   useEffect(() => {
     getFromStorage()
