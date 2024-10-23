@@ -180,7 +180,7 @@ export default function useTransactionHistory (address: string | undefined, tabI
       return;
     }
 
-    const observerCallback = async (entries: IntersectionObserverEntry[]): Promise<void> => {
+    const observerCallback = (entries: IntersectionObserverEntry[]): void => {
       const [entry] = entries;
 
       if (!entry.isIntersecting) {
@@ -198,7 +198,10 @@ export default function useTransactionHistory (address: string | undefined, tabI
         return;
       }
 
-      await getTransfers(receivingTransfers.current); // Fetch more transfers if available
+      getTransfers(receivingTransfers.current) // Fetch more transfers if available
+        .catch((error) => {
+          console.error('Error fetching transfers:', error);
+        });
     };
 
     const options = {
