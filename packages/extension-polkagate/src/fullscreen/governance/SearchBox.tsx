@@ -48,8 +48,10 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
+
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [filter, setFilter] = useState<Filter>(JSON.parse(JSON.stringify(DEFAULT_FILTER)) as Filter);
+  const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -86,6 +88,8 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
     }
 
     keyword = keyword.trim();
+
+    setSearchKeyword(keyword);
 
     const _filtered = referenda?.filter((r) =>
       (filter.advanced.refIndex && String(r.post_id) === keyword) ||
@@ -134,6 +138,13 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
     setFilteredReferenda(isAnyFilterOn ? uniqueFiltered : referenda);
   }, [filter, formatted, myVotedReferendaIndexes, referenda, setFilteredReferenda]);
 
+  useEffect(() => {
+    /**  To re-apply search keyword on referenda loadings */
+    if (searchKeyword) {
+      onSearch(searchKeyword);
+    }
+  }, [onSearch, referenda, searchKeyword]);
+
   const onChangeStatus = useCallback((s: number) => {
     s = String(s) === 'All' ? 0 : s;
     const list = referenda?.filter((ref) => REFERENDA_STATUS[s].includes(ref.status));
@@ -151,7 +162,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
           <InputFilter
             autoFocus={false}
             onChange={onSearch}
-            placeholder={t<string>('🔍 Search in all referenda ')}
+            placeholder={t('🔍 Search in all referenda ')}
             theme={theme}
           // value={searchKeyword ?? ''}
           />
