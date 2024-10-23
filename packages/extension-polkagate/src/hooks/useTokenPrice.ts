@@ -13,9 +13,11 @@ import { getPriceIdByChainName } from '../util/utils';
 import { useInfo, usePrices } from '.';
 
 const DEFAULT_PRICE = {
+  decimal: undefined,
   price: undefined,
   priceChainName: undefined,
-  priceDate: undefined
+  priceDate: undefined,
+  token: undefined
 };
 
 const assetsChains = createAssets();
@@ -23,13 +25,16 @@ const assetsChains = createAssets();
 /**
  *  @description retrieve the price of a token from local storage PRICES
  * @param address : accounts substrate address
+ * @param assetId : asset id on multi asset chains
+ * @param assetChainName : chain name to fetch asset id price from
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (address: string | undefined, assetId?: number | string): Price | typeof DEFAULT_PRICE {
-  const { chainName, genesisHash } = useInfo(address);
+export default function useTokenPrice (address: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
+  const { chainName: addressChainName, decimal, genesisHash, token } = useInfo(address);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();
-  const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
+  const _chainName = assetChainName || addressChainName;
+  const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(_chainName || '')];
 
   const isAssetHub = ASSET_HUBS.includes(genesisHash || '');
 
@@ -42,21 +47,27 @@ export default function useTokenPrice (address: string | undefined, assetId?: nu
   , [assetId, isAssetHub]);
 
   return useMemo(() => {
-    if (!chainName || !pricesInCurrencies) {
+    if (!_chainName || !pricesInCurrencies || !token || !decimal) {
       return DEFAULT_PRICE;
     }
 
     // FixMe, on second fetch of asset id its type will get string which is weird!!
-    const priceId = _assetId !== undefined && ((typeof _assetId === 'number' && _assetId > NATIVE_TOKEN_ASSET_ID) || isAssetHub)
-      ? maybeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId) || id === _assetId)?.priceId
-      : userAddedPriceId || getPriceIdByChainName(chainName);
+    const maybeAssetInfo = _assetId !== undefined && ((typeof _assetId === 'number' && _assetId > NATIVE_TOKEN_ASSET_ID) || isAssetHub)
+      ? maybeAssetsOnMultiAssetChains?.find(({ id }) => id === Number(_assetId) || id === _assetId)
+      : undefined;
+
+    const priceId = maybeAssetInfo?.priceId || userAddedPriceId || getPriceIdByChainName(_chainName);
 
     const maybePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
+    const _decimal = maybeAssetInfo?.decimal || decimal;
+    const _token = maybeAssetInfo?.symbol || token;
 
     return {
+      decimal: _decimal,
       price: maybePriceValue,
-      priceChainName: chainName?.toLocaleLowerCase(),
-      priceDate: pricesInCurrencies.date
+      priceChainName: _chainName?.toLocaleLowerCase(),
+      priceDate: pricesInCurrencies.date,
+      token: _token
     };
-  }, [_assetId, chainName, isAssetHub, maybeAssetsOnMultiAssetChains, pricesInCurrencies, userAddedPriceId]);
+  }, [_assetId, _chainName, decimal, isAssetHub, maybeAssetsOnMultiAssetChains, pricesInCurrencies, token, userAddedPriceId]);
 }
