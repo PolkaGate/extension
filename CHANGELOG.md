@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.19.5](https://github.com/polkagate/extension/compare/v0.19.4...v0.19.5) (2024-10-23)
+
+
+### Bug Fixes
+
+* search ref problem ([#1602](https://github.com/polkagate/extension/issues/1602)) ([a43adba](https://github.com/polkagate/extension/commit/a43adba1df696a6aefccca11ae960c18b794d456))
+
 ## [0.19.4](https://github.com/polkagate/extension/compare/v0.19.3...v0.19.4) (2024-10-23)
 
 
