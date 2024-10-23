@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.19.3](https://github.com/polkagate/extension/compare/v0.19.2...v0.19.3) (2024-10-23)
+
+
+### Bug Fixes
+
+* apply search after loading referenda [#1220](https://github.com/polkagate/extension/issues/1220) ([#1597](https://github.com/polkagate/extension/issues/1597)) ([ab372b9](https://github.com/polkagate/extension/commit/ab372b9f785a7316a2a30164b23573bcf4e7fc92))
+
+## [0.19.2](https://github.com/polkagate/extension/compare/v0.19.1...v0.19.2) (2024-10-22)
+
+
+### Bug Fixes
+
+* fix displaying reaction issue ([#1596](https://github.com/polkagate/extension/issues/1596)) ([1a0e8a9](https://github.com/polkagate/extension/commit/1a0e8a9e50999972426b3b9dcf3fef293234f1d9))
+
 ## [0.19.1](https://github.com/polkagate/extension/compare/v0.19.0...v0.19.1) (2024-10-21)
 
 
