@@ -26,21 +26,29 @@ export default function useReferendaRequested (address: string | undefined, refe
   const currency = useCurrency();
 
   const maybeAssetIdInNumber = referendum?.assetId ? Number(referendum.assetId) : undefined;
-  const maybeAssetHubs = referendum?.assetId
-    ? chainName?.includes('Polkadot')
+
+  const maybeAssetHubs = useMemo(() => {
+    if (!referendum?.assetId || !chainName) {
+      return undefined;
+    }
+
+    return chainName.includes('Polkadot')
       ? 'polkadot asset hub'
-      : 'kusama asset hub'
-    : undefined;
+      : chainName.includes('Kusama')
+        ? 'kusama asset hub'
+        : undefined;
+  }, [chainName, referendum?.assetId]);
+
   const priceInfo = useTokenPrice(address, maybeAssetIdInNumber, maybeAssetHubs);
   const _decimal = priceInfo?.decimal || referendum?.decimal || decimal;
   const _token = priceInfo?.token || referendum?.token || token;
 
   return useMemo(() => {
-    if (!referendum?.requested || !currency || !_decimal || !_token || !priceInfo.price || !priceInfo.decimal) {
+    if (!referendum?.requested || !currency || !_decimal || !_token || !priceInfo.price) {
       return DEFAULT_OUTPUT;
     }
 
-    const requestedAssetInCurrency = (Number(referendum.requested) / 10 ** priceInfo.decimal) * priceInfo.price;
+    const requestedAssetInCurrency = (Number(referendum.requested) / 10 ** _decimal) * priceInfo.price;
 
     return {
       rAssetInCurrency: requestedAssetInCurrency,
