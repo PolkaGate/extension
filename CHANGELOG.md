@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.19.4](https://github.com/polkagate/extension/compare/v0.19.3...v0.19.4) (2024-10-23)
+
+
+### Bug Fixes
+
+* asset requested issue while currency is something other than USD ([#1594](https://github.com/polkagate/extension/issues/1594)) ([9083e0b](https://github.com/polkagate/extension/commit/9083e0bb3e6376ea85004bf8b78b18a88329fffd))
+
+## [0.19.3](https://github.com/polkagate/extension/compare/v0.19.2...v0.19.3) (2024-10-23)
+
+
+### Bug Fixes
+
+* apply search after loading referenda [#1220](https://github.com/polkagate/extension/issues/1220) ([#1597](https://github.com/polkagate/extension/issues/1597)) ([ab372b9](https://github.com/polkagate/extension/commit/ab372b9f785a7316a2a30164b23573bcf4e7fc92))
+
 ## [0.19.2](https://github.com/polkagate/extension/compare/v0.19.1...v0.19.2) (2024-10-22)
 
 

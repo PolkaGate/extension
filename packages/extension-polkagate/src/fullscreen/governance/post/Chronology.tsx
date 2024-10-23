@@ -131,10 +131,15 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
         sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}
       >
         <Grid container item>
-          <Grid container item xs={12}>
+          <Grid alignItems='baseline' container item>
             <Typography fontSize={24} fontWeight={500}>
               {t('Timeline')}
             </Typography>
+            {!expanded &&
+              <Typography fontSize={16} fontWeight={300} sx={{ color: 'text.disabled', ml: '10px' }}>
+                {`(${sortedHistory?.length ? treasuryLabel || pascalCaseToTitleCase(sortedHistory[0].status)?.trim() : 'Unknown'})`}
+              </Typography>
+            }
           </Grid>
         </Grid>
       </AccordionSummary>

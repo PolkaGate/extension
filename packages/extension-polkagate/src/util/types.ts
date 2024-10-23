@@ -614,6 +614,8 @@ export interface PricesInCurrencies {
 
 export interface Price {
   price: number;
+  decimal: number;
+  token: string;
   priceChainName: string;
   priceDate: number;
 }

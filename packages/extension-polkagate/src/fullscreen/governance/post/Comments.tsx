@@ -49,7 +49,7 @@ export default function Comments ({ address, referendum }: CommentsProps): React
         <Grid container item>
           <Grid container item xs={12}>
             <Typography fontSize={24} fontWeight={500}>
-              {t('Comments')}
+              {t('Comments ({{count}})', { replace: { count: sortedComments?.length || 0 } })}
             </Typography>
           </Grid>
         </Grid>

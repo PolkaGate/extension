@@ -15,12 +15,13 @@ import rehypeRaw from 'rehype-raw';
 import { BN } from '@polkadot/util';
 
 import { FormatPrice, Identity, ShowBalance, ShowValue } from '../../../components';
-import { useInfo, useTokenPrice, useTranslation } from '../../../hooks';
+import { useInfo, useTranslation } from '../../../hooks';
 import useStyles from '../styles/styles';
 import { LabelValue } from '../TrackStats';
 import { STATUS_COLOR } from '../utils/consts';
 import { formalizedStatus, formatRelativeTime, pascalCaseToTitleCase } from '../utils/util';
 import { getBeneficiary } from './Metadata';
+import useReferendaRequested from './useReferendaRequested';
 
 interface Props {
   address: string | undefined;
@@ -33,21 +34,11 @@ const DEFAULT_CONTENT = 'This referendum does not have a description provided by
 export default function ReferendumDescription ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chain, decimal, token } = useInfo(address);
-  const { price } = useTokenPrice(address);
   const style = useStyles();
 
-  const requestedInUSD = useMemo(() => {
-    const STABLE_COIN_PRICE = 1;
-    const _decimal = referendum?.decimal || decimal;
-    const _price = referendum?.assetId ? STABLE_COIN_PRICE : price;
+  const { api, chain } = useInfo(address);
 
-    if (!referendum?.requested || !_decimal || !_price) {
-      return undefined;
-    }
-
-    return (Number(referendum.requested) / 10 ** _decimal) * _price;
-  }, [decimal, price, referendum]);
+  const { rAssetInCurrency, rCurrencySign, rDecimal, rToken } = useReferendaRequested(address, referendum);
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -136,9 +127,9 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                           value={
                             <ShowBalance
                               balance={new BN(referendum.requested)}
-                              decimal={referendum?.decimal || decimal}
+                              decimal={rDecimal}
                               decimalPoint={2}
-                              token={referendum?.token || token}
+                              token={rToken}
                             />
                           }
                           valueStyle={{ fontSize: 16, fontWeight: 500, pl: '5px' }}
@@ -148,8 +139,8 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                       <Grid item sx={{ opacity: theme.palette.mode === 'dark' ? 0.6 : 1 }}>
                         <FormatPrice
                           decimalPoint={2}
-                          num={requestedInUSD || 0}
-                          sign='$'
+                          num={rAssetInCurrency || 0}
+                          sign={rCurrencySign}
                           textColor={ theme.palette.mode === 'light' ? 'text.disabled' : undefined}
                         />
                       </Grid>
@@ -157,7 +148,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                   </>
                 }
               </Grid>
-              <Grid item sx={{ bgcolor: referendum?.status ? STATUS_COLOR[referendum.status] : undefined , border: '0.01px solid primary.main', borderRadius: '30px', color: 'white', fontSize: '16px', fontWeight: 400, lineHeight: '24px', mb: '5px', px: '10px', textAlign: 'center', width: 'fit-content' }}>
+              <Grid item sx={{ bgcolor: referendum?.status ? STATUS_COLOR[referendum.status] : undefined, border: '0.01px solid primary.main', borderRadius: '30px', color: 'white', fontSize: '16px', fontWeight: 400, lineHeight: '24px', mb: '5px', px: '10px', textAlign: 'center', width: 'fit-content' }}>
                 {pascalCaseToTitleCase(formalizedStatus(referendum?.status))}
               </Grid>
             </Grid>
