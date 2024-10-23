@@ -1401,5 +1401,6 @@
   "Invalid endpoint format!": "",
   "The chain already exists, no need to add it again!": "",
   "Click to hide all the profile accounts from websites!": "",
-  "Checking": ""
+  "Checking": "",
+  "Comments ({{count}})": ""
 }
