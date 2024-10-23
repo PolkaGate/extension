@@ -5,14 +5,19 @@ import { useEffect, useState } from 'react';
 
 export default function useAnimateOnce (condition: boolean | undefined): boolean {
   const [animate, setAnimate] = useState(false);
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  useEffect((): void => {
-    if (condition) {
+  useEffect(() => {
+    if (condition && !prefersReducedMotion) {
       setAnimate(true);
 
-      setTimeout(() => setAnimate(false), 500);
+      const timeoutId = setTimeout(() => setAnimate(false), 500);
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [condition]);
+
+    return undefined;
+  }, [condition, prefersReducedMotion]);
 
   return animate;
 }
