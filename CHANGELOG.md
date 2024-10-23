@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.19.6](https://github.com/polkagate/extension/compare/v0.19.5...v0.19.6) (2024-10-23)
+
+
+### Bug Fixes
+
+* history intersection loader issue ([#1598](https://github.com/polkagate/extension/issues/1598)) ([8744720](https://github.com/polkagate/extension/commit/87447206493735381da5a6152373eafbfe3c1797))
+
 ## [0.19.5](https://github.com/polkagate/extension/compare/v0.19.4...v0.19.5) (2024-10-23)
 
 
