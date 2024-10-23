@@ -17,10 +17,11 @@ interface Props {
   placeholder: string;
   value?: string;
   withReset?: boolean;
+  disabled?: boolean;
   theme: Theme;
 }
 
-export default function InputFilter ({ autoFocus = true, label, onChange, placeholder, theme, value, withReset = false }: Props) {
+export default function InputFilter ({ autoFocus = true, disabled, label, onChange, placeholder, theme, value, withReset = false }: Props) {
   const inputRef: React.RefObject<HTMLInputElement> | null = useRef(null);
 
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +42,7 @@ export default function InputFilter ({ autoFocus = true, label, onChange, placeh
           autoCapitalize='off'
           autoCorrect='off'
           autoFocus={autoFocus}
+          disabled={disabled}
           onChange={onChangeFilter}
           placeholder={placeholder}
           ref={inputRef}

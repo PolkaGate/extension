@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
-
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
+/**
+ * @param {{ value: string; }[]} endpoints
+ */
 export async function fastestEndpoint (endpoints) {
   let connection;
 

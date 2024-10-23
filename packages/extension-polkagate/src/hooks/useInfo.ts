@@ -21,7 +21,7 @@ interface AddressInfo {
   endpoint: string | undefined;
   formatted: string | undefined;
   genesisHash: string | undefined;
-  token: string | undefined
+  token: string | undefined;
 }
 
 export default function useInfo (address: AccountId | string | undefined): AddressInfo {
