@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import { ReferendaContext, Warning } from '../../components';
-import { useApi, useChain, useChainName, useDecidingCount, useFullscreen, useTracks, useTranslation } from '../../hooks';
+import { useDecidingCount, useFullscreen, useInfo, useTracks, useTranslation } from '../../hooks';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
@@ -33,13 +33,12 @@ export type Fellowship = [string, number];
 
 export default function Governance (): React.ReactElement {
   useFullscreen();
+  const theme = useTheme();
   const { t } = useTranslation();
   const { state } = useLocation() as unknown as {state: {selectedSubMenu?: string}};
-  const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
-  const api = useApi(address);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
+
+  const { api, chain, chainName } = useInfo(address);
   const decidingCounts = useDecidingCount(address);
   const chainChangeRef = useRef('');
   const refsContext = useContext(ReferendaContext);
@@ -47,6 +46,7 @@ export default function Governance (): React.ReactElement {
   const { fellowshipTracks, tracks } = useTracks(address);
 
   const pageTrackRef = useRef({ listFinished: false, page: 1, subMenu: 'All', topMenu });
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSubMenu, setSelectedSubMenu] = useState<string>(state?.selectedSubMenu || 'All');
   const [referendumCount, setReferendumCount] = useState<{ referenda: number | undefined, fellowship: number | undefined }>({ fellowship: undefined, referenda: undefined });
@@ -453,7 +453,7 @@ export default function Governance (): React.ReactElement {
                               : isLoadingMore &&
                               <Grid container justifyContent='center'>
                                 <HorizontalWaiting color={theme.palette.primary.main} />
-                                <Typography color='secondary.contrastText' fontSize='13px' display='block' width="100%" textAlign="center">
+                                <Typography color='secondary.contrastText' display='block' fontSize='13px' textAlign='center' width='100%'>
                                   {t('Loaded {{count}} out of {{referendumCount}} referenda ...', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
                                 </Typography>
                               </Grid>
