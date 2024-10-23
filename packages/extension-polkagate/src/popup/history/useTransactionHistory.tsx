@@ -180,30 +180,48 @@ export default function useTransactionHistory (address: string | undefined, tabI
       return;
     }
 
-    const observerCallback = async (): Promise<void> => {
+    const observerCallback = (entries: IntersectionObserverEntry[]): void => {
+      const [entry] = entries;
+
+      if (!entry.isIntersecting) {
+        return; // If the observer object is not in view, do nothing
+      }
+
       if (receivingTransfers.current?.isFetching) {
-        return;
+        return; // If already fetching, do nothing
       }
 
       if (!receivingTransfers.current?.hasMore) {
-        return observerInstance?.current?.disconnect();
+        observerInstance.current?.disconnect();
+        console.log('No more data to load, disconnecting observer.');
+
+        return;
       }
 
-      await getTransfers(receivingTransfers.current);
+      getTransfers(receivingTransfers.current) // Fetch more transfers if available
+        .catch((error) => {
+          console.error('Error fetching transfers:', error);
+        });
     };
 
     const options = {
       root: document.getElementById('scrollArea'),
       rootMargin: '0px',
-      threshold: 1.0
+      threshold: 1.0 // Trigger when 100% of the target (observerObj) is visible
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     observerInstance.current = new IntersectionObserver(observerCallback, options);
+
     const target = document.getElementById('observerObj');
 
-    target && observerInstance.current.observe(target);
-  }, [chainName, formatted, getTransfers, tabHistory]);
+    if (target) {
+      observerInstance.current.observe(target); // Start observing the target
+    }
+
+    return () => {
+      observerInstance.current?.disconnect();
+    };
+  }, [chainName, formatted, getTransfers]);
 
   return { grouped, tabHistory, transfersTx };
 }
