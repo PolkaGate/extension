@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.19.4](https://github.com/polkagate/extension/compare/v0.19.3...v0.19.4) (2024-10-23)
+
+
+### Bug Fixes
+
+* asset requested issue while currency is something other than USD ([#1594](https://github.com/polkagate/extension/issues/1594)) ([9083e0b](https://github.com/polkagate/extension/commit/9083e0bb3e6376ea85004bf8b78b18a88329fffd))
+
 ## [0.19.3](https://github.com/polkagate/extension/compare/v0.19.2...v0.19.3) (2024-10-23)
 
 
