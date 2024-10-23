@@ -137,7 +137,7 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
             </Typography>
             {!expanded &&
               <Typography fontSize={16} fontWeight={300} sx={{ color: 'text.disabled', ml: '10px' }}>
-                ({ isTreasury && isExecuted ? treasuryLabel : sortedHistory?.length ? treasuryLabel || pascalCaseToTitleCase(sortedHistory[0].status)?.trim() : 'Unknown'})
+                ({ isTreasury && isExecuted ? treasuryLabel : sortedHistory?.length ? treasuryLabel || pascalCaseToTitleCase(sortedHistory[0].status)?.trim() : ''})
               </Typography>
             }
           </Grid>
