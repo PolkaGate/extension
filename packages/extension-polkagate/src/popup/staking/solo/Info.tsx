@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -23,7 +22,7 @@ interface Props {
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info ({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
   const token = useToken(address);
@@ -49,7 +48,7 @@ export default function Info({ address, info, setShowInfo, showInfo }: Props): R
         </Grid>
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', m: '1px auto', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'divider', m: '1px auto', width: '90%' }} />
           </Grid>
         }
       </>

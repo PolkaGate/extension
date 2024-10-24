@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -72,7 +71,7 @@ export default function Index(): React.ReactElement {
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const isPoolInfoOutdated = useMemo(() => pool && pool.date && (Date.now() - pool.date) > BALANCES_VALIDITY_PERIOD, [pool]);
+  const isPoolInfoOutdated = useMemo(() => pool?.date && (Date.now() - pool.date) > BALANCES_VALIDITY_PERIOD, [pool]);
 
   const [redeemable, setRedeemable] = useState<BN | undefined>(state?.redeemable);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>(state?.unlockingAmount);
@@ -96,19 +95,19 @@ export default function Index(): React.ReactElement {
   const _toggleShowUnlockings = useCallback(() => setShowUnlockings(!showUnlockings), [showUnlockings]);
 
   useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
+    api?.derive.session?.progress().then((sessionInfo) => {
       setSessionInfo({
         currentEra: Number(sessionInfo.currentEra),
         eraLength: Number(sessionInfo.eraLength),
         eraProgress: Number(sessionInfo.eraProgress)
       });
-    });
+    }).catch(console.error);
   }, [api]);
 
   useEffect((): void => {
-    api && api['query']['staking'] && api.query['staking']['currentEra']().then((ce) => {
+    api?.query['staking']?.['currentEra']().then((ce) => {
       setCurrentEraIndex(Number(ce));
-    });
+    }).catch(console.error);
   }, [api]);
 
   useEffect(() => {
@@ -218,8 +217,7 @@ export default function Index(): React.ReactElement {
     </Grid>
   );
 
-  const Row = ({ isUnstaking, label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }
-    : { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
+  const Row = ({ isUnstaking, label, link1Text, link2Text, onLink1, onLink2, showDivider = true, value }: { label: string, value: BN | undefined, link1Text?: Text, onLink1?: () => void, link2Text?: Text, onLink2?: () => void, showDivider?: boolean, isUnstaking?: boolean }) => {
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' pt='10px'>
@@ -274,7 +272,7 @@ export default function Index(): React.ReactElement {
         }
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', mt: '10px', width: '100%' }} />
+            <Divider sx={{ bgcolor: 'divider', mt: '10px', width: '100%' }} />
           </Grid>
         }
       </>
