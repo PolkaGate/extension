@@ -15,10 +15,9 @@ import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ActionContext, Infotip } from '../../../components';
-import { useInfo, useTranslation } from '../../../hooks';
+import { useAnimateOnce, useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import useAnimateOnce from './useAnimateOnce';
 
 interface AddressDetailsProps {
   address: string | undefined;
