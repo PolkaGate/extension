@@ -17,9 +17,10 @@ type Timer = ReturnType<typeof setTimeout>;
 
 /**
  * A hook that triggers a one-time animation state when a condition becomes true.
+ * Accounts for 'prefers-reduced-motion' settings.
  * @param condition - The condition that triggers the animation
  * @param config - Configuration options for the animation
- * @returns isAnimating: boolean - Current animation state
+ * @returns animate: boolean - Current animation state
  */
 export default function useAnimateOnce (condition: boolean | undefined, config: AnimateOnceConfig = {}): boolean {
   const [animate, setAnimate] = useState(false);
@@ -27,10 +28,14 @@ export default function useAnimateOnce (condition: boolean | undefined, config: 
 
   const { delay = DEFAULT_DELAY, duration = DEFAULT_DURATION, onComplete, onStart } = config;
 
+  // Check if the user prefers reduced motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // Cleanup function to clear any pending timeouts
   const cleanup = useCallback(() => {
-    if (timeoutRef.current !== undefined) {
-      window.clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = undefined;
     }
   }, []);
 
@@ -46,22 +51,12 @@ export default function useAnimateOnce (condition: boolean | undefined, config: 
   }, [cleanup, duration, onStart, onComplete]);
 
   useEffect(() => {
-    if (condition) {
-      if (delay) {
-        timeoutRef.current = setTimeout(trigger, delay);
-      } else {
-        trigger();
-      }
+    if (condition && !prefersReducedMotion) {
+      timeoutRef.current = setTimeout(trigger, delay);
     }
 
-    // Cleanup on unmount or when condition changes
     return cleanup;
-  }, [cleanup, condition, delay, trigger]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return cleanup;
-  }, [cleanup]);
+  }, [cleanup, condition, delay, trigger, prefersReducedMotion]);
 
   return animate;
 }
