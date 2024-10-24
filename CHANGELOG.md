@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.20.0](https://github.com/polkagate/extension/compare/v0.19.6...v0.20.0) (2024-10-24)
+
+
+### Features
+
+* auto loading referenda list ([#1599](https://github.com/polkagate/extension/issues/1599)) ([c987138](https://github.com/polkagate/extension/commit/c987138d3b2fe4f9d7525b8a821b24a1dc51388e))
+
 ## [0.19.6](https://github.com/polkagate/extension/compare/v0.19.5...v0.19.6) (2024-10-23)
 
 
