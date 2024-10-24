@@ -1402,5 +1402,7 @@
   "The chain already exists, no need to add it again!": "",
   "Click to hide all the profile accounts from websites!": "",
   "Checking": "",
-  "Comments ({{count}})": ""
+  "Comments ({{count}})": "",
+  "Loaded {{count}} out of {{referendumCount}} referenda ...": "",
+  "Loading...": ""
 }

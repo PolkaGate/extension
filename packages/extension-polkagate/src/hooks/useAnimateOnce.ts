@@ -22,7 +22,7 @@ type Timer = ReturnType<typeof setTimeout>;
  * @param config - Configuration options for the animation
  * @returns animate: boolean - Current animation state
  */
-export default function useAnimateOnce (condition: boolean | undefined, config: AnimateOnceConfig = {}): boolean {
+export default function useAnimateOnce (condition: boolean | undefined, config = {} as AnimateOnceConfig): boolean {
   const [animate, setAnimate] = useState(false);
   const timeoutRef = useRef<Timer>();
 
