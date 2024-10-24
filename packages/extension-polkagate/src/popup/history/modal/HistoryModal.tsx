@@ -85,7 +85,15 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                     // staking transaction history is saved locally
                     tabIndex !== TAB_MAP.STAKING &&
                     ((transfersTx?.hasMore)
-                      ? 'loading...'
+                      ? <Progress
+                        direction='row'
+                        pt='5px'
+                        size={15}
+                        title={t('Loading...')}
+                        titlePaddingLeft={5}
+                        titlePaddingTop={0}
+                        type='wordpress'
+                      />
                       : !!tabHistory?.length &&
                       <Box fontSize={11}>
                         {t('No more transactions to load')}
