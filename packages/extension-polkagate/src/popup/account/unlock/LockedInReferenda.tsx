@@ -103,7 +103,7 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
           </Grid>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '1px', my: '5px' }} />
       {showReview && !!classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
         <Review
           address={address}

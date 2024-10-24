@@ -78,7 +78,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
         </Grid>
       </Grid>
       {showLabel &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
+        <Divider sx={{ bgcolor: 'divider', height: '1px', my: '5px' }} />
       }
     </>
   );
