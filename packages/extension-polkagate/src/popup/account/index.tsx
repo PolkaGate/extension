@@ -161,7 +161,7 @@ export default function AccountDetails (): React.ReactElement {
           onClick={goToOthers}
           sx={{ p: 0 }}
         >
-          <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 1 }} />
+          <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '26px', stroke: theme.palette.secondary.light, strokeWidth: 0 }} />
         </IconButton>
       </Grid>
     </Grid>
