@@ -42,8 +42,13 @@ function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }:
   const proxyTooltipTxt = useHasProxyTooltipText(address, hasProxy);
 
   useEffect((): void => {
-    api?.query?.['recovery']?.['recoverable'](formatted)
-      .then((r: any) => setRecoverable(!!r.isSome)).catch(console.error);
+    if (!api || !formatted) {
+      return;
+    }
+
+    api.query?.['recovery']?.['recoverable'](formatted)
+      .then((r: any) => setRecoverable(!!r.isSome))
+      .catch(console.error);
   }, [api, formatted]);
 
   const openManageProxy = useCallback(() => {
