@@ -1392,5 +1392,14 @@
   "Add a new chain": "Ajouter une nouvelle chaîne",
   "Invalid endpoint format!": "Format de point de terminaison invalide !",
   "The chain already exists, no need to add it again!": "La chaîne existe déjà, pas besoin de l'ajouter à nouveau !",
-  "Click to hide all the profile accounts from websites!": "Cliquez pour masquer tous les comptes de profil des sites web !"
+  "Click to hide all the profile accounts from websites!": "Cliquez pour masquer tous les comptes de profil des sites web !",
+  "Checking": "Vérification",
+  "Comments ({{count}})": "Commentaires ({{count}})",
+  "Loaded {{count}} out of {{referendumCount}} referenda ...": "{{count}} sur {{referendumCount}} référendums chargés...",
+  "Loading...": "Chargement...",
+  "Has identity": "A une identité",
+  "No identity": "Pas d'identité",
+  "Recoverable": "Récupérable",
+  "Not recoverable": "Non récupérable",
+  "No proxy": "Pas de proxy"
 }

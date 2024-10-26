@@ -1387,5 +1387,14 @@
   "Add a new chain": "Добавить новую сеть",
   "Invalid endpoint format!": "Неверный формат конечной точки!",
   "The chain already exists, no need to add it again!": "Цепь уже существует, нет необходимости добавлять её снова!",
-  "Click to hide all the profile accounts from websites!": "Нажмите, чтобы скрыть все аккаунты профиля с веб-сайтов!"
+  "Click to hide all the profile accounts from websites!": "Нажмите, чтобы скрыть все аккаунты профиля с веб-сайтов!",
+  "Checking": "Проверка",
+  "Comments ({{count}})": "Комментарии ({{count}})",
+  "Loaded {{count}} out of {{referendumCount}} referenda ...": "Загружено {{count}} из {{referendumCount}} референдумов...",
+  "Loading...": "Загрузка...",
+  "Has identity": "Есть идентификация",
+  "No identity": "Нет идентификации",
+  "Recoverable": "Восстановимо",
+  "Not recoverable": "Не восстановимо",
+  "No proxy": "Нет прокси"
 }

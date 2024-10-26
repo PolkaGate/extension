@@ -1389,5 +1389,14 @@
   "Add a new chain": "नई चेन जोड़ें",
   "Invalid endpoint format!": "अमान्य एंडपॉइंट प्रारूप!",
   "The chain already exists, no need to add it again!": "चेन पहले से मौजूद है, इसे फिर से जोड़ने की आवश्यकता नहीं है!",
-  "Click to hide all the profile accounts from websites!": "वेबसाइटों से सभी प्रोफ़ाइल खातों को छिपाने के लिए क्लिक करें!"
+  "Click to hide all the profile accounts from websites!": "वेबसाइटों से सभी प्रोफ़ाइल खातों को छिपाने के लिए क्लिक करें!",
+  "Checking": "जाँच हो रही है",
+  "Comments ({{count}})": "टिप्पणियाँ ({{count}})",
+  "Loaded {{count}} out of {{referendumCount}} referenda ...": "{{referendumCount}} में से {{count}} जनमत लोड किया गया...",
+  "Loading...": "लोड हो रहा है...",
+  "Has identity": "पहचान है",
+  "No identity": "कोई पहचान नहीं",
+  "Recoverable": "पुनः प्राप्त करने योग्य",
+  "Not recoverable": "पुनः प्राप्त नहीं किया जा सकता",
+  "No proxy": "कोई प्रॉक्सी नहीं"
 }

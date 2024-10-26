@@ -1404,5 +1404,10 @@
   "Checking": "",
   "Comments ({{count}})": "",
   "Loaded {{count}} out of {{referendumCount}} referenda ...": "",
-  "Loading...": ""
+  "Loading...": "",
+  "Has identity": "",
+  "No identity": "",
+  "Recoverable": "",
+  "Not recoverable": "",
+  "No proxy": ""
 }
