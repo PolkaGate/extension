@@ -15,29 +15,19 @@ import Details, { InfoRow } from './Details';
 import ItemAvatar from './ItemAvatar';
 import ItemSkeleton from './ItemSkeleton';
 
-export default function Thumbnail ({ api, itemInformation, itemsDetail }: ThumbnailProps): React.ReactElement {
+export default function Thumbnail ({ api, itemInformation }: ThumbnailProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const itemDetail = useMemo(() => {
-    if (!itemInformation) {
-      return undefined;
-    }
-
-    const id = itemInformation.isCollection
-      ? `${itemInformation.collectionId}`
-      : `${itemInformation.collectionId} - ${itemInformation.itemId}`;
-
-    return itemsDetail[id];
-  }, [itemInformation, itemsDetail]);
-  const displayNft = useMemo(() => (itemDetail || (itemDetail === null && itemInformation?.data)), [itemInformation?.data, itemDetail]);
+  const displayNft = useMemo(() => Boolean(!itemInformation?.noData && itemInformation?.data), [itemInformation?.data, itemInformation?.noData]);
+  const loading = useMemo(() => Boolean(itemInformation?.data && !itemInformation.description && !itemInformation.name), [itemInformation?.data, itemInformation?.description, itemInformation?.name]);
 
   const openNftDetail = useCallback(() => setShowDetail(true), []);
 
   return (
     <>
-      {itemInformation?.data && itemDetail === undefined
+      {loading
         ? <ItemSkeleton />
         : <Grid container item onClick={openNftDetail} sx={{ bgcolor: 'divider', border: '1px solid', borderColor: 'divider', borderRadius: '10px', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', cursor: displayNft ? 'pointer' : 'default', height: THUMBNAIL_HEIGHT, width: THUMBNAIL_WIDTH }}>
           {itemInformation?.data === null &&
@@ -61,12 +51,12 @@ export default function Thumbnail ({ api, itemInformation, itemsDetail }: Thumbn
               }}
             >
               <ItemAvatar
-                image={itemDetail?.image ?? null}
+                image={itemInformation?.image ?? null}
               />
               <Grid container item px='8px'>
-                {itemDetail?.name &&
+                {itemInformation?.name &&
                   <Typography fontSize='14px' fontWeight={400} sx={{ maxWidth: '174px', overflow: 'hidden', py: '15px', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
-                    {itemDetail.name}
+                    {itemInformation.name}
                   </Typography>
                 }
                 {itemInformation?.items !== undefined &&
@@ -114,7 +104,6 @@ export default function Thumbnail ({ api, itemInformation, itemsDetail }: Thumbn
       {showDetail && itemInformation &&
         <Details
           api={api}
-          details={itemDetail ?? null}
           itemInformation={itemInformation}
           setShowDetail={setShowDetail}
           show={showDetail}

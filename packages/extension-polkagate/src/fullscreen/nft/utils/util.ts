@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type React from 'react';
-import type { DataType, ItemInformation, ItemMetadata, ItemsDetail } from './types';
+import type { DataType, ItemInformation, ItemMetadata } from './types';
 
-import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_BACKOFF_TIME, MAX_RETRY_ATTEMPTS } from './constants';
+import NftManager from '../../../class/nftManager';
+import { INITIAL_BACKOFF_TIME, IPFS_GATEWAYS, MAX_RETRY_ATTEMPTS } from './constants';
 
 export const getContentUrl = (url: string | undefined) => {
   if (!url || url.length < 10) {
@@ -35,7 +35,7 @@ export const fetchWithRetry = async (url: string, attempt = 0): Promise<Response
     return response;
   } catch (error) {
     if (attempt < MAX_RETRY_ATTEMPTS - 1) {
-      const backoffTime = Math.min(INITIAL_BACKOFF_TIME * Math.pow(2, attempt), MAX_BACKOFF_TIME);
+      const backoffTime = (Math.floor(Math.random() * 10) + 1) * INITIAL_BACKOFF_TIME;
 
       console.log(`Attempt ${attempt + 1} failed. Retrying in ${backoffTime}ms...`);
       await sleep(backoffTime);
@@ -97,18 +97,13 @@ export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = 
   return null;
 };
 
-export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (value: React.SetStateAction<ItemsDetail>) => void) => {
-  const id = item.isCollection
-    ? `${item.collectionId}`
-    : `${item.collectionId} - ${item.itemId}`;
+const nftManager = new NftManager();
 
+export const fetchItemMetadata = async (address: string, item: ItemInformation) => {
   try {
     // if data in empty or null or undefined so the item detail gonna be null, means nothing to display
     if (!item.data) {
-      setItemsDetail((perv) => ({
-        ...perv,
-        [id]: null
-      }));
+      nftManager.setItemDetail(address, item, null);
 
       return;
     }
@@ -116,10 +111,7 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
     const itemMetadata = await fetchData<ItemMetadata>(item.data, true);
 
     if (!itemMetadata) {
-      setItemsDetail((perv) => ({
-        ...perv,
-        [id]: null
-      }));
+      nftManager.setItemDetail(address, item, null);
 
       return;
     }
@@ -151,15 +143,9 @@ export const fetchItemMetadata = async (item: ItemInformation, setItemsDetail: (
       imageContentType: nftImageContent?.contentType
     };
 
-    setItemsDetail((perv) => ({
-      ...perv,
-      [id]: detail
-    }));
+    nftManager.setItemDetail(address, item, detail);
   } catch (error) {
     console.error('Error fetching NFT metadata:', error);
-    setItemsDetail((perv) => ({
-      ...perv,
-      [id]: null
-    }));
+    nftManager.setItemDetail(address, item, null);
   }
 };

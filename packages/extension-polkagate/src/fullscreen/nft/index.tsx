@@ -4,15 +4,16 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { ItemInformation, ItemsDetail } from './utils/types';
+import type { ItemInformation } from './utils/types';
 
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { NftItemsContext, Warning } from '../../components';
+import NftManager from '../../class/nftManager';
+import { Warning } from '../../components';
 import { useApiWithChain2, useFullscreen, useTranslation } from '../../hooks';
 import { getAssetHubByChainName } from '../../hooks/useReferendum';
 import FullScreenHeader from '../governance/FullScreenHeader';
@@ -29,27 +30,36 @@ enum STEPS {
   UNSUPPORTED
 }
 
+const nftManager = new NftManager();
+
 function NFT (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const nfts = useContext(NftItemsContext);
 
-  const myNfts = useMemo(() => {
-    if (!nfts || !(address in nfts)) {
-      return undefined;
-    }
+  const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
 
-    if (nfts[address]?.length > 0) {
-      return nfts[address];
-    }
+  useEffect(() => {
+    const myNfts = nftManager.get(address);
 
-    return null;
-  }, [address, nfts]);
+    setNfts(myNfts);
+
+    const handleNftUpdate = (updatedAddress: string, updatedNfts: ItemInformation[]) => {
+      if (updatedAddress === address) {
+        setNfts(updatedNfts);
+      }
+    };
+
+    nftManager.subscribe(handleNftUpdate);
+
+    // Cleanup
+    return () => {
+      nftManager.unsubscribe(handleNftUpdate);
+    };
+  }, [address]);
 
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
-  const [itemsDetail, setItemsDetail] = useState<ItemsDetail>({});
   const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
   const chainNames = Object.keys(SUPPORTED_NFT_CHAINS);
@@ -63,7 +73,6 @@ function NFT (): React.ReactElement {
   );
 
   const reset = useCallback(() => {
-    setItemsDetail({});
     setStep(STEPS.CHECK_SCREEN);
   }, []);
 
@@ -72,18 +81,19 @@ function NFT (): React.ReactElement {
   }, [address, reset]);
 
   useEffect(() => {
-    if (myNfts) {
+    if (nfts) {
       setStep(STEPS.INDEX);
 
-      myNfts.forEach((nft) => {
-        fetchItemMetadata(nft, setItemsDetail).catch(console.error);
+      nfts.forEach((nft) => {
+        (nft.data && (nft.image === undefined && nft.animation_url === undefined)) &&
+          fetchItemMetadata(address, nft).catch(console.error);
       });
 
       return;
     }
 
     setStep(STEPS.CHECK_SCREEN);
-  }, [myNfts]);
+  }, [address, nfts]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -123,12 +133,11 @@ function NFT (): React.ReactElement {
                 {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
               </Typography>
               <Tabs
-                items={myNfts}
+                items={nfts}
                 setItemsToShow={setItemsToShow}
               />
               <NftList
                 apis={apis}
-                itemsDetail={itemsDetail}
                 nfts={itemsToShow}
               />
             </>

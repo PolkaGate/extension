@@ -7,16 +7,18 @@
 import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
 import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { ItemInformation } from '../../nft/utils/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { type BN, noop } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { Identicon, Identity, NftItemsContext, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import NftManager from '../../../class/nftManager';
+import { Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
 import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
 import { showAccount, tieAccount } from '../../../messaging';
@@ -104,29 +106,42 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   );
 };
 
+const nftManager = new NftManager();
+
 function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const nftItems = useContext(NftItemsContext);
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
 
-  const accountNft = useMemo(() => {
-    if (!nftItems || !address) {
-      return undefined;
-    }
-
-    if (address in nftItems && nftItems[address].length > 0) {
-      return nftItems[address];
-    }
-
-    return null;
-  }, [address, nftItems]);
-
   const accountInfo = useIdentity(genesisHash, formatted);
 
   const [displayPopup, setDisplayPopup] = useState<number>();
+  const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
+
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+
+    const myNfts = nftManager.get(address);
+
+    setNfts(myNfts);
+
+    const handleNftUpdate = (updatedAddress: string, updatedNfts: ItemInformation[]) => {
+      if (updatedAddress === address) {
+        setNfts(updatedNfts);
+      }
+    };
+
+    nftManager.subscribe(handleNftUpdate);
+
+    // Cleanup
+    return () => {
+      nftManager.unsubscribe(handleNftUpdate);
+    };
+  }, [address]);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
 
@@ -236,18 +251,18 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
             </Grid>
             <Grid container item width='fit-content'>
               <NftGrouped
-                accountNft={accountNft}
+                accountNft={myNfts}
                 address={address}
               />
             </Grid>
           </Grid>
           <Grid alignItems='center' container item width='fit-content'>
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', mx: accountNft ? '5px' : undefined, my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', mx: myNfts ? '5px' : undefined, my: 'auto', width: '1px' }} />
             <FullScreenAccountMenu
               address={address}
               baseButton={
                 <AccountButton
-                  collapse={!!accountNft}
+                  collapse={!!myNfts}
                   icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />}
                   onClick={noop}
                   text={t('Settings')}
@@ -255,9 +270,9 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
               }
               setDisplayPopup={setDisplayPopup}
             />
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: accountNft ? '5px' : '15px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: myNfts ? '5px' : '15px', my: 'auto', width: '1px' }} />
             <AccountButton
-              collapse={!!accountNft}
+              collapse={!!myNfts}
               icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />}
               onClick={goToDetails}
               text={t('Details')}

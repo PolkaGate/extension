@@ -15,7 +15,7 @@ import { Identity, Progress, ShortAddress, ShowBalance, TwoButtons } from '../..
 import { useTranslation } from '../../../components/translate';
 import { useMetadata } from '../../../hooks';
 import { KODADOT_URL } from '../../../util/constants';
-import { amountToMachine } from '../../../util/utils';
+import { amountToMachine, isHexToBn } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import { IPFS_GATEWAY } from '../utils/constants';
 import { fetchWithRetry, getContentUrl } from '../utils/util';
@@ -29,9 +29,15 @@ export const InfoRow = React.memo(
     const decimal = api?.registry.chainDecimals[0];
     const token = api?.registry.chainTokens[0];
 
-    const convertedAmount = useMemo(() => price && decimal ? (price.toNumber() / 10 ** decimal).toString() : null, [decimal, price]);
+    let _price = price;
+
+    if (typeof (price) === 'string') {
+      _price = isHexToBn(price);
+    }
+
+    const convertedAmount = useMemo(() => _price && decimal ? (Number(_price) / 10 ** decimal).toString() : null, [decimal, _price]);
     const priceAsBN = useMemo(() => convertedAmount ? amountToMachine(convertedAmount, decimal) : null, [convertedAmount, decimal]);
-    const notListed = price === null;
+    const notListed = _price === null;
     const isDescription = !title;
 
     return (
@@ -163,7 +169,7 @@ const Item = ({ animation_url, animationContentType, image, imageContentType, se
   }
 };
 
-export default function Details ({ api, details, itemInformation: { chainName, collectionId, creator, isCollection, isNft, itemId, items, owner, price }, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details ({ api, itemInformation, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -176,7 +182,7 @@ export default function Details ({ api, details, itemInformation: { chainName, c
   const [showFullscreenDisabled, setShowFullscreenDisabled] = useState<boolean>(false);
 
   const chainNameSymbol = useCallback(() => {
-    switch (chainName) {
+    switch (itemInformation.chainName) {
       case 'Polkadot Asset Hub':
         return 'ahp';
       case 'Kusama Asset Hub':
@@ -184,27 +190,27 @@ export default function Details ({ api, details, itemInformation: { chainName, c
       default:
         return '';
     }
-  }, [chainName]);
+  }, [itemInformation.chainName]);
 
   const NFT_URL_ON_KODADOT = useMemo(() => {
-    if (isCollection) {
-      return `${KODADOT_URL}/${chainNameSymbol()}/collection/${collectionId}`;
+    if (itemInformation.isCollection) {
+      return `${KODADOT_URL}/${chainNameSymbol()}/collection/${itemInformation.collectionId}`;
     } else {
-      return `${KODADOT_URL}/${chainNameSymbol()}/gallery/${collectionId}-${itemId}`;
+      return `${KODADOT_URL}/${chainNameSymbol()}/gallery/${itemInformation.collectionId}-${itemInformation.itemId}`;
     }
-  }, [chainNameSymbol, collectionId, isCollection, itemId]);
+  }, [chainNameSymbol, itemInformation.collectionId, itemInformation.isCollection, itemInformation.itemId]);
 
   const closeDetail = useCallback(() => setShowDetail(false), [setShowDetail]);
 
   useEffect(() => {
     const getUniqueGif = async () => {
-      if (isNft || !details?.mediaUri) {
+      if (itemInformation.isNft || !itemInformation.mediaUri) {
         setGifSource(null);
 
         return;
       }
 
-      const { isIPFS, sanitizedUrl } = getContentUrl(details.mediaUri);
+      const { isIPFS, sanitizedUrl } = getContentUrl(itemInformation.mediaUri);
 
       if (!isIPFS) {
         setGifSource(null);
@@ -231,17 +237,17 @@ export default function Details ({ api, details, itemInformation: { chainName, c
     };
 
     getUniqueGif().catch(console.error);
-  }, [details?.mediaUri, isNft]);
+  }, [itemInformation.isNft, itemInformation.mediaUri]);
 
   const { iFrame, source } = useMemo(() => {
     if (gifSource) {
       return { iFrame: false, source: gifSource };
-    } else if (details?.animation_url && details?.animationContentType === 'text/html') {
-      return { iFrame: true, source: details?.animation_url };
+    } else if (itemInformation.animation_url && itemInformation.animationContentType === 'text/html') {
+      return { iFrame: true, source: itemInformation.animation_url };
     } else {
-      return { iFrame: false, source: details?.image };
+      return { iFrame: false, source: itemInformation.image };
     }
-  }, [details?.animationContentType, details?.animation_url, gifSource, details?.image]);
+  }, [itemInformation.animationContentType, itemInformation.animation_url, gifSource, itemInformation.image]);
 
   const openFullscreen = useCallback(() => {
     if (showFullscreenDisabled) {
@@ -264,7 +270,7 @@ export default function Details ({ api, details, itemInformation: { chainName, c
         <Grid container item>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', mb: '20px' }}>
             <Typography fontSize='20px' fontWeight={500} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
-              {details?.name ?? (isNft ? t('NFT Detail') : t('Unique Detail'))}
+              {itemInformation.name ?? (itemInformation.isNft ? t('NFT Detail') : t('Unique Detail'))}
             </Typography>
             <Grid item>
               <IconButton disabled={showFullscreenDisabled} onClick={openFullscreen} sx={{ mr: 1 }}>
@@ -278,65 +284,65 @@ export default function Details ({ api, details, itemInformation: { chainName, c
           <Grid container item justifyContent='space-between' width='740px'>
             <Grid alignItems='center' container item width='fit-content'>
               <Item
-                animationContentType={details?.animationContentType}
-                animation_url={details?.animation_url}
-                image={gifSource || details?.image}
-                imageContentType={details?.imageContentType}
+                animationContentType={itemInformation.animationContentType}
+                animation_url={itemInformation.animation_url}
+                image={gifSource || itemInformation.image}
+                imageContentType={itemInformation.imageContentType}
                 setShowFullscreenDisabled={setShowFullscreenDisabled}
               />
             </Grid>
             <Grid alignContent='flex-start' container item sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '460px', overflowY: 'scroll', p: '15px 20px', width: '390px' }}>
-              {details?.description &&
+              {itemInformation.description &&
                 <Grid item sx={{ pb: '15px' }}>
                   <InfoRow
                     divider={false}
                     inline={false}
-                    text={details.description}
+                    text={itemInformation.description}
                   />
                 </Grid>
               }
               <InfoRow
-                divider={!!details?.description}
-                text={chainName}
+                divider={!!itemInformation.description}
+                text={itemInformation.chainName}
                 title={t('Network')}
               />
-              {collectionId !== undefined &&
+              {itemInformation.collectionId !== undefined &&
                 <InfoRow
-                  text={collectionId}
+                  text={itemInformation.collectionId}
                   title={t('Collection ID')}
                 />
               }
-              {items !== undefined &&
+              {itemInformation.items !== undefined &&
                 <InfoRow
-                  divider={!!collectionId}
-                  text={items.toString()}
+                  divider={!!itemInformation.collectionId}
+                  text={itemInformation.items.toString()}
                   title={t('Items')}
                 />
               }
-              {itemId !== undefined &&
+              {itemInformation.itemId !== undefined &&
                 <InfoRow
-                  divider={!!collectionId || !!details?.description}
-                  text={itemId}
-                  title={isNft ? t('NFT ID') : t('Unique ID')}
+                  divider={!!itemInformation.collectionId || !!itemInformation.description}
+                  text={itemInformation.itemId}
+                  title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
                 />
               }
-              {details?.metadataLink &&
+              {itemInformation.metadataLink &&
                 <InfoRow
-                  divider={!!itemId || items !== undefined}
-                  text={`[application/json](${details.metadataLink})`}
+                  divider={!!itemInformation.itemId || itemInformation.items !== undefined}
+                  text={`[application/json](${itemInformation.metadataLink})`}
                   title={t('Metadata')}
                 />
               }
-              {details?.image &&
+              {itemInformation.image &&
                 <InfoRow
-                  text={`[${details?.imageContentType}](${details.image})`}
+                  text={`[${itemInformation.imageContentType}](${itemInformation.image})`}
                   title={t('Image')}
                 />
               }
-              {details?.animation_url &&
+              {itemInformation.animation_url &&
                 <InfoRow
-                  text={`[${details?.animationContentType}](${details?.animation_url})`}
-                  title={details?.animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
+                  text={`[${itemInformation.animationContentType}](${itemInformation.animation_url})`}
+                  title={itemInformation.animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
                 />
               }
               {gifSource &&
@@ -345,30 +351,30 @@ export default function Details ({ api, details, itemInformation: { chainName, c
                   title={t('Media')}
                 />
               }
-              {!isCollection &&
+              {!itemInformation.isCollection &&
                 <InfoRow
                   api={api}
-                  price={price}
+                  price={itemInformation.price}
                   title={t('Price')}
                 />
               }
-              {creator &&
+              {itemInformation.creator &&
                 <InfoRow
-                  accountId={creator}
+                  accountId={itemInformation.creator}
                   api={api}
                   chain={chain}
                   title={t('Creator')}
                 />
               }
-              {owner &&
+              {itemInformation.owner &&
                 <InfoRow
-                  accountId={owner}
+                  accountId={itemInformation.owner}
                   api={api}
                   chain={chain}
                   title={t('Owner')}
                 />
               }
-              {owner &&
+              {itemInformation.owner &&
                 <InfoRow
                   link={NFT_URL_ON_KODADOT}
                   linkName='Kodadot'

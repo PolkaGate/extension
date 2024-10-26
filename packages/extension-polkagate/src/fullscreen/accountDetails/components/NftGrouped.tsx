@@ -3,12 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { ItemInformation, ItemsDetail } from '../../nft/utils/types';
+import type { ItemInformation } from '../../nft/utils/types';
 
 import { Avatar, AvatarGroup, Grid, useTheme } from '@mui/material';
-//@ts-ignore
+// @ts-ignore
 import { Wordpress } from 'better-react-spinkit';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import Infotip2 from '../../../components/Infotip2';
 import { fetchItemMetadata } from '../../nft/utils/util';
@@ -24,34 +24,33 @@ interface NftGroupedProps {
 function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactElement {
   const theme = useTheme();
 
-  const [itemsDetails, setItemsDetails] = useState<ItemsDetail>({});
   const [isLoading, setIsLoading] = React.useState(true);
 
   const itemsToShow = useMemo(() => accountNft?.slice(0, MAX_NFT_TO_SHOW), [accountNft]);
 
-  const nftsToDisplay = useMemo(() => {
-    return itemsToShow?.map((item) =>
-      itemsDetails[`${item?.collectionId} - ${item?.itemId}`]?.image
-    ).filter(Boolean);
-  }, [itemsDetails, itemsToShow]);
-
   const fetchMetadata = useCallback(async () => {
-    if (!itemsToShow || itemsToShow?.length === 0) {
+    if (!itemsToShow || itemsToShow?.length === 0 || !address) {
+      return;
+    }
+
+    const noNeedToFetchMetadata = !itemsToShow.some((nft) => nft.data && (nft.image === undefined && nft.animation_url === undefined));
+
+    if (noNeedToFetchMetadata) {
+      setIsLoading(false);
+
       return;
     }
 
     setIsLoading(true);
 
     try {
-      await Promise.all(
-        itemsToShow.map((item) => fetchItemMetadata(item, setItemsDetails))
-      );
+      await Promise.all(itemsToShow.map((item) => fetchItemMetadata(address, item)));
     } catch (error) {
       console.error('Error fetching NFT metadata:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [itemsToShow]);
+  }, [address, itemsToShow]);
 
   useEffect(() => {
     if (!itemsToShow || itemsToShow?.length === 0) {
@@ -99,7 +98,7 @@ function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactEleme
           }}
           total={accountNft?.length}
         >
-          {nftsToDisplay?.map((image, index) => (
+          {itemsToShow?.map(({ image }, index) => (
             <Avatar alt='NFT' key={index} src={image ?? undefined} style={{ height: '30px', width: '30px' }} />
           ))}
         </AvatarGroup>
