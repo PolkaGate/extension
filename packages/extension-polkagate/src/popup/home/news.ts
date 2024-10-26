@@ -10,9 +10,12 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.18.5',
+    version: '0.20.0',
     notes: [
-      'Show No Internet Sign: Display a disconnected icon if the extension cannot access the internet.'
+      'Show No Internet Sign: Display a “no internet” icon if the extension detects no internet connection.',
+      'Auto-Loading Referenda: Automatically load more referenda as you scroll to the end of the list, eliminating the need for manual clicks.',
+      'Real-Time Referenda Search: Apply keyword-based search and filtering instantly, even while referenda are still loading.',
+      'Currency Conversion Display: Show asset values in the selected currency on the governance page.'
     ]
   },
   {
