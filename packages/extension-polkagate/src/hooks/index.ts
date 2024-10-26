@@ -61,6 +61,7 @@ export { default as useIsRecoverableTooltipText } from './useIsRecoverableToolti
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
 export { default as useIsValidator } from './useIsValidator';
 export { useLedger } from './useLedger';
+export { default as useLockedInReferenda } from './useLockedInReferenda';
 export { default as useLostAccountInformation } from './useLostAccountInformation';
 export { default as useManifest } from './useManifest';
 export { useMapEntries } from './useMapEntries';
