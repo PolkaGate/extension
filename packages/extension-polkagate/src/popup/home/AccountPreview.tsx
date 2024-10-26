@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ActionContext } from '../../components';
 import AccountFeatures from '../../components/AccountFeatures';
 import AccountIcons from '../../components/AccountIcons';
-import { useInfo, useMyAccountIdentity, useProxies } from '../../hooks';
+import { useInfo, useMyAccountIdentity } from '../../hooks';
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import { showAccount } from '../../messaging';
 import { AccountMenu } from '../../partials';
@@ -22,7 +22,6 @@ import AccountDetail from './AccountDetail';
 export interface Props {
   actions?: React.ReactNode;
   address: string;
-  // children?: React.ReactNode;
   isExternal?: boolean | null;
   isHardware?: boolean | null;
   isHidden?: boolean;
@@ -38,20 +37,13 @@ export interface Props {
 
 export default function AccountPreview ({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const onExtension = useIsExtensionPopup();
-  const { api, chain, formatted } = useInfo(address);
+  const { chain, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
-  const proxies = useProxies(api, formatted);
   const identity = useMyAccountIdentity(address);
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const [recoverable, setRecoverable] = useState<boolean | undefined>();
 
   const _judgement = identity && JSON.stringify(identity.judgements).match(/reasonable|knownGood/gi);
-
-  useEffect((): void => {
-    api?.query?.['recovery']?.['recoverable'](formatted)
-      .then((r: any) => setRecoverable(!!r.isSome)).catch(console.error);
-  }, [api, formatted]);
 
   useEffect((): void => {
     setShowAccountMenu(false);
@@ -83,14 +75,11 @@ export default function AccountPreview ({ address, hideNumbers, isHidden, name, 
   return (
     <Grid alignItems='center' container overflow='hidden' p='15px 0 13px' position='relative'>
       <AccountIcons
-        chain={chain}
-        formatted={formatted || address}
+        address={address}
         identiconTheme={identiconTheme}
         isSubId={!!identity?.displayParent}
         judgements={_judgement}
         prefix={chain?.ss58Format ?? 42}
-        proxies={proxies}
-        recoverable={recoverable}
       />
       <AccountDetail
         address={address}
