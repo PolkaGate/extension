@@ -1,17 +1,37 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import type { Option } from '@polkadot/types';
+//@ts-ignore
+import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { useChain, useTranslation } from '.';
+import { useEffect, useMemo, useState } from 'react';
 
-export default function useIsRecoverableTooltipText (address: string | undefined, isRecoverable: boolean | undefined): string {
+import { useInfo, useTranslation } from '.';
+
+export default function useIsRecoverableTooltipText (address: string | undefined): { isRecoverable: boolean | undefined; recoverableToolTipTxt: string; } {
   const { t } = useTranslation();
 
-  const chain = useChain(address);
+  const { api, chain, formatted } = useInfo(address);
   const anyChainModeText = t('Account is in Any Chain mode');
 
-  return useMemo(() => {
+  const [isRecoverable, setRecoverable] = useState<boolean | undefined>();
+
+  useEffect((): void => {
+    if (!api || !formatted) {
+      return;
+    }
+
+    api.query?.['recovery']?.['recoverable'](formatted)
+      .then((result) => {
+        const recoveryOpt = result as Option<PalletRecoveryRecoveryConfig>
+
+        setRecoverable(!!recoveryOpt.isSome);
+      })
+      .catch(console.error);
+  }, [api, formatted]);
+
+  const recoverableToolTipTxt = useMemo(() => {
     if (!chain) {
       return anyChainModeText;
     }
@@ -25,4 +45,9 @@ export default function useIsRecoverableTooltipText (address: string | undefined
         return t('Checking');
     }
   }, [anyChainModeText, chain, isRecoverable, t]);
+
+  return {
+    isRecoverable,
+    recoverableToolTipTxt
+  };
 }

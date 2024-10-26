@@ -3,15 +3,18 @@
 
 import { useMemo } from 'react';
 
-import { useChain, useTranslation } from '.';
+import { useInfo, useProxies, useTranslation } from '.';
 
-export default function useHasProxyTooltipText (address: string | undefined, hasProxy: boolean | undefined): string {
+export default function useHasProxyTooltipText (address: string | undefined): { hasProxy: boolean | undefined; proxyTooltipTxt: string; } {
   const { t } = useTranslation();
 
-  const chain = useChain(address);
+  const { api, chain, formatted } = useInfo(address);
+
+  const proxies = useProxies(api, formatted);
+  const hasProxy = proxies ? !!proxies.length : undefined;
   const anyChainModeText = t('Account is in Any Chain mode');
 
-  return useMemo(() => {
+  const proxyTooltipTxt = useMemo(() => {
     if (!chain) {
       return anyChainModeText;
     }
@@ -25,4 +28,9 @@ export default function useHasProxyTooltipText (address: string | undefined, has
         return t('Checking');
     }
   }, [anyChainModeText, chain, hasProxy, t]);
+
+  return {
+    hasProxy,
+    proxyTooltipTxt
+  };
 }

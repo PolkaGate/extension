@@ -8,9 +8,9 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect,useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 
-import { useAnimateOnce, useHasProxyTooltipText, useInfo, useIsRecoverableTooltipText, useProxies } from '../hooks';
+import { useAnimateOnce, useHasProxyTooltipText, useInfo, useIsRecoverableTooltipText } from '../hooks';
 import { windowOpen } from '../messaging';
 import { PROXY_CHAINS } from '../util/constants';
 import { ActionContext } from './contexts';
@@ -29,27 +29,13 @@ function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }:
   const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const { api, chain, formatted } = useInfo(address);
-  const proxies = useProxies(api, formatted);
+  const { chain, formatted } = useInfo(address);
 
-  const shakeProxy = useAnimateOnce(!!proxies?.length);
+  const { hasProxy, proxyTooltipTxt } = useHasProxyTooltipText(address);
+  const { isRecoverable, recoverableToolTipTxt } = useIsRecoverableTooltipText(address);
 
-  const [isRecoverable, setRecoverable] = useState<boolean | undefined>();
-
+  const shakeProxy = useAnimateOnce(hasProxy);
   const shakeShield = useAnimateOnce(isRecoverable);
-  const recoverableToolTipTxt = useIsRecoverableTooltipText(address, isRecoverable);
-  const hasProxy = proxies ? !!proxies.length : undefined;
-  const proxyTooltipTxt = useHasProxyTooltipText(address, hasProxy);
-
-  useEffect((): void => {
-    if (!api || !formatted) {
-      return;
-    }
-
-    api.query?.['recovery']?.['recoverable'](formatted)
-      .then((r: any) => setRecoverable(!!r.isSome))
-      .catch(console.error);
-  }, [api, formatted]);
 
   const openManageProxy = useCallback(() => {
     address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
@@ -91,7 +77,7 @@ function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }:
           <Infotip placement='bottom-end' text={proxyTooltipTxt}>
             <IconButton onClick={openManageProxy} sx={{ height: '15px', width: '15px' }}>
               <FontAwesomeIcon
-                color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
+                color={hasProxy ? theme.palette.success.main : theme.palette.action.disabledBackground}
                 fontSize='13px'
                 icon={faSitemap}
                 shake={shakeProxy}

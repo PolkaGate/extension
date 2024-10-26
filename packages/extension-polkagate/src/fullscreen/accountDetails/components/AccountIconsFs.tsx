@@ -4,10 +4,8 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { Option, u128, Vec } from '@polkadot/types';
 //@ts-ignore
 import type { PalletProxyAnnouncement, PalletRecoveryActiveRecovery } from '@polkadot/types/lookup';
-import type { Proxy } from '../../../util/types';
 
 import { faChain, faCheckCircle, faCircleInfo, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,7 +15,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ActionContext, Infotip } from '../../../components';
 import { useAnimateOnce, useHasIdentityTooltipText, useHasProxyTooltipText, useInfo, useIsRecoverableTooltipText } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
-import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
+import { IDENTITY_CHAINS } from '../../../util/constants';
 
 interface AddressDetailsProps {
   address: string | undefined;
@@ -31,22 +29,16 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
   const { account, api, chain, formatted } = useInfo(address);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
-  const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
-  const [hasProxy, setHasProxy] = useState<boolean | undefined>();
+
+  const { isRecoverable, recoverableToolTipTxt } = useIsRecoverableTooltipText(address);
+  const { hasProxy, proxyTooltipTxt } = useHasProxyTooltipText(address);
+  const identityToolTipTxt = useHasIdentityTooltipText(address, hasID);
 
   const shakeProxy = useAnimateOnce(hasProxy);
-  const shakeIdentity = useAnimateOnce(hasID);
   const shakeShield = useAnimateOnce(isRecoverable);
-
-  const identityToolTipTxt = useHasIdentityTooltipText(address, hasID);
-  const recoverableToolTipTxt = useIsRecoverableTooltipText(address, isRecoverable);
-  const proxyTooltipTxt = useHasProxyTooltipText(address, hasProxy);
+  const shakeIdentity = useAnimateOnce(hasID);
 
   useEffect((): void => {
-    setHasID(undefined);
-    setIsRecoverable(undefined);
-    setHasProxy(undefined);
-
     if (!api || !formatted || !account?.genesisHash || api.genesisHash.toHex() !== account.genesisHash) {
       return;
     }
@@ -55,27 +47,6 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
       setHasID(!!accountInfo);
     } else {
       setHasID(false);
-    }
-
-    if (api.query?.['recovery'] && SOCIAL_RECOVERY_CHAINS.includes(account.genesisHash)) {
-      api.query['recovery']['recoverable'](formatted)
-        .then((r) =>
-          setIsRecoverable((r as Option<PalletRecoveryActiveRecovery>).isSome))
-        .catch(console.error);
-    } else {
-      setIsRecoverable(false);
-    }
-
-    if (api.query?.['proxy'] && PROXY_CHAINS.includes(account.genesisHash)) {
-      api.query['proxy']['proxies'](formatted)
-        .then((p) => {
-          const _p = p as unknown as [Vec<PalletProxyAnnouncement>, u128];
-          const fetchedProxies = JSON.parse(JSON.stringify(_p[0])) as unknown as Proxy[];
-
-          setHasProxy(fetchedProxies.length > 0);
-        }).catch(console.error);
-    } else {
-      setHasProxy(false);
     }
   }, [api, formatted, account?.genesisHash, accountInfo]);
 
