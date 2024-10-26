@@ -9,11 +9,10 @@ export default function useHasIdentityTooltipText (address: string | undefined, 
   const { t } = useTranslation();
 
   const chain = useChain(address);
-  const anyChainModeText = t('Account is in Any Chain mode');
 
   return useMemo(() => {
     if (!chain) {
-      return anyChainModeText;
+      return t('Account is in Any Chain mode');
     }
 
     switch (hasID) {
@@ -24,5 +23,5 @@ export default function useHasIdentityTooltipText (address: string | undefined, 
       default:
         return t('Checking');
     }
-  }, [anyChainModeText, chain, hasID, t]);
+  }, [chain, hasID, t]);
 }
