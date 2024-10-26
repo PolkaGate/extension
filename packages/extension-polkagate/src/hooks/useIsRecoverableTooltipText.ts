@@ -9,11 +9,11 @@ export default function useIsRecoverableTooltipText (address: string | undefined
   const { t } = useTranslation();
 
   const chain = useChain(address);
-  const anyChinModeText = t('Account is in Any Chain mode');
+  const anyChainModeText = t('Account is in Any Chain mode');
 
   return useMemo(() => {
     if (!chain) {
-      return anyChinModeText;
+      return anyChainModeText;
     }
 
     switch (isRecoverable) {
@@ -24,5 +24,5 @@ export default function useIsRecoverableTooltipText (address: string | undefined
       default:
         return t('Checking');
     }
-  }, [anyChinModeText, chain, isRecoverable, t]);
+  }, [anyChainModeText, chain, isRecoverable, t]);
 }

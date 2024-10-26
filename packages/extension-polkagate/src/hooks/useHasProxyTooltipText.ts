@@ -9,11 +9,11 @@ export default function useHasProxyTooltipText (address: string | undefined, has
   const { t } = useTranslation();
 
   const chain = useChain(address);
-  const anyChinModeText = t('Account is in Any Chain mode');
+  const anyChainModeText = t('Account is in Any Chain mode');
 
   return useMemo(() => {
     if (!chain) {
-      return anyChinModeText;
+      return anyChainModeText;
     }
 
     switch (hasProxy) {
@@ -24,5 +24,5 @@ export default function useHasProxyTooltipText (address: string | undefined, has
       default:
         return t('Checking');
     }
-  }, [anyChinModeText, chain, hasProxy, t]);
+  }, [anyChainModeText, chain, hasProxy, t]);
 }
