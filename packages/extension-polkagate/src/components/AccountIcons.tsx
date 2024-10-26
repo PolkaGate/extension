@@ -1,9 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { Proxy } from '../util/types';
 
@@ -12,10 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-
-import { useTranslation } from '../hooks';
+import { useAnimateOnce, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 import { PROXY_CHAINS } from '../util/constants';
 import { getSubstrateAddress } from '../util/utils';
@@ -34,19 +31,22 @@ interface Props {
   recoverable?: boolean;
 }
 
-export default function AccountIcons({ chain, formatted, identiconTheme, isSubId, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
+export default function AccountIcons ({ chain, formatted, identiconTheme, isSubId, judgements, prefix, proxies, recoverable = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
   const address = getSubstrateAddress(formatted);
 
+  const shakeProxy = useAnimateOnce(!!proxies?.length);
+  const shakeShield = useAnimateOnce(recoverable);
+
   const openManageProxy = useCallback(() => {
     address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
   }, [address, chain, onAction]);
 
   const openSocialRecovery = useCallback(() => {
-    address && windowOpen(`/socialRecovery/${address}/false`);
+    address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
 
   return (
@@ -71,6 +71,7 @@ export default function AccountIcons({ chain, formatted, identiconTheme, isSubId
                 color={recoverable ? theme.palette.success.main : theme.palette.action.disabledBackground}
                 fontSize='13px'
                 icon={faShieldHalved}
+                shake={shakeShield}
               />
             </IconButton>
           </Infotip>
@@ -82,6 +83,7 @@ export default function AccountIcons({ chain, formatted, identiconTheme, isSubId
                 color={proxies?.length ? theme.palette.success.main : theme.palette.action.disabledBackground}
                 fontSize='13px'
                 icon={faSitemap}
+                shake={shakeProxy}
               />
             </IconButton>
           </Infotip>

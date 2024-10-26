@@ -1,24 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable sort-keys */
+import type { TransferRequest } from '../types';
 
 import request from 'umi-request';
 
-import { TransferRequest } from '../types';
-
 const nullObject = {
   code: 0,
-  message: 'Success',
-  generated_at: Date.now(),
   data: {
     count: 0,
     transfers: null
-  }
+  },
+  generated_at: Date.now(),
+  message: 'Success'
 } as unknown as TransferRequest;
 
-export function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
+export function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
   if (!chainName) {
     return Promise.resolve(nullObject);
   }
@@ -46,6 +43,6 @@ export function getTxTransfers(chainName: string, address: string, pageNum: numb
   });
 }
 
-function postReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
+function postReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
   return request.post(api, { data, ...option });
 }

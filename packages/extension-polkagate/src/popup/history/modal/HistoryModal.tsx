@@ -51,7 +51,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
               setTabIndex ={setTabIndex}
               tabIndex={tabIndex}
             />
-            <Grid container item sx={{ gap: '5px', height: '70%', maxHeight: 650 - 145, overflowY: 'auto' }}>
+            <Grid container id='scrollArea' item sx={{ gap: '5px', height: '70%', maxHeight: 650 - 145, overflowY: 'auto' }}>
               {grouped && Object.keys(grouped).length > 0 &&
                 Object.entries(grouped)?.map((group) => {
                   const [date, info] = group;
@@ -85,7 +85,15 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                     // staking transaction history is saved locally
                     tabIndex !== TAB_MAP.STAKING &&
                     ((transfersTx?.hasMore)
-                      ? 'loading...'
+                      ? <Progress
+                        direction='row'
+                        pt='5px'
+                        size={15}
+                        title={t('Loading...')}
+                        titlePaddingLeft={5}
+                        titlePaddingTop={0}
+                        type='wordpress'
+                      />
                       : !!tabHistory?.length &&
                       <Box fontSize={11}>
                         {t('No more transactions to load')}
@@ -93,7 +101,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                     )
                   }
                 </Grid>}
-              <div id='observerObj' />
+              <div id='observerObj' style={{ height: '1px' }} />
             </Grid>
           </>
         }

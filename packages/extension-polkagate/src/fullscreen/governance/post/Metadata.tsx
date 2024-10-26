@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -22,8 +21,9 @@ import { isValidAddress } from '../../../util/utils';
 import useStyles from '../styles/styles';
 import { LabelValue } from '../TrackStats';
 import { pascalCaseToTitleCase } from '../utils/util';
+import useReferendaRequested from './useReferendaRequested';
 
-export function hexAddressToFormatted(hexString: string, chain: Chain | null | undefined): string | undefined {
+export function hexAddressToFormatted (hexString: string, chain: Chain | null | undefined): string | undefined {
   try {
     if (!chain || !hexString) {
       return undefined;
@@ -74,6 +74,8 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
   const theme = useTheme();
   const { api, chain, chainName, decimal, token } = useInfo(address);
   const style = useStyles();
+
+  const { rDecimal, rToken } = useReferendaRequested(address, referendum);
 
   const [expanded, setExpanded] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
@@ -181,9 +183,9 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
                 style={{ justifyContent: 'flex-start' }}
                 value={<ShowBalance
                   balance={referendum?.call?.args?.['amount'] as string || referendum?.requested}
-                  decimal={referendum?.decimal || decimal}
+                  decimal={rDecimal}
                   decimalPoint={2}
-                  token={referendum?.token || token}
+                  token={rToken}
                 />}
                 valueStyle={{ fontSize: 16, fontWeight: 500 }}
               />

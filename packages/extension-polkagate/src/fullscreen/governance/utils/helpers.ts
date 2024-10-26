@@ -25,7 +25,6 @@ export interface Statistics {
   'OriginsCount': number
 }
 
-
 interface DataSS {
   items: CommentItemSS[];
   page: number;
@@ -101,7 +100,11 @@ interface ReactionSS {
   parentCid: string,
   reaction: number,
   updatedAt: string,
-  user: null
+  user: {
+    address: string;
+    publicKey: string;
+    username: string;
+  } | null
 }
 
 export interface VoteType {
@@ -250,7 +253,6 @@ export async function getAllVotesFromPA (chainName: string, refIndex: number, li
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
   };
 
-  // return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}&sortBy=time`, requestOptions)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}`, requestOptions)
     .then((response) => response.json())
@@ -392,13 +394,13 @@ interface RefListSb {
   }[];
 }
 
-export async function getReferendumsListSb (chainName: string, type: TopMenu, listingLimit = 30): Promise<RefListSb | null> {
+export async function getReferendumsListSb (chainName: string, type: 'referenda' | 'fellowship', listingLimit = 30): Promise<RefListSb | null> {
   console.log('Getting ref list from sb ...');
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendums`,
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLowerCase()}/referendums`,
         {
           // page:1,
           row: listingLimit
@@ -460,7 +462,7 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
     const formattedComments = comments.items.map(({ _id, author, content, createdAt, proposer, reactions, replies, updatedAt }) => ({
       commentSource: 'SS',
       comment_reactions: {
-        '👍': { count: reactions.length, usernames: reactions[0]?.user },
+        '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
         '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
       },
       content,
@@ -475,7 +477,7 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
         id: _id,
         proposer,
         reply_reactions: {
-          '👍': { count: reactions.length, usernames: reactions[0]?.user },
+          '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
           '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
         },
         updated_at: updatedAt,

@@ -13,6 +13,7 @@ export { default as useActiveEraIndex } from './useActiveEraIndex';
 export { default as useActiveRecoveries } from './useActiveRecoveries';
 export { default as useActiveValidators } from './useActiveValidators';
 export { default as useAlerts } from './useAlerts';
+export { default as useAnimateOnce } from './useAnimateOnce';
 export { default as useApi } from './useApi';
 export { default as useApiWithChain } from './useApiWithChain';
 export { default as useApiWithChain2 } from './useApiWithChain2';

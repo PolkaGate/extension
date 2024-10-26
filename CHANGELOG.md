@@ -1,5 +1,61 @@
 # Change Log
 
+# [0.20.0](https://github.com/polkagate/extension/compare/v0.19.6...v0.20.0) (2024-10-24)
+
+
+### Features
+
+* auto loading referenda list ([#1599](https://github.com/polkagate/extension/issues/1599)) ([c987138](https://github.com/polkagate/extension/commit/c987138d3b2fe4f9d7525b8a821b24a1dc51388e))
+
+## [0.19.6](https://github.com/polkagate/extension/compare/v0.19.5...v0.19.6) (2024-10-23)
+
+
+### Bug Fixes
+
+* history intersection loader issue ([#1598](https://github.com/polkagate/extension/issues/1598)) ([8744720](https://github.com/polkagate/extension/commit/87447206493735381da5a6152373eafbfe3c1797))
+
+## [0.19.5](https://github.com/polkagate/extension/compare/v0.19.4...v0.19.5) (2024-10-23)
+
+
+### Bug Fixes
+
+* search ref problem ([#1602](https://github.com/polkagate/extension/issues/1602)) ([a43adba](https://github.com/polkagate/extension/commit/a43adba1df696a6aefccca11ae960c18b794d456))
+
+## [0.19.4](https://github.com/polkagate/extension/compare/v0.19.3...v0.19.4) (2024-10-23)
+
+
+### Bug Fixes
+
+* asset requested issue while currency is something other than USD ([#1594](https://github.com/polkagate/extension/issues/1594)) ([9083e0b](https://github.com/polkagate/extension/commit/9083e0bb3e6376ea85004bf8b78b18a88329fffd))
+
+## [0.19.3](https://github.com/polkagate/extension/compare/v0.19.2...v0.19.3) (2024-10-23)
+
+
+### Bug Fixes
+
+* apply search after loading referenda [#1220](https://github.com/polkagate/extension/issues/1220) ([#1597](https://github.com/polkagate/extension/issues/1597)) ([ab372b9](https://github.com/polkagate/extension/commit/ab372b9f785a7316a2a30164b23573bcf4e7fc92))
+
+## [0.19.2](https://github.com/polkagate/extension/compare/v0.19.1...v0.19.2) (2024-10-22)
+
+
+### Bug Fixes
+
+* fix displaying reaction issue ([#1596](https://github.com/polkagate/extension/issues/1596)) ([1a0e8a9](https://github.com/polkagate/extension/commit/1a0e8a9e50999972426b3b9dcf3fef293234f1d9))
+
+## [0.19.1](https://github.com/polkagate/extension/compare/v0.19.0...v0.19.1) (2024-10-21)
+
+
+### Bug Fixes
+
+* referenda tracks Max ([#1591](https://github.com/polkagate/extension/issues/1591)) ([268a5eb](https://github.com/polkagate/extension/commit/268a5eb2578f677f2ce3233fc3cdd66defd76691))
+
+# [0.19.0](https://github.com/polkagate/extension/compare/v0.18.4...v0.19.0) (2024-10-16)
+
+
+### Features
+
+* add no internet alert ([#1589](https://github.com/polkagate/extension/issues/1589)) ([6b02c7e](https://github.com/polkagate/extension/commit/6b02c7e025f85c7f7d0e1a399d1d2dcf990363f0))
+
 ## [0.18.4](https://github.com/polkagate/extension/compare/v0.18.3...v0.18.4) (2024-10-15)
 
 

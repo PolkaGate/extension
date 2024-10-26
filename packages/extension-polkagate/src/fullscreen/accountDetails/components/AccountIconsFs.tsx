@@ -1,9 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Option, u128, Vec } from '@polkadot/types';
+//@ts-ignore
+import type { PalletProxyAnnouncement, PalletRecoveryActiveRecovery } from '@polkadot/types/lookup';
 import type { Proxy } from '../../../util/types';
 
 import { faChain, faCheckCircle, faCircleInfo, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
@@ -11,10 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-
 import { ActionContext, Infotip } from '../../../components';
-import { useInfo, useTranslation } from '../../../hooks';
+import { useAnimateOnce, useInfo, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 
@@ -23,15 +24,20 @@ interface AddressDetailsProps {
   accountInfo: DeriveAccountInfo | undefined | null
 }
 
-export default function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
+function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const onAction = useContext(ActionContext);
   const { account, api, chain, formatted } = useInfo(address);
 
   const [hasID, setHasID] = useState<boolean | undefined>();
   const [isRecoverable, setIsRecoverable] = useState<boolean | undefined>();
   const [hasProxy, setHasProxy] = useState<boolean | undefined>();
+
+  const shakeProxy = useAnimateOnce(hasProxy);
+  const shakeIdentity = useAnimateOnce(hasID);
+  const shakeShield = useAnimateOnce(isRecoverable);
 
   const identityToolTipTxt = useMemo(() => {
     if (!chain) {
@@ -93,19 +99,20 @@ export default function AccountIconsFs({ accountInfo, address }: AddressDetailsP
       setHasID(false);
     }
 
-    if (api.query?.recovery && SOCIAL_RECOVERY_CHAINS.includes(account.genesisHash)) {
-      api.query.recovery.recoverable(formatted)
+    if (api.query?.['recovery'] && SOCIAL_RECOVERY_CHAINS.includes(account.genesisHash)) {
+      api.query['recovery']['recoverable'](formatted)
         .then((r) =>
-          setIsRecoverable(r.isSome))
+          setIsRecoverable((r as Option<PalletRecoveryActiveRecovery>).isSome))
         .catch(console.error);
     } else {
       setIsRecoverable(false);
     }
 
-    if (api.query?.proxy && PROXY_CHAINS.includes(account.genesisHash)) {
-      api.query.proxy.proxies(formatted)
+    if (api.query?.['proxy'] && PROXY_CHAINS.includes(account.genesisHash)) {
+      api.query['proxy']['proxies'](formatted)
         .then((p) => {
-          const fetchedProxies = JSON.parse(JSON.stringify(p[0])) as unknown as Proxy[];
+          const _p = p as unknown as [Vec<PalletProxyAnnouncement>, u128];
+          const fetchedProxies = JSON.parse(JSON.stringify(_p[0])) as unknown as Proxy[];
 
           setHasProxy(fetchedProxies.length > 0);
         }).catch(console.error);
@@ -115,11 +122,11 @@ export default function AccountIconsFs({ accountInfo, address }: AddressDetailsP
   }, [api, address, formatted, account?.genesisHash, accountInfo]);
 
   const openIdentity = useCallback(() => {
-    address && chain && windowOpen(`/manageIdentity/${address}`);
+    address && chain && windowOpen(`/manageIdentity/${address}`).catch(console.error);
   }, [address, chain]);
 
   const openSocialRecovery = useCallback(() => {
-    address && chain && windowOpen(`/socialRecovery/${address}/false`);
+    address && chain && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address, chain]);
 
   const openManageProxy = useCallback(() => {
@@ -134,10 +141,12 @@ export default function AccountIconsFs({ accountInfo, address }: AddressDetailsP
             ? accountInfo?.identity?.displayParent
               ? <FontAwesomeIcon
                 icon={faChain}
+                shake={shakeIdentity}
                 style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.success.main, fontSize: '13px', padding: '2px' }}
               />
               : <FontAwesomeIcon
                 icon={faCheckCircle}
+                shake={shakeIdentity}
                 style={{ border: '1px solid', borderRadius: '5px', color: theme.palette.success.main, fontSize: '16px', padding: '2px' }}
               />
             : <FontAwesomeIcon
@@ -155,6 +164,7 @@ export default function AccountIconsFs({ accountInfo, address }: AddressDetailsP
           >
             <FontAwesomeIcon
               icon={faShieldHalved}
+              shake={shakeShield}
               style={{ border: '1px solid', borderRadius: '5px', color: isRecoverable ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
             />
           </IconButton>
@@ -165,6 +175,7 @@ export default function AccountIconsFs({ accountInfo, address }: AddressDetailsP
           <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
             <FontAwesomeIcon
               icon={faSitemap}
+              shake={shakeProxy}
               style={{ border: '1px solid', borderRadius: '5px', color: hasProxy ? theme.palette.success.main : theme.palette.action.disabledBackground, fontSize: '16px', padding: '2px' }}
             />
           </IconButton>
@@ -173,3 +184,5 @@ export default function AccountIconsFs({ accountInfo, address }: AddressDetailsP
     </Grid>
   );
 }
+
+export default React.memo(AccountIconsFs);

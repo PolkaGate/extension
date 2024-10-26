@@ -32,15 +32,11 @@ function InternetConnectivity (): React.ReactElement {
 
   useEffect(() => {
     checkInternetAccess().then((_isOnline) => {
-      console.log('internet check result:', _isOnline);
-
       setIsOnline(_isOnline);
     }).catch(console.error);
 
     const intervalId = setInterval(() => {
       checkInternetAccess().then((_isOnline) => {
-        console.log('internet check result:', _isOnline);
-
         setIsOnline(_isOnline);
       }).catch(console.error);
     }, CHECK_INTERNET_CONNECTIVITY_PERIOD);
