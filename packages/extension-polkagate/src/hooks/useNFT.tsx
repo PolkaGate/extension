@@ -1,52 +1,29 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type React from 'react';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
-import type { NftItemsContextType } from '../util/types';
+import type { NftItemsType} from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import NftManager from '../class/nftManager';
 import { useTranslation } from '../components/translate';
-import { isHexToBn } from '../util/utils';
 import useAlerts from './useAlerts';
 
-export default function useNFT (accountsFromContext: AccountJson[] | null, setNftItems: React.Dispatch<React.SetStateAction<NftItemsContextType | undefined>>) {
+const nftManager = new NftManager();
+
+export default function useNFT (accountsFromContext: AccountJson[] | null) {
   const { t } = useTranslation();
   const { notify } = useAlerts();
 
   const [fetching, setFetching] = useState<boolean>(false);
 
-  const isWhitelistedPath = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs') || window.location.hash.startsWith('#/nft');
+  const onWhitelistedPath = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs') || window.location.hash.startsWith('#/nft');
   const addresses = (accountsFromContext || []).map(({ address: accountAddress }) => accountAddress);
 
-  const saveToStorage = useCallback(async (data: NftItemsContextType) => {
-    await chrome.storage.local.set({ nftItems: JSON.stringify(data) });
+  const saveToStorage = useCallback((data: NftItemsType) => {
+    nftManager.setOnChainItemsInfo(data);
   }, []);
-
-  const getFromStorage = useCallback(async (): Promise<NftItemsContextType | null> => {
-    const result = await chrome.storage.local.get(['nftItems']);
-
-    if (result['nftItems']) {
-      return JSON.parse(result['nftItems'] as string) as NftItemsContextType;
-    }
-
-    return null;
-  }, []);
-
-  const processAndSetNFTs = useCallback((data: NftItemsContextType) => {
-    for (const address in data) {
-      const items = data[address];
-
-      items.forEach((nftItem) => {
-        if (nftItem.price) {
-          nftItem.price = isHexToBn(nftItem.price.toString());
-        }
-      });
-    }
-
-    setNftItems(data);
-  }, [setNftItems]);
 
   const fetchNFTs = useCallback((addresses: string[]) => {
     setFetching(true);
@@ -70,10 +47,10 @@ export default function useNFT (accountsFromContext: AccountJson[] | null, setNf
         return;
       }
 
-      let parsedNFTsInfo: NftItemsContextType;
+      let parsedNFTsInfo: NftItemsType;
 
       try {
-        parsedNFTsInfo = JSON.parse(NFTs) as NftItemsContextType;
+        parsedNFTsInfo = JSON.parse(NFTs) as NftItemsType;
       } catch (error) {
         console.error('Failed to parse NFTs JSON:', error);
         // setFetching(false);
@@ -85,30 +62,16 @@ export default function useNFT (accountsFromContext: AccountJson[] | null, setNf
       // console.log('All fetched NFTs:', parsedNFTsInfo);
 
       // Save all fetched items to Chrome storage
-      saveToStorage(parsedNFTsInfo).catch(console.error);
-
-      // Set context
-      processAndSetNFTs(parsedNFTsInfo);
+      saveToStorage(parsedNFTsInfo);
 
       // setFetching(false);
       getNFTsWorker.terminate();
     };
-  }, [notify, processAndSetNFTs, saveToStorage, t]);
+  }, [notify, saveToStorage, t]);
 
   useEffect(() => {
-    if (!fetching && addresses && addresses.length > 0 && isWhitelistedPath) {
+    if (!fetching && addresses && addresses.length > 0 && onWhitelistedPath) {
       fetchNFTs(addresses);
     }
-  }, [addresses, fetching, fetchNFTs, isWhitelistedPath]);
-
-  useEffect(() => {
-    getFromStorage()
-      .then((storedItems) => {
-        if (storedItems) {
-          // console.log('Fetched NFTs from storage:', storedItems);
-          processAndSetNFTs(storedItems);
-        }
-      })
-      .catch(console.error);
-  }, [getFromStorage, processAndSetNFTs]);
+  }, [addresses, fetching, fetchNFTs, onWhitelistedPath]);
 }
