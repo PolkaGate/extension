@@ -10,7 +10,7 @@
  * */
 
 import type { HexString } from '@polkadot/util/types';
-import type { BalancesInfo, FormattedAddressState } from '../../util/types';
+import type { FormattedAddressState } from '../../util/types';
 
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -59,8 +59,6 @@ export default function AccountDetails (): React.ReactElement {
     balances?.soloTotal && balances?.pooledBalance && !balances.soloTotal.isZero() && !balances.pooledBalance.isZero()
   , [balances?.pooledBalance, balances?.soloTotal]);
 
-  console.log('balances:', balances && JSON.parse(JSON.stringify(balances)))
-  
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
       return setShowStakingOptions(false);
