@@ -12,10 +12,10 @@ import type { Proxy } from '../../../util/types';
 import { faChain, faCheckCircle, faCircleInfo, faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ActionContext, Infotip } from '../../../components';
-import { useAnimateOnce, useInfo, useTranslation } from '../../../hooks';
+import { useAnimateOnce, useHasIdentityTooltipText, useHasProxyTooltipText, useInfo, useIsRecoverableTooltipText } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
 
@@ -24,8 +24,7 @@ interface AddressDetailsProps {
   accountInfo: DeriveAccountInfo | undefined | null
 }
 
-function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
-  const { t } = useTranslation();
+function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
 
   const onAction = useContext(ActionContext);
@@ -39,57 +38,16 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
   const shakeIdentity = useAnimateOnce(hasID);
   const shakeShield = useAnimateOnce(isRecoverable);
 
-  const identityToolTipTxt = useMemo(() => {
-    if (!chain) {
-      return 'Account is in Any Chain mode';
-    }
-
-    switch (hasID) {
-      case true:
-        return 'Has Identity';
-      case false:
-        return 'No Identity';
-      default:
-        return 'Checking';
-    }
-  }, [chain, hasID]);
-
-  const recoverableToolTipTxt = useMemo(() => {
-    if (!chain) {
-      return 'Account is in Any Chain mode';
-    }
-
-    switch (isRecoverable) {
-      case true:
-        return 'Recoverable';
-      case false:
-        return 'Not Recoverable';
-      default:
-        return 'Checking';
-    }
-  }, [chain, isRecoverable]);
-
-  const proxyTooltipTxt = useMemo(() => {
-    if (!chain) {
-      return 'Account is in Any Chain mode';
-    }
-
-    switch (hasProxy) {
-      case true:
-        return 'Has Proxy';
-      case false:
-        return 'No Proxy';
-      default:
-        return 'Checking';
-    }
-  }, [chain, hasProxy]);
+  const identityToolTipTxt = useHasIdentityTooltipText(address, hasID);
+  const recoverableToolTipTxt = useIsRecoverableTooltipText(address, isRecoverable);
+  const proxyTooltipTxt = useHasProxyTooltipText(address, hasProxy);
 
   useEffect((): void => {
     setHasID(undefined);
     setIsRecoverable(undefined);
     setHasProxy(undefined);
 
-    if (!api || !address || !account?.genesisHash || api.genesisHash.toHex() !== account.genesisHash) {
+    if (!api || !formatted || !account?.genesisHash || api.genesisHash.toHex() !== account.genesisHash) {
       return;
     }
 
@@ -119,7 +77,7 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
     } else {
       setHasProxy(false);
     }
-  }, [api, address, formatted, account?.genesisHash, accountInfo]);
+  }, [api, formatted, account?.genesisHash, accountInfo]);
 
   const openIdentity = useCallback(() => {
     address && chain && windowOpen(`/manageIdentity/${address}`).catch(console.error);
@@ -136,7 +94,7 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
   return (
     <Grid alignItems='center' container direction='column' display='grid' height='72px' item justifyContent='center' justifyItems='center' width='fit-content'>
       <Grid item onClick={openIdentity} sx={{ cursor: 'pointer', height: '24px', m: 'auto', p: '2px', width: 'fit-content' }}>
-        <Infotip placement='right' text={t(identityToolTipTxt)}>
+        <Infotip placement='right' text={identityToolTipTxt}>
           {hasID
             ? accountInfo?.identity?.displayParent
               ? <FontAwesomeIcon
@@ -157,7 +115,7 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
         </Infotip>
       </Grid>
       <Grid height='24px' item my='1px' width='24px'>
-        <Infotip placement='right' text={t(recoverableToolTipTxt)}>
+        <Infotip placement='right' text={recoverableToolTipTxt}>
           <IconButton
             onClick={openSocialRecovery}
             sx={{ height: '24px', width: '24px' }}
@@ -171,7 +129,7 @@ function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.R
         </Infotip>
       </Grid>
       <Grid height='24px' item width='fit-content'>
-        <Infotip placement='right' text={t(proxyTooltipTxt)}>
+        <Infotip placement='right' text={proxyTooltipTxt}>
           <IconButton onClick={openManageProxy} sx={{ height: '16px', width: '16px' }}>
             <FontAwesomeIcon
               icon={faSitemap}
