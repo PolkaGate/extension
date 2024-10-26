@@ -15,7 +15,7 @@ import Thumbnail from './Thumbnail';
 const UNAVAILABLE_HEIGHT = 320;
 const LIST_HEIGHT = innerHeight - UNAVAILABLE_HEIGHT;
 
-function NftList ({ apis, itemsDetail, nfts }: ItemsListProps): React.ReactElement {
+function NftList ({ apis, nfts }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -38,7 +38,6 @@ function NftList ({ apis, itemsDetail, nfts }: ItemsListProps): React.ReactEleme
         <Thumbnail
           api={apis[nftInfo.chainName]}
           itemInformation={nftInfo}
-          itemsDetail={itemsDetail}
           key={index}
         />
       ))

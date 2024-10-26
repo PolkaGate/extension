@@ -6,7 +6,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
 
-export interface ItemInformation {
+export interface ItemOnChainInfo {
   collectionId?: string;
   chainName: string; // polkadot, kusama or westend asset hubs
   itemId?: string;
@@ -17,6 +17,23 @@ export interface ItemInformation {
   owner: string;
   price?: BN | null | undefined;
   items?: number;
+}
+
+export interface ItemMetadata {
+  animation_url?: string | null;
+  name?: string | undefined;
+  description?: string | undefined;
+  image?: string | null | undefined;
+  attributes?: Attribute[] | undefined;
+  tags?: string[] | undefined;
+  metadataLink?: string;
+  imageContentType?: string;
+  animationContentType?: string;
+  mediaUri?: string;
+}
+
+export interface ItemInformation extends ItemOnChainInfo, ItemMetadata {
+  noData?: boolean;
 }
 
 export interface FilterSectionProps {
@@ -33,24 +50,10 @@ export interface CheckboxButtonProps {
 
 interface Attribute { label: string; value: string }
 
-export interface ItemMetadata {
-  animation_url?: string | null;
-  name?: string | undefined;
-  description?: string | undefined;
-  image?: string | null | undefined;
-  attributes: Attribute[] | undefined;
-  tags: string[] | undefined;
-  metadataLink: string;
-  imageContentType?: string;
-  animationContentType?: string;
-  mediaUri?: string;
-}
-
 export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;
 
 export interface ThumbnailProps {
   itemInformation: ItemInformation | undefined;
-  itemsDetail: ItemsDetail;
   api: ApiPromise | undefined;
 }
 
@@ -69,7 +72,6 @@ export interface FullscreenNftModalProps {
 
 export interface DetailsProp {
   api: ApiPromise | undefined;
-  details: ItemMetadata | null;
   itemInformation: ItemInformation;
   show: boolean;
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
@@ -91,7 +93,6 @@ export interface DetailProp {
 
 export interface ItemsListProps {
   nfts: ItemInformation[] | null | undefined;
-  itemsDetail: ItemsDetail;
   apis: Record<string, ApiPromise | undefined>;
 }
 
