@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.20.1](https://github.com/polkagate/extension/compare/v0.20.0...v0.20.1) (2024-10-27)
+
+
+### Bug Fixes
+
+* staking balances get undefined in useBalances ([#1609](https://github.com/polkagate/extension/issues/1609)) ([2d97e9a](https://github.com/polkagate/extension/commit/2d97e9a755c262a366dddf685d0fd19d2478b7e6))
+
 # [0.20.0](https://github.com/polkagate/extension/compare/v0.19.6...v0.20.0) (2024-10-24)
 
 
