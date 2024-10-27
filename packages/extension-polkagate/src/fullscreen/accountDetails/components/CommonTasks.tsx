@@ -30,15 +30,16 @@ interface Props {
 }
 
 interface TaskButtonProps {
+  disabled?: boolean;
+  dividerWidth?: string;
   icon: React.JSX.Element;
-  text: string;
+  loading?: boolean;
+  mr?: string;
+  noBorderButton?: boolean;
   onClick: () => void;
   secondaryIconType: 'popup' | 'page';
-  noBorderButton?: boolean;
-  disabled?: boolean;
+  text: string;
   show?: boolean;
-  mr?: string;
-  loading?: boolean;
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
@@ -69,7 +70,7 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
   });
 };
 
-export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, dividerWidth = '66%', icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -99,7 +100,8 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
               />
             }
           </Grid>
-          {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
+          {!noBorderButton &&
+           <Divider sx={{ bgcolor: 'divider', height: '2px', justifySelf: 'flex-end', m: '5px 15px', width: dividerWidth }} />
           }
         </>
       }

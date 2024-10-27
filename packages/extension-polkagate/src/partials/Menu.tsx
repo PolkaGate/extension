@@ -1,15 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Theme } from '@mui/material/styles';
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
-import { keyframes, Theme } from '@mui/material/styles';
+import { keyframes } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon,Warning } from '../components';
+import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon, Warning } from '../components';
 import { setStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { tieAccount } from '../messaging';
@@ -31,9 +32,12 @@ const COLLAPSIBLE_MENUS = {
   SETTING: 3
 };
 
-function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
+const Div = () => <Divider sx={{ bgcolor: 'divider', height: '1px', justifySelf: 'flex-end', mx: '10px', width: '83%' }} />;
+
+function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+
   const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnableConfirmed, setIsTestnetEnableConfirmed] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
@@ -117,7 +121,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
           ? <>
             <MenuItem
               iconComponent={
-                <VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:plus-circle' spin={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleNewAccountSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
@@ -126,10 +130,10 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             >
               <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
             </MenuItem>
-            <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+            <Div />
             <MenuItem
               iconComponent={
-                <VaadinIcon icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon float ={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleImportSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
@@ -138,7 +142,7 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
             >
               <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
             </MenuItem>
-            <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+            <Div />
             <MenuItem
               iconComponent={
                 <VaadinIcon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
@@ -147,10 +151,10 @@ function Menu({ setShowMenu, theme }: Props): React.ReactElement<Props> {
               text={t('Export all accounts')}
               withHoverEffect
             />
-            <Divider sx={{ bgcolor: 'secondary.light', height: '1px' }} />
+            <Div />
             <MenuItem
               iconComponent={
-                <VaadinIcon icon='vaadin:cog' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+                <VaadinIcon icon='vaadin:cog' spin={collapsedMenu === COLLAPSIBLE_MENUS.SETTING} style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
               }
               onClick={toggleSettingSubMenu}
               showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
