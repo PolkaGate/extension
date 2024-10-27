@@ -10,7 +10,7 @@
  * */
 
 import type { HexString } from '@polkadot/util/types';
-import type { BalancesInfo, FormattedAddressState } from '../../util/types';
+import type { FormattedAddressState } from '../../util/types';
 
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -49,7 +49,6 @@ export default function AccountDetails (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<number>();
   const balances = useBalances(address, refresh, setRefresh, false, assetId); // if assetId is undefined and chain is assethub it will fetch native token's balance
-  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
   const [showOthers, setShowOthers] = useState<boolean | undefined>(false);
   const [showReservedReasons, setShowReservedReasons] = useState<boolean | undefined>(false);
   const [showStakingOptions, setShowStakingOptions] = useState<boolean>(false);
@@ -57,8 +56,8 @@ export default function AccountDetails (): React.ReactElement {
   const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const isDualStaking = useMemo(() =>
-    balanceToShow?.soloTotal && balanceToShow?.pooledBalance && !balanceToShow.soloTotal.isZero() && !balanceToShow.pooledBalance.isZero()
-  , [balanceToShow?.pooledBalance, balanceToShow?.soloTotal]);
+    balances?.soloTotal && balances?.pooledBalance && !balances.soloTotal.isZero() && !balances.pooledBalance.isZero()
+  , [balances?.pooledBalance, balances?.soloTotal]);
 
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
@@ -71,14 +70,6 @@ export default function AccountDetails (): React.ReactElement {
   const goToAccount = useCallback(() => {
     chain?.genesisHash && onAction(`/account/${chain.genesisHash}/${address}/`);
   }, [address, chain, onAction]);
-
-  useEffect(() => {
-    if (balances?.chainName === chainName) {
-      return setBalanceToShow(balances);
-    }
-
-    setBalanceToShow(undefined);
-  }, [balances, chainName]);
 
   useEffect(() => {
     chain && goToAccount();
@@ -212,12 +203,12 @@ export default function AccountDetails (): React.ReactElement {
           ? <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
             {assetId !== undefined
               ? <>
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} title={t('Transferable')} />
+                <LabelBalancePrice address={address} balances={balances} label={'Transferable'} title={t('Transferable')} />
                 {balances?.lockedBalance &&
-                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
+                  <LabelBalancePrice address={address} balances={balances} label={'Locked'} title={t('Locked')} />
                 }
                 {balances?.reservedBalance && !balances?.lockedBalance &&
-                  <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} title={t('Reserved')} />
+                  <LabelBalancePrice address={address} balances={balances} label={'Reserved'} title={t('Reserved')} />
                 }
               </>
               : <>
@@ -233,27 +224,27 @@ export default function AccountDetails (): React.ReactElement {
                     </Warning>
                   </Grid>
                 }
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Total'} title={t('Total')} />
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
+                <LabelBalancePrice address={address} balances={balances} label={'Total'} title={t('Total')} />
+                <LabelBalancePrice address={address} balances={balances} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
                 {supportStaking &&
                  <>
-                   {!balanceToShow?.soloTotal?.isZero() &&
-                      <LabelBalancePrice address={address} balances={balanceToShow} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />}
-                   {!balanceToShow?.pooledBalance?.isZero() &&
-                      <LabelBalancePrice address={address} balances={balanceToShow} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
+                   {balances?.soloTotal && !balances?.soloTotal?.isZero() &&
+                      <LabelBalancePrice address={address} balances={balances} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />}
+                   {balances?.pooledBalance && !balances?.pooledBalance?.isZero() &&
+                      <LabelBalancePrice address={address} balances={balances} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
                    }
                  </>
                 }
                 {GOVERNANCE_CHAINS.includes(genesisHash)
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
-                  : <LabelBalancePrice address={address} balances={balanceToShow} label={'Locked'} title={t('Locked')} />
+                  : <LabelBalancePrice address={address} balances={balances} label={'Locked'} title={t('Locked')} />
                 }
-                <LabelBalancePrice address={address} balances={balanceToShow} label={'Reserved'} onClick={showReservedChevron ? onReservedReasons : undefined} title={t('Reserved')} />
+                <LabelBalancePrice address={address} balances={balances} label={'Reserved'} onClick={showReservedChevron ? onReservedReasons : undefined} title={t('Reserved')} />
                 <OthersRow />
               </>
             }
           </Grid>
-          : <StakingOption balance={balanceToShow} setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
+          : <StakingOption balance={balances} setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
         <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
           <HorizontalMenuItem
