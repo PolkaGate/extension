@@ -49,8 +49,6 @@ export default function useTimeToUnlock (address: string | undefined, delegatedB
   }, [refresh]);
 
   useEffect(() => {
-    console.log('referendaLocks:', referendaLocks);
-
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
       setUnlockableAmount(BN_ZERO);
