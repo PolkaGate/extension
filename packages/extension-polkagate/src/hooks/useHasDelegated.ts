@@ -10,14 +10,10 @@ import { useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import useApi from './useApi';
-import useFormatted from './useFormatted';
-import { useChain, useTracks } from '.';
+import { useInfo, useTracks } from '.';
 
 export default function useHasDelegated (address: string | undefined, refresh?: boolean): BN | null | undefined {
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
+  const { api, chain, formatted } = useInfo(address);
   const { tracks } = useTracks(address);
 
   const [hasDelegated, setHasDelegated] = useState<BN | null>();
