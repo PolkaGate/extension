@@ -8,10 +8,10 @@ import type { UnlockInformationType } from '..';
 import { faLock, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import { FormatPrice, ShowBalance } from '../../../components';
-import { useInfo, useLockedInReferenda, useTranslation } from '../../../hooks';
+import { useAnimateOnce, useInfo, useLockedInReferenda, useTranslation } from '../../../hooks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import { popupNumbers } from '..';
 
@@ -30,15 +30,7 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
   const { api, decimal, token } = useInfo(address);
 
   const { classToUnlock, delegatedBalance, hasDescription, isDisable, timeToUnlock, totalLocked, unlockableAmount } = useLockedInReferenda(address, refreshNeeded);
-
-  const [shake, setShake] = useState<boolean>();
-
-  useEffect(() => {
-    if (unlockableAmount && !unlockableAmount.isZero()) {
-      setShake(true);
-      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
-    }
-  }, [unlockableAmount]);
+  const shake = useAnimateOnce(unlockableAmount && !unlockableAmount.isZero(), { duration: TIME_TO_SHAKE_ICON });
 
   const onUnlock = useCallback(() => {
     if (isDisable) {

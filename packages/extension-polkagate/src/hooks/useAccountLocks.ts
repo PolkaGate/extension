@@ -124,6 +124,8 @@ export default function useAccountLocks (address: string | undefined, palletRefe
         return undefined;
       }
 
+      setInfo(undefined);
+
       const locks = await api.query[palletVote]?.['classLocksFor'](formatted) as unknown as [BN, BN][];
       const lockClasses = locks?.length
         ? locks.map((l) => l[0])
@@ -203,8 +205,7 @@ export default function useAccountLocks (address: string | undefined, palletRefe
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getLockClass();
+    getLockClass().catch(console.error);
   }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote, refresh]);
 
   return useMemo(() => {
