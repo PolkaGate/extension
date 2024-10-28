@@ -125,16 +125,21 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
       return;
     }
 
-    const myNfts = nftManager.get(address);
-
-    setNfts(myNfts);
-
+    // Handle updates after initialization
     const handleNftUpdate = (updatedAddress: string, updatedNfts: ItemInformation[]) => {
       if (updatedAddress === address) {
         setNfts(updatedNfts);
       }
     };
 
+    // Waits for initialization
+    nftManager.waitForInitialization()
+      .then(() => {
+        setNfts(nftManager.get(address));
+      })
+      .catch(console.error);
+
+    // subscribe to the possible nft items for the account
     nftManager.subscribe(handleNftUpdate);
 
     // Cleanup

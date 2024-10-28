@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation, ItemMetadata, ItemOnChainInfo } from '../fullscreen/nft/utils/types';
-import type { NftItemsType} from '../util/types';
+import type { NftItemsType } from '../util/types';
 
-// Define types for listener function
+// Define types for listener functions
 type Listener = (address: string, nftItemsInformation: ItemInformation[]) => void;
+type InitializationListener = () => void;
 
 // Error class for NFT-specific errors
 class NftManagerError extends Error {
@@ -17,15 +18,34 @@ class NftManagerError extends Error {
 
 export default class NftManager {
   // Store nft items and listeners
-  private nfts: NftItemsType= {};
+  private nfts: NftItemsType = {};
   private listeners = new Set<Listener>();
+  private initializationListeners = new Set<InitializationListener>();
   private readonly STORAGE_KEY = 'nftItems';
   private isInitialized = false;
+  private initializationPromise: Promise<void>;
 
   constructor () {
     // Load nft items from storage and set up storage change listener
-    this.loadFromStorage().catch(console.error);
+    this.initializationPromise = this.loadFromStorage();
     chrome.storage.onChanged.addListener(this.handleStorageChange);
+  }
+
+  // Wait for initialization to complete
+  public async waitForInitialization (): Promise<void> {
+    return this.initializationPromise;
+  }
+
+  // Notify all listeners about initialization
+  private notifyInitializationListeners (): void {
+    this.initializationListeners.forEach((listener) => {
+      try {
+        listener();
+      } catch (error) {
+        console.error('Error in initialization listener:', error);
+      }
+    });
+    this.initializationListeners.clear();
   }
 
   // Load nft items from chrome storage
@@ -33,11 +53,11 @@ export default class NftManager {
     try {
       const result = await chrome.storage.local.get(this.STORAGE_KEY);
 
-      if (result[this.STORAGE_KEY]) {
-        this.nfts = result[this.STORAGE_KEY]as NftItemsType;
-        this.isInitialized = true;
-        this.notifyListeners();
-      }
+      this.nfts = result[this.STORAGE_KEY] as NftItemsType || {};
+      this.isInitialized = true;
+
+      this.notifyInitializationListeners();
+      this.notifyListeners();
     } catch (error) {
       console.error('Failed to load NFT items from storage:', error);
       throw new NftManagerError('Failed to load NFT items from storage');
@@ -102,7 +122,7 @@ export default class NftManager {
   }
 
   // Get all nft items
-  getAll (): NftItemsType| null | undefined {
+  getAll (): NftItemsType | null | undefined {
     return this.nfts;
   }
 
