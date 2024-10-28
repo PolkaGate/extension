@@ -4,12 +4,16 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { SelectChangeEvent } from '@mui/material';
+import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { DropdownOption } from '../util/types';
 
 import { CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 
+import Icon from '@polkadot/react-identicon';
+
+import { DEMO_ACCOUNT } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 import ChainLogo from './ChainLogo';
 
@@ -19,7 +23,13 @@ interface Props {
   onChange?: (v: number | string) => void;
   options: DropdownOption[];
   label: string;
+  labelFontSize?: string;
+  labelPaddingLeft?: string;
+  textFontSize?: string;
+  labelAlignment?: string;
   isDisabled?: boolean;
+  isIdenticon?: boolean;
+  rounded?: boolean;
   showLogo?: boolean;
   showIcons?: boolean;
   _mt?: string | number;
@@ -49,7 +59,7 @@ const BootstrapInput = styled(InputBase)<{ isDisabled?: boolean }>(({ isDisabled
   }
 }));
 
-function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
+function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isIdenticon, isItemsLoading, label, labelAlignment, labelFontSize = '10px', labelPaddingLeft = '5px', onChange, options, rounded = true, showIcons = true, showLogo = false, textFontSize = '14px', value }: Props) {
   const theme = useTheme();
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
@@ -70,7 +80,7 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = 
 
   return (
     <FormControl disabled={isDisabled} sx={{ mt: `${_mt}`, width: '100%' }} variant='standard'>
-      <Typography sx={{ fontSize: '10px', paddingLeft: '5px' }}>
+      <Typography sx={{ alignSelf: labelAlignment, fontSize: labelFontSize, paddingLeft: labelPaddingLeft }}>
         {label}
       </Typography>
       {selectedValue &&
@@ -78,7 +88,7 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = 
           // eslint-disable-next-line react/jsx-no-bind
           IconComponent={
             isItemsLoading
-              ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> 
+              ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} />
               : undefined
           }
           MenuProps={{
@@ -120,11 +130,45 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = 
           onChange={_onChange}
           onClick={toggleMenu}
           open={options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
+          // eslint-disable-next-line react/jsx-no-bind
+          renderValue={(v) => {
+            let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];
+
+            if (textToShow?.split(':')?.[1]) {
+              textToShow = textToShow?.split(':')[1]?.trim();
+            }
+
+            return (
+              <Grid container height={'30px'} justifyContent='flex-start'>
+                {showIcons && textToShow && textToShow !== 'Allow use on any chain' &&
+                  <Grid alignItems='center' container item width='fit-content'>
+                    {isIdenticon
+                      ? <Icon
+                        className='icon'
+                        size={20}
+                        theme={v as IconTheme}
+                        value={DEMO_ACCOUNT}
+                      />
+                      : <ChainLogo chainName={chainName(textToShow)} genesisHash={v} size={19.8} />
+                    }
+                  </Grid>
+                }
+                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
+                  <Typography fontSize={textFontSize} fontWeight={300}>
+                    {textToShow}
+                  </Typography>
+                </Grid>
+              </Grid>
+            );
+          }}
           sx={{
+            '.MuiSelect-icon': {
+              display: options?.length && options.length === 1 ? 'none' : 'block'
+            },
             '> #selectChain': {
               border: '1px solid',
               borderColor: 'secondary.light',
-              borderRadius: '20px',
+              borderRadius: rounded ? '20px' : '5px',
               fontSize: '14px',
               height: '29px',
               lineHeight: '30px',
@@ -141,35 +185,9 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = 
               fontSize: '30px'
             },
             bgcolor: isDisabled ? 'primary.contrastText' : 'transparent',
-            width: '100%',
-            '.MuiSelect-icon': {
-              display: options?.length && options.length === 1 ? 'none' : 'block'
-            }
+            width: '100%'
           }}
           value={selectedValue} // Assuming selectedValue is a state variable
-          // eslint-disable-next-line react/jsx-no-bind
-          renderValue={(v) => {
-            let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];
-
-            if (textToShow?.split(':')?.[1]) {
-              textToShow = textToShow?.split(':')[1]?.trim();
-            }
-
-            return (
-              <Grid container height={'30px'} justifyContent='flex-start'>
-                {showIcons && textToShow && textToShow !== 'Allow use on any chain' &&
-                  <Grid alignItems='center' container item width='fit-content'>
-                    <ChainLogo chainName={chainName(textToShow)} genesisHash={v} size={19.8} />
-                  </Grid>
-                }
-                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
-                  <Typography fontSize='14px' fontWeight={300}>
-                    {textToShow}
-                  </Typography>
-                </Grid>
-              </Grid>
-            );
-          }}
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
@@ -181,11 +199,19 @@ function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = 
               <Grid container height={'30px'} justifyContent='flex-start'>
                 {showIcons && text !== 'Allow use on any chain' &&
                   <Grid alignItems='center' container item pr='6px' width='fit-content'>
-                    <ChainLogo chainName={chainName(text)} genesisHash={value as string} size={19.8} />
+                    {isIdenticon
+                      ? <Icon
+                        className='icon'
+                        size={25}
+                        theme={value as IconTheme}
+                        value={DEMO_ACCOUNT}
+                      />
+                      : <ChainLogo chainName={chainName(text)} genesisHash={value as string} size={19.8} />
+                    }
                   </Grid>
                 }
-                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content' sx={{ overflowX: 'scroll' }}>
-                  <Typography fontSize='14px' fontWeight={300}>
+                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' sx={{ overflowX: 'scroll' }} width='fit-content'>
+                  <Typography fontSize={textFontSize} fontWeight={300}>
                     {text}
                   </Typography>
                 </Grid>

@@ -5,10 +5,12 @@ import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import Icon from '@polkadot/react-identicon';
+
+import { AccountIconThemeContext } from '.';
 
 interface Props {
   className?: string;
@@ -22,6 +24,8 @@ interface Props {
 }
 
 function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+  const { accountIconTheme } = useContext(AccountIconThemeContext);
+
   return (
     <div style={{ position: 'relative' }}>
       <div className={className}>
@@ -30,7 +34,7 @@ function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, 
           onCopy={onCopy}
           prefix={prefix}
           size={size}
-          theme={iconTheme}
+          theme={ accountIconTheme || iconTheme}
           value={value}
         />
       </div>

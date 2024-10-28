@@ -11,7 +11,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, FullScreenIcon, Infotip2, MenuItem, Select, VaadinIcon } from '../components';
+import { ActionContext, Checkbox2, FullScreenIcon, Infotip2, MenuItem, Select, SelectIdenticonTheme, VaadinIcon } from '../components';
 import { getStorage, updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
@@ -171,7 +171,10 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
               text={t('Manage login password')}
             />
           </Grid>
-          <Grid item pt='12px'>
+          <SelectIdenticonTheme
+            style={{ pt: '12px', width: '100%' }}
+          />
+          <Grid item pt='10px'>
             <Select
               defaultValue={languageOptions[0].value}
               label={t('Language')}
@@ -180,7 +183,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
               value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
             />
           </Grid>
-          <Grid item pt='10px'>
+          <Grid item pt='10px' sx={{ visibility: 'hidden' }}>
             <Select
               defaultValue={notificationOptions[1].value}
               label={t('Notification')}

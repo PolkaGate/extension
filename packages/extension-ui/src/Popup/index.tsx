@@ -4,6 +4,7 @@
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import type { AlertType, APIs, Fetching, LatestRefs, Prices, PricesInCurrencies, UserAddedChains } from '@polkadot/extension-polkagate/src/util/types';
+import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 
 import { AnimatePresence } from 'framer-motion';
@@ -13,7 +14,7 @@ import { Route, Switch, useLocation } from 'react-router';
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import { ErrorBoundary, Loading } from '@polkadot/extension-polkagate/src/components';
-import { AccountContext, AccountsAssetsContext, ActionContext, AlertContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, GenesisHashOptionsContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext, UserAddedChainContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { AccountContext, AccountIconThemeContext, AccountsAssetsContext, ActionContext, AlertContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, GenesisHashOptionsContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext, UserAddedChainContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { getStorage, type LoginInfo, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
@@ -83,6 +84,7 @@ import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp'
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
+import { DEFAULT_ACCOUNT_ICON_THEME } from '@polkadot/extension-polkagate/src/util/constants';
 import uiSettings from '@polkadot/ui-settings';
 
 const startSettings = uiSettings.get();
@@ -137,6 +139,7 @@ export default function Popup (): React.ReactElement {
   const [refs, setRefs] = useState<LatestRefs>({});
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
+  const [accountIconTheme, setAccountIconTheme] = useState<IconTheme>();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [alerts, setAlerts] = useState<AlertType[]>([]);
 
@@ -154,6 +157,12 @@ export default function Popup (): React.ReactElement {
     if (to) {
       window.location.hash = to;
     }
+  }, []);
+
+  useEffect(() => {
+    getStorage('iconTheme')
+      .then((maybeTheme) => setAccountIconTheme((maybeTheme as IconTheme | undefined) || DEFAULT_ACCOUNT_ICON_THEME))
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -293,96 +302,98 @@ export default function Popup (): React.ReactElement {
             accounts && authRequests && metaRequests && signRequests &&
             <ActionContext.Provider value={_onAction}>
               <SettingsContext.Provider value={settingsCtx}>
-                <GenesisHashOptionsContext.Provider value={genesisHashOptionsCtx}>
-                  <AccountContext.Provider value={accountCtx}>
-                    <APIContext.Provider value={{ apis, setIt }}>
-                      <AlertContext.Provider value={{ alerts, setAlerts }}>
-                        <FetchingContext.Provider value={{ fetching, set }}>
-                          <CurrencyContext.Provider value={{ currency, setCurrency }}>
-                            <AccountsAssetsContext.Provider value={{ accountsAssets, setAccountsAssets }}>
-                              <ReferendaContext.Provider value={{ refs, setRefs }}>
-                                <AuthorizeReqContext.Provider value={authRequests}>
-                                  <MediaContext.Provider value={cameraOn && mediaAllowed}>
-                                    <MetadataReqContext.Provider value={metaRequests}>
-                                      <SigningReqContext.Provider value={signRequests}>
-                                        <UserAddedChainContext.Provider value={userAddedChainCtx}>
-                                          <Switch>
-                                            <Route path='/addNewChain/'>{wrapWithErrorBoundary(<AddNewChain />, 'add-new-chain')}</Route>
-                                            <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
-                                            <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
-                                            <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
-                                            <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
-                                            <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
-                                            <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
-                                            <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
-                                            <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
-                                            <Route path='/auth-list/:id?'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
-                                            <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
-                                            <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
-                                            <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
-                                            <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
-                                            <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
-                                            <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
-                                            <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
-                                            <Route path='/derivefs/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
-                                            <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
-                                            <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
-                                            <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
-                                            <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
-                                            <Route path='/import/add-watch-only'>{wrapWithErrorBoundary(<AddWatchOnly />, 'import-add-watch-only')}</Route>
-                                            <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
-                                            <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
-                                            <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
-                                            <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
-                                            <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
-                                            <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
-                                            <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
-                                            <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
-                                            <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
-                                            <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
-                                            <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
-                                            <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
-                                            <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
-                                            <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
-                                            <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
-                                            <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
-                                            <Route path='/poolfs/:address'>{wrapWithErrorBoundary(<PoolFS />, 'pool-staking-fullscreen')}</Route>
-                                            <Route path='/manageValidators/:address'>{wrapWithErrorBoundary(<ManageValidators />, 'manage-validators-fullscreen')}</Route>
-                                            <Route path='/managePoolValidators/:address'>{wrapWithErrorBoundary(<ManageValidatorsPoolfs />, 'manage-validators-fullscreen')}</Route>
-                                            <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
-                                            <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
-                                            <Route path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                                            <Route path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                                            <Route path='/stake/:address'>{wrapWithErrorBoundary(<Stake />, 'stake')}</Route>
-                                            <Route path='/socialRecovery/:address/:closeRecovery'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
-                                            <Route path='/solo/fastUnstake/:address'>{wrapWithErrorBoundary(<FastUnstake />, 'solo-fast-unstake')}</Route>
-                                            <Route path='/solo/nominations/:address'>{wrapWithErrorBoundary(<SoloNominations />, 'solo-nominations')}</Route>
-                                            <Route path='/solo/payout/:address'>{wrapWithErrorBoundary(<SoloPayout />, 'solo-payout')}</Route>
-                                            <Route path='/solo/restake/:address'>{wrapWithErrorBoundary(<SoloRestake />, 'solo-restake')}</Route>
-                                            <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
-                                            <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
-                                            <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
-                                            <Route path='/solofs/:address'>{wrapWithErrorBoundary(<SoloFS />, 'solo-staking-fullscreen')}</Route>
-                                            <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
-                                            <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
-                                            <Route
-                                              exact
-                                              path='/'
-                                            >{Root}</Route>
-                                          </Switch>
-                                        </UserAddedChainContext.Provider>
-                                      </SigningReqContext.Provider>
-                                    </MetadataReqContext.Provider>
-                                  </MediaContext.Provider>
-                                </AuthorizeReqContext.Provider>
-                              </ReferendaContext.Provider>
-                            </AccountsAssetsContext.Provider>
-                          </CurrencyContext.Provider>
-                        </FetchingContext.Provider>
-                      </AlertContext.Provider>
-                    </APIContext.Provider>
-                  </AccountContext.Provider>
-                </GenesisHashOptionsContext.Provider>
+                <AccountIconThemeContext.Provider value={{ accountIconTheme, setAccountIconTheme }}>
+                  <GenesisHashOptionsContext.Provider value={genesisHashOptionsCtx}>
+                    <AccountContext.Provider value={accountCtx}>
+                      <APIContext.Provider value={{ apis, setIt }}>
+                        <AlertContext.Provider value={{ alerts, setAlerts }}>
+                          <FetchingContext.Provider value={{ fetching, set }}>
+                            <CurrencyContext.Provider value={{ currency, setCurrency }}>
+                              <AccountsAssetsContext.Provider value={{ accountsAssets, setAccountsAssets }}>
+                                <ReferendaContext.Provider value={{ refs, setRefs }}>
+                                  <AuthorizeReqContext.Provider value={authRequests}>
+                                    <MediaContext.Provider value={cameraOn && mediaAllowed}>
+                                      <MetadataReqContext.Provider value={metaRequests}>
+                                        <SigningReqContext.Provider value={signRequests}>
+                                          <UserAddedChainContext.Provider value={userAddedChainCtx}>
+                                            <Switch>
+                                              <Route path='/addNewChain/'>{wrapWithErrorBoundary(<AddNewChain />, 'add-new-chain')}</Route>
+                                              <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
+                                              <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
+                                              <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
+                                              <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
+                                              <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
+                                              <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
+                                              <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
+                                              <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
+                                              <Route path='/auth-list/:id?'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
+                                              <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
+                                              <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
+                                              <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
+                                              <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
+                                              <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
+                                              <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
+                                              <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
+                                              <Route path='/derivefs/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
+                                              <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
+                                              <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
+                                              <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
+                                              <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
+                                              <Route path='/import/add-watch-only'>{wrapWithErrorBoundary(<AddWatchOnly />, 'import-add-watch-only')}</Route>
+                                              <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
+                                              <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
+                                              <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
+                                              <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
+                                              <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
+                                              <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
+                                              <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
+                                              <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
+                                              <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
+                                              <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
+                                              <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
+                                              <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
+                                              <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
+                                              <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
+                                              <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
+                                              <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
+                                              <Route path='/poolfs/:address'>{wrapWithErrorBoundary(<PoolFS />, 'pool-staking-fullscreen')}</Route>
+                                              <Route path='/manageValidators/:address'>{wrapWithErrorBoundary(<ManageValidators />, 'manage-validators-fullscreen')}</Route>
+                                              <Route path='/managePoolValidators/:address'>{wrapWithErrorBoundary(<ManageValidatorsPoolfs />, 'manage-validators-fullscreen')}</Route>
+                                              <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
+                                              <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
+                                              <Route path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                                              <Route path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
+                                              <Route path='/stake/:address'>{wrapWithErrorBoundary(<Stake />, 'stake')}</Route>
+                                              <Route path='/socialRecovery/:address/:closeRecovery'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
+                                              <Route path='/solo/fastUnstake/:address'>{wrapWithErrorBoundary(<FastUnstake />, 'solo-fast-unstake')}</Route>
+                                              <Route path='/solo/nominations/:address'>{wrapWithErrorBoundary(<SoloNominations />, 'solo-nominations')}</Route>
+                                              <Route path='/solo/payout/:address'>{wrapWithErrorBoundary(<SoloPayout />, 'solo-payout')}</Route>
+                                              <Route path='/solo/restake/:address'>{wrapWithErrorBoundary(<SoloRestake />, 'solo-restake')}</Route>
+                                              <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
+                                              <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
+                                              <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
+                                              <Route path='/solofs/:address'>{wrapWithErrorBoundary(<SoloFS />, 'solo-staking-fullscreen')}</Route>
+                                              <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
+                                              <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
+                                              <Route
+                                                exact
+                                                path='/'
+                                              >{Root}</Route>
+                                            </Switch>
+                                          </UserAddedChainContext.Provider>
+                                        </SigningReqContext.Provider>
+                                      </MetadataReqContext.Provider>
+                                    </MediaContext.Provider>
+                                  </AuthorizeReqContext.Provider>
+                                </ReferendaContext.Provider>
+                              </AccountsAssetsContext.Provider>
+                            </CurrencyContext.Provider>
+                          </FetchingContext.Provider>
+                        </AlertContext.Provider>
+                      </APIContext.Provider>
+                    </AccountContext.Provider>
+                  </GenesisHashOptionsContext.Provider>
+                </AccountIconThemeContext.Provider>
               </SettingsContext.Provider>
             </ActionContext.Provider>
           }
