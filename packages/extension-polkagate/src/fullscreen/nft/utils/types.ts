@@ -4,7 +4,6 @@
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { BN } from '@polkadot/util';
 
 export interface ItemOnChainInfo {
   collectionId?: string;
@@ -15,7 +14,7 @@ export interface ItemOnChainInfo {
   isCollection: boolean;
   creator?: string | undefined;
   owner: string;
-  price?: BN | null | undefined;
+  price?: number | null | undefined;
   items?: number;
 }
 
@@ -34,6 +33,7 @@ export interface ItemMetadata {
 
 export interface ItemInformation extends ItemOnChainInfo, ItemMetadata {
   noData?: boolean;
+  collectionName?: string;
 }
 
 export interface FilterSectionProps {
@@ -85,7 +85,7 @@ export interface DetailProp {
   accountId?: string;
   api?: ApiPromise;
   chain?: Chain | null;
-  price?: BN | null;
+  price?: number | null;
   divider?: boolean;
   link?: string;
   linkName?: string;

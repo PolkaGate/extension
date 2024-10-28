@@ -838,4 +838,4 @@ export interface FastestConnectionType {
 
 export type RecentChainsType = Record<string, string[]>;
 
-export type NftItemsType= Record<string, ItemInformation[]>;
+export type NftItemsType = Record<string, ItemInformation[]>;
