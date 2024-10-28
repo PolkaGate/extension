@@ -73,10 +73,10 @@ export default function AiBackgroundImage ({ bgImage, setBgImage }: Props): Reac
   useEffect(() => {
     /** initiate background image on load and UI theme change */
     chrome.storage.local.get('backgroundImage', (res) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const imgUrl = res?.['backgroundImage']?.[mode] as string;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const imgUrl = res?.['backgroundImage']?.[mode] as string | undefined;
 
-      tryToApplyImg(imgUrl);
+      imgUrl && tryToApplyImg(imgUrl);
     });
   }, [tryToApplyImg, mode]);
 
