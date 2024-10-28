@@ -13,17 +13,16 @@ import Select2 from './Select2';
 
 interface Props {
   style?: SxProps<Theme> | undefined;
-  fullWidthDropdown?: boolean;
 }
+
+const THEME_OPTIONS = [
+  { text: 'Dot', value: 'polkadot' },
+  { text: 'Ball', value: 'beachball' },
+  { text: 'Cube', value: 'ethereum' }
+];
 
 function SelectIdenticonTheme ({ style = {} }: Props) {
   const { accountIconTheme, setAccountIconTheme } = useContext(AccountIconThemeContext);
-
-  const options = [
-    { text: 'Dot', value: 'polkadot' },
-    { text: 'Ball', value: 'beachball' },
-    { text: 'Cube', value: 'ethereum' }
-  ];
 
   const onChangeTheme = useCallback((iconTheme: string | number) => {
     setStorage('iconTheme', iconTheme).catch(console.error);
@@ -44,7 +43,7 @@ function SelectIdenticonTheme ({ style = {} }: Props) {
         labelFontSize='14px'
         labelPaddingLeft='0px'
         onChange={onChangeTheme}
-        options={options}
+        options={THEME_OPTIONS}
         rounded={false}
         textFontSize='18px'
       />
