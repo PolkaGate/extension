@@ -1,6 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ApiPromise } from '@polkadot/api';
 import type { DataType, ItemInformation, ItemMetadata } from './types';
 
 import NftManager from '../../../class/nftManager';
@@ -99,6 +100,50 @@ export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = 
 
 const nftManager = new NftManager();
 
+const getCollectionName = (collectionId: string | undefined, isNftCollection: boolean) => {
+  const allNftItems = nftManager.getAll();
+
+  if (allNftItems && collectionId) {
+    const collection = Object.values(allNftItems).flat().find(({ collectionId: id, isCollection, isNft }) => isCollection && isNftCollection === isNft && id === String(collectionId));
+
+    if (collection) {
+      return collection.name;
+    }
+  }
+
+  return undefined;
+};
+
+export const fetchCollectionName = async (address: string, api: ApiPromise | undefined, nftItemInfo: ItemInformation): Promise<void> => {
+  if (!api) {
+    return;
+  }
+
+  try {
+    const queryPath = nftItemInfo.isNft ? 'nfts' : 'uniques';
+    const metadataMethod = nftItemInfo.isNft ? 'collectionMetadataOf' : 'classMetadataOf';
+
+    const response = await api.query[queryPath][metadataMethod](nftItemInfo.collectionId);
+    const res = response.toPrimitive() as { data: string | undefined };
+
+    if (!res?.data) {
+      return;
+    }
+
+    const metadata = await fetchData<{ name?: string }>(res.data, true);
+
+    if (metadata?.name) {
+      nftManager.setItemDetail(
+        address,
+        nftItemInfo,
+        { collectionName: metadata.name } as ItemMetadata
+      );
+    }
+  } catch (error) {
+    console.error(`Error fetching ${nftItemInfo.isNft ? 'NFT' : 'Unique'} collection name:`, error);
+  }
+};
+
 export const fetchItemMetadata = async (address: string, item: ItemInformation) => {
   try {
     // if data in empty or null or undefined so the item detail gonna be null, means nothing to display
@@ -135,10 +180,15 @@ export const fetchItemMetadata = async (address: string, item: ItemInformation) 
       ? await fetchData<DataType>(itemMetadata.animation_url)
       : null;
 
+    const collectionName = item.isCollection
+      ? undefined
+      : getCollectionName(item.collectionId, item.isNft);
+
     const detail = {
       ...itemMetadata,
       animationContentType: nftAnimationContent?.contentType,
       animation_url: nftAnimationContent?.url ?? null,
+      collectionName,
       image: nftImageContent?.url ?? null,
       imageContentType: nftImageContent?.contentType
     };

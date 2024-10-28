@@ -85,7 +85,7 @@ function NFT (): React.ReactElement {
       setStep(STEPS.INDEX);
 
       nfts.forEach((nft) => {
-        (nft.data && (nft.image === undefined && nft.animation_url === undefined)) &&
+        (nft.data && ((nft.image === undefined && nft.animation_url === undefined) || !nft.collectionName)) &&
           fetchItemMetadata(address, nft).catch(console.error);
       });
 
