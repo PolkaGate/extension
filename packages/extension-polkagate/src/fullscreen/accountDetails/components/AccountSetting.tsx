@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +20,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, chain } = useInfo(address);
@@ -77,7 +76,7 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
         />
       </Grid>
       <Collapse in={showAccountSettings} sx={{ width: '100%' }}>
-        <Grid alignItems='center' container direction='column' item justifyContent='center'>
+        <Grid alignItems='flex-end' container direction='column' item justifyContent='center'>
           <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
             disabled={identityDisable}

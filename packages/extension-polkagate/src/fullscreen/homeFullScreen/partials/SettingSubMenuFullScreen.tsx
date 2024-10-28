@@ -93,7 +93,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
     <>
       <Collapse in={show}>
         <>
-          <Divider sx={{ bgcolor: 'divider', height: '1px' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '1px', justifySelf: 'flex-end', width: '81%' }} />
           <Grid container direction='column' sx={{ p: '0px 0 15px 40px' }}>
             <TaskButton
               icon={

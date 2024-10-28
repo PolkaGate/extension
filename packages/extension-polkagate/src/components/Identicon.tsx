@@ -1,8 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import type { ThemeProps } from '@polkadot/extension-polkagate/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
@@ -14,7 +12,7 @@ import Icon from '@polkadot/react-identicon';
 
 interface Props {
   className?: string;
-  iconTheme?: IconTheme | string;
+  iconTheme?: IconTheme;
   isSubId?: boolean;
   judgement?: RegExpMatchArray | null | undefined;
   onCopy?: () => void;
@@ -23,7 +21,7 @@ interface Props {
   value?: AccountId | string | null;
 }
 
-function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
   return (
     <div style={{ position: 'relative' }}>
       <div className={className}>
@@ -70,7 +68,7 @@ function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, s
   );
 }
 
-export default React.memo(styled(Identicon)(({ theme }: ThemeProps) => `
+export default React.memo(styled(Identicon)(() => `
   background: rgba(192, 192, 292, 0.25);
   border-radius: 50%;
   display: flex;
