@@ -4,91 +4,23 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable camelcase */
 
-import type { DetailItemProps, DetailProp, DetailsProp } from '../utils/types';
+import type { DetailItemProps, DetailsProp } from '../utils/types';
 
 import { Close as CloseIcon, OpenInFull as OpenInFullIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
+import { Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 
-import { Identity, Progress, ShortAddress, ShowBalance, TwoButtons } from '../../../components';
+import { Progress, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useMetadata } from '../../../hooks';
 import { KODADOT_URL } from '../../../util/constants';
-import { amountToMachine, isHexToBn } from '../../../util/utils';
 import { DraggableModal } from '../../governance/components/DraggableModal';
 import { IPFS_GATEWAY } from '../utils/constants';
 import { fetchWithRetry, getContentUrl } from '../utils/util';
 import AudioPlayer from './AudioPlayer';
 import FullScreenNFT from './FullScreenNFT';
+import InfoRow from './InfoRow';
 import ItemAvatar from './ItemAvatar';
-
-export const InfoRow = React.memo(
-  function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThumbnail, link, linkName, price, text, title }: DetailProp) {
-    const { t } = useTranslation();
-    const decimal = api?.registry.chainDecimals[0];
-    const token = api?.registry.chainTokens[0];
-
-    let _price = price;
-
-    if (typeof (price) === 'string') {
-      _price = isHexToBn(price);
-    }
-
-    const convertedAmount = useMemo(() => _price && decimal ? (Number(_price) / 10 ** decimal).toString() : null, [decimal, _price]);
-    const priceAsBN = useMemo(() => convertedAmount ? amountToMachine(convertedAmount, decimal) : null, [convertedAmount, decimal]);
-    const notListed = _price === null;
-    const isDescription = !title;
-
-    return (
-      <Grid container item justifyContent='space-between'>
-        {divider && !isThumbnail &&
-          <Divider sx={{ bgcolor: 'divider', height: '1px', m: '8px auto', width: '100%' }} />
-        }
-        {title &&
-          <Typography fontSize={isThumbnail ? '13px' : '14px'} fontWeight={400} sx={inline ? { pr: '10px', width: 'fit-content' } : {}}>
-            {title}:
-          </Typography>
-        }
-        {price &&
-          <ShowBalance
-            balance={priceAsBN}
-            decimal={decimal}
-            decimalPoint={3}
-            token={token}
-            withCurrency
-          />
-        }
-        {notListed &&
-          <Typography fontSize='14px' fontWeight={400} textAlign='left'>
-            {t('Not listed')}
-          </Typography>
-        }
-        {text &&
-          <Typography fontSize='14px' fontWeight={isDescription ? 400 : 500} sx={{ '> p': { m: 0 } }} textAlign='justify'>
-            <ReactMarkdown
-              linkTarget='_blank'
-            >
-              {String(text)}
-            </ReactMarkdown>
-          </Typography>
-        }
-        {accountId &&
-          <>
-            {api && chain
-              ? <Identity api={api} chain={chain} formatted={accountId} identiconSize={15} showShortAddress style={{ fontSize: '14px', maxWidth: '200px' }} />
-              : <ShortAddress address={accountId} charsCount={6} style={{ fontSize: '14px', width: 'fit-content' }} />
-            }
-          </>
-        }
-        {link &&
-          <Link href={link} target='_blank' underline='hover'>
-            {linkName}
-          </Link>
-        }
-      </Grid>
-    );
-  });
 
 export const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.ReactElement }) => (
   <>
@@ -103,71 +35,73 @@ export const WithLoading = ({ children, loaded }: { loaded: boolean, children: R
   </>
 );
 
-const Item = ({ animation_url, animationContentType, image, imageContentType, setShowFullscreenDisabled }: DetailItemProps) => {
-  const [loaded, setLoaded] = useState<boolean>(false);
+const Item = React.memo(
+  function Item ({ animation_url, animationContentType, image, imageContentType, setShowFullscreenDisabled }: DetailItemProps) {
+    const [loaded, setLoaded] = useState<boolean>(false);
 
-  const isHtmlContent = animation_url && animationContentType === 'text/html';
-  const isAudioOnly = !image && animation_url && animationContentType?.startsWith('audio');
-  const isImageWithAudio = image && imageContentType?.startsWith('image') && animation_url && animationContentType?.startsWith('audio');
+    const isHtmlContent = animation_url && animationContentType === 'text/html';
+    const isAudioOnly = !image && animation_url && animationContentType?.startsWith('audio');
+    const isImageWithAudio = image && imageContentType?.startsWith('image') && animation_url && animationContentType?.startsWith('audio');
 
-  const onLoaded = useCallback(() => {
-    setLoaded(true);
-  }, []);
+    const onLoaded = useCallback(() => {
+      setLoaded(true);
+    }, []);
 
-  if (isHtmlContent) {
-    return (
-      <>
-        {!loaded &&
-          <Grid container item sx={{ left: '15%', position: 'absolute', top: '25%', width: 'fit-content', zIndex: 100 }}>
-            <Progress type='grid' />
-          </Grid>
-        }
-        <iframe
-          onLoad={onLoaded}
-          src={animation_url}
-          style={{
-            border: 'none',
-            height: '460px',
-            objectFit: 'contain',
-            pointerEvents: 'none',
-            width: '300px'
-          }}
-          title='HTML Content'
-        />
-      </>
-    );
-  } else if (isAudioOnly) {
-    return (
-      <AudioPlayer audioUrl={animation_url} />
-    );
-  } else if (isImageWithAudio) {
-    return (
-      <Grid container direction='column' item rowGap='20px' width='320px'>
+    if (isHtmlContent) {
+      return (
+        <>
+          {!loaded &&
+            <Grid container item sx={{ left: '15%', position: 'absolute', top: '25%', width: 'fit-content', zIndex: 100 }}>
+              <Progress type='grid' />
+            </Grid>
+          }
+          <iframe
+            onLoad={onLoaded}
+            src={animation_url}
+            style={{
+              border: 'none',
+              height: '460px',
+              objectFit: 'contain',
+              pointerEvents: 'none',
+              width: '300px'
+            }}
+            title='HTML Content'
+          />
+        </>
+      );
+    } else if (isAudioOnly) {
+      return (
+        <AudioPlayer audioUrl={animation_url} />
+      );
+    } else if (isImageWithAudio) {
+      return (
+        <Grid container direction='column' item rowGap='20px' width='320px'>
+          <ItemAvatar
+            image={image}
+            size='large'
+          />
+          <AudioPlayer audioUrl={animation_url} />
+        </Grid>
+      );
+    } else if (image && imageContentType?.startsWith('image')) {
+      return (
         <ItemAvatar
           image={image}
           size='large'
         />
-        <AudioPlayer audioUrl={animation_url} />
-      </Grid>
-    );
-  } else if (image && imageContentType?.startsWith('image')) {
-    return (
-      <ItemAvatar
-        image={image}
-        size='large'
-      />
-    );
-  } else {
-    setShowFullscreenDisabled(true);
+      );
+    } else {
+      setShowFullscreenDisabled(true);
 
-    return (
-      <ItemAvatar
-        image={null}
-        size='large'
-      />
-    );
+      return (
+        <ItemAvatar
+          image={null}
+          size='large'
+        />
+      );
+    }
   }
-};
+);
 
 export default function Details ({ api, itemInformation, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
@@ -301,8 +235,15 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
                   />
                 </Grid>
               }
+              {!itemInformation.isCollection && itemInformation.collectionName &&
+                  <InfoRow
+                    divider={!!itemInformation.description}
+                    text={itemInformation.collectionName}
+                    title={t('Collection name')}
+                  />
+              }
               <InfoRow
-                divider={!!itemInformation.description}
+                divider={!!itemInformation.description || (!itemInformation.isCollection && !!itemInformation.collectionName)}
                 text={itemInformation.chainName}
                 title={t('Network')}
               />
