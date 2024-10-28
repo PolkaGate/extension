@@ -54,7 +54,7 @@ function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }:
           judgement={judgements}
           prefix={prefix}
           size={40}
-          value={formatted}
+          value={formatted || address}
         />
       </Grid>
       <Grid container direction='row' item justifyContent='center'>
