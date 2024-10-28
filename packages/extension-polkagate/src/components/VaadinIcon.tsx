@@ -12,6 +12,8 @@ interface VaadinIconProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const VaadinIcon: React.FC<VaadinIconProps> = ({ float = false, icon, spin = false, style, ...props }) => {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   useEffect(() => {
     // Check if the animations are already injected
     if (!document.getElementById('vaadin-icon-animation-keyframes')) {
@@ -34,12 +36,16 @@ const VaadinIcon: React.FC<VaadinIconProps> = ({ float = false, icon, spin = fal
 
   // Combine inline styles with the animations if enabled
   const combinedStyles: React.CSSProperties = {
-    animation: `${spin ? 'vaadinSpin 3s linear infinite' : ''} ${float ? 'float 2s ease-in-out infinite' : ''}`,
+    animation: `${spin && !prefersReducedMotion ? 'vaadinSpin 3s linear infinite' : ''} ${float && !prefersReducedMotion ? 'float 2s ease-in-out infinite' : ''}`,
     ...style
   };
 
-//@ts-ignore
-return <vaadin-icon icon={icon} style={combinedStyles} {...props} />;
+  // @ts-ignore
+  return <vaadin-icon
+    icon={icon}
+    style={combinedStyles}
+    {...props}
+  />;
 };
 
 export default VaadinIcon;
