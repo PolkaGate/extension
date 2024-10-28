@@ -94,10 +94,9 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
                 text={t('Switch Theme')}
               >
                 <IconButton
-                  // onClick={noop}
                   sx={{ height: '35px', p: 0, width: '35px' }}
                 >
-                  <ThemeChanger color= 'secondary.light' noBorder />
+                  <ThemeChanger color= 'secondary.light' left='4px' noBorder />
                 </IconButton>
               </Infotip2>
             </Grid>

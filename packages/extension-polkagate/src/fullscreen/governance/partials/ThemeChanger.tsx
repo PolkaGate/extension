@@ -9,7 +9,7 @@ import React, { useCallback, useContext } from 'react';
 
 import { ColorContext } from '../../../components';
 
-function ThemeChanger ({ color, noBorder }: {color?: string, noBorder?: boolean}): React.ReactElement {
+function ThemeChanger ({ color = 'white', left = '7px', noBorder }: {color?: string, left?: string, noBorder?: boolean}): React.ReactElement {
   const theme = useTheme();
   const colorMode = useContext(ColorContext);
 
@@ -50,9 +50,9 @@ function ThemeChanger ({ color, noBorder }: {color?: string, noBorder?: boolean}
   const themeIconsStyle = {
     animationDuration: '250ms',
     animationFillMode: 'forwards',
-    color: color || 'white',
+    color,
     fontSize: '27px',
-    left: '7px',
+    left,
     m: 'auto',
     position: 'absolute',
     top: 0
