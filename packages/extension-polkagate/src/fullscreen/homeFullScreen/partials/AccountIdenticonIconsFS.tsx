@@ -25,7 +25,7 @@ function AccountIdenticonIconsFS ({ address }: Props): React.ReactElement {
         <Identicon
           iconTheme={chain?.icon ?? 'polkadot'}
           prefix={chain?.ss58Format ?? 42}
-          size={60}
+          size={55}
           value={formatted || address}
         />
       </Grid>
