@@ -128,7 +128,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        {[STEPS.INDEX, STEPS.SIGN_QR].includes(step) &&
+        {[STEPS.INDEX, STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
           <>
             <SubTitle label={t('Review')} style={{ paddingTop: isPasswordError ? '10px' : '25px' }} />
             <Container disableGutters sx={{ px: '30px' }}>
