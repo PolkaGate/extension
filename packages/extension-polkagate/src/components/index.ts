@@ -72,6 +72,7 @@ export { default as RemoveAuth } from './RemoveAuth';
 export { default as Select } from './Select';
 export { default as Select2 } from './Select2';
 export { default as SelectChain } from './SelectChain';
+export { default as SelectIdenticonTheme } from './SelectIdenticonTheme';
 export { default as ShortAddress } from './ShortAddress';
 export { default as ShortAddress2 } from './ShortAddress2';
 export { default as ShowBalance } from './ShowBalance';

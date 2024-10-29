@@ -243,3 +243,6 @@ export const AUTO_MODE = {
   text: 'Auto Mode',
   value: 'AutoMode'
 };
+
+export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
+export const DEFAULT_ACCOUNT_ICON_THEME = 'polkadot';

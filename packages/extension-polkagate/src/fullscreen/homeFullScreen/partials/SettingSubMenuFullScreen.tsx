@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Collapse, Divider, Grid, useTheme } from '@mui/material';
@@ -10,7 +9,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import settings from '@polkadot/ui-settings';
 
 import { checkBox, checkedBox } from '../../../assets/icons';
-import { AccountContext, Select, VaadinIcon } from '../../../components';
+import { AccountContext, Select, SelectIdenticonTheme, VaadinIcon } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
@@ -25,7 +24,7 @@ interface Props {
   show: boolean;
 }
 
-export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
+export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -85,7 +84,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
 
   useEffect(() => {
     getStorage('testnet_enabled').then((res) => {
-      setIsTestnetEnabledChecked(res as boolean);
+      setIsTestnetEnabledChecked(res as unknown as boolean);
     }).catch(console.error);
   }, [setIsTestnetEnabledChecked]);
 
@@ -135,9 +134,13 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
               onClick={onManageLoginPassword}
               text={t('Manage login password')}
             />
-            <Grid item pt='12px'>
+            <SelectIdenticonTheme
+              style={{ pt: '18px', width: '100%' }}
+            />
+            <Grid item pt='10px'>
               <Select
                 label={t('Language')}
+                //@ts-ignore
                 onChange={onChangeLang}
                 options={languageOptions}
                 value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
@@ -146,6 +149,7 @@ export default function SettingSubMenuFullScreen({ show }: Props): React.ReactEl
             <Grid item pt='10px'>
               <Select
                 label={t('Notification')}
+                //@ts-ignore
                 onChange={onChangeNotification}
                 options={notificationOptions}
                 value={notification ?? notificationOptions[1].value}
