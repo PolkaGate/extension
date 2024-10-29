@@ -16,19 +16,19 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
+import { ActionContext } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
-import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
-import { showAccount, tieAccount } from '../../../messaging';
+import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
+import { tieAccount } from '../../../messaging';
 import { amountToHuman } from '../../../util/utils';
-import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
-import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import DeriveAccountModal from '../../partials/DeriveAccountModal';
 import ExportAccountModal from '../../partials/ExportAccountModal';
 import ForgetAccountModal from '../../partials/ForgetAccountModal';
 import RenameModal from '../../partials/RenameAccountModal';
+import AccountBodyFs from './AccountBodyFs';
+import AccountIdenticonIconsFS from './AccountIdenticonIconsFS';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -96,10 +96,8 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
   const theme = useTheme();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
-  const { account, api, chain, formatted, genesisHash } = useInfo(address);
+  const account = useAccount(address);
   const onAction = useContext(ActionContext);
-
-  const accountInfo = useIdentity(genesisHash, formatted);
 
   const [displayPopup, setDisplayPopup] = useState<number>();
 
@@ -135,10 +133,6 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
     }).catch(console.error);
   }, [address, setSelectedAsset]);
 
-  const toggleVisibility = useCallback((): void => {
-    address && showAccount(address, account?.isHidden || false).catch(console.error);
-  }, [account?.isHidden, address]);
-
   const openSettings = useCallback((): void => {
     address && onAction();
   }, [onAction, address]);
@@ -151,48 +145,14 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
     <>
       <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '0.1px dashed' : 'none', borderColor: 'secondary.main', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
         <Grid container item>
-          <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
-            <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
-              <Identicon
-                iconTheme={chain?.icon ?? 'polkadot'}
-                prefix={chain?.ss58Format ?? 42}
-                size={70}
-                value={formatted || address}
-              />
-            </Grid>
-            <AccountIconsFs
-              accountInfo={accountInfo}
-              address={address}
-            />
-          </Grid>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>
-            <Grid container item justifyContent='space-between'>
-              <Identity
-                accountInfo={accountInfo}
-                address={address}
-                api={api}
-                chain={chain}
-                noIdenticon
-                onClick={goToDetails}
-                style={{ width: 'calc(100% - 40px)' }}
-                subIdOnly
-              />
-              <Grid item width='40px'>
-                <EyeIconFullScreen
-                  isHidden={account?.isHidden}
-                  onClick={toggleVisibility}
-                />
-              </Grid>
-            </Grid>
-            <Grid alignItems='center' container item>
-              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-                <ShortAddress2 address={formatted || address} charsCount={40} style={{ fontSize: '10px', fontWeight: 300 }} />
-              </Grid>
-              <Grid container item width='fit-content'>
-                <OptionalCopyButton address={address} />
-              </Grid>
-            </Grid>
-          </Grid>
+          <AccountIdenticonIconsFS
+            address={address}
+          />
+          <AccountBodyFs
+            address={address}
+            goToDetails={goToDetails}
+            gridSize={5.6}
+          />
           <AccountTotal
             hideNumbers={hideNumbers}
             totalBalance={totalBalance}
