@@ -1,29 +1,29 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+import type { Vote } from '../myVote/util';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useInfo, useProxies, useTranslation } from '../../../../hooks';
-import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { PROXY_TYPE } from '../../../../util/constants';
+import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import SimpleModalTitle from '../../../partials/SimpleModalTitle';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { getVoteType } from '../../utils/util';
-import { getConviction, Vote } from '../myVote/util';
+import { getConviction } from '../myVote/util';
 import About from './About';
 import Cast from './Cast';
 import Confirmation from './Confirmation';
@@ -70,9 +70,8 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index ({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { api, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -84,8 +83,8 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
   const [reviewModalHeight, setReviewModalHeight] = useState<number | undefined>();
 
-  const voteTx = api && api.tx['convictionVoting']['vote'];
-  const removeTx = api && api.tx['convictionVoting']['removeVote'];
+  const voteTx = api?.tx['convictionVoting']['vote'];
+  const removeTx = api?.tx['convictionVoting']['removeVote'];
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -113,7 +112,43 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         voteType: getVoteType(myVote)
       };
     }
+
+    return undefined;
   }, [decimal, myVote, refIndex, trackId]);
+
+  const title = useMemo(() => {
+    switch (step) {
+      case STEPS.ABOUT:
+        return t('About Voting');
+
+      case STEPS.CHECK_SCREEN:
+        return t('Checking');
+
+      case STEPS.INDEX:
+        return t(hasVoted ? 'Modify Your Vote' : 'Cast Your Vote');
+
+      case STEPS.REMOVE:
+        return t('Remove Your Vote');
+
+      case STEPS.PREVIEW:
+        return t('Vote Details');
+
+      case STEPS.REVIEW:
+        return t('Review Your Vote');
+
+      case STEPS.WAIT_SCREEN:
+        return t(alterType === 'remove' ? 'Removing vote' : 'Voting');
+
+      case STEPS.CONFIRM:
+        return t(alterType === 'remove' ? 'Vote has been removed' : 'Voting Completed');
+
+      case STEPS.PROXY:
+        return t('Select Proxy');
+
+      default:
+        return '';
+    }
+  }, [step, hasVoted, alterType, t]);
 
   useEffect(() => {
     if (!formatted || !voteTx) {
@@ -122,7 +157,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
 
     if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     const dummyVote = undefined;
@@ -151,64 +186,14 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
     }
   }, [notVoted, step]);
 
-  const CastVoteHeader = () => (
-    <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-      <Grid item>
-        <Typography fontSize='22px' fontWeight={700}>
-          {step === STEPS.ABOUT &&
-            t('About Voting')
-          }
-          {step === STEPS.INDEX &&
-            <>
-              {
-                hasVoted
-                  ? t('Modify Your Vote')
-                  : t('Cast Your Vote')
-              }
-            </>
-          }
-          {step === STEPS.REMOVE &&
-            t('Remove Your Vote')
-          }
-          {step === STEPS.PREVIEW &&
-            t('Vote Details')
-          }
-          {step === STEPS.REVIEW &&
-            t('Review Your Vote')
-          }
-          {step === STEPS.WAIT_SCREEN &&
-            <>
-              {alterType === 'remove'
-                ? t('Removing vote')
-                : t('Voting')
-              }
-            </>
-          }
-          {step === STEPS.CONFIRM &&
-            <>
-              {alterType === 'remove'
-                ? t('Vote has been removed')
-                : t('Voting Completed')
-              }
-            </>
-          }
-          {step === STEPS.PROXY &&
-            t('Select Proxy')
-          }
-        </Typography>
-      </Grid>
-      <Grid item>
-        {step !== STEPS.WAIT_SCREEN &&
-          <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-        }
-      </Grid>
-    </Grid>
-  );
-
   return (
     <DraggableModal onClose={handleClose} open={open}>
       <>
-        <CastVoteHeader />
+        <SimpleModalTitle
+          icon={faVoteYea}
+          onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
+          title= {title}
+        />
         {step === STEPS.ABOUT &&
           <About
             nextStep={
@@ -254,6 +239,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             step={step}
             tx={alterType === 'remove' ? removeTx : voteTx}
             txType={alterType === 'remove' ? 'Remove' : 'Vote'}
+            //@ts-ignore
             voteInformation={voteInformation || votedInfo}
           />
         }
@@ -287,6 +273,7 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
             alterType={alterType}
             handleClose={handleClose}
             txInfo={txInfo}
+            //@ts-ignore
             voteInformation={voteInformation || votedInfo}
           />
         }

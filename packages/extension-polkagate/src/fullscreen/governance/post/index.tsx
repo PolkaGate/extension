@@ -14,7 +14,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { PButton } from '../../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useReferendum, useTrack, useTranslation } from '../../../hooks';
 import Bread from '../Bread';
-import { FullScreenHeader } from '../FullScreenHeader';
+import FullScreenHeader from '../FullScreenHeader';
 import Toolbar from '../Toolbar';
 import { ENDED_STATUSES } from '../utils/consts';
 import { isFinished } from '../utils/helpers';

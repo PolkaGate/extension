@@ -9,7 +9,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AccountContext, ActionContext } from '../../components';
 import { useAccountsOrder, useAlerts, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
@@ -17,7 +17,7 @@ import ProfileTabsFullScreen from './partials/ProfileTabsFullScreen';
 import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
 import WatchList from './partials/WatchList';
 
-export default function HomePageFullScreen (): React.ReactElement {
+function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
 
@@ -92,3 +92,5 @@ export default function HomePageFullScreen (): React.ReactElement {
     </Grid>
   );
 }
+
+export default React.memo(HomePageFullScreen);

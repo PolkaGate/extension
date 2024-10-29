@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -20,7 +19,7 @@ interface Props {
   fontSize?: string;
 }
 
-function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
+function Infotip2 ({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
@@ -89,7 +88,7 @@ function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark
                 : <FontAwesomeIcon
                   color={theme.palette.secondary.light}
                   icon={faExclamationTriangle}
-                  style={{ paddingLeft: '7px', fontSize: '17px' }}
+                  style={{ fontSize: '17px', paddingLeft: '7px' }}
                 />
             }
           </Tooltip>

@@ -1,58 +1,75 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Grid, useTheme } from '@mui/material';
-import React from 'react';
+import { Avatar, useTheme } from '@mui/material';
+import React, { useContext } from 'react';
 
+import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
-import allChains from '../util/chains';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
-import getLogo from '../util/getLogo';
+import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
+import { GenesisHashOptionsContext } from './contexts';
 
 interface Props {
   chainName?: string;
   genesisHash?: string | undefined;
-  showDefault?: boolean;
+  logo?: string;
   size?: number;
 }
 
-function ChainLogo({ chainName, genesisHash, showDefault = true, size = 25 }: Props): React.ReactElement<Props> {
+function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const foundChainName = allChains.find((chain) => chain.genesisHash === genesisHash)?.chain;
+  const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
+  const options = useContext(GenesisHashOptionsContext);
+
+  const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;
   const _chainName = sanitizeChainName(foundChainName || chainName);
-  const logo = getLogo(_chainName);
+  const _logo = logo || getLogo2(_chainName)?.logo;
+  const filter = (CHAINS_WITH_BLACK_LOGO.includes(_chainName || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '';
 
   return (
     <>
-      {logo
+      {_logo
         ? <>
-          {logo.startsWith('data:')
+          {_logo.startsWith('data:')
             ? <Avatar
-              src={logo}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(_chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: size, width: size }}
-              variant='square' />
+              src={_logo}
+              sx={{
+                borderRadius: '50%',
+                filter,
+                height: size,
+                width: size
+              }}
+              variant='square'
+            />
             : <FontAwesomeIcon
               fontSize='15px'
-              icon={fas[convertToCamelCase(logo)]}
-              style={{ borderRadius: '50%', border: '0.5px solid', width: size, height: size, filter: (CHAINS_WITH_BLACK_LOGO.includes(_chainName) && theme.palette.mode === 'dark') ? 'invert(1)' : '' }}
+              icon={fas[convertToCamelCase(_logo)]}
+              style={{
+                border: '0.5px solid',
+                borderRadius: '50%',
+                filter,
+                height: size,
+                width: size
+              }}
             />
           }
         </>
-        : showDefault && <Grid
+        : <Avatar
           sx={{
-            bgcolor: 'action.disabledBackground',
-            border: '1px solid',
-            borderColor: 'secondary.light',
+            bgcolor: maybeUserAddedChainColor,
             borderRadius: '50%',
-            height: `${size + 6}px`,
-            width: `${size + 6}px`
+            fontSize: size * 0.7,
+            height: size,
+            width: size
           }}
+          variant='square'
         >
-        </Grid>
+          {_chainName?.charAt(0)?.toUpperCase() || ''}
+        </Avatar>
       }
     </>
   );

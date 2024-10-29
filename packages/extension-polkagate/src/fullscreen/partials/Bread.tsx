@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -13,7 +12,7 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { capitalizeFirstLetter } from '../governance/utils/util';
 
-export default function Bread(): React.ReactElement {
+export default function Bread (): React.ReactElement {
   const { address } = useParams<{ address: string, paramAssetId?: string }>();
   const { t } = useTranslation();
 
@@ -24,6 +23,7 @@ export default function Bread(): React.ReactElement {
       case ('accountfs'):
       case ('import'):
       case ('derivefs'):
+      case ('addNewChain'):
         return [t('Home')];
       case ('managePoolValidators'):
         return [t('Home'), t('Account Details'), t('Staked in Pool')];
@@ -34,8 +34,8 @@ export default function Bread(): React.ReactElement {
     }
   }, [path, t]);
 
-  const backToTopMenu = useCallback((event: React.MouseEventHandler<HTMLAnchorElement>) => {
-    const { outerText } = event.target;
+  const backToTopMenu = useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const { outerText } = event.target as HTMLElement;
 
     switch (outerText) {
       case (t('Home')):
@@ -55,7 +55,7 @@ export default function Bread(): React.ReactElement {
   return (
     <Breadcrumbs aria-label='breadcrumb' color='text.primary' separator='/' sx={{ mt: '10px' }}>
       {segments?.map((item, index) => (
-        <Link key={index} onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
+        <Link component='button' key={index} onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
           <Typography color='text.primary' sx={{ fontSize: 15, fontWeight: 500 }}>
             {capitalizeFirstLetter(item)}{segments.length === 1 ? ' /' : ''}
           </Typography>

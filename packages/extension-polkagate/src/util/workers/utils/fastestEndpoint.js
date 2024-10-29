@@ -1,24 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-// @ts-nocheck
-
-import { options } from '@acala-network/api';
+//@ts-nocheck
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-export async function fastestEndpoint(chainEndpoints, isACA) {
+export async function fastestEndpoint (endpoints) {
   let connection;
 
-  const connections = chainEndpoints.map((endpoint) => {
-    const wsProvider = new WsProvider(endpoint.value);
+  const connections = endpoints.map(({ value }) => {
+    const wsProvider = new WsProvider(value);
 
-    if (isACA) {
-      connection = new ApiPromise(options({ provider: wsProvider })).isReady;
-    } else {
-      connection = ApiPromise.create({ provider: wsProvider });
-    }
+    connection = ApiPromise.create({ provider: wsProvider });
 
     return {
       connection,
@@ -26,7 +19,7 @@ export async function fastestEndpoint(chainEndpoints, isACA) {
     };
   });
 
-  const api = await Promise.any(connections.map((con) => con.connection));
+  const api = await Promise.any(connections.map(({ connection }) => connection));
 
   return {
     api,

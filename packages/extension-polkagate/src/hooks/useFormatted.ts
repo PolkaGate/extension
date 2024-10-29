@@ -1,16 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useContext, useMemo } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { AccountContext } from '../components/contexts';
 import { useChain } from './';
 
-export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): string | undefined {
+export default function useFormatted (address?: AccountId | string, formatted?: AccountId | string): string | undefined {
   const { accounts } = useContext(AccountContext);
   const chain = useChain(address);
 
@@ -34,9 +34,13 @@ export default function useFormatted(address?: AccountId | string, formatted?: A
         return undefined;
       }
 
-      const publicKey = decodeAddress(selectedAddressJson.address);
+      try {
+        const publicKey = decodeAddress(selectedAddressJson.address);
 
-      return encodeAddress(publicKey, prefix);
+        return encodeAddress(publicKey, prefix);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     return undefined;

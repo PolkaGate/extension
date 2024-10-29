@@ -1,28 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../../components';
+import { AccountWithProxyInConfirmation, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowBalance, WrongPasswordAlert } from '../../../../../components';
 import { useAccountDisplay, useProxies, useTranslation } from '../../../../../hooks';
-import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../../partials';
+import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import { signAndSend } from '../../../../../util/api';
 import { PROXY_TYPE } from '../../../../../util/constants';
-import type { MemberPoints, MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 
@@ -40,11 +38,12 @@ interface Props {
   mode: 'UnbondAll' | 'RemoveAll';
 }
 
-export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -85,7 +84,9 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   }, [setShowMyPool]);
 
   useEffect(() => {
-    if (!poolMembers?.length) { return; }
+    if (!poolMembers?.length) {
+      return;
+    }
 
     if (mode === 'UnbondAll') {
       const nonZeroPointMembers = poolMembers.filter((m) => !new BN(m.points).isZero());
@@ -101,7 +102,9 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
   }, [poolMembers, mode, poolDepositorAddr]);
 
   useEffect(() => {
-    if (!membersToUnboundAll && !membersToRemoveAll) { return; }
+    if (!membersToUnboundAll && !membersToRemoveAll) {
+      return;
+    }
 
     if (mode === 'UnbondAll') {
       const calls = membersToUnboundAll?.map((m) => unbonded(m.accountId, m.points));
@@ -113,7 +116,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       setTxCalls(calls);
 
       if (!api?.call?.['transactionPaymentApi']) {
-        return setEstimatedFee(api?.createType('Balance', BN_ONE));
+        return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
       }
 
       // eslint-disable-next-line no-void
@@ -125,8 +128,10 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         } else {
           const dummyParams = [1, 1];
 
-          // eslint-disable-next-line no-void
-          void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
+          poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted)
+          // @ts-ignore
+            .then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee || BN_ZERO) as Balance)))
+            .catch(console.error);
         }
       });
     } else if (mode === 'RemoveAll') {
@@ -139,7 +144,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
       setTxCalls(calls);
 
       if (!api?.call?.['transactionPaymentApi']) {
-        return setEstimatedFee(api?.createType('Balance', BN_ONE));
+        return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
       }
 
       // eslint-disable-next-line no-void
@@ -207,28 +212,28 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           shortBorder
           showBackArrow
           showClose
-          text={t<string>(`${mode === 'RemoveAll' ? 'Remove' : 'Unstake'} All`)}
+          text={t(`${mode === 'RemoveAll' ? 'Remove' : 'Unstake'} All`)}
         />
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        <SubTitle label={t<string>('Review')} />
+        <SubTitle label={t('Review')} />
         {mode === 'UnbondAll'
           ? (<Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-            {t<string>('Unstaking all members of the pool except yourself forcefully.')}
+            {t('Unstaking all members of the pool except yourself forcefully.')}
           </Typography>)
           : (<>
             <Typography fontSize='14px' fontWeight={300} textAlign='center' sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('Removing all members from the pool')}
+              {t('Removing all members from the pool')}
             </Typography>
             <Typography fontSize='14px' fontWeight={300} sx={{ m: '15px auto 0', width: '85%' }}>
-              {t<string>('When you confirm, you will be able to unstake your tokens')}
+              {t('When you confirm, you will be able to unstake your tokens')}
             </Typography>
           </>)
         }
         <ShowPool
           api={api}
-          chain={chain as any}
+          chain={chain}
           label=''
           mode='Default'
           pool={pool}
@@ -240,7 +245,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         />
         <Grid container m='auto' width='92%'>
           <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-            {t<string>('Fee:')}
+            {t('Fee')}:
           </Typography>
           <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance
@@ -256,7 +261,7 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={unstakeOrRemoveAll}
           proxiedAddress={formatted}
@@ -274,11 +279,11 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
         />
         <WaitScreen
           show={showWaitScreen}
-          title={t<string>(`${mode === 'RemoveAll' ? 'Remove' : 'Unstake'} All`)}
+          title={t(`${mode === 'RemoveAll' ? 'Remove' : 'Unstake'} All`)}
         />
         {txInfo && (
           <Confirmation
-            headerTitle={t<string>(`${mode === 'RemoveAll' ? 'Remove' : 'Unstake'} All`)}
+            headerTitle={t(`${mode === 'RemoveAll' ? 'Remove' : 'Unstake'} All`)}
             onPrimaryBtnClick={goToStakingHome}
             onSecondaryBtnClick={goToMyPool}
             primaryBtnText={t('Staking Home')}
@@ -287,30 +292,13 @@ export default function Review({ address, api, chain, formatted, mode, pool, poo
             txInfo={txInfo}
           >
             <>
-              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account holder:')}
-                </Typography>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {txInfo.from.name}
-                </Typography>
-                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                  <ShortAddress
-                    address={txInfo.from.address}
-                    inParentheses
-                    style={{ fontSize: '16px' }}
-                  />
-                </Grid>
-              </Grid>
-              {txInfo.throughProxy &&
-                <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-                </Grid>
-              }
+              <AccountWithProxyInConfirmation
+                txInfo={txInfo}
+              />
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
               <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Pool:')}
+                  {t('Pool')}:
                 </Typography>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
                   {pool.metadata}

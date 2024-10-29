@@ -3,13 +3,12 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, FetchingRequests, ReferendaContextType } from '../util/types';
+import type { AccountIconThemeContextType, AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, DropdownOption, FetchingRequests, ReferendaContextType, UserAddedChains } from '../util/types';
 
 import React from 'react';
 
 import settings from '@polkadot/ui-settings';
-
-import { noop } from '../util/utils';
+import { noop } from '@polkadot/util';
 
 const AccountContext = React.createContext<AccountsContext>({ accounts: [], hierarchy: [], master: undefined });
 const AccountsAssetsContext = React.createContext<AccountsAssetsContextType>({ accountsAssets: undefined, setAccountsAssets: noop });
@@ -25,8 +24,12 @@ const MetadataReqContext = React.createContext<MetadataRequest[]>([]);
 const SettingsContext = React.createContext<SettingsStruct>(settings.get());
 const SigningReqContext = React.createContext<SigningRequest[]>([]);
 const ToastContext = React.createContext<({ show: (message: string) => void })>({ show: noop });
+const UserAddedChainContext = React.createContext<UserAddedChains>({});
+const GenesisHashOptionsContext = React.createContext<DropdownOption[]>([]);
+const AccountIconThemeContext = React.createContext<AccountIconThemeContextType>({ accountIconTheme: undefined, setAccountIconTheme: noop });
 
 export { AccountContext,
+  AccountIconThemeContext,
   AccountsAssetsContext,
   ActionContext,
   AlertContext,
@@ -34,9 +37,11 @@ export { AccountContext,
   AuthorizeReqContext,
   CurrencyContext,
   FetchingContext,
+  GenesisHashOptionsContext,
   MediaContext,
   MetadataReqContext,
   ReferendaContext,
   SettingsContext,
   SigningReqContext,
-  ToastContext };
+  ToastContext,
+  UserAddedChainContext };

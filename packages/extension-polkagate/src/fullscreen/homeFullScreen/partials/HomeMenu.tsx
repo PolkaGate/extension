@@ -53,7 +53,9 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
       </Grid>
       {extra}
       <Grid container item justifyContent='flex-end'>
-        {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', width: '98%' }} />}
+        {!noBorderButton &&
+         <Divider sx={{ bgcolor: 'divider', height: '2px', width: '81%' }} />
+         }
       </Grid>
       {children}
     </>
@@ -118,7 +120,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <VaadinIcon icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon float={showImport} icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           onClick={onImportClick}
           secondaryIconType='page'
@@ -139,7 +141,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <VaadinIcon icon='vaadin:cog' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:cog' spin ={showSetting} style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
           }
           noBorderButton
           onClick={onSettingClick}

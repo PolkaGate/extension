@@ -50,8 +50,8 @@ export default function ShowPool ({ api, chain, label, labelPosition = 'left', m
   const hasCommission = pool && 'commission' in (pool.bondedPool as any);
   const parsedPool = JSON.parse(JSON.stringify(pool)) as MyPoolInfo;
   //@ts-ignore
-  const mayBeCommission = hasCommission && parsedPool.bondedPool?.commission?.current ? parsedPool.bondedPool.commission.current[0] as number : 0;
-  const commission = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+  const maybeCommission = hasCommission && parsedPool.bondedPool?.commission?.current ? parsedPool.bondedPool.commission.current[0] as number : 0;
+  const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
   // hide show more info for a pool while creating a pool
   const _showInfo = mode === 'Creating' ? false : showInfo;

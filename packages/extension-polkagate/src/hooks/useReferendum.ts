@@ -8,16 +8,16 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
 import type { PalletConvictionVotingTally, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
 import type { OnchainVotes } from '../fullscreen/governance/utils/getAllVotes';
-import type { Referendum, ReferendumHistory, ReferendumPA, ReferendumSb, TopMenu } from '../fullscreen/governance/utils/types';
+import type { CommentType, Referendum, ReferendumHistory, ReferendumPA, ReferendumSb, TopMenu } from '../fullscreen/governance/utils/types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { REFERENDA_LIMIT_SAVED_LOCAL } from '../fullscreen/governance/utils/consts';
 import { getReferendumVotes } from '../fullscreen/governance/utils/getAllVotes';
-import { getReferendumPA, getReferendumSb, isFinished } from '../fullscreen/governance/utils/helpers';
+import { getReferendumCommentsSS, getReferendumPA, getReferendumSb, isFinished } from '../fullscreen/governance/utils/helpers';
 import { STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../util/constants';
-import { useApi, useApiWithChain2, useChainName } from '.';
 import { isHexToBn } from '../util/utils';
+import { useApi, useApiWithChain2, useChainName } from '.';
 
 type ReferendumData = Record<string, Referendum[]>;
 
@@ -35,7 +35,7 @@ const getAssetHubByChainName = (chainName?: string) => {
   return undefined;
 };
 
-export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
+export default function useReferendum (address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
   const assetHubApi = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
@@ -44,6 +44,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
   const [savedReferendum, setSavedReferendum] = useState<Referendum>();
   const [referendumPA, setReferendumPA] = useState<ReferendumPA | null>();
   const [referendumSb, setReferendumSb] = useState<ReferendumSb | null>();
+  const [referendumCommentsSS, setReferendumCommentsSS] = useState<CommentType[] | null>();
   const [onChainTally, setOnChainTally] = useState<PalletConvictionVotingTally>();
   const [onchainVotes, setOnchainVotes] = useState<OnchainVotes | null>();
   const [onchainRefInfo, setOnchainRefInfo] = useState<PalletReferendaReferendumInfoConvictionVotingTally | undefined>();
@@ -239,20 +240,18 @@ export default function useReferendum(address: AccountId | string | undefined, t
     api && id !== undefined && api.query?.['referenda']?.['referendumInfoFor'] && api.query['referenda']['referendumInfoFor'](id)
       .then((result) => {
         const res = result as Option<PalletReferendaReferendumInfoConvictionVotingTally>;
-        const mayBeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoConvictionVotingTally | undefined;
-        const mayBeOngoingRef = mayBeUnwrappedResult?.isOngoing ? mayBeUnwrappedResult?.asOngoing : undefined;
-        const mayBeTally = mayBeOngoingRef ? mayBeOngoingRef.tally : undefined;
+        const maybeUnwrappedResult = (res.isSome && res.unwrap()) as PalletReferendaReferendumInfoConvictionVotingTally | undefined;
+        const maybeOngoingRef = maybeUnwrappedResult?.isOngoing ? maybeUnwrappedResult?.asOngoing : undefined;
+        const maybeTally = maybeOngoingRef ? maybeOngoingRef.tally : undefined;
 
-        // console.log('referendum Info for:', JSON.parse(JSON.stringify(mayBeUnwrappedResult)))
-
-        setOnchainRefInfo(mayBeUnwrappedResult);
-        setOnChainTally(mayBeTally);
+        setOnchainRefInfo(maybeUnwrappedResult);
+        setOnChainTally(maybeTally);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const mayBeOrigin = mayBeUnwrappedResult?.isOngoing ? JSON.parse(JSON.stringify(mayBeUnwrappedResult?.asOngoing?.origin)) : undefined;
+        const maybeOrigin = maybeUnwrappedResult?.isOngoing ? JSON.parse(JSON.stringify(maybeUnwrappedResult?.asOngoing?.origin)) : undefined;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-        setMaybeOriginDC(mayBeOrigin?.origins);
+        setMaybeOriginDC(maybeOrigin?.origins);
       }).catch(console.error);
   }, [api, id, refresh]);
 
@@ -280,6 +279,41 @@ export default function useReferendum(address: AccountId | string | undefined, t
       return;
     }
 
+    // Merge comments from referendumPA with referendumCommentsSS if available
+    const comments = referendumCommentsSS
+      ? referendumPA?.comments.map((commentPA) => {
+        // Find a matching commentPA in referendumCommentsSS based on proposer or id
+        const matchedComment = referendumCommentsSS.find(
+          (commentSS) => commentSS.proposer === commentPA.proposer || commentSS.id === commentPA.id
+        );
+
+        // If no matching comment is found, return the original commentPA unchanged
+        if (!matchedComment) {
+          return commentPA;
+        }
+
+        // Determine which replies to use:
+        // 1. Use original replies if they exist
+        // 2. Otherwise, use matched comment replies if they exist
+        // 3. If neither exists, use an empty array
+        const mergedReplies = commentPA.replies.length > 0
+          ? commentPA.replies
+          : matchedComment.replies?.length > 0
+            ? matchedComment.replies
+            : [];
+
+        // Merge the original commentPA with the matched comment:
+        // - Spread the original commentPA properties
+        // - Overwrite with matched comment properties
+        // - Set the replies based on the mergedReplies logic
+        return {
+          ...commentPA,
+          ...matchedComment,
+          replies: mergedReplies
+        };
+      })
+      : referendumPA?.comments; // If referendumCommentsSS doesn't exist, use referendumPA comments as is
+
     setReferendum({
       assetId: referendumPA?.assetId,
       ayesAmount,
@@ -287,7 +321,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       // @ts-expect-error comes from two different sources
       call: referendumPA?.proposed_call || referendumSb?.pre_image,
       chainName: referendumPA?.chainName || referendumSb?.chainName || chainName,
-      comments: referendumPA?.comments,
+      comments,
       content: referendumPA?.content,
       created_at: referendumPA?.created_at || (referendumSb?.created_block_timestamp && referendumSb.created_block_timestamp * 1000) || createdAtOC,
       decimal: assetMetadata?.decimals?.toNumber(),
@@ -328,7 +362,7 @@ export default function useReferendum(address: AccountId | string | undefined, t
       trackName: referendumSb?.origins || referendumPA?.origin || mayOriginOC,
       type: referendumPA?.type
     });
-  }, [ayesAmount, assetMetadata, ayesCount, chainName, convertBlockNumberToDate, id, createdAtOC, mayOriginOC, naysAmount, naysCount, onChainStatus, onchainRefInfo, proposerOC, referendumPA, referendumSb, submissionAmountOC, trackId, statusOC, savedReferendum]);
+  }, [ayesAmount, assetMetadata, ayesCount, chainName, convertBlockNumberToDate, id, createdAtOC, mayOriginOC, naysAmount, naysCount, onChainStatus, onchainRefInfo, proposerOC, referendumPA, referendumSb, submissionAmountOC, trackId, statusOC, savedReferendum, referendumCommentsSS]);
 
   useEffect(() => {
     if (id === undefined || !chainName || !type || !notInLocalStorage) {
@@ -346,6 +380,10 @@ export default function useReferendum(address: AccountId | string | undefined, t
 
       getReferendumSb(chainName, type, id).then((res) => {
         setReferendumSb(res);
+      }).catch(console.error);
+
+      getReferendumCommentsSS(chainName, id).then((res) => {
+        setReferendumCommentsSS(res);
       }).catch(console.error);
     }
   }, [chainName, getOnChain, isConcluded, id, notInLocalStorage, type]);

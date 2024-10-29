@@ -10,11 +10,34 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.7.72',
+    version: '0.21.1',
     notes: [
-      'New Transferable Formula: The on-chain formula for calculating transferable balances has been updated, potentially increasing users’ transferable balances for those with staked solo and reserved balances.',
-      'Social Icons Update: PolkaGate\'s GitHub, and docs link have been added.',
-      'Known Issues Resolved: Fixes include chain switching on staking pages, track selection in delegate votes, unexpected closures on import account pages, missing connected dApp icons, and profile menu issues—all within extension mode.'
+      'Show No Internet Sign: Display an icon to indicate when there’s no internet connection.',
+      'Identicon Theme Selection: Allow users to choose a theme for their account identicons.',
+      'Auto-Loading Referenda: Automatically load more referenda as you scroll, removing the need for manual clicks.',
+      'Real-Time Referenda Search: Apply keyword-based search and filtering instantly, even while referenda are still loading.',
+      'Currency Conversion Display: Show asset values in the selected currency on the governance page.'
+    ]
+  },
+  {
+    version: '0.18.2',
+    notes: [
+      'Add Your Chain: If your favorite chain isn’t available in the extension, you can now add it manually using an RPC endpoint address.',
+      'BTC, ETH  and DOT as currency: View your token balance equivalent in BTC, ETH, DOT and other fiat currencies.',
+      'Auto Mode Remote Node: RPCs are now automatically selected based on your location and latency, for optimal performance.',
+      'Show Foreign Assets: Foreign assets from the asset hub, like the recent MYTH airdrop, are now displayed in the list.',
+      'Show Selected Chains Badge: The number of favorite selected chains is displayed in a badge on the header in full-screen home mode.',
+      'Auto Metadata Update: Metadata updates automatically in the background on supported chains, eliminating the need for manual updates.'
+    ]
+  },
+  {
+    version: '0.10.0',
+    notes: [
+      'Updated Transferable Balance Formula: The on-chain formula for calculating transferable balances has been updated, potentially increasing transferable balances for users with staked solo and reserved funds.',
+      'Re-authorize Accounts: A popup will now request authorization for dapps when new accounts are added.',
+      'Social Icons Update: Links to PolkaGate’s GitHub, Discord, and docs have been added.',
+      'Vote Type Display: The vote types of referenda commenters are now visible in the comments section.',
+      'Resolved Issues: Fixes include chain switching on staking pages, delegate vote tracking, unexpected account import closures, missing connected dApp icons, and profile menu bugs in extension mode.'
     ]
   },
   {

@@ -4,22 +4,21 @@
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { BN } from '@polkadot/util';
-
-import { DisplayLogo } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useTranslation } from '../../../hooks';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import { AssetLogo } from '../../../components';
+import FormatPrice from '../../../components/FormatPrice';
+import { useTranslation } from '../../../hooks';
+import { DEFAULT_COLOR } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
-import { DEFAULT_COLOR } from '../../../util/constants';
 
 interface Props {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -32,10 +31,9 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
+export default function TotalChart ({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const currency = useCurrency();
   const chartRef = useRef(null);
 
   Chart.register(...registerables);
@@ -46,10 +44,10 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
   const formatNumber = useCallback((num: number): number => parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1)), []);
 
   const { assets, totalWorth } = useMemo(() => {
-    if (accountAssets && accountAssets.length) {
+    if (accountAssets?.length) {
       const _assets = accountAssets as unknown as AssetsToShow[];
 
-      let totalWorth = 0;
+      let total = 0;
 
       /** to add asset's worth and color */
       accountAssets.forEach((asset, index) => {
@@ -59,12 +57,12 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
         _assets[index].worth = assetWorth;
         _assets[index].color = adjustColor(asset.token, assetColor, theme);
 
-        totalWorth += assetWorth;
+        total += assetWorth;
       });
 
       /** to add asset's percentage */
       _assets.forEach((asset) => {
-        asset.percentage = formatNumber((asset.worth / totalWorth) * 100);
+        asset.percentage = formatNumber((asset.worth / total) * 100);
 
         return asset;
       });
@@ -72,7 +70,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
       _assets.sort((a, b) => b.worth - a.worth);
       const nonZeroAssets = _assets.filter((asset) => asset.worth > 0);
 
-      return { assets: nonZeroAssets, totalWorth: nFormatter(totalWorth, 2) };
+      return { assets: nonZeroAssets, totalWorth: total };
     }
 
     return { assets: undefined, totalWorth: undefined };
@@ -82,7 +80,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
     const worths = assets?.map(({ worth }) => worth);
     const colors = assets?.map(({ color }) => color);
 
-    //@ts-ignore
+    // @ts-ignore
     const chartInstance = new Chart(chartRef.current, {
       data: {
         datasets: [{
@@ -101,7 +99,7 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
               label: function (context) {
                 const index = colors?.findIndex((val) => val === context.element.options['backgroundColor']);
 
-                return index && index != -1 ? assets?.[index]?.token as string :'UNIT';
+                return index && index !== -1 ? assets?.[index]?.token : 'UNIT';
               }
             }
           }
@@ -110,21 +108,24 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
       type: 'doughnut'
     });
 
-    // Clean up the chart instance on component unmount
     return () => {
       chartInstance.destroy();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assets?.length, theme.palette.divider]);
 
   return (
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '185px', p: '15px', width: 'inherit' }}>
-      <Grid alignItems='center' container gap='15px' item justifyContent='center'>
+      <Grid alignItems='center' container gap='15px' item justifyContent='center' height='54px'>
         <Typography fontSize='18px' fontWeight={400}>
           {t('Total')}
         </Typography>
-        <Typography fontSize='36px' fontWeight={700}>
-          {`${currency?.sign ?? ''}${totalWorth ?? 0}`}
-        </Typography>
+        <FormatPrice
+          fontSize='36px'
+          fontWeight={700}
+          num={totalWorth}
+          skeletonHeight={22}
+        />
       </Grid>
       {assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', py: '5px' }}>
@@ -138,8 +139,8 @@ export default function TotalChart({ accountAssets, pricesInCurrency }: Props): 
               return (
                 <Grid container item justifyContent='space-between' key={index} mt='5px'>
                   <Grid alignItems='center' container item width='fit-content'>
-                    <DisplayLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-                    <Typography fontSize='16px' fontWeight={500} pl='5px' width='40px'>
+                    <AssetLogo assetSize='20px' baseTokenSize='14px' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+                    <Typography fontSize='16px' fontWeight={500} pl='5px' width='60px'>
                       {token}
                     </Typography>
                   </Grid>

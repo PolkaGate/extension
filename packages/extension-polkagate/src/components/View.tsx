@@ -1,10 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { CssBaseline, PaletteMode, Theme } from '@mui/material';
+import type { PaletteMode, Theme } from '@mui/material';
+
+import { CssBaseline } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import { darkTheme as dark } from '../themes/dark';
@@ -16,25 +17,37 @@ interface Props {
   className?: string;
 }
 
-function View({ children, className }: Props): React.ReactElement<Props> {
-  const [mode, setMode] = React.useState<PaletteMode>(chooseTheme());
+function View ({ children, className }: Props): React.ReactElement<Props> {
+  const [mode, setMode] = useState<PaletteMode>(chooseTheme());
 
-  const colorMode = React.useMemo(
-    () => ({
-      toggleColorMode: () => {
-        const toMode = mode === 'light' ? 'dark' : 'light';
-
-        localStorage.setItem('theme', toMode);
-        setMode(toMode);
+  useEffect(() => {
+    // Handler for storage events
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'theme') {
+        // Type assertion since we know theme can only be 'light' or 'dark'
+        setMode(event.newValue as PaletteMode);
       }
-    }),
-    [mode]
-  );
+    };
 
-  const theme = React.useMemo(
-    () => createTheme(mode === 'light' ? light : dark),
-    [mode]
-  );
+    // Add event listener
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const colorMode = useMemo(() => ({
+    toggleColorMode: () => {
+      const toMode = mode === 'light' ? 'dark' : 'light';
+
+      localStorage.setItem('theme', toMode);
+      setMode(toMode);
+    }
+  }), [mode]);
+
+  const theme = useMemo(() => createTheme(mode === 'light' ? light : dark), [mode]);
 
   return (
     <ColorContext.Provider value={colorMode}>
@@ -49,7 +62,7 @@ function View({ children, className }: Props): React.ReactElement<Props> {
   );
 }
 
-const BodyTheme = createGlobalStyle<Theme>`
+const BodyTheme = createGlobalStyle<{theme: Theme}>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
   }

@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -22,8 +21,9 @@ import { isValidAddress } from '../../../util/utils';
 import useStyles from '../styles/styles';
 import { LabelValue } from '../TrackStats';
 import { pascalCaseToTitleCase } from '../utils/util';
+import useReferendaRequested from './useReferendaRequested';
 
-export function hexAddressToFormatted(hexString: string, chain: Chain | null | undefined): string | undefined {
+export function hexAddressToFormatted (hexString: string, chain: Chain | null | undefined): string | undefined {
   try {
     if (!chain || !hexString) {
       return undefined;
@@ -75,12 +75,14 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
   const { api, chain, chainName, decimal, token } = useInfo(address);
   const style = useStyles();
 
+  const { rDecimal, rToken } = useReferendaRequested(address, referendum);
+
   const [expanded, setExpanded] = React.useState(false);
   const [showJson, setShowJson] = React.useState(false);
 
   const referendumLinkOnsSubscan = () => `https://${chainName}.subscan.io/referenda_v2/${String(referendum?.index)}`;
 
-  const mayBeBeneficiary = useMemo(() => {
+  const maybeBeneficiary = useMemo(() => {
     if (referendum?.call && chain) {
       return getBeneficiary(referendum, chain);
     }
@@ -173,7 +175,7 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
             />}
             valueStyle={{ fontSize: 16, fontWeight: 500 }}
           />
-          {mayBeBeneficiary &&
+          {maybeBeneficiary &&
             <>
               <LabelValue
                 label={t('Requested for')}
@@ -181,29 +183,29 @@ export default function Metadata ({ address, decisionDepositPayer, referendum }:
                 style={{ justifyContent: 'flex-start' }}
                 value={<ShowBalance
                   balance={referendum?.call?.args?.['amount'] as string || referendum?.requested}
-                  decimal={referendum?.decimal || decimal}
+                  decimal={rDecimal}
                   decimalPoint={2}
-                  token={referendum?.token || token}
+                  token={rToken}
                 />}
                 valueStyle={{ fontSize: 16, fontWeight: 500 }}
               />
-              {mayBeBeneficiary &&
+              {maybeBeneficiary &&
                 <LabelValue
                   label={t('Beneficiary')}
                   labelStyle={{ minWidth: '20%' }}
                   style={{ justifyContent: 'flex-start' }}
                   value={
-                    isValidAddress(mayBeBeneficiary)
+                    isValidAddress(maybeBeneficiary)
                       ? <Identity
                         api={api}
                         chain={chain}
-                        formatted={mayBeBeneficiary}
+                        formatted={maybeBeneficiary}
                         identiconSize={25}
                         showShortAddress
                         showSocial
                         style={{ fontSize: '16px', fontWeight: 500, maxWidth: '100%', minWidth: '35%' }}
                       />
-                      : <ShowValue value={mayBeBeneficiary} />
+                      : <ShowValue value={maybeBeneficiary} />
                   }
                   valueStyle={{ maxWidth: '75%', width: 'fit-content' }}
                 />

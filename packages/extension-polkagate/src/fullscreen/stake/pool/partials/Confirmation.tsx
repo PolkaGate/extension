@@ -1,17 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography } from '@mui/material';
+import type { TxInfo } from '../../../../util/types';
+
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { Motion, PButton, ShortAddress } from '../../../../components';
+import { DisplayInfo, Motion, PButton, ShortAddress } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import Explorer from '../../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../../popup/history/partials/FailSuccessIcon';
-import type { TxInfo } from '../../../../util/types';
 
 interface Props {
   txInfo: TxInfo;
@@ -22,32 +22,17 @@ interface Props {
 
 const unAvailableSpace = 120;
 
-export default function Confirmation({ children, handleClose, popupHeight, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ children, handleClose, popupHeight, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
 
-  const DisplayInfo = ({ caption, showDivider = true, value }: { caption: string, value: string, showDivider?: boolean }) => {
-    return (
-      <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-        <Grid container item width='fit-content'>
-          <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
-          <Typography lineHeight='40px'>{value}</Typography>
-        </Grid>
-        {showDivider &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-          </Grid>}
-      </Grid>
-    );
-  };
-
   return (
     <Motion style={{ height: `${popupHeight - unAvailableSpace}px`, position: 'relative', width: '100%' }}>
       <FailSuccessIcon
         showLabel={false}
-        style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+        style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
         success={txInfo.success}
       />
       {txInfo?.failureText &&

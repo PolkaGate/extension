@@ -11,6 +11,7 @@ import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, D
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
@@ -167,6 +168,7 @@ export interface TxInfo extends TransactionDetail {
   token?: string;
   poolName?: string;
   validatorsCount?: number;
+  payee?: Payee,
 }
 
 export interface Auction {
@@ -613,6 +615,8 @@ export interface PricesInCurrencies {
 
 export interface Price {
   price: number;
+  decimal: number;
+  token: string;
   priceChainName: string;
   priceDate: number;
 }
@@ -632,7 +636,7 @@ export interface SavedIdentities {
 
 export interface BalancesInfo extends DeriveBalancesAll {
   ED: BN;
-  assetId?: number;
+  assetId?: number | string;
   chainName: string;
   currencyId?: unknown;
   date: number;
@@ -664,9 +668,22 @@ export interface IsFetching {
   [item: string]: boolean;
 }
 
+export interface UserAddedEndpoint {
+  chain: string;
+  color: string;
+  endpoint: string;
+  priceId: string;
+}
+
+export type UserAddedChains= Record<string, UserAddedEndpoint>
+
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
   setCurrency: (selectedCurrency: CurrencyItemType) => void;
+}
+export interface AccountIconThemeContextType {
+  accountIconTheme: IconTheme | undefined;
+  setAccountIconTheme: (theme: IconTheme) => void;
 }
 
 export interface FetchingRequests {
@@ -724,13 +741,13 @@ export interface ApiProps extends ApiState {
   isWaitingInjected: boolean;
 }
 
-interface ApiPropsNew {
+export interface ApiPropsNew {
   api?: ApiPromise;
   endpoint: string;
   isRequested: boolean;
 }
 
-export type APIs = Record<string, ApiPropsNew[]>;
+export type APIs = Record<string, ApiPropsNew[] | undefined>;
 
 export interface APIsContext {
   apis: APIs;
@@ -772,6 +789,7 @@ export interface AccountsAssetsContextType {
 export type Severity= 'error' | 'warning' | 'info' | 'success'
 
 export interface AlertType {
+  id: string;
   text: string;
   severity: Severity
 }
@@ -808,6 +826,18 @@ export interface ProxiedAccounts {
 export interface AccountsOrder {
   id: number,
   account: AccountWithChildren
+}
+
+export interface EndpointType {
+  checkForNewOne?: boolean;
+  endpoint: string | undefined;
+  timestamp: number | undefined;
+  isAuto: boolean | undefined;
+}
+
+export interface FastestConnectionType {
+  api: ApiPromise | undefined;
+  selectedEndpoint: string | undefined;
 }
 
 export type RecentChainsType = Record<string, string[]>;

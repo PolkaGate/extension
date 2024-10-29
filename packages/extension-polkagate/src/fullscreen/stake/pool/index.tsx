@@ -15,7 +15,7 @@ import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
-import { FullScreenHeader } from '../../governance/FullScreenHeader';
+import FullScreenHeader from '../../governance/FullScreenHeader';
 import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
 import Entry from '../Entry';

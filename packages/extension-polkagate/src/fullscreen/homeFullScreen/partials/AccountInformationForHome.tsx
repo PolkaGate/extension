@@ -10,25 +10,25 @@ import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
-import { showAccount, tieAccount } from '../../../messaging';
+import { ActionContext } from '../../../components';
+import FormatPrice from '../../../components/FormatPrice';
+import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
+import { tieAccount } from '../../../messaging';
 import { amountToHuman } from '../../../util/utils';
-import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
-import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import DeriveAccountModal from '../../partials/DeriveAccountModal';
 import ExportAccountModal from '../../partials/ExportAccountModal';
 import ForgetAccountModal from '../../partials/ForgetAccountModal';
 import RenameModal from '../../partials/RenameAccountModal';
+import AccountBodyFs from './AccountBodyFs';
+import AccountIdenticonIconsFS from './AccountIdenticonIconsFS';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -65,7 +65,7 @@ const AccountButton = ({ icon, onClick, text }: AccountButtonType) => {
   );
 };
 
-const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySign: string | undefined, hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
+const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -78,26 +78,26 @@ const AccountTotal = ({ currencySign, hideNumbers, totalBalance }: { currencySig
         {
           hideNumbers || hideNumbers === undefined
             ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
-            : totalBalance !== undefined
-              ? <Typography fontSize='32px' fontWeight={700}>
-                {`${currencySign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
-              </Typography>
-              : <Skeleton animation='wave' height={28} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />
+            : <FormatPrice
+              fontSize='32px'
+              fontWeight={700}
+              num={totalBalance}
+              skeletonHeight={28}
+              width='180px'
+            />
         }
       </Grid>
     </Grid>
   );
 };
 
-export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
-  const { account, api, chain, formatted, genesisHash } = useInfo(address);
+  const account = useAccount(address);
   const onAction = useContext(ActionContext);
-
-  const accountInfo = useIdentity(genesisHash, formatted);
 
   const [displayPopup, setDisplayPopup] = useState<number>();
 
@@ -133,10 +133,6 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     }).catch(console.error);
   }, [address, setSelectedAsset]);
 
-  const toggleVisibility = useCallback((): void => {
-    address && showAccount(address, account?.isHidden || false).catch(console.error);
-  }, [account?.isHidden, address]);
-
   const openSettings = useCallback((): void => {
     address && onAction();
   }, [onAction, address]);
@@ -149,50 +145,15 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     <>
       <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '0.1px dashed' : 'none', borderColor: 'secondary.main', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
         <Grid container item>
-          <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
-            <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
-              <Identicon
-                iconTheme={chain?.icon ?? 'polkadot'}
-                prefix={chain?.ss58Format ?? 42}
-                size={70}
-                value={formatted || address}
-              />
-            </Grid>
-            <AccountIconsFs
-              accountInfo={accountInfo}
-              address={address}
-            />
-          </Grid>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>
-            <Grid container item justifyContent='space-between'>
-              <Identity
-                accountInfo={accountInfo}
-                address={address}
-                api={api}
-                chain={chain}
-                noIdenticon
-                onClick={goToDetails}
-                style={{ width: 'calc(100% - 40px)' }}
-                subIdOnly
-              />
-              <Grid item width='40px'>
-                <EyeIconFullScreen
-                  isHidden={account?.isHidden}
-                  onClick={toggleVisibility}
-                />
-              </Grid>
-            </Grid>
-            <Grid alignItems='center' container item>
-              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-                <ShortAddress2 address={formatted || address} charsCount={40} style={{ fontSize: '10px', fontWeight: 300 }} />
-              </Grid>
-              <Grid container item width='fit-content'>
-                <OptionalCopyButton address={address} />
-              </Grid>
-            </Grid>
-          </Grid>
+          <AccountIdenticonIconsFS
+            address={address}
+          />
+          <AccountBodyFs
+            address={address}
+            goToDetails={goToDetails}
+            gridSize={5.6}
+          />
           <AccountTotal
-            currencySign={currency?.sign}
             hideNumbers={hideNumbers}
             totalBalance={totalBalance}
           />
@@ -260,3 +221,5 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     </>
   );
 }
+
+export default React.memo(AccountInformationForHome);

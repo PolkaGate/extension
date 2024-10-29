@@ -130,7 +130,6 @@ export default function Filters ({ allValidators, allValidatorsIdentities, apply
   }, [setApply]);
 
   const onClear = useCallback(() => {
-    console.log('DEFAULT_FILTERS:', DEFAULT_FILTERS);
     setFilters(structuredClone(DEFAULT_FILTERS) as Filter);
     setSortValue(0);
     setApply(false);

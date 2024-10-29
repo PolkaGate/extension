@@ -1,18 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Avatar, CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
+import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { DropdownOption } from '../util/types';
+
+import { CircularProgress, FormControl, Grid, InputBase, MenuItem, Select, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 
-import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
+import Icon from '@polkadot/react-identicon';
 
-import getLogo from '../util/getLogo';
-import { DropdownOption } from '../util/types';
+import { DEMO_ACCOUNT } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
+import ChainLogo from './ChainLogo';
 
 interface Props {
   defaultValue: string | number | undefined;
@@ -20,11 +23,17 @@ interface Props {
   onChange?: (v: number | string) => void;
   options: DropdownOption[];
   label: string;
+  labelFontSize?: string;
+  labelPaddingLeft?: string;
+  textFontSize?: string;
+  labelAlignment?: string;
   isDisabled?: boolean;
+  isIdenticon?: boolean;
+  rounded?: boolean;
   showLogo?: boolean;
   showIcons?: boolean;
   _mt?: string | number;
-  disabledItems?: string[] | number[];
+  disabledItems?: (string | number)[];
   isItemsLoading?: boolean;
 }
 
@@ -50,13 +59,13 @@ const BootstrapInput = styled(InputBase)<{ isDisabled?: boolean }>(({ isDisabled
   }
 }));
 
-function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isItemsLoading, label, onChange, options, showIcons = true, showLogo = false, value }: Props) {
+function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, isDisabled = false, isIdenticon, isItemsLoading, label, labelAlignment, labelFontSize = '10px', labelPaddingLeft = '5px', onChange, options, rounded = true, showIcons = true, showLogo = false, textFontSize = '14px', value }: Props) {
   const theme = useTheme();
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>();
 
   useLayoutEffect(() => {
-    setSelectedValue(value || defaultValue);
+    setSelectedValue((value || defaultValue) as string);
   }, [value, defaultValue]);
 
   const toggleMenu = useCallback(() => !isDisabled && setShowMenu(!showMenu), [isDisabled, showMenu]);
@@ -71,11 +80,17 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
 
   return (
     <FormControl disabled={isDisabled} sx={{ mt: `${_mt}`, width: '100%' }} variant='standard'>
-      <Typography sx={{ fontSize: '10px', paddingLeft: '5px' }}>
+      <Typography sx={{ alignSelf: labelAlignment, fontSize: labelFontSize, paddingLeft: labelPaddingLeft }}>
         {label}
       </Typography>
       {selectedValue &&
         <Select
+          // eslint-disable-next-line react/jsx-no-bind
+          IconComponent={
+            isItemsLoading
+              ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} />
+              : undefined
+          }
           MenuProps={{
             MenuListProps: {
               sx: {
@@ -109,17 +124,51 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
               }
             }
           }}
-          defaultValue={defaultValue}
-          IconComponent={isItemsLoading ? () => <CircularProgress size={20} sx={{ color: `${theme.palette.secondary.light}`, position: 'absolute', right: '5px' }} /> : undefined}
+          defaultValue={defaultValue as string}
           id='selectChain'
           input={<BootstrapInput isDisabled={isDisabled} />}
           onChange={_onChange}
           onClick={toggleMenu}
+          open={options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
+          // eslint-disable-next-line react/jsx-no-bind
+          renderValue={(v) => {
+            let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];
+
+            if (textToShow?.split(':')?.[1]) {
+              textToShow = textToShow?.split(':')[1]?.trim();
+            }
+
+            return (
+              <Grid container height={'30px'} justifyContent='flex-start'>
+                {showIcons && textToShow && textToShow !== 'Allow use on any chain' &&
+                  <Grid alignItems='center' container item width='fit-content'>
+                    {isIdenticon
+                      ? <Icon
+                        className='icon'
+                        size={20}
+                        theme={v as IconTheme}
+                        value={DEMO_ACCOUNT}
+                      />
+                      : <ChainLogo chainName={chainName(textToShow)} genesisHash={v} size={19.8} />
+                    }
+                  </Grid>
+                }
+                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
+                  <Typography fontSize={textFontSize} fontWeight={300}>
+                    {textToShow}
+                  </Typography>
+                </Grid>
+              </Grid>
+            );
+          }}
           sx={{
+            '.MuiSelect-icon': {
+              display: options?.length && options.length === 1 ? 'none' : 'block'
+            },
             '> #selectChain': {
               border: '1px solid',
               borderColor: 'secondary.light',
-              borderRadius: '20px',
+              borderRadius: rounded ? '20px' : '5px',
               fontSize: '14px',
               height: '29px',
               lineHeight: '30px',
@@ -136,40 +185,13 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
               fontSize: '30px'
             },
             bgcolor: isDisabled ? 'primary.contrastText' : 'transparent',
-            width: '100%',
-            '.MuiSelect-icon': {
-              display: options?.length && options.length === 1 ? 'none' : 'block'
-            }
+            width: '100%'
           }}
           value={selectedValue} // Assuming selectedValue is a state variable
-          open={options?.length !== 1 && showMenu} // do not open select when page is loading , or options has just one item
-          // eslint-disable-next-line react/jsx-no-bind
-          renderValue={(v) => {
-            let textToShow = options.find((option) => v === option.value || v === option.text || String(v) === String(option.value))?.text?.split(/\s*\(/)[0];
-
-            if (textToShow?.split(':')?.[1]) {
-              textToShow = textToShow?.split(':')[1]?.trim();
-            }
-
-            return (
-              <Grid container height={'30px'} justifyContent='flex-start'>
-                {showIcons && textToShow && textToShow !== 'Allow use on any chain' &&
-                  <Grid alignItems='center' container item width='fit-content'>
-                    {<Avatar src={getLogo(chainName(textToShow))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(textToShow) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 19.8, width: 19.8 }} variant='square' />}
-                  </Grid>
-                }
-                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content'>
-                  <Typography fontSize='14px' fontWeight={300}>
-                    {textToShow}
-                  </Typography>
-                </Grid>
-              </Grid>
-            );
-          }}
         >
           {options.map(({ text, value }): React.ReactNode => (
             <MenuItem
-              disabled={disabledItems?.includes(value) || disabledItems?.includes(text)}
+              disabled={disabledItems?.includes(value || text)}
               key={value}
               sx={{ fontSize: '14px', fontWeight: 300, letterSpacing: '-0.015em' }}
               value={value !== undefined ? value : text}
@@ -177,11 +199,19 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
               <Grid container height={'30px'} justifyContent='flex-start'>
                 {showIcons && text !== 'Allow use on any chain' &&
                   <Grid alignItems='center' container item pr='6px' width='fit-content'>
-                    <Avatar src={getLogo(chainName(text))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 19.8, width: 19.8 }} variant='square' />
+                    {isIdenticon
+                      ? <Icon
+                        className='icon'
+                        size={25}
+                        theme={value as IconTheme}
+                        value={DEMO_ACCOUNT}
+                      />
+                      : <ChainLogo chainName={chainName(text)} genesisHash={value as string} size={19.8} />
+                    }
                   </Grid>
                 }
-                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' width='fit-content' sx={{ overflowX: 'scroll' }}>
-                  <Typography fontSize='14px' fontWeight={300}>
+                <Grid alignItems='center' container item justifyContent='flex-start' pl='6px' sx={{ overflowX: 'scroll' }} width='fit-content'>
+                  <Typography fontSize={textFontSize} fontWeight={300}>
                     {text}
                   </Typography>
                 </Grid>
@@ -190,7 +220,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
           ))}
         </Select>
       }
-    </FormControl >
+    </FormControl>
   );
 }
 

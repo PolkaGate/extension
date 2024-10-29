@@ -1,18 +1,18 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { Chain } from '../../../extension-chains/src/types';
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { Chain } from '../../../extension-chains/src/types';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
 
-const endpoints = createWsEndpoints(() => '');
+const endpoints = createWsEndpoints();
 
-export default function getLogo(info: string | undefined | Chain, token?: string): string | undefined {
+export default function getLogo (info: string | undefined | Chain, token?: string): string | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {
@@ -34,20 +34,20 @@ export default function getLogo(info: string | undefined | Chain, token?: string
     }
   }
 
-  let mayBeExternalLogo;
+  let maybeExternalLogo;
   const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 
   if (!endpoint) {
-    mayBeExternalLogo = Object
+    maybeExternalLogo = Object
       .entries(externalLinks)
-      .find(([name, { chains, create, homepage, isActive, paths, ui }]): React.ReactNode | null =>
+      .find(([name]): React.ReactNode | null =>
         name.toLowerCase() === iconName
       );
   }
 
-  const found = iconName ? (endpoint?.ui.logo || mayBeExternalLogo?.[1]?.ui?.logo) : undefined;
+  const found = iconName ? (endpoint?.ui.logo || maybeExternalLogo?.[1]?.ui?.logo) : undefined;
 
-  return found as string;
+  return found;
 }

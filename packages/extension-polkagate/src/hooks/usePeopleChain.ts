@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { createWsEndpoints } from '@polkagate/apps-config';
-import { useMemo } from 'react';
-
 import type { Chain } from '@polkadot/extension-chains/types';
 
+import { createWsEndpoints } from '@polkagate/apps-config';
+import { useMemo } from 'react';
 
 import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import getChain from '../util/getChain';
@@ -40,7 +39,9 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
   }
 };
 
-export default function usePeopleChain(address: string | undefined, genesisHash?: string): PeopleChainInfo {
+const allEndpoints = createWsEndpoints();
+
+export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);
@@ -55,8 +56,6 @@ export default function usePeopleChain(address: string | undefined, genesisHash?
     if (!peopleChainName) {
       return;
     }
-
-    const allEndpoints = createWsEndpoints(() => '');
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === peopleChainName?.toLowerCase() || String(e.info)?.toLowerCase() === peopleChainName?.toLowerCase());
 

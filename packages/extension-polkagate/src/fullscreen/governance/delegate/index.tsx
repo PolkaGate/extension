@@ -1,32 +1,32 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, TxInfo } from '../../../util/types';
+import type { DelegationInfo } from '../utils/types';
+import type { ModifyModes } from './modify/ModifyDelegate';
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
+import { BN_ONE, noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccountLocks, useBalances, useInfo, useProxies, useTracks, useTranslation } from '../../../hooks';
 import { PROXY_TYPE } from '../../../util/constants';
+import SimpleModalTitle from '../../partials/SimpleModalTitle';
 import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal2 from '../components/SelectProxyModal2';
 import WaitScreen from '../partials/WaitScreen';
-import { DelegationInfo } from '../utils/types';
 import { getMyDelegationInfo } from '../utils/util';
 import ChooseDelegator from './delegate/ChooseDelegator';
 import DelegateVote from './delegate/Delegate';
-import { ModifyModes } from './modify/ModifyDelegate';
 import { getAlreadyLockedValue } from './partial/AlreadyLockedTooltipText';
 import Confirmation from './partial/Confirmation';
 import About from './About';
@@ -76,12 +76,12 @@ export const STEPS = {
 
 export type DelegationStatus = 'Delegate' | 'Remove' | 'Modify';
 
-export function Delegate({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
+export function Delegate ({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { api, formatted } = useInfo(address);
   const tracksList = useTracks(address);
   const balances = useBalances(address, undefined, undefined, true);
+
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting');
   const proxies = useProxies(api, formatted);
@@ -111,8 +111,64 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
     setProxyStep(step);
   }, [step]);
 
+  const title = useMemo(() => {
+    if (step === STEPS.ABOUT) {
+      return t('Delegate Vote');
+    }
+
+    if (step === STEPS.CHECK_SCREEN) {
+      return t('Delegation status');
+    }
+
+    if ([STEPS.INDEX, STEPS.CHOOSE_DELEGATOR].includes(step)) {
+      return t('Delegate Vote ({{ step }}/3)', { replace: { step: step === STEPS.INDEX ? 1 : 2 } });
+    }
+
+    if (step === STEPS.PREVIEW) {
+      return t('Delegation details');
+    }
+
+    if ([STEPS.REVIEW, STEPS.SIGN_QR].includes(step) && status === 'Delegate') {
+      return t('Review Your Delegation (3/3)');
+    }
+
+    if ([STEPS.REMOVE, STEPS.SIGN_QR].includes(step) && status === 'Remove') {
+      return t('Remove Delegate');
+    }
+
+    if ([STEPS.MODIFY, STEPS.SIGN_QR].includes(step) && status === 'Modify') {
+      return t('Modify Delegate');
+    }
+
+    if (step === STEPS.WAIT_SCREEN) {
+      if (status === 'Delegate') {
+        return t('Delegating');
+      } else if (status === 'Modify') {
+        return t('Modifying Delegation');
+      } else {
+        return t('Removing Delegation');
+      }
+    }
+
+    if (step === STEPS.CONFIRM) {
+      if (status === 'Delegate') {
+        return txInfo?.success ? t('Delegation Completed') : t('Delegation Failed');
+      } else if (status === 'Modify') {
+        return txInfo?.success ? t('Delegations Modified') : t('Modifying Delegations Failed');
+      } else {
+        return txInfo?.success ? t('Delegations Removed') : t('Removing Delegations Failed');
+      }
+    }
+
+    if (step === STEPS.PROXY) {
+      return t('Select Proxy');
+    }
+
+    return '';
+  }, [status, step, t, txInfo?.success]);
+
   const handleClose = useCallback(() => {
-    step !== STEPS.PROXY ? setOpen(false) : setStep(proxyStep);
+    step !== STEPS.PROXY ? setOpen(false) : proxyStep && setStep(proxyStep);
   }, [proxyStep, setOpen, step]);
 
   useEffect(() => {
@@ -148,7 +204,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
 
     if (!api?.call?.['transactionPaymentApi']) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     if (delegateInformation.delegatedTracks.length > 1) {
@@ -232,61 +288,11 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
   return (
     <DraggableModal minHeight={550} onClose={handleClose} open={open}>
       <>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid item>
-            <Typography fontSize='22px' fontWeight={700}>
-              {step === STEPS.ABOUT &&
-                t('Delegate Vote')
-              }
-              {step === STEPS.CHECK_SCREEN &&
-                t('Delegation status')
-              }
-              {[STEPS.INDEX, STEPS.CHOOSE_DELEGATOR].includes(step) &&
-                t('Delegate Vote ({{ step }}/3)', { replace: { step: step === STEPS.INDEX ? 1 : 2 } })
-              }
-              {step === STEPS.PREVIEW &&
-                t('Delegation details')
-              }
-              {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) && status === 'Delegate' &&
-                t('Review Your Delegation (3/3)')
-              }
-              {[STEPS.REMOVE, STEPS.SIGN_QR].includes(step) && status === 'Remove' &&
-                t('Remove Delegate')
-              }
-              {[STEPS.MODIFY, STEPS.SIGN_QR].includes(step) && status === 'Modify' &&
-                t('Modify Delegate')
-              }
-              {step === STEPS.WAIT_SCREEN
-                ? status === 'Delegate'
-                  ? t('Delegating')
-                  : status === 'Modify'
-                    ? t('Modifying Delegation')
-                    : t('Removing Delegation')
-                : undefined
-              }
-              {step === STEPS.CONFIRM
-                ? status === 'Delegate'
-                  ? txInfo?.success
-                    ? t('Delegation Completed')
-                    : t('Delegation Failed')
-                  : status === 'Modify'
-                    ? txInfo?.success
-                      ? t('Delegations Modified')
-                      : t('Modifying Delegations Failed')
-                    : txInfo?.success
-                      ? t('Delegations Removed')
-                      : t('Removing Delegations Failed')
-                : undefined
-              }
-              {step === STEPS.PROXY &&
-                t('Select Proxy')
-              }
-            </Typography>
-          </Grid>
-          <Grid item>
-            {step !== STEPS.WAIT_SCREEN && <CloseIcon onClick={handleClose} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />}
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          icon={step === STEPS.PROXY ? faUserAstronaut : 'vaadin:money-withdraw'}
+          onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
+          title= {title}
+        />
         {step === STEPS.ABOUT &&
           <About
             setStep={setStep}
@@ -358,7 +364,7 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
           <SelectProxyModal2
             address={address}
             // eslint-disable-next-line react/jsx-no-bind
-            closeSelectProxy={() => setStep(proxyStep)}
+            closeSelectProxy={() => proxyStep && setStep(proxyStep)}
             height={modalHeight}
             proxies={proxyItems}
             proxyTypeFilter={PROXY_TYPE.GOVERNANCE}

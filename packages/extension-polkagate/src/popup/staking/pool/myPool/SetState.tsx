@@ -1,24 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ONE } from '@polkadot/util';
 
-import { ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShortAddress, ShowBalance, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useApi, useChain, useProxies, useTranslation } from '../../../../hooks';
-import { HeaderBrand, SubTitle, ThroughProxy, WaitScreen } from '../../../../partials';
+import { AccountWithProxyInConfirmation, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowBalance, WrongPasswordAlert } from '../../../../components';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import ShowPool from '../../partial/ShowPool';
 
@@ -34,13 +34,14 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState ({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const api = useApi(address);
+
+  const { api, chain } = useInfo(address);
   const proxies = useProxies(api, formatted);
-  const chain = useChain(address);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -54,9 +55,9 @@ export default function SetState({ address, formatted, headerText, helperText, p
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
-  const batchAll = api && api.tx['utility']['batchAll'];
-  const chilled = api && api.tx['nominationPools']['chill'];
-  const poolSetState = api && api.tx['nominationPools']['setState'](pool.poolId.toString(), state); // (poolId, state)
+  const batchAll = api?.tx['utility']['batchAll'];
+  const chilled = api?.tx['nominationPools']['chill'];
+  const poolSetState = api?.tx['nominationPools']['setState'](pool.poolId.toString(), state); // (poolId, state)
 
   const backToStake = useCallback(() => {
     setShow(false);
@@ -68,7 +69,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     // eslint-disable-next-line no-void
@@ -112,7 +113,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
       const calls = mayNeedChill ? batchAll([mayNeedChill, poolSetState]) : poolSetState;
 
       const tx = selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, calls) : calls;
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, tx, signer, String(formatted));
 
       const subAction = state === 'Destroying' ? 'Destroy Pool' : state === 'Open' ? 'Unblock Pool' : 'Block Pool';
 
@@ -155,10 +156,10 @@ export default function SetState({ address, formatted, headerText, helperText, p
         {isPasswordError &&
           <WrongPasswordAlert />
         }
-        <SubTitle label={t<string>('Review')} />
+        <SubTitle label={t('Review')} />
         <ShowPool
           api={api}
-          chain={chain as any}
+          chain={chain}
           mode='Default'
           pool={pool}
           showInfo
@@ -169,7 +170,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
         />
         <Grid container m='auto' width='92%'>
           <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
-            {t<string>('Fee:')}
+            {t('Fee')}:
           </Typography>
           <Grid item lineHeight='22px' pl='5px'>
             <ShowBalance
@@ -189,7 +190,7 @@ export default function SetState({ address, formatted, headerText, helperText, p
           estimatedFee={estimatedFee}
           genesisHash={chain?.genesisHash}
           isPasswordError={isPasswordError}
-          label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
+          label={t('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
           onChange={setPassword}
           onConfirmClick={changeState}
           proxiedAddress={formatted}
@@ -220,30 +221,13 @@ export default function SetState({ address, formatted, headerText, helperText, p
             txInfo={txInfo}
           >
             <>
-              <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Account holder:')}
-                </Typography>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {txInfo.from.name}
-                </Typography>
-                <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-                  <ShortAddress
-                    address={txInfo.from.address}
-                    inParentheses
-                    style={{ fontSize: '16px' }}
-                  />
-                </Grid>
-              </Grid>
-              {txInfo.throughProxy &&
-                <Grid container m='auto' maxWidth='92%'>
-                  <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-                </Grid>
-              }
+              <AccountWithProxyInConfirmation
+                txInfo={txInfo}
+              />
               <Divider sx={{ bgcolor: 'secondary.main', height: '2px', m: '5px auto', width: '75%' }} />
               <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-                  {t<string>('Pool:')}
+                  {t('Pool')}:
                 </Typography>
                 <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'                >
                   {pool.metadata}

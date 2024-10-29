@@ -6,14 +6,13 @@
 import '@vaadin/icons';
 
 import { Grid } from '@mui/material';
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { AlertContext } from '../components';
-import { useTransactionState } from '../hooks';
+import { useAlerts, useTransactionState } from '../hooks';
 import Alert from './Alert';
 
 function AlertBox (): React.ReactElement {
-  const { alerts } = useContext(AlertContext);
+  const { alerts } = useAlerts();
 
   useTransactionState();
 

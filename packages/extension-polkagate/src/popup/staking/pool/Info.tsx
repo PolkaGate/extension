@@ -1,10 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-
-//@ts-nocheck
 
 import type { PoolStakingConsts } from '../../../util/types';
 
@@ -26,7 +23,7 @@ interface Props {
 
 }
 
-export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info ({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
 
@@ -34,7 +31,7 @@ export default function Info({ address, info, setShowInfo, showInfo }: Props): R
     setShowInfo(false);
   }, [setShowInfo]);
 
-  const Row = ({ label, showDivider = true, value }: { label: string, value: BN | undefined, showDivider?: boolean }) => {
+  const Row = ({ label, showDivider = true, value }: { label: string, value: BN | string | number | undefined, showDivider?: boolean }) => {
     return (
       <>
         <Grid alignItems='center' container justifyContent='space-between' p='5px 15px'>
@@ -50,7 +47,7 @@ export default function Info({ address, info, setShowInfo, showInfo }: Props): R
         </Grid>
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', m: '1px auto', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'divider', m: '1px auto', width: '90%' }} />
           </Grid>
         }
       </>
@@ -70,7 +67,7 @@ export default function Info({ address, info, setShowInfo, showInfo }: Props): R
         </Grid>
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', m: '1px auto', width: '90%' }} />
+            <Divider sx={{ bgcolor: 'divider', m: '1px auto', width: '90%' }} />
           </Grid>
         }
       </>

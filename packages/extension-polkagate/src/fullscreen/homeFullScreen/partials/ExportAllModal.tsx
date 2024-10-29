@@ -1,28 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Close as CloseIcon } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { saveAs } from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AccountContext, TwoButtons, VaadinIcon } from '../../../components';
+import { AccountContext, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { exportAccounts } from '../../../messaging';
 import { Passwords } from '../../../partials';
 import { DraggableModal } from '../../governance/components/DraggableModal';
+import SimpleModalTitle from '../../partials/SimpleModalTitle';
 
 interface Props {
   open: boolean;
   setDisplayPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ExportAllModal({ open, setDisplayPopup }: Props): React.ReactElement {
+export default function ExportAllModal ({ open, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { accounts } = useContext(AccountContext);
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -55,26 +53,16 @@ export default function ExportAllModal({ open, setDisplayPopup }: Props): React.
     [accounts, password, setDisplayPopup]
   );
 
-  const onCancel = useCallback(() => setDisplayPopup(false), [setDisplayPopup]);
+  const onClose = useCallback(() => setDisplayPopup(false), [setDisplayPopup]);
 
   return (
-    <DraggableModal minHeight={500} onClose={onCancel} open={open}>
+    <DraggableModal minHeight={500} onClose={onClose} open={open}>
       <Grid container item>
-        <Grid alignItems='center' container justifyContent='space-between' pt='5px'>
-          <Grid alignItems='flex-start' container justifyContent='flex-start' sx={{ width: 'fit-content' }}>
-            <Grid item>
-              <VaadinIcon icon='vaadin:download' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
-            </Grid>
-            <Grid item sx={{ pl: '10px' }}>
-              <Typography fontSize='22px' fontWeight={700}>
-                {t('Export All Accounts')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <CloseIcon onClick={onCancel} sx={{ color: 'primary.main', cursor: 'pointer', stroke: theme.palette.primary.main, strokeWidth: 1.5 }} />
-          </Grid>
-        </Grid>
+        <SimpleModalTitle
+          icon='vaadin:download'
+          onClose={onClose}
+          title= {t('Export All Accounts')}
+        />
         <Typography fontSize='16px' m='25px auto' textAlign='left' width='88%'>
           {t('All your accounts will be encrypted with a password and stored in a JSON file inside your browser’s download history.')}
         </Typography>
@@ -92,7 +80,7 @@ export default function ExportAllModal({ open, setDisplayPopup }: Props): React.
           ml='0'
           mt='125px'
           onPrimaryClick={_onExportAllButtonClick}
-          onSecondaryClick={onCancel}
+          onSecondaryClick={onClose}
           primaryBtnText={t('Export')}
           secondaryBtnText={t('Cancel')}
           width='100%'

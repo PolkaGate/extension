@@ -2,27 +2,30 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, useTheme } from '@mui/material';
-//@ts-ignore
-import { Circle, CubeGrid, WanderingCubes } from 'better-react-spinkit';
+// @ts-ignore
+import { Circle, CubeGrid, WanderingCubes, Wordpress } from 'better-react-spinkit';
 import React from 'react';
 
 interface Props {
+  direction?: 'column' | 'row'
   fontSize?: number;
+  titlePaddingTop?: number;
+  titlePaddingLeft?: number;
   title?: string;
   pt?: number | string;
   size?: number;
   gridSize?: number;
-  type?: 'circle' | 'cubes' | 'grid';
+  type?: 'circle' | 'cubes' | 'grid' | 'wordpress';
 }
 
-function Progress ({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress ({ direction = 'column', fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, titlePaddingTop = 20, titlePaddingLeft = 0, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (
     <Grid
       alignItems='center'
       container
-      direction='column'
+      direction={direction}
       justifyContent='center'
       pt={pt}
     >
@@ -31,6 +34,12 @@ function Progress ({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, titl
           color={theme.palette.primary.main}
           scaleEnd={0.7}
           scaleStart={0.4}
+          size={size}
+        />
+      }
+      {type === 'wordpress' &&
+        <Wordpress
+          color={theme.palette.primary.main}
           size={size}
         />
       }
@@ -55,7 +64,11 @@ function Progress ({ fontSize = 13, gridSize = 135, pt = '50px', size = 25, titl
       {title &&
         <Grid
           item
-          sx={{ fontSize, paddingTop: '20px' }}
+          sx={{
+            fontSize,
+            pl: `${titlePaddingLeft}px`,
+            pt: `${titlePaddingTop}px`
+          }}
         >
           {title}
         </Grid>

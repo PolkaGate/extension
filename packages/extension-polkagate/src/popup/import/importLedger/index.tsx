@@ -6,7 +6,7 @@
 import { Grid } from '@mui/material';
 import React, { useState } from 'react';
 
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen } from '../../../hooks';
 import GenericApp from './GenericApp';
 import LedgerOptions from './LedgerOptions';

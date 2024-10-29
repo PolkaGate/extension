@@ -10,7 +10,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { ChainLogo, Identity, Motion, ShowBalance, SignArea2, WrongPasswordAlert } from '../../components';
-import { useApi, useChain } from '../../hooks';
+import { useInfo } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { PROXY_TYPE } from '../../util/constants';
@@ -30,9 +30,9 @@ interface Props {
 
 export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const api = useApi(address);
-  const chain = useChain(address);
   const theme = useTheme();
+
+  const { api, chain } = useInfo(address);
 
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -80,7 +80,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           <DisplayValue dividerHeight='1px' title={t('Amount')}>
             <Grid alignItems='center' container item sx={{ height: '42px' }}>
               <ShowBalance
-                balance={inputs?.amount && balances?.decimal && amountToMachine(inputs.amount, balances?.decimal)}
+                balance={inputs?.amount && balances?.decimal ? amountToMachine(inputs.amount, balances?.decimal) : undefined }
                 decimal={balances?.decimal}
                 decimalPoint={4}
                 token={balances?.token}
@@ -89,7 +89,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </DisplayValue>
           <DisplayValue dividerHeight='1px' title={t('Chain')}>
             <Grid alignItems='center' container item sx={{ height: '42px' }}>
-              <ChainLogo chainName={chain?.name} size={31} />
+              <ChainLogo chainName={chain?.name} genesisHash={chain?.genesisHash} size={31} />
               <Typography fontSize='26px' pl='10px'>
                 {chain?.name}
               </Typography>
@@ -112,7 +112,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           </DisplayValue>
           <DisplayValue dividerHeight='1px' title={t('Chain')}>
             <Grid alignItems='center' container item sx={{ height: '42px' }}>
-              <ChainLogo chainName={inputs?.recipientChainName} size={31} />
+              <ChainLogo chainName={inputs?.recipientChainName} genesisHash={inputs?.recipientGenesisHashOrParaId} size={31} />
               <Typography fontSize='26px' pl='10px'>
                 {inputs?.recipientChainName}
               </Typography>

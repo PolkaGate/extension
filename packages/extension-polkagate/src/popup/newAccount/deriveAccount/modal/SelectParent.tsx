@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { canDerive } from '@polkadot/extension-base/utils';
 
-import { AccountContext, Address, ButtonWithCancel, ChainLogo, Label, Password, Warning } from '../../../../components';
+import { AccountContext, ButtonWithCancel, ChainLogo, Label, NewAddress, Password, Warning } from '../../../../components';
 import useTranslation from '../../../../hooks/useTranslation';
 import { validateAccount, validateDerivationPath } from '../../../../messaging';
 import { nextDerivationPath } from '../../../../util/nextDerivationPath';
@@ -29,7 +29,7 @@ interface Props {
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-export default function SelectParent({ isLocked, onClose, onDerivationConfirmed, parentAccount, selectedParentAddress, setSelectedParentAddress }: Props): React.ReactElement<Props> {
+export default function SelectParent ({ isLocked, onClose, onDerivationConfirmed, parentAccount, selectedParentAddress, setSelectedParentAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isBusy, setIsBusy] = useState(false);
   const { accounts, hierarchy } = useContext(AccountContext);
@@ -122,29 +122,29 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
       <>
         {isLocked
           ? (
-            <Grid alignItems='center' container item justifyContent='space-around' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: 'auto', mb: '20px' }}>
-              <Grid container item xs={11}>
-                <Address
+            <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: theme.palette.mode === 'dark' ? '1px solid' : 'none', borderColor: 'secondary.light', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '20px', px: '10px' }}>
+              <Grid container item xs>
+                <NewAddress
                   address={parentAccount?.address}
-                  genesisHash={parentAccount?.genesisHash}
+                  name={parentAccount?.name}
                   showCopy={false}
-                  style={{ '> div:last-child': { alignItems: 'flex-start' }, border: 'none', borderRadius: '5px 0 0 5px', m: 0, px: '10px', width: '100%' }}
+                  style={{ border: 'none', boxShadow: 'none', px: 0 }}
                 />
               </Grid>
-              <Grid container item xs={1}>
-                <ChainLogo genesisHash={parentAccount?.genesisHash as string} />
+              <Grid container item width='fit-content'>
+                <ChainLogo genesisHash={parentAccount?.genesisHash ?? ''} />
               </Grid>
             </Grid>
           )
           : (
             <Label
-              label={t<string>('Choose parent account')}
+              label={t('Choose parent account')}
               style={{ margin: 'auto', paddingBottom: '20px', width: '92%' }}
             >
               <AddressDropdown
                 allAddresses={allAddresses}
                 onSelect={onParentChange}
-                selectedAddress={parentAccount?.address as string}
+                selectedAddress={parentAccount?.address ?? ''}
                 selectedGenesis={parentAccount?.genesisHash as string}
                 selectedName={parentAccount?.name as string | null}
               />
@@ -156,7 +156,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
             data-input-password
             isError={!!parentPassword && !isProperParentPassword}
             isFocused
-            label={t<string>('Password for the account to derive from')}
+            label={t('Password for the account to derive from')}
             onChange={onParentPasswordChange}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onEnter={_onSubmit}
@@ -171,7 +171,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
                 isDanger
                 theme={theme}
               >
-                {t<string>('You’ve used an incorrect password. Try again.')}
+                {t('You’ve used an incorrect password. Try again.')}
               </Warning>
             </Grid>
           )}
@@ -189,7 +189,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
                 isDanger
                 theme={theme}
               >
-                {t<string>(pathError)}
+                {t(pathError)}
               </Warning>
             </Grid>
           )}
@@ -201,7 +201,7 @@ export default function SelectParent({ isLocked, onClose, onDerivationConfirmed,
           _onClick={_onSubmit}
           _onClickCancel={onClose}
           disabled={!isProperParentPassword || !!pathError || !parentAccount?.address}
-          text={t<string>('Next')}
+          text={t('Next')}
         />
       </Grid>
     </>

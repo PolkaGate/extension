@@ -238,7 +238,7 @@ export default function Index (): React.ReactElement {
         }
         {showDivider &&
           <Grid container item justifyContent='center' xs={12}>
-            <Divider sx={{ bgcolor: 'secondary.main', m: '2px auto', width: '100%' }} />
+            <Divider sx={{ bgcolor: 'divider', m: '2px auto', width: '100%' }} />
           </Grid>
         }
       </>

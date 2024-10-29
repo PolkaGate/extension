@@ -44,7 +44,7 @@ export default function TransactionHistory (): React.ReactElement {
         setTabIndex ={setTabIndex}
         tabIndex={tabIndex}
       />
-      <Grid container item sx={{ gap: '5px', height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }}>
+      <Grid container id='scrollArea' item sx={{ gap: '5px', height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }}>
         {grouped && Object.keys(grouped).length > 0 &&
           Object.entries(grouped)?.map((group) => {
             const [date, info] = group;
@@ -71,13 +71,22 @@ export default function TransactionHistory (): React.ReactElement {
         {(grouped === undefined || (transfersTx.isFetching && tabHistory?.length === 0)) &&
         <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
         }
+        <div id='observerObj' style={{ height: '1px' }} />
         {grouped &&
           <Grid container justifyContent='center'>
             {
               // staking transaction history is saved locally
               tabIndex !== TAB_MAP.STAKING &&
               ((transfersTx?.hasMore)
-                ? 'loading...'
+                ? <Progress
+                  direction='row'
+                  pt='5px'
+                  size={15}
+                  title={t('Loading...')}
+                  titlePaddingLeft={5}
+                  titlePaddingTop={0}
+                  type='wordpress'
+                />
                 : !!tabHistory?.length &&
                 <Box fontSize={11}>
                   {t('No more transactions to load')}
@@ -85,7 +94,6 @@ export default function TransactionHistory (): React.ReactElement {
               )
             }
           </Grid>}
-        <div id='observerObj' />
       </Grid>
     </>
   );

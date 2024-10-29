@@ -55,10 +55,12 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
                 withCurrency={false}
               />
             </Grid>
-            <Grid item pt='6px' sx={{ fontSize: label === 'Total' ? '20px' : '16px', fontWeight: label === 'Total' ? 400 : 300, letterSpacing: '-0.015em', lineHeight: '15px' }} textAlign='right'>
+            <Grid item pt='6px' sx={{ lineHeight: '15px' }} textAlign='right'>
               <FormatPrice
                 amount={value}
                 decimals={balances?.decimal}
+                fontSize= {label === 'Total' ? '20px' : '16px'}
+                fontWeight= {label === 'Total' ? 400 : 300}
                 price={price}
               />
             </Grid>
@@ -76,7 +78,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
         </Grid>
       </Grid>
       {showLabel &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
+        <Divider sx={{ bgcolor: 'divider', height: '1px', my: '5px' }} />
       }
     </>
   );

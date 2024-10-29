@@ -106,15 +106,15 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
               withCurrency
             />
           </Grid>
-          <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
-          <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
-            <FormatPrice
-              amount={amount}
-              decimals={decimal}
-              price={price}
-              skeletonHeight={20}
-            />
-          </Grid>
+          <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '35px', mx: '10px', my: 'auto' }} />
+          <FormatPrice
+            amount={amount}
+            decimals={decimal}
+            fontSize= '22px'
+            fontWeight= {400}
+            price={price}
+            skeletonHeight={20}
+          />
         </Grid>
         <Grid container item justifyContent='flex-end' width='38%'>
           {isUnstaking &&

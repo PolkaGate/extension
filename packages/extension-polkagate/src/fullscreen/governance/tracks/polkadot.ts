@@ -1,6 +1,5 @@
 // Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { TrackInfo } from './types.js';
 
@@ -32,7 +31,7 @@ const SPEND_LIMITS = {
 };
 
 export const polkadot: Record<string, TrackInfo[]> = {
-  fellowshipReferenda: [
+  fellowship: [
     {
       compare: compareFellowshipRank(0),
       id: 0,

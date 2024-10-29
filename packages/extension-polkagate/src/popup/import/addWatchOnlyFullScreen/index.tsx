@@ -8,7 +8,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyItem } from '../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
@@ -18,9 +18,9 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AddressInput, ProxyTable, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
-import { useApiWithChain, useFullscreen, useGenesisHashOptions, useTranslation } from '../../../hooks';
+import { AddressInput, GenesisHashOptionsContext, ProxyTable, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
+import { useApiWithChain, useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
@@ -43,7 +43,8 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   const [proxies, setProxies] = useState<ProxyItem[] | undefined>();
 
   const api = useApiWithChain(chain);
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
+
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
   useEffect(() => {

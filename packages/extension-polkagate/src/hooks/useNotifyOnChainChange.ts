@@ -3,6 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 
+import { toTitleCase } from '../fullscreen/governance/utils/util';
 import { useAlerts, useInfo, useTranslation } from '.';
 
 /**
@@ -20,7 +21,7 @@ export default function useNotifyOnChainChange (address: string | undefined): un
     if (chainName && ref.current && ref.current !== chainName) {
       notify(
         t('{{accountName}} default chain switched to {{chainName}}.',
-          { replace: { accountName: accountName || 'Unknown', chainName } }),
+          { replace: { accountName: accountName || 'Unknown', chainName: toTitleCase(chainName) } }),
         'info'
       );
     }

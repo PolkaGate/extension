@@ -35,7 +35,7 @@ export const DEFAULT_SELECTED_CHAINS: DropdownOption[] = [
     value: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6'
   },
   {
-    text: 'HydraDX',
+    text: 'Hydration',
     value: '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d'
   },
   {

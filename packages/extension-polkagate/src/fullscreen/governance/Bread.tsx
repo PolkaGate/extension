@@ -9,6 +9,8 @@ import { Breadcrumbs, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { useTranslation } from '../../hooks';
+import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { capitalizeFirstLetter } from './utils/util';
 
 interface Props {
@@ -21,6 +23,7 @@ interface Props {
 
 export default function Bread ({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
   const history = useHistory();
+  const { t } = useTranslation();
 
   const backToSubMenu = useCallback(() => {
     setSelectedSubMenu(subMenu);
@@ -33,9 +36,18 @@ export default function Bread ({ address, postId, setSelectedSubMenu, subMenu, t
     setSelectedSubMenu('All');
   }, [address, history, setSelectedSubMenu, topMenu]);
 
+  const toHome = useCallback(() => {
+    openOrFocusTab('/', true);
+  }, []);
+
   return (
     <Grid container sx={{ py: '10px' }}>
       <Breadcrumbs aria-label='breadcrumb' color='text.primary'>
+        <Link onClick={toHome} sx={{ cursor: 'pointer' }} underline='hover'>
+          <Typography color='text.primary' sx={{ fontWeight: 500 }}>
+            {t('Home')}
+          </Typography>
+        </Link>
         <Link onClick={backToTopMenu} sx={{ cursor: 'pointer' }} underline='hover'>
           <Typography color='text.primary' sx={{ fontWeight: 500 }}>
             {capitalizeFirstLetter(topMenu || '')}

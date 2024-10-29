@@ -3,19 +3,15 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-// @ts-ignore
-import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 import type { UnlockInformationType } from '..';
 
-import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { BN_MAX_INTEGER } from '@polkadot/util';
+import React, { useCallback } from 'react';
 
 import { FormatPrice, ShowBalance } from '../../../components';
-import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useInfo, useTimeToUnlock, useTranslation } from '../../../hooks';
+import { useAnimateOnce, useInfo, useLockedInReferenda, useTranslation } from '../../../hooks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import { popupNumbers } from '..';
 
@@ -32,26 +28,9 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
   const theme = useTheme();
 
   const { api, decimal, token } = useInfo(address);
-  const delegatedBalance = useHasDelegated(address, refreshNeeded);
-  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refreshNeeded);
-  const currentBlock = useCurrentBlockNumber(address);
-  const { timeToUnlock, totalLocked, unlockableAmount } = useTimeToUnlock(address, referendaLocks, refreshNeeded);
 
-  const [shake, setShake] = useState<boolean>();
-
-  const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
-  const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
-
-  const hasDescription = useMemo(() =>
-    (unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock
-  , [delegatedBalance, timeToUnlock, unlockableAmount]);
-
-  useEffect(() => {
-    if (unlockableAmount && !unlockableAmount.isZero()) {
-      setShake(true);
-      setTimeout(() => setShake(false), TIME_TO_SHAKE_ICON);
-    }
-  }, [unlockableAmount]);
+  const { classToUnlock, delegatedBalance, hasDescription, isDisable, timeToUnlock, totalLocked, unlockableAmount } = useLockedInReferenda(address, refreshNeeded);
+  const shake = useAnimateOnce(unlockableAmount && !unlockableAmount.isZero(), { duration: TIME_TO_SHAKE_ICON });
 
   const onUnlock = useCallback(() => {
     if (isDisable) {
@@ -82,15 +61,16 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
                 token={token}
               />
             </Grid>
-            <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '35px', mx: '10px', my: 'auto' }} />
-            <Grid item sx={{ '> div span': { display: 'block' }, fontSize: '22px', fontWeight: 400 }}>
-              <FormatPrice
-                amount={totalLocked}
-                decimals={decimal}
-                price={price}
-                skeletonHeight={20}
-              />
-            </Grid>
+            <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '35px', mx: '10px', my: 'auto' }} />
+            <FormatPrice
+              amount={totalLocked}
+              decimals={decimal}
+              fontSize= '22px'
+              fontWeight={ 400}
+              mt={!totalLocked ? '5px' : undefined}
+              price={price}
+              skeletonHeight={20}
+            />
           </Grid>
           <Typography fontSize='12px' fontWeight={500} textAlign='right'>
             {api && unlockableAmount && !unlockableAmount.isZero()
@@ -109,7 +89,7 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
           >
             <FontAwesomeIcon
               color={isDisable ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
-              icon={faUnlockAlt}
+              icon={ unlockableAmount && !unlockableAmount.isZero() ? faUnlockAlt : faLock}
               shake={shake}
               style={{ height: '25px' }}
             />

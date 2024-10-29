@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,24 +8,24 @@
  * this component opens send review page
  * */
 
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
 import type { Proxy, TxInfo } from '../../../../util/types';
+import type { VoteInformation } from '.';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { BN_ZERO } from '@polkadot/util';
 
-import { Identity, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
+import { AccountHolderWithProxy, Motion, ShowBalance, ShowValue, SignArea2, Warning, WrongPasswordAlert } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
-import { ThroughProxy } from '../../../../partials';
-import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
 import { PROXY_TYPE } from '../../../../util/constants';
+import { ENDED_STATUSES, STATUS_COLOR } from '../../utils/consts';
 import DisplayValue from './partial/DisplayValue';
-import { STEPS, VoteInformation } from '.';
+import { STEPS } from '.';
 
 interface Props {
   address: string | undefined;
@@ -43,16 +42,16 @@ interface Props {
   txType: 'Remove' | 'Vote';
 }
 
-export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, chain, decimal, token } = useInfo(address);
+  const { chain, decimal, token } = useInfo(address);
   const ref = useRef(null);
 
   const [isPasswordError, setIsPasswordError] = useState(false);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const isOngoing = !ENDED_STATUSES.includes(status);
+  const isOngoing = !ENDED_STATUSES.includes(status || '');
   const extraInfo = useMemo(() => ({
     action: 'Governance',
     amount: voteInformation.voteBalance,
@@ -70,7 +69,7 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
         </Grid>
         <Grid alignItems='center' container item width='fit-content'>
           {vote === 'Aye'
-            ? <CheckIcon sx={{ color: STATUS_COLOR.Confirmed, fontSize: '28px', stroke: STATUS_COLOR.Confirmed, strokeWidth: 1.8 }} />
+            ? <CheckIcon sx={{ color: STATUS_COLOR['Confirmed'], fontSize: '28px', stroke: STATUS_COLOR['Confirmed'], strokeWidth: 1.8 }} />
             : vote === 'Nay'
               ? <CloseIcon sx={{ color: 'warning.main', fontSize: '28px', stroke: theme.palette.warning.main, strokeWidth: 1.5 }} />
               : <AbstainIcon sx={{ color: 'primary.light', fontSize: '28px' }} />
@@ -104,17 +103,18 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
     } else if (txType === 'Remove') {
       return [voteInformation.trackId, voteInformation.refIndex];
     }
+
+    return undefined;
   }, [txType, voteInformation.refIndex, voteInformation.trackId, voteInformation.voteAmountBN, voteInformation.voteConvictionValue, voteInformation.voteType]);
 
   useEffect(() => {
     if (ref) {
+      //@ts-ignore
       setModalHeight(ref.current?.offsetHeight as number);
     }
   }, [setModalHeight]);
 
-  const onBackClick = useCallback(() =>
-    setStep(txType === 'Vote' ? STEPS.INDEX : STEPS.PREVIEW)
-    , [setStep, txType]);
+  const onBackClick = useCallback(() => setStep(txType === 'Vote' ? STEPS.INDEX : STEPS.PREVIEW), [setStep, txType]);
 
   return (
     <Motion style={{ height: '100%' }}>
@@ -132,26 +132,13 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
             {t('Think twice before removing your vote. It may affect the outcome.')}
           </Warning>
         }
-        <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ m: 'auto', pt: isPasswordError ? 0 : '10px', width: '90%' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t('Account holder')}
-          </Typography>
-          <Identity
-            address={address}
-            api={api}
-            chain={chain as any}
-            direction='row'
-            identiconSize={35}
-            showSocial={false}
-            style={{ maxWidth: '100%', width: 'fit-content' }}
-            withShortAddress
-          />
-        </Grid>
-        {selectedProxyAddress &&
-          <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={selectedProxyAddress} chain={chain as any} />
-          </Grid>
-        }
+        <AccountHolderWithProxy
+          address={address}
+          chain={chain}
+          direction ='row'
+          selectedProxyAddress={selectedProxyAddress}
+          style={{ m: 'auto', pt: isPasswordError ? 0 : '10px' }}
+        />
         <DisplayValue title={t('Vote')}>
           <VoteStatus vote={voteInformation.voteType} />
         </DisplayValue>
@@ -176,25 +163,26 @@ export default function Review({ address, estimatedFee, selectedProxy, setModalH
           <ShowValue height={20} value={estimatedFee?.toHuman()} />
         </DisplayValue>
         <Grid container item mt='15px'>
-          <SignArea2
-            address={address}
-            call={tx}
-            extraInfo={extraInfo}
-            isPasswordError={isPasswordError}
-            onSecondaryClick={onBackClick}
-            params={params}
-            previousStep={txType === 'Vote' ? STEPS.REVIEW : STEPS.REMOVE}
-            primaryBtnText={t('Confirm')}
-            proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
-            secondaryBtnText={t('Back')}
-            selectedProxy={selectedProxy}
-            setIsPasswordError={setIsPasswordError}
-            setRefresh={setRefresh}
-            setStep={setStep}
-            setTxInfo={setTxInfo}
-            step={step}
-            steps={STEPS}
-          />
+          {address &&
+            <SignArea2
+              address={address}
+              call={tx}
+              extraInfo={extraInfo}
+              isPasswordError={isPasswordError}
+              onSecondaryClick={onBackClick}
+              params={params}
+              previousStep={txType === 'Vote' ? STEPS.REVIEW : STEPS.REMOVE}
+              primaryBtnText={t('Confirm')}
+              proxyTypeFilter={PROXY_TYPE.GOVERNANCE}
+              secondaryBtnText={t('Back')}
+              selectedProxy={selectedProxy}
+              setIsPasswordError={setIsPasswordError}
+              setRefresh={setRefresh}
+              setStep={setStep}
+              setTxInfo={setTxInfo}
+              step={step}
+              steps={STEPS}
+            />}
         </Grid>
       </Grid>
     </Motion>

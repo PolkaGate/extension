@@ -69,11 +69,11 @@ export default function useReservedDetails (address: string | undefined): Reserv
       /** fetch proxy  */
       if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
         api.query['proxy']['proxies'](formatted).then((p) => {
-          const mayBeDeposit = p?.[1] as BN;
+          const maybeDeposit = p?.[1] as BN;
 
-          if (!mayBeDeposit?.isZero()) {
+          if (!maybeDeposit?.isZero()) {
             setReserved((prev) => {
-              prev.proxy = toBalance(mayBeDeposit);
+              prev.proxy = toBalance(maybeDeposit);
 
               return prev;
             });

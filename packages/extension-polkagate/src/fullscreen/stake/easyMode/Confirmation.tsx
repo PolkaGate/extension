@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { NameAddress, TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
@@ -12,7 +13,6 @@ import { useAccountDisplay, useTranslation } from '../../../hooks';
 import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import type { NameAddress, TxInfo } from '../../../util/types';
 import { amountToHuman, pgBoxShadow } from '../../../util/utils';
 
 interface Props {
@@ -44,7 +44,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
   );
 };
 
-export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -83,7 +83,7 @@ export default function Confirmation({ handleDone, txInfo }: Props): React.React
       <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: pgBoxShadow(theme), pb: '15px' }}>
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
           success={txInfo.success}
         />
         {txInfo?.failureText &&

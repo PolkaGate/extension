@@ -13,7 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
-import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
+import { AssetLogo, FormatPrice, ShowBalance } from '../../../components';
 import { useApi, useNotifyOnChainChange, usePrices, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
@@ -56,13 +56,13 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
           token={asset.token}
         />
       </Grid>
-      <Grid item sx={{ fontSize: '13px', fontWeight: 400, lineHeight: 1 }}>
-        <FormatPrice
-          amount={total}
-          decimals={asset.decimal}
-          price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
-        />
-      </Grid>
+      <FormatPrice
+        amount={total}
+        decimals={asset.decimal}
+        fontSize='13px'
+        fontWeight={ 400}
+        price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
+      />
     </Grid>
   );
 };
@@ -98,7 +98,7 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
       {_assetToShow
         ? <>
           <Grid alignItems='center' container item mr={logoInfo?.subLogo && '2px'} width='fit-content'>
-            <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={_assetToShow.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            <AssetLogo assetSize='25px' baseTokenSize='16px' genesisHash={_assetToShow.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           {(mode === 'Detail' || (homeMode && !hideNumbers)) &&
             <BalanceRow

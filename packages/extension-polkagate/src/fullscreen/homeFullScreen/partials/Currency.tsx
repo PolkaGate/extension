@@ -6,6 +6,7 @@
 import { Grid, Popover, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 
+import Infotip2 from '../../../components/Infotip2';
 import { getStorage } from '../../../components/Loading';
 import CurrencySwitch from '../components/CurrencySwitch';
 
@@ -19,7 +20,7 @@ export interface CurrencyItemType {
 export default function Currency (): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [currencyToShow, setCurrencyToShow] = useState<string | undefined>();
+  const [currencyToShow, setCurrencyToShow] = useState<CurrencyItemType | undefined>();
 
   const textColor = useMemo(() => theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary, [theme.palette.mode, theme.palette.text.primary, theme.palette.text.secondary]);
 
@@ -29,7 +30,7 @@ export default function Currency (): React.ReactElement {
     }
 
     getStorage('currency').then((res) => {
-      setCurrencyToShow((res as CurrencyItemType)?.sign || '$');
+      setCurrencyToShow((res as CurrencyItemType));
     }).catch(console.error);
   }, [currencyToShow]);
 
@@ -47,9 +48,11 @@ export default function Currency (): React.ReactElement {
   return (
     <>
       <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}>
-        <Typography color={textColor} fontSize='25px' fontWeight={600}>
-          {currencyToShow}
-        </Typography>
+        <Infotip2 text={currencyToShow?.currency}>
+          <Typography color={textColor} fontSize='25px' fontWeight={600}>
+            {currencyToShow?.sign || '$'}
+          </Typography>
+        </Infotip2>
       </Grid>
       <Popover
         PaperProps={{

@@ -11,12 +11,13 @@ import getChainGenesisHash from '../util/getChainGenesisHash';
 import { sanitizeChainName } from '../util/utils';
 import useApi from './useApi';
 
+const allEndpoints = createWsEndpoints();
+
 export default function useApiWithChain2 (chain: Chain | null | undefined): ApiPromise | undefined {
   const genesisHash = useMemo(() => chain?.genesisHash || getChainGenesisHash(chain?.name), [chain]);
 
   const maybeEndpoint = useMemo(() => {
     const chainName = sanitizeChainName(chain?.name);
-    const allEndpoints = createWsEndpoints(() => '');
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase() || String(e.info)?.toLowerCase() === chainName?.toLowerCase());
 

@@ -42,13 +42,13 @@ export default function Index (): React.ReactElement {
 
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
   const myBalances = useBalances(address);
-  const mayBeMyStashBalances = useBalances(stakingAccount?.stashId as unknown as string);
+  const maybeMyStashBalances = useBalances(stakingAccount?.stashId as unknown as string);
 
   const stakingConsts = useStakingConsts(address, state?.stakingConsts);
   const isExposed = useIsExposed(address);
 
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
-  const balances = useMemo(() => mayBeMyStashBalances || myBalances, [mayBeMyStashBalances, myBalances]);
+  const balances = useMemo(() => maybeMyStashBalances || myBalances, [maybeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 

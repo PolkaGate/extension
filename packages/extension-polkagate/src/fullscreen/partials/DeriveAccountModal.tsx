@@ -116,7 +116,6 @@ function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactEle
           <CreateNewDerivedAccount
             address={account.address}
             derivedAccountName={name}
-            genesisHash={parentAccount?.genesisHash}
             isBusy={isBusy}
             onBackClick={onBackClick}
             onCreate={onCreate}
