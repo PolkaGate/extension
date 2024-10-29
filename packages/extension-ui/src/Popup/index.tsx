@@ -139,7 +139,7 @@ export default function Popup (): React.ReactElement {
   const [refs, setRefs] = useState<LatestRefs>({});
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
   const [currency, setCurrency] = useState<CurrencyItemType>();
-  const [accountIconTheme, setAccountIconTheme] = useState<IconTheme>();
+  const [accountIconTheme, setAccountIconTheme] = useState<IconTheme>(DEFAULT_ACCOUNT_ICON_THEME);
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
   const [alerts, setAlerts] = useState<AlertType[]>([]);
 
