@@ -15,7 +15,7 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import { canDerive } from '@polkadot/extension-base/utils';
 import { ErrorBoundary, Loading } from '@polkadot/extension-polkagate/src/components';
 import { AccountContext, AccountIconThemeContext, AccountsAssetsContext, ActionContext, AlertContext, APIContext, AuthorizeReqContext, CurrencyContext, FetchingContext, GenesisHashOptionsContext, MediaContext, MetadataReqContext, ReferendaContext, SettingsContext, SigningReqContext, UserAddedChainContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { getStorage, type LoginInfo, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { getStorage, type LoginInfo, setStorage, updateStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import AddNewChain from '@polkadot/extension-polkagate/src/fullscreen/addNewChain';
@@ -163,6 +163,8 @@ export default function Popup (): React.ReactElement {
     getStorage('iconTheme')
       .then((maybeTheme) => setAccountIconTheme((maybeTheme as IconTheme | undefined) || DEFAULT_ACCOUNT_ICON_THEME))
       .catch(console.error);
+
+    watchStorage('iconTheme', setAccountIconTheme).catch(console.error);
   }, []);
 
   useEffect(() => {
