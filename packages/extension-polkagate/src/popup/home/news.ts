@@ -10,10 +10,11 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.20.0',
+    version: '0.21.0',
     notes: [
-      'Show No Internet Sign: Display a “no internet” icon if the extension detects no internet connection.',
-      'Auto-Loading Referenda: Automatically load more referenda as you scroll to the end of the list, eliminating the need for manual clicks.',
+      'Show No Internet Sign: Display an icon to indicate when there’s no internet connection.',
+      'Identicon Theme Selection: Allow users to choose a theme for their account identicons.',
+      'Auto-Loading Referenda: Automatically load more referenda as you scroll, removing the need for manual clicks.',
       'Real-Time Referenda Search: Apply keyword-based search and filtering instantly, even while referenda are still loading.',
       'Currency Conversion Display: Show asset values in the selected currency on the governance page.'
     ]
