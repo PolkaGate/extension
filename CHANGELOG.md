@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.21.0](https://github.com/polkagate/extension/compare/v0.20.1...v0.21.0) (2024-10-29)
+
+
+### Features
+
+* add account icon theme options ([#1612](https://github.com/polkagate/extension/issues/1612)) ([e1b3570](https://github.com/polkagate/extension/commit/e1b3570104f11e45eb24cfdadefb1df6f3cb0436))
+
 ## [0.20.1](https://github.com/polkagate/extension/compare/v0.20.0...v0.20.1) (2024-10-27)
 
 
