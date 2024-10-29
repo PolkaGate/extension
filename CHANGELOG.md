@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.21.1](https://github.com/polkagate/extension/compare/v0.21.0...v0.21.1) (2024-10-29)
+
+
+### Bug Fixes
+
+* theme change sync issue ([#1616](https://github.com/polkagate/extension/issues/1616)) ([69bccb0](https://github.com/polkagate/extension/commit/69bccb0445ce3c73cc6e39a21921eca06285c05f))
+
 # [0.21.0](https://github.com/polkagate/extension/compare/v0.20.1...v0.21.0) (2024-10-29)
 
 
