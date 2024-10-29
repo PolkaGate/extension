@@ -10,7 +10,7 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.21.0',
+    version: '0.21.1',
     notes: [
       'Show No Internet Sign: Display an icon to indicate when there’s no internet connection.',
       'Identicon Theme Selection: Allow users to choose a theme for their account identicons.',
