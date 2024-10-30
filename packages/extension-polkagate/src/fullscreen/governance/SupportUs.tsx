@@ -127,10 +127,6 @@ export default function SupportUs () {
     }).catch(console.error);
   }, [accountsAssets]);
 
-  const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
-
   const handleOnVote = useCallback(() => {
     maxPowerAddress && openOrFocusTab(`/governance/${maxPowerAddress}/referenda/${PROPOSAL_NO}`);
   }, [maxPowerAddress]);
@@ -157,7 +153,7 @@ export default function SupportUs () {
           }}
           fullWidth
           maxWidth='sm'
-          onClose={handleClose}
+          onClose={handleMaybeLater}
           open={open}
         >
           <DialogContent style={{ padding: 0 }}>
