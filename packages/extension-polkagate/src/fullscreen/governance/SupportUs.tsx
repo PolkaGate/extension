@@ -7,13 +7,13 @@ import { faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { Box, Grid, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, TwoButtons } from '../../components';
 import { getStorage, setStorage } from '../../components/Loading';
-import { useTranslation } from '../../hooks';
+import { useMyVote, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import { POLKADOT_GENESIS_HASH } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
@@ -21,6 +21,7 @@ import SimpleModalTitle from '../partials/SimpleModalTitle';
 import { DraggableModal } from './components/DraggableModal';
 
 const PROPOSAL_NO = 1264;
+const TRACK_ID = 33;
 const SHOW_INTERVAL = 10 * 1000; // ms
 const STORAGE_LABEL = `polkaGateVoteReminderLastShown_${PROPOSAL_NO}`;
 
@@ -31,6 +32,8 @@ export default function SupportUs (): React.ReactElement {
   const [open, setOpen] = useState<boolean>(true);
   const [maxPowerAddress, setAddress] = useState<string>();
   const [timeToShow, setTimeToShow] = useState<boolean>();
+  const vote = useMyVote(maxPowerAddress, PROPOSAL_NO, TRACK_ID);
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
 
   useEffect(() => {
     getStorage(STORAGE_LABEL).then((maybeDate) => {
@@ -56,8 +59,10 @@ export default function SupportUs (): React.ReactElement {
 
       const votingBalance = maybeAsset[0].votingBalance ? new BN(maybeAsset[0].votingBalance) : BN_ZERO;
 
-      max = votingBalance.gt(max) ? votingBalance : max;
-      addressWithMaxVotingPower = address;
+      if (votingBalance.gt(max)) {
+        max = votingBalance;
+        addressWithMaxVotingPower = address;
+      }
     });
 
     addressWithMaxVotingPower && tieAccount(addressWithMaxVotingPower, POLKADOT_GENESIS_HASH).finally(() => {
@@ -80,7 +85,7 @@ export default function SupportUs (): React.ReactElement {
 
   return (
     <>
-      {maxPowerAddress && timeToShow &&
+      {maxPowerAddress && timeToShow && notVoted &&
         <DraggableModal onClose={handleClose} open={open}>
           <>
             <SimpleModalTitle

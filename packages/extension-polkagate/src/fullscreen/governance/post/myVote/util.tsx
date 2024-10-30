@@ -1,14 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+//@ts-nocheck
+
+import type { ApiPromise } from '@polkadot/api';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { Track } from '../../utils/types';
 
-import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
-
-import { Track } from '../../utils/types';
 import { toCamelCase } from '../../utils/util';
 
 export const CONVICTION = {
@@ -71,8 +71,8 @@ interface Voting {
   delegating: any; // needs to be fixed
 }
 
-export async function getAddressVote(address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
-  const voting = await api.query.convictionVoting.votingFor(address, trackId) as unknown as PalletConvictionVotingVoteVoting;
+export async function getAddressVote (address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
+  const voting = await api.query['convictionVoting']['votingFor'](address, trackId) as unknown as PalletConvictionVotingVoteVoting;
 
   if (voting.isEmpty) {
     return null;
@@ -96,7 +96,7 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
   if (voting.isDelegating) {
     // Then, look into the votes of the delegating target address.
     const { conviction, target } = voting.asDelegating;
-    const proxyVoting = await api.query.convictionVoting.votingFor(target, trackId) as unknown as PalletConvictionVotingVoteVoting;
+    const proxyVoting = await api.query['convictionVoting']['votingFor'](target, trackId) as unknown as PalletConvictionVotingVoteVoting;
     const targetVote = proxyVoting.isCasting ? proxyVoting.asCasting.votes.find(([index]) => index.toNumber() === referendumIndex)?.[1] : undefined;
 
     if (!targetVote?.isStandard && !targetVote?.isSplitAbstain) {
@@ -139,8 +139,8 @@ export async function getAddressVote(address: string, api: ApiPromise, referendu
   return null;
 }
 
-export async function getAllVotes(address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
-  const queries = tracks.map((t) => api.query.convictionVoting.votingFor(address, t[0]));
+export async function getAllVotes (address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
+  const queries = tracks.map((t) => api.query['convictionVoting']['votingFor'](address, t[0]));
   const voting = await Promise.all(queries);
   const castedRefIndexes = voting?.map((v) => {
     const jsonV = v.toJSON() as unknown as Voting;
