@@ -8,7 +8,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { alpha, Box, Button, Dialog, DialogContent, Paper, Slide, type Theme, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
