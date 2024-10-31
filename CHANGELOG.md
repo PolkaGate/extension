@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.21.2](https://github.com/polkagate/extension/compare/v0.21.1...v0.21.2) (2024-10-31)
+
+
+### Bug Fixes
+
+* wrong timeline stage in Governance ([#1619](https://github.com/polkagate/extension/issues/1619)) ([73fcabf](https://github.com/polkagate/extension/commit/73fcabf87ade60a8acb0f7e6ba365b54aab3f859))
+
 ## [0.21.1](https://github.com/polkagate/extension/compare/v0.21.0...v0.21.1) (2024-10-29)
 
 
