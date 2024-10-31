@@ -137,6 +137,8 @@ export default function SupportUs () {
   }, [accountsAssets]);
 
   const handleOnVote = useCallback(() => {
+    setOpen(false);
+
     maxPowerAddress && openOrFocusTab(`/governance/${maxPowerAddress}/referenda/${PROPOSAL_NO}`);
   }, [maxPowerAddress]);
 
