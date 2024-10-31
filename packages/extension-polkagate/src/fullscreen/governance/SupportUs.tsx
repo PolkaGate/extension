@@ -162,8 +162,16 @@ export default function SupportUs () {
           }}
           fullWidth
           maxWidth='sm'
-          onClose={handleMaybeLater}
+          // onClose={handleMaybeLater}
           open={open}
+          slotProps={{
+            backdrop: {
+              style: {
+                backdropFilter: 'blur(5px)',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)'
+              }
+            }
+          }}
         >
           <DialogContent style={{ padding: 0 }}>
             <StyledPaper theme={theme}>
