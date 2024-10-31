@@ -105,7 +105,7 @@ export default function SupportUs () {
 
       (!maybeDate || isWaitingExpired) && setTimeToNextShow(true);
     }).catch(console.error);
-  }, [accountsAssets]);
+  }, []);
 
   useEffect(() => {
     if (!accountsAssets) {
