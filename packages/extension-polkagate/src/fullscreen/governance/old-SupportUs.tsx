@@ -6,20 +6,22 @@
 import { AccessTime as AccessTimeIcon, ArrowForward as ArrowForwardIcon, Handshake as HandshakeIcon } from '@mui/icons-material';
 import { alpha, Box, Button, Dialog, DialogContent, Paper, Slide, type Theme, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext } from '../../components';
 import { getStorage, setStorage } from '../../components/Loading';
-import { useReferendum, useTranslation } from '../../hooks';
+import { useMyVote, useReferendum, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import { POLKADOT_GENESIS_HASH } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { ENDED_STATUSES } from './utils/consts';
 
 const PROPOSAL_NO = 1264;
-const STORAGE_LABEL = `supportUs0000_${PROPOSAL_NO}`;
+const TRACK_ID = 33;
+const SHOW_INTERVAL = 10 * 1000; // ms
+const STORAGE_LABEL = `polkaGateVoteReminderLastShown_${PROPOSAL_NO}`;
 
 const StyledPaper = styled(Paper)(({ theme }: { theme: Theme }) => ({
   background: theme.palette.background.default,
@@ -86,15 +88,22 @@ export default function SupportUs () {
 
   const [open, setOpen] = useState<boolean>(true);
   const [maxPowerAddress, setAddress] = useState<string>();
-  const [show, setShow] = useState<boolean>();
+  const [timeToNextShow, setTimeToNextShow] = useState<boolean>();
 
   const referendum = useReferendum(maxPowerAddress, 'Referenda', PROPOSAL_NO);
+
+  const vote = useMyVote(maxPowerAddress, PROPOSAL_NO, TRACK_ID);
+  const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
+
   const isReferendumOngoing = referendum?.status && !ENDED_STATUSES.includes(referendum.status);
-  const showModal = show && maxPowerAddress && isReferendumOngoing;
+
+  const showModal = timeToNextShow && maxPowerAddress && notVoted && isReferendumOngoing;
 
   useEffect(() => {
-    getStorage(STORAGE_LABEL).then((hasAlreadyShown) => {
-      setShow(!hasAlreadyShown);
+    getStorage(STORAGE_LABEL).then((maybeDate) => {
+      const isWaitingExpired = Date.now() - (maybeDate as unknown as number) > SHOW_INTERVAL;
+
+      (!maybeDate || isWaitingExpired) && setTimeToNextShow(true);
     }).catch(console.error);
   }, []);
 
@@ -127,16 +136,16 @@ export default function SupportUs () {
     }).catch(console.error);
   }, [accountsAssets]);
 
-  const handleHasShown = useCallback(() => {
-    setStorage(STORAGE_LABEL, true).catch(console.error); // hope u come back again ;)
-    setOpen(false);
-  }, []);
-
   const handleOnVote = useCallback(() => {
-    handleHasShown();
+    setOpen(false);
 
     maxPowerAddress && openOrFocusTab(`/governance/${maxPowerAddress}/referenda/${PROPOSAL_NO}`);
-  }, [handleHasShown, maxPowerAddress]);
+  }, [maxPowerAddress]);
+
+  const handleMaybeLater = useCallback(() => {
+    setStorage(STORAGE_LABEL, Date.now()).catch(console.error);
+    setOpen(false);
+  }, []);
 
   return (
     <>
@@ -155,6 +164,7 @@ export default function SupportUs () {
           }}
           fullWidth
           maxWidth='sm'
+          // onClose={handleMaybeLater}
           open={open}
           slotProps={{
             backdrop: {
@@ -195,7 +205,7 @@ export default function SupportUs () {
                 </Box>
                 <Box alignItems='center' display='flex' justifyContent='space-between' mt={4}>
                   <MaybeLaterButton
-                    onClick={handleHasShown}
+                    onClick={handleMaybeLater}
                     startIcon={<AccessTimeIcon />}
                     theme={theme}
                   >
