@@ -12,10 +12,11 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext } from '../../components';
 import { getStorage, setStorage } from '../../components/Loading';
-import { useMyVote, useTranslation } from '../../hooks';
+import { useMyVote, useReferendum, useTranslation } from '../../hooks';
 import { tieAccount } from '../../messaging';
 import { POLKADOT_GENESIS_HASH } from '../../util/constants';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
+import { ENDED_STATUSES } from './utils/consts';
 
 const PROPOSAL_NO = 1264;
 const TRACK_ID = 33;
@@ -87,14 +88,22 @@ export default function SupportUs () {
 
   const [open, setOpen] = useState<boolean>(true);
   const [maxPowerAddress, setAddress] = useState<string>();
-  const [timeToShow, setTimeToShow] = useState<boolean>();
+  const [timeToNextShow, setTimeToNextShow] = useState<boolean>();
+
+  const referendum = useReferendum(maxPowerAddress, 'Referenda', PROPOSAL_NO);
 
   const vote = useMyVote(maxPowerAddress, PROPOSAL_NO, TRACK_ID);
   const notVoted = useMemo(() => vote === null || (vote && !('standard' in vote || 'splitAbstain' in vote || ('delegating' in vote && vote?.delegating?.voted))), [vote]);
 
+  const isReferendumOngoing = referendum?.status && !ENDED_STATUSES.includes(referendum.status);
+
+  const showModal = timeToNextShow && maxPowerAddress && notVoted && isReferendumOngoing;
+
   useEffect(() => {
     getStorage(STORAGE_LABEL).then((maybeDate) => {
-      (!maybeDate || Date.now() - (maybeDate as unknown as number) > SHOW_INTERVAL) && setTimeToShow(true);
+      const isWaitingExpired = Date.now() - (maybeDate as unknown as number) > SHOW_INTERVAL;
+
+      (!maybeDate || isWaitingExpired) && setTimeToNextShow(true);
     }).catch(console.error);
   }, [accountsAssets]);
 
@@ -138,7 +147,7 @@ export default function SupportUs () {
 
   return (
     <>
-      {notVoted && timeToShow &&
+      {showModal &&
         <Dialog
           PaperProps={{
             style: {
