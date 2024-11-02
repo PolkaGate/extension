@@ -463,37 +463,41 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
     };
 
     // Format the comments
-    const formattedComments = comments.items.map(({ _id, author, content, createdAt, proposer, reactions, replies, updatedAt }) => ({
-      commentSource: 'SS',
-      comment_reactions: {
-        '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
-        '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
-      },
-      content,
-      created_at: createdAt,
-      id: _id,
-      proposer,
-      // Format replies
-      replies: replies.map(({ _id, cid, content, createdAt, proposer, reactions, updatedAt }) => ({
+    const formattedComments = comments.items.map(({ _id, author, content, createdAt, proposer, reactions, replies, updatedAt }) => {
+      const decision = voteInformation(proposer);
+
+      return {
         commentSource: 'SS',
+        comment_reactions: {
+          '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
+          '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
+        },
         content,
         created_at: createdAt,
         id: _id,
         proposer,
-        reply_reactions: {
-          '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
-          '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
-        },
+        // Format replies
+        replies: replies.map(({ _id, cid, content, createdAt, proposer, reactions, updatedAt }) => ({
+          commentSource: 'SS',
+          content,
+          created_at: createdAt,
+          id: _id,
+          proposer,
+          reply_reactions: {
+            '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
+            '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
+          },
+          updated_at: updatedAt,
+          user_id: cid,
+          username: ''
+        } as unknown as Reply)),
+        sentiment: 0,
         updated_at: updatedAt,
-        user_id: cid,
-        username: ''
-      } as unknown as Reply)),
-      sentiment: 0,
-      updated_at: updatedAt,
-      user_id: author.cid,
-      username: '',
-      votes: voteInformation(proposer) ? [{ decision: voteInformation(proposer) }] : []
-    } as unknown as CommentType));
+        user_id: author.cid,
+        username: '',
+        votes: decision ? [{ decision }] : []
+      } as unknown as CommentType;
+    });
 
     return formattedComments;
   } catch (error) {
