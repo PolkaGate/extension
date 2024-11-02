@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.21.3](https://github.com/polkagate/extension/compare/v0.21.2...v0.21.3) (2024-11-02)
+
+
+### Bug Fixes
+
+* wrong vote type issue in comments ([#1624](https://github.com/polkagate/extension/issues/1624)) ([f398d16](https://github.com/polkagate/extension/commit/f398d16227205ffda4b3281f57fd065815fd3f90))
+
 ## [0.21.2](https://github.com/polkagate/extension/compare/v0.21.1...v0.21.2) (2024-10-31)
 
 
