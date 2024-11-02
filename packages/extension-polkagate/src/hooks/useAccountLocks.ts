@@ -54,8 +54,9 @@ function getLocks (api: ApiPromise, palletVote: PalletVote, votes: [classId: BN,
 
           if ((tally.isApproved && vote.isAye) || (tally.isRejected && vote.isNay)) {
             convictionIndex = vote.conviction.index;
-            locked = vote.conviction.type;
           }
+
+          locked = vote.conviction.type;
         } else if (accountVote.isSplit) {
           const { aye, nay } = accountVote.asSplit;
 
