@@ -119,6 +119,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
     <DraggableModal onClose={onClose} open={show}>
       <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
         <ModalTitle
+          closeProxy={closeProxy}
           icon={step === STEPS.PROXY ? faUserAstronaut : faLockOpen}
           onCancel={step === STEPS.PROXY ? closeProxy : onClose}
           setStep={setStep}
