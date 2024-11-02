@@ -455,8 +455,8 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
         return 'yes';
       }
 
-      if (!vote.aye && (vote.isSplit || vote.isSplitAbstain)) {
-        return 'Abstain';
+      if (vote.isSplit || vote.isSplitAbstain) {
+        return 'abstain';
       }
 
       return 'no';
