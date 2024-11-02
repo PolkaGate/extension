@@ -1,21 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type React from 'react';
+import type { Vote } from '../fullscreen/governance/post/myVote/util';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getAddressVote, Vote } from '../fullscreen/governance/post/myVote/util';
-import { useApi, useFormatted } from '.';
+import { getAddressVote } from '../fullscreen/governance/post/myVote/util';
+import { useInfo } from '.';
 
-export default function useMyVote(
+export default function useMyVote (
   address: string | undefined,
   refIndex: number | string | undefined,
   trackId: number | string | undefined,
   refresh?: boolean,
   setRefresh?: React.Dispatch<React.SetStateAction<boolean>>
 ): Vote | null | undefined {
-  const api = useApi(address);
-  const formatted = useFormatted(address);
+  const { api, formatted } = useInfo(address);
+
   const [vote, setVote] = useState<Vote | null | undefined>();
 
   const fetchVote = useCallback(async () => {
@@ -36,7 +38,7 @@ export default function useMyVote(
   }, [fetchVote]);
 
   useEffect(() => {
-    refresh && fetchVote();
+    refresh && fetchVote().catch(console.error);
   }, [fetchVote, refresh]);
 
   return vote;
