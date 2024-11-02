@@ -444,14 +444,18 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
     const votes = await votesResponse.json() as VoteSS[];
 
     // Helper function to determine the vote decision
-    const voteInformation = (address: string): string => {
+    const voteInformation = (address: string): string | null => {
       const vote = votes.find(({ account }) => account === address);
 
-      if (vote?.aye) {
+      if (!vote) {
+        return null;
+      }
+
+      if (vote.aye) {
         return 'yes';
       }
 
-      if (!vote?.aye && (vote?.isSplit || vote?.isSplitAbstain)) {
+      if (!vote.aye && (vote.isSplit || vote.isSplitAbstain)) {
         return 'Abstain';
       }
 
@@ -488,7 +492,7 @@ export async function getReferendumCommentsSS (chainName: string, refId: string 
       updated_at: updatedAt,
       user_id: author.cid,
       username: '',
-      votes: [{ decision: voteInformation(proposer) }]
+      votes: voteInformation(proposer) ? [{ decision: voteInformation(proposer) }] : []
     } as unknown as CommentType));
 
     return formattedComments;
