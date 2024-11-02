@@ -32,8 +32,6 @@ export default function useDecidingCount (address: string | undefined): Deciding
   const trackIds: TrackId[] | undefined = useMemo(() => tracks?.map(([id, { name }]) => [id, name.toString()]), [tracks]);
   const fellowshipTrackIds: TrackId[] | undefined = useMemo(() => fellowshipTracks?.map(([id, { name }]) => [id, name.toString()]), [fellowshipTracks]);
 
-  console.log('counts:', counts);
-
   useEffect(() => {
     if (chain?.genesisHash !== api?.genesisHash?.toString()) {
       setCounts(undefined);
