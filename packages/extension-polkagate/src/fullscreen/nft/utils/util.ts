@@ -29,8 +29,8 @@ export const fetchWithRetry = async (url: string, attempt = 0): Promise<Response
   try {
     const response = await fetch(url, { cache: 'force-cache' });
 
-    if (response.status === 429) { // Too Many Requests
-      throw new Error('Rate limited');
+    if ([429, 500, 502, 503, 504].includes(response.status)) {
+      throw new Error(`Retryable error with status ${response.status}`);
     }
 
     return response;
@@ -38,7 +38,7 @@ export const fetchWithRetry = async (url: string, attempt = 0): Promise<Response
     if (attempt < MAX_RETRY_ATTEMPTS - 1) {
       const backoffTime = (Math.floor(Math.random() * 10) + 1) * INITIAL_BACKOFF_TIME;
 
-      console.log(`Attempt ${attempt + 1} failed. Retrying in ${backoffTime}ms...`);
+      // console.log(`Attempt ${attempt + 1} failed. Retrying in ${backoffTime}ms...`);
       await sleep(backoffTime);
 
       return fetchWithRetry(url, attempt + 1);
