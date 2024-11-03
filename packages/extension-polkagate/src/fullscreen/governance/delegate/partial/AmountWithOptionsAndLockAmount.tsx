@@ -40,40 +40,41 @@ interface AlreadyLockedTooltipTextProps {
 const AlreadyLockedTooltipText = ({ accountLocks, currentBlock, decimal, token }: AlreadyLockedTooltipTextProps) => {
   const { t } = useTranslation();
 
-  return (<Grid container item sx={{ maxHeight: '400px', overflow: 'hidden', overflowY: 'scroll' }}>
-    <Typography variant='body2'>
-      <Grid container spacing={2}>
-        <Grid item xs={2.5}>
-          {t('Ref.')}
+  return (
+    <Grid container item sx={{ maxHeight: '400px', overflow: 'hidden', overflowY: 'scroll' }}>
+      <Typography variant='body2'>
+        <Grid container spacing={2}>
+          <Grid item xs={2.5}>
+            {t('Ref.')}
+          </Grid>
+          <Grid item xs={3.6}>
+            {t('Amount')}
+          </Grid>
+          <Grid item xs={2.9}>
+            {t('Multiplier')}
+          </Grid>
+          <Grid item xs={3}>
+            {t('Expires')}
+          </Grid>
+          {accountLocks.map((l, index) =>
+            <React.Fragment key={index}>
+              <Grid item xs={2.5}>
+                {isBn(l.refId) ? l.refId.toNumber() : 'N/A'}
+              </Grid>
+              <Grid item xs={3.6}>
+                {amountToHuman(l.total, decimal)} {token}
+              </Grid>
+              <Grid item xs={2.9}>
+                {l.locked === 'None' ? 'N/A' : l.locked.replace('Locked', '')}
+              </Grid>
+              <Grid item xs={3}>
+                {getLockedUntil(l.endBlock, currentBlock)}
+              </Grid>
+            </React.Fragment>
+          )}
         </Grid>
-        <Grid item xs={3.6}>
-          {t('Amount')}
-        </Grid>
-        <Grid item xs={2.9}>
-          {t('Multiplier')}
-        </Grid>
-        <Grid item xs={3}>
-          {t('Expires')}
-        </Grid>
-        {accountLocks.map((l, index) =>
-          <React.Fragment key={index}>
-            <Grid item xs={2.5}>
-              {isBn(l.refId) ? l.refId.toNumber() : 'N/A'}
-            </Grid>
-            <Grid item xs={3.6}>
-              {amountToHuman(l.total, decimal)} {token}
-            </Grid>
-            <Grid item xs={2.9}>
-              {l.locked === 'None' ? 'N/A' : l.locked.replace('Locked', '')}
-            </Grid>
-            <Grid item xs={3}>
-              {getLockedUntil(l.endBlock, currentBlock)}
-            </Grid>
-          </React.Fragment>
-        )}
-      </Grid>
-    </Typography>
-  </Grid>
+      </Typography>
+    </Grid>
   );
 };
 
@@ -133,8 +134,8 @@ export default function AmountWithOptionsAndLockAmount ({ accountLocks, amount, 
         onChangeAmount={onValueChange}
         onPrimary={onMaxAmount}
         onSecondary={lockedAmount && !lockedAmount?.isZero() ? onLockedAmount : undefined}
-        primaryBtnText={t<string>('Max amount')}
-        secondaryBtnText={t<string>('Locked amount')}
+        primaryBtnText={t('Max amount')}
+        secondaryBtnText={t('Locked amount')}
         style={{
           '> div div div': { fontSize: '16px', fontWeight: 400 },
           fontSize: '16px',
