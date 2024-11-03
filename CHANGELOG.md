@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.21.4](https://github.com/polkagate/extension/compare/v0.21.3...v0.21.4) (2024-11-03)
+
+
+### Bug Fixes
+
+* resolve issue with closing button on the Referanda unlock modal ([#1547](https://github.com/polkagate/extension/issues/1547)) ([ac1a4df](https://github.com/polkagate/extension/commit/ac1a4df5349ad775bca53405ca12d2b474d8dd16))
+
 ## [0.21.3](https://github.com/polkagate/extension/compare/v0.21.2...v0.21.3) (2024-11-02)
 
 
