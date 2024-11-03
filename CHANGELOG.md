@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.21.6](https://github.com/polkagate/extension/compare/v0.21.5...v0.21.6) (2024-11-03)
+
+
+### Bug Fixes
+
+* displaying locked amount button ([#1626](https://github.com/polkagate/extension/issues/1626)) ([dbc15f0](https://github.com/polkagate/extension/commit/dbc15f042d45b8a2da8d243b7940d613bfc17eea))
+
 ## [0.21.5](https://github.com/polkagate/extension/compare/v0.21.4...v0.21.5) (2024-11-03)
 
 
