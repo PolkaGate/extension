@@ -20,8 +20,6 @@ function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThum
 
   const convertedAmount = useMemo(() => price && decimal ? price / (10 ** decimal) : null, [decimal, price]);
 
-  price && console.log('price:', price);
-  convertedAmount && console.log('convertedAmount:', convertedAmount);
   const priceAsBN = useMemo(() => convertedAmount ? amountToMachine(String(convertedAmount), decimal) : null, [convertedAmount, decimal]);
   const notListed = price === null;
   const isDescription = !title;

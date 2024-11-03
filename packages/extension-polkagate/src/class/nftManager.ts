@@ -129,7 +129,7 @@ export default class NftManager {
   // Set on-chain nft item for a specific address
   setOnChainItemsInfo (data: NftItemsType) {
     if (!data) {
-      throw new NftManagerError('Address and NFT items information are required');
+      throw new NftManagerError('NFT items information are required to set on-chain information');
     }
 
     for (const address in data) {
