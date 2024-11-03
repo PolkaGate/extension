@@ -17,9 +17,7 @@ import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { type BN, noop } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext } from '../../../components';
 import NftManager from '../../../class/nftManager';
-import { Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
 import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
 import { tieAccount } from '../../../messaging';
@@ -107,15 +105,14 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   );
 };
 
-const nftManager = new NftManager();
-
 function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+  const nftManager = useMemo(() => new NftManager(), []);
+
   const { t } = useTranslation();
   const theme = useTheme();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const account = useAccount(address);
-  const onAction = useContext(ActionContext);
 
   const [displayPopup, setDisplayPopup] = useState<number>();
   const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
@@ -146,7 +143,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
     return () => {
       nftManager.unsubscribe(handleNftUpdate);
     };
-  }, [address]);
+  }, [address, nftManager]);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
 

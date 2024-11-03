@@ -30,10 +30,10 @@ enum STEPS {
   UNSUPPORTED
 }
 
-const nftManager = new NftManager();
-
 function NFT (): React.ReactElement {
   useFullscreen();
+  const nftManager = React.useMemo(() => new NftManager(), []);
+
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
