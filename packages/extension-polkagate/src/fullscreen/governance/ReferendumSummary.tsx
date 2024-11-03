@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Theme } from '@mui/material';
 import type { LatestReferenda, TopMenu } from './utils/types';
 
 import { OpenInNewRounded as OpenInNewIcon, ScheduleRounded as ClockIcon } from '@mui/icons-material/';
