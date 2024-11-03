@@ -38,8 +38,6 @@ interface AlreadyLockedTooltipTextProps {
 }
 
 const AlreadyLockedTooltipText = ({ accountLocks, currentBlock, decimal, token }: AlreadyLockedTooltipTextProps) => {
-  console.log('accountLocks :::', accountLocks);
-
   const { t } = useTranslation();
 
   return (<Grid container item sx={{ maxHeight: '400px', overflow: 'hidden', overflowY: 'scroll' }}>
@@ -127,8 +125,6 @@ const VotingInformation = ({ accountLocks, balances, currentBlock, decimal, lock
 
 export default function AmountWithOptionsAndLockAmount ({ accountLocks, amount, balances, currentBlock, decimal, lockedAmount, onLockedAmount, onMaxAmount, onValueChange, token }: Props): React.ReactElement {
   const { t } = useTranslation();
-
-  console.log('accountLocks:', accountLocks);
 
   return (
     <>
