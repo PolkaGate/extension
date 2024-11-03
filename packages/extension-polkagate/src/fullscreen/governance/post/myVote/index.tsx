@@ -62,7 +62,7 @@ export default function MyVote ({ address, isFinished, notVoted, vote }: Props):
             <Skeleton animation='wave' sx={{ borderRadius: '5px', display: 'inline-block', height: '20px', transform: 'none', width: '90%' }} />
           </Grid>
           : <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
-            <Grid container item xs={8}>
+            <Grid alignItems='center' container item xs={8}>
               <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
                 <ShowBalance api={api} balance={voteBalance as unknown as BN} decimal={decimal} decimalPoint={1} token={token} />
               </Grid>

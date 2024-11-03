@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.21.5](https://github.com/polkagate/extension/compare/v0.21.4...v0.21.5) (2024-11-03)
+
+
+### Bug Fixes
+
+* underway votes type ([#1625](https://github.com/polkagate/extension/issues/1625)) ([42be4e2](https://github.com/polkagate/extension/commit/42be4e2f0396e92623ce8d3b8927c066f9d1172e))
+
 ## [0.21.4](https://github.com/polkagate/extension/compare/v0.21.3...v0.21.4) (2024-11-03)
 
 
