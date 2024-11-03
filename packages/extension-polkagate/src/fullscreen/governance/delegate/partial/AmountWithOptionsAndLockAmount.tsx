@@ -103,7 +103,7 @@ export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, b
         label={t<string>('Amount ({{token}})', { replace: { token } })}
         onChangeAmount={onValueChange}
         onPrimary={onMaxAmount}
-        onSecondary={onLockedAmount}
+        onSecondary={lockedAmount && !lockedAmount?.isZero() ? onLockedAmount : undefined}
         primaryBtnText={t<string>('Max amount')}
         secondaryBtnText={t<string>('Locked amount')}
         style={{
