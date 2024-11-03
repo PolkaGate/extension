@@ -11,9 +11,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, ColorContext, FullScreenIcon, Infotip2, MenuItem, Select, Switch, VaadinIcon } from '../components';
+import { ActionContext, Checkbox2, FullScreenIcon, Infotip2, MenuItem, Select, SelectIdenticonTheme, VaadinIcon } from '../components';
 import { getStorage, updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
+import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
 import { useIsExtensionPopup, useIsLoginEnabled, useTranslation } from '../hooks';
 import { lockExtension, setNotification } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
@@ -32,7 +33,6 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
   const isPopup = useIsExtensionPopup();
   const isLoginEnabled = useIsLoginEnabled();
   const onAction = useContext(ActionContext);
-  const colorMode = useContext(ColorContext);
   const { setExtensionLock } = useExtensionLockContext();
 
   const [notification, updateNotification] = useState(settings.notification);
@@ -60,10 +60,6 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
     settings.set({ i18nLang: value as string });
   }, []);
 
-  const onChangeTheme = useCallback((): void => {
-    colorMode.toggleColorMode();
-  }, [colorMode]);
-
   const onManageLoginPassword = useCallback(() => {
     onAction('/login-password');
   }, [onAction]);
@@ -89,35 +85,35 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
 
   return (
     <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
-      <Grid container item>
-        <Divider sx={{ bgcolor: 'secondary.light', height: '1px', width: '100%' }} />
-        <Grid container direction='column' pl='30px' pt='10px' sx={{ p: '10px', pr: 0 }}>
-          <Grid alignItems='center' container item justifyContent='space-between'>
+      <Grid container item justifyContent='flex-end'>
+        <Divider sx={{ bgcolor: 'divider', height: '1px', mx: '10px', width: '83%' }} />
+        <Grid container direction='column' pl='40px' pr= '5px' pt='10px'>
+          <Grid alignItems='center' container item justifyContent='space-around' pr='10px'>
             <Grid item>
-              <Switch
-                checkedLabel={t('Dark')}
-                defaultColor
-                fontSize='17px'
-                isChecked={theme.palette.mode === 'dark'}
-                onChange={onChangeTheme}
-                theme={theme}
-                uncheckedLabel={t('Light')}
-              />
+              <Infotip2
+                text={t('Switch Theme')}
+              >
+                <IconButton
+                  sx={{ height: '35px', p: 0, width: '35px' }}
+                >
+                  <ThemeChanger color= 'secondary.light' left='4px' noBorder />
+                </IconButton>
+              </Infotip2>
             </Grid>
             {isLoginEnabled &&
               <>
                 <Grid item>
-                  <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
+                  <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
                 </Grid>
-                <Grid item>
+                <Grid container item width='fit-content'>
                   <Infotip2
                     text={t('Lock Extension')}
                   >
                     <IconButton
                       onClick={onLockExtension}
-                      sx={{ height: '35px', mr: '-5px', width: '35px' }}
+                      sx={{ height: '35px', ml: '-5px', p: 0, width: '35px' }}
                     >
-                      <LockIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '25px' }} />
+                      <LockIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '27px' }} />
                     </IconButton>
                   </Infotip2>
                 </Grid>
@@ -126,9 +122,9 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
             {isPopup &&
               <>
                 <Grid item>
-                  <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '20px', my: 'auto' }} />
+                  <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
                 </Grid>
-                <FullScreenIcon url='/' isSettingSubMenu/>
+                <FullScreenIcon isSettingSubMenu url='/' />
               </>
             }
           </Grid>
@@ -168,14 +164,17 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
             <MenuItem
               fontSize='17px'
               iconComponent={
-                <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '18px'}} />
+                <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
               }
               onClick={onManageLoginPassword}
               py='2px'
               text={t('Manage login password')}
             />
           </Grid>
-          <Grid item pt='12px'>
+          <SelectIdenticonTheme
+            style={{ pt: '12px', width: '100%' }}
+          />
+          <Grid item pt='10px'>
             <Select
               defaultValue={languageOptions[0].value}
               label={t('Language')}
@@ -184,7 +183,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
               value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
             />
           </Grid>
-          <Grid item pt='10px'>
+          <Grid item pt='10px' sx={{ visibility: 'hidden' }}>
             <Select
               defaultValue={notificationOptions[1].value}
               label={t('Notification')}

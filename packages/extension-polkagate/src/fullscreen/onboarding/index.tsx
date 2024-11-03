@@ -9,7 +9,7 @@ import { Grid, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DEMO_ACCOUNT, FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, ActionContext } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
@@ -19,8 +19,6 @@ import NeedHelp from '../../popup/welcome/NeedHelp';
 import Privacy from '../../popup/welcome/Privacy';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import IconBox from './IconBox';
-
-const demoAccount = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export const ICON_BOX_WIDTH = '300px';
 
@@ -53,7 +51,7 @@ function Onboarding (): React.ReactElement {
   );
 
   const onExploreDemo = useCallback((): void => {
-    createAccountExternal('Demo Account ☔️', demoAccount, POLKADOT_GENESIS)
+    createAccountExternal('Demo Account ☔️', DEMO_ACCOUNT, POLKADOT_GENESIS)
       .then(() => onAction('/'))
       .catch((error: Error) => {
         console.error(error);

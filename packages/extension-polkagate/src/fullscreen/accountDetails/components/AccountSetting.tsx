@@ -76,7 +76,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
         />
       </Grid>
       <Collapse in={showAccountSettings} sx={{ width: '100%' }}>
-        <Grid alignItems='center' container direction='column' item justifyContent='center'>
+        <Grid alignItems='flex-end' container direction='column' item justifyContent='center'>
           <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
             disabled={identityDisable}

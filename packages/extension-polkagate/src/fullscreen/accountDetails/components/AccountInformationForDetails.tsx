@@ -8,17 +8,18 @@ import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { BalancesInfo, Prices } from '../../../util/types';
 
-import { Divider, Grid, IconButton, Skeleton, Typography, useTheme } from '@mui/material';
+import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { AssetLogo, FormatBalance2, FormatPrice, Identicon, Identity, Infotip, Infotip2, OptionalCopyButton, ShortAddress2, VaadinIcon } from '../../../components';
-import { useIdentity, useInfo, useTranslation } from '../../../hooks';
-import { showAccount, tieAccount } from '../../../messaging';
+import { AssetLogo, FormatBalance2, FormatPrice, Infotip, Infotip2 } from '../../../components';
+import { useInfo, useTranslation } from '../../../hooks';
+import { tieAccount } from '../../../messaging';
 import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
-import AccountIconsFs from './AccountIconsFs';
+import AccountBodyFs from '../../homeFullScreen/partials/AccountBodyFs';
+import AccountIdenticonIconsFS from '../../homeFullScreen/partials/AccountIdenticonIconsFS';
 import AOC from './AOC';
 
 interface PriceJSXType {
@@ -147,24 +148,10 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | string | undefined>>;
 }
 
-export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | undefined, onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined }) => {
-  const { t } = useTranslation();
-  const theme = useTheme();
-
-  return (
-    <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
-      <IconButton onClick={onClick} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
-      </IconButton>
-    </Infotip>
-  );
-};
-
 function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
-  const { account, api, chain, formatted, genesisHash, token } = useInfo(address);
+  const { account, chain, genesisHash, token } = useInfo(address);
 
-  const accountInfo = useIdentity(genesisHash, formatted);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
     return parseFloat(amountToHuman(amount, decimal)) * _price;
@@ -210,56 +197,17 @@ function AccountInformationForDetails ({ accountAssets, address, label, price, p
     }).catch(console.error);
   }, [address, setSelectedAsset, setAssetIdOnAssetHub]);
 
-  const toggleVisibility = useCallback((): void => {
-    address && showAccount(address, account?.isHidden || false).catch(console.error);
-  }, [account?.isHidden, address]);
-
   return (
     <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: '0px solid', borderBottomWidth: '8px', borderBottomColor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', mb: '15px', p: `20px 20px ${showAOC ? '5px' : '20px'} 20px`, position: 'relative' }}>
       {label}
       <Grid container item>
-        <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
-          <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
-            <Identicon
-              iconTheme={chain?.icon ?? 'polkadot'}
-              prefix={chain?.ss58Format ?? 42}
-              size={70}
-              value={formatted || address}
-            />
-          </Grid>
-          <AccountIconsFs
-            accountInfo={accountInfo}
+        <AccountIdenticonIconsFS
+          address={address}
+        />
+        <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>
+          <AccountBodyFs
             address={address}
           />
-        </Grid>
-        <Grid container item sx={{ display: 'grid', gridTemplateColumns: 'minmax(150px, 60%) max-content' }} xs>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }}>
-            <Grid container item justifyContent='space-between'>
-              <Identity
-                accountInfo={accountInfo}
-                address={address}
-                api={api}
-                chain={chain}
-                noIdenticon
-                style={{ width: 'calc(100% - 40px)' }}
-              // subIdOnly
-              />
-              <Grid item width='40px'>
-                <EyeIconFullScreen
-                  isHidden={account?.isHidden}
-                  onClick={toggleVisibility}
-                />
-              </Grid>
-            </Grid>
-            <Grid alignItems='center' container item>
-              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-                <ShortAddress2 address={formatted || address} clipped style={{ fontSize: '10px', fontWeight: 300 }} />
-              </Grid>
-              <Grid container item width='fit-content'>
-                <OptionalCopyButton address={address} />
-              </Grid>
-            </Grid>
-          </Grid>
           <SelectedAssetBox
             balanceToShow={selectedAsset as unknown as BalancesInfo}
             genesisHash={chain === null ? null : genesisHash}

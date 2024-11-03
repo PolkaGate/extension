@@ -63,6 +63,7 @@ export default function CommonTasks ({ address, setRefresh, staked }: Props): Re
         <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
           <TaskButton
             disabled={isDisabled}
+            dividerWidth='75%'
             icon={
               <FontAwesomeIcon
                 color={`${iconColor}`}

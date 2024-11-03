@@ -7,6 +7,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Option, u32 } from '@polkadot/types';
 // @ts-ignore
 import type { PalletConvictionVotingVoteAccountVote, PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
+import type { ITuple } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -16,7 +17,6 @@ import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import { useInfo } from '.';
-import type { ITuple } from '@polkadot/types-codec/types';
 
 export interface Lock {
   classId: BN;
@@ -124,6 +124,8 @@ export default function useAccountLocks (address: string | undefined, palletRefe
         return undefined;
       }
 
+      setInfo(undefined);
+
       const locks = await api.query[palletVote]?.['classLocksFor'](formatted) as unknown as [BN, BN][];
       const lockClasses = locks?.length
         ? locks.map((l) => l[0])
@@ -203,8 +205,7 @@ export default function useAccountLocks (address: string | undefined, palletRefe
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getLockClass();
+    getLockClass().catch(console.error);
   }, [api, chain?.genesisHash, formatted, palletReferenda, palletVote, refresh]);
 
   return useMemo(() => {

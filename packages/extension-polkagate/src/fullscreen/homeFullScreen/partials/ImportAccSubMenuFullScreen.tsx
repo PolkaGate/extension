@@ -1,19 +1,16 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Grid, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { useTranslation } from '../../../hooks';
 import { VaadinIcon } from '../../../components';
+import { useTranslation } from '../../../hooks';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import { TaskButton } from './HomeMenu';
 
@@ -22,7 +19,7 @@ interface Props {
   show: boolean;
 }
 
-function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

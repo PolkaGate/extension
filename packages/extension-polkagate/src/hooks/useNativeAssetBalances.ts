@@ -17,7 +17,7 @@ import { decodeMultiLocation } from '../util/utils';
 import { useInfo, useStakingAccount } from '.';
 
 export default function useNativeAssetBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
-  const stakingAccount = useStakingAccount(address);
+  const stakingAccount = useStakingAccount(address, undefined, undefined, undefined, onlyNew);
   const { account, api, chainName, decimal: currentDecimal, formatted, genesisHash, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
 
@@ -51,6 +51,8 @@ export default function useNativeAssetBalances (address: string | undefined, ref
           decimal,
           frozenBalance,
           genesisHash: api.genesisHash.toString(),
+          pooledBalance: balances?.pooledBalance, // fill from saved balance it exists, it will be updated
+          soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN,
           token
         });
         setRefresh?.(false);
@@ -58,8 +60,8 @@ export default function useNativeAssetBalances (address: string | undefined, ref
         isFetching.set(isFetching.fetching);
       }).catch(console.error);
     }).catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, genesisHash, chainName, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [api, genesisHash, chainName, decimal, stakingAccount, token, isFetchingNativeTokenOfAssetHub, balances, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   useEffect(() => {
     if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== genesisHash) {
@@ -144,7 +146,7 @@ export default function useNativeAssetBalances (address: string | undefined, ref
 
     setBalances(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
+  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount, genesisHash]);
 
   if (onlyNew) {
     return newBalances; // returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance

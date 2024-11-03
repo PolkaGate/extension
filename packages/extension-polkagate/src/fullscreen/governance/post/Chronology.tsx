@@ -122,6 +122,16 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
     setExpanded(isExpanded);
   }, []);
 
+  const timelineStage = useMemo(() => {
+    if (isTreasury && isExecuted) {
+      return `(${treasuryLabel})`;
+    } else if (sortedHistory?.length) {
+      return `(${pascalCaseToTitleCase(sortedHistory[0].status)?.trim() || treasuryLabel})`;
+    } else {
+      return '';
+    }
+  }, [isExecuted, isTreasury, sortedHistory, treasuryLabel]);
+
   return (
     <Accordion expanded={expanded} onChange={handleChange} style={style.accordionStyle}>
       <AccordionSummary
@@ -131,13 +141,13 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
         sx={{ borderBottom: expanded ? `1px solid ${theme.palette.text.disabled}` : 'none', px: 0 }}
       >
         <Grid container item>
-          <Grid alignItems='baseline' container item>
+          <Grid alignItems='center' container item>
             <Typography fontSize={24} fontWeight={500}>
               {t('Timeline')}
             </Typography>
             {!expanded &&
               <Typography fontSize={16} fontWeight={300} sx={{ color: 'text.disabled', ml: '10px' }}>
-                ({ isTreasury && isExecuted ? treasuryLabel : sortedHistory?.length ? treasuryLabel || pascalCaseToTitleCase(sortedHistory[0].status)?.trim() : ''})
+                {timelineStage}
               </Typography>
             }
           </Grid>

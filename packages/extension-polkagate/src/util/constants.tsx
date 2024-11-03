@@ -250,3 +250,6 @@ export const AUTO_MODE = {
 };
 
 export const KODADOT_URL = 'https://kodadot.xyz';
+
+export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
+export const DEFAULT_ACCOUNT_ICON_THEME = 'polkadot';

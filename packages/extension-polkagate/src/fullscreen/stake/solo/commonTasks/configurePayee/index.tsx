@@ -31,13 +31,17 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: string, onCancel: () => void, setStep?: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number }): React.ReactElement<Props> => {
+export const ModalTitle = ({ closeProxy, icon, onCancel, setStep, step, text }: { closeProxy?: () => void, text: string, onCancel: () => void, setStep?: React.Dispatch<React.SetStateAction<number>>, icon: IconDefinition, step: number }): React.ReactElement<Props> => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const closeProxy = useCallback(
-    () => setStep && setStep(STEPS.REVIEW)
-    , [setStep]);
+  const _closeProxy = useCallback(() => {
+    if (closeProxy) {
+      return closeProxy();
+    }
+
+    setStep && setStep(STEPS.REVIEW);
+  }, [closeProxy, setStep]);
 
   const onClose = useCallback(() => {
     setStep && setStep(STEPS.INDEX);
@@ -65,7 +69,7 @@ export const ModalTitle = ({ icon, onCancel, setStep, step, text }: { text: stri
             step === STEPS.INDEX
               ? onCancel
               : step === STEPS.PROXY
-                ? closeProxy
+                ? _closeProxy
                 : onClose
           }
         >

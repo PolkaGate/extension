@@ -11,6 +11,7 @@ import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, D
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
@@ -680,6 +681,10 @@ export type UserAddedChains= Record<string, UserAddedEndpoint>
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
   setCurrency: (selectedCurrency: CurrencyItemType) => void;
+}
+export interface AccountIconThemeContextType {
+  accountIconTheme: IconTheme | undefined;
+  setAccountIconTheme: (theme: IconTheme) => void;
 }
 
 export interface FetchingRequests {

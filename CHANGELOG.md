@@ -1,5 +1,47 @@
 # Change Log
 
+## [0.21.4](https://github.com/polkagate/extension/compare/v0.21.3...v0.21.4) (2024-11-03)
+
+
+### Bug Fixes
+
+* resolve issue with closing button on the Referanda unlock modal ([#1547](https://github.com/polkagate/extension/issues/1547)) ([ac1a4df](https://github.com/polkagate/extension/commit/ac1a4df5349ad775bca53405ca12d2b474d8dd16))
+
+## [0.21.3](https://github.com/polkagate/extension/compare/v0.21.2...v0.21.3) (2024-11-02)
+
+
+### Bug Fixes
+
+* wrong vote type issue in comments ([#1624](https://github.com/polkagate/extension/issues/1624)) ([f398d16](https://github.com/polkagate/extension/commit/f398d16227205ffda4b3281f57fd065815fd3f90))
+
+## [0.21.2](https://github.com/polkagate/extension/compare/v0.21.1...v0.21.2) (2024-10-31)
+
+
+### Bug Fixes
+
+* wrong timeline stage in Governance ([#1619](https://github.com/polkagate/extension/issues/1619)) ([73fcabf](https://github.com/polkagate/extension/commit/73fcabf87ade60a8acb0f7e6ba365b54aab3f859))
+
+## [0.21.1](https://github.com/polkagate/extension/compare/v0.21.0...v0.21.1) (2024-10-29)
+
+
+### Bug Fixes
+
+* theme change sync issue ([#1616](https://github.com/polkagate/extension/issues/1616)) ([69bccb0](https://github.com/polkagate/extension/commit/69bccb0445ce3c73cc6e39a21921eca06285c05f))
+
+# [0.21.0](https://github.com/polkagate/extension/compare/v0.20.1...v0.21.0) (2024-10-29)
+
+
+### Features
+
+* add account icon theme options ([#1612](https://github.com/polkagate/extension/issues/1612)) ([e1b3570](https://github.com/polkagate/extension/commit/e1b3570104f11e45eb24cfdadefb1df6f3cb0436))
+
+## [0.20.1](https://github.com/polkagate/extension/compare/v0.20.0...v0.20.1) (2024-10-27)
+
+
+### Bug Fixes
+
+* staking balances get undefined in useBalances ([#1609](https://github.com/polkagate/extension/issues/1609)) ([2d97e9a](https://github.com/polkagate/extension/commit/2d97e9a755c262a366dddf685d0fd19d2478b7e6))
+
 # [0.20.0](https://github.com/polkagate/extension/compare/v0.19.6...v0.20.0) (2024-10-24)
 
 
