@@ -30,9 +30,9 @@ interface Props {
   myVotedReferendaIndexes: number[] | null | undefined;
 }
 
-const VerticalBar = ({ theme }: { theme: Theme }) => (
+const VerticalBar = () => (
   <Grid item mx='1.5%'>
-    <Divider flexItem orientation='vertical' sx={{ bgcolor: `${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : theme.palette.text.disabled}`, height: '34px' }} />
+    <Divider flexItem orientation='vertical' sx={{ bgcolor: 'divider', height: '34px' }} />
   </Grid>
 );
 
@@ -111,26 +111,26 @@ function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props)
           <Grid item sx={{ maxWidth: '22%', mb: '10px' }}>
             <Identity api={api} chain={chain} formatted={refSummary.proposer} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px', fontWeight: 400, height: '38px', lineHeight: '47px', maxWidth: '100%', minWidth: '35%', width: 'fit-content' }} />
           </Grid>
-          <VerticalBar theme={theme} />
+          <VerticalBar />
           {origin &&
             <>
-              <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.primary.main} `, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '0.5px 14.5px' }}>
+              <Grid item sx={{ bgcolor: 'background.default', border: `1px solid ${theme.palette.divider} `, borderRadius: '30px', fontSize: '16px', fontWeight: 400, p: '0.5px 14.5px' }}>
                 {capitalizeFirstLetter(origin.replace(/([A-Z])/g, ' $1').trim())}
               </Grid>
-              <VerticalBar theme={theme} />
+              <VerticalBar />
             </>
           }
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.6, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {refSummary.method}
           </Grid>
-          <VerticalBar theme={theme} />
+          <VerticalBar />
           <ClockIcon sx={{ fontSize: 27 }} />
           <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '1%' }}>
             {formatRelativeTime(refSummary.created_at)}
           </Grid>
           {newReferendum?.ayesAmount && newReferendum?.naysAmount &&
             <>
-              <VerticalBar theme={theme} />
+              <VerticalBar />
               <Grid item sx={{ width: '30px' }}>
                 <VoteChart
                   ayes={newReferendum.ayesAmount}
@@ -149,7 +149,7 @@ function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props)
           }
           {refSummary.status === 'Submitted' &&
             <>
-              <VerticalBar theme={theme} />
+              <VerticalBar />
               <Grid item sx={{ fontSize: '16px', fontWeight: 400, pl: '5px' }}>
                 <PayDecisionDeposit
                   setOpenDecisionDeposit={setOpenDecisionDeposit}

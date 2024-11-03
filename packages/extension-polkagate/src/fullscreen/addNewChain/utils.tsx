@@ -28,7 +28,7 @@ export function useUserAddedEndpoint (genesis: string | null | undefined): Dropd
   }, [endpoints, genesis]);
 }
 
-export function useUserAddedChainColor (_genesisHash: string | undefined): string | undefined {
+export function useUserAddedChainColor (_genesisHash: string | undefined | null): string | undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {

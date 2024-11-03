@@ -1,32 +1,32 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { DelegateInformation } from '..';
 
 import { FormControl, Grid, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { AccountInputWithIdentity, Infotip2, TwoButtons } from '../../../../components';
-import { useApi, useChain, useChainName, useFormatted, useTranslation } from '../../../../hooks';
+import { useFormatted, useInfo, useTranslation } from '../../../../hooks';
 import { LoadingSkeleton } from '../partial/ReferendaTracks';
 import TAccountsDisplay from '../partial/TAccountDisplay';
-import { DelegateInformation, STEPS } from '..';
+import { STEPS } from '..';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
 }
 
-export default function ChooseDelegator({ setDelegateInformation, setStep }: Props): React.ReactElement {
+export default function ChooseDelegator ({ setDelegateInformation, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const { address } = useParams<{ address: string }>();
   const myFormattedAddress = useFormatted(address);
-  const chain = useChain(address);
-  const chainName = useChainName(address);
-  const api = useApi(address);
-  const theme = useTheme();
+  const { api, chain, chainName } = useInfo(address);
 
   const [delegatorAddress, setDelegatorAddress] = useState<string | null | undefined>();
   const [selectedTrustedAddress, setSelectedTrustedAddress] = useState<string | undefined>();
@@ -43,7 +43,8 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
       return response.json();
     }).then((data) => {
       try {
-        const arrayData = data?.[chainName] && Object.values(data[chainName] as object);
+        //@ts-ignore
+        const arrayData = data?.[chainName] ? Object.values(data[chainName] as object) as string[] : undefined;
 
         setTrustedAccounts(arrayData);
       } catch (error) {
@@ -74,7 +75,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
     });
   }, [delegatorAddress, selectedTrustedAddress, setDelegateInformation]);
 
-  const onSelectTrustedAccount = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: string) => {
+  const onSelectTrustedAccount = useCallback((_event: React.ChangeEvent<HTMLInputElement>, value: string) => {
     setSelectedTrustedAddress(value);
   }, []);
 
@@ -95,7 +96,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
       <Grid container item>
         <AccountInputWithIdentity
           address={delegatorAddress}
-          chain={chain as any}
+          chain={chain}
           helperText={t<string>('Enter the account address that you want to delegate to')}
           ignoreAddress={String(myFormattedAddress)}
           label={t('Delegate to Account')}
@@ -129,7 +130,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
                   <TAccountsDisplay
                     address={trustedAccount}
                     api={api}
-                    chain={chain as any}
+                    chain={chain}
                     key={trustedAccount}
                     selectedTrustedAddress={selectedTrustedAddress}
                   />

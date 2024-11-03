@@ -50,7 +50,8 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
     : mixedDelegateInformation
       ? mixedDelegateInformation.delegatee
       : undefined;
-  const delegateeName = useIdentity(genesisHash, delegateeAddress)?.identity?.display;
+
+  const delegateeName = useIdentity(genesisHash, delegateeAddress as string | undefined)?.identity?.display;
 
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -146,7 +147,7 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
             api={api}
             chain={chain}
             direction='row'
-            formatted={delegateeAddress}
+            formatted={delegateeAddress as string | undefined}
             identiconSize={31}
             showShortAddress
             showSocial={false}
