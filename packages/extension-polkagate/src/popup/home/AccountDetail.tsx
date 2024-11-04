@@ -43,7 +43,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   return (
     <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '17px' }} />
       </IconButton>
     </Infotip>
   );
@@ -162,7 +162,7 @@ function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, is
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
         <Grid item maxWidth='70%' onClick={goToAccount} sx={{ cursor: 'pointer' }}>
-          <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+          <Typography fontSize='24px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {identity?.display || name || t('Unknown')}
           </Typography>
         </Grid>
@@ -173,7 +173,7 @@ function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, is
           />
         </Grid>
         <Grid item sx={{ m: '10px 0', width: 'fit-content' }}>
-          <OptionalCopyButton address={address} />
+          <OptionalCopyButton address={address} iconWidth={15} />
         </Grid>
       </Grid>
       <Grid alignItems='center' container item>
