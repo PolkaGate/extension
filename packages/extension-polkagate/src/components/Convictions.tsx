@@ -18,7 +18,7 @@ interface Props {
 
 export const DEFAULT_CONVICTION = 1;
 
-export default function Convictions ({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
+export default function Convictions({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -39,14 +39,13 @@ export default function Convictions ({ address, children, conviction, setConvict
   const info = useMemo((): string => {
     const newText = convictionOptions?.find(({ value }) => value === (conviction || DEFAULT_CONVICTION))?.text;
     const match = newText?.match(/\(([^)]+)\)/);
-    const result = match ? match[1] : '0 days';
 
-    return 'Tokens will be locked for ' + result;
+    return match ? match[1] : '0 days';
   }, [conviction, convictionOptions]);
 
   const marks = useMemo(() =>
     convictionOptions?.map(({ value }) => ({ label: `${value} X`, value: value as number }))
-  , [convictionOptions]);
+    , [convictionOptions]);
 
   const valuetext = useCallback((value: number) => {
     return `${value} X`;
@@ -84,6 +83,7 @@ export default function Convictions ({ address, children, conviction, setConvict
         size='small'
         step={null}
         sx={{
+          mx:'10px',
           '& .MuiSlider-rail': {
             color: 'action.focus' // Non-selected track color
           },
@@ -97,9 +97,17 @@ export default function Convictions ({ address, children, conviction, setConvict
         valueLabelDisplay='auto'
       />
       {children}
-      <Typography sx={{ fontSize: '14px', mt: '5px' }}>
-        {t(info)}
-      </Typography>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '10px' }}>
+        <Grid item>
+          <Typography sx={{ fontSize: '14px' }}>
+            {t('Tokens will be locked for')}
+          </Typography>
+        </Grid>
+        <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
+          {info}
+        </Grid>
+      </Grid>
+
     </Grid>
   );
 }
