@@ -72,7 +72,6 @@ export function DraggableModalWithTitle ({ children, icon, maxHeight = 740, minH
     borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
-    cursor: isDragging ? 'grabbing' : 'grab',
     left: modalPosition.x,
     maxHeight: `${maxHeight}px`,
     minHeight: `${minHeight}px`,
@@ -95,9 +94,10 @@ export function DraggableModalWithTitle ({ children, icon, maxHeight = 740, minH
       >
         <ModalTitleWithDrag
           icon={icon}
+          isDragging={isDragging}
           onClose={onClose}
           onMouseDown={handleMouseDown}
-          title= {title}
+          title={title}
         />
         {children}
       </Box>

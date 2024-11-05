@@ -19,10 +19,11 @@ interface Props {
   icon?: string | IconDefinition;
   onMouseDown: (e: { clientX: number; clientY: number; }) => void;
   onMouseMove?: (e: { clientX: number; clientY: number; }) => void;
-  onMouseUp?: () => void
+  onMouseUp?: () => void;
+  isDragging: boolean;
 }
 
-export default function ModalTitleWithDrag ({ icon, onClose, onMouseDown, onMouseMove, onMouseUp, title }: Props): React.ReactElement {
+export default function ModalTitleWithDrag ({ icon, isDragging, onClose, onMouseDown, onMouseMove, onMouseUp, title }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -57,7 +58,7 @@ export default function ModalTitleWithDrag ({ icon, onClose, onMouseDown, onMous
           onMouseUp={onMouseUp}
         >
           <Infotip2 text={t('Drag to move the window.')}>
-            <DragIndicatorIcon sx={{ color: 'primary.light', cursor: 'pointer', stroke: theme.palette.primary.light, strokeWidth: 1.5 }} />
+            <DragIndicatorIcon sx={{ color: 'primary.light', cursor: isDragging ? 'grabbing' : 'grab', stroke: theme.palette.primary.light, strokeWidth: 1.5 }} />
           </Infotip2>
         </IconButton>
         <IconButton onClick={onClose}>
