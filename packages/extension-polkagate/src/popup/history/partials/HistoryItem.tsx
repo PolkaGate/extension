@@ -82,7 +82,7 @@ export default function HistoryItem ({ anotherDay, chainName, date, decimal, for
               </Grid>
               <Grid item>
                 <Typography color={info.success ? 'green' : 'red'} fontSize='16px' fontWeight={400}>
-                  {info.success ? t<string>('Completed') : t<string>('Failed')}
+                  {info.success ? t('Completed') : t('Failed')}
                 </Typography>
               </Grid>
             </Grid>
