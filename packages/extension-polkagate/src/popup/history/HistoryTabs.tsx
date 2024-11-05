@@ -6,18 +6,26 @@
 import { Box, Divider, Tab, Tabs } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { useInfo, useTranslation } from '../../hooks';
-import { STAKING_CHAINS } from '../../util/constants';
+import { useInfo, useIsExtensionPopup, useTranslation } from '../../hooks';
+import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 
 export enum TAB_MAP {
   ALL,
   TRANSFERS,
-  STAKING
+  STAKING,
+  GOVERNANCE
 }
 
-export default function HistoryTabs ({ address, setTabIndex, tabIndex }: {address: string | undefined , tabIndex: TAB_MAP, setTabIndex: React.Dispatch<React.SetStateAction<TAB_MAP>>}): React.ReactElement {
+interface HistoryTabsProps {
+  address: string | undefined;
+  tabIndex: TAB_MAP;
+  setTabIndex: React.Dispatch<React.SetStateAction<TAB_MAP>>;
+}
+
+export default function HistoryTabs ({ address, setTabIndex, tabIndex }: HistoryTabsProps): React.ReactElement {
   const { t } = useTranslation();
   const { chain } = useInfo(address);
+  const isExtensionMode = useIsExtensionPopup();
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: number) => {
     setTabIndex(value);
@@ -34,9 +42,10 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: {addres
               fontWeight: 500
             },
             color: 'text.primary',
-            fontSize: '18px',
+            fontSize: isExtensionMode ? '16px' : '18px',
             fontWeight: 400,
-            minWidth: '108px',
+            minWidth: isExtensionMode ? '70px' : '108px',
+            p: isExtensionMode ? '12px' : undefined,
             textTransform: 'capitalize'
           }}
           value={TAB_MAP.ALL}
@@ -50,9 +59,10 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: {addres
               fontWeight: 500
             },
             color: 'text.primary',
-            fontSize: '18px',
+            fontSize: isExtensionMode ? '16px' : '18px',
             fontWeight: 400,
-            minWidth: '108px',
+            minWidth: isExtensionMode ? '70px' : '108px',
+            p: isExtensionMode ? '12px' : undefined,
             textTransform: 'capitalize'
           }}
           value={TAB_MAP.TRANSFERS}
@@ -69,12 +79,34 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: {addres
                   fontWeight: 500
                 },
                 color: 'text.primary',
-                fontSize: '18px',
+                fontSize: isExtensionMode ? '16px' : '18px',
                 fontWeight: 400,
-                minWidth: '108px',
+                minWidth: isExtensionMode ? '70px' : '108px',
+                p: isExtensionMode ? '12px' : undefined,
                 textTransform: 'capitalize'
               }}
               value={TAB_MAP.STAKING}
+            />
+        }
+        {GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '') &&
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
+        }
+        {GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '') &&
+            <Tab
+              label={t('Governance')}
+              sx={{
+                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                  color: 'secondary.light',
+                  fontWeight: 500
+                },
+                color: 'text.primary',
+                fontSize: isExtensionMode ? '16px' : '18px',
+                fontWeight: 400,
+                minWidth: isExtensionMode ? '70px' : '108px',
+                p: isExtensionMode ? '12px' : undefined,
+                textTransform: 'capitalize'
+              }}
+              value={TAB_MAP.GOVERNANCE}
             />
         }
       </Tabs>
