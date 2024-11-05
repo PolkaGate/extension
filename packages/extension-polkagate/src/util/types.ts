@@ -1,8 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
-
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
@@ -14,6 +12,7 @@ import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -95,9 +94,7 @@ export interface ValidatorsIdentities {
   eraIndex: number;
 }
 
-export interface SavedValidatorsIdentities {
-  [chainName: string]: ValidatorsIdentities;
-}
+export type SavedValidatorsIdentities = Record<string, ValidatorsIdentities>;
 
 export interface AllValidatorsFromSubscan {
   current: ValidatorsFromSubscan[];
@@ -111,7 +108,7 @@ export interface ValidatorsName {
 
 export interface SavedMetaData {
   chainName: string;
-  metaData: any
+  metaData: unknown
 }
 
 export interface ValidatorsFromSubscan {
@@ -137,8 +134,8 @@ interface stashAccountDisplay {
   address: string;
   display: string;
   identity: boolean;
-  judgements: any;
-  parent: any;
+  judgements: unknown;
+  parent: unknown;
 }
 
 export interface TxResult {
@@ -149,15 +146,20 @@ export interface TxResult {
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
-  action: string; // send, Solo staking, pool staking ...
+  action: string; // send, Solo staking, pool staking, convictionvoting ...
   amount?: string;
   chain?: Chain;
   date: number;
   from: NameAddress;
-  subAction?: string; // bond_extra, unbound, nominate
+  subAction?: string; // bond_extra, unbound, nominate, vote
   to?: NameAddress;
   token?: string;
   throughProxy?: NameAddress;
+  refId?: number;
+  voteType?: number;
+  class?: number;
+  conviction?: string;
+  delegatee?: string;
 }
 
 export interface TxInfo extends TransactionDetail {
@@ -224,9 +226,19 @@ interface Identity {
 export interface TransferRequest {
   code: number;
   data: {
-    list: any;
+    list: unknown;
     count: number;
     transfers: Transfers[];
+  };
+  generated_at: number;
+  message: string;
+}
+
+export interface ExtrinsicsRequest {
+  code: number;
+  data: {
+    count: number;
+    extrinsics: Extrinsics[];
   };
   generated_at: number;
   message: string;
@@ -240,6 +252,32 @@ export interface TipsRequest {
   };
   generated_at: number;
   message: string;
+}
+
+export interface Extrinsics {
+  id: number,
+  block_num: number,
+  block_timestamp: number,
+  extrinsic_index: string,
+  call_module_function: string, // vote
+  call_module: string, // convictionvoting
+  nonce: number,
+  extrinsic_hash: string,
+  success: true,
+  fee: string,
+  fee_used: string,
+  tip: string,
+  finalized: true,
+  account_display: {
+    address: string,
+    people: object
+  },
+  refId?: number;
+  amount?: string;
+  voteType?: number;
+  class?: number;
+  conviction?: string;
+  delegatee?: string;
 }
 
 export interface Transfers {
@@ -265,7 +303,7 @@ interface AccountDisplay {
   judgements: string;
   account_index: string;
   identity: boolean;
-  parent: any;
+  parent: unknown;
 }
 
 export interface CouncilInfo extends DeriveElectionsInfo {
@@ -280,7 +318,7 @@ export interface PersonsInfo {
 
 export interface MotionsInfo {
   proposals: DeriveCollectiveProposal[];
-  proposalInfo: any[];
+  proposalInfo: unknown[];
   accountInfo: DeriveAccountInfo[]
 }
 
@@ -482,7 +520,7 @@ export interface SubQueryRewardInfo {
   reward: Reward
 }
 export interface SubQueryHistory {
-  action(action: any): unknown;
+  action(action: unknown): unknown;
   id: string,
   blockNumber: number,
   extrinsicIdx: number,
