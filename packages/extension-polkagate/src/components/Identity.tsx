@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -9,7 +11,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
-import { Box, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Link, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
@@ -32,12 +34,12 @@ interface Props {
   noIdenticon?: boolean;
   onClick?: () => void;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
-  style?: CSSProperties;
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
-  withShortAddress?: boolean;
+  style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
+  withShortAddress?: boolean;
 }
 
 function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {

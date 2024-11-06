@@ -12,7 +12,7 @@ import type { Track } from '../../utils/types';
 import type { DelegateInformation } from '..';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -51,14 +51,15 @@ interface EditAdvanceProps {
 
 const EditAdvance = ({ accountLocks, checked, currentBlock, setChecked, showAdvance, toggleAdvance, tracks }: EditAdvanceProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Grid container item>
       <Grid container item onClick={toggleAdvance} sx={{ cursor: 'pointer' }}>
-        <Typography color='secondary.main' fontSize='16px' fontWeight={400}>
+        <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
           {t('Advanced')}
         </Typography>
-        <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto 8px', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvance ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+        <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto 8px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showAdvance ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
       </Grid>
       {showAdvance &&
         <ReferendaTracks

@@ -42,7 +42,7 @@ interface Props {
 }
 
 export interface DelegateInformation {
-  delegateeAddress?: string;
+  delegateeAddress?: string | null;
   delegateAmount: string;
   delegateAmountBN: BN;
   delegateConviction: number;

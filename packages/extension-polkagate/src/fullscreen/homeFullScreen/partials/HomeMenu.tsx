@@ -55,7 +55,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
       <Grid container item justifyContent='flex-end'>
         {!noBorderButton &&
          <Divider sx={{ bgcolor: 'divider', height: '2px', width: '81%' }} />
-         }
+        }
       </Grid>
       {children}
     </>
