@@ -417,7 +417,7 @@ export default function Cast ({ address, notVoted, previousVote, refIndex, setSt
                   {t('Your final vote power after multiplying')}
                 </Typography>
               </Grid>
-              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              <Grid item>
                 <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={4} token={token} />
               </Grid>
             </Grid>

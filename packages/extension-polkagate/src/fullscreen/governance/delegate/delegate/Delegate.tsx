@@ -227,14 +227,14 @@ export default function DelegateVote ({ accountLocks, address, api, balances, de
         setConviction={setConviction}
         style={{ py: '15px' }}
       >
-        <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '24px', pt: '25px' }}>
           <Grid item>
-            <Typography fontSize='16px' fontWeight={400}>
+            <Typography fontSize='14px'>
               {t('Your final delegated vote power')}
             </Typography>
           </Grid>
-          <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-            <Typography fontSize='28px' fontWeight={500}>
+          <Grid item>
+            <Typography fontSize='16px' fontWeight={400}>
               {delegatePower}
             </Typography>
           </Grid>
