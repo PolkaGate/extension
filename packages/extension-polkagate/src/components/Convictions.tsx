@@ -18,7 +18,7 @@ interface Props {
 
 export const DEFAULT_CONVICTION = 1;
 
-export default function Convictions({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
+export default function Convictions ({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -45,7 +45,7 @@ export default function Convictions({ address, children, conviction, setConvicti
 
   const marks = useMemo(() =>
     convictionOptions?.map(({ value }) => ({ label: `${value} X`, value: value as number }))
-    , [convictionOptions]);
+  , [convictionOptions]);
 
   const valuetext = useCallback((value: number) => {
     return `${value} X`;
@@ -83,16 +83,16 @@ export default function Convictions({ address, children, conviction, setConvicti
         size='small'
         step={null}
         sx={{
-          mx:'10px',
           '& .MuiSlider-rail': {
             color: 'action.focus' // Non-selected track color
           },
           '& .MuiSlider-thumb': {
-            color: 'success.light' // Thumb color
+            color: 'primary.main' // Thumb color
           },
           '& .MuiSlider-track': {
             color: 'secondary.light' // Selected track color
-          }
+          },
+          mx: '10px'
         }}
         valueLabelDisplay='auto'
       />
@@ -107,7 +107,6 @@ export default function Convictions({ address, children, conviction, setConvicti
           {info}
         </Grid>
       </Grid>
-
     </Grid>
   );
 }
