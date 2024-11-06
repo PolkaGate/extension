@@ -50,7 +50,7 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: History
           }}
           value={TAB_MAP.ALL}
         />
-        <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={4} />
+        <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={4} />
         <Tab
           label={t('Transfers')}
           sx={{
@@ -68,7 +68,7 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: History
           value={TAB_MAP.TRANSFERS}
         />
         {STAKING_CHAINS.includes(chain?.genesisHash ?? '') &&
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
         }
         {STAKING_CHAINS.includes(chain?.genesisHash ?? '') &&
             <Tab
@@ -89,7 +89,7 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: History
             />
         }
         {GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '') &&
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
+            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
         }
         {GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '') &&
             <Tab
