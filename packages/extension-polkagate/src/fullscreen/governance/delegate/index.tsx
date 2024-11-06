@@ -20,8 +20,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccountLocks, useBalances, useInfo, useProxies, useTracks, useTranslation } from '../../../hooks';
 import { PROXY_TYPE } from '../../../util/constants';
-import SimpleModalTitle from '../../partials/SimpleModalTitle';
-import { DraggableModal } from '../components/DraggableModal';
+import { DraggableModalWithTitle } from '../components/DraggableModalWithTitle';
 import SelectProxyModal2 from '../components/SelectProxyModal2';
 import WaitScreen from '../partials/WaitScreen';
 import { getMyDelegationInfo } from '../utils/util';
@@ -286,13 +285,13 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
   }, [proxies]);
 
   return (
-    <DraggableModal minHeight={550} onClose={handleClose} open={open}>
+    <DraggableModalWithTitle
+      icon={step === STEPS.PROXY ? faUserAstronaut : 'vaadin:money-withdraw'}
+      onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
+      open={open}
+      title= {title}
+    >
       <>
-        <SimpleModalTitle
-          icon={step === STEPS.PROXY ? faUserAstronaut : 'vaadin:money-withdraw'}
-          onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
-          title= {title}
-        />
         {step === STEPS.ABOUT &&
           <About
             setStep={setStep}
@@ -387,6 +386,6 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
           />
         }
       </>
-    </DraggableModal>
+    </DraggableModalWithTitle>
   );
 }
