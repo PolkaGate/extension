@@ -100,7 +100,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
             extra={settings.camera !== 'on'
               ? <Grid fontSize='12px' item letterSpacing='-1.5%' ml='19.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
                 {t('Allow QR camera access in the extension’s setting in order to use this feature')}
-                <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-2px', stroke: '#BA2882' }} />
+                <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-2px', stroke: theme.palette.secondary.light }} />
               </Grid>
               : undefined
             }

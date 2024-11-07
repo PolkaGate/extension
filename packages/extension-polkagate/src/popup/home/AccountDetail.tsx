@@ -51,6 +51,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
 
 const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, menuOnClick: () => void}) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <>
@@ -59,7 +60,7 @@ const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, 
           <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>
             {t('Select a chain to view balance')}
           </Typography>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-1px', stroke: '#BA2882' }} />
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-1px', stroke: theme.palette.secondary.light }} />
         </Grid>
         : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={'95%'} />
       }

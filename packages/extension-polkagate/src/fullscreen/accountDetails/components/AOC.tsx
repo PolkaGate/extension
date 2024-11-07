@@ -116,6 +116,8 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
 
 function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const api = useApi(address);
   const pricesInCurrencies = usePrices();
 
@@ -164,7 +166,7 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
               <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider', height: 'fit-content', pl: '8px' }}>
                 {showMore ? t('Less') : t('More')}
               </Typography>
-              <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+              <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
             : accountAssets.length > 6 &&
             <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />

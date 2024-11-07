@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Box, Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { type MouseEventHandler } from 'react';
 
 import { noop } from '../util/utils';
@@ -25,6 +25,8 @@ interface Props {
 }
 
 export default function MenuItem ({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
   const hoverEffectStyles: SxProps<Theme> = {
     '&:hover': { bgcolor: disabled ? 'none' : 'divider' },
     borderRadius: '5px',
@@ -59,7 +61,7 @@ export default function MenuItem ({ children, disabled = false, fontSize, icon, 
           </Grid>
         </Grid>
         <Grid alignItems='center' container item sx={{ display: children || showChevron ? 'inherit' : 'none' }} xs={1}>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showChevron ? 'none' : (showSubMenu ? 'rotate(-90deg)' : 'rotate(90deg)'), transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showChevron ? 'none' : (showSubMenu ? 'rotate(-90deg)' : 'rotate(90deg)'), transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
       {

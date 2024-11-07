@@ -432,10 +432,10 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
                   </Typography>
                 </Grid>
                 <Grid container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                  <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                  <Typography color='secondary.light' fontSize='14px' fontWeight={400}>
                     {t(showDetails ? t('Less') : t('More'))}
                   </Typography>
-                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
                 </Grid>
               </Grid>
             </Grid>

@@ -10,6 +10,13 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.21.6',
+    notes: [
+      'Show Support Us Notification: Encourage users to support us by voting for our referenda in governance.',
+      'Known Issues Resolved: Removed locked amount button if no funds are locked, fixed underway votes type in the tooltip, corrected the referenda unlock modal close button, addressed vote type issues in comments, and improved the governance timeline display.'
+    ]
+  },
+  {
     version: '0.21.1',
     notes: [
       'Show No Internet Sign: Display an icon to indicate when there’s no internet connection.',

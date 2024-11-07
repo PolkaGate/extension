@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.22.0](https://github.com/polkagate/extension/compare/v0.21.6...v0.22.0) (2024-11-06)
+
+
+### Features
+
+* use Slider for Conviction settings ([#1629](https://github.com/polkagate/extension/issues/1629)) ([790d7a1](https://github.com/polkagate/extension/commit/790d7a1f739774778c6c1a6755f0db65c990723c))
+
 ## [0.21.6](https://github.com/polkagate/extension/compare/v0.21.5...v0.21.6) (2024-11-03)
 
 
