@@ -14,8 +14,8 @@ import React from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { Checkbox2, Identity, Infotip, ShowBalance } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { Checkbox2, Identity, Infotip, ShowBalance, ShowValue } from '../../../../components';
+import { useTranslation, useValidatorApy } from '../../../../hooks';
 import { isHexToBn } from '../../../../util/utils';
 
 interface Props {
@@ -37,19 +37,22 @@ interface Props {
   allInOneRow?: boolean
 }
 
+const Div = () => (
+  <Grid alignItems='center' item justifyContent='center'>
+    <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '15px', m: '3px 10px', width: '1px' }} />
+  </Grid>
+);
+
 function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
   const { t } = useTranslation();
+
+  const isElected = isHexToBn(v.exposure.total.toString()).gt(BN_ZERO);
+  const apy = useValidatorApy(api, String(v.accountId), isElected);
 
   const overSubscriptionAlert1 = t('This validator is oversubscribed but you are within the top {{max}}.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
   const overSubscriptionAlert2 = t('This validator is oversubscribed and you are not within the top {{max}} and won\'t get rewards.', { replace: { max: stakingConsts?.maxNominatorRewardedPerValidator } });
 
   const ifOverSubscribed = isOversubscribed?.safe || isOversubscribed?.notSafe;
-
-  const Div = () => (
-    <Grid alignItems='center' item justifyContent='center'>
-      <Divider orientation='vertical' sx={{ bgcolor: 'secondary.light', height: '15px', m: '3px 10px', width: '1px' }} />
-    </Grid>
-  );
 
   return (
     <Grid alignItems='center' container item p='3px 5px' rowGap={!allInOneRow ? '5px' : undefined} sx={{ borderRight: allInOneRow ? '1px solid' : undefined, borderRightColor: allInOneRow ? 'secondary.main' : undefined }} width={allInOneRow ? '94%' : '100%'}>
@@ -79,7 +82,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
           {t('Staked')}:
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item pl='3px'>
-          {isHexToBn(v.exposure.total.toString()).gt(BN_ZERO)
+          {isElected
             ? <ShowBalance
               api={api}
               balance={v.exposure.total}
@@ -109,6 +112,17 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
           {v.exposure.others?.length || t('N/A')}
+        </Grid>
+      </Grid>
+      {allInOneRow && <Div />}
+      <Grid alignItems='end' container item justifyContent={allInOneRow ? 'center' : 'space-between'} sx={{ fontSize: '14px', fontWeight: 300, lineHeight: '23px' }} width={allInOneRow ? 'fit-content' : ifOverSubscribed ? '93%' : '100%'}>
+        <Grid item>
+          {t('APY')}:
+        </Grid>
+        <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
+          {isElected
+            ? <ShowValue height={14} value={apy ? `${apy}%` : undefined} width='50px' />
+            : 'N/A'}
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>

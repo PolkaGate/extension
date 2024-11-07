@@ -1,10 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { useEffect } from 'react';
 
-export default function ObserveResize(element: Element, maxSize: number, onResize: () => void): void {
+export default function ObserveResize (element: Element, maxSize: number, onResize: () => void): void {
   useEffect(() => {
     if (!element) {
       return;
