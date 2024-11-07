@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable no-case-declarations */
 /* eslint-disable camelcase */
@@ -34,6 +33,11 @@ interface BaseParam<T> {
   value: T;
 }
 
+interface VotesType {
+  Standard: StandardVote;
+  SplitAbstain: SplitAbstainVote
+}
+
 type ClassOfParam = BaseParam<number>;
 
 interface DelegateParams extends Array<BaseParam<unknown>> {
@@ -54,10 +58,7 @@ interface UnlockParams extends Array<BaseParam<unknown>> {
 
 interface VoteParams extends Array<BaseParam<unknown>> {
   0: BaseParam<number>; // PollIndexOf
-  1: BaseParam<{
-    Standard: StandardVote;
-    SplitAbstain: SplitAbstainVote
-  }>;
+  1: BaseParam<VotesType>;
 }
 
 interface RemoveVoteParams extends Array<BaseParam<unknown>> {
@@ -110,7 +111,7 @@ async function postReq<T> (
     const response = await request.post(api, { data, ...option }) as T;
 
     return response;
-  } catch (error: ResponseError) {
+  } catch (error) {
     if (retryCount < MAX_RETRIES) {
       console.log(`Rate limit hit, retrying in ${RETRY_DELAY}ms... (Attempt ${retryCount + 1}/${MAX_RETRIES})`);
       await sleep(RETRY_DELAY);
@@ -128,8 +129,8 @@ async function postReq<T> (
  * @param batchSize Size of each batch
  * @param processor Function to process each batch
  */
-async function processBatch<T, R> (array: T[], batchSize: number, processor: (items: T[]) => Promise<R[]>): Promise<R[]> {
-  const results: R[] = [];
+async function processBatch<T> (array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
+  const results: T[] = [];
 
   for (let i = 0; i < array.length; i += batchSize) {
     const batch = array.slice(i, i + batchSize);
@@ -149,7 +150,7 @@ async function processBatch<T, R> (array: T[], batchSize: number, processor: (it
 /**
  * Process a batch of extrinsics
  */
-async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string) {
+async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string, prefix: number) {
   return Promise.all(
     extrinsics.map(async (extrinsic) => {
       try {
@@ -166,12 +167,12 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
           { hash: extrinsic.extrinsic_hash }
         );
 
-        const additionalInfo = getAdditionalInfo(functionName, txDetail);
+        const additionalInfo = getAdditionalInfo(functionName, txDetail, prefix);
 
         return {
           ...extrinsic,
           ...additionalInfo
-        };
+        } as Extrinsics;
       } catch (error) {
         console.error('Failed to fetch details for extrinsic:', error);
 
@@ -208,10 +209,10 @@ export async function getGovHistory (chainName: string, address: string, pageNum
   }
 
   // Process extrinsics in batches
-  const extrinsicsInfo = await processBatch(
+  const extrinsicsInfo = await processBatch<Extrinsics>(
     extrinsics.data.extrinsics,
     BATCH_SIZE,
-    (batch) => processExtrinsicsBatch(batch, network)
+    (batch) => processExtrinsicsBatch(batch, network, prefix)
   );
 
   return {
@@ -224,11 +225,11 @@ export async function getGovHistory (chainName: string, address: string, pageNum
 }
 
 function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
-  const id = txDetail?.data?.params?.[1]?.value.Id as string | undefined;
+  const id = (txDetail.data.params[1]?.value as AccountId).Id as string | undefined;
   const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
 
-  const voteBalance = (txDetail?.data?.params?.[1]?.value?.Standard?.balance ?? txDetail?.data?.params?.[1]?.value?.SplitAbstain?.abstain) as string | undefined;
-  const voteType = (txDetail?.data?.params?.[1]?.value?.Standard?.vote ?? null) as number | null;
+  const voteBalance = ((txDetail.data.params[1]?.value as VotesType)?.Standard?.balance ?? (txDetail.data.params[1]?.value as VotesType)?.SplitAbstain?.abstain) as string | undefined;
+  const voteType = ((txDetail.data.params[1]?.value as VotesType)?.Standard?.vote ?? null) as number | null;
 
   switch (functionName) {
     case 'delegate':
