@@ -1,12 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
-//@ts-nocheck
 /**
  * @description to show rewards chart
  * */
+import type { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
+
 import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowDropDown as ArrowDropDownIcon, ExpandMore as ExpandMoreIcon, KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
@@ -21,7 +21,6 @@ import { Identity, Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
 import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
-import type { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -45,7 +44,7 @@ interface Props {
   rewardDestinationAddress: string | undefined;
 }
 
-export default function RewardsChart({ address, rewardDestinationAddress }: Props): React.ReactElement {
+export default function RewardsChart ({ address, rewardDestinationAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, chainName, decimal, token } = useInfo(address);
@@ -59,7 +58,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
 
   const [expanded, setExpanded] = useState<number>(-1);
 
-  const dateOptions = useMemo(() => ({ day: 'numeric', month: 'short' }), []);
+  const dateOptions = useMemo(() => ({ day: 'numeric', month: 'short' } as Intl.DateTimeFormatOptions), []);
   const weekDaysShort = ['Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thurs.', 'Fri.', 'Sat.'];
 
   const formateDate = useCallback((date: number) => {
@@ -136,7 +135,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
     }
 
     const availableDates = weeksRewards[pageIndex].map((item) => formateDate(item.timestamp));
-    const filteredRewardsDetail = ascSortedRewards.filter((item) => availableDates.includes(item.date));
+    const filteredRewardsDetail = ascSortedRewards.filter((item) => availableDates.includes(item.date || ''));
 
     return filteredRewardsDetail.reverse();
   }, [ascSortedRewards, formateDate, pageIndex, weeksRewards]);
@@ -164,7 +163,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
       }
     }
 
-    aWeekRewards.length > 0 && aWeekRewards.forEach((week, index) => {
+    aWeekRewards.length > 0 && aWeekRewards.forEach((week, _index) => {
       const aWeekRewardsAmount: string[] = [];
       const aWeekRewardsLabel: string[] = [];
 
@@ -229,10 +228,10 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
       } else if (list === null) {
         setRewardsInfo(null);
       }
-    });
+    }).catch(console.error);
   }, [chainName, rewardDestinationAddress]);
 
-  const handleAccordionChange = useCallback((panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleAccordionChange = useCallback((panel: number) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : -1);
   }, []);
 
@@ -241,8 +240,8 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
       return;
     }
 
-    const start = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][0];
-    const end = dataToShow[next ? pageIndex - 1 : pageIndex + 1] && dataToShow[next ? pageIndex - 1 : pageIndex + 1][1][6];
+    const start = dataToShow[next ? pageIndex - 1 : pageIndex + 1]?.[1][0];
+    const end = dataToShow[next ? pageIndex - 1 : pageIndex + 1]?.[1][6];
 
     const newDate = new Date(weeksRewards[next ? 0 : weeksRewards?.length - 1][next ? 6 : 0].timestamp * 1000);
     const estimatedStart = next ? formateDate(new Date(newDate.setDate(newDate.getDate() + 1)).getTime() / 1000) : formateDate(new Date(newDate.setDate(newDate.getDate() - 7)).getTime() / 1000);
@@ -267,21 +266,22 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
           weight: 'bold'
         },
         callbacks: {
-          label: function (TooltipItem: string | { label: string }[] | undefined) {
+          label: function (TooltipItem: { formattedValue: string } | undefined) {
             if (!dataToShow || !TooltipItem) {
               return;
             }
 
             return `${TooltipItem.formattedValue} ${token}`;
           },
-          title: function (TooltipItem: string | { label: string }[] | undefined) {
+          title: function (TooltipItem: { label: string }[] | undefined) {
             if (!dataToShow || !TooltipItem || !token) {
               return;
             }
 
-            const weekDayIndex = dataToShow[pageIndex][1].indexOf((TooltipItem[0] as any).label);
+            const _label = TooltipItem[0].label;
+            const weekDayIndex = dataToShow[pageIndex][1].indexOf(_label);
 
-            return `${weekDaysShort[weekDayIndex]} ${(TooltipItem[0] as any).label}`;
+            return `${weekDaysShort[weekDayIndex]} ${_label}`;
           }
         },
         displayColors: false,
@@ -303,9 +303,9 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
           tickColor: ''
         },
         ticks: {
-          callback: function (_: any, index: number) {
+          callback: function (_: unknown, index: number) {
             const currentDay = formateDate(new Date().getTime() / 1000);
-            const labels = dataToShow && dataToShow[pageIndex][1];
+            const labels = dataToShow?.[pageIndex][1];
             const currentLabel = labels?.length ? labels[index] : undefined;
 
             if (currentLabel === currentDay) {
@@ -337,11 +337,11 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
         borderColor: '#3A0B63',
         borderRadius: 3,
         borderWidth: 1,
-        data: dataToShow && dataToShow[pageIndex][0],
+        data: dataToShow?.[pageIndex][0],
         label: token
       }
     ],
-    labels: dataToShow && dataToShow[pageIndex][1]
+    labels: dataToShow?.[pageIndex][1]
   };
 
   const toggleDetails = useCallback(() => {
@@ -356,26 +356,30 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
     dataToShow && pageIndex !== (dataToShow.length - 1) && setPageIndex(pageIndex + 1);
   }, [dataToShow, pageIndex]);
 
-  const Arrows = ({ onNext, onPrevious }: ArrowsProps) => (
-    <Grid container justifyContent='space-between' m='auto' width='96%'>
-      <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='50%' onClick={onPrevious} sx={{ cursor: pageIndex === dataToShow?.length - 1 ? 'default' : 'pointer' }} width='fit_content'>
-        <KeyboardDoubleArrowLeftIcon sx={{ color: pageIndex === (dataToShow?.length as number) - 1 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
-        <Grid container direction='column' item xs={7}>
-          <Typography color={pageIndex === (dataToShow?.length as number) - 1 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Previous')}</Typography>
-          <Typography color={pageIndex === (dataToShow?.length as number) - 1 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
+  const Arrows = ({ onNext, onPrevious }: ArrowsProps) => {
+    const isLatest = dataToShow && pageIndex === dataToShow.length - 1;
+
+    return (
+      <Grid container justifyContent='space-between' m='auto' width='96%'>
+        <Grid alignItems='center' container item justifyContent='flex-start' maxWidth='50%' onClick={onPrevious} sx={{ cursor: isLatest ? 'default' : 'pointer' }} width='fit_content'>
+          <KeyboardDoubleArrowLeftIcon sx={{ color: isLatest ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
+          <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '3px', mr: '7px', my: 'auto', width: '1px' }} />
+          <Grid container direction='column' item xs={7}>
+            <Typography color={isLatest ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Previous')}</Typography>
+            <Typography color={isLatest ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(false)}</Typography>
+          </Grid>
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='50%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
+          <Grid container direction='column' item textAlign='right' xs={7}>
+            <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Next')}</Typography>
+            <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
+          </Grid>
+          <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
+          <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
         </Grid>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-end' maxWidth='50%' onClick={onNext} sx={{ cursor: pageIndex === 0 ? 'default' : 'pointer' }} width='fit_content'>
-        <Grid container direction='column' item textAlign='right' xs={7}>
-          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light'} fontSize='14px' fontWeight={400}>{t('Next')}</Typography>
-          <Typography color={pageIndex === 0 ? 'secondary.contrastText' : 'text.primary'} fontSize='12px' fontWeight={300}>{nextPrevWeek(true)}</Typography>
-        </Grid>
-        <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '28px', ml: '7px', mr: '3px', my: 'auto', width: '1px' }} />
-        <KeyboardDoubleArrowRightIcon sx={{ color: pageIndex === 0 ? 'secondary.contrastText' : 'secondary.light', fontSize: '25px' }} />
-      </Grid>
-    </Grid>
-  );
+    );
+  };
 
   return (
     <Grid alignItems='flex-start' container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: 'fit-content', minHeight: '295px', p: '10px', width: 'inherit' }}>
@@ -438,7 +442,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
                                     <Identity
                                       address={d.validator}
                                       api={api}
-                                      chain={chain as any}
+                                      chain={chain}
                                       formatted={d.validator}
                                       identiconSize={30}
                                       showSocial={false}
@@ -467,10 +471,10 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
                     </Typography>
                   </Grid>
                   <Grid container item onClick={toggleDetails} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                    <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
+                    <Typography color='secondary.light' fontSize='14px' fontWeight={400}>
                       {t(showDetails ? t('Less') : t('More'))}
                     </Typography>
-                    <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                    <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
                   </Grid>
                 </Grid>
               </Grid>

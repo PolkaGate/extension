@@ -97,7 +97,7 @@ export default function ActiveValidators ({ address }: Props): React.ReactElemen
                     <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
                       {t(showDetails ? t('Hide') : t('Others ({{count}})', { replace: { count: nonActiveValidators?.length } }))}
                     </Typography>
-                    <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                    <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showDetails ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
                   </Grid>
                 </>
               }

@@ -15,7 +15,7 @@ import { GenesisHashOptionsContext } from './contexts';
 
 interface Props {
   chainName?: string;
-  genesisHash?: string | undefined;
+  genesisHash?: string | undefined | null;
   logo?: string;
   size?: number;
 }
