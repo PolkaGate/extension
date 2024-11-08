@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
@@ -24,8 +24,8 @@ export const CONVICTION = {
 const AYE_BITS = 0b10000000;
 const CON_MASK = 0b01111111;
 
-export const isAye = (vote: string) => (vote & AYE_BITS) === AYE_BITS;
-export const getConviction = (vote: string) => (vote & CON_MASK) === 0 ? 0.1 : (vote & CON_MASK);
+export const isAye = (vote: string) => (Number(vote) & AYE_BITS) === AYE_BITS;
+export const getConviction = (vote: string) => (Number(vote) & (CON_MASK)) === 0 ? 0.1 : (Number(vote) & CON_MASK);
 
 interface Votes {
   votes: [number, Vote][];
@@ -62,13 +62,13 @@ export interface Vote {
       votes: BN;
       capital: BN;
     };
-    prior: any;
+    prior: unknown;
   }
 }
 
 interface Voting {
   casting: Votes;
-  delegating: any; // needs to be fixed
+  delegating: unknown; // needs to be fixed
 }
 
 export async function getAddressVote (address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {

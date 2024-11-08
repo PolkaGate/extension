@@ -1,11 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+//@ts-nocheck
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { Vote } from '../myVote/util';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
@@ -17,12 +18,13 @@ import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO, isBn } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AmountWithOptions, Convictions, Infotip2, PButton, ShowBalance, Warning } from '../../../../components';
-import { useAccountLocks, useApi, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useDecimal, useFormatted, useToken, useTranslation } from '../../../../hooks';
+import { DEFAULT_CONVICTION } from '../../../../components/Convictions';
+import { useAccountLocks, useBalances, useBlockInterval, useConvictionOptions, useCurrentBlockNumber, useInfo, useTranslation } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH } from '../../../../util/constants';
 import { amountToHuman, amountToMachine, remainingTime } from '../../../../util/utils';
 import { STATUS_COLOR } from '../../utils/consts';
 import { getVoteType } from '../../utils/util';
-import { getConviction, Vote } from '../myVote/util';
+import { getConviction } from '../myVote/util';
 import { STEPS } from '.';
 
 interface Props {
@@ -49,7 +51,7 @@ export interface VoteInformation {
 
 const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
 
-function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN | undefined {
+function getAlreadyLockedValue (allBalances: DeriveBalancesAll | undefined): BN | undefined {
   const sortedLocks = allBalances?.lockedBreakdown
     // first sort by amount, so greatest value first
     .sort((a, b) =>
@@ -84,20 +86,16 @@ const getLockedUntil = (endBlock: BN, currentBlock: number) => {
   return remainingTime(endBlock.toNumber() - currentBlock);
 };
 
-const DEFAULT_CONVICTION = 1;
-
-export default function Cast({ address, notVoted, previousVote, refIndex, setStep, setVoteInformation, step, trackId }: Props): React.ReactElement {
+export default function Cast ({ address, notVoted, previousVote, refIndex, setStep, setVoteInformation, step, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const api = useApi(address);
-  const formatted = useFormatted(address);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const theme = useTheme();
+  const { api, decimal, formatted, token } = useInfo(address);
+
   const balances = useBalances(address, undefined, undefined, true);
   const blockTime = useBlockInterval(address);
-  const theme = useTheme();
   const currentBlock = useCurrentBlockNumber(address);
   const accountLocks = useAccountLocks(address, 'referenda', 'convictionVoting', true);
-  const convictionOptions = useConvictionOptions(address, blockTime, t);
+  const convictionOptions = useConvictionOptions(address, blockTime);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteType, setVoteType] = useState<'Aye' | 'Nay' | 'Abstain' | undefined>(getVoteType(previousVote));
@@ -105,18 +103,18 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   const [voteAmount, setVoteAmount] = React.useState<string>('0');
   const [conviction, setConviction] = useState<number>();
 
-  const tx = api && api.tx['convictionVoting']['vote'];
+  const tx = api?.tx['convictionVoting']['vote'];
 
   const lockedAmount = useMemo(() => getAlreadyLockedValue(balances), [balances]);
   const myDelegations = previousVote?.delegations?.votes;
   const voteAmountAsBN = useMemo(() => amountToMachine(voteAmount, decimal), [voteAmount, decimal]);
   const voteOptions = useMemo(() => (['Aye', 'Nay', 'Abstain']), []);
   const convictionLockUp = useMemo((): string | undefined => {
-    if (conviction === undefined || !convictionOptions || !convictionOptions?.length) {
+    if (conviction === undefined || !convictionOptions?.length) {
       return undefined;
     }
 
-    const convText = convictionOptions?.find((conv) => conv.value === conviction)?.text as string;
+    const convText = convictionOptions?.find((conv) => conv.value === conviction)?.text;
     const parenthesisIndex = convText?.indexOf('(') ? convText?.indexOf('(') + 1 : 0;
     const lockUp = parenthesisIndex
       ? convText?.slice(parenthesisIndex, -1)
@@ -148,7 +146,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
   }, [maybePreviousVote, previousVote]);
 
   useEffect(() => {
-    convictionOptions === undefined && setConviction(1);
+    convictionOptions === undefined && setConviction(DEFAULT_CONVICTION);
   }, [convictionOptions]);
 
   useEffect(() => {
@@ -230,7 +228,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
     setStep(STEPS.REVIEW);
   }, [setStep]);
 
-  const onSelectVote = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Aye' | 'Nay' | 'Abstain'): void => {
+  const onSelectVote = useCallback((_event: React.ChangeEvent<HTMLInputElement>, value: 'Aye' | 'Nay' | 'Abstain'): void => {
     setVoteType(value);
   }, []);
 
@@ -345,7 +343,7 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
           <RadioGroup onChange={onSelectVote} row value={voteType}>
             <Grid alignItems='center' container justifyContent='space-between'>
               <VoteButton voteOption={voteOptions[0]}>
-                <CheckIcon sx={{ color: STATUS_COLOR.Confirmed, fontSize: '28px', stroke: STATUS_COLOR.Confirmed, strokeWidth: 1.5 }} />
+                <CheckIcon sx={{ color: STATUS_COLOR['Confirmed'], fontSize: '28px', stroke: STATUS_COLOR['Confirmed'], strokeWidth: 1.5 }} />
               </VoteButton>
               <VoteButton voteOption={voteOptions[1]}>
                 <CloseIcon sx={{ color: 'warning.main', fontSize: '28px', stroke: theme.palette.warning.main, strokeWidth: 1.5 }} />
@@ -413,13 +411,13 @@ export default function Cast({ address, notVoted, previousVote, refIndex, setSte
             setConviction={setConviction}
             style={{ mt: '25px' }}
           >
-            <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px' }}>
+            <Grid alignItems='center' container item justifyContent='space-between' sx={{ height: '42px', pt: '25px' }}>
               <Grid item>
-                <Typography sx={{ fontSize: '16px' }}>
+                <Typography sx={{ fontSize: '14px' }}>
                   {t('Your final vote power after multiplying')}
                 </Typography>
               </Grid>
-              <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
+              <Grid item>
                 <ShowBalance balance={votePower || '0'} decimal={decimal} decimalPoint={4} token={token} />
               </Grid>
             </Grid>

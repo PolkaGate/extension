@@ -112,6 +112,7 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
 function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
+
   const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
 
@@ -236,10 +237,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                 </Collapse>
                 <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
                 <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                  <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                    {t<string>(showMore ? t('Less tokens') : t('More tokens'))}
+                  <Typography color='secondary.light' fontSize='14px' fontWeight={400}>
+                    {t<string>(showMore ? t('Less') : t('More'))}
                   </Typography>
-                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                  <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
                 </Grid>
               </Grid>
             }

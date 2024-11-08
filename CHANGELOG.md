@@ -1,5 +1,26 @@
 # Change Log
 
+# [0.22.0](https://github.com/polkagate/extension/compare/v0.21.6...v0.22.0) (2024-11-06)
+
+
+### Features
+
+* use Slider for Conviction settings ([#1629](https://github.com/polkagate/extension/issues/1629)) ([790d7a1](https://github.com/polkagate/extension/commit/790d7a1f739774778c6c1a6755f0db65c990723c))
+
+## [0.21.6](https://github.com/polkagate/extension/compare/v0.21.5...v0.21.6) (2024-11-03)
+
+
+### Bug Fixes
+
+* displaying locked amount button ([#1626](https://github.com/polkagate/extension/issues/1626)) ([dbc15f0](https://github.com/polkagate/extension/commit/dbc15f042d45b8a2da8d243b7940d613bfc17eea))
+
+## [0.21.5](https://github.com/polkagate/extension/compare/v0.21.4...v0.21.5) (2024-11-03)
+
+
+### Bug Fixes
+
+* underway votes type ([#1625](https://github.com/polkagate/extension/issues/1625)) ([42be4e2](https://github.com/polkagate/extension/commit/42be4e2f0396e92623ce8d3b8927c066f9d1172e))
+
 ## [0.21.4](https://github.com/polkagate/extension/compare/v0.21.3...v0.21.4) (2024-11-03)
 
 

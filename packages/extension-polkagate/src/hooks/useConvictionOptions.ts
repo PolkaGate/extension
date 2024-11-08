@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 /* eslint-disable header/header */
 
 /**
@@ -8,25 +7,27 @@
  * This hook will get and calculate the conviction options
  */
 
-import { TFunction } from '@polkagate/apps-config/types';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { BN } from '@polkadot/util';
+import type { DropdownOption } from '../util/types';
+
 import { useCallback, useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import { calcBlockTime } from '../fullscreen/governance/utils/util';
-import useApi from './useApi';
-import useChain from './useChain';
+import { useInfo, useTranslation } from '.';
 
-export default function useConvictionOptions(address: string | AccountId | undefined, blockTime: BN | undefined, t: TFunction): { text: string; value: number }[] | undefined {
-  const [convictionOptions, setConvictionOptions] = useState<{ text: string; value: number }[] | undefined>();
-  const [savedConvictionOptions, setSavedConvictionOptions] = useState<{ text: string; value: number }[] | undefined>();
-  const genesisHash = useChain(address)?.genesisHash;
-  const api = useApi(address);
-  const voteLockingPeriod = api && api.consts.convictionVoting?.voteLockingPeriod;
+export default function useConvictionOptions (address: string | AccountId | undefined, blockTime: BN | undefined): DropdownOption[] | undefined {
+  const { t } = useTranslation();
+  const { api, genesisHash } = useInfo(address);
 
-  const getConvictionOptions = useCallback((blockTime, voteLockingPeriod, genesisHash) => {
+  const [convictionOptions, setConvictionOptions] = useState<DropdownOption[] | undefined>();
+  const [savedConvictionOptions, setSavedConvictionOptions] = useState<DropdownOption[] | undefined>();
+  const voteLockingPeriod = api?.consts['convictionVoting']?.['voteLockingPeriod'] as BN | undefined;
+
+  const getConvictionOptions = useCallback((blockTime: BN, voteLockingPeriod: BN, genesisHash: string) => {
     const options = [
       { text: t('0.1x voting balance, no lockup period'), value: 0.1 },
       ...CONVICTIONS.map(([value, duration, durationBn]): { text: string; value: number } => ({
@@ -46,7 +47,7 @@ export default function useConvictionOptions(address: string | AccountId | undef
     // eslint-disable-next-line no-void
     chrome.storage.local.get('Convictions', (res) => {
       const k = `${genesisHash}`;
-      const last = res?.Convictions || {};
+      const last = res?.['Convictions'] || {};
 
       last[k] = options;
 
@@ -72,10 +73,10 @@ export default function useConvictionOptions(address: string | AccountId | undef
 
     /** load Convictions from storage */
     chrome.storage.local.get('Convictions', (res) => {
-      // console.log('ConvictionOptions in local storage:', res);
+      const convictions = res?.['Convictions']?.[genesisHash] as DropdownOption[] | undefined;
 
-      if (res?.Convictions?.[genesisHash]) {
-        setSavedConvictionOptions(res.Convictions[genesisHash]);
+      if (convictions) {
+        setSavedConvictionOptions(convictions);
 
         return;
       }

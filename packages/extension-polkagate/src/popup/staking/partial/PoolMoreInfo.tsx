@@ -9,7 +9,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Collapse, Grid, IconButton, Typography } from '@mui/material';
+import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
 // @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -188,18 +188,20 @@ const ShowClaimableCommission = ({ address, poolToShow, setShowClaimCommission }
         text={t('Claim')}
       />
     </Grid>
-  )
+  );
 };
 
-const CollapseData = ({ open, show, title, children }: CollapseProps) => {
+const CollapseData = ({ children, open, show, title }: CollapseProps) => {
+  const theme = useTheme();
+
   return (
     <Grid container direction='column' sx={{ m: 'auto', width: '92%' }}>
-      <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', cursor: 'pointer' }}>
+      <Grid container item justifyContent='space-between' onClick={open} sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', cursor: 'pointer' }}>
         <Typography fontSize='18px' fontWeight={400} lineHeight='40px'>
           {title}
         </Typography>
         <Grid alignItems='center' container item xs={1}>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: show ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: show ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
         </Grid>
       </Grid>
       <Collapse in={show} sx={{ width: '100%' }}>

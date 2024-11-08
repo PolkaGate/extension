@@ -169,7 +169,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
           onclick={onChainSelect}
         />
       ))}
-      <Grid container item onClick={onOtherChains} sx={{ bgcolor: 'secondary.main', borderRadius: '5px', cursor: 'pointer' }}>
+      <Grid container item onClick={onOtherChains} sx={{ bgcolor: 'secondary.light', borderRadius: '5px', cursor: 'pointer' }}>
         <ArrowForwardIosRoundedIcon
           sx={{
             color: 'background.default',

@@ -76,7 +76,7 @@ function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): R
           onclick={changeCurrency}
         />
       ))}
-      <Grid container item onClick={onOtherCurrencies} sx={{ bgcolor: 'secondary.main', borderRadius: '5px', cursor: 'pointer' }}>
+      <Grid container item onClick={onOtherCurrencies} sx={{ bgcolor: 'secondary.light', borderRadius: '5px', cursor: 'pointer' }}>
         <ArrowForwardIosRoundedIcon
           sx={{
             color: 'background.default',

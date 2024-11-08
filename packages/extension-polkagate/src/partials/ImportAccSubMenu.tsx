@@ -120,7 +120,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           {settings.camera !== 'on' &&
             <Grid fontSize='11px' item letterSpacing='-1.5%' onClick={toggleSettingSubMenu} sx={{ cursor: 'pointer' }} textAlign='left'>
               {t('Allow QR camera access in the extension’s setting in order to use this feature')}
-              <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: '#BA2882' }} />
+              <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 10, mb: '-2px', stroke: theme.palette.secondary.light }} />
             </Grid>
           }
           <MenuItem
