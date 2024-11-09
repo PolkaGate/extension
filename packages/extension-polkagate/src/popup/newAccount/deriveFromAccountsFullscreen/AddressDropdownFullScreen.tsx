@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +20,7 @@ interface Props {
   withoutChainLogo?: boolean;
 }
 
-export default function AddressDropdownFullScreen({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, style, withoutChainLogo }: Props): React.ReactElement<Props> {
+export default function AddressDropdownFullScreen ({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, style, withoutChainLogo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef<HTMLDivElement>(null);
@@ -63,7 +62,7 @@ export default function AddressDropdownFullScreen({ allAddresses, onSelect, sele
           }
         </Grid>
         <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: isDarkMode ? 'secondary.light' : 'divider', cursor: 'pointer', px: '10px', width: 'fit-content' }}>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
       <Grid container sx={{ position: 'absolute', top: '75px', zIndex: 10 }}>

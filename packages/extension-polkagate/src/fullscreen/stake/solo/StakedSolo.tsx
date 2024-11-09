@@ -1,8 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { BN } from '@polkadot/util';
 
 import { faArrowRotateLeft, faBolt, faCircleDown, faClockFour, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Boy as BoyIcon } from '@mui/icons-material';
@@ -10,10 +12,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router';
 
-import type { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
-import { BN } from '@polkadot/util';
-
-import { useAvailableToSoloStake, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnstakingAmount, useUnSupportedNetwork } from '../../../hooks';
+import { useAvailableToSoloStake, useIsValidator, useStakingRewardDestinationAddress, useStakingRewards, useTranslation, useUnstakingAmount, useUnSupportedNetwork } from '../../../hooks';
 import { STAKING_CHAINS } from '../../../util/constants';
 import Bread from '../../partials/Bread';
 import { Title } from '../../sendFund/InputPage';
@@ -33,11 +32,12 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo ({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
+  const isValidator = useIsValidator(address);
 
   const availableToSoloStake = useAvailableToSoloStake(address, refresh);
   const { toBeReleased, unlockingAmount } = useUnstakingAmount(address, refresh);
@@ -149,9 +149,11 @@ export default function StakedSolo({ balances, refresh, setRefresh, setShow, sta
           />
           <ActiveValidators
             address={address}
+            isValidator={isValidator}
           />
           <CommonTasks
             address={address}
+            isValidator={isValidator}
             setRefresh={setRefresh}
             staked={staked}
           />

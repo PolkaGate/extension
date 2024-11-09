@@ -1,19 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+//@ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../../hooks/useAccountLocks';
+import type { Track } from '../../utils/types';
+
 import { alpha, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { Checkbox2, Infotip2 } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
-import { Lock } from '../../../../hooks/useAccountLocks';
-import { Track } from '../../utils/types';
 import { getLockedUntil, toTitleCase } from '../../utils/util';
 
 interface Props {
@@ -29,7 +30,7 @@ interface Props {
   firstSelections?: BN[] | undefined;
 }
 
-export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skeletonsNum: number, withCheckBox: boolean }) => {
+export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skeletonsNum: number, withCheckBox?: boolean }) => {
   const skeletonArray = [];
 
   for (let index = 0; index < skeletonsNum; index++) {
@@ -51,7 +52,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
+export default function ReferendaTracks ({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -71,14 +72,6 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
         }
       });
 
-      // const replacedKey = Object.keys(result).reduce((acc, key) => {
-      //   const newKey = tracks.find((value) => String(value[0]) === key)?.[1].name; // Convert numeric key to track names
-
-      //   acc[newKey] = result[key];
-
-      //   return acc;
-      // }, {});
-
       return result;
     }
 
@@ -93,6 +86,7 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
     let toSelect = [];
 
     if (filterLockedTracks && existingVotes) {
+      //@ts-ignore
       const availableTracks = tracks.filter((track) => !(track[0] in existingVotes));
 
       toSelect = availableTracks.map((track) => track[0]);
@@ -151,12 +145,12 @@ export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTra
           </Infotip2>
         </Grid>
         <Grid item onClick={onSelectAll}>
-          <Typography fontSize='16px' fontWeight={400} sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline' }}>
+          <Typography fontSize='16px' fontWeight={400} sx={{ color: 'secondary.light', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline' }}>
             {allSelected ? t('Deselect All') : t('Select All')}
           </Typography>
         </Grid>
       </Grid>
-      <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'primary.main', borderRadius: '5px', maxHeight: maximumHeight, maxWidth: '100%', minHeight: '175px', overflowY: 'scroll', width: '100%' }}>
+      <List disablePadding sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', maxHeight: maximumHeight, maxWidth: '100%', minHeight: '175px', overflowY: 'scroll', width: '100%' }}>
         {tracks?.length
           ? tracks.map((value, index) => {
             const checked = selectedTracks.length !== 0 && !!selectedTracks.find((track) => track.eq(value[0]));

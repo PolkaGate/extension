@@ -18,8 +18,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import SimpleModalTitle from '../../../partials/SimpleModalTitle';
-import { DraggableModal } from '../../components/DraggableModal';
+import { DraggableModalWithTitle } from '../../components/DraggableModalWithTitle';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { getVoteType } from '../../utils/util';
@@ -187,13 +186,8 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   }, [notVoted, step]);
 
   return (
-    <DraggableModal onClose={handleClose} open={open}>
+    <DraggableModalWithTitle icon={faVoteYea} onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop} open={open} title= {title}>
       <>
-        <SimpleModalTitle
-          icon={faVoteYea}
-          onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
-          title= {title}
-        />
         {step === STEPS.ABOUT &&
           <About
             nextStep={
@@ -278,6 +272,6 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
           />
         }
       </>
-    </DraggableModal>
+    </DraggableModalWithTitle>
   );
 }

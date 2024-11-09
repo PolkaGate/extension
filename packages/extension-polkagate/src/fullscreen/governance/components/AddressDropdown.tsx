@@ -1,14 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import type { ApiPromise } from '@polkadot/api';
+import type { HexString } from '@polkadot/util/types';
 
-import { ApiPromise } from '@polkadot/api';
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
+import { Collapse, Divider, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { AccountContext, Identity } from '../../../components';
 import { useChain, useOutsideClick } from '../../../hooks';
@@ -22,18 +22,21 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
-export default function AddressDropdown({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+export default function AddressDropdown ({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
+  const theme = useTheme();
+
   const { accounts } = useContext(AccountContext);
   const chain = useChain(selectedAddress);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   const addressesToDisplay = useMemo(() => accounts.map(({ address }) => address).filter((address) => address !== selectedAddress), [accounts, selectedAddress]);
 
   const hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const toggleDropdown = useCallback(() => addressesToDisplay.length > 0 && setDropdownVisible(!isDropdownVisible), [addressesToDisplay, isDropdownVisible]);
   const _onSelect = useCallback((addr: string) => () => {
-    addr && chainGenesis && tieAccount(addr, chainGenesis).then(() => setTimeout(() => onSelect(addr), 150)).catch(console.error);
+    addr && chainGenesis && tieAccount(addr, chainGenesis as HexString).then(() => setTimeout(() => onSelect(addr), 150)).catch(console.error);
   }, [chainGenesis, onSelect]);
 
   useOutsideClick([ref], hideDropdown);
@@ -51,7 +54,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
               border: 'none',
               fontSize: '14px',
               height: '40px',
-              m: 0,
+              margin: 0,
               maxWidth: '300px',
               minWidth: '150px',
               px: '5px',
@@ -61,7 +64,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
         </Grid>
         {!unableToChangeAccount &&
           <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
         }
       </Grid>
@@ -75,7 +78,7 @@ export default function AddressDropdown({ api, chainGenesis, onSelect, selectedA
                 <Grid alignItems='center' container item key={index} onClick={_onSelect(address)} sx={{ cursor: 'pointer', zIndex: 10 }}>
                   <Identity
                     address={address}
-                    chain={chain as any}
+                    chain={chain}
                     identiconSize={24}
                     showSocial={false}
                     style={{

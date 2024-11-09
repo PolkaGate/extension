@@ -18,6 +18,7 @@ import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/utils/types';
 import type { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import type { ItemInformation } from '../fullscreen/nft/utils/types';
 import type { SavedAssets } from '../hooks/useAssetsBalances';
 
 import { type SxProps, type Theme } from '@mui/material';
@@ -879,3 +880,5 @@ export interface FastestConnectionType {
 }
 
 export type RecentChainsType = Record<string, string[]>;
+
+export type NftItemsType = Record<string, ItemInformation[]>;

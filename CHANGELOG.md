@@ -1,5 +1,26 @@
 # Change Log
 
+## [0.23.1](https://github.com/polkagate/extension/compare/v0.23.0...v0.23.1) (2024-11-09)
+
+
+### Bug Fixes
+
+* disable manage validators if the account is already a validator ([#1634](https://github.com/polkagate/extension/issues/1634)) ([89d56c4](https://github.com/polkagate/extension/commit/89d56c48eedc8fe3fdff98ca8ff7e69edf88a65d))
+
+# [0.23.0](https://github.com/polkagate/extension/compare/v0.22.0...v0.23.0) (2024-11-09)
+
+
+### Features
+
+* support NFTs and Uniques ([#1564](https://github.com/polkagate/extension/issues/1564)) ([7c38aac](https://github.com/polkagate/extension/commit/7c38aacad0b8b5f800287d28f49b67974009d746))
+
+# [0.22.0](https://github.com/polkagate/extension/compare/v0.21.6...v0.22.0) (2024-11-06)
+
+
+### Features
+
+* use Slider for Conviction settings ([#1629](https://github.com/polkagate/extension/issues/1629)) ([790d7a1](https://github.com/polkagate/extension/commit/790d7a1f739774778c6c1a6755f0db65c990723c))
+
 ## [0.21.6](https://github.com/polkagate/extension/compare/v0.21.5...v0.21.6) (2024-11-03)
 
 
