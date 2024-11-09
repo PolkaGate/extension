@@ -7,7 +7,6 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from './utils/types';
 
 import { faGem } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -103,13 +102,7 @@ function NFT (): React.ReactElement {
           <Bread />
           <Title
             height='100px'
-            logo={
-              <FontAwesomeIcon
-                color={theme.palette.text.primary}
-                fontSize='50px'
-                icon={faGem}
-              />
-            }
+            icon={faGem}
             padding='0px'
             text={t('NFT Album')}
           />
