@@ -200,7 +200,7 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
 
   return (
     <>
-      <DraggableModal minHeight={540} onClose={closeDetail} open={show} width={800}>
+      <DraggableModal blurBackdrop minHeight={540} onClose={closeDetail} open={show} width={800}>
         <Grid container item>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'divider', mb: '20px' }}>
             <Typography fontSize='20px' fontWeight={500} sx={{ maxWidth: '380px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }}>
