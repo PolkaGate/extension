@@ -37,7 +37,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
   const backToAccount = useCallback(() => setDisplayPopup(undefined), [setDisplayPopup]);
 
   return (
-    <DraggableModal onClose={backToAccount} open>
+    <DraggableModal blurBackdrop onClose={backToAccount} open>
       <Grid alignItems='center' container justifyContent='center' maxHeight='650px' overflow='hidden'>
         <SimpleModalTitle
           icon={showDetail ? faReceipt : faHistory}

@@ -63,8 +63,8 @@ export function DraggableModal ({ blurBackdrop, children, maxHeight = 740, minHe
       outline: 'none' // Remove outline when Box is focused
     },
     bgcolor: 'background.default',
-    border: isDarkMode && !blurBackdrop ? '0.5px solid' : 'none',
-    borderColor: 'secondary.light',
+    border: isDarkMode ? '0.5px solid' : 'none',
+    borderColor: blurBackdrop ? 'divider' : 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
     cursor: isDragging ? 'grabbing' : 'grab',
