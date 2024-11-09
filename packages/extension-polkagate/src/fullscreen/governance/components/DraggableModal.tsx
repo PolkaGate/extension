@@ -13,9 +13,10 @@ interface Props {
   children: React.ReactElement;
   open: boolean;
   onClose: () => void
+  blurBackdrop?: boolean;
 }
 
-export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ blurBackdrop, children, maxHeight = 740, minHeight = 615, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -62,7 +63,7 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
       outline: 'none' // Remove outline when Box is focused
     },
     bgcolor: 'background.default',
-    border: isDarkMode ? '0.5px solid' : 'none',
+    border: isDarkMode && !blurBackdrop ? '0.5px solid' : 'none',
     borderColor: 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
@@ -79,7 +80,20 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
   };
 
   return (
-    <Modal onClose={_onClose} open={open}>
+    <Modal
+      onClose={_onClose}
+      open={open}
+      slotProps={{
+        backdrop: {
+          style: blurBackdrop
+            ? {
+              backdropFilter: 'blur(5px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            }
+            : {}
+        }
+      }}
+    >
       <Box
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

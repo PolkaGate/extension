@@ -6,7 +6,7 @@
 import type { BalancesInfo } from 'extension-polkagate/src/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
-import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faGem, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -54,7 +54,6 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
         const existingTab = allTabs.find(function (tab) {
           return tab.url === tabUrl;
         });
-
 
         if (existingTab?.id) {
           chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
@@ -161,6 +160,10 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
     address && !stakingDisabled && openOrFocusTab(`/poolfs/${address}/`);
   }, [address, stakingDisabled]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && openOrFocusTab(`/nft/${address}`);
+  }, [address]);
+
   const goToHistory = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
   }, [address, genesisHash, setDisplayPopup]);
@@ -251,6 +254,19 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           secondaryIconType='page'
           show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
           text={t('Stake in Pool')}
+        />
+        <TaskButton
+          disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+          icon={
+            <FontAwesomeIcon
+              color={theme.palette.text.primary}
+              fontSize='28px'
+              icon={faGem}
+            />
+          }
+          onClick={onNFTAlbum}
+          secondaryIconType='page'
+          text={t('NFT album')}
         />
         <TaskButton
           disabled={!genesisHash}
