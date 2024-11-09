@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.23.1](https://github.com/polkagate/extension/compare/v0.23.0...v0.23.1) (2024-11-09)
+
+
+### Bug Fixes
+
+* disable manage validators if the account is already a validator ([#1634](https://github.com/polkagate/extension/issues/1634)) ([89d56c4](https://github.com/polkagate/extension/commit/89d56c48eedc8fe3fdff98ca8ff7e69edf88a65d))
+
 # [0.23.0](https://github.com/polkagate/extension/compare/v0.22.0...v0.23.0) (2024-11-09)
 
 
