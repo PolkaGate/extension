@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.23.0](https://github.com/polkagate/extension/compare/v0.22.0...v0.23.0) (2024-11-09)
+
+
+### Features
+
+* support NFTs and Uniques ([#1564](https://github.com/polkagate/extension/issues/1564)) ([7c38aac](https://github.com/polkagate/extension/commit/7c38aacad0b8b5f800287d28f49b67974009d746))
+
 # [0.22.0](https://github.com/polkagate/extension/compare/v0.21.6...v0.22.0) (2024-11-06)
 
 

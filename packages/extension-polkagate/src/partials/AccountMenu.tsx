@@ -5,7 +5,7 @@
 
 import type { HexString } from '@polkadot/util/types';
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
+import { faAddressCard, faGem } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
@@ -77,6 +77,10 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
     address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && windowOpen(`/nft/${address}`).catch(console.error);
+  }, [address]);
+
   const isDisabled = useCallback((supportedChains: string[]) => {
     if (!currentGenesisHash) {
       return true;
@@ -131,6 +135,19 @@ function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): Re
         }
         onClick={onSocialRecovery}
         text={t('Social recovery')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+        iconComponent={
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            fontSize='22px'
+            icon={faGem}
+          />
+        }
+        onClick={onNFTAlbum}
+        text={t('NFT album')}
         withHoverEffect
       />
       <MenuSeparator />

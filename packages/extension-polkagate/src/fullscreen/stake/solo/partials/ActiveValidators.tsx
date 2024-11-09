@@ -13,18 +13,19 @@ import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { useActiveValidators, useInfo, useIsValidator, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useActiveValidators, useInfo, useStakingConsts, useTranslation } from '../../../../hooks';
 import ShowValidator from './ShowValidator';
 
 interface Props {
   address?: string;
+  isValidator: boolean | null | undefined
+
 }
 
-export default function ActiveValidators ({ address }: Props): React.ReactElement {
+export default function ActiveValidators ({ address, isValidator }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);
-  const isValidator = useIsValidator(address);
 
   const { activeValidators, nonActiveValidators } = useActiveValidators(address);
   const stakingConsts = useStakingConsts(address);
