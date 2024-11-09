@@ -242,16 +242,11 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
                     title={t('Collection name')}
                   />
               }
-              <InfoRow
-                divider={!!itemInformation.description || (!itemInformation.isCollection && !!itemInformation.collectionName)}
-                text={itemInformation.chainName}
-                title={t('Network')}
-              />
               {itemInformation.collectionId !== undefined &&
-                <InfoRow
-                  text={itemInformation.collectionId}
-                  title={t('Collection ID')}
-                />
+                  <InfoRow
+                    text={itemInformation.collectionId}
+                    title={t('Collection ID')}
+                  />
               }
               {itemInformation.items !== undefined &&
                 <InfoRow
@@ -265,31 +260,6 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
                   divider={!!itemInformation.collectionId || !!itemInformation.description}
                   text={itemInformation.itemId}
                   title={itemInformation.isNft ? t('NFT ID') : t('Unique ID')}
-                />
-              }
-              {itemInformation.metadataLink &&
-                <InfoRow
-                  divider={!!itemInformation.itemId || itemInformation.items !== undefined}
-                  text={`[application/json](${itemInformation.metadataLink})`}
-                  title={t('Metadata')}
-                />
-              }
-              {itemInformation.image &&
-                <InfoRow
-                  text={`[${itemInformation.imageContentType}](${itemInformation.image})`}
-                  title={t('Image')}
-                />
-              }
-              {itemInformation.animation_url &&
-                <InfoRow
-                  text={`[${itemInformation.animationContentType}](${itemInformation.animation_url})`}
-                  title={itemInformation.animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
-                />
-              }
-              {gifSource &&
-                <InfoRow
-                  text={`[image/gif](${IPFS_GATEWAY + gifHash})`}
-                  title={t('Media')}
                 />
               }
               {!itemInformation.isCollection &&
@@ -313,6 +283,35 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
                   api={api}
                   chain={chain}
                   title={t('Owner')}
+                />
+              }<InfoRow
+                divider={!!itemInformation.description || (!itemInformation.isCollection && !!itemInformation.collectionName)}
+                text={itemInformation.chainName}
+                title={t('Network')}
+              />
+              {itemInformation.metadataLink &&
+                <InfoRow
+                  divider={!!itemInformation.itemId || itemInformation.items !== undefined}
+                  text={`[application/json](${itemInformation.metadataLink})`}
+                  title={t('Metadata')}
+                />
+              }
+              {itemInformation.image &&
+                <InfoRow
+                  text={`[${itemInformation.imageContentType}](${itemInformation.image})`}
+                  title={t('Image')}
+                />
+              }
+              {itemInformation.animation_url &&
+                <InfoRow
+                  text={`[${itemInformation.animationContentType}](${itemInformation.animation_url})`}
+                  title={itemInformation.animationContentType?.startsWith('text') ? t('Animation') : t('Audio')}
+                />
+              }
+              {gifSource &&
+                <InfoRow
+                  text={`[image/gif](${IPFS_GATEWAY + gifHash})`}
+                  title={t('Media')}
                 />
               }
               {itemInformation.owner &&
