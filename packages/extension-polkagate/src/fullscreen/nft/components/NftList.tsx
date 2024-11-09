@@ -10,16 +10,20 @@ import React from 'react';
 
 import Progress from '../../../components/Progress';
 import useTranslation from '../../../hooks/useTranslation';
+import { THUMBNAIL_HEIGHT } from '../utils/constants';
 import Thumbnail from './Thumbnail';
 
 const UNAVAILABLE_HEIGHT = 320;
 const LIST_HEIGHT = innerHeight - UNAVAILABLE_HEIGHT;
+const INLINE_PADDING = '40px';
+const BLOCK_PADDING = '20px';
+const MIN_LIST_HEIGHT = `calc(${THUMBNAIL_HEIGHT} + ${INLINE_PADDING})`;
 
 function NftList ({ apis, nfts }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
-    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', gap: '30px', height: LIST_HEIGHT, maxHeight: LIST_HEIGHT, overflowY: 'scroll', p: '20px 40px' }}>
+    <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.2)', gap: '30px', height: 'fit-content', maxHeight: LIST_HEIGHT, minHeight: MIN_LIST_HEIGHT, overflowY: 'scroll', p: `${BLOCK_PADDING} ${INLINE_PADDING}` }}>
       {!nfts &&
         <Grid alignItems='center' container item justifyContent='center'>
           {nfts === undefined
