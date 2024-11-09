@@ -10,6 +10,13 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.23.0',
+    notes: [
+      'Support for NFTS: View your account’s NFTs and their details',
+      'Set Conviction with the Slider: Easily set convictions in governance using the slider.'
+    ]
+  },
+  {
     version: '0.21.6',
     notes: [
       'Show Support Us Notification: Encourage users to support us by voting for our referenda in governance.',
