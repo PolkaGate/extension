@@ -87,6 +87,8 @@ export default function useValidatorApy (api: ApiPromise | undefined, validatorA
 
     if (!validatorEraInfo.length) {
       setApy(null);
+
+      return;
     }
 
     validatorEraInfo.forEach(({ netReward, total }) => {
