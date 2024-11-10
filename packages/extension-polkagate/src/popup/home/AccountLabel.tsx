@@ -73,6 +73,10 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   const profiles = useMemo(() => {
     const profileSet = new Set(accountProfiles);
 
+    if (selectedProfile === undefined) {
+      return [];
+    }
+
     if (maybeAccountDefaultProfile) {
       profileSet.add(maybeAccountDefaultProfile);
     }
