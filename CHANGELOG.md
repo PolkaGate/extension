@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.25.0](https://github.com/polkagate/extension/compare/v0.24.0...v0.25.0) (2024-11-10)
+
+
+### Features
+
+* add filter to NFT page ([#1639](https://github.com/polkagate/extension/issues/1639)) ([c8c835e](https://github.com/polkagate/extension/commit/c8c835e9f64c18bb722deaf6daaaddeecb22e6c6))
+
 # [0.24.0](https://github.com/polkagate/extension/compare/v0.23.1...v0.24.0) (2024-11-10)
 
 
