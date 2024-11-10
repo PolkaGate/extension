@@ -284,7 +284,8 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
                   chain={chain}
                   title={t('Owner')}
                 />
-              }<InfoRow
+              }
+              <InfoRow
                 divider={!!itemInformation.description || (!itemInformation.isCollection && !!itemInformation.collectionName)}
                 text={itemInformation.chainName}
                 title={t('Network')}
