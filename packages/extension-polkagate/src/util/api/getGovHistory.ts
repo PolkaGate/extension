@@ -234,34 +234,34 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
   switch (functionName) {
     case 'delegate':
       return {
-        amount: txDetail?.data?.params?.[3]?.value as string | undefined,
-        class: txDetail?.data?.params?.[0]?.value as number | undefined,
-        conviction: txDetail?.data?.params?.[2]?.value as string | undefined,
+        amount: txDetail.data.params[3]?.value as string | undefined,
+        class: txDetail.data.params[0]?.value as number | undefined,
+        conviction: txDetail.data.params[2]?.value as string | undefined,
         delegatee: formattedAddress
       };
 
     case 'undelegate':
       return {
-        class: txDetail?.data?.params?.[0]?.value as number | undefined
+        class: txDetail.data.params[0]?.value as number | undefined
       };
 
     case 'unlock':
       return {
-        class: txDetail?.data?.params?.[0]?.value as number | undefined,
+        class: txDetail.data.params[0]?.value as number | undefined,
         from: formattedAddress
       };
 
     case 'vote':
       return {
         amount: voteBalance,
-        refId: txDetail?.data?.params?.[0]?.value as number | undefined,
+        refId: txDetail.data.params[0]?.value as number | undefined,
         voteType
       };
 
     case 'remove_vote':
       return {
-        class: txDetail?.data?.params?.[0]?.value as number | undefined,
-        refId: txDetail?.data?.params?.[0]?.value as number | undefined
+        class: txDetail.data.params[0]?.value as number | undefined,
+        refId: txDetail.data.params[1]?.value as number | undefined
       };
 
     default:
