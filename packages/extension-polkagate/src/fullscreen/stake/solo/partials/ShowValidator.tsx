@@ -65,13 +65,13 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
           />
         </Grid>
       }
-      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '40%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
+      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '30%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
         <Identity
           accountInfo={accountInfo}
           api={api}
           chain={chain}
           formatted={String(v.accountId)}
-          identiconSize={24}
+          identiconSize={20}
           showShortAddress
           style={{ fontSize: '14px' }}
         />
@@ -121,7 +121,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
           {isElected
-            ? <ShowValue height={14} value={apy ? `${apy}%` : undefined} width='50px' />
+            ? <ShowValue height={14} value={apy ? `${apy}%` : undefined} width='40px' />
             : 'N/A'}
         </Grid>
       </Grid>
