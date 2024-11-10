@@ -196,25 +196,25 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   return (
     <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', minHeight: '287px', p: '15px 25px 10px', width: '430px' }}>
       <Grid alignItems='flex-start' container item justifyContent='flex-start'>
-        <Typography sx={{ fontSize: '24px', fontVariant: 'small-caps', fontWeight: 400 }}>
+        <Typography sx={{ fontSize: '23px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('My Portfolio')}
         </Typography>
-        <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ my: '13px' }}> 
+        <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ my: '13px' }}>
           {hideNumbers || hideNumbers === undefined || !youHave
             ? <Box
               component='img'
               src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-              sx={{ height: '34px', width: '154px' }}
+              sx={{ height: '32px', width: '154px' }}
             />
             : <>
               <FormatPrice
                 commify
-                fontSize='34px'
+                fontSize='32px'
                 fontWeight={700}
                 num={youHave?.portfolio}
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
               />
-              <Typography sx={{ color: youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '20px', fontWeight: 500 }}>
+              <Typography sx={{ color: youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
                 {youHave.change > 0 ? '+' : '-'} { fixFloatingPoint(youHave?.change, 2, true)} {`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
               </Typography>
             </>
