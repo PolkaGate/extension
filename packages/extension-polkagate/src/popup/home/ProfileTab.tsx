@@ -85,7 +85,8 @@ export default function ProfileTab ({ index, isContainerHovered, isSelected, ord
         orientation='horizontal'
         sx={{
           '&:hover': { boxShadow: shadowOnHover },
-          bgcolor: getProfileColor(index, theme) || 'background.paper',
+          border:1,
+          borderColor: getProfileColor(index, theme) || 'background.paper',
           borderRadius: '10px',
           boxShadow: shadow,
           cursor: 'pointer',
