@@ -23,7 +23,7 @@ const AssetPriceChange = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
   const pricesInCurrencies = usePrices();
 
   const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
-  const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : 0;
+  const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : undefined;
 
   return (
     <Grid container item justifyContent='space-between'>
@@ -41,19 +41,21 @@ const AssetPriceChange = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
           num={asset.price}
         />
         <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
-        {change > 0
-          ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
-          : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
-        }
-        <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-          {`${(change ?? 0).toFixed(2)}%`}
-        </Typography>
+        <Grid alignItems='center' container item width='fit-content'>
+          {change !== undefined && change > 0
+            ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
+            : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
+          }
+          <Typography color={change !== undefined ? change > 0 ? 'success.main' : 'warning.main' : undefined} fontSize='16px' fontWeight={400} ml='-5px' width='40px'>
+            {`${(change ?? 0).toFixed(2)}%`}
+          </Typography>
+        </Grid>
       </Grid>
     </Grid>
   );
 };
 
-function WatchList ({ groupedAssets }: Props): React.ReactElement {
+function WatchList({ groupedAssets }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
