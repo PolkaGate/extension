@@ -18,8 +18,8 @@ import { getAssetHubByChainName } from '../../hooks/useReferendum';
 import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
+import Filters from './components/Filters';
 import NftList from './components/NftList';
-import Tabs from './components/Tabs';
 import { SUPPORTED_NFT_CHAINS } from './utils/constants';
 import { fetchItemMetadata } from './utils/util';
 
@@ -38,6 +38,8 @@ function NFT (): React.ReactElement {
   const { address } = useParams<{ address: string }>();
 
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
+  const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
+  const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
   useEffect(() => {
     const myNfts = nftManager.get(address);
@@ -56,10 +58,7 @@ function NFT (): React.ReactElement {
     return () => {
       nftManager.unsubscribe(handleNftUpdate);
     };
-  }, [address]);
-
-  const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
-  const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
+  }, [address, nftManager]);
 
   const chainNames = Object.keys(SUPPORTED_NFT_CHAINS);
 
@@ -125,7 +124,7 @@ function NFT (): React.ReactElement {
               <Typography fontSize='14px' fontWeight={400}>
                 {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
               </Typography>
-              <Tabs
+              <Filters
                 items={nfts}
                 setItemsToShow={setItemsToShow}
               />

@@ -44,7 +44,7 @@ function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThum
         />
       }
       {notListed &&
-        <Typography fontSize='14px' fontWeight={400} textAlign='left'>
+        <Typography fontSize='14px' fontWeight={500} textAlign='left'>
           {t('Not listed')}
         </Typography>
       }
@@ -66,12 +66,12 @@ function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThum
               formatted={accountId}
               identiconSize={15}
               showShortAddress
-              style={{ fontSize: '14px', maxWidth: '200px' }}
+              style={{ fontSize: '14px', fontWeight: 500, maxWidth: '200px' }}
             />
             : <ShortAddress
               address={accountId}
               charsCount={6}
-              style={{ fontSize: '14px', width: 'fit-content' }}
+              style={{ fontSize: '14px', fontWeight: 500, width: 'fit-content' }}
             />
           }
         </>
