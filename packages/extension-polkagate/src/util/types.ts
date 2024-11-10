@@ -74,6 +74,7 @@ export interface ValidatorInfo extends DeriveStakingQuery {
     others: Other[]
   };
   accountInfo?: DeriveAccountInfo;
+  apy?: string | null;
   isOversubscribed?: {
     notSafe: boolean;
     safe: boolean;
