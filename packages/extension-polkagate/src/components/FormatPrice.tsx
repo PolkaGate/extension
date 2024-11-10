@@ -8,12 +8,13 @@ import React, { useMemo } from 'react';
 
 import { useCurrency } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
-import { amountToHuman } from '../util/utils';
+import { amountToHuman, fixFloatingPoint } from '../util/utils';
 
 interface Props {
   amount?: BN | null;
   decimalPoint?: number;
   decimals?: number;
+  commify?: boolean;
   fontSize?: string;
   fontWeight?: number;
   lineHeight?: number;
@@ -53,7 +54,7 @@ export function nFormatter (num: number, decimalPoint: number) {
 
 const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
 
-function FormatPrice ({ amount, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px' }: Props): React.ReactElement<Props> {
+function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px' }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
 
   const total = useMemo(() => {
@@ -90,7 +91,7 @@ function FormatPrice ({ amount, decimalPoint = 2, decimals, fontSize, fontWeight
           lineHeight={lineHeight}
           sx={{ color: textColor }}
         >
-          {sign || currency?.sign || ''}{nFormatter(total as number, _decimalPoint)}
+          {sign || currency?.sign || ''}{ commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
         </Typography>
         : <Skeleton
           animation='wave'

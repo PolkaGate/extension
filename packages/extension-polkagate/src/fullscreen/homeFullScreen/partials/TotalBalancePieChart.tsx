@@ -16,9 +16,10 @@ import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
 import { usePrices, useTranslation, useYouHave } from '../../../hooks';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
+import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { amountToHuman } from '../../../util/utils';
+import { amountToHuman, fixFloatingPoint } from '../../../util/utils';
 import Chart from './Chart';
 
 interface Props {
@@ -121,7 +122,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) =>
-    parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), 
+    parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0),
   []);
 
   const formatNumber = useCallback(
@@ -140,13 +141,13 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         if (!TEST_NETS.includes(genesisHash)) {
-          //@ts-ignore
+          // @ts-ignore
           allAccountsAssets = allAccountsAssets.concat(balances[address][genesisHash]);
         }
       });
     });
 
-    //@ts-ignore
+    // @ts-ignore
     const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }: { genesisHash: string, token: string }) => `${token}_${genesisHash}`);
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
       const assetSample = groupedAssets[index][0] as AssetsWithUiAndPrice;
@@ -193,25 +194,32 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
-      <Grid alignItems='center' container gap='15px' item justifyContent='center'>
-        <Typography sx={{ fontSize: '28px', fontVariant: 'small-caps', fontWeight: 400 }}>
+    <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', minHeight: '287px', p: '15px 25px 10px', width: '430px' }}>
+      <Grid alignItems='flex-start' container item justifyContent='flex-start'>
+        <Typography sx={{ fontSize: '24px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('My Portfolio')}
         </Typography>
-        {hideNumbers || hideNumbers === undefined
-          ? <Box
-            component='img'
-            src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-            sx={{ height: '60px', width: '154px' }}
-          />
-          : <FormatPrice
-            fontSize='40px'
-            fontWeight={700}
-            lineHeight={1.5}
-            num={youHave?.portfolio}
-            textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
-          />
-        }
+        <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ my: '13px' }}> 
+          {hideNumbers || hideNumbers === undefined || !youHave
+            ? <Box
+              component='img'
+              src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
+              sx={{ height: '40px', width: '154px' }}
+            />
+            : <>
+              <FormatPrice
+                commify
+                fontSize='34px'
+                fontWeight={700}
+                num={youHave?.portfolio}
+                textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+              />
+              <Typography sx={{ color: youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '20px', fontWeight: 500 }}>
+                {youHave.change > 0 ? '+' : '-'} { fixFloatingPoint(youHave?.change, 2, true)} {`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
+              </Typography>
+            </>
+          }
+        </Grid>
       </Grid>
       {youHave?.portfolio !== 0 && assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>

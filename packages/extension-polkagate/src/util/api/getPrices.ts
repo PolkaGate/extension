@@ -16,12 +16,14 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
   pendulum: 'pendulum-chain'
 };
 
+export const COIN_GECKO_PRICE_CHANGE_DURATION = 24;
+
 export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
   console.log(' getting prices for:', priceIds.sort());
 
   const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
 
-  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_24hr_change=true`, {});
+  const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_${COIN_GECKO_PRICE_CHANGE_DURATION}hr_change=true`, {});
 
   const outputObjectPrices: PricesType = {};
 
