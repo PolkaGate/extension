@@ -36,7 +36,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '45px', p: '5px 0px 5px 10px', my: '5px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' onClick={disabled ? noop : onClick} sx={{ '&:hover': { bgcolor: disabled ? 'transparent' : 'divider' }, borderRadius: '5px', cursor: disabled ? 'default' : 'pointer', minHeight: isSubMenu ? '40px' : '41px', p: '5px 0px 5px 10px', my: '5px' }}>
         <Grid container item xs={2}>
           {icon}
         </Grid>

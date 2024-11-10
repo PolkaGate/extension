@@ -1449,5 +1449,6 @@
   "NFT Album": "",
   "The chosen blockchain does not support NFTs/Uniques.": "",
   "Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.": "",
-  "Unable to fetch NFT/Unique items!": ""
+  "Unable to fetch NFT/Unique items!": "",
+  "APY": ""
 }
