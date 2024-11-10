@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.24.0](https://github.com/polkagate/extension/compare/v0.23.1...v0.24.0) (2024-11-10)
+
+
+### Features
+
+* show validators APY ([#1633](https://github.com/polkagate/extension/issues/1633)) ([cdc4b37](https://github.com/polkagate/extension/commit/cdc4b37569ba0a55927158b4e445cae7a5b58fb7))
+
 ## [0.23.1](https://github.com/polkagate/extension/compare/v0.23.0...v0.23.1) (2024-11-09)
 
 
