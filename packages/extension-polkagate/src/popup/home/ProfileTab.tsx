@@ -90,7 +90,8 @@ export default function ProfileTab ({ index, isContainerHovered, isSelected, ord
           boxShadow: shadow,
           cursor: 'pointer',
           height: COLLAPSED_SIZE,
-          my: '2px'
+          my: '2px',
+          opacity: isDarkMode ? (isContainerHovered || isSelected ? 1 : 0.3) : undefined
         }}
       >
         <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>

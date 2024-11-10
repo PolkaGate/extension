@@ -54,7 +54,7 @@ function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActio
   return (
     <div ref={id ? setNodeRef : null} style={{ transform: CSS.Transform.toString(transform), transition }}>
       <Grid container {...attributes} item ref={containerRef} sx={{ borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', overflow: 'hidden', position: 'relative' }} width='760px'>
-        <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: 'secondary.contrastText', cursor: 'grab', fontSize: '25px', position: 'absolute', right: '5px', top: '5px' }} />
+        <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: 'secondary.contrastText', cursor: 'grab', fontSize: '25px', position: 'absolute', right: '5px', top: '5px', opacity: 0.5 }} />
         <AccountLabel
           account={account}
           ml='30px'

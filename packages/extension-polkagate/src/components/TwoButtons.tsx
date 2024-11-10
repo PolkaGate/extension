@@ -39,8 +39,8 @@ export default function TwoButtons ({ disabled = false, isBusy = false, ml = '6%
           onClick={onSecondaryClick}
           startIcon={secondaryBtnStartIcon}
           sx={{
-            borderColor: 'secondary.main',
-            color: variant === 'text' ? 'secondary.main' : 'text.primary',
+            borderColor: 'secondary.light',
+            color: variant === 'text' ? 'secondary.light' : 'text.primary',
             fontSize: '18px',
             fontWeight: 400,
             height: '36px',

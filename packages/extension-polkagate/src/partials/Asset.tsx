@@ -41,7 +41,7 @@ function Asset ({ address, api, balance, balanceLabel, balanceType, balances, fe
       <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '-0.015em' }}>
         {t('Asset')}
       </div>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.main', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ border: 1, borderColor: 'primary.light', borderRadius: '5px', background: `${theme.palette.background.paper}`, p: '5px 10px' }}>
         <Grid container item xs={1.5}>
           <ChainLogo genesisHash={chain?.genesisHash} size={31} />
         </Grid>

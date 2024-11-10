@@ -102,7 +102,7 @@ export default function ValidatorsTableFS ({ activeValidators, address, allValid
               const isNominated = !!nominatedValidatorsIds?.find((n) => n === v.accountId);
 
               return (
-                <Grid container item key={key} sx={{ backgroundColor: isNominated ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2) : undefined, borderBottom: '1px solid', borderBottomColor: 'secondary.main', overflowY: 'scroll', ...style }}>
+                <Grid container item key={key} sx={{ backgroundColor: isNominated ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2) : undefined, borderBottom: '1px solid', borderBottomColor: 'secondary.light', overflowY: 'scroll', ...style }}>
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}

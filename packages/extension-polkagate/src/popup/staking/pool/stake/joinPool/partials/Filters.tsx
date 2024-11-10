@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { PoolFilter, PoolInfo, StakingConsts } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
@@ -13,7 +14,6 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool/partials/comparators';
 import { DEFAULT_POOL_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
-import { PoolFilter, PoolInfo, StakingConsts } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
@@ -33,7 +33,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Filters({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
+export default function Filters ({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtensionPopup = useIsExtensionPopup();
@@ -141,15 +141,15 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isExtensionPopup ? '46px' : 0} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='20px' fontWeight={400} lineHeight={1.4}>
-          {t<string>('Filters')}
+          {t('Filters')}
         </Typography>
       </Grid>
       <Grid alignItems='center' container justifyContent='center'>
-        <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
+        <Divider sx={{ bgcolor: 'secondary.light', width: '80%' }} />
         <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.hasVerifiedIdentity}
-            label={t<string>('Pool creator has verified identity')}
+            label={t('Pool creator has verified identity')}
             onChange={() => onFilters('hasVerifiedIdentity')}
             style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
           />
@@ -157,7 +157,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
         <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.hasNominated?.check}
-            label={t<string>('Selected more than')}
+            label={t('Selected more than')}
             onChange={() => onFilters('hasNominated')}
             style={{ fontSize: '14px', fontWeight: '300', width: '56%' }}
           />
@@ -182,7 +182,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
         <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.stakedMoreThan?.check}
-            label={t<string>('Staked more than')}
+            label={t('Staked more than')}
             onChange={() => onFilters('stakedMoreThan')}
             style={{ fontSize: '14px', fontWeight: '300', width: '56%' }}
           />
@@ -207,7 +207,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
         <Grid alignItems='center' container item m='3px 34px 3px'>
           <Checkbox2
             checked={filters?.membersMoreThan?.check}
-            label={t<string>('Members more than')}
+            label={t('Members more than')}
             onChange={() => onFilters('membersMoreThan')}
             style={{ fontSize: '14px', fontWeight: '300', width: '56%' }}
           />
@@ -242,8 +242,8 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
         ml={isExtensionPopup ? undefined : '0'}
         onPrimaryClick={onApply}
         onSecondaryClick={onClear}
-        primaryBtnText={t<string>('Apply')}
-        secondaryBtnText={t<string>('Reset All')}
+        primaryBtnText={t('Apply')}
+        secondaryBtnText={t('Reset All')}
         variant='text'
       />
       <IconButton
@@ -267,7 +267,7 @@ export default function Filters({ apply, decimal, filters, pools, setApply, setF
         ? <SlidePopUp show={show}>
           {page}
         </SlidePopUp>
-        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show}>
+        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show} px = {0}>
           {page}
         </DraggableModal>
       }

@@ -102,7 +102,7 @@ export default function HomeMenu(): React.ReactElement {
       <Grid alignItems='center' container direction='column' display='block' item justifyContent='center' sx={{ pb: '40px' }}>
         <TaskButton
           icon={
-            <VaadinIcon icon='vaadin:plus-circle' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:plus-circle' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           onClick={onCreate}
           secondaryIconType='page'
@@ -111,7 +111,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           disabled={areAllExternalAccounts}
           icon={
-            <VaadinIcon icon='vaadin:road-branch' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:road-branch' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           onClick={onDeriveFromAccounts}
           secondaryIconType='page'
@@ -120,7 +120,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <VaadinIcon float={showImport} icon='vaadin:upload-alt' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon float={showImport} icon='vaadin:upload-alt' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           onClick={onImportClick}
           secondaryIconType='page'
@@ -132,7 +132,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           disabled={areAllExternalAccounts}
           icon={
-            <VaadinIcon icon='vaadin:download' style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:download' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           onClick={onExportAll}
           secondaryIconType='popup'
@@ -141,7 +141,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <VaadinIcon icon='vaadin:cog' spin ={showSetting} style={{ height: '30px', color: `${theme.palette.text.primary}`, width: '30px' }} />
+            <VaadinIcon icon='vaadin:cog' spin ={showSetting} style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           noBorderButton
           onClick={onSettingClick}
