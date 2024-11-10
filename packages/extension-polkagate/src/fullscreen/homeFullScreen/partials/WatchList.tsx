@@ -55,7 +55,7 @@ const AssetPriceChange = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
   );
 };
 
-function WatchList({ groupedAssets }: Props): React.ReactElement {
+function WatchList ({ groupedAssets }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
