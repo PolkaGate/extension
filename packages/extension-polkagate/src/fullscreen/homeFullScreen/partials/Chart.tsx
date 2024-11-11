@@ -48,6 +48,7 @@ function ChartTotal ({ assets }: Props): React.ReactElement {
       },
       options: {
         animation: false,
+        cutout: '75%',
         plugins: {
           tooltip: {
             callbacks: {
@@ -61,7 +62,7 @@ function ChartTotal ({ assets }: Props): React.ReactElement {
           }
         }
       },
-      type: 'pie'
+      type: 'doughnut'
     });
 
     // Clean up the chart instance on component unmount
@@ -71,7 +72,7 @@ function ChartTotal ({ assets }: Props): React.ReactElement {
   }, [assets, theme.palette.divider]);
 
   return (
-    <Grid container item sx={{ height: '125px', mr: '5px', width: '125px' }}>
+    <Grid container item sx={{ height: '120px', mr: '5px', width: '120px' }}>
       <canvas id='chartCanvas' ref={chartRef} />
     </Grid>
   );

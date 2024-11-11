@@ -224,13 +224,13 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
             : <>
               <FormatPrice
                 commify
-                fontSize='32px'
+                fontSize='30px'
                 fontWeight={700}
                 num={youHave?.portfolio}
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
                 withCountUp
               />
-              <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
+              <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
                 <CountUp
                   decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
                   duration={1}
@@ -244,9 +244,9 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
         </Grid>
       </Grid>
       {youHave?.portfolio !== 0 && assets && assets.length > 0 &&
-        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
+        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider' }}>
           <Chart assets={assets} />
-          <Grid container item pt='10px' rowGap='10px' xs>
+          <Grid container item pt='20px' rowGap='10px' xs>
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
                 asset={asset}

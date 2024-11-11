@@ -97,7 +97,6 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
         }]
       },
       options: {
-        cutout: '75%',
         plugins: {
           tooltip: {
             callbacks: {
@@ -110,7 +109,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
           }
         }
       },
-      type: 'doughnut'
+      type: 'pie'
     });
 
     return () => {
