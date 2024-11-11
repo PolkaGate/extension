@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.26.1](https://github.com/polkagate/extension/compare/v0.26.0...v0.26.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* transient label of selected profile name ([#1640](https://github.com/polkagate/extension/issues/1640)) ([75386b9](https://github.com/polkagate/extension/commit/75386b9e6cd2e2d9f2309928a391bd80f0a40bfd))
+
 # [0.26.0](https://github.com/polkagate/extension/compare/v0.25.0...v0.26.0) (2024-11-11)
 
 
