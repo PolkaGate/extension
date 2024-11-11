@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.28.0](https://github.com/polkagate/extension/compare/v0.27.0...v0.28.0) (2024-11-11)
+
+
+### Features
+
+* display portfolio change in account detail ([#1644](https://github.com/polkagate/extension/issues/1644)) ([e30ef9c](https://github.com/polkagate/extension/commit/e30ef9c7fadaec43e7e6087ac0c58be8b23a5cdb))
+
 # [0.27.0](https://github.com/polkagate/extension/compare/v0.26.1...v0.27.0) (2024-11-11)
 
 
