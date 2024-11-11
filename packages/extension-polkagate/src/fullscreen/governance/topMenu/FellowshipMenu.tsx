@@ -16,7 +16,7 @@ import { findItemDecidingCount } from './ReferendaMenu';
 interface Props {
   address: string | undefined;
   decidingCounts: Count[] | undefined;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
 
 }
