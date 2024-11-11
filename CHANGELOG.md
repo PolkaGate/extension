@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.26.0](https://github.com/polkagate/extension/compare/v0.25.0...v0.26.0) (2024-11-11)
+
+
+### Features
+
+* add portfolio price change ([#1641](https://github.com/polkagate/extension/issues/1641)) ([8e4eacb](https://github.com/polkagate/extension/commit/8e4eacb1bedd7eeb580bd2424471cdadf4662801))
+
 # [0.25.0](https://github.com/polkagate/extension/compare/v0.24.0...v0.25.0) (2024-11-10)
 
 
