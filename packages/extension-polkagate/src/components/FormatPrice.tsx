@@ -79,7 +79,7 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
     return decimalPoint;
   }, [currency?.code, decimalPoint]);
 
-  const no = useMemo(() => {
+  const TotalAsNumber = useMemo(() => {
     const temp = fixFloatingPoint(total as number, _decimalPoint);
 
     return parseFloat(temp);
@@ -101,9 +101,9 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
         >
           {withCountUp
             ? <CountUp
-              decimals={countDecimalPlaces(no)}
+              decimals={countDecimalPlaces(TotalAsNumber)}
               duration={1}
-              end={no}
+              end={TotalAsNumber}
               prefix={sign || currency?.sign || ''}
             />
             : <>
