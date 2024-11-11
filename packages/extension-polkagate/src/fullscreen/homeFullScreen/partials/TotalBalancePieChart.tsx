@@ -216,7 +216,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
               />
               <Typography sx={{ color: youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
-                {youHave.change > 0 ? '+ ' : '- '}{currency?.sign}{ fixFloatingPoint(youHave?.change, 2, true)} {`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
+                {youHave.change > 0 ? '+ ' : '- '}{currency?.sign}{ fixFloatingPoint(youHave?.change, 2, true, true)} {`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
               </Typography>
             </>
           }

@@ -40,7 +40,19 @@ export function isValidAddress (_address: string | undefined): boolean {
   }
 }
 
-export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean): string {
+function countLeadingZerosInFraction (numStr: string) {
+  const match = numStr.match(/\.(0+)/);
+
+  if (match) {
+    return match[1].length;
+  }
+
+  return 0;
+}
+
+export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+  const MAX_DECIMAL_POINTS = 6;
+
   // make number positive if it is negative
   const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
 
@@ -52,8 +64,17 @@ export function fixFloatingPoint (_number: number | string, decimalDigit = FLOAT
 
   let integerDigits = sNumber.slice(0, dotIndex);
 
-  integerDigits = commify ? Number(integerDigits).toLocaleString() : integerDigits;
+  if (integerDigits === '0' && dynamicDecimal) { // to show very small numbers such as 0.0000001123
+    const leadingZerosInFraction = countLeadingZerosInFraction(sNumber);
+
+    if (leadingZerosInFraction > 0 && leadingZerosInFraction < MAX_DECIMAL_POINTS) {
+      decimalDigit = leadingZerosInFraction + 1;
+    }
+  }
+
   const fractionalDigits = sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
+
+  integerDigits = commify ? Number(integerDigits).toLocaleString() : integerDigits;
 
   return integerDigits + fractionalDigits;
 }
