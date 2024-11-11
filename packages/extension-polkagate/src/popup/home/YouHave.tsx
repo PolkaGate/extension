@@ -56,7 +56,7 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
           />
           : <Grid item pr='15px'>
             <FormatPrice
-              fontSize='42px'
+              fontSize='38px'
               fontWeight={500}
               height={36}
               num={youHave?.portfolio }

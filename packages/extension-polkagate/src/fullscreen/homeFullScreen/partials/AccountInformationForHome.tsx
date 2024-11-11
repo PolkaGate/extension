@@ -93,7 +93,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
           hideNumbers || hideNumbers === undefined
             ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
             : <FormatPrice
-              fontSize='32px'
+              fontSize='28px'
               fontWeight={700}
               num={totalBalance}
               skeletonHeight={28}

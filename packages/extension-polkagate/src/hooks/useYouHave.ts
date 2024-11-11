@@ -10,8 +10,9 @@ import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
 export interface YouHaveType {
-  portfolio: number,
-  date: number
+  change: number;
+  date: number;
+  portfolio: number;
 }
 
 /**
@@ -23,10 +24,18 @@ export default function useYouHave (): YouHaveType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
-  const calPrice = useCallback(
+  const calcPrice = useCallback(
     (assetPrice: number | undefined, balance: BN, decimal: number) =>
       parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0)
     , []);
+
+  const calcChange = useCallback((currentAssetPrice: number, change: number) => {
+    if (change === -100) {
+      return 0;
+    }
+
+    return currentAssetPrice && change ? currentAssetPrice / (1 + (change / 100)) : 0;
+  }, []);
 
   const youHave = useMemo(() => {
     if (!accountsAssets?.balances) {
@@ -38,19 +47,25 @@ export default function useYouHave (): YouHaveType | undefined | null {
     }
 
     let totalPrice = 0;
+    let totalBeforeChange = 0;
     const balances = accountsAssets.balances;
     const date = Math.min(accountsAssets.timeStamp, pricesInCurrencies.date);
 
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         balances?.[address]?.[genesisHash].forEach((asset) => {
-          totalPrice += calPrice(pricesInCurrencies.prices[asset.priceId]?.value ?? 0, asset.totalBalance, asset.decimal);
+          const currentAssetPrice = calcPrice(pricesInCurrencies.prices[asset.priceId]?.value ?? 0, asset.totalBalance, asset.decimal);
+
+          totalPrice += currentAssetPrice;
+          totalBeforeChange += calcChange(currentAssetPrice, pricesInCurrencies.prices[asset.priceId]?.change);
         });
       });
     });
 
-    return { date, portfolio: totalPrice } as unknown as YouHaveType;
-  }, [accountsAssets, calPrice, pricesInCurrencies]);
+    const change = totalPrice - totalBeforeChange;
+
+    return { change, date, portfolio: totalPrice } as unknown as YouHaveType;
+  }, [accountsAssets, calcChange, calcPrice, pricesInCurrencies]);
 
   return youHave;
 }

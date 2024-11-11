@@ -99,7 +99,7 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
               <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
               <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
                 <Typography color='secondary.light' fontSize='14px' fontWeight={400}>
-                  {t<string>(showMore ? t('Less') : t('More'))}
+                  {t(showMore ? t('Less') : t('More'))}
                 </Typography>
                 <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
               </Grid>
