@@ -264,14 +264,14 @@ export interface Extrinsics {
   call_module: string, // convictionvoting
   nonce: number,
   extrinsic_hash: string,
-  success: true,
+  success: boolean,
   fee: string,
   fee_used: string,
   tip: string,
   finalized: true,
   account_display: {
     address: string,
-    people: object
+    people: Record<string, unknown>
   },
   refId?: number;
   amount?: string;
