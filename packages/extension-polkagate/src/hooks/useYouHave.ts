@@ -6,8 +6,9 @@ import type { BN } from '@polkadot/util';
 import { useCallback, useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
+import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
 import { amountToHuman } from '../util/utils';
-import { usePrices } from '.';
+import { useCurrency, usePrices } from '.';
 
 export interface YouHaveType {
   change: number;
@@ -23,6 +24,7 @@ export interface YouHaveType {
 export default function useYouHave (): YouHaveType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
+  const currency = useCurrency();
 
   const calcPrice = useCallback(
     (assetPrice: number | undefined, balance: BN, decimal: number) =>
@@ -62,10 +64,12 @@ export default function useYouHave (): YouHaveType | undefined | null {
       });
     });
 
-    const change = totalPrice - totalBeforeChange;
+    const change = currency?.code
+      ? ASSETS_AS_CURRENCY_LIST.includes(currency.code.toUpperCase()) ? 0 : totalPrice - totalBeforeChange
+      : 0;
 
     return { change, date, portfolio: totalPrice } as unknown as YouHaveType;
-  }, [accountsAssets, calcChange, calcPrice, pricesInCurrencies]);
+  }, [accountsAssets, calcChange, calcPrice, currency, pricesInCurrencies]);
 
   return youHave;
 }
