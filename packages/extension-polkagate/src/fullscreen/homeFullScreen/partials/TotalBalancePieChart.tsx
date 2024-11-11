@@ -205,6 +205,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
     return parseFloat(value);
   }, [youHave?.change]);
 
+  const changeSign = !youHave?.change
+    ? ''
+    : youHave.change > 0 ? '+ ' : '- ';
+
   return (
     <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', minHeight: '287px', p: '15px 25px 10px', width: '430px' }}>
       <Grid alignItems='flex-start' container item justifyContent='flex-start'>
@@ -227,16 +231,14 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
                 withCountUp
               />
-              <Typography sx={{ color: youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
-                {portfolioChange &&
+              <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
                 <CountUp
-                  decimals={countDecimalPlaces(portfolioChange)}
+                  decimals={countDecimalPlaces(portfolioChange) || 2}
                   duration={1}
                   end={portfolioChange}
-                  prefix={`${youHave.change > 0 ? '+ ' : '- '}${currency?.sign}`}
+                  prefix={`${changeSign}${currency?.sign}`}
                   suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
                 />
-                }
               </Typography>
             </>
           }
