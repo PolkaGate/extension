@@ -5,10 +5,11 @@ import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
+import CountUp from 'react-countup';
 
 import { useCurrency } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
-import { amountToHuman, fixFloatingPoint } from '../util/utils';
+import { amountToHuman, countDecimalPlaces, fixFloatingPoint } from '../util/utils';
 
 interface Props {
   amount?: BN | null;
@@ -27,6 +28,7 @@ interface Props {
   textColor?: string;
   height?: number;
   width?: string;
+  withCountUp?: boolean;
 }
 
 export function nFormatter (num: number, decimalPoint: number) {
@@ -54,7 +56,7 @@ export function nFormatter (num: number, decimalPoint: number) {
 
 const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
 
-function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px' }: Props): React.ReactElement<Props> {
+function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
 
   const total = useMemo(() => {
@@ -77,6 +79,12 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
     return decimalPoint;
   }, [currency?.code, decimalPoint]);
 
+  const no = useMemo(() => {
+    const temp = fixFloatingPoint(total as number, _decimalPoint);
+
+    return parseFloat(temp);
+  }, [_decimalPoint, total]);
+
   return (
     <Grid
       item
@@ -91,7 +99,17 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
           lineHeight={lineHeight}
           sx={{ color: textColor }}
         >
-          {sign || currency?.sign || ''}{ commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
+          {withCountUp
+            ? <CountUp
+              decimals={countDecimalPlaces(no)}
+              duration={1}
+              end={no}
+              prefix={sign || currency?.sign || ''}
+            />
+            : <>
+              {sign || currency?.sign || ''}{ commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
+            </>
+          }
         </Typography>
         : <Skeleton
           animation='wave'
