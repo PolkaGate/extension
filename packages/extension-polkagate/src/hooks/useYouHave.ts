@@ -3,18 +3,29 @@
 
 import type { BN } from '@polkadot/util';
 
-import { useCallback, useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
-import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
 import { amountToHuman } from '../util/utils';
-import { useCurrency, usePrices } from '.';
+import { usePrices } from '.';
 
 export interface YouHaveType {
   change: number;
   date: number;
   portfolio: number;
 }
+
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0);
+
+export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
+  if (tokenPriceChange === -100) {
+    return 0;
+  }
+
+  const totalChange = (tokenPriceChange * tokenBalance) / 100;
+
+  return totalChange * tokenPrice;
+};
 
 /**
  * @description
@@ -24,20 +35,6 @@ export interface YouHaveType {
 export default function useYouHave (): YouHaveType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
-  const currency = useCurrency();
-
-  const calcPrice = useCallback(
-    (assetPrice: number | undefined, balance: BN, decimal: number) =>
-      parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0)
-    , []);
-
-  const calcChange = useCallback((currentAssetPrice: number, change: number) => {
-    if (change === -100) {
-      return 0;
-    }
-
-    return currentAssetPrice && change ? currentAssetPrice / (1 + (change / 100)) : 0;
-  }, []);
 
   const youHave = useMemo(() => {
     if (!accountsAssets?.balances) {
@@ -56,20 +53,18 @@ export default function useYouHave (): YouHaveType | undefined | null {
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         balances?.[address]?.[genesisHash].forEach((asset) => {
-          const currentAssetPrice = calcPrice(pricesInCurrencies.prices[asset.priceId]?.value ?? 0, asset.totalBalance, asset.decimal);
+          const tokenValue = pricesInCurrencies.prices[asset.priceId]?.value ?? 0;
+          const tokenPriceChange = pricesInCurrencies.prices[asset.priceId]?.change ?? 0;
+          const currentAssetPrice = calcPrice(tokenValue, asset.totalBalance, asset.decimal);
 
           totalPrice += currentAssetPrice;
-          totalBeforeChange += calcChange(currentAssetPrice, pricesInCurrencies.prices[asset.priceId]?.change);
+          totalBeforeChange += calcChange(tokenValue, Number(asset.totalBalance) / (10 ** asset.decimal), tokenPriceChange);
         });
       });
     });
 
-    const change = currency?.code
-      ? ASSETS_AS_CURRENCY_LIST.includes(currency.code.toUpperCase()) ? 0 : totalPrice - totalBeforeChange
-      : 0;
-
-    return { change, date, portfolio: totalPrice } as unknown as YouHaveType;
-  }, [accountsAssets, calcChange, calcPrice, currency, pricesInCurrencies]);
+    return { change: totalBeforeChange, date, portfolio: totalPrice } as unknown as YouHaveType;
+  }, [accountsAssets, pricesInCurrencies]);
 
   return youHave;
 }
