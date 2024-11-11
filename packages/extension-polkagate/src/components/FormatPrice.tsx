@@ -9,7 +9,7 @@ import CountUp from 'react-countup';
 
 import { useCurrency } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
-import { amountToHuman, countDecimalPlaces, fixFloatingPoint } from '../util/utils';
+import { amountToHuman, fixFloatingPoint } from '../util/utils';
 
 interface Props {
   amount?: BN | null;
