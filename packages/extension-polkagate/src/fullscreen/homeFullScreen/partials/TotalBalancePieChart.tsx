@@ -16,11 +16,12 @@ import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
 import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
+import { calcPrice } from '../../../hooks/useYouHave';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { amountToHuman, countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
+import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
 import Chart from './Chart';
 
 interface Props {
@@ -56,6 +57,12 @@ export interface AssetsWithUiAndPrice {
   reservedBalance?: BN,
   votingBalance?: BN
 }
+
+export const PORTFOLIO_CHANGE_DECIMAL = 2;
+
+export const changeSign = (change: number | undefined) => !change
+  ? ''
+  : change > 0 ? '+ ' : '- ';
 
 export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
@@ -123,10 +130,6 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
-  const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) =>
-    parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0),
-  []);
-
   const formatNumber = useCallback(
     (num: number, decimal = 2) =>
       parseFloat(Math.trunc(num) === 0 ? num.toFixed(decimal) : num.toFixed(1))
@@ -157,7 +160,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
       const accumulatedPricePerAsset = groupedAssets[index].reduce((sum: BN, { totalBalance }: FetchedBalance) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
 
-      const balancePrice = calPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
+      const balancePrice = calcPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
 
       const _percent = (balancePrice / youHave.portfolio) * 100;
 
@@ -187,7 +190,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
     });
 
     return aggregatedAssets;
-  }, [accountsAssets, youHave, calPrice, formatNumber, pricesInCurrencies, theme]);
+  }, [accountsAssets, youHave, formatNumber, pricesInCurrencies, theme]);
 
   useEffect(() => {
     assets && setGroupedAssets([...assets]);
@@ -200,17 +203,13 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
       return 0;
     }
 
-    const value = fixFloatingPoint(youHave.change, 2, false, true);
+    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [youHave?.change]);
 
-  const changeSign = !youHave?.change
-    ? ''
-    : youHave.change > 0 ? '+ ' : '- ';
-
   return (
-    <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', minHeight: '287px', p: '15px 25px 10px', width: '430px' }}>
+    <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
       <Grid alignItems='flex-start' container item justifyContent='flex-start'>
         <Typography sx={{ fontSize: '23px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('My Portfolio')}
@@ -233,10 +232,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
               />
               <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
                 <CountUp
-                  decimals={countDecimalPlaces(portfolioChange) || 2}
+                  decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
                   duration={1}
                   end={portfolioChange}
-                  prefix={`${changeSign}${currency?.sign}`}
+                  prefix={`${changeSign(youHave?.change)}${currency?.sign}`}
                   suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
                 />
               </Typography>
