@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.27.0](https://github.com/polkagate/extension/compare/v0.26.1...v0.27.0) (2024-11-11)
+
+
+### Features
+
+* add count up ([#1642](https://github.com/polkagate/extension/issues/1642)) ([b155aaf](https://github.com/polkagate/extension/commit/b155aaf303fdd2416c9030215bcb9b9a8a3437a7))
+
 ## [0.26.1](https://github.com/polkagate/extension/compare/v0.26.0...v0.26.1) (2024-11-11)
 
 
