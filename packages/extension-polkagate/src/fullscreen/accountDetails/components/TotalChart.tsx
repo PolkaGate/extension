@@ -49,7 +49,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
       const _assets = accountAssets as unknown as AssetsToShow[];
 
       let total = 0;
-      let totalBeforeChange = 0;
+      let totalChange = 0;
 
       /** to add asset's worth and color */
       accountAssets.forEach((asset, index) => {
@@ -61,9 +61,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
 
         total += assetWorth;
 
-        const totalAssetChange = calcChange(priceOf(asset.priceId), Number(asset.totalBalance) / (10 ** asset.decimal), changePriceOf(asset.priceId));
-
-        totalBeforeChange += totalAssetChange;
+        totalChange += calcChange(priceOf(asset.priceId), Number(asset.totalBalance) / (10 ** asset.decimal), changePriceOf(asset.priceId));
       });
 
       /** to add asset's percentage */
@@ -76,7 +74,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
       _assets.sort((a, b) => b.worth - a.worth);
       const nonZeroAssets = _assets.filter((asset) => asset.worth > 0);
 
-      return { assets: nonZeroAssets, totalChange: totalBeforeChange, totalWorth: total };
+      return { assets: nonZeroAssets, totalChange, totalWorth: total };
     }
 
     return { assets: undefined, totalChange: undefined, totalWorth: undefined };
