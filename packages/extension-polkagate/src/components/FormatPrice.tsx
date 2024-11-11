@@ -79,12 +79,6 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
     return decimalPoint;
   }, [currency?.code, decimalPoint]);
 
-  const TotalAsNumber = useMemo(() => {
-    const temp = fixFloatingPoint(total as number, _decimalPoint);
-
-    return parseFloat(temp);
-  }, [_decimalPoint, total]);
-
   return (
     <Grid
       item
@@ -101,9 +95,9 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
         >
           {withCountUp
             ? <CountUp
-              decimals={countDecimalPlaces(TotalAsNumber)}
+              decimals={_decimalPoint}
               duration={1}
-              end={TotalAsNumber}
+              end={parseFloat(String(total))}
               prefix={sign || currency?.sign || ''}
             />
             : <>
