@@ -58,6 +58,12 @@ export interface AssetsWithUiAndPrice {
   votingBalance?: BN
 }
 
+export const PORTFOLIO_CHANGE_DECIMAL = 2;
+
+export const changeSign = (change: number | undefined) => !change
+  ? ''
+  : change > 0 ? '+ ' : '- ';
+
 export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
@@ -197,14 +203,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
       return 0;
     }
 
-    const value = fixFloatingPoint(youHave.change, 2, false, true);
+    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [youHave?.change]);
-
-  const changeSign = !youHave?.change
-    ? ''
-    : youHave.change > 0 ? '+ ' : '- ';
 
   return (
     <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
@@ -230,10 +232,10 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
               />
               <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
                 <CountUp
-                  decimals={countDecimalPlaces(portfolioChange) || 2}
+                  decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
                   duration={1}
                   end={portfolioChange}
-                  prefix={`${changeSign}${currency?.sign}`}
+                  prefix={`${changeSign(youHave?.change)}${currency?.sign}`}
                   suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
                 />
               </Typography>
