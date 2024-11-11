@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
-import { usePrices, useTranslation, useYouHave } from '../../../hooks';
+import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
@@ -113,6 +113,7 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
 function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
+  const currency = useCurrency();
 
   const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
@@ -215,7 +216,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
               />
               <Typography sx={{ color: youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '18px', fontWeight: 500 }}>
-                {youHave.change > 0 ? '+' : '-'} { fixFloatingPoint(youHave?.change, 2, true)} {`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
+                {youHave.change > 0 ? '+ ' : '- '}{currency?.sign}{ fixFloatingPoint(youHave?.change, 2, true)} {`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
               </Typography>
             </>
           }
