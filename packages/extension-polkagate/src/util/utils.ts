@@ -50,6 +50,12 @@ function countLeadingZerosInFraction (numStr: string) {
   return 0;
 }
 
+export function countDecimalPlaces (n: number) {
+  const match = n.toString().match(/\.(\d+)/);
+
+  return match ? match[1].length : 0;
+}
+
 export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
 
