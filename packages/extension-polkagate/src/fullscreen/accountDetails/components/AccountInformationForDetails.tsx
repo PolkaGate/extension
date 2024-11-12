@@ -104,9 +104,9 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
       {genesisHash
         ? <>
           <Grid item pl='7px'>
-            <AssetLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            <AssetLogo assetSize='32px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
-          <Grid item sx={{ ml: '5px' }}>
+          <Grid item sx={{ ml: '10px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
           </Grid>
         </>

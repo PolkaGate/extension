@@ -86,7 +86,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   return (
     <Grid alignItems='center' container item xs>
       <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
-        <Typography fontSize='16px' fontWeight={400} pl='15px'>
+        <Typography color='secondary.contrastText' fontSize='16px' fontWeight={400} pl='15px'>
           {t('Total')}:
         </Typography>
         {

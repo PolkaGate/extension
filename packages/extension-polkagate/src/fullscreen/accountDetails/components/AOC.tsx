@@ -139,7 +139,7 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
 
   return (
     <Grid container item>
-      <Typography fontSize='18px' fontWeight={400} mt='13px' px='10px' width='fit-content'>
+      <Typography color='secondary.contrastText' fontSize='18px' fontWeight={400} mt='13px' px='10px' width='fit-content'>
         {t('Assets')}
       </Typography>
       <Grid alignItems='center' container item xs>
