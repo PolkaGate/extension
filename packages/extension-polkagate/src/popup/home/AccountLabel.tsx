@@ -119,7 +119,8 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
         <Grid
           key={index}
           sx={{
-            bgcolor: getColorOfUserDefinedProfile(profile),
+            border: 1,
+            borderColor: getColorOfUserDefinedProfile(profile),
             borderRadius: '0 0 5px 5px',
             boxShadow: shadow,
             fontSize: '11px',
