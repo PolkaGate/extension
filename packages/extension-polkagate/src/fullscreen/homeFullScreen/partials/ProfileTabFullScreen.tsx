@@ -103,8 +103,9 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           '&:hover': {
             boxShadow: shadowOnHover
           },
-          bgcolor: getProfileColor(index, theme) || 'background.paper',
-          borderRadius: '0 0 12px 12px',
+          border: 1,
+          borderColor: getProfileColor(index, theme) || 'background.paper',
+          borderRadius: '15px',
           boxShadow: shadow,
           cursor: 'pointer',
           flexShrink: 0,
