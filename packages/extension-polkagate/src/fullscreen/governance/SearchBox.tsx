@@ -9,7 +9,7 @@
 import type { LatestReferenda } from './utils/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, useTheme } from '@mui/material';
+import { Collapse, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Checkbox2, InputFilter, Select } from '../../components';
@@ -193,7 +193,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
           />
         </Grid>
       </Grid>
-      {showAdvanced &&
+      <Collapse in={showAdvanced} sx={{ width: '100%' }}>
         <Grid alignItems='center' container justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', fontSize: '16px', fontWeight: '400', height: '52px', pl: '22px', width: '90%' }}>
           <Grid item>
             {t('Search in:')}
@@ -234,7 +234,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
             {t('Reset')}
           </Grid>
         </Grid>
-      }
+      </Collapse>
     </>
   );
 }

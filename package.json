@@ -81,6 +81,7 @@
     "memoize-one": "^6.0.0",
     "qrcode.react": "^3.0.2",
     "react-chartjs-2": "^5.2.0",
+    "react-countup": "^6.5.3",
     "react-json-to-table": "^0.1.7",
     "react-markdown": "^8.0.7",
     "react-tooltip": "^4.2.21",

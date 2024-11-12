@@ -4,21 +4,23 @@
 /* eslint-disable sort-keys */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Chart, registerables } from 'chart.js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import CountUp from 'react-countup';
 
 import { AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
-import { useTranslation } from '../../../hooks';
+import { useCurrency, useTranslation } from '../../../hooks';
+import { calcChange, calcPrice } from '../../../hooks/useYouHave';
+import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { amountToHuman } from '../../../util/utils';
-import { adjustColor } from '../../homeFullScreen/partials/TotalBalancePieChart';
+import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
+import { adjustColor, changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../homeFullScreen/partials/TotalBalancePieChart';
 
 interface Props {
   accountAssets: FetchedBalance[] | null | undefined;
@@ -35,29 +37,32 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
   const { t } = useTranslation();
   const theme = useTheme();
   const chartRef = useRef(null);
+  const currency = useCurrency();
 
   Chart.register(...registerables);
 
-  const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), []);
-
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
+  const changePriceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.change || 0, [pricesInCurrency?.prices]);
   const formatNumber = useCallback((num: number): number => parseFloat(Math.trunc(num) === 0 ? num.toFixed(2) : num.toFixed(1)), []);
 
-  const { assets, totalWorth } = useMemo(() => {
+  const { assets, totalChange, totalWorth } = useMemo(() => {
     if (accountAssets?.length) {
       const _assets = accountAssets as unknown as AssetsToShow[];
 
       let total = 0;
+      let totalChange = 0;
 
       /** to add asset's worth and color */
       accountAssets.forEach((asset, index) => {
-        const assetWorth = calPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
+        const assetWorth = calcPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
         const assetColor = getLogo2(asset.genesisHash, asset.token)?.color || DEFAULT_COLOR;
 
         _assets[index].worth = assetWorth;
         _assets[index].color = adjustColor(asset.token, assetColor, theme);
 
         total += assetWorth;
+
+        totalChange += calcChange(priceOf(asset.priceId), Number(asset.totalBalance) / (10 ** asset.decimal), changePriceOf(asset.priceId));
       });
 
       /** to add asset's percentage */
@@ -70,11 +75,11 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
       _assets.sort((a, b) => b.worth - a.worth);
       const nonZeroAssets = _assets.filter((asset) => asset.worth > 0);
 
-      return { assets: nonZeroAssets, totalWorth: total };
+      return { assets: nonZeroAssets, totalChange, totalWorth: total };
     }
 
-    return { assets: undefined, totalWorth: undefined };
-  }, [accountAssets, calPrice, formatNumber, priceOf, theme]);
+    return { assets: undefined, totalChange: 0, totalWorth: undefined };
+  }, [accountAssets, changePriceOf, formatNumber, priceOf, theme]);
 
   useEffect(() => {
     const worths = assets?.map(({ worth }) => worth);
@@ -92,7 +97,6 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
         }]
       },
       options: {
-        cutout: '75%',
         plugins: {
           tooltip: {
             callbacks: {
@@ -105,27 +109,52 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
           }
         }
       },
-      type: 'doughnut'
+      type: 'pie'
     });
 
     return () => {
       chartInstance.destroy();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assets?.length, theme.palette.divider]);
 
+  const accountBalanceTotalChange = useMemo(() => {
+    if (!totalChange) {
+      return 0;
+    }
+
+    const value = fixFloatingPoint(totalChange, PORTFOLIO_CHANGE_DECIMAL, false, true);
+
+    return parseFloat(value);
+  }, [totalChange]);
+
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', maxHeight: '185px', p: '15px', width: 'inherit' }}>
-      <Grid alignItems='center' container gap='15px' item justifyContent='center' height='54px'>
-        <Typography fontSize='18px' fontWeight={400}>
-          {t('Total')}
-        </Typography>
-        <FormatPrice
-          fontSize='36px'
-          fontWeight={700}
-          num={totalWorth}
-          skeletonHeight={22}
-        />
+    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '10px 15px', width: 'inherit' }}>
+      <Grid alignItems='flex-start' container item justifyContent='space-between' mb='10px'>
+        <Grid alignItems='center' item>
+          <Typography sx={{ fontSize: '22px', fontVariant: 'small-caps', fontWeight: 400 }}>
+            {t('Total')}
+          </Typography>
+        </Grid>
+        <Grid alignItems='center' item justifyItems='flex-end'>
+          <FormatPrice
+            commify
+            fontSize='28px'
+            fontWeight={600}
+            num={totalWorth}
+            skeletonHeight={22}
+            withCountUp
+          />
+          <Typography sx={{ color: !totalChange ? 'secondary.contrastText' : totalChange > 0 ? 'success.main' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
+            <CountUp
+              decimals={countDecimalPlaces(accountBalanceTotalChange) || PORTFOLIO_CHANGE_DECIMAL}
+              duration={1}
+              end={accountBalanceTotalChange}
+              prefix={`${changeSign(totalChange)}${currency?.sign}`}
+              suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
+            />
+          </Typography>
+        </Grid>
       </Grid>
       {assets && assets.length > 0 &&
         <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', py: '5px' }}>
@@ -153,7 +182,8 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
             })
             }
           </Grid>
-        </Grid>}
+        </Grid>
+      }
     </Grid>
   );
 }

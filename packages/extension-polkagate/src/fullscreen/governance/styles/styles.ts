@@ -27,8 +27,6 @@ export default function useStyles (firstBreakpoint?: boolean, secondBreakpoint?:
     allReferendaStatsContainer: {
       alignItems: 'start',
       bgcolor: 'background.paper',
-      border: 1,
-      borderColor: theme.palette.mode === 'light' ? 'background.paper' : 'secondary.main',
       borderRadius: '10px',
       display: 'flex',
       boxShadow: pgBoxShadow(theme),

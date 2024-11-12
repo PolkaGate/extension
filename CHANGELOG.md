@@ -1,5 +1,40 @@
 # Change Log
 
+# [0.29.0](https://github.com/polkagate/extension/compare/v0.28.0...v0.29.0) (2024-11-12)
+
+
+### Features
+
+* support governance tx history ([#1630](https://github.com/polkagate/extension/issues/1630)) ([4044d3b](https://github.com/polkagate/extension/commit/4044d3b83a268ce2af7da4f42323cc866d477e19))
+
+# [0.28.0](https://github.com/polkagate/extension/compare/v0.27.0...v0.28.0) (2024-11-11)
+
+
+### Features
+
+* display portfolio change in account detail ([#1644](https://github.com/polkagate/extension/issues/1644)) ([e30ef9c](https://github.com/polkagate/extension/commit/e30ef9c7fadaec43e7e6087ac0c58be8b23a5cdb))
+
+# [0.27.0](https://github.com/polkagate/extension/compare/v0.26.1...v0.27.0) (2024-11-11)
+
+
+### Features
+
+* add count up ([#1642](https://github.com/polkagate/extension/issues/1642)) ([b155aaf](https://github.com/polkagate/extension/commit/b155aaf303fdd2416c9030215bcb9b9a8a3437a7))
+
+## [0.26.1](https://github.com/polkagate/extension/compare/v0.26.0...v0.26.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* transient label of selected profile name ([#1640](https://github.com/polkagate/extension/issues/1640)) ([75386b9](https://github.com/polkagate/extension/commit/75386b9e6cd2e2d9f2309928a391bd80f0a40bfd))
+
+# [0.26.0](https://github.com/polkagate/extension/compare/v0.25.0...v0.26.0) (2024-11-11)
+
+
+### Features
+
+* add portfolio price change ([#1641](https://github.com/polkagate/extension/issues/1641)) ([8e4eacb](https://github.com/polkagate/extension/commit/8e4eacb1bedd7eeb580bd2424471cdadf4662801))
+
 # [0.25.0](https://github.com/polkagate/extension/compare/v0.24.0...v0.25.0) (2024-11-10)
 
 

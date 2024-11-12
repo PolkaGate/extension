@@ -8,17 +8,20 @@ import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import CountUp from 'react-countup';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
-import { usePrices, useTranslation, useYouHave } from '../../../hooks';
+import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
+import { calcPrice } from '../../../hooks/useYouHave';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
+import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { amountToHuman } from '../../../util/utils';
+import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
 import Chart from './Chart';
 
 interface Props {
@@ -54,6 +57,12 @@ export interface AssetsWithUiAndPrice {
   reservedBalance?: BN,
   votingBalance?: BN
 }
+
+export const PORTFOLIO_CHANGE_DECIMAL = 2;
+
+export const changeSign = (change: number | undefined) => !change
+  ? ''
+  : change > 0 ? '+ ' : '- ';
 
 export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
@@ -112,6 +121,7 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
 function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
+  const currency = useCurrency();
 
   const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
@@ -119,10 +129,6 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
   const [showMore, setShowMore] = useState<boolean>(false);
-
-  const calPrice = useCallback((assetPrice: number | undefined, balance: BN, decimal: number) =>
-    parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0), 
-  []);
 
   const formatNumber = useCallback(
     (num: number, decimal = 2) =>
@@ -140,13 +146,13 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         if (!TEST_NETS.includes(genesisHash)) {
-          //@ts-ignore
+          // @ts-ignore
           allAccountsAssets = allAccountsAssets.concat(balances[address][genesisHash]);
         }
       });
     });
 
-    //@ts-ignore
+    // @ts-ignore
     const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }: { genesisHash: string, token: string }) => `${token}_${genesisHash}`);
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
       const assetSample = groupedAssets[index][0] as AssetsWithUiAndPrice;
@@ -154,7 +160,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
       const accumulatedPricePerAsset = groupedAssets[index].reduce((sum: BN, { totalBalance }: FetchedBalance) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
 
-      const balancePrice = calPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
+      const balancePrice = calcPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
 
       const _percent = (balancePrice / youHave.portfolio) * 100;
 
@@ -184,7 +190,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
     });
 
     return aggregatedAssets;
-  }, [accountsAssets, youHave, calPrice, formatNumber, pricesInCurrencies, theme]);
+  }, [accountsAssets, youHave, formatNumber, pricesInCurrencies, theme]);
 
   useEffect(() => {
     assets && setGroupedAssets([...assets]);
@@ -192,31 +198,55 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
 
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
+  const portfolioChange = useMemo(() => {
+    if (!youHave?.change) {
+      return 0;
+    }
+
+    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
+
+    return parseFloat(value);
+  }, [youHave?.change]);
+
   return (
-    <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
-      <Grid alignItems='center' container gap='15px' item justifyContent='center'>
-        <Typography sx={{ fontSize: '28px', fontVariant: 'small-caps', fontWeight: 400 }}>
+    <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
+      <Grid alignItems='flex-start' container item justifyContent='flex-start'>
+        <Typography sx={{ fontSize: '22px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('My Portfolio')}
         </Typography>
-        {hideNumbers || hideNumbers === undefined
-          ? <Box
-            component='img'
-            src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-            sx={{ height: '60px', width: '154px' }}
-          />
-          : <FormatPrice
-            fontSize='40px'
-            fontWeight={700}
-            lineHeight={1.5}
-            num={youHave?.portfolio}
-            textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
-          />
-        }
+        <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ my: '13px' }}>
+          {hideNumbers || hideNumbers === undefined || !youHave
+            ? <Box
+              component='img'
+              src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
+              sx={{ height: '32px', width: '154px' }}
+            />
+            : <>
+              <FormatPrice
+                commify
+                fontSize='30px'
+                fontWeight={700}
+                num={youHave?.portfolio}
+                textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+                withCountUp
+              />
+              <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
+                <CountUp
+                  decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
+                  duration={1}
+                  end={portfolioChange}
+                  prefix={`${changeSign(youHave?.change)}${currency?.sign}`}
+                  suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
+                />
+              </Typography>
+            </>
+          }
+        </Grid>
       </Grid>
       {youHave?.portfolio !== 0 && assets && assets.length > 0 &&
-        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider', pt: '10px' }}>
+        <Grid container item sx={{ borderTop: '1px solid', borderTopColor: 'divider' }}>
           <Chart assets={assets} />
-          <Grid container item pt='10px' rowGap='10px' xs>
+          <Grid container item pt='20px' rowGap='10px' xs>
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
                 asset={asset}

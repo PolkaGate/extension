@@ -24,9 +24,9 @@ export default function TransactionHistory (): React.ReactElement {
 
   const [tabIndex, setTabIndex] = useState<TAB_MAP>(state?.tabIndex ?? TAB_MAP.ALL);
 
-  const { grouped, tabHistory, transfersTx } = useTransactionHistory(address, tabIndex);
+  const { governanceTx, grouped, tabHistory, transfersTx } = useTransactionHistory(address, tabIndex);
 
-  const _onBack = useCallback(() => {
+  const onBack = useCallback(() => {
     history.push({
       pathname: state?.pathname ?? '/'
     });
@@ -35,7 +35,7 @@ export default function TransactionHistory (): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        onBackClick={_onBack}
+        onBackClick={onBack}
         showBackArrow
         text={t('Transaction History')}
       />
@@ -63,12 +63,12 @@ export default function TransactionHistory (): React.ReactElement {
               />
             ));
           })}
-        {grouped === null && transfersTx.isFetching === false &&
+        {grouped === null && transfersTx.isFetching === false && governanceTx.isFetching === false &&
           <Grid item mt='50px' mx='auto' textAlign='center'>
             {t('Nothing to show')}
           </Grid>
         }
-        {(grouped === undefined || (transfersTx.isFetching && tabHistory?.length === 0)) &&
+        {(grouped === undefined || ((transfersTx.isFetching || governanceTx.isFetching) && tabHistory?.length === 0)) &&
         <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
         }
         <div id='observerObj' style={{ height: '1px' }} />
