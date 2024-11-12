@@ -78,7 +78,7 @@ interface BalanceRowJSXType {
 }
 
 const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: BalanceRowJSXType) => (
-  <Grid alignItems='center' container fontSize='28px' item xs>
+  <Grid alignItems='center' container fontSize='26px' item xs>
     <Balance balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} />
     <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '30px', mx: '10px', my: 'auto' }} />
     <Price balanceToShow={balanceToShow} isPriceOutdated={isPriceOutdated} price={price} />
@@ -106,7 +106,7 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
           <Grid item pl='7px'>
             <AssetLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
-          <Grid item sx={{ fontSize: '28px', ml: '5px' }}>
+          <Grid item sx={{ ml: '5px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
           </Grid>
         </>
@@ -151,7 +151,6 @@ interface AddressDetailsProps {
 function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, chain, genesisHash, token } = useInfo(address);
-
 
   const calculatePrice = useCallback((amount: BN, decimal: number, _price: number) => {
     return parseFloat(amountToHuman(amount, decimal)) * _price;

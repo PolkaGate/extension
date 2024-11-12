@@ -3,16 +3,29 @@
 
 import type { BN } from '@polkadot/util';
 
-import { useCallback, useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
 import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
 export interface YouHaveType {
-  portfolio: number,
-  date: number
+  change: number;
+  date: number;
+  portfolio: number;
 }
+
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0);
+
+export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
+  if (tokenPriceChange === -100) {
+    return 0;
+  }
+
+  const totalChange = (tokenPriceChange * tokenBalance) / 100;
+
+  return totalChange * tokenPrice;
+};
 
 /**
  * @description
@@ -22,11 +35,6 @@ export interface YouHaveType {
 export default function useYouHave (): YouHaveType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
-
-  const calPrice = useCallback(
-    (assetPrice: number | undefined, balance: BN, decimal: number) =>
-      parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0)
-    , []);
 
   const youHave = useMemo(() => {
     if (!accountsAssets?.balances) {
@@ -38,19 +46,25 @@ export default function useYouHave (): YouHaveType | undefined | null {
     }
 
     let totalPrice = 0;
+    let totalBeforeChange = 0;
     const balances = accountsAssets.balances;
     const date = Math.min(accountsAssets.timeStamp, pricesInCurrencies.date);
 
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         balances?.[address]?.[genesisHash].forEach((asset) => {
-          totalPrice += calPrice(pricesInCurrencies.prices[asset.priceId]?.value ?? 0, asset.totalBalance, asset.decimal);
+          const tokenValue = pricesInCurrencies.prices[asset.priceId]?.value ?? 0;
+          const tokenPriceChange = pricesInCurrencies.prices[asset.priceId]?.change ?? 0;
+          const currentAssetPrice = calcPrice(tokenValue, asset.totalBalance, asset.decimal);
+
+          totalPrice += currentAssetPrice;
+          totalBeforeChange += calcChange(tokenValue, Number(asset.totalBalance) / (10 ** asset.decimal), tokenPriceChange);
         });
       });
     });
 
-    return { date, portfolio: totalPrice } as unknown as YouHaveType;
-  }, [accountsAssets, calPrice, pricesInCurrencies]);
+    return { change: totalBeforeChange, date, portfolio: totalPrice } as unknown as YouHaveType;
+  }, [accountsAssets, pricesInCurrencies]);
 
   return youHave;
 }

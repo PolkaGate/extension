@@ -114,3 +114,27 @@ export interface DetailItemProps {
 export interface AudioPlayerProps {
   audioUrl: string | undefined;
 }
+
+export interface FilterState {
+  collections: boolean;
+  nft: boolean;
+  unique: boolean;
+  kusama: boolean;
+  polkadot: boolean;
+}
+
+export interface FilterAction {
+  filter: keyof FilterState;
+}
+
+export interface SortState {
+  // newest: boolean;
+  // oldest: boolean;
+  lowPrice: boolean;
+  highPrice: boolean;
+}
+
+export interface SortAction {
+  enable: keyof SortState;
+  unable: keyof SortState;
+}

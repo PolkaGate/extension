@@ -109,10 +109,11 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           cursor: 'pointer',
           flexShrink: 0,
           minWidth: '100px',
+          opacity: isDarkMode ? (visibleContent ? 1 : 0.3) : undefined,
           position: 'relative',
           transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
           transformOrigin: 'top',
-          transition: 'transform 0.2s, box-shadow 0.2s',
+          transition: hideCard ? 'transform 1s, box-shadow 1s, opacity 1s' : 'transform 0.2s, box-shadow 0.2s',
           userSelect: 'none',
           width: 'fit-content'
         }}

@@ -20,7 +20,7 @@ export const EyeIconFullScreen = ({ isHidden, onClick }: { isHidden: boolean | u
   return (
     <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
       <IconButton onClick={onClick} sx={{ height: '20px', ml: '7px', mt: '13px', p: 0, width: '28px' }}>
-        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '15px' }} />
       </IconButton>
     </Infotip>
   );
@@ -66,7 +66,10 @@ function AccountBodyFs ({ address, goToDetails = noop, gridSize }: Props): React
           <ShortAddress2 address={formatted || address} charsCount={40} style={{ fontSize: '10px', fontWeight: 300 }} />
         </Grid>
         <Grid container item width='fit-content'>
-          <OptionalCopyButton address={address} />
+          <OptionalCopyButton
+            address={address}
+            iconWidth={15}
+          />
         </Grid>
       </Grid>
     </Grid>
