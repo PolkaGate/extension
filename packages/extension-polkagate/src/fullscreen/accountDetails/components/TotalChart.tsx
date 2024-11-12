@@ -145,7 +145,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
             skeletonHeight={22}
             withCountUp
           />
-          <Typography sx={{ color: !totalChange ? 'secondary.contrastText' : totalChange > 0 ? 'success.main' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
+          <Typography sx={{ color: !totalChange ? 'secondary.contrastText' : totalChange > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 500, mt: '10px' }}>
             <CountUp
               decimals={countDecimalPlaces(accountBalanceTotalChange) || PORTFOLIO_CHANGE_DECIMAL}
               duration={1}
