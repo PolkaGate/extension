@@ -34,7 +34,7 @@ const findItemDecidingCount = (item: string, decidingCounts: DecidingCount | und
   }
 
   const filtered = decidingCounts.referenda.concat(decidingCounts.fellowship).find(([key]) =>
-    key === item.toLowerCase().replace(' ', '_') ||
+    key === item.toLowerCase().replaceAll(' ', '_') ||
     key === item.toLowerCase());
 
   return filtered?.[1] || 0;

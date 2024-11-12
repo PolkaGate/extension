@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { DecidingCount } from '../../hooks/useDecidingCount';
@@ -20,11 +22,45 @@ import { Delegate } from './delegate';
 interface Props {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
-  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedSubMenu: React.Dispatch<React.SetStateAction<string>>;
   decidingCounts: DecidingCount | undefined;
 }
 
 const MENU_DELAY = 150; // ms
+const TOOLBAR_MENU_ITEM_REFERENDA = 'Referenda' as TopMenu;
+const TOOLBAR_MENU_ITEM_FELLOWSHIP = 'Fellowship' as TopMenu;
+
+interface TopMenuComponentProps {
+  item: TopMenu;
+  onTopMenuMenuMouseEnter: (item: TopMenu) => void;
+  onTopMenuMenuMouseLeave: () => void;
+  bgcolor: string;
+  color: string;
+}
+
+const TopMenuComponent = React.memo(function TopMenuComponent ({ bgcolor, color, item, onTopMenuMenuMouseEnter, onTopMenuMenuMouseLeave }: TopMenuComponentProps): React.ReactElement<{ item: TopMenu }> {
+  return (
+    <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} onMouseLeave={() => onTopMenuMenuMouseLeave()}
+      sx={{
+        bgcolor,
+        color,
+        cursor: 'pointer',
+        height: '46px',
+        mt: '3.5px',
+        px: '5px',
+        width: '150px'
+      }}
+    >
+      <Typography sx={{ display: 'inline-block', fontSize: '20px', fontWeight: 500 }}>
+        {item}
+      </Typography>
+      {item === TOOLBAR_MENU_ITEM_FELLOWSHIP
+        ? <FellowshipIcon sx={{ fontSize: 29, ml: '10px' }} />
+        : <ReferendaIcon sx={{ fontSize: 29, ml: '10px', transform: 'scaleX(-1)' }} />
+      }
+    </Grid>
+  );
+});
 
 export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -66,46 +102,27 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
   const menuTextColor = theme.palette.mode === 'light' ? 'primary.main' : 'text.primary';
   const selectedMenuBgColor = theme.palette.mode === 'light' ? 'background.paper' : 'primary.main';
 
-  function TopMenuComponent ({ item }: { item: TopMenu }): React.ReactElement<{ item: TopMenu }> {
-    return (
-      <Grid
-        alignItems='center'
-        container
-        item
-        justifyContent='center'
-        // eslint-disable-next-line react/jsx-no-bind
-        onMouseEnter={() => onTopMenuMenuMouseEnter(item)}
-        // eslint-disable-next-line react/jsx-no-bind
-        onMouseLeave={() => onTopMenuMenuMouseLeave()}
-        sx={{
-          bgcolor: hoveredTopMenu === item.toLowerCase() ? selectedMenuBgColor : menuBgColor,
-          color: hoveredTopMenu === item.toLowerCase() ? menuTextColor : 'white',
-          cursor: 'pointer',
-          height: '46px',
-          mt: '3.5px',
-          px: '5px',
-          width: '150px'
-        }}>
-        <Typography sx={{ display: 'inline-block', fontSize: '20px', fontWeight: 500 }}>
-          {item}
-        </Typography>
-        {item === 'Fellowship'
-          ? <FellowshipIcon sx={{ fontSize: 29, ml: '10px' }} />
-          : <ReferendaIcon sx={{ fontSize: 29, ml: '10px', transform: 'scaleX(-1)' }} />
-        }
-      </Grid>
-    );
-  }
-
   return (
     <>
-      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderTop: 1, borderColor: theme.palette.mode === 'dark' ? 'primary.main' : undefined, height: '51.5px', color: 'text.secondary', fontSize: '20px', fontWeight: 500, minWidth: '810px' }}>
+      <Grid container id='menu' sx={{ bgcolor: theme.palette.mode === 'light' ? 'primary.main' : 'background.paper', borderBottom: 1, borderColor: theme.palette.mode === 'dark' ? 'primary.main' : undefined, borderTop: 1, color: 'text.secondary', fontSize: '20px', fontWeight: 500, height: '51.5px', minWidth: '810px' }}>
         <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
           <Grid alignItems='center' container justifyContent='space-between'>
             <ClickAwayListener onClickAway={handleClickAway}>
               <Grid alignItems='flex-end' container item justifyContent='flex-start' xs={6}>
-                <TopMenuComponent item={'Referenda'} />
-                <TopMenuComponent item={'Fellowship'} />
+                <TopMenuComponent
+                  bgcolor={hoveredTopMenu === TOOLBAR_MENU_ITEM_REFERENDA.toLowerCase() ? selectedMenuBgColor : menuBgColor}
+                  color={hoveredTopMenu === TOOLBAR_MENU_ITEM_REFERENDA.toLowerCase() ? menuTextColor : 'white'}
+                  item={TOOLBAR_MENU_ITEM_REFERENDA}
+                  onTopMenuMenuMouseEnter={onTopMenuMenuMouseEnter}
+                  onTopMenuMenuMouseLeave={onTopMenuMenuMouseLeave}
+                />
+                <TopMenuComponent
+                  bgcolor={hoveredTopMenu === TOOLBAR_MENU_ITEM_FELLOWSHIP.toLowerCase() ? selectedMenuBgColor : menuBgColor}
+                  color={hoveredTopMenu === TOOLBAR_MENU_ITEM_FELLOWSHIP.toLowerCase() ? menuTextColor : 'white'}
+                  item={TOOLBAR_MENU_ITEM_FELLOWSHIP}
+                  onTopMenuMenuMouseEnter={onTopMenuMenuMouseEnter}
+                  onTopMenuMenuMouseLeave={onTopMenuMenuMouseLeave}
+                />
               </Grid>
             </ClickAwayListener>
             <Grid container item justifyContent='flex-end' xs={6}>
