@@ -166,7 +166,7 @@ export default function Index (): React.ReactElement {
   }, [address, history]);
 
   const ToBeReleased = () => (
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '2px', width: '95%' }}>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.light', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '2px', width: '95%' }}>
       <Grid item pt='10px' xs={12}>
         {t('To be released')}
       </Grid>
@@ -311,7 +311,7 @@ export default function Index (): React.ReactElement {
           }
         </Grid>
       </Container>
-      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
+      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.light', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '2px', width: '92%' }}>
         <HorizontalMenuItem
           divider
           icon={
