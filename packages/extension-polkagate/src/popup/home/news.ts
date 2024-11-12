@@ -12,9 +12,10 @@ export const news: News[] = [
   {
     version: '0.23.0',
     notes: [
-      'Support for NFTS: View your account’s NFTs and their details',
+      'Support for NFTs: View the details of your account’s NFTs',
       'Set Conviction with the Slider: Easily set convictions in governance using the slider.',
-      'View Portfolio Price Change: Display the portfolio’s price change over the last 24 hours with an engaging count-up effect.'
+      'View Portfolio Price Change: Display the portfolio’s price change over the last 24 hours with an engaging count-up effect.',
+      'View Governance History: In addition to transfer and staking histories, governance histories for supported chains are now available on the history page.'
     ]
   },
   {
