@@ -45,7 +45,7 @@ interface MenuItemProps {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MenuItem = React.memo(function MenuItem ({ address, borderWidth = '2px', clickable = true, decidingCounts, fontWeight, icon, item, setMenuOpen, setSelectedSubMenu, top = false, width = '18%' }: MenuItemProps): React.ReactElement {
+export const ToolbarMenuItem = React.memo(function ToolbarMenuItem ({ address, borderWidth = '2px', clickable = true, decidingCounts, fontWeight, icon, item, setMenuOpen, setSelectedSubMenu, top = false, width = '18%' }: MenuItemProps): React.ReactElement {
   const theme = useTheme();
   const history = useHistory();
 
@@ -100,7 +100,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
   return (
     <Grid alignItems='flex-start' container item justifyContent='center' onMouseLeave={onMouseLeave} sx={{ bgcolor: 'background.paper', borderBottom: 2, borderColor: theme.palette.mode === 'dark' ? 'primary.main' : 'background.paper', borderTop: 2, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', position: 'absolute', py: '15px', zIndex: 10 }}>
       <Grid alignItems='flex-start' container item justifyContent='center' sx={{ maxWidth: `calc(${MAX_WIDTH} + 50px)` }}>
-        <MenuItem
+        <ToolbarMenuItem
           address={address}
           decidingCounts={decidingCounts}
           fontWeight={500}
@@ -112,7 +112,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
           width='7%'
         />
         <Grid container item sx={{ width: '13%' }}>
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             decidingCounts={decidingCounts}
             fontWeight={500}
@@ -123,7 +123,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             top
             width='100%'
           />
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             borderWidth='1px'
             decidingCounts={decidingCounts}
@@ -134,7 +134,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
           />
         </Grid>
         <Grid container item sx={{ width: '16%' }}>
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             clickable={false}
             decidingCounts={decidingCounts}
@@ -146,7 +146,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             top
             width='100%'
           />
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             borderWidth='1px'
             decidingCounts={decidingCounts}
@@ -155,7 +155,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             setSelectedSubMenu={setSelectedSubMenu}
             width='100%'
           />
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             borderWidth='2px'
             decidingCounts={decidingCounts}
@@ -166,7 +166,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
           />
         </Grid>
         <Grid container item sx={{ width: '23%' }}>
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             clickable={false}
             decidingCounts={decidingCounts}
@@ -179,7 +179,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             width='100%'
           />
           <Grid container item xs={6}>
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -188,7 +188,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
               setSelectedSubMenu={setSelectedSubMenu}
               width='100%'
             />
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -199,7 +199,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             />
           </Grid>
           <Grid container item xs={6}>
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -208,7 +208,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
               setSelectedSubMenu={setSelectedSubMenu}
               width='100%'
             />
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='2px'
               decidingCounts={decidingCounts}
@@ -220,7 +220,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
           </Grid>
         </Grid>
         <Grid container item sx={{ width: '38%' }}>
-          <MenuItem
+          <ToolbarMenuItem
             address={address}
             clickable={false}
             decidingCounts={decidingCounts}
@@ -233,7 +233,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             width='100%'
           />
           <Grid container item xs={3.5}>
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -242,7 +242,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
               setSelectedSubMenu={setSelectedSubMenu}
               width='100%'
             />
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -253,7 +253,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             />
           </Grid>
           <Grid container item xs={4.5}>
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -262,7 +262,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
               setSelectedSubMenu={setSelectedSubMenu}
               width='100%'
             />
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -273,7 +273,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
             />
           </Grid>
           <Grid container item xs={4}>
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='1px'
               decidingCounts={decidingCounts}
@@ -282,7 +282,7 @@ export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, s
               setSelectedSubMenu={setSelectedSubMenu}
               width='100%'
             />
-            <MenuItem
+            <ToolbarMenuItem
               address={address}
               borderWidth='2px'
               decidingCounts={decidingCounts}
