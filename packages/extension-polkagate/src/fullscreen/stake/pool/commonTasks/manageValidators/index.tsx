@@ -7,7 +7,7 @@
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { StakingInputs } from '../../../type';
 
-import { faHand } from '@fortawesome/free-solid-svg-icons';
+import { faHandDots } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -54,7 +54,7 @@ export default function ManageValidators (): React.ReactElement {
         <Bread />
         <Title
           height='100px'
-          icon={faHand}
+          icon={faHandDots}
           text={t('Manage Pool Validators')}
         />
         <Grid alignItems='center' container item justifyContent='flex-start'>

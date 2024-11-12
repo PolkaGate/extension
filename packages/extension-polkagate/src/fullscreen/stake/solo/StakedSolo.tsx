@@ -78,7 +78,7 @@ export default function StakedSolo ({ balances, refresh, setRefresh, setShow, st
       <Bread />
       <Title
         height='70px'
-        logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '60px' }} />}
+        logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '50px' }} />}
         ml='-20px'
         padding='0px'
         spacing={0}

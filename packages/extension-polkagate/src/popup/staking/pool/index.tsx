@@ -6,7 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHandDots, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -356,7 +356,7 @@ export default function Index(): React.ReactElement {
             <FontAwesomeIcon
               bounce={staked !== undefined && !staked.isZero() && (pool?.bondedPool?.state as unknown as string) !== 'Destroying' && pool?.stashIdAccount?.nominators?.length === 0} // do when has stake but does not nominations
               color={`${theme.palette.text.primary}`}
-              icon={faHand}
+              icon={faHandDots}
               size='lg'
             />
           }

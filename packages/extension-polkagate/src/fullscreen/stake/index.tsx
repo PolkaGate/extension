@@ -113,9 +113,9 @@ export default function StakingOptions (): React.ReactElement {
           }
           logo={
             poolSteps.includes(step)
-              ? <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
+              ? <PoolStakingIcon color={theme.palette.text.primary} height={50} width={50} />
               : [STEPS.STAKE_SOLO, STEPS.SOLO_REVIEW].includes(step) &&
-              <BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+              <BoyIcon sx={{ color: 'text.primary', fontSize: '50px' }} />}
           ml={generalSteps.includes(step) ? undefined : '-25px'}
           padding='0px'
           text={getHeaderText(txInfo?.success)}

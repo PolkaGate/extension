@@ -166,7 +166,7 @@ export default function AccountDetails (): React.ReactElement {
         <Grid container item sx={{ display: 'block', px: '5%' }}>
           <Bread />
           <Title
-            height='70px'
+            height='60px'
             icon={faFileInvoice}
             padding='0px'
             text={t('Account Details')}

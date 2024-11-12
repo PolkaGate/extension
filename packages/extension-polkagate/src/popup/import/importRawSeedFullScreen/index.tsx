@@ -12,6 +12,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { keyring } from '@polkadot/ui-keyring';
@@ -150,16 +151,13 @@ export default function ImportRawSeed (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:book-dollar' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Import from raw seed')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Title
+            height='100px'
+            logo={
+              <VaadinIcon icon='vaadin:book-dollar' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            }
+            text= {t('Import from raw seed')}
+          />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('Enter your account\'s raw seed to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
           </Typography>

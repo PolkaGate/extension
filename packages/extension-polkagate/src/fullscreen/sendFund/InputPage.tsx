@@ -77,14 +77,14 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
           <FontAwesomeIcon
             color={theme.palette.text.primary}
             icon={icon}
-            size='2xl'
+            size='xl'
             style={{ paddingBottom: '5px' }}
           />
         }
         {logo as any}
       </Grid>
       <Grid item>
-        <Typography fontSize='30px' fontWeight={700}>
+        <Typography fontSize='24px' fontWeight={700}>
           {text}
         </Typography>
       </Grid>

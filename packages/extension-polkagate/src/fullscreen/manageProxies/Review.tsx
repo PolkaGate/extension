@@ -152,7 +152,7 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
     <Grid container item>
       <Title
         logo={
-          <VaadinIcon icon='vaadin:sitemap' style={{ fontSize: '25px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ fontSize: '20px', color: `${theme.palette.text.primary}` }} />
         }
         text={
           [STEPS.REVIEW, STEPS.PROXY, STEPS.SIGN_QR].includes(step)

@@ -89,7 +89,7 @@ function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactEl
           <MenuItem
             fontSize='17px'
             iconComponent={
-              <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${theme.palette.text.primary}`, transform: 'rotate(180deg)' }} />
+              <VaadinIcon icon='vaadin:cluster' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
             }
             onClick={onImportProxied}
             py='4px'

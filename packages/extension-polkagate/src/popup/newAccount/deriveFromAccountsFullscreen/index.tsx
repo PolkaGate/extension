@@ -149,7 +149,7 @@ function DeriveFromAccounts(): React.ReactElement {
           <Title
             height='70px'
             logo={
-              <VaadinIcon icon='vaadin:road-branch' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
+              <VaadinIcon icon='vaadin:road-branch' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
             }
             padding='0px'
             text={t('Derive from accounts')}
