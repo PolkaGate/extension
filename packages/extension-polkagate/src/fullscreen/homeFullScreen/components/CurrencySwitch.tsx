@@ -1,8 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { CurrencyItemType } from '../partials/Currency';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Collapse, Grid, useTheme } from '@mui/material';
@@ -12,16 +13,17 @@ import { CurrencyContext, InputFilter } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import { CURRENCY_LIST } from '../../../util/currencyList';
-import { CurrencyItemType } from '../partials/Currency';
 import CurrencyItem from './CurrencyItem';
 
 interface Props {
   anchorEl: HTMLButtonElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
-  setCurrencyToShow: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setCurrencyToShow: React.Dispatch<React.SetStateAction<CurrencyItemType | undefined>>;
 }
 
-function CurrencySwitch({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
+const DEFAULT_CURRENCIES_TO_SHOW = 6;
+
+function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { setCurrency } = useContext(CurrencyContext);
@@ -40,7 +42,7 @@ function CurrencySwitch({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Re
   const changeCurrency = useCallback((currency: CurrencyItemType) => {
     setAnchorEl(null);
     setCurrency(currency);
-    setCurrencyToShow(currency.sign);
+    setCurrencyToShow(currency);
     setStorage('currency', currency).catch(console.error);
   }, [setAnchorEl, setCurrency, setCurrencyToShow]);
 
@@ -67,14 +69,14 @@ function CurrencySwitch({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Re
 
   return (
     <Grid container item sx={{ maxHeight: '550px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '230px' }}>
-      {[...CURRENCY_LIST.slice(0, 3)].map((item, index) => (
+      {[...CURRENCY_LIST.slice(0, DEFAULT_CURRENCIES_TO_SHOW)].map((item, index) => (
         <CurrencyItem
           currency={item}
           key={index}
           onclick={changeCurrency}
         />
       ))}
-      <Grid container item onClick={onOtherCurrencies} sx={{ bgcolor: 'secondary.main', borderRadius: '5px', cursor: 'pointer' }}>
+      <Grid container item onClick={onOtherCurrencies} sx={{ bgcolor: 'secondary.light', borderRadius: '5px', cursor: 'pointer' }}>
         <ArrowForwardIosRoundedIcon
           sx={{
             color: 'background.default',
@@ -97,7 +99,7 @@ function CurrencySwitch({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Re
             value={searchKeyword ?? ''}
           />
         </Grid>
-        {[...(searchedCurrency ?? CURRENCY_LIST.slice(3))].map((item, index) => (
+        {[...(searchedCurrency ?? CURRENCY_LIST.slice(DEFAULT_CURRENCIES_TO_SHOW))].map((item, index) => (
           <CurrencyItem
             currency={item}
             key={index}

@@ -70,7 +70,7 @@ export default function useStakingAccount(address: AccountId | string | undefine
     temp.rewardDestination = JSON.parse(JSON.stringify(temp.rewardDestination));
 
     fetchedToken === addressCurrentToken && setStakingInfo({ ...temp, date: Date.now(), decimal: fetchedDecimal, era: Number(era), genesisHash: api.genesisHash.toString() });
-    refresh && setRefresh && setRefresh(false);
+    refresh && setRefresh?.(false);
   }, [addressCurrentToken, api, refresh, setRefresh, stashId]);
 
   useEffect(() => {

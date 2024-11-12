@@ -3,16 +3,30 @@
 
 import type { Severity } from '../util/types';
 
-import { useCallback, useContext } from 'react';
+import { Chance } from 'chance';
+import { useCallback, useContext, useMemo } from 'react';
 
 import { AlertContext } from '../components';
 
-export default function useAlerts () {
-  const { setAlerts } = useContext(AlertContext);
+export const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
 
-  const notify = useCallback((text: string, severity?: Severity) => {
-    setAlerts((prev) => [...prev, { severity: severity || 'info', text }]);
+export default function useAlerts () {
+  const { alerts, setAlerts } = useContext(AlertContext);
+
+  const random = useMemo(() => new Chance(), []);
+
+  const removeAlert = useCallback((idToRemove: string) => {
+    setAlerts((prev) => prev.filter(({ id }) => id !== idToRemove));
   }, [setAlerts]);
 
-  return { notify };
+  const notify = useCallback((text: string, severity?: Severity) => {
+    const id = random.string({ length: 10 });
+
+    setAlerts((prev) => [...prev, { id, severity: severity || 'info', text }]);
+    const timeout = setTimeout(() => removeAlert(id), TIME_TO_REMOVE_ALERT);
+
+    return () => clearTimeout(timeout);
+  }, [random, removeAlert, setAlerts]);
+
+  return { alerts, notify, removeAlert };
 }

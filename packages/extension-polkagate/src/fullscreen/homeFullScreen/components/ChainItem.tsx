@@ -4,13 +4,10 @@
 /* eslint-disable react/jsx-max-props-per-line */
 import type { DropdownOption } from '../../../util/types';
 
-import { Avatar, Grid, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import React from 'react';
 
-import { Switch } from '../../../components';
-import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import getLogo2 from '../../../util/getLogo2';
-import { sanitizeChainName } from '../../../util/utils';
+import { ChainLogo, Switch } from '../../../components';
 
 interface Props {
   onclick: (item: DropdownOption) => void;
@@ -21,21 +18,37 @@ interface Props {
 
 function ChainItem ({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
   const theme = useTheme();
-  const selectedItem = useMemo(() => false, []);
 
   return (
-    <Grid alignItems='center' container justifyContent='space-between' sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, bgcolor: selectedItem ? 'rgba(186, 40, 130, 0.2)' : 'transparent', cursor: 'pointer', height: '45px', opacity: disabled ? 0.3 : 1, px: '15px' }}>
-      <Grid alignItems='center' container item mr='10px' width='fit-content'>
-        <Avatar
-          src={getLogo2(chain.text)?.logo}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(sanitizeChainName(chain.text) || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 25, width: 25, mr: '10px' }}
-          variant='square'
-        />
-        <Typography fontSize='16px' fontWeight={selectedItem ? 500 : 400}>
+    <Grid alignItems='center' container justifyContent='space-between' sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, cursor: 'pointer', height: '45px', opacity: disabled ? 0.3 : 1, px: '15px' }}>
+      <Grid
+        alignItems='center'
+        sx={{
+          display: 'flex',
+          flexGrow: 1,
+          minWidth: 0,
+          mr: '10px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}
+        xs={9}
+      >
+        <ChainLogo chainName={chain.text} genesisHash={chain.value as string} size={25} />
+        <Typography
+          fontSize='16px' fontWeight={isSelected ? 500 : 400}
+          sx={{
+            minWidth: 0,
+            ml: '10px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}
+        >
           {chain.text}
         </Typography>
       </Grid>
-      <Grid alignItems='center' container item width='fit-content'>
+      <Grid container item xs={2}>
         <Switch
           fontSize='17px'
           isChecked={isSelected && !disabled}

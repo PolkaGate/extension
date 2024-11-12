@@ -10,13 +10,15 @@ export type TopMenu = 'Referenda' | 'Fellowship';
 export type Origins = 'root' | 'whitelisted_caller' | 'staking_admin' | 'treasurer' | 'lease_admin' | 'general_admin' | 'auction_admin' | 'referendum_canceller' | 'small_tipper' | 'big_tipper' | 'small_spender' | 'medium_spender' | 'big_spender';
 
 export interface Reply {
+  reply_reactions: Reaction;
   content: string;
-  created_at: Date,
-  id: string,
-  proposer: string,
-  updated_at: Date,
-  user_id: number,
-  username: string
+  created_at: Date;
+  id: string;
+  proposer: string;
+  updated_at: Date;
+  user_id: number;
+  username: string;
+  commentSource?: 'SS' | 'PA'; // SS --> SubSquare, PA --> Polkassembly
 }
 
 interface Reaction {
@@ -31,16 +33,18 @@ interface Reaction {
 }
 
 export interface CommentType {
-  comment_reactions: Reaction,
-  content: string,
-  created_at: Date,
-  id: string,
-  proposer: string,
-  replies: Reply[],
-  sentiment: number,
-  updated_at: Date,
-  user_id: number,
-  username: string
+  comment_reactions: Reaction;
+  content: string;
+  created_at: Date;
+  id: string;
+  proposer: string;
+  replies: Reply[];
+  sentiment: number;
+  updated_at: Date;
+  user_id: number;
+  username: string;
+  votes?: { decision?: 'yes' | 'no' | 'abstain' }[];
+  commentSource?: 'SS' | 'PA'; // SS --> SubSquare, PA --> Polkassembly
 }
 
 export interface ReferendumHistory {

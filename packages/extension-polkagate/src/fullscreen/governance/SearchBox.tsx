@@ -48,8 +48,10 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
+
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [filter, setFilter] = useState<Filter>(JSON.parse(JSON.stringify(DEFAULT_FILTER)) as Filter);
+  const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const statusOptions = useMemo(() => REFERENDA_STATUS.map((status, index) => {
     return {
@@ -57,6 +59,17 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
       value: index
     };
   }), []);
+
+  const applySearchFilter = useCallback((referendaToFilter: LatestReferenda[], keyword: string) => {
+    const filtered = referendaToFilter.filter((r) =>
+      (filter.advanced.refIndex && String(r.post_id) === keyword) ||
+      (filter.advanced.titles && r.title && r.title.toLowerCase().includes(keyword.toLowerCase())) ||
+      (filter.advanced.methods && r.method && r.method.toLowerCase().includes(keyword.toLowerCase())) ||
+      (filter.advanced.proposers && r.proposer === keyword)
+    );
+
+    return filtered;
+  }, [filter.advanced.methods, filter.advanced.proposers, filter.advanced.refIndex, filter.advanced.titles]);
 
   const onAdvanced = useCallback(() => {
     setShowAdvanced(!showAdvanced);
@@ -77,25 +90,8 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
   }, []);
 
   const onSearch = useCallback((keyword: string) => {
-    if (!referenda) {
-      return;
-    }
-
-    if (!keyword) {
-      return setFilteredReferenda([...referenda]);
-    }
-
-    keyword = keyword.trim();
-
-    const _filtered = referenda?.filter((r) =>
-      (filter.advanced.refIndex && String(r.post_id) === keyword) ||
-      (filter.advanced.titles && r.title && r.title.toLowerCase().includes(keyword.toLowerCase())) ||
-      (filter.advanced.methods && r.method && r.method.toLowerCase().includes(keyword.toLowerCase())) ||
-      (filter.advanced.proposers && r.proposer === keyword)
-    );
-
-    setFilteredReferenda([..._filtered]);
-  }, [filter, referenda, setFilteredReferenda]);
+    setSearchKeyword(keyword);
+  }, []);
 
   const onMyReferenda = useCallback(() => {
     filter.myReferenda = !filter.myReferenda;
@@ -126,13 +122,17 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
       filtered = filtered.filter((r) => filter.status.includes(r.status));
     }
 
+    if (searchKeyword) {
+      filtered = applySearchFilter(filtered, searchKeyword);
+    }
+
     // to remove duplicates
     const uniqueFiltered = [...new Set(filtered)];
 
-    const isAnyFilterOn = filter.myReferenda || filter.myVotes || !filter.status.includes('All');
+    const isAnyFilterOn = filter.myReferenda || filter.myVotes || !filter.status.includes('All') || searchKeyword;
 
     setFilteredReferenda(isAnyFilterOn ? uniqueFiltered : referenda);
-  }, [filter, formatted, myVotedReferendaIndexes, referenda, setFilteredReferenda]);
+  }, [applySearchFilter, filter, formatted, myVotedReferendaIndexes, referenda, searchKeyword, setFilteredReferenda]);
 
   const onChangeStatus = useCallback((s: number) => {
     s = String(s) === 'All' ? 0 : s;
@@ -151,7 +151,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
           <InputFilter
             autoFocus={false}
             onChange={onSearch}
-            placeholder={t<string>('🔍 Search in all referenda ')}
+            placeholder={t('🔍 Search in all referenda ')}
             theme={theme}
           // value={searchKeyword ?? ''}
           />
@@ -159,7 +159,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onAdvanced} py='10px' sx={{ cursor: 'pointer' }} width='fit-content'>
           {t('Advanced')}
           <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer', width: '25px' }}>
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
         </Grid>
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' py='10px' width='fit-content'>
@@ -174,7 +174,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
             }
           </Grid>
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }} >
+        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }}>
           <Checkbox2
             checked={filter.myReferenda}
             disabled={!referenda}
@@ -183,7 +183,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
             onChange={onMyReferenda}
           />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }} >
+        <Grid alignItems='center' container item justifyContent='flex-start' py='10px' sx={{ color: theme.palette.mode === 'light' ? 'secondary.main' : 'text.primary', cursor: 'pointer', textDecorationLine: 'underline', width: 'fit-content' }}>
           <Checkbox2
             checked={filter.myVotes}
             disabled={!myVotedReferendaIndexes}
@@ -230,7 +230,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
               onChange={() => onFilter('methods')}
             />
           </Grid>
-          <Grid item onClick={onReset} sx={{ color: 'secondary.light', cursor: 'pointer', textDecorationLine: 'underline', ml: '22px' }}>
+          <Grid item onClick={onReset} sx={{ color: 'secondary.light', cursor: 'pointer', ml: '22px', textDecorationLine: 'underline' }}>
             {t('Reset')}
           </Grid>
         </Grid>

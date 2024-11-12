@@ -3,7 +3,7 @@
 
 import type { Option } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
-//@ts-ignore
+// @ts-ignore
 import type { PalletStakingValidatorPrefs } from '@polkadot/types/lookup';
 import type { AnyJson } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
+import { AUTO_MODE } from '../util/constants';
 import { useCurrentEraIndex, useInfo } from '.';
 
 export interface ExposureOverview {
@@ -104,7 +105,7 @@ export default function useValidators (address: string | undefined, validators?:
     }
 
     const getValidatorsPaged = async (eraIndex: number) => {
-      if (!api) {
+      if (!api || !currentEraIndex) {
         return; // never happens since we check api before, but to suppress linting
       }
 
@@ -151,11 +152,14 @@ export default function useValidators (address: string | undefined, validators?:
       const current: ValidatorInfo[] = [];
       const waiting: ValidatorInfo[] = [];
 
-      Object.keys(validatorPrefs).forEach((v) => {
-        Object.keys(currentEraValidatorsOverview).includes(v)
-          ? current.push(
+      for (const v of Object.keys(validatorPrefs)) {
+        if (Object.keys(currentEraValidatorsOverview).includes(v)) {
+          // const apy = await getValidatorApy(api, v, currentEraValidatorsOverview[v].total, validatorPrefs[v].commission, currentEraIndex);
+
+          current.push(
             {
               accountId: v as unknown as AccountId,
+              // apy,
               exposure: {
                 ...currentEraValidatorsOverview[v],
                 others: currentNominators[v]
@@ -163,8 +167,9 @@ export default function useValidators (address: string | undefined, validators?:
               stashId: v as unknown as AccountId,
               validatorPrefs: validatorPrefs[v]
             } as unknown as ValidatorInfo // types need to be revised!
-          )
-          : waiting.push(
+          );
+        } else {
+          waiting.push(
             {
               accountId: v as unknown as AccountId,
               exposure: {
@@ -176,7 +181,9 @@ export default function useValidators (address: string | undefined, validators?:
               validatorPrefs: validatorPrefs[v]
             } as unknown as ValidatorInfo
           );
-      });
+        }
+      }
+
       const inf = {
         current,
         eraIndex,
@@ -188,7 +195,7 @@ export default function useValidators (address: string | undefined, validators?:
 
     if (api && currentEraIndex && api.query['staking']['erasStakersOverview']) {
       getValidatorsPaged(currentEraIndex).catch(console.error); // TODO: can save paged validators info in local storage
-    } else if (endpoint && chain && currentEraIndex && currentEraIndex !== info?.eraIndex) {
+    } else if (endpoint && endpoint !== AUTO_MODE.value && chain && currentEraIndex && currentEraIndex !== info?.eraIndex) {
       /** get validators info, including current and waiting, should be called after savedValidators gets value */
       getValidatorsInfo(endpoint, info);
     }

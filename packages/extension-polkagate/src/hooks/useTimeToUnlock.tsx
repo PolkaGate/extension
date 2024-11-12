@@ -11,12 +11,11 @@ import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import blockToDate from '../popup/crowdloans/partials/blockToDate';
 import { type Lock } from './useAccountLocks';
-import { useCurrentBlockNumber, useHasDelegated, useInfo, useTranslation } from '.';
+import { useCurrentBlockNumber, useInfo, useTranslation } from '.';
 
-export default function useTimeToUnlock (address: string | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
+export default function useTimeToUnlock (address: string | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
   const { t } = useTranslation();
   const { api, chain, formatted } = useInfo(address);
-  const delegatedBalance = useHasDelegated(address, refresh);
   const currentBlock = useCurrentBlockNumber(address);
 
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
@@ -31,6 +30,15 @@ export default function useTimeToUnlock (address: string | undefined, referendaL
     return maybeFound ? maybeFound.total : BN_ZERO;
   }, []);
 
+  // Reset states when address changes
+  useEffect(() => {
+    setUnlockableAmount(undefined);
+    setLockedInReferenda(undefined);
+    setTotalLocked(undefined);
+    setTimeToUnlock(undefined);
+    setMiscRefLock(undefined);
+  }, [address]);
+
   useEffect(() => {
     if (refresh) {
       setLockedInReferenda(undefined); // TODO: needs double check
@@ -43,6 +51,8 @@ export default function useTimeToUnlock (address: string | undefined, referendaL
   useEffect(() => {
     if (referendaLocks === null) {
       setLockedInReferenda(BN_ZERO);
+      setUnlockableAmount(BN_ZERO);
+      setTotalLocked(BN_ZERO);
       setTimeToUnlock(null);
 
       return;
@@ -50,6 +60,8 @@ export default function useTimeToUnlock (address: string | undefined, referendaL
 
     if (!referendaLocks || !currentBlock) {
       setLockedInReferenda(undefined);
+      setUnlockableAmount(undefined);
+      setTotalLocked(undefined);
       setTimeToUnlock(undefined);
 
       return;
@@ -98,7 +110,8 @@ export default function useTimeToUnlock (address: string | undefined, referendaL
     }
 
     if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
-      const dateString = blockToDate(Number(referendaLocks[indexOfBiggestNotLockable].endBlock), currentBlock);
+      const dateOptions = { day: 'numeric', hour: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
+      const dateString = blockToDate(Number(referendaLocks[indexOfBiggestNotLockable].endBlock), currentBlock, dateOptions);
 
       setUnlockableAmount(BN_ZERO);
 
@@ -115,16 +128,17 @@ export default function useTimeToUnlock (address: string | undefined, referendaL
       return setMiscRefLock(undefined);
     }
 
-    // eslint-disable-next-line no-void
-    void api.query['balances']['locks'](formatted).then((locks) => {
-      const _locks = locks as unknown as PalletBalancesBalanceLock[];
+    api.query['balances']['locks'](formatted)
+      .then((locks) => {
+        const _locks = locks as unknown as PalletBalancesBalanceLock[];
 
-      if (_locks?.length) {
-        const foundRefLock = _locks.find((l) => l.id.toHuman() === 'pyconvot');
+        if (_locks?.length) {
+          const foundRefLock = _locks.find((l) => l.id.toHuman() === 'pyconvot');
 
-        setMiscRefLock(foundRefLock?.amount);
-      }
-    });
+          setMiscRefLock(foundRefLock?.amount);
+        }
+      })
+      .catch(console.error);
   }, [api, chain?.genesisHash, formatted, refresh]);
 
   useEffect(() => {

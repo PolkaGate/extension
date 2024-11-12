@@ -43,46 +43,51 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   return (
     <Infotip text={isHidden ? t('This account is hidden from websites') : t('This account is visible to websites')}>
       <IconButton onClick={toggleVisibility} sx={{ height: '15px', ml: '7px', mt: '13px', p: 0, width: '24px' }}>
-        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '20px' }} />
+        <VaadinIcon icon={isHidden ? 'vaadin:eye-slash' : 'vaadin:eye'} style={{ color: `${theme.palette.secondary.light}`, height: '17px' }} />
       </IconButton>
     </Infotip>
   );
 };
 
-export default function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, menuOnClick: () => void}) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const balances = useBalances(address);
-  const chainName = useChainName(address);
-  const { price, priceChainName, priceDate } = useTokenPrice(address);
 
-  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
-  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]);
-  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
-
-  useEffect(() => {
-    if (balances?.chainName === chainName) {
-      return setBalanceToShow(balances);
-    }
-
-    setBalanceToShow(undefined);
-  }, [balances, chainName]);
-
-  const NoChainAlert = () => (
+  return (
     <>
       {chain === null
         ? <Grid alignItems='center' color='text.primary' container onClick={menuOnClick} sx={{ cursor: 'pointer', lineHeight: '27px', textDecoration: 'underline' }}>
           <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>
             {t('Select a chain to view balance')}
           </Typography>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-1px', stroke: '#BA2882' }} />
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 12, mb: '-1px', stroke: theme.palette.secondary.light }} />
         </Grid>
         : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={'95%'} />
       }
     </>
   );
+};
 
-  const Balance = () => (
+const Price = ({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPriceOutdated: boolean, price: number | undefined, priceChainName: string | undefined, balanceToShow: BalancesInfo | undefined}) => {
+  return (
+    <>
+      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
+        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
+        : <FormatPrice
+          amount={getValue('total', balanceToShow)}
+          decimals={balanceToShow.decimal}
+          fontSize= '18px'
+          fontWeight= { 300}
+          price={price}
+          textColor= {isPriceOutdated ? 'primary.light' : 'text.primary'}
+        />
+      }
+    </>
+  );
+};
+
+const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined}) => {
+  return (
     <>
       {balanceToShow?.decimal
         ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
@@ -97,23 +102,29 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
       }
     </>
   );
+};
 
-  const Price = () => (
-    <>
-      {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
-        ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
-        : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
-          <FormatPrice
-            amount={getValue('total', balanceToShow)}
-            decimals={balanceToShow.decimal}
-            price={price}
-          />
-        </Grid>
-      }
-    </>
-  );
+const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: boolean | undefined}) => {
+  const theme = useTheme();
 
-  const BalanceRow = () => (
+  const balances = useBalances(address);
+  const chainName = useChainName(address);
+
+  const { price, priceChainName, priceDate } = useTokenPrice(address);
+  const isPriceOutdated = useMemo(() => priceDate !== undefined && Date.now() - priceDate > BALANCES_VALIDITY_PERIOD, [priceDate]); 
+  const isBalanceOutdated = useMemo(() => balances && Date.now() - balances.date > BALANCES_VALIDITY_PERIOD, [balances]);
+
+  const [balanceToShow, setBalanceToShow] = useState<BalancesInfo>();
+
+  useEffect(() => {
+    if (balances?.chainName === chainName) {
+      return setBalanceToShow(balances);
+    }
+
+    setBalanceToShow(undefined);
+  }, [balances, chainName]);
+
+  return (
     <Grid alignItems='center' container fontSize='18px' item xs>
       {hideNumbers || hideNumbers === undefined
         ? <Box
@@ -121,25 +132,38 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
           src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
           sx={{ height: '27px', width: '77px' }}
         />
-        : <Balance />
+        : <Balance
+          balanceToShow={balanceToShow}
+          isBalanceOutdated={isBalanceOutdated}
+        />
       }
-      <Divider orientation='vertical' sx={{ backgroundColor: 'text.primary', height: '19px', mx: '5px', my: 'auto' }} />
+      <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />
       {hideNumbers
         ? <Box
           component='img'
           src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
           sx={{ height: '27px', width: '77px' }}
         />
-        : <Price />
+        : <Price
+          balanceToShow={balanceToShow}
+          isPriceOutdated={isPriceOutdated}
+          price={price}
+          priceChainName={priceChainName}
+        />
       }
     </Grid>
   );
+};
+
+function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const chainName = useChainName(address);
 
   return (
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
         <Grid item maxWidth='70%' onClick={goToAccount} sx={{ cursor: 'pointer' }}>
-          <Typography fontSize='28px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+          <Typography fontSize='24px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {identity?.display || name || t('Unknown')}
           </Typography>
         </Grid>
@@ -150,18 +174,26 @@ export default function AccountDetail ({ address, chain, goToAccount, hideNumber
           />
         </Grid>
         <Grid item sx={{ m: '10px 0', width: 'fit-content' }}>
-          <OptionalCopyButton address={address} />
+          <OptionalCopyButton address={address} iconWidth={15} />
         </Grid>
       </Grid>
       <Grid alignItems='center' container item>
         {!chain
-          ? <NoChainAlert />
+          ? <NoChainAlert
+            chain={chain}
+            menuOnClick={menuOnClick}
+          />
           : <Grid alignItems='center' container>
             <RecentChains address={address} chainName={chainName} />
-            <BalanceRow />
+            <BalanceRow
+              address={address}
+              hideNumbers={hideNumbers}
+            />
           </Grid>
         }
       </Grid>
     </Grid>
   );
 }
+
+export default React.memo(AccountDetail);

@@ -9,17 +9,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AccountContext, ActionContext } from '../../components';
 import { useAccountsOrder, useAlerts, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
+import SupportUs from '../governance/SupportUs';
 import HeaderComponents from './components/HeaderComponents';
 import DraggableAccountsList from './partials/DraggableAccountList';
 import HomeMenu from './partials/HomeMenu';
-import ProfileTabs from './partials/ProfileTabs';
+import ProfileTabsFullScreen from './partials/ProfileTabsFullScreen';
 import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
 import WatchList from './partials/WatchList';
 
-export default function HomePageFullScreen (): React.ReactElement {
+function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+
   const onAction = useContext(ActionContext);
   const { notify } = useAlerts();
   const initialAccountList = useAccountsOrder(true);
@@ -52,7 +54,7 @@ export default function HomePageFullScreen (): React.ReactElement {
       />
       <Grid container item sx={{ bgcolor: 'backgroundFL.secondary', maxWidth: '1282px' }}>
         <Grid container display='block' item sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll', pb: '40px' }}>
-          <ProfileTabs
+          <ProfileTabsFullScreen
             orderedAccounts={initialAccountList}
           />
           <Grid container justifyContent='space-around'>
@@ -88,6 +90,9 @@ export default function HomePageFullScreen (): React.ReactElement {
           </Grid>
         </Grid>
       </Grid>
+      <SupportUs />
     </Grid>
   );
 }
+
+export default React.memo(HomePageFullScreen);

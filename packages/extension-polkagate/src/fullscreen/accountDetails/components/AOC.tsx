@@ -13,7 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
-import { DisplayLogo, FormatPrice, ShowBalance } from '../../../components';
+import { AssetLogo, FormatPrice, ShowBalance } from '../../../components';
 import { useApi, useNotifyOnChainChange, usePrices, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
@@ -56,13 +56,13 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
           token={asset.token}
         />
       </Grid>
-      <Grid item sx={{ fontSize: '13px', fontWeight: 400, lineHeight: 1 }}>
-        <FormatPrice
-          amount={total}
-          decimals={asset.decimal}
-          price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
-        />
-      </Grid>
+      <FormatPrice
+        amount={total}
+        decimals={asset.decimal}
+        fontSize='13px'
+        fontWeight={ 400}
+        price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
+      />
     </Grid>
   );
 };
@@ -98,7 +98,7 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
       {_assetToShow
         ? <>
           <Grid alignItems='center' container item mr={logoInfo?.subLogo && '2px'} width='fit-content'>
-            <DisplayLogo assetSize='25px' baseTokenSize='16px' genesisHash={_assetToShow.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            <AssetLogo assetSize='25px' baseTokenSize='16px' genesisHash={_assetToShow.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
           {(mode === 'Detail' || (homeMode && !hideNumbers)) &&
             <BalanceRow
@@ -116,6 +116,8 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
 
 function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const api = useApi(address);
   const pricesInCurrencies = usePrices();
 
@@ -132,6 +134,8 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
       return [undefined, undefined]; // two undefined to show two skeletons
     }
   }, [accountAssets]);
+
+  const shouldShowCursor = useMemo(() => (mode === 'Detail' && accountAssets && accountAssets.length > 5) || (mode !== 'Detail' && accountAssets && accountAssets.length > 6), [accountAssets, mode]);
 
   return (
     <Grid container item>
@@ -157,14 +161,14 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
         </Collapse>
       </Grid>
       {!!accountAssets?.length &&
-        <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: 'pointer', width: '65px' }}>
+        <Grid alignItems='center' container item justifyContent='center' onClick={toggleAssets} sx={{ cursor: shouldShowCursor ? 'pointer' : 'default', width: '65px' }}>
           {mode === 'Detail'
             ? accountAssets.length > 5 &&
             <>
               <Typography fontSize='14px' fontWeight={400} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider', height: 'fit-content', pl: '8px' }}>
                 {showMore ? t('Less') : t('More')}
               </Typography>
-              <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+              <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
             </>
             : accountAssets.length > 6 &&
             <MoreHorizIcon sx={{ color: 'secondary.light', fontSize: '27px' }} />

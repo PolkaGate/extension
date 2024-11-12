@@ -21,7 +21,7 @@ interface AddressInfo {
   endpoint: string | undefined;
   formatted: string | undefined;
   genesisHash: string | undefined;
-  token: string | undefined
+  token: string | undefined;
 }
 
 export default function useInfo (address: AccountId | string | undefined): AddressInfo {
@@ -29,7 +29,7 @@ export default function useInfo (address: AccountId | string | undefined): Addre
   const api = useApi(address);
   const chain = useChain(address);
   const decimal = useDecimal(address);
-  const endpoint = useEndpoint(address);
+  const { endpoint } = useEndpoint(address);
   const formatted = useFormatted(address);
   const token = useToken(address);
 

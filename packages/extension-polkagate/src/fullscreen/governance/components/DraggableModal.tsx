@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Modal, useTheme } from '@mui/material';
@@ -14,9 +13,11 @@ interface Props {
   children: React.ReactElement;
   open: boolean;
   onClose: () => void
+  blurBackdrop?: boolean;
+  px?: number
 }
 
-export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, onClose, open, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ blurBackdrop, children, maxHeight = 740, minHeight = 615, onClose, open, px = 4, width = 500 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -28,12 +29,12 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
   const [modalPosition, setModalPosition] = useState({ x: initialX, y: initialY });
   const [dragStartPosition, setDragStartPosition] = useState({ x: 0, y: 0 });
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = useCallback((e: { clientX: number; clientY: number; }) => {
     setIsDragging(true);
     setDragStartPosition({ x: e.clientX, y: e.clientY });
-  };
+  }, []);
 
-  const _onClose = useCallback((event, reason) => {
+  const _onClose = useCallback((_event: unknown, reason: string) => {
     if (reason && reason === 'backdropClick') {
       return;
     }
@@ -41,27 +42,30 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
     onClose();
   }, [onClose]);
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = useCallback((e: { clientX: number; clientY: number; }) => {
     if (isDragging) {
       const dx = e.clientX - dragStartPosition.x;
       const dy = e.clientY - dragStartPosition.y;
 
       setModalPosition((prevPosition) => ({
         x: prevPosition.x + dx,
-        y: prevPosition.y + dy,
+        y: prevPosition.y + dy
       }));
       setDragStartPosition({ x: e.clientX, y: e.clientY });
     }
   }, [dragStartPosition, isDragging]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   const style = {
+    '&:focus': {
+      outline: 'none' // Remove outline when Box is focused
+    },
     bgcolor: 'background.default',
     border: isDarkMode ? '0.5px solid' : 'none',
-    borderColor: 'secondary.light',
+    borderColor: blurBackdrop ? 'divider' : 'secondary.light',
     borderRadius: '10px',
     boxShadow: 24,
     cursor: isDragging ? 'grabbing' : 'grab',
@@ -71,16 +75,26 @@ export function DraggableModal ({ children, maxHeight = 740, minHeight = 615, on
     pb: 3,
     position: 'absolute',
     pt: 2,
-    px: 4,
+    px,
     top: modalPosition.y,
-    width: `${width}px`,
-    '&:focus': {
-      outline: 'none' // Remove outline when Box is focused
-    }
+    width: `${width}px`
   };
 
   return (
-    <Modal onClose={_onClose} open={open}>
+    <Modal
+      onClose={_onClose}
+      open={open}
+      slotProps={{
+        backdrop: {
+          style: blurBackdrop
+            ? {
+              backdropFilter: 'blur(5px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            }
+            : {}
+        }
+      }}
+    >
       <Box
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

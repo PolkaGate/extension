@@ -1,24 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Option } from '@polkadot/types';
+import type { Perbill } from '@polkadot/types/interfaces';
+import type { MyPoolInfo } from '../../../../../util/types';
+import type { ChangesProps } from '.';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-
-import type { Chain } from '@polkadot/extension-chains/types';
 
 import CollapseIt from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool/editPool/CollapseIt';
 import getAllAddresses from '@polkadot/extension-polkagate/src/util/getAllAddresses';
 
 import { AccountContext, AddressInput, AutoResizeTextarea, ButtonWithCancel, Input, ShowValue } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
-import type { MyPoolInfo } from '../../../../../util/types';
 import { STEPS } from '../../stake';
-import { ChangesProps } from '.';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -30,7 +30,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function Edit({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
+export default function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);
@@ -38,10 +38,11 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
   const poolName = pool?.metadata;
   const poolRoles = pool?.bondedPool?.roles;
   const depositorAddress = pool?.bondedPool?.roles?.depositor?.toString();
-
+  //@ts-ignore
   const maybeCommissionPayee = pool?.bondedPool?.commission?.current?.[1]?.toString() as string | undefined;
-  const mayBeCommission = (pool?.bondedPool?.commission?.current?.[0] || 0) as number;
-  const commissionValue = Number(mayBeCommission) / (10 ** 7) < 1 ? 0 : Number(mayBeCommission) / (10 ** 7);
+  //@ts-ignore
+  const maybeCommission = (pool?.bondedPool?.commission?.current?.[0] || 0) as number;
+  const commissionValue = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
   const [newPoolName, setNewPoolName] = useState<string>();
   const [newRootAddress, setNewRootAddress] = useState<string | null | undefined>();
@@ -50,7 +51,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
   const [collapsedName, setCollapsed] = useState<string | undefined>();
   const [newCommissionPayee, setNewCommissionPayee] = useState<string | null | undefined>();
   const [newCommissionValue, setNewCommissionValue] = useState<number | undefined>();
-  const [maxCommission, setMaxCommission] = useState<number | undefined>();
+  const [maxCommission, setMaxCommission] = useState<Perbill | undefined>();
 
   const open = useCallback((title: string) => {
     setCollapsed(title === collapsedName ? undefined : title);
@@ -72,27 +73,29 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
   useEffect(() => {
     setChanges({
       commission: {
-        payee: getChangedValue(newCommissionPayee, maybeCommissionPayee),
-        value: (newCommissionPayee || maybeCommissionPayee) ? getChangedValue(newCommissionValue, commissionValue) : undefined
+        payee: getChangedValue(newCommissionPayee, maybeCommissionPayee) as string,
+        value: (newCommissionPayee || maybeCommissionPayee) ? getChangedValue(newCommissionValue, commissionValue) as number : undefined
       },
-      newPoolName: getChangedValue(newPoolName, poolName),
+      newPoolName: getChangedValue(newPoolName, poolName) as string,
       newRoles: {
-        newBouncer: getChangedValue(newBouncerAddress, poolRoles?.bouncer?.toString()),
-        newNominator: getChangedValue(newNominatorAddress, poolRoles?.nominator?.toString()),
-        newRoot: getChangedValue(newRootAddress, poolRoles?.root?.toString())
+        newBouncer: getChangedValue(newBouncerAddress, poolRoles?.bouncer?.toString()) as string,
+        newNominator: getChangedValue(newNominatorAddress, poolRoles?.nominator?.toString()) as string,
+        newRoot: getChangedValue(newRootAddress, poolRoles?.root?.toString()) as string
       }
     });
   }, [commissionValue, maybeCommissionPayee, poolName, poolRoles, newBouncerAddress, newCommissionPayee, newCommissionValue, newNominatorAddress, newPoolName, newRootAddress, setChanges]);
 
   useEffect(() => {
-    api && api.query.nominationPools.globalMaxCommission().then((res: Option) => {
+    api?.query['nominationPools']['globalMaxCommission']().then((maybeResponse) => {
+      const res = maybeResponse as Option<Perbill>;
+
       if (res.isSome) {
         setMaxCommission(res.unwrap());
       }
-    });
+    }).catch(console.error);
   }, [api]);
 
-  const getChangedValue = (newValue: string | number | null | undefined, oldValue: number | string | null | undefined): undefined | null | string => {
+  const getChangedValue = (newValue: string | number | null | undefined, oldValue: number | string | null | undefined): undefined | null | string | number => {
     if ((newValue === null || newValue === undefined) && oldValue) {
       return null;
     }
@@ -120,7 +123,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
     return value === undefined;
   });
 
-  const onNewCommission = useCallback((e) => {
+  const onNewCommission = useCallback((e: { target: { value: any; }; }) => {
     const value = Number(e.target.value);
 
     if (value !== commissionValue) {
@@ -144,7 +147,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
         <>
           <AddressInput
             address={depositorAddress}
-            chain={chain as any}
+            chain={chain}
             disabled
             label={'Depositor'}
             showIdenticon
@@ -156,7 +159,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newRootAddress}
             allAddresses={allAddresses}
-            chain={chain as any}
+            chain={chain}
             label={'Root'}
             setAddress={setNewRootAddress}
             showIdenticon
@@ -168,7 +171,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newNominatorAddress}
             allAddresses={allAddresses}
-            chain={chain as any}
+            chain={chain}
             label={t('Nominator')}
             setAddress={setNewNominatorAddress}
             showIdenticon
@@ -180,7 +183,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newBouncerAddress}
             allAddresses={allAddresses}
-            chain={chain as any}
+            chain={chain}
             label={t('Bouncer')}
             setAddress={setNewBouncerAddress}
             showIdenticon
@@ -233,7 +236,7 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
           <AddressInput
             address={newCommissionPayee}
             allAddresses={allAddresses}
-            chain={chain as any}
+            chain={chain}
             label={t('Payee')}
             setAddress={setNewCommissionPayee}
             showIdenticon

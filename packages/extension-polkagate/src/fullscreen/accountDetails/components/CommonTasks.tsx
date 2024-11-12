@@ -6,7 +6,7 @@
 import type { BalancesInfo } from 'extension-polkagate/src/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
-import { faCoins, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faGem, faHistory, faPaperPlane, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, Boy as BoyIcon, QrCode2 as QrCodeIcon } from '@mui/icons-material';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -23,22 +23,23 @@ import { popupNumbers } from '..';
 
 interface Props {
   address: string | undefined;
-  assetId: number | undefined;
+  assetId: number | string | undefined;
   balance: BalancesInfo | FetchedBalance | undefined;
   genesisHash: string | null | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 interface TaskButtonProps {
+  disabled?: boolean;
+  dividerWidth?: string;
   icon: React.JSX.Element;
-  text: string;
+  loading?: boolean;
+  mr?: string;
+  noBorderButton?: boolean;
   onClick: () => void;
   secondaryIconType: 'popup' | 'page';
-  noBorderButton?: boolean;
-  disabled?: boolean;
+  text: string;
   show?: boolean;
-  mr?: string;
-  loading?: boolean;
 }
 
 export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): void => {
@@ -54,7 +55,6 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
           return tab.url === tabUrl;
         });
 
-
         if (existingTab?.id) {
           chrome.tabs.update(existingTab.id, { active: true }).catch(console.error);
         } else {
@@ -69,7 +69,7 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
   });
 };
 
-export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
+export const TaskButton = ({ disabled, dividerWidth = '66%', icon, loading, mr = '25px', noBorderButton = false, onClick, secondaryIconType, show = true, text }: TaskButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -99,7 +99,8 @@ export const TaskButton = ({ disabled, icon, loading, mr = '25px', noBorderButto
               />
             }
           </Grid>
-          {!noBorderButton && <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: '85%' }} />
+          {!noBorderButton &&
+           <Divider sx={{ bgcolor: 'divider', height: '2px', justifySelf: 'flex-end', m: '5px 15px', width: dividerWidth }} />
           }
         </>
       }
@@ -134,7 +135,7 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
 
   const goToSend = useCallback(() => {
     address && genesisHash &&
-      openOrFocusTab(`/send/${address}/${assetId || ''}`, true);
+      openOrFocusTab(`/send/${address}/${assetId}`, true);
   }, [address, assetId, genesisHash]);
 
   const goToReceive = useCallback(() => {
@@ -158,6 +159,10 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
   const goToPoolStaking = useCallback(() => {
     address && !stakingDisabled && openOrFocusTab(`/poolfs/${address}/`);
   }, [address, stakingDisabled]);
+
+  const onNFTAlbum = useCallback(() => {
+    address && openOrFocusTab(`/nft/${address}`);
+  }, [address]);
 
   const goToHistory = useCallback(() => {
     address && genesisHash && setDisplayPopup(popupNumbers.HISTORY);
@@ -249,6 +254,19 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
           secondaryIconType='page'
           show={(hasSoloStake || hasPoolStake) && !stakingDisabled}
           text={t('Stake in Pool')}
+        />
+        <TaskButton
+          disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+          icon={
+            <FontAwesomeIcon
+              color={theme.palette.text.primary}
+              fontSize='28px'
+              icon={faGem}
+            />
+          }
+          onClick={onNFTAlbum}
+          secondaryIconType='page'
+          text={t('NFT album')}
         />
         <TaskButton
           disabled={!genesisHash}

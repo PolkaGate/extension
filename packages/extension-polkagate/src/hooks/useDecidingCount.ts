@@ -1,20 +1,23 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { u32 } from '@polkadot/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import useApi from './useApi';
-import useChain from './useChain';
+import useInfo from './useInfo';
 import useTracks from './useTracks';
 
 export type Count = [string, number];
 
-export type DecidingCount = { referenda: Count[]; fellowship: Count[]; };
+export interface DecidingCount {
+  referenda: Count[];
+  fellowship: Count[];
+}
 
-export default function useDecidingCount(address: string | undefined): DecidingCount | undefined {
-  const api = useApi(address);
-  const chain = useChain(address);
+export default function useDecidingCount (address: string | undefined): DecidingCount | undefined {
+  const { api, chain } = useInfo(address);
+
   const { fellowshipTracks, tracks } = useTracks(address);
 
   const [counts, setCounts] = useState<DecidingCount | undefined>(undefined);
@@ -22,7 +25,7 @@ export default function useDecidingCount(address: string | undefined): DecidingC
   const fellowshipTrackIds = useMemo(() => fellowshipTracks?.map(([id, { name }]) => [id, name]), [fellowshipTracks]);
 
   useEffect(() => {
-    async function fetchDecidingCounts() {
+    async function fetchDecidingCounts () {
       if ((!trackIds && !fellowshipTrackIds) || !api) {
         return;
       }
@@ -30,36 +33,38 @@ export default function useDecidingCount(address: string | undefined): DecidingC
       try {
         let allCount = 0;
         const fellowshipDecidingCounts: Count[] = [];
-        let decidingCounts;
+        let decidingCounts: Count[] = [];
         let fellowshipCounts;
 
         if (trackIds) {
-          const counts = await Promise.all(trackIds.map(([id]) => api.query.referenda.decidingCount(id)));
+          const counts = await Promise.all(trackIds.map(([id]) => api.query['referenda']['decidingCount'](id))) as unknown as u32[];
 
-          decidingCounts = counts.map((count, index): Count => {
-            if (!['whitelisted_caller', 'fellowship_admin'].includes(trackIds[index][1])) {
-              allCount += count.toNumber();
+          decidingCounts = counts.map((count, index) => {
+            const _count = count.toNumber();
+
+            if (!['whitelisted_caller', 'fellowship_admin'].includes(trackIds[index][1] as unknown as string)) {
+              allCount += _count;
             } else {
-              fellowshipDecidingCounts.push([String(trackIds[index][1]), count.toNumber() as number]);
+              fellowshipDecidingCounts.push([String(trackIds[index][1]), _count]);
             }
 
-            return [String(trackIds[index][1]), count.toNumber() as number];
+            return [String(trackIds[index][1]), _count];
           });
 
           decidingCounts.push(['all', allCount]);
         }
 
-        if (fellowshipTrackIds) {
-          fellowshipCounts = await Promise.all(fellowshipTracks.map(([id]) => api.query.fellowshipReferenda.decidingCount(id)));
+        if (fellowshipTrackIds && fellowshipTracks) {
+          fellowshipCounts = await Promise.all(fellowshipTracks.map(([id]) => api.query['fellowshipReferenda']['decidingCount'](id))) as unknown as u32[];
 
           allCount = 0;
-          const Counts = fellowshipCounts.map((c, index): Count => {
+          const counts = fellowshipCounts.map((c, index) => {
             allCount += c.toNumber();
 
-            return [String(fellowshipTrackIds[index][1]), c.toNumber() as number];
+            return [String(fellowshipTrackIds[index][1]), c.toNumber()] as [string, number];
           });
 
-          fellowshipDecidingCounts.push(...Counts);
+          fellowshipDecidingCounts.push(...counts);
           fellowshipDecidingCounts.push(['all', allCount]);
         }
 
@@ -75,7 +80,7 @@ export default function useDecidingCount(address: string | undefined): DecidingC
       return;
     }
 
-    fetchDecidingCounts();
+    fetchDecidingCounts().catch(console.error);
   }, [api, chain?.genesisHash, fellowshipTrackIds, fellowshipTracks, trackIds]);
 
   return counts;

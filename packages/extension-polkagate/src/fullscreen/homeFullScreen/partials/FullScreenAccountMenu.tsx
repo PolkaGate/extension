@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
+import { faAddressCard, faGem } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -20,13 +20,11 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
-  : {
-    address: string | undefined,
-    handleClose: () => void,
-    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>,
-    setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
-  }) => {
+const Menus = ({ address, handleClose, setDisplayPopup }: {
+  address: string | undefined,
+  handleClose: () => void,
+  setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>,
+}) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -66,6 +64,10 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && onAction(`/nft/${address}`);
+  }, [address, onAction]);
+
   const isDisable = useCallback((supportedChains: string[]) => {
     if (!chain) {
       return true;
@@ -73,6 +75,8 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       return !supportedChains.includes(chain.genesisHash ?? '');
     }
   }, [chain]);
+
+  const vaadinIconStyle = { color: `${theme.palette.text.primary}`, height: '20px' };
 
   return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
@@ -92,10 +96,10 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       <MenuItem
         disabled={isDisable(PROXY_CHAINS)}
         iconComponent={
-          <VaadinIcon icon='vaadin:sitemap' style={{ height: '20px', color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onManageProxies}
-        text={t<string>('Manage proxies')}
+        text={t('Manage proxies')}
         withHoverEffect
       />
       <MenuItem
@@ -114,15 +118,28 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
         text={t('Social recovery')}
         withHoverEffect
       />
+      <MenuItem
+        disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+        iconComponent={
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            fontSize='20px'
+            icon={faGem}
+          />
+        }
+        onClick={onNFTAlbum}
+        text={t('NFT album')}
+        withHoverEffect
+      />
       <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
       <ProfileMenu
         address={address}
-        setUpperAnchorEl={setAnchorEl}
+        closeParentMenu={handleClose}
       />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:download-alt' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={vaadinIconStyle} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -132,7 +149,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:road-branch' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={vaadinIconStyle} />
           }
           onClick={goToDeriveAcc}
           text={t('Derive new account')}
@@ -141,7 +158,7 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       }
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:edit' style={{ height: '20px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={vaadinIconStyle} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -149,17 +166,17 @@ const Menus = ({ address, handleClose, setAnchorEl, setDisplayPopup }
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
+          <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
         withHoverEffect
       />
     </Grid>
-  )
+  );
 };
 
-function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -200,9 +217,8 @@ function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props):
       >
         <Menus
           address={address}
-          setDisplayPopup={setDisplayPopup}
           handleClose={handleClose}
-          setAnchorEl={setAnchorEl}
+          setDisplayPopup={setDisplayPopup}
         />
       </Popover>
     </>

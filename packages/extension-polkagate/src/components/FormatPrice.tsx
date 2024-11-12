@@ -3,33 +3,43 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Grid, Skeleton } from '@mui/material';
+import { Grid, Skeleton, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
+import CountUp from 'react-countup';
 
 import { useCurrency } from '../hooks';
-import { amountToHuman } from '../util/utils';
+import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
+import { amountToHuman, fixFloatingPoint } from '../util/utils';
 
 interface Props {
   amount?: BN | null;
   decimalPoint?: number;
   decimals?: number;
+  commify?: boolean;
+  fontSize?: string;
+  fontWeight?: number;
+  lineHeight?: number;
+  mt?: string;
   num?: number | string;
   price?: number | null,
-  textAlign?: 'left' | 'right';
-  width?: string;
-  mt?: string;
+  sign?: string;
   skeletonHeight?: number;
+  textAlign?: 'left' | 'right';
+  textColor?: string;
+  height?: number;
+  width?: string;
+  withCountUp?: boolean;
 }
 
 export function nFormatter (num: number, decimalPoint: number) {
   const lookup = [
-    { value: 1, symbol: '' },
-    { value: 1e3, symbol: 'k' },
-    { value: 1e6, symbol: 'M' },
-    { value: 1e9, symbol: 'G' },
-    { value: 1e12, symbol: 'T' },
-    { value: 1e15, symbol: 'P' },
-    { value: 1e18, symbol: 'E' }
+    { symbol: '', value: 1 },
+    { symbol: 'k', value: 1e3 },
+    { symbol: 'M', value: 1e6 },
+    { symbol: 'G', value: 1e9 },
+    { symbol: 'T', value: 1e12 },
+    { symbol: 'P', value: 1e15 },
+    { symbol: 'E', value: 1e18 }
   ];
 
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
@@ -44,11 +54,13 @@ export function nFormatter (num: number, decimalPoint: number) {
   return item ? (num / item.value).toFixed(decimalPoint).replace(rx, '$1') + item.symbol : '0';
 }
 
-function FormatPrice ({ amount, decimalPoint = 2, decimals, mt = '0px', num, price, skeletonHeight = 15, textAlign = 'left', width = '90px' }: Props): React.ReactElement<Props> {
+const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
+
+function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
 
   const total = useMemo(() => {
-    if (num) {
+    if (num !== undefined) {
       return num;
     }
 
@@ -59,14 +71,40 @@ function FormatPrice ({ amount, decimalPoint = 2, decimals, mt = '0px', num, pri
     return undefined;
   }, [amount, decimals, num, price]);
 
+  const _decimalPoint = useMemo(() => {
+    if (currency?.code && ASSETS_AS_CURRENCY_LIST.includes(currency.code)) {
+      return DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY;
+    }
+
+    return decimalPoint;
+  }, [currency?.code, decimalPoint]);
+
   return (
     <Grid
       item
       mt={mt}
+      sx={{ height }}
       textAlign={textAlign}
     >
       {total !== undefined
-        ? `${currency?.sign || ''}${nFormatter(total as number, decimalPoint)}`
+        ? <Typography
+          fontSize={fontSize}
+          fontWeight={fontWeight}
+          lineHeight={lineHeight}
+          sx={{ color: textColor }}
+        >
+          {withCountUp
+            ? <CountUp
+              decimals={_decimalPoint}
+              duration={1}
+              end={parseFloat(String(total))}
+              prefix={sign || currency?.sign || ''}
+            />
+            : <>
+              {sign || currency?.sign || ''}{ commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
+            </>
+          }
+        </Typography>
         : <Skeleton
           animation='wave'
           height={skeletonHeight}

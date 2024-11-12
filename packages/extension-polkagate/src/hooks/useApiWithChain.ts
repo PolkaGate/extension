@@ -11,14 +11,14 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { APIContext } from '../components';
 import { sanitizeChainName } from '../util/utils';
 
+const allEndpoints = createWsEndpoints();
+
 export default function useApiWithChain (chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
   const apisContext = useContext(APIContext);
   const [_api, setApi] = useState<ApiPromise | undefined>();
 
   const maybeEndpoint = useMemo(() => {
     const chainName = sanitizeChainName(chain?.name);
-    const allEndpoints = createWsEndpoints(() => '');
-
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
     return endpoints?.length ? endpoints[0].value : undefined;
@@ -29,8 +29,10 @@ export default function useApiWithChain (chain: Chain | null | undefined, api?: 
       return setApi(api);
     }
 
-    if (chain?.genesisHash && apisContext?.apis[chain.genesisHash]) {
-      const maybeApi = apisContext?.apis[chain.genesisHash].find(({api}) => api?.isConnected)?.api;
+    const _genesisHash = chain?.genesisHash;
+
+    if (_genesisHash && apisContext?.apis[_genesisHash]) {
+      const maybeApi = apisContext.apis[_genesisHash].find(({ api }) => api?.isConnected)?.api;
 
       if (maybeApi) {
         console.log(`♻ using the saved api for ${chain.name} in useApiWithChain`);

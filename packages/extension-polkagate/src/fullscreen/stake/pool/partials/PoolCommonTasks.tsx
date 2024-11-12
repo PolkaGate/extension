@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -50,7 +49,6 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
 
   const pool = usePool(address, undefined, refresh);
 
-  const isDarkTheme = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const poolState = useMemo(() => pool?.bondedPool?.state?.toString(), [pool?.bondedPool?.state]);
   const canChangeState = useMemo(() => pool?.bondedPool && formatted && [String(pool?.bondedPool?.roles?.root), String(pool?.bondedPool?.roles?.bouncer)].includes(String(formatted)), [pool?.bondedPool, formatted]);
   const poolRoot = useMemo(() => pool?.bondedPool && formatted && String(pool?.bondedPool?.roles?.root) === (String(formatted)), [pool?.bondedPool, formatted]);
@@ -115,6 +113,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <Grid alignItems='center' container direction='column' display='block' item justifyContent='center'>
           <TaskButton
             disabled={!justMember || !staked || staked.isZero()}
+            dividerWidth='76%'
             icon={
               <FontAwesomeIcon
                 color={!justMember || !staked || staked.isZero() ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -144,9 +143,10 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                 withHoverEffect
               >
                 <Collapse in={showManagePool} style={{ paddingRight: 0 }} sx={{ '& p': { pl: '5px' }, width: '100%' }}>
-                  <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto', width: 'calc(100% - 8px)' }} />
+                  <Divider sx={{ bgcolor: 'divider', height: '2px', justifySelf: 'flex-end', my: '5px', width: '89%' }} />
                   <TaskButton
                     disabled={poolState === 'Destroying' || !poolRoot}
+                    dividerWidth='73%'
                     icon={
                       <FontAwesomeIcon
                         color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
@@ -162,6 +162,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                   />
                   <TaskButton
                     disabled={poolState === 'Destroying' || !poolRoot}
+                    dividerWidth='73%'
                     icon={
                       <FontAwesomeIcon
                         color={poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -176,6 +177,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                   />
                   <TaskButton
                     disabled={isRemoveAllDisabled || (!poolRoot && !poolBouncer)}
+                    dividerWidth='73%'
                     icon={
                       <FontAwesomeIcon
                         color={isRemoveAllDisabled || (!poolRoot && !poolBouncer) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -190,6 +192,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                   />
                   <TaskButton
                     disabled={poolState === 'Destroying' || (!poolRoot && !poolBouncer)}
+                    dividerWidth='73%'
                     icon={
                       <FontAwesomeIcon
                         color={poolState === 'Destroying' || (!poolRoot && !poolBouncer) ? theme.palette.action.disabledBackground : theme.palette.text.primary}
@@ -204,6 +207,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                   />
                   <TaskButton
                     disabled={poolState === 'Destroying' || (!poolRoot && !poolBouncer)}
+                    dividerWidth='73%'
                     icon={
                       <AutoDeleteIcon
                         sx={{ color: poolState === 'Destroying' || (!poolRoot && !poolBouncer) ? 'action.disabledBackground' : 'text.primary', fontSize: '23px' }}
@@ -227,7 +231,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <EditPool
           address={address}
           api={api}
-          chain={chain as any}
+          chain={chain}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}
@@ -237,7 +241,6 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <SetState
           address={address}
           api={api}
-          chain={chain as any}
           formatted={formatted}
           onClose={resetModal}
           pool={pool}
@@ -257,7 +260,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
         <RemoveAll
           address={address}
           api={api}
-          chain={chain as any}
+          chain={chain}
           onClose={resetModal}
           pool={pool}
           setRefresh={setRefresh}

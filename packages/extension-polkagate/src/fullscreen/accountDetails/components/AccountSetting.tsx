@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -21,7 +20,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function AccountSetting({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function AccountSetting ({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, chain } = useInfo(address);
@@ -77,7 +76,7 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
         />
       </Grid>
       <Collapse in={showAccountSettings} sx={{ width: '100%' }}>
-        <Grid alignItems='center' container direction='column' item justifyContent='center'>
+        <Grid alignItems='flex-end' container direction='column' item justifyContent='center'>
           <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />
           <TaskButton
             disabled={identityDisable}
@@ -94,7 +93,7 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
           />
           <TaskButton
             disabled={proxyDisable}
-            icon={<VaadinIcon icon='vaadin:sitemap' style={{ height: '30px', color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:sitemap' style={{ color: `${proxyDisable ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '30px' }} />}
             onClick={onManageProxies}
             secondaryIconType='page'
             text={t('Manage proxies')}
@@ -117,26 +116,26 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}
-            icon={<VaadinIcon icon='vaadin:download-alt' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:download-alt' style={{ color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '30px' }} />}
             onClick={onExportAccount}
             secondaryIconType='popup'
             text={t('Export account')}
           />
           <TaskButton
             disabled={hardwareOrExternalAccount}
-            icon={<VaadinIcon icon='vaadin:road-branch' style={{ height: '30px', color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:road-branch' style={{ color: `${hardwareOrExternalAccount ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '30px' }} />}
             onClick={goToDeriveAcc}
             secondaryIconType='popup'
             text={t('Derive new account')}
           />
           <TaskButton
-            icon={<VaadinIcon icon='vaadin:edit' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:edit' style={{ color: `${theme.palette.text.primary}`, height: '30px' }} />}
             onClick={onRenameAccount}
             secondaryIconType='popup'
             text={t('Rename')}
           />
           <TaskButton
-            icon={<VaadinIcon icon='vaadin:file-remove' style={{ height: '30px', color: `${theme.palette.text.primary}` }} />}
+            icon={<VaadinIcon icon='vaadin:file-remove' style={{ color: `${theme.palette.text.primary}`, height: '30px' }} />}
             noBorderButton
             onClick={onForgetAccount}
             secondaryIconType='popup'

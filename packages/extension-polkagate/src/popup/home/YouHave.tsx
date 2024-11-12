@@ -5,7 +5,7 @@
 
 import type { YouHaveType } from '../../hooks/useYouHave';
 
-import { Box, Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
@@ -55,12 +55,16 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             sx={{ height: '36px', width: '154px' }}
           />
           : <Grid item pr='15px'>
-            <Typography sx={{ color: isPriceOutdated(youHave) ? 'primary.light' : 'text.primary', fontSize: '42px', fontWeight: 500, height: 36, lineHeight: 1 }}>
-              {youHave === undefined
-                ? <Skeleton animation='wave' height={38} sx={{ transform: 'none' }} variant='text' width={223} />
-                : <FormatPrice num={youHave?.portfolio || '0'} />
-              }
-            </Typography>
+            <FormatPrice
+              fontSize='32px'
+              fontWeight={500}
+              height={36}
+              num={youHave?.portfolio }
+              skeletonHeight={36}
+              textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+              width='223px'
+              withCountUp
+            />
           </Grid>
         }
         <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: shadow, cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '20px' }}>

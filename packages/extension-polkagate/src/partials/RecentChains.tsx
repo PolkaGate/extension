@@ -10,11 +10,12 @@ import type { RecentChainsType } from '../util/types';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Backdrop, ClickAwayListener, Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { ChainLogo, GenesisHashOptionsContext } from '../components';
 import { getStorage } from '../components/Loading';
 import ThreeItemCurveBackground from '../components/SVG/ThreeItemCurveBackground';
-import { useGenesisHashOptions, useInfo } from '../hooks';
+import { useInfo } from '../hooks';
 import { tieAccount } from '../messaging';
 import { CHAINS_WITH_BLACK_LOGO, INITIAL_RECENT_CHAINS_GENESISHASH } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -110,7 +111,7 @@ interface Props {
 function RecentChains ({ address, chainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
-  const genesisHashes = useGenesisHashOptions();
+  const genesisHashes = useContext(GenesisHashOptionsContext);
 
   const [showRecentChains, setShowRecentChains] = useState<boolean>(false);
   // in order to prevent displaying the closing animation
@@ -230,10 +231,7 @@ function RecentChains ({ address, chainName }: Props): React.ReactElement<Props>
             </Grid>
           </ClickAwayListener>
           : <Grid item onClick={toggleRecentChains} sx={{ cursor: 'pointer', left: 0, position: 'absolute', top: 0 }}>
-            <Avatar
-              src={getLogo(currentSelectedChain)}
-              sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(currentSelectedChain ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: '20px', width: '20px' }}
-            />
+            <ChainLogo chainName={currentSelectedChain} genesisHash={genesisHash} size={20} />
           </Grid>
         }
         <Grid

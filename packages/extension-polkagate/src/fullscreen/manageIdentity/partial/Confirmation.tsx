@@ -1,23 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import type { BN } from '@polkadot/util';
 import type { TxInfo } from '../../../util/types';
+import type { Mode, SubIdAccountsToSubmit } from '..';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { BN } from '@polkadot/util';
-
-import { Motion, PButton, ShortAddress, ShowBalance } from '../../../components';
+import { AccountWithProxyInConfirmation, DisplayInfo, Motion, PButton, ShortAddress, ShowBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { ThroughProxy } from '../../../partials';
 import Explorer from '../../../popup/history/Explorer';
 import FailSuccessIcon from '../../../popup/history/partials/FailSuccessIcon';
-import { Mode, SubIdAccountsToSubmit } from '..';
 
 interface Props {
   txInfo: TxInfo;
@@ -29,34 +26,11 @@ interface Props {
   maxFeeAmount: BN | undefined;
 }
 
-interface DisplayInfoProps {
-  caption: string;
-  value: string | undefined;
-  showDivider?: boolean;
-}
-
-export default function Confirmation({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ SubIdentityAccounts, handleClose, identity, maxFeeAmount, selectedRegistrarName, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');
   const fee = txInfo.api.createType('Balance', txInfo.fee);
-
-  const DisplayInfo = ({ caption, showDivider = true, value }: DisplayInfoProps) => {
-    return (
-      <>{value &&
-        <Grid alignItems='center' container direction='column' fontSize='16px' fontWeight={400} justifyContent='center'>
-          <Grid container item width='fit-content'>
-            <Typography lineHeight='40px' pr='5px'>{caption}</Typography>
-            <Typography lineHeight='40px'>{value}</Typography>
-          </Grid>
-          {showDivider &&
-            <Grid alignItems='center' container item justifyContent='center'>
-              <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-            </Grid>}
-        </Grid>
-      }</>
-    );
-  };
 
   const ManageIdentityDetail = () => (
     <>
@@ -87,7 +61,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
       <DisplayInfo
         caption={t('Discord:')}
         showDivider={false}
-        value={identity?.other?.discord}
+        value={identity?.other?.['discord']}
       />
     </>
   );
@@ -110,7 +84,7 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
       <Grid container item sx={{ bgcolor: 'background.paper', boxShadow: '0px 4px 4px 0px #00000040', pb: '8px' }}>
         <FailSuccessIcon
           showLabel={false}
-          style={{ fontSize: '87px', m: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
+          style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
           success={txInfo.success}
         />
         {txInfo?.failureText &&
@@ -118,35 +92,15 @@ export default function Confirmation({ SubIdentityAccounts, handleClose, identit
             {txInfo.failureText}
           </Typography>
         }
-        <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t('Account holder')}:
-          </Typography>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-            {txInfo.from.name}
-          </Typography>
-          <Grid fontSize='16px' fontWeight={400} item lineHeight='22px' pl='5px'>
-            <ShortAddress address={txInfo.from.address} inParentheses style={{ fontSize: '16px' }} />
-          </Grid>
-        </Grid>
-        {txInfo.throughProxy &&
-          <Grid container m='auto' maxWidth='92%'>
-            <ThroughProxy address={txInfo.throughProxy.address} chain={txInfo.chain} />
-          </Grid>
-        }
+        <AccountWithProxyInConfirmation
+          txInfo={txInfo}
+        />
         <Grid alignItems='center' container item justifyContent='center' pt='8px'>
           <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
         </Grid>
         {(status === 'Modify' || status === 'Set') &&
           <ManageIdentityDetail />
         }
-        {/* {status === 'Clear' &&
-          <Typography fontSize='22px' fontWeight={400} my='8px' textAlign='center' width='100%'>
-            {txInfo.success
-              ? t('Identity cleared.')
-              : t('Identity not cleared.')}
-          </Typography>
-        } */}
         {status === 'ManageSubId' && SubIdentityAccounts && SubIdentityAccounts.length > 0 &&
           <ManageSubIdTxDetail />
         }

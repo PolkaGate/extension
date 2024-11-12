@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -21,8 +20,8 @@ import ValidatorsTable from '../../../partial/ValidatorsTable';
 
 interface Props {
   address: string;
-  api: ApiPromise;
-  chain: Chain;
+  api: ApiPromise | undefined;
+  chain: Chain | null | undefined;
   selectedValidators: ValidatorInfo[];
   showSelectedValidators: boolean;
   setShowSelectedValidators: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +30,7 @@ interface Props {
 
 const MODAL_HEIGHT = 650;
 
-export default function ShowValidators({ address, api, chain, selectedValidators, setShowSelectedValidators, showSelectedValidators, staked }: Props): React.ReactElement<Props> {
+export default function ShowValidators ({ address, api, chain, selectedValidators, setShowSelectedValidators, showSelectedValidators, staked }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
   const isExtensionPopup = useIsExtensionPopup();

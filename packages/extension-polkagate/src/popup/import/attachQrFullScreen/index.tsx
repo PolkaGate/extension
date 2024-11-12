@@ -16,7 +16,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { QrScanAddress } from '@polkadot/react-qr';
 
 import { AccountNamePasswordCreation, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';

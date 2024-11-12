@@ -8,7 +8,7 @@
 
 A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains. It allows users to access their Polkadot/Kusama ecosystem account(s), which can also be used to interact with decentralized apps. It injects a [@polkadot/api](https://github.com/polkadot-js/api) signer into a page, along with any associated accounts.
 
-Polkagate extension not only has all the abilities of the original Polkadot extension, but also many new functionalities as listed below are available, where more features are coming.
+PolkaGate extension not only has all the abilities of the original Polkadot extension, but also many new functionalities as listed below are available, where more features are coming.
 
 ## Functionalities
 
@@ -37,9 +37,9 @@ Currently, the following features are available:
 
 ### Add-on
 
-**FireFox**: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/)
+<!-- **FireFox**: The extension for firefox can be downloaded from Firefox add-ons page [here](https://addons.mozilla.org/en-US/firefox/addon/polkagate/) -->
 
-**Chrome** and **Microsoft Edge**: The extension for these browsers can be downloaded from [here]( https://chrome.google.com/webstore/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp)
+**Chrome**, **Microsoft Edge**,  **Brave**, and **Yandex**: The extension for these browsers can be downloaded from [here]( https://chrome.google.com/webstore/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp)
 
 
 ### Development version

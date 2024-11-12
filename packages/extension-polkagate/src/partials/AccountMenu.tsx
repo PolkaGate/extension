@@ -5,15 +5,15 @@
 
 import type { HexString } from '@polkadot/util/types';
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
+import { faAddressCard, faGem } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { ActionContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
+import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
 import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
-import { useGenesisHashOptions, useInfo, useTranslation } from '../hooks';
+import { useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
 import getLogo from '../util/getLogo';
@@ -25,11 +25,12 @@ interface Props {
   noMargin?: boolean;
 }
 
-function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu ({ address, isMenuOpen, noMargin, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const options = useGenesisHashOptions();
-  const { account, api, chain, formatted } = useInfo(address);
+  const options = useContext(GenesisHashOptionsContext);
+
+  const { account, api, chain, formatted, genesisHash: currentGenesisHash } = useInfo(address);
 
   const [genesisHash, setGenesis] = useState<string | undefined>();
 
@@ -41,14 +42,13 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     onAction(`/forget/${address}/${account?.isExternal}`);
   }, [address, account, onAction]);
 
-  const goToDeriveAcc = useCallback(() => {
+  const onDeriveAccount = useCallback(() => {
     address && onAction(`/derive/${address}/locked`);
   }, [address, onAction]);
 
-  const closeMenu = useCallback(
-    () => setShowMenu((isMenuOpen) => !isMenuOpen),
-    [setShowMenu]
-  );
+  const closeMenu = useCallback(() =>
+    setShowMenu((isMenuOpen) => !isMenuOpen)
+  , [setShowMenu]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
@@ -66,8 +66,8 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
   }, [address, onAction]);
 
   const onManageProxies = useCallback(() => {
-    address && chain && PROXY_CHAINS.includes(chain.genesisHash ?? '') && onAction(`/manageProxies/${address}`);
-  }, [address, chain, onAction]);
+    address && currentGenesisHash && PROXY_CHAINS.includes(currentGenesisHash) && onAction(`/manageProxies/${address}`);
+  }, [address, currentGenesisHash, onAction]);
 
   const onManageId = useCallback(() => {
     address && windowOpen(`/manageIdentity/${address}`).catch(console.error);
@@ -77,15 +77,21 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
     address && windowOpen(`/socialRecovery/${address}/false`).catch(console.error);
   }, [address]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && windowOpen(`/nft/${address}`).catch(console.error);
+  }, [address]);
+
   const isDisabled = useCallback((supportedChains: string[]) => {
-    if (!chain) {
+    if (!currentGenesisHash) {
       return true;
     }
 
-    return !supportedChains.includes(chain.genesisHash ?? '');
-  }, [chain]);
+    return !supportedChains.includes(currentGenesisHash);
+  }, [currentGenesisHash]);
 
   const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />;
+
+  const vaadinIconStyle = { color: `${theme.palette.text.primary}`, height: '18px' };
 
   const movingParts = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
@@ -109,7 +115,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       <MenuItem
         disabled={isDisabled(PROXY_CHAINS)}
         iconComponent={
-          <VaadinIcon icon='vaadin:sitemap' style={{ height: '18px', color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '18px' }} />
         }
         onClick={onManageProxies}
         text={t('Manage proxies')}
@@ -131,14 +137,28 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
         text={t('Social recovery')}
         withHoverEffect
       />
+      <MenuItem
+        disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+        iconComponent={
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            fontSize='22px'
+            icon={faGem}
+          />
+        }
+        onClick={onNFTAlbum}
+        text={t('NFT album')}
+        withHoverEffect
+      />
       <MenuSeparator />
       <ProfileMenu
         address={address}
+        closeParentMenu={closeMenu}
       />
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:download-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:download-alt' style={vaadinIconStyle} />
           }
           onClick={onExportAccount}
           text={t('Export account')}
@@ -147,16 +167,16 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       {hasPrivateKey &&
         <MenuItem
           iconComponent={
-            <VaadinIcon icon='vaadin:road-branch' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+            <VaadinIcon icon='vaadin:road-branch' style={vaadinIconStyle} />
           }
-          onClick={goToDeriveAcc}
+          onClick={onDeriveAccount}
           text={t('Derive new account')}
           withHoverEffect
         />
       }
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:edit' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:edit' style={vaadinIconStyle} />
         }
         onClick={onRenameAccount}
         text={t('Rename')}
@@ -164,7 +184,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
+          <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}
@@ -173,7 +193,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       <MenuSeparator />
       <SelectChain
         address={address}
-        defaultValue={chain?.genesisHash ?? options[0].text}
+        defaultValue={currentGenesisHash ?? options[0].text}
         icon={getLogo(chain || undefined)}
         label={t('Chain')}
         onChange={onChangeNetwork}
@@ -182,7 +202,7 @@ function AccountMenu({ address, isMenuOpen, noMargin, setShowMenu }: Props): Rea
       />
       <RemoteNodeSelector
         address={address}
-        genesisHash={genesisHash}
+        genesisHash={genesisHash ?? currentGenesisHash}
       />
       <IconButton
         onClick={closeMenu}

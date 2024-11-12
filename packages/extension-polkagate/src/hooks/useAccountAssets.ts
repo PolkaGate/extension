@@ -1,16 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { FetchedBalance } from './useAssetsBalances';
 
 import { useContext, useEffect, useState } from 'react';
 
 import { AccountsAssetsContext } from '../components';
 import { TEST_NETS } from '../util/constants';
 import { isHexToBn } from '../util/utils';
-import { BN_MEMBERS, FetchedBalance } from './useAssetsBalances';
+import { BN_MEMBERS } from './useAssetsBalances';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 
-export default function useAccountAssets(address: string | undefined): FetchedBalance[] | undefined | null {
+export default function useAccountAssets (address: string | undefined): FetchedBalance[] | undefined | null {
   const [assets, setAssets] = useState<FetchedBalance[] | undefined | null>();
   const { accountsAssets } = useContext(AccountsAssetsContext);
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -30,10 +31,13 @@ export default function useAccountAssets(address: string | undefined): FetchedBa
 
     // handle BN conversion
     const assetsConvertedToBN = filteredAssets.map((asset) => {
-      const updatedAsset = { ...asset };
+      const updatedAsset = { ...asset } as FetchedBalance;
 
-      Object.keys(updatedAsset).forEach((key) => {
+      Object.keys(updatedAsset).forEach((_key) => {
+        const key = _key as keyof FetchedBalance;
+
         if (BN_MEMBERS.includes(key)) {
+          // @ts-ignore
           updatedAsset[key] = isHexToBn(updatedAsset[key] as string);
         }
       });

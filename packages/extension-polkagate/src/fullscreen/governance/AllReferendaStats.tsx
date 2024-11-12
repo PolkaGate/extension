@@ -68,10 +68,11 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
           <Grid alignItems='center' container item sx={{ fontSize: '18px', fontWeight: 500, height: '36px', letterSpacing: '-0.015em', pt: '10px' }} width='fit-content'>
             <ShowBalance api={api} balance={balance} decimal={decimal} decimalPoint={2} token={token} />
           </Grid>
-          <Grid container item sx={{ fontSize: '16px', letterSpacing: '-0.015em' }} width='fit-content'>
+          <Grid container item width='fit-content'>
             <FormatPrice
               amount={balance}
               decimals={decimal}
+              fontSize= '16px'
               price={tokenPrice}
             />
           </Grid>

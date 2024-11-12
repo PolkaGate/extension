@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
@@ -17,6 +16,8 @@ interface Props {
   onPrimaryClick: React.MouseEventHandler<HTMLButtonElement>;
   secondaryBtnText?: string;
   onSecondaryClick: React.MouseEventHandler<HTMLButtonElement>;
+  primaryBtnStartIcon?: React.JSX.Element;
+  secondaryBtnStartIcon?: React.JSX.Element;
   mt?: string;
   ml?: string;
   disabled?: boolean;
@@ -26,7 +27,7 @@ interface Props {
 }
 // TODO: can replace ButtonWithCancel later
 
-export default function TwoButtons({ disabled = false, isBusy = false, ml = '6%', mt, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
+export default function TwoButtons ({ disabled = false, isBusy = false, ml = '6%', mt, onPrimaryClick, onSecondaryClick, primaryBtnStartIcon, primaryBtnText, secondaryBtnStartIcon, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -36,6 +37,7 @@ export default function TwoButtons({ disabled = false, isBusy = false, ml = '6%'
         <Button
           disabled={isBusy}
           onClick={onSecondaryClick}
+          startIcon={secondaryBtnStartIcon}
           sx={{
             borderColor: 'secondary.main',
             color: variant === 'text' ? 'secondary.main' : 'text.primary',
@@ -60,6 +62,7 @@ export default function TwoButtons({ disabled = false, isBusy = false, ml = '6%'
           : <Button
             disabled={disabled}
             onClick={onPrimaryClick}
+            startIcon={primaryBtnStartIcon}
             sx={{
               borderColor: 'secondary.main',
               borderRadius: '5px',

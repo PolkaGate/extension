@@ -15,20 +15,19 @@ import { useParams } from 'react-router';
 import { BN } from '@polkadot/util';
 
 import { AccountContext, ActionContext, Warning } from '../../components';
-import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTranslation } from '../../hooks';
+import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTokenPrice, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
-import ExportAccountModal from '../../popup/export/ExportAccountModal';
-import ForgetAccountModal from '../../popup/forgetAccount/ForgetAccountModal';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
 import { AccountLabel } from '../../popup/home/AccountLabel';
-import DeriveAccountModal from '../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
-import RenameModal from '../../popup/rename/RenameModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import { getPriceIdByChainName } from '../../util/utils';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import Bread from '../partials/Bread';
+import DeriveAccountModal from '../partials/DeriveAccountModal';
+import ExportAccountModal from '../partials/ExportAccountModal';
+import ForgetAccountModal from '../partials/ForgetAccountModal';
+import RenameModal from '../partials/RenameAccountModal';
 import { Title } from '../sendFund/InputPage';
 import { openOrFocusTab } from './components/CommonTasks';
 import ReservedDisplayBalance from './components/ReservedDisplayBalance';
@@ -62,16 +61,23 @@ export default function AccountDetails (): React.ReactElement {
   const onAction = useContext(ActionContext);
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
-  
+
   const [refreshNeeded, setRefreshNeeded] = useState<boolean>(false);
-  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number>();
+  const [assetIdOnAssetHub, setAssetIdOnAssetHub] = useState<number | string>();
   const [selectedAsset, setSelectedAsset] = useState<FetchedBalance>();
   const [displayPopup, setDisplayPopup] = useState<number | undefined>();
   const [unlockInformation, setUnlockInformation] = useState<UnlockInformationType | undefined>();
 
-  const assetId = useMemo(() => assetIdOnAssetHub !== undefined ? assetIdOnAssetHub : selectedAsset?.assetId, [assetIdOnAssetHub, selectedAsset?.assetId]);
+  const assetId = useMemo(() =>
+    assetIdOnAssetHub !== undefined
+      ? assetIdOnAssetHub
+      : selectedAsset?.assetId
+  , [assetIdOnAssetHub, selectedAsset?.assetId]);
+
+  const { price: currentPrice } = useTokenPrice(address, assetId);
 
   const balances = useBalances(address, refreshNeeded, setRefreshNeeded, undefined, assetId || undefined);
+
   const isOnAssetHub = useMemo(() => ASSET_HUBS.includes(genesisHash ?? ''), [genesisHash]);
   const supportGov = useMemo(() => GOVERNANCE_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
@@ -105,21 +111,6 @@ export default function AccountDetails (): React.ReactElement {
     balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
   , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
 
-  const currentPrice = useMemo((): number | undefined => {
-    const selectedAssetPriceId = selectedAsset?.priceId;
-
-    if (selectedAsset && !selectedAssetPriceId) {
-      // price is 0 for assets with no priceId
-      return 0;
-    }
-
-    const _priceId = getPriceIdByChainName(chainName);
-    const currentAssetPrices = pricesInCurrency?.prices?.[(selectedAssetPriceId || _priceId)];
-    const mayBeTestNetPrice = pricesInCurrency?.prices && !currentAssetPrices ? 0 : undefined;
-
-    return currentAssetPrices?.value || mayBeTestNetPrice;
-  }, [selectedAsset, chainName, pricesInCurrency?.prices]);
-
   useEffect(() => {
     // reset assetId on chain switch
     assetIdOnAssetHub && setAssetIdOnAssetHub(undefined);
@@ -130,7 +121,7 @@ export default function AccountDetails (): React.ReactElement {
   }, [genesisHash]);
 
   useEffect(() => {
-    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && assetId !== parseInt(paramAssetId)) {
+    if (selectedAsset !== undefined && paramAssetId && assetId !== undefined && String(assetId) !== paramAssetId) {
       onAction(`/accountfs/${address}/${assetId}`);
     }
   }, [accountAssets, address, assetId, onAction, paramAssetId, selectedAsset]);
@@ -140,27 +131,21 @@ export default function AccountDetails (): React.ReactElement {
       return;
     }
 
-    const mayBeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : parseInt(paramAssetId);
+    const maybeAssetIdSelectedInHomePage = assetId !== undefined ? assetId : paramAssetId;
 
-    if (mayBeAssetIdSelectedInHomePage >= 0 && accountAssets) {
-      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => assetId === mayBeAssetIdSelectedInHomePage && genesisHash === _genesisHash);
+    if (maybeAssetIdSelectedInHomePage as number >= 0 && accountAssets) {
+      const found = accountAssets.find(({ assetId, genesisHash: _genesisHash }) => String(assetId) === String(maybeAssetIdSelectedInHomePage) && genesisHash === _genesisHash);
 
       found && setSelectedAsset(found);
     }
   }, [genesisHash, accountAssets, assetId, paramAssetId, selectedAsset]);
 
-  const onChangeAsset = useCallback((id: number) => {
-    if (id === -1) { // this is the id of native token on drop down list
-      setAssetIdOnAssetHub(0);
-
-      return;
-    }
-
-    setAssetIdOnAssetHub(id); // this works for asset hubs atm
+  const onChangeAsset = useCallback((id: number | string) => {
+    setAssetIdOnAssetHub(id as number); // this works for asset hubs atm
   }, []);
 
   const goToSend = useCallback(() => {
-    address && onAction(`/send/${address}/${assetId || ''}`);
+    address && onAction(`/send/${address}/${assetId}`);
   }, [address, assetId, onAction]);
 
   const goToSoloStaking = useCallback(() => {

@@ -5,26 +5,29 @@
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
-import type { AlertType } from '../util/types';
+import type { MetadataDef } from '@polkadot/extension-inject/types';
+import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
+import { Chance } from 'chance';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, isObject } from '@polkadot/util';
 
 import { getStorage, setStorage, watchStorage } from '../components/Loading';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
-import allChains from '../util/chains';
+import { updateMetadata } from '../messaging';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import { isHexToBn } from '../util/utils';
+import { TIME_TO_REMOVE_ALERT } from './useAlerts';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled, useTranslation } from '.';
 
 type WorkerMessage = Record<string, MessageBody[]>;
 type Assets = Record<string, FetchedBalance[]>;
-interface AssetsBalancesPerChain { [genesisHash: string]: FetchedBalance[] }
-interface AssetsBalancesPerAddress { [address: string]: AssetsBalancesPerChain }
+type AssetsBalancesPerChain = Record<string, FetchedBalance[]>;
+type AssetsBalancesPerAddress = Record<string, AssetsBalancesPerChain>;
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 interface BalancesDetails {
@@ -43,7 +46,7 @@ interface BalancesDetails {
 }
 
 interface MessageBody {
-  assetId?: number,
+  assetId: number | string,
   totalBalance: string,
   chainName: string,
   decimal: string,
@@ -71,7 +74,7 @@ export const BN_MEMBERS = [
 ];
 
 export interface FetchedBalance {
-  assetId?: number,
+  assetId: number | string,
   availableBalance: BN,
   balanceDetails?: any,
   totalBalance: BN,
@@ -100,7 +103,7 @@ const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeSta
 export const ASSETS_NAME_IN_STORAGE = 'assets';
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
-const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
+export const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
 function allHexToBN (balances: object | string | undefined): BalancesDetails | {} {
   if (!balances) {
@@ -128,10 +131,13 @@ const assetsChains = createAssets();
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains): SavedAssets | undefined | null {
+  const { t } = useTranslation();
+
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
-  const { t } = useTranslation();
+
+  const random = useMemo(() => new Chance(), []);
 
   /** to limit calling of this heavy call on just home and account details */
   const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
@@ -144,6 +150,15 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   const [isWorking, setIsWorking] = useState<boolean>(false);
   const [workersCalled, setWorkersCalled] = useState<Worker[]>();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+
+  const addAlert = useCallback(() => {
+    const id = random.string({ length: 10 });
+
+    setAlerts((perv) => [...perv, { id, severity: 'success', text: t('Accounts\' balances updated!') }]);
+    const timeout = setTimeout(() => setAlerts((prev) => prev.filter(({ id: alertId }) => alertId !== id)), TIME_TO_REMOVE_ALERT);
+
+    return () => clearTimeout(timeout);
+  }, [random, setAlerts, t]);
 
   useEffect(() => {
     SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
@@ -205,9 +220,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     /** when one round fetch is done, we will save fetched assets in storage */
     if (addresses && workersCalled?.length === 0) {
       handleAccountsSaving();
-      setAlerts((perv) => [...perv, { severity: 'success', text: t('Accounts\' balances updated!') }]);
+      addAlert();
     }
-  }, [accounts, addresses, handleAccountsSaving, setAlerts, t, workersCalled?.length]);
+  }, [addAlert, addresses, handleAccountsSaving, workersCalled?.length]);
 
   useEffect(() => {
     /** chain list may have changed */
@@ -294,7 +309,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
     handleSetWorkersCall(worker);
 
-    worker.postMessage({ addresses: _addresses, chainName });
+    worker.postMessage({ addresses: _addresses, chainName, userAddedEndpoints });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -312,6 +327,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       }
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
+
+      if ('metadata' in parsedMessage) {
+        const metadata = parsedMessage['metadata'];
+
+        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
+
+        return;
+      }
 
       Object.keys(parsedMessage).forEach((address) => {
         /** We use index 0 because we consider each relay chain has only one asset */
@@ -332,14 +355,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       combineAndSetAssets(_assets);
       handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
+  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
 
   const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAssetHub.js', import.meta.url));
     const _assets: Assets = {};
 
     handleSetWorkersCall(worker);
-    worker.postMessage({ addresses: _addresses, assetsToBeFetched, chainName });
+    worker.postMessage({ addresses: _addresses, assetsToBeFetched, chainName, userAddedEndpoints });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -357,6 +380,14 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       }
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
+
+      if ('metadata' in parsedMessage) {
+        const metadata = parsedMessage['metadata'];
+
+        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
+
+        return;
+      }
 
       Object.keys(parsedMessage).forEach((address) => {
         _assets[address] = parsedMessage[address]
@@ -378,13 +409,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       combineAndSetAssets(_assets);
       handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
+  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
 
   const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
     const worker: Worker = new Worker(new URL('../util/workers/getAssetOnMultiAssetChain.js', import.meta.url));
 
     handleSetWorkersCall(worker);
-    worker.postMessage({ addresses, chainName });
+    worker.postMessage({ addresses, chainName, userAddedEndpoints });
 
     worker.onerror = (err) => {
       console.log(err);
@@ -402,6 +433,15 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       }
 
       const parsedMessage = JSON.parse(message) as WorkerMessage;
+
+      if ('metadata' in parsedMessage) {
+        const metadata = parsedMessage['metadata'];
+
+        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
+
+        return;
+      }
+
       const _assets: Assets = {};
 
       Object.keys(parsedMessage).forEach((address) => {
@@ -424,7 +464,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       combineAndSetAssets(_assets);
       handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall]);
+  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
 
   const fetchMultiAssetChainAssets = useCallback((chainName: string) => {
     return addresses && fetchAssetOnMultiAssetChain(addresses, chainName);
@@ -434,10 +474,10 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     /** Checking assets balances on Relay chains */
     /** and also checking assets on chains with just one native token */
     if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
-      const chainName = getChainName(genesisHash);
+      const chainName = getChainName(genesisHash, genesisOptions);
 
       if (!chainName) {
-        console.error('can not find chain name by genesis hash!');
+        console.error('can not find chain name by genesis hash!', genesisHash);
 
         return;
       }
@@ -449,21 +489,21 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const chainName = getChainName(genesisHash);
 
       if (!chainName) {
-        console.error('can not find chain name by genesis hash!');
+        console.error('can not find chain name by genesis hash!', genesisHash);
 
         return;
       }
 
-      const assetsToBeFetched = assetsChains[chainName]; /** we fetch asset hubs assets only if it is whitelisted via Polkagate/apps-config */
+      const assetsToBeFetched = assetsChains[chainName]; /** we fetch asset hubs assets only if it is whitelisted via PolkaGate/apps-config */
 
       return fetchAssetOnAssetHubs(addresses!, chainName, assetsToBeFetched);
     }
 
-    /** Checking assets balances on chains with more than one assets such as Acala, hydradx, etc, */
+    /** Checking assets balances on chains with more than one assets such as Acala, Hydration, etc, */
     if (maybeMultiAssetChainName) {
       fetchMultiAssetChainAssets(maybeMultiAssetChainName);
     }
-  }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets]);
+  }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets, genesisOptions]);
 
   useEffect(() => {
     if (!SHOULD_FETCH_ASSETS || !addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
@@ -473,21 +513,21 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const _selectedChains = isTestnetEnabled ? selectedChains : selectedChains.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
-    const singleAssetChains = allChains.filter(({ chain, genesisHash }) =>
-      _selectedChains.includes(genesisHash) &&
-      !ASSET_HUBS.includes(genesisHash) &&
-      !RELAY_CHAINS_GENESISHASH.includes(genesisHash) &&
-      !multipleAssetsChainsNames.includes(toCamelCase(chain) || '')
+    const singleAssetChains = genesisOptions.filter(({ text, value }) =>
+      _selectedChains.includes(value as string) &&
+      !ASSET_HUBS.includes(value as string) &&
+      !RELAY_CHAINS_GENESISHASH.includes(value as string) &&
+      !multipleAssetsChainsNames.includes(toCamelCase(text) || '')
     );
 
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
-      const isSingleTokenChain = !!singleAssetChains.find((o) => o.genesisHash === genesisHash);
+      const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains]);
+  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains, genesisOptions]);
 
   return fetchedAssets;
 }

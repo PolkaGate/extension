@@ -73,6 +73,10 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   const profiles = useMemo(() => {
     const profileSet = new Set(accountProfiles);
 
+    if (selectedProfile === undefined) {
+      return [];
+    }
+
     if (maybeAccountDefaultProfile) {
       profileSet.add(maybeAccountDefaultProfile);
     }
@@ -110,7 +114,7 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   }, [profiles.length]);
 
   return (
-    <Grid container item ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', left: ml || '15px', position: 'absolute', px: 1, top: 0, height: '17px', overflowX: 'scroll', whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
+    <Grid container item ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '16px', left: ml || '15px', position: 'absolute', px: 1, top: 0, overflowX: 'scroll', whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
       {profiles?.map((profile, index) =>
         <Grid
           key={index}

@@ -8,10 +8,10 @@
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { NATIVE_TOKEN_ASSET_ID,TEST_NETS } from '../constants';
+import { NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../constants';
 import getPoolAccounts from '../getPoolAccounts';
 import { getPriceIdByChainName } from '../utils';
-import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints } from './utils';
+import { balancify, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi } from './utils';
 
 async function getPooledBalance (api, address) {
   const response = await api.query['nominationPools']['poolMembers'](address);
@@ -48,12 +48,15 @@ async function getPooledBalance (api, address) {
   return active.add(rewards).add(unlockingValue);
 }
 
-async function getBalances (chainName, addresses) {
-  const chainEndpoints = getChainEndpoints(chainName);
-
-  const { api, connections } = await fastestEndpoint(chainEndpoints, false);
+async function getBalances (chainName, addresses, userAddedEndpoints) {
+  const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
+  const { api, connections } = await fastestEndpoint(chainEndpoints);
 
   if (api.isConnected && api.derive.balances) {
+    const result = metadataFromApi(api);
+
+    postMessage(JSON.stringify(result));
+
     const requests = addresses.map(async (address) => {
       const balances = await api.derive.balances.all(address);
       const systemBalance = await api.query.system.account(address);
@@ -82,20 +85,20 @@ async function getBalances (chainName, addresses) {
   }
 }
 
-async function getAssetOnRelayChain (addresses, chainName) {
+async function getAssetOnRelayChain (addresses, chainName, userAddedEndpoints) {
   const results = {};
 
-  await getBalances(chainName, addresses)
+  await getBalances(chainName, addresses, userAddedEndpoints)
     .then(({ api, balanceInfo, connectionsToBeClosed }) => {
       balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
         const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
         const genesisHash = api.genesisHash.toString();
         const priceId = TEST_NETS.includes(genesisHash)
           ? undefined
-          : getPriceIdByChainName(chainName);
+          : getPriceIdByChainName(chainName, userAddedEndpoints);
 
         results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
-          assetId: NATIVE_TOKEN_ASSET_ID, // Rule: we set asset id 0 for native tokens
+          assetId: NATIVE_TOKEN_ASSET_ID,
           balanceDetails: balancify({ ...balances, pooledBalance, soloTotal }),
           chainName,
           decimal: api.registry.chainDecimals[0],
@@ -116,15 +119,13 @@ async function getAssetOnRelayChain (addresses, chainName) {
 }
 
 onmessage = async (e) => {
-  const { addresses, chainName } = e.data;
+  const { addresses, chainName, userAddedEndpoints } = e.data;
 
   let tryCount = 1;
 
-  console.log(`getAssetOnRelayChain: try ${tryCount} to fetch assets on ${chainName}.`);
-
   while (tryCount >= 1 && tryCount <= 5) {
     try {
-      await getAssetOnRelayChain(addresses, chainName);
+      await getAssetOnRelayChain(addresses, chainName, userAddedEndpoints);
 
       tryCount = 0;
 

@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
 import type { Vote } from './util';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
@@ -10,7 +11,7 @@ import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { ShowBalance } from '../../../../components';
-import { useApi, useDecimal, useToken, useTranslation } from '../../../../hooks';
+import { useInfo, useTranslation } from '../../../../hooks';
 import { pgBoxShadow } from '../../../../util/utils';
 import { getVoteType } from '../../utils/util';
 import { getConviction } from './util';
@@ -25,9 +26,7 @@ interface Props {
 export default function MyVote ({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const api = useApi(address);
-  const decimal = useDecimal(address);
-  const token = useToken(address);
+  const { api, decimal, token } = useInfo(address);
 
   // @ts-ignore
   const voteBalance = useMemo((): number | undefined => (vote?.standard?.balance || vote?.splitAbstain?.abstain || vote?.delegating?.balance), [vote]);
@@ -63,9 +62,9 @@ export default function MyVote ({ address, isFinished, notVoted, vote }: Props):
             <Skeleton animation='wave' sx={{ borderRadius: '5px', display: 'inline-block', height: '20px', transform: 'none', width: '90%' }} />
           </Grid>
           : <Grid alignItems='center' container item justifyContent='space-between' sx={{ pt: '20px', px: '10%' }}>
-            <Grid container item xs={8}>
+            <Grid alignItems='center' container item xs={8}>
               <Grid item sx={{ fontSize: '20px', fontWeight: 500 }}>
-                <ShowBalance api={api} balance={voteBalance} decimal={decimal} decimalPoint={1} token={token} />
+                <ShowBalance api={api} balance={voteBalance as unknown as BN} decimal={decimal} decimalPoint={1} token={token} />
               </Grid>
               <Grid item sx={{ fontSize: '18px', fontWeight: 500, pl: '5px' }}>
                 {vote?.standard?.vote && `(${getConviction(vote.standard.vote)}x)`}

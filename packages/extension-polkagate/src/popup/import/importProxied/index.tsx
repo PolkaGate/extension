@@ -13,8 +13,8 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
-import { AccountContext, ActionContext, Label, PButton, SelectChain } from '../../../components';
-import { useGenesisHashOptions, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
+import { AccountContext, ActionContext, GenesisHashOptionsContext, Label, PButton, SelectChain } from '../../../components';
+import { useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata, tieAccount } from '../../../messaging';
 import HeaderBrand from '../../../partials/HeaderBrand';
 import { PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
@@ -26,7 +26,8 @@ function ImportProxied (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
+
   const random = useMemo(() => new Chance(), []);
 
   const selectableChains = useMemo(() => genesisOptions.filter(({ value }) => PROXY_CHAINS.includes(value as string)), [genesisOptions]);

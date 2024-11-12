@@ -16,6 +16,9 @@ export const PROFILE_TAGS = {
   WATCH_ONLY: 'Watch-only'
 };
 
+/**
+ * @description returns the list of accounts which has a profile tag, if profile is undefined it returns 'All' accounts
+ */
 export default function useProfileAccounts (initialAccountList: AccountsOrder[] | undefined, profile?: string) {
   const { t } = useTranslation();
 
@@ -44,7 +47,7 @@ export default function useProfileAccounts (initialAccountList: AccountsOrder[] 
 
     let accounts;
 
-    switch (_profile) {
+    switch (t(_profile)) {
       case t(PROFILE_TAGS.ALL):
         return setProfileAccounts(initialAccountList);
 

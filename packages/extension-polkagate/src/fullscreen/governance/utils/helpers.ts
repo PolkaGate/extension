@@ -3,7 +3,7 @@
 
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { BN } from '@polkadot/util';
-import type { LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, TopMenu } from './types';
+import type { CommentType, LatestReferenda, Origins, Referendum, ReferendumPA, ReferendumSb, Reply, TopMenu } from './types';
 
 import { postData } from '../../../util/api';
 import { FINISHED_REFERENDUM_STATUSES, TRACK_LIMIT_TO_LOAD_PER_REQUEST } from './consts';
@@ -23,6 +23,88 @@ export interface Statistics {
     'Count': number
   }[],
   'OriginsCount': number
+}
+
+interface DataSS {
+  items: CommentItemSS[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
+interface VoteSS {
+  account: string;
+  aye: boolean;
+  balance: string;
+  conviction: number;
+  delegations: {
+    votes: string;
+    capital: string;
+  };
+  isDelegating: boolean;
+  isSplit: boolean;
+  isSplitAbstain: boolean;
+  isStandard: boolean;
+  queryAt: number;
+  referendumIndex: number;
+  votes: string;
+}
+
+interface CommentItemSS {
+  author: {
+    username: string;
+    cid: string;
+  };
+  content: string;
+  contentType: string;
+  contentVersion: string;
+  createdAt: string;
+  dataSource: string;
+  height: number;
+  proposer: string;
+  reactions: ReactionSS[];
+  referendaReferendum: string;
+  replies: ReplySS[];
+  updatedAt: string;
+  _id: string;
+}
+
+interface ReplySS {
+  _id: string;
+  referendaReferendum: string;
+  replyToComment: string;
+  content: string;
+  contentType: string;
+  contentVersion: string;
+  author: {
+    username: string;
+    publicKey: string;
+    address: string;
+  };
+  height: number;
+  createdAt: string;
+  updatedAt: string;
+  dataSource: string;
+  cid: string;
+  proposer: string;
+  reactions: ReactionSS[];
+}
+
+interface ReactionSS {
+  _id: string,
+  comment: string,
+  dataSource: string,
+  proposer: string,
+  cid: string,
+  createdAt: string,
+  parentCid: string,
+  reaction: number,
+  updatedAt: string,
+  user: {
+    address: string;
+    publicKey: string;
+    username: string;
+  } | null
 }
 
 export interface VoteType {
@@ -75,7 +157,7 @@ export interface FilteredVotes {
 
 export const isFinished = (referendum: Referendum | undefined) => referendum?.status ? FINISHED_REFERENDUM_STATUSES.includes(referendum.status) : undefined;
 
-export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
+export async function getReferendumStatistics (chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
   // console.log('Getting ref stat from sb ... ');
 
   return new Promise((resolve) => {
@@ -102,7 +184,7 @@ export async function getReferendumStatistics(chainName: string, type: 'referend
   });
 }
 
-export async function getReferendumVotesFromSubscan(chainName: string, referendumIndex: number | undefined): Promise<string | null> {
+export async function getReferendumVotesFromSubscan (chainName: string, referendumIndex: number | undefined): Promise<string | null> {
   if (!referendumIndex) {
     console.log('referendumIndex is undefined while getting Referendum Votes from Sb ');
 
@@ -135,7 +217,7 @@ export async function getReferendumVotesFromSubscan(chainName: string, referendu
   });
 }
 
-export async function getLatestReferendums(chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
+export async function getLatestReferendums (chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
   // console.log(`Getting Latest referendum on ${chainName} from PA ...`);
 
   const requestOptions = {
@@ -164,14 +246,13 @@ export async function getLatestReferendums(chainName: string, listingLimit = 30)
     });
 }
 
-export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
+export async function getAllVotesFromPA (chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
   // console.log(`Getting All Votes on ${chainName} for refIndex: ${refIndex} from PA ...`);
 
   const requestOptions = {
     headers: { 'x-network': chainName.charAt(0).toLowerCase() + chainName.slice(1) }
   };
 
-  // return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}&sortBy=time`, requestOptions)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return fetch(`https://api.polkassembly.io/api/v1/votes?postId=${refIndex}&page=1&listingLimit=${listingLimit}&voteType=${isFellowship ? 'Fellowship' : 'ReferendumV2'}`, requestOptions)
     .then((response) => response.json())
@@ -192,7 +273,7 @@ export async function getAllVotesFromPA(chainName: string, refIndex: number, lis
     });
 }
 
-export async function getTrackOrFellowshipReferendumsPA(chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
+export async function getTrackOrFellowshipReferendumsPA (chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
   console.log(`Getting refs on ${chainName} track:${track} from PA`);
 
   const requestOptions = {
@@ -221,7 +302,7 @@ export async function getTrackOrFellowshipReferendumsPA(chainName: string, page 
     });
 }
 
-export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<ReferendumPA | null> {
+export async function getReferendumPA (chainName: string, type: TopMenu, postId: number): Promise<ReferendumPA | null> {
   // console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
 
   const requestOptions = {
@@ -252,7 +333,7 @@ export async function getReferendumPA(chainName: string, type: TopMenu, postId: 
     });
 }
 
-export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<ReferendumSb | null> {
+export async function getReferendumSb (chainName: string, type: TopMenu, postId: number): Promise<ReferendumSb | null> {
   // console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint
@@ -313,13 +394,13 @@ interface RefListSb {
   }[];
 }
 
-export async function getReferendumsListSb(chainName: string, type: TopMenu, listingLimit = 30): Promise<RefListSb | null> {
+export async function getReferendumsListSb (chainName: string, type: 'referenda' | 'fellowship', listingLimit = 30): Promise<RefListSb | null> {
   console.log('Getting ref list from sb ...');
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLocaleLowerCase()}/referendums`,
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLowerCase()}/referendums`,
         {
           // page:1,
           row: listingLimit
@@ -341,4 +422,87 @@ export async function getReferendumsListSb(chainName: string, type: TopMenu, lis
       resolve(null);
     }
   });
+}
+
+/**
+ * Fetches and formats comments for a specific referendum from SubSquare.
+ * @param chainName The name of the blockchain.
+ * @param refId The ID of the referendum.
+ * @returns A promise that resolves to an array of formatted comments or null if an error occurs.
+ */
+export async function getReferendumCommentsSS (chainName: string, refId: string | number): Promise<CommentType[] | null> {
+  // console.log(`Getting comments of ref ${refId} from SS ...`);
+
+  try {
+    // Fetch both comments and votes concurrently
+    const [commentsResponse, votesResponse] = await Promise.all([
+      fetch(`https://${chainName}.subsquare.io/api/gov2/referendums/${refId}/comments`),
+      fetch(`https://${chainName}.subsquare.io/api/gov2/referenda/${refId}/votes`)
+    ]);
+
+    const comments = await commentsResponse.json() as DataSS;
+    const votes = await votesResponse.json() as VoteSS[];
+
+    // Helper function to determine the vote decision
+    const voteInformation = (address: string): string | null => {
+      const vote = votes.find(({ account }) => account === address);
+
+      if (!vote) {
+        return null;
+      }
+
+      if (vote.aye) {
+        return 'yes';
+      }
+
+      if (vote.isSplit || vote.isSplitAbstain) {
+        return 'abstain';
+      }
+
+      return 'no';
+    };
+
+    // Format the comments
+    const formattedComments = comments.items.map(({ _id, author, content, createdAt, proposer, reactions, replies, updatedAt }) => {
+      const decision = voteInformation(proposer);
+
+      return {
+        commentSource: 'SS',
+        comment_reactions: {
+          '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
+          '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
+        },
+        content,
+        created_at: createdAt,
+        id: _id,
+        proposer,
+        // Format replies
+        replies: replies.map(({ _id, cid, content, createdAt, proposer, reactions, updatedAt }) => ({
+          commentSource: 'SS',
+          content,
+          created_at: createdAt,
+          id: _id,
+          proposer,
+          reply_reactions: {
+            '👍': { count: reactions.length, usernames: reactions.map((reaction) => reaction.user?.address ?? '') ?? null },
+            '👎': { count: 0, usernames: undefined } // SubSquare does not display dislikes
+          },
+          updated_at: updatedAt,
+          user_id: cid,
+          username: ''
+        } as unknown as Reply)),
+        sentiment: 0,
+        updated_at: updatedAt,
+        user_id: author.cid,
+        username: '',
+        votes: decision ? [{ decision }] : []
+      } as unknown as CommentType;
+    });
+
+    return formattedComments;
+  } catch (error) {
+    console.error(`Error in getReferendumCommentsSS for chain ${chainName}, referendum ${refId}:`, error);
+
+    return null;
+  }
 }

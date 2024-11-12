@@ -54,7 +54,7 @@ function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Re
             ? <ShowIcon />
             : <HideIcon />
           }
-          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500 }}>
+          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>
             {hideNumbers ? t('Show numbers') : t('Hide numbers')}
           </Typography>
         </Grid>

@@ -1,10 +1,12 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
 
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
@@ -12,17 +14,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
-import { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useBalances, useChain, useFullscreen, useTranslation } from '../../hooks';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
-import { FullScreenHeader } from '../governance/FullScreenHeader';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import WaitScreen from '../governance/partials/WaitScreen';
 import Bread from '../partials/Bread';
 import { STEPS } from '../stake/pool/stake';
@@ -41,7 +40,7 @@ export interface Inputs {
 }
 type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function SendFund(): React.ReactElement {
+export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
@@ -50,9 +49,8 @@ export default function SendFund(): React.ReactElement {
   const ref = useRef(chain);
   const history = useHistory();
 
-  const parsedAssetId = assetId === undefined || assetId === 'undefined' ? undefined : parseInt(assetId);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const balances = useBalances(address, refresh, setRefresh, undefined, parsedAssetId);
+  const balances = useBalances(address, refresh, setRefresh, undefined, assetId);
 
   const [step, setStep] = useState<StepsType>(STEPS.INDEX);
   const [inputs, setInputs] = useState<Inputs>();
@@ -81,8 +79,8 @@ export default function SendFund(): React.ReactElement {
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);
-    openOrFocusTab(`/accountfs/${address}/0`, true); // TODO: add asset id instead of 0
-  }, [address, setRefresh]);
+    openOrFocusTab(`/accountfs/${address}/${assetId}`, true);
+  }, [address, assetId]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
@@ -107,7 +105,7 @@ export default function SendFund(): React.ReactElement {
         {(step === STEPS.INDEX) &&
           <InputPage
             address={address}
-            assetId={parsedAssetId}
+            assetId={assetId}
             balances={balances}
             inputs={inputs}
             setInputs={setInputs}

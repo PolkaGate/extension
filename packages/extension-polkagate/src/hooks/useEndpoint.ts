@@ -1,71 +1,80 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-
-import { createWsEndpoints } from '@polkagate/apps-config';
-import { useEffect, useState } from 'react';
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { EndpointType } from '../util/types';
 
-import { useChainName, useTranslation } from '.';
+import { useCallback, useEffect, useState } from 'react';
 
-export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): string | undefined {
-  const chainName = useChainName(address);
-  const { t } = useTranslation();
-  const [endpoint, setEndpoint] = useState<string | undefined>();
+import EndpointManager from '../class/endpointManager';
+import { AUTO_MODE } from '../util/constants';
+import { useGenesisHash } from '.';
 
-  useEffect(() => {
+// Create a singleton EndpointManager
+const endpointManager = new EndpointManager();
+
+const DEFAULT_ENDPOINT = {
+  checkForNewOne: undefined,
+  endpoint: undefined,
+  isAuto: undefined,
+  timestamp: undefined
+};
+
+export default function useEndpoint (address: AccountId | string | undefined, _endpoint?: string): EndpointType {
+  const genesisHash = useGenesisHash(address);
+  const [endpoint, setEndpoint] = useState<EndpointType>(DEFAULT_ENDPOINT);
+
+  // Function to fetch or update the endpoint
+  const fetchEndpoint = useCallback(() => {
+    if (!address || !genesisHash) {
+      return;
+    }
+
+    // If an endpoint is provided, set it as manual
     if (_endpoint) {
-      setEndpoint(_endpoint);
+      endpointManager.set(String(address), genesisHash, {
+        checkForNewOne: false,
+        endpoint: _endpoint,
+        isAuto: false,
+        timestamp: Date.now()
+      });
+    } else {
+      // Otherwise, check for a saved endpoint or set to auto mode
+      const savedEndpoint = endpointManager.get(String(address), genesisHash);
 
-      return;
-    }
-
-    if (!address || !chainName) {
-      setEndpoint(undefined);
-
-      return;
-    }
-
-    chrome.storage.local.get('endpoints', (res) => {
-      const i = `${String(address)}`;
-      const j = `${chainName}`;
-      const savedEndpoint = res?.endpoints?.[i]?.[j] as string | undefined;
-
-      if (savedEndpoint) {
-        setEndpoint(savedEndpoint);
-      } else {
-        const allEndpoints = createWsEndpoints(t);
-
-        const endpoints = allEndpoints?.filter((e) =>
-          e.value &&
-          (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
-            String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase()))
-        );
-
-        if (endpoints?.length) {
-          setEndpoint(endpoints[0].value);
-        } else {
-          // Endpoint not found, handle the error (e.g., set a default value?)
-          setEndpoint(undefined);
-        }
+      // If an endpoint already saved or it should be on auto mode, then save the Auto Mode endpoint in the storage
+      if (!savedEndpoint || endpointManager.shouldBeOnAutoMode(savedEndpoint)) {
+        endpointManager.set(String(address), genesisHash, {
+          checkForNewOne: false,
+          endpoint: AUTO_MODE.value,
+          isAuto: true,
+          timestamp: Date.now()
+        });
       }
-    });
-  }, [_endpoint, address, chainName, t]);
+    }
+
+    // Update the local state with the current endpoint
+    const maybeExistingEndpoint = endpointManager.get(String(address), genesisHash);
+
+    setEndpoint(maybeExistingEndpoint || DEFAULT_ENDPOINT);
+  }, [address, genesisHash, _endpoint]);
 
   useEffect(() => {
-    address && chainName && chrome.storage.onChanged.addListener((changes, namespace) => {
-      for (const [key, { newValue, oldValue }] of Object.entries(changes)) {
-        if (key === 'endpoints' && namespace === 'local') {
-          const maybeNewEndpoint = newValue?.[String(address)]?.[chainName];
+    fetchEndpoint();
 
-          if (maybeNewEndpoint) {
-            setEndpoint(maybeNewEndpoint);
-          }
-        }
+    // Handler for endpoint changes
+    const handleEndpointChange = (changedAddress: string, changedGenesisHash: string, newEndpoint: EndpointType) => {
+      if (changedAddress === String(address) && changedGenesisHash === genesisHash) {
+        setEndpoint(newEndpoint);
       }
-    });
-  }, [address, chainName, t]);
+    };
+
+    endpointManager.subscribe(handleEndpointChange);
+
+    return () => {
+      endpointManager.unsubscribe(handleEndpointChange);
+    };
+  }, [address, genesisHash, fetchEndpoint]);
 
   return endpoint;
 }

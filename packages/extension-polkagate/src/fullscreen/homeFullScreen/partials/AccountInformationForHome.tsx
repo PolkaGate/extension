@@ -5,30 +5,32 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
-import type { BN } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { ItemInformation } from '../../nft/utils/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { Box, Button, Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { type BN, noop } from '@polkadot/util';
 
 import { stars6Black, stars6White } from '../../../assets/icons';
-import { ActionContext, Identicon, Identity, OptionalCopyButton, ShortAddress2 } from '../../../components';
-import { nFormatter } from '../../../components/FormatPrice';
-import { useCurrency, useIdentity, useInfo, usePrices, useTranslation } from '../../../hooks';
-import { showAccount, tieAccount } from '../../../messaging';
-import ExportAccountModal from '../../../popup/export/ExportAccountModal';
-import ForgetAccountModal from '../../../popup/forgetAccount/ForgetAccountModal';
-import DeriveAccountModal from '../../../popup/newAccount/deriveAccount/modal/DeriveAccountModal';
-import RenameModal from '../../../popup/rename/RenameModal';
+import NftManager from '../../../class/nftManager';
+import FormatPrice from '../../../components/FormatPrice';
+import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
+import { tieAccount } from '../../../messaging';
 import { amountToHuman } from '../../../util/utils';
-import AccountIconsFs from '../../accountDetails/components/AccountIconsFs';
-import { EyeIconFullScreen } from '../../accountDetails/components/AccountInformationForDetails';
 import AOC from '../../accountDetails/components/AOC';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
+import NftGrouped from '../../accountDetails/components/NftGrouped';
+import DeriveAccountModal from '../../partials/DeriveAccountModal';
+import ExportAccountModal from '../../partials/ExportAccountModal';
+import ForgetAccountModal from '../../partials/ForgetAccountModal';
+import RenameModal from '../../partials/RenameAccountModal';
+import AccountBodyFs from './AccountBodyFs';
+import AccountIdenticonIconsFS from './AccountIdenticonIconsFS';
 import FullScreenAccountMenu from './FullScreenAccountMenu';
 
 interface AddressDetailsProps {
@@ -40,7 +42,12 @@ interface AddressDetailsProps {
   isChild?: boolean;
 }
 
-interface AccountButtonType { text: string, onClick: () => void, icon: React.ReactNode }
+interface AccountButtonType {
+  text: string;
+  onClick: () => void;
+  icon: React.ReactNode;
+  collapse?: boolean;
+}
 
 export enum POPUPS_NUMBER {
   DERIVE_ACCOUNT,
@@ -48,19 +55,96 @@ export enum POPUPS_NUMBER {
   FORGET_ACCOUNT,
   RENAME,
   MANAGE_PROFILE
+}
+
+const AccountButton = ({ collapse = false, icon, onClick, text }: AccountButtonType) => {
+  const theme = useTheme();
+
+  const collapsedStyle = collapse
+    ? {
+      '&:first-child': { '> span': { m: 0 }, m: '0px', minWidth: '48px' },
+      '> span': { m: 0 }
+    }
+    : {};
+
+  return (
+    <Button
+      endIcon={icon}
+      onClick={onClick}
+      sx={{ ...collapsedStyle, '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', minWidth: '48px', textTransform: 'none', width: 'fit-content' }}
+      variant='text'
+    >
+      {collapse ? '' : text}
+    </Button>
+  );
 };
 
-export default function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | undefined, totalBalance: number | undefined }) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <Grid alignItems='center' container item xs>
+      <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
+        <Typography fontSize='16px' fontWeight={400} pl='15px'>
+          {t('Total')}:
+        </Typography>
+        {
+          hideNumbers || hideNumbers === undefined
+            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
+            : <FormatPrice
+              commify
+              fontSize='24px'
+              fontWeight={700}
+              num={totalBalance}
+              skeletonHeight={28}
+              width='180px'
+            />
+        }
+      </Grid>
+    </Grid>
+  );
+};
+
+function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+  const nftManager = useMemo(() => new NftManager(), []);
+
   const { t } = useTranslation();
   const theme = useTheme();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
-  const { account, api, chain, formatted, genesisHash } = useInfo(address);
-  const onAction = useContext(ActionContext);
-
-  const accountInfo = useIdentity(genesisHash, formatted);
+  const account = useAccount(address);
 
   const [displayPopup, setDisplayPopup] = useState<number>();
+  const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
+
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+
+    // Handle updates after initialization
+    const handleNftUpdate = (updatedAddress: string, updatedNfts: ItemInformation[]) => {
+      if (updatedAddress === address) {
+        setNfts(updatedNfts);
+      }
+    };
+
+    // Waits for initialization
+    nftManager.waitForInitialization()
+      .then(() => {
+        setNfts(nftManager.get(address));
+      })
+      .catch(console.error);
+
+    // subscribe to the possible nft items for the account
+    nftManager.subscribe(handleNftUpdate);
+
+    // Cleanup
+    return () => {
+      nftManager.unsubscribe(handleNftUpdate);
+    };
+  }, [address, nftManager]);
 
   const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
 
@@ -88,49 +172,11 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
 
-  const AccountTotal = () => (
-    <Grid alignItems='center' container item xs>
-      <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
-        <Typography fontSize='16px' fontWeight={400} pl='15px'>
-          {t('Total')}:
-        </Typography>
-        {
-          hideNumbers || hideNumbers === undefined
-            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
-            : totalBalance !== undefined
-              ? <Typography fontSize='32px' fontWeight={700}>
-                {`${currency?.sign ?? ''}${nFormatter(totalBalance ?? 0, 2)}`}
-              </Typography>
-              : <Skeleton animation='wave' height={28} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={180} />
-        }
-      </Grid>
-    </Grid>
-  );
-
-  const AccountButton = ({ icon, onClick, text }: AccountButtonType) => (
-    <Button
-      endIcon={icon}
-      onClick={onClick}
-      sx={{ '&:hover': { bgcolor: 'divider' }, color: theme.palette.secondary.light, fontSize: '16px', fontWeight: 400, height: '53px', textTransform: 'none', width: 'fit-content' }}
-      variant='text'
-    >
-      {text}
-    </Button>
-  );
-
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
     address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
       setSelectedAsset(asset);
     }).catch(console.error);
   }, [address, setSelectedAsset]);
-
-  const toggleVisibility = useCallback((): void => {
-    address && showAccount(address, account?.isHidden || false).catch(console.error);
-  }, [account?.isHidden, address]);
-
-  const openSettings = useCallback((): void => {
-    address && onAction();
-  }, [onAction, address]);
 
   const goToDetails = useCallback((): void => {
     address && openOrFocusTab(`/accountfs/${address}/${selectedAsset?.assetId || '0'}`, true);
@@ -140,79 +186,58 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     <>
       <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: isChild ? '0.1px dashed' : 'none', borderColor: 'secondary.main', borderRadius: '5px', p: '20px 10px 15px 30px' }}>
         <Grid container item>
-          <Grid container item sx={{ borderRight: '1px solid', borderRightColor: 'divider', pr: '8px', width: 'fit-content' }}>
-            <Grid container item pr='7px' sx={{ '> div': { height: 'fit-content' }, m: 'auto', width: 'fit-content' }}>
-              <Identicon
-                iconTheme={chain?.icon ?? 'polkadot'}
-                prefix={chain?.ss58Format ?? 42}
-                size={70}
-                value={formatted || address}
-              />
-            </Grid>
-            <AccountIconsFs
-              accountInfo={accountInfo}
-              address={address}
-            />
-          </Grid>
-          <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'divider', px: '7px' }} xs={5.6}>
-            <Grid container item justifyContent='space-between'>
-              <Identity
-                accountInfo={accountInfo}
-                address={address}
-                api={api}
-                chain={chain}
-                noIdenticon
-                onClick={goToDetails}
-                style={{ width: 'calc(100% - 40px)' }}
-                subIdOnly
-              />
-              <Grid item width='40px'>
-                <EyeIconFullScreen
-                  isHidden={account?.isHidden}
-                  onClick={toggleVisibility}
-                />
-              </Grid>
-            </Grid>
-            <Grid alignItems='center' container item>
-              <Grid container item sx={{ '> div div:last-child': { width: 'auto' } }} xs>
-                <ShortAddress2 address={formatted || address} charsCount={40} style={{ fontSize: '10px', fontWeight: 300 }} />
-              </Grid>
-              <Grid container item width='fit-content'>
-                <OptionalCopyButton address={address} />
-              </Grid>
-            </Grid>
-          </Grid>
-          <AccountTotal />
+          <AccountIdenticonIconsFS
+            address={address}
+          />
+          <AccountBodyFs
+            address={address}
+            goToDetails={goToDetails}
+            gridSize={5.6}
+          />
+          <AccountTotal
+            hideNumbers={hideNumbers}
+            totalBalance={totalBalance}
+          />
         </Grid>
         <Grid container item justifyContent='flex-end' minHeight='50px'>
           <Divider sx={{ bgcolor: 'divider', height: '1px', mr: '5px', my: '15px', width: '100%' }} />
           <Grid container item xs>
-            {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
-              <AOC
-                accountAssets={assetsToShow}
+            <Grid container item xs>
+              {(assetsToShow === undefined || (assetsToShow && assetsToShow?.length > 0)) &&
+                <AOC
+                  accountAssets={assetsToShow}
+                  address={address}
+                  hideNumbers={hideNumbers}
+                  mode='Home'
+                  onclick={onAssetBoxClicked}
+                  selectedAsset={selectedAsset}
+                />
+              }
+            </Grid>
+            <Grid container item width='fit-content'>
+              <NftGrouped
+                accountNft={myNfts}
                 address={address}
-                hideNumbers={hideNumbers}
-                mode='Home'
-                onclick={onAssetBoxClicked}
-                selectedAsset={selectedAsset}
               />
-            }
+            </Grid>
           </Grid>
           <Grid alignItems='center' container item width='fit-content'>
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: 0, mr: '10px', mx: myNfts ? '5px' : undefined, my: 'auto', width: '1px' }} />
             <FullScreenAccountMenu
               address={address}
               baseButton={
                 <AccountButton
+                  collapse={!!myNfts}
                   icon={<MoreVertIcon style={{ color: theme.palette.secondary.light, fontSize: '32px' }} />}
-                  onClick={openSettings}
+                  onClick={noop}
                   text={t('Settings')}
                 />
               }
               setDisplayPopup={setDisplayPopup}
             />
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: '15px', my: 'auto', width: '1px' }} />
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '34px', ml: '5px', mr: myNfts ? '5px' : '15px', my: 'auto', width: '1px' }} />
             <AccountButton
+              collapse={!!myNfts}
               icon={<ArrowForwardIosIcon style={{ color: theme.palette.secondary.light, fontSize: '28px' }} />}
               onClick={goToDetails}
               text={t('Details')}
@@ -247,3 +272,5 @@ export default function AccountInformationForHome ({ accountAssets, address, hid
     </>
   );
 }
+
+export default React.memo(AccountInformationForHome);

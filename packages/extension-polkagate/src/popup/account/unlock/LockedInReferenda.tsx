@@ -1,7 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable header/header */
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
@@ -9,16 +8,15 @@
  * this component shows an account locked tokens information
  * */
 
-import { faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN_MAX_INTEGER } from '@polkadot/util';
 
 import { FormatPrice, ShowBalance, ShowValue } from '../../../components';
-import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useInfo, useTimeToUnlock, useTokenPrice, useTranslation } from '../../../hooks';
+import { useInfo, useLockedInReferenda, useTokenPrice, useTranslation } from '../../../hooks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
 import Review from './Review';
 
@@ -34,15 +32,11 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
 
   const { api, decimal, token } = useInfo(address);
   const { price } = useTokenPrice(address);
-  const delegatedBalance = useHasDelegated(address, refresh);
-  const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refresh);
-  const { lockedInRef, timeToUnlock, totalLocked, unlockableAmount } = useTimeToUnlock(address, referendaLocks, refresh);
-  const currentBlock = useCurrentBlockNumber(address);
 
   const [showReview, setShowReview] = useState(false);
   const [shake, setShake] = useState<boolean>();
 
-  const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
+  const { classToUnlock, delegatedBalance, isDisable, lockedInRef, timeToUnlock, totalLocked, unlockableAmount } = useLockedInReferenda(address, refresh);
 
   useEffect(() => {
     if (unlockableAmount && !unlockableAmount.isZero()) {
@@ -57,7 +51,7 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
 
   return (
     <>
-      <Grid item pt='3px' pb='2px'>
+      <Grid item pb='2px' pt='3px'>
         <Grid alignItems='flex-end' container justifyContent='space-between'>
           <Grid item sx={{ fontSize: '16px', fontWeight: 300 }} xs>
             {t('Locked in Referenda')}
@@ -83,8 +77,8 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() ? 'pointer' : undefined, ml: '8px', width: '26px' }}>
             <FontAwesomeIcon
-              color={!unlockableAmount || unlockableAmount.isZero() ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
-              icon={faUnlockAlt}
+              color={isDisable ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
+              icon={ unlockableAmount && !unlockableAmount.isZero() ? faUnlockAlt : faLock}
               onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
               shake={shake}
               style={{ height: '25px' }}
@@ -103,7 +97,7 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
           </Grid>
         </Grid>
       </Grid>
-      <Divider sx={{ bgcolor: 'secondary.main', height: '1px', my: '5px' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '1px', my: '5px' }} />
       {showReview && !!classToUnlock?.length && api && lockedInRef && unlockableAmount && address &&
         <Review
           address={address}

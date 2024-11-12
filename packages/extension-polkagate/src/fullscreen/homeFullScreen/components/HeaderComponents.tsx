@@ -1,14 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import { Badge, Grid, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { HideIcon, ShowIcon } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsTestnetEnabled, useSelectedChains, useTranslation } from '../../../hooks';
+import { TEST_NETS } from '../../../util/constants';
 import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
 
@@ -17,8 +17,25 @@ interface Props {
   setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+const HideNumbers = ({ hideNumbers, onHideClick }: { hideNumbers: boolean | undefined, onHideClick: () => void}) => {
   const { t } = useTranslation();
+
+  return (
+    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', minWidth: '92px', p: '2px 6px', width: 'fit-content' }}>
+      {hideNumbers
+        ? <ShowIcon color='#fff' height={18} scale={1.2} width={40} />
+        : <HideIcon color='#fff' height={18} scale={1.2} width={40} />
+      }
+      <Typography sx={{ color: '#fff', fontSize: '12px', fontWeight: 500, textWrap: 'nowrap', userSelect: 'none' }}>
+        {hideNumbers ? t('Show numbers') : t('Hide numbers')}
+      </Typography>
+    </Grid>
+  );
+};
+
+function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+  const selectedChains = useSelectedChains();
+  const isTestNetEnabled = useIsTestnetEnabled();
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
@@ -31,23 +48,32 @@ export default function HeaderComponents({ hideNumbers, setHideNumbers }: Props)
     isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
   }, [setHideNumbers]);
 
-  const HideNumbers = () => (
-    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', minWidth: '92px', p: '2px 6px', width: 'fit-content' }}>
-      {hideNumbers
-        ? <ShowIcon color='#fff' height={18} scale={1.2} width={40} />
-        : <HideIcon color='#fff' height={18} scale={1.2} width={40} />
-      }
-      <Typography sx={{ color: '#fff', fontSize: '12px', fontWeight: 500, textWrap: 'nowrap' }}>
-        {hideNumbers ? t('Show numbers') : t('Hide numbers')}
-      </Typography>
-    </Grid>
-  );
+  const badgeCount = useMemo(() => {
+    if (!selectedChains?.length) {
+      return 0;
+    }
+
+    let filteredList = selectedChains;
+
+    if (!isTestNetEnabled) {
+      filteredList = selectedChains.filter((item) => !TEST_NETS.includes(item));
+    }
+
+    return filteredList.length;
+  }, [isTestNetEnabled, selectedChains]);
 
   return (
     <Grid columnGap='18px' container item pl='18px' width='fit-content'>
       <Currency />
-      <FavoriteChains />
-      <HideNumbers />
+      <Badge badgeContent={badgeCount} color='success'>
+        <FavoriteChains />
+      </Badge>
+      <HideNumbers
+        hideNumbers={hideNumbers}
+        onHideClick={onHideClick}
+      />
     </Grid>
   );
 }
+
+export default React.memo(HeaderComponents);

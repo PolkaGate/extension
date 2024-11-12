@@ -1,9 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { AccountId } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
 import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -11,11 +12,10 @@ import React from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { Progress, ShortAddress, Warning } from '../../../components';
+import { DisplayInfo, Progress, ShortAddress, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { amountToHuman } from '../../../util/utils';
 import recoveryDelayPeriod from '../util/recoveryDelayPeriod';
-import { DisplayInfo } from './Confirmation';
 
 interface Props {
   accountsInfo: DeriveAccountInfo[] | undefined;
@@ -25,7 +25,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
+export default function LostAccountRecoveryInfo ({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -42,22 +42,22 @@ export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAcc
             isBelowInput
             theme={theme}
           >
-            {t<string>('This account is not recoverable, try another address.')}
+            {t('This account is not recoverable, try another address.')}
           </Warning>
         </Grid>
       }
       {lostAccountRecoveryInfo &&
         <Grid container item justifyContent='center'>
           <Typography fontSize='18px' fontWeight={500} pb='25px'>
-            {t<string>('This account is recoverable with the following details.')}
+            {t('This account is recoverable with the following details.')}
           </Typography>
-          {lostAccountRecoveryInfo.friends.map((friend, index) => {
+          {lostAccountRecoveryInfo.friends.map((friend: AccountId, index: number) => {
             const friendID = accountsInfo?.find((info) => String(info.accountId) === String(friend))?.identity.display;
 
             return (
               <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
                 <Typography fontSize='20px' fontWeight={400} lineHeight='23px'>
-                  {t<string>(`Trusted friend ${index + 1}`)}:
+                  {t(`Trusted friend ${index + 1}`)}:
                 </Typography>
                 {friendID &&
                   <Typography fontSize='20px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
@@ -73,17 +73,17 @@ export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAcc
             <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
           </Grid>
           <DisplayInfo
-            caption={t<string>('Threshold:')}
+            caption={t('Threshold:')}
             fontSize='20px'
             value={`${lostAccountRecoveryInfo.threshold.toNumber()} of ${lostAccountRecoveryInfo.friends.length}`}
           />
           <DisplayInfo
-            caption={t<string>('Delay:')}
+            caption={t('Delay:')}
             fontSize='20px'
             value={recoveryDelayPeriod(lostAccountRecoveryInfo.delayPeriod.toNumber())}
           />
           <DisplayInfo
-            caption={t<string>('Deposited:')}
+            caption={t('Deposited:')}
             fontSize='20px'
             showDivider={false}
             value={`${amountToHuman(new BN(lostAccountRecoveryInfo.deposit.toString()), decimal, 4)} ${token ?? ''}`}

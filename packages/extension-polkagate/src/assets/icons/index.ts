@@ -3,11 +3,9 @@
 
 // @ts-nocheck
 
-export { default as assetHub } from './assetHub.svg';
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
 export { default as auctionWhite } from './auctionWhite.svg';
-export { default as BTC } from './BTC.svg';
 export { default as checkBox } from './checkBox.svg';
 export { default as checkedBox } from './checkedBox.svg';
 export { default as controllerSettingBlack } from './controllerSettingBlack.svg';
@@ -15,9 +13,6 @@ export { default as controllerSettingWhite } from './controllerSettingWhite.svg'
 export { default as crowdloanHomeBlack } from './crowdloanHomeBlack.svg';
 export { default as crowdloanHomeRed } from './crowdloanHomeRed.svg';
 export { default as crowdloanHomeWhite } from './crowdloanHomeWhite.svg';
-export { default as DAI } from './DAI.svg';
-export { default as lcDOT } from './lcDOT.svg';
-export { default as LDOT } from './LDOT.svg';
 export { default as ms } from './ms.svg';
 export { default as msGreen } from './msGreen.svg';
 export { default as msWarning } from './msWarning.svg';
@@ -37,5 +32,3 @@ export { default as stashSettingWhite } from './stashSettingWhite.svg';
 export { default as subId } from './subId.svg';
 export { default as subscan } from './subscan.svg';
 export { default as upload } from './upload.png';
-export { default as USDC } from './USDC.svg';
-export { default as USDT } from './USDT.svg';

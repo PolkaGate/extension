@@ -91,14 +91,18 @@ export default function useReservedDetails(address: string | undefined): Reserve
 
         api.query.proxy.proxies(formatted).then((p) => {
           const mayBeDeposit = p?.[1] as BN;
+      if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
+        api.query['proxy']['proxies'](formatted).then((p) => {
+          const maybeDeposit = p?.[1] as BN;
 
-          setValue('proxy', mayBeDeposit);
-        }).catch((error) => {
-          console.error(error);
-          setValue('proxy', null);
-        });
-      } else {
-        setValue('proxy', null);
+          if (!maybeDeposit?.isZero()) {
+            setReserved((prev) => {
+              prev.proxy = toBalance(maybeDeposit);
+
+              return prev;
+            });
+          }
+        }).catch(console.error);
       }
 
       /** fetch social recovery  */

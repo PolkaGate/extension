@@ -9,7 +9,7 @@ import type { HexString } from '@polkadot/util/types';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
@@ -17,9 +17,9 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfile
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
-import { Address, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import { FullScreenHeader } from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useGenesisHashOptions, useMetadata, useTranslation } from '../../../hooks';
+import { Address, GenesisHashOptionsContext, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
+import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
+import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import getLogo from '../../../util/getLogo';
@@ -36,7 +36,7 @@ export default function ImportSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const genesisOptions = useGenesisHashOptions();
+  const genesisOptions = useContext(GenesisHashOptionsContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);
@@ -49,11 +49,11 @@ export default function ImportSeed (): React.ReactElement {
   const [path, setPath] = useState<string | null>(null);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null >();
+  const [password, setPassword] = useState<string | null>();
 
   const chain = useMetadata(account?.genesis, true);
 
-  const showAddress = useMemo(() => !!(account && account.address), [account]);
+  const showAddress = useMemo(() => !!(account?.address), [account]);
 
   useEffect((): void => {
     setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain
@@ -223,7 +223,7 @@ export default function ImportSeed (): React.ReactElement {
             <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }}>
               {t('More ...')}
             </Typography>
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
           <Collapse in={showMore}>
             <Grid container item justifyContent='space-between' mb='25px' mt='10px'>

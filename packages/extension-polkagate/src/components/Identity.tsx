@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
@@ -9,7 +11,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { Email as EmailIcon, Language as LanguageIcon, X as XIcon } from '@mui/icons-material';
-import { Box, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Link, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
@@ -26,20 +28,21 @@ interface Props {
   direction?: 'row' | 'column';
   formatted?: string | AccountId;
   identiconSize?: number;
+  inParentheses?: boolean;
   judgement?: unknown;
   name?: string;
   noIdenticon?: boolean;
   onClick?: () => void;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
-  style?: CSSProperties;
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
-  withShortAddress?: boolean;
+  style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
+  withShortAddress?: boolean;
 }
 
-function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity ({ accountInfo, address, api, chain, direction = 'column', formatted, identiconSize = 40, inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -153,13 +156,13 @@ function Identity ({ accountInfo, address, api, chain, direction = 'column', for
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
             </Grid>
           }
         </Grid>
         {withShortAddress && direction === 'row' &&
           <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
-            <ShortAddress address={_formatted} charsCount={6} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
+            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
           </Grid>
         }
         {_showSocial &&
