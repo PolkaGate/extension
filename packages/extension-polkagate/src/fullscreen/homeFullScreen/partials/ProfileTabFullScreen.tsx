@@ -119,7 +119,7 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           width: 'fit-content'
         }}
       >
-        <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
+        <VaadinIcon icon={'vaadin:check'} style={{ height: '12px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
         <Typography
           color={'text.primary'} display='block' fontSize='16px' fontWeight={400}
           sx={{
