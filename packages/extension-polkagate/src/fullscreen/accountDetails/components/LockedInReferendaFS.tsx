@@ -67,7 +67,6 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
               decimals={decimal}
               fontSize= '22px'
               fontWeight={ 400}
-              mt={!totalLocked ? '5px' : undefined}
               price={price}
               skeletonHeight={20}
             />
