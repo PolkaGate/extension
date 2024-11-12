@@ -19,7 +19,7 @@ import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { ENDED_STATUSES } from './utils/consts';
 
 const PROPOSAL_NO = 1264;
-const STORAGE_LABEL = `supportUs0000_${PROPOSAL_NO}`;
+const STORAGE_LABEL = `supportUs_${PROPOSAL_NO}`;
 
 const StyledPaper = styled(Paper)(({ theme }: { theme: Theme }) => ({
   background: theme.palette.background.default,

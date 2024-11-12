@@ -132,14 +132,14 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
     <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '10px 15px', width: 'inherit' }}>
       <Grid alignItems='flex-start' container item justifyContent='space-between' mb='10px'>
         <Grid alignItems='center' item>
-          <Typography sx={{ fontSize: '22px', fontVariant: 'small-caps', fontWeight: 400 }}>
+          <Typography sx={{ fontSize: '20px', fontVariant: 'small-caps', fontWeight: 400 }}>
             {t('Total')}
           </Typography>
         </Grid>
         <Grid alignItems='center' item justifyItems='flex-end'>
           <FormatPrice
             commify
-            fontSize='28px'
+            fontSize='26px'
             fontWeight={600}
             num={totalWorth}
             skeletonHeight={22}
