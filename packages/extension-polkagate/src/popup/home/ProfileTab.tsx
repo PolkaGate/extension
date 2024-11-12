@@ -85,7 +85,7 @@ export default function ProfileTab ({ index, isContainerHovered, isSelected, ord
         orientation='horizontal'
         sx={{
           '&:hover': { boxShadow: shadowOnHover },
-          border:1,
+          border: 1,
           borderColor: getProfileColor(index, theme) || 'background.paper',
           borderRadius: '10px',
           boxShadow: shadow,
@@ -96,7 +96,7 @@ export default function ProfileTab ({ index, isContainerHovered, isSelected, ord
         }}
       >
         <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>
-          <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', userSelect: 'none', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
+          <Typography color='text.primary' fontSize='14px' fontWeight={400} sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', userSelect: 'none', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
             {t(text)}
           </Typography>
           {areAllHidden && isSelected &&
