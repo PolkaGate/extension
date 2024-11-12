@@ -1,5 +1,103 @@
 # Change Log
 
+# [0.29.0](https://github.com/polkagate/extension/compare/v0.28.0...v0.29.0) (2024-11-12)
+
+
+### Features
+
+* support governance tx history ([#1630](https://github.com/polkagate/extension/issues/1630)) ([4044d3b](https://github.com/polkagate/extension/commit/4044d3b83a268ce2af7da4f42323cc866d477e19))
+
+# [0.28.0](https://github.com/polkagate/extension/compare/v0.27.0...v0.28.0) (2024-11-11)
+
+
+### Features
+
+* display portfolio change in account detail ([#1644](https://github.com/polkagate/extension/issues/1644)) ([e30ef9c](https://github.com/polkagate/extension/commit/e30ef9c7fadaec43e7e6087ac0c58be8b23a5cdb))
+
+# [0.27.0](https://github.com/polkagate/extension/compare/v0.26.1...v0.27.0) (2024-11-11)
+
+
+### Features
+
+* add count up ([#1642](https://github.com/polkagate/extension/issues/1642)) ([b155aaf](https://github.com/polkagate/extension/commit/b155aaf303fdd2416c9030215bcb9b9a8a3437a7))
+
+## [0.26.1](https://github.com/polkagate/extension/compare/v0.26.0...v0.26.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* transient label of selected profile name ([#1640](https://github.com/polkagate/extension/issues/1640)) ([75386b9](https://github.com/polkagate/extension/commit/75386b9e6cd2e2d9f2309928a391bd80f0a40bfd))
+
+# [0.26.0](https://github.com/polkagate/extension/compare/v0.25.0...v0.26.0) (2024-11-11)
+
+
+### Features
+
+* add portfolio price change ([#1641](https://github.com/polkagate/extension/issues/1641)) ([8e4eacb](https://github.com/polkagate/extension/commit/8e4eacb1bedd7eeb580bd2424471cdadf4662801))
+
+# [0.25.0](https://github.com/polkagate/extension/compare/v0.24.0...v0.25.0) (2024-11-10)
+
+
+### Features
+
+* add filter to NFT page ([#1639](https://github.com/polkagate/extension/issues/1639)) ([c8c835e](https://github.com/polkagate/extension/commit/c8c835e9f64c18bb722deaf6daaaddeecb22e6c6))
+
+# [0.24.0](https://github.com/polkagate/extension/compare/v0.23.1...v0.24.0) (2024-11-10)
+
+
+### Features
+
+* show validators APY ([#1633](https://github.com/polkagate/extension/issues/1633)) ([cdc4b37](https://github.com/polkagate/extension/commit/cdc4b37569ba0a55927158b4e445cae7a5b58fb7))
+
+## [0.23.1](https://github.com/polkagate/extension/compare/v0.23.0...v0.23.1) (2024-11-09)
+
+
+### Bug Fixes
+
+* disable manage validators if the account is already a validator ([#1634](https://github.com/polkagate/extension/issues/1634)) ([89d56c4](https://github.com/polkagate/extension/commit/89d56c48eedc8fe3fdff98ca8ff7e69edf88a65d))
+
+# [0.23.0](https://github.com/polkagate/extension/compare/v0.22.0...v0.23.0) (2024-11-09)
+
+
+### Features
+
+* support NFTs and Uniques ([#1564](https://github.com/polkagate/extension/issues/1564)) ([7c38aac](https://github.com/polkagate/extension/commit/7c38aacad0b8b5f800287d28f49b67974009d746))
+
+# [0.22.0](https://github.com/polkagate/extension/compare/v0.21.6...v0.22.0) (2024-11-06)
+
+
+### Features
+
+* use Slider for Conviction settings ([#1629](https://github.com/polkagate/extension/issues/1629)) ([790d7a1](https://github.com/polkagate/extension/commit/790d7a1f739774778c6c1a6755f0db65c990723c))
+
+## [0.21.6](https://github.com/polkagate/extension/compare/v0.21.5...v0.21.6) (2024-11-03)
+
+
+### Bug Fixes
+
+* displaying locked amount button ([#1626](https://github.com/polkagate/extension/issues/1626)) ([dbc15f0](https://github.com/polkagate/extension/commit/dbc15f042d45b8a2da8d243b7940d613bfc17eea))
+
+## [0.21.5](https://github.com/polkagate/extension/compare/v0.21.4...v0.21.5) (2024-11-03)
+
+
+### Bug Fixes
+
+* underway votes type ([#1625](https://github.com/polkagate/extension/issues/1625)) ([42be4e2](https://github.com/polkagate/extension/commit/42be4e2f0396e92623ce8d3b8927c066f9d1172e))
+
+## [0.21.4](https://github.com/polkagate/extension/compare/v0.21.3...v0.21.4) (2024-11-03)
+
+
+### Bug Fixes
+
+* resolve issue with closing button on the Referanda unlock modal ([#1547](https://github.com/polkagate/extension/issues/1547)) ([ac1a4df](https://github.com/polkagate/extension/commit/ac1a4df5349ad775bca53405ca12d2b474d8dd16))
+
+## [0.21.3](https://github.com/polkagate/extension/compare/v0.21.2...v0.21.3) (2024-11-02)
+
+
+### Bug Fixes
+
+* wrong vote type issue in comments ([#1624](https://github.com/polkagate/extension/issues/1624)) ([f398d16](https://github.com/polkagate/extension/commit/f398d16227205ffda4b3281f57fd065815fd3f90))
+
 ## [0.21.2](https://github.com/polkagate/extension/compare/v0.21.1...v0.21.2) (2024-10-31)
 
 

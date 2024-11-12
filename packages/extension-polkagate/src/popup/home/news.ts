@@ -10,6 +10,22 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.23.0',
+    notes: [
+      'Support for NFTs: View the details of your account’s NFTs',
+      'Set Conviction with the Slider: Easily set convictions in governance using the slider.',
+      'View Portfolio Price Change: Display the portfolio’s price change over the last 24 hours with an engaging count-up effect.',
+      'View Governance History: In addition to transfer and staking histories, governance histories for supported chains are now available on the history page.'
+    ]
+  },
+  {
+    version: '0.21.6',
+    notes: [
+      'Show Support Us Notification: Encourage users to support us by voting for our referenda in governance.',
+      'Known Issues Resolved: Removed locked amount button if no funds are locked, fixed underway votes type in the tooltip, corrected the referenda unlock modal close button, addressed vote type issues in comments, and improved the governance timeline display.'
+    ]
+  },
+  {
     version: '0.21.1',
     notes: [
       'Show No Internet Sign: Display an icon to indicate when there’s no internet connection.',

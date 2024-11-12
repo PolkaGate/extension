@@ -12,6 +12,7 @@ const START_WITH_PATH = [
   '/send/',
   '/stake/',
   '/socialRecovery/',
+  '/nft/',
   '/derivefs/'
 ] as const;
 

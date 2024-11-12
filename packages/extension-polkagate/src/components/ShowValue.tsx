@@ -1,8 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/** 
+/**
  * @description  this component is used to show an account balance in some pages like contributeToCrowdloan
  * */
 import type { BN } from '@polkadot/util';
@@ -17,7 +16,7 @@ export interface Props {
   width?: string;
 }
 
-export default function ShowValue({ height = 20, unit, value, width = '90px' }: Props): React.ReactElement<Props> {
+export default function ShowValue ({ height = 20, unit, value, width = '90px' }: Props): React.ReactElement<Props> {
   return (
     <>
       {value !== undefined

@@ -3,10 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Prices } from '../../../util/types';
+import type { CurrencyItemType } from './Currency';
 import type { AssetsWithUiAndPrice } from './TotalBalancePieChart';
 
 import { ArrowDropDown as ArrowDropDownIcon, ArrowDropDown as DownIcon, ArrowDropUp as UpIcon } from '@mui/icons-material';
-import { Collapse, Divider, Grid, Typography } from '@mui/material';
+import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { AssetLogo } from '../../../components';
@@ -15,15 +17,18 @@ import { useCurrency, usePrices, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
 interface Props {
-  groupedAssets: AssetsWithUiAndPrice[] | undefined
+  groupedAssets: AssetsWithUiAndPrice[] | undefined;
 }
 
-const AssetPriceChange = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
-  const currency = useCurrency();
-  const pricesInCurrencies = usePrices();
+interface AssetPriceChangeProps {
+  asset: AssetsWithUiAndPrice;
+  currency: CurrencyItemType | undefined;
+  pricesInCurrencies: Prices | null | undefined;
+}
 
+const AssetPriceChange = React.memo(function AssetPriceChange ({ asset, currency, pricesInCurrencies }: AssetPriceChangeProps) {
   const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
-  const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : 0;
+  const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : undefined;
 
   return (
     <Grid container item justifyContent='space-between'>
@@ -41,20 +46,25 @@ const AssetPriceChange = ({ asset }: { asset: AssetsWithUiAndPrice }) => {
           num={asset.price}
         />
         <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '21px', m: 'auto', width: '3px' }} />
-        {change > 0
-          ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
-          : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
-        }
-        <Typography fontSize='16px' fontWeight={400} m='auto' width='40px'>
-          {`${(change ?? 0).toFixed(2)}%`}
-        </Typography>
+        <Grid alignItems='center' container item width='fit-content'>
+          {change !== undefined && change > 0
+            ? <UpIcon sx={{ color: 'success.main', fontSize: '40px' }} />
+            : <DownIcon sx={{ color: 'warning.main', fontSize: '40px' }} />
+          }
+          <Typography color={change !== undefined ? change > 0 ? 'success.main' : 'warning.main' : undefined} fontSize='16px' fontWeight={400} ml='-5px' width='40px'>
+            {`${(change ?? 0).toFixed(2)}%`}
+          </Typography>
+        </Grid>
       </Grid>
     </Grid>
   );
-};
+});
 
 function WatchList ({ groupedAssets }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const currency = useCurrency();
+  const pricesInCurrencies = usePrices();
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
@@ -80,7 +90,9 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
           {uniqueAssets.slice(0, 3).map((asset, index) => (
             <AssetPriceChange
               asset={asset}
+              currency={currency}
               key={index}
+              pricesInCurrencies={pricesInCurrencies}
             />
           ))}
           {uniqueAssets.length > 3 &&
@@ -89,16 +101,18 @@ function WatchList ({ groupedAssets }: Props): React.ReactElement {
                 {uniqueAssets.slice(3).map((asset, index) => (
                   <AssetPriceChange
                     asset={asset}
+                    currency={currency}
                     key={index}
+                    pricesInCurrencies={pricesInCurrencies}
                   />
                 ))}
               </Collapse>
               <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
               <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
-                <Typography color='secondary.light' fontSize='16px' fontWeight={400}>
-                  {t<string>(showMore ? t('Less') : t('More'))}
+                <Typography color='secondary.light' fontSize='14px' fontWeight={400}>
+                  {t(showMore ? t('Less') : t('More'))}
                 </Typography>
-                <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: '#BA2882', strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
+                <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
               </Grid>
             </Grid>
           }

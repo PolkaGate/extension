@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
+import { faAddressCard, faGem } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
@@ -64,6 +64,10 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
     address && onAction(`/socialRecovery/${address}/false`);
   }, [address, onAction]);
 
+  const onNFTAlbum = useCallback(() => {
+    address && onAction(`/nft/${address}`);
+  }, [address, onAction]);
+
   const isDisable = useCallback((supportedChains: string[]) => {
     if (!chain) {
       return true;
@@ -95,7 +99,7 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
           <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisable(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '20px' }} />
         }
         onClick={onManageProxies}
-        text={t<string>('Manage proxies')}
+        text={t('Manage proxies')}
         withHoverEffect
       />
       <MenuItem
@@ -112,6 +116,19 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
         }
         onClick={onSocialRecovery}
         text={t('Social recovery')}
+        withHoverEffect
+      />
+      <MenuItem
+        disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+        iconComponent={
+          <FontAwesomeIcon
+            color={theme.palette.text.primary}
+            fontSize='20px'
+            icon={faGem}
+          />
+        }
+        onClick={onNFTAlbum}
+        text={t('NFT album')}
         withHoverEffect
       />
       <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
@@ -149,7 +166,7 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
       />
       <MenuItem
         iconComponent={
-          <VaadinIcon icon='vaadin:file-remove' style={ vaadinIconStyle } />
+          <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
         }
         onClick={onForgetAccount}
         text={t('Forget account')}

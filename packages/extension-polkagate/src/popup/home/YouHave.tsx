@@ -56,13 +56,14 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
           />
           : <Grid item pr='15px'>
             <FormatPrice
-              fontSize='42px'
+              fontSize='32px'
               fontWeight={500}
               height={36}
               num={youHave?.portfolio }
               skeletonHeight={36}
               textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
               width='223px'
+              withCountUp
             />
           </Grid>
         }

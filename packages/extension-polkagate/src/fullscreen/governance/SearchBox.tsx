@@ -9,7 +9,7 @@
 import type { LatestReferenda } from './utils/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, useTheme } from '@mui/material';
+import { Collapse, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Checkbox2, InputFilter, Select } from '../../components';
@@ -159,7 +159,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' onClick={onAdvanced} py='10px' sx={{ cursor: 'pointer' }} width='fit-content'>
           {t('Advanced')}
           <Grid alignItems='center' container item justifyContent='center' sx={{ cursor: 'pointer', width: '25px' }}>
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+            <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showAdvanced ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
         </Grid>
         <Grid alignItems='center' container fontSize='16px' fontWeight={400} item justifyContent='flex-start' py='10px' width='fit-content'>
@@ -193,7 +193,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
           />
         </Grid>
       </Grid>
-      {showAdvanced &&
+      <Collapse in={showAdvanced} sx={{ width: '100%' }}>
         <Grid alignItems='center' container justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', fontSize: '16px', fontWeight: '400', height: '52px', pl: '22px', width: '90%' }}>
           <Grid item>
             {t('Search in:')}
@@ -234,7 +234,7 @@ export default function SearchBox ({ address, myVotedReferendaIndexes, referenda
             {t('Reset')}
           </Grid>
         </Grid>
-      }
+      </Collapse>
     </>
   );
 }

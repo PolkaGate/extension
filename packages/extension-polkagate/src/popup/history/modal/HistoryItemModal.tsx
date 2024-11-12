@@ -6,7 +6,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Grid, IconButton, Typography } from '@mui/material';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { FormatBalance2 } from '../../../components';
@@ -27,6 +27,7 @@ interface Props {
 
 export default function HistoryItemModal ({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const goToDetail = useCallback(() => {
     setDetailInfo(info);
@@ -92,7 +93,7 @@ export default function HistoryItemModal ({ anotherDay, date, decimal, formatted
               onClick={goToDetail}
               sx={{ p: 0 }}
             >
-              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
+              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: theme.palette.secondary.light, strokeWidth: 2 }} />
             </IconButton>
           </Grid>
         </Grid>

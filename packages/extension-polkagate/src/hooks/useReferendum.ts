@@ -23,7 +23,7 @@ type ReferendumData = Record<string, Referendum[]>;
 
 const isAlreadySaved = (list: Referendum[], referendum: Referendum) => list?.find((r) => r?.index === referendum?.index);
 
-const getAssetHubByChainName = (chainName?: string) => {
+export const getAssetHubByChainName = (chainName?: string) => {
   if (chainName?.toLowerCase()?.includes('polkadot')) {
     return { genesisHash: STATEMINT_GENESIS_HASH, name: 'Polkadot Asset Hub' };
   }

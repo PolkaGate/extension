@@ -1,20 +1,20 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import OptionalCopyPopup from '../partials/OptionalCopyPopup';
 import { VaadinIcon } from '../components';
+import OptionalCopyPopup from '../partials/OptionalCopyPopup';
 
 interface Props {
   address: string | undefined;
+  iconWidth?: number;
 }
 
-function OptionalCopyButton({ address }: Props): React.ReactElement {
+function OptionalCopyButton ({ address, iconWidth = 20 }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -35,7 +35,7 @@ function OptionalCopyButton({ address }: Props): React.ReactElement {
   return (
     <>
       <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCopyIconClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '35px' }}>
-        <VaadinIcon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: '20px' }} />
+        <VaadinIcon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${iconWidth}px` }} />
       </Grid>
       <Popover
         PaperProps={{

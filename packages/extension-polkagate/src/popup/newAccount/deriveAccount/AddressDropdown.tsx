@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Address, ChainLogo } from '../../../components';
@@ -20,8 +19,10 @@ interface Props {
   withoutChainLogo?: boolean;
 }
 
-export default function AddressDropdown({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, withoutChainLogo = false }: Props): React.ReactElement<Props> {
+export default function AddressDropdown ({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, withoutChainLogo = false }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -60,7 +61,7 @@ export default function AddressDropdown({ allAddresses, onSelect, selectedAddres
           }
         </Grid>
         <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer' }} xs={1}>
-          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: '#BA2882', strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
+          <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
         </Grid>
       </Grid>
       <Grid container sx={{ '> .tree:last-child': { border: 'none' }, bgcolor: 'background.paper', border: '2px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: '0px 3px 10px rgba(255, 255, 255, 0.25)', maxHeight: '220px', overflow: 'hidden', overflowY: 'scroll', position: 'absolute', top: '75px', transform: isDropdownVisible ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'top', transitionDuration: '0.3s', transitionProperty: 'transform', visibility: isDropdownVisible ? 'visible' : 'hidden', zIndex: 10 }}>

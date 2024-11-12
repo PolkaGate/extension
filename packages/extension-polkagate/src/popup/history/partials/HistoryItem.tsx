@@ -6,7 +6,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, Grid, IconButton, Typography } from '@mui/material';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { FormatBalance2 } from '../../../components';
@@ -27,6 +27,8 @@ interface Props {
 
 export default function HistoryItem ({ anotherDay, chainName, date, decimal, formatted, info, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const _goToDetail = useCallback(() => {
@@ -82,7 +84,7 @@ export default function HistoryItem ({ anotherDay, chainName, date, decimal, for
               </Grid>
               <Grid item>
                 <Typography color={info.success ? 'green' : 'red'} fontSize='16px' fontWeight={400}>
-                  {info.success ? t<string>('Completed') : t<string>('Failed')}
+                  {info.success ? t('Completed') : t('Failed')}
                 </Typography>
               </Grid>
             </Grid>
@@ -92,7 +94,7 @@ export default function HistoryItem ({ anotherDay, chainName, date, decimal, for
               onClick={_goToDetail}
               sx={{ p: 0 }}
             >
-              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: '#BA2882', strokeWidth: 2 }} />
+              <ArrowForwardIosRoundedIcon sx={{ color: 'secondary.light', fontSize: '24px', stroke: theme.palette.secondary.light, strokeWidth: 2 }} />
             </IconButton>
           </Grid>
         </Grid>

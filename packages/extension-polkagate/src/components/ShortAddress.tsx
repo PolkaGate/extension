@@ -1,13 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+
 import { Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
 import ObserveResize from '../util/ObserveResize';
@@ -22,7 +23,7 @@ interface Props {
   clipped?: boolean;
 }
 
-function ShortAddress({ address, clipped = false, charsCount = SHORT_ADDRESS_CHARACTERS, style, showCopy = false, inParentheses = false }: Props): React.ReactElement {
+function ShortAddress ({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped = false, inParentheses = false, showCopy = false, style }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(1);
   const pRef = useRef(null);
   const cRef = useRef(null);
