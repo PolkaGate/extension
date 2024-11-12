@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.29.0](https://github.com/polkagate/extension/compare/v0.28.0...v0.29.0) (2024-11-12)
+
+
+### Features
+
+* support governance tx history ([#1630](https://github.com/polkagate/extension/issues/1630)) ([4044d3b](https://github.com/polkagate/extension/commit/4044d3b83a268ce2af7da4f42323cc866d477e19))
+
 # [0.28.0](https://github.com/polkagate/extension/compare/v0.27.0...v0.28.0) (2024-11-11)
 
 

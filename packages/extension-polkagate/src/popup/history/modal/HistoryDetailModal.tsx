@@ -9,6 +9,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { AccountContext, PButton } from '../../../components';
+import { getVoteType } from '../../../fullscreen/governance/utils/util';
 import { useTranslation } from '../../../hooks';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 import Explorer from '../Explorer';
@@ -30,7 +31,7 @@ export default function HistoryDetailModal ({ chainName, decimal, info, setShowD
   const { accounts } = useContext(AccountContext);
   const options = { day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', second: 'numeric', weekday: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
-  const _onBack = useCallback(() => {
+  const onBack = useCallback(() => {
     setShowDetail(false);
   }, [setShowDetail]);
 
@@ -73,8 +74,23 @@ export default function HistoryDetailModal ({ chainName, decimal, info, setShowD
         {info?.to &&
           <ToFrom item={<ShowNameAddress nameAddress={info.to} title={t('To')} />} toCopy={info?.to?.address} />
         }
+        {info?.refId &&
+          <Item item={`${t('Referenda Id')}: #${info.refId}`} noDivider />
+        }
+        {info?.refId &&
+          <Item item={`${t('Vote')}: ${info.voteType ? getVoteType({ standard: { balance: 0, vote: info.voteType.toString() } }) : 'Abstain'}`} noDivider />
+        }
+        {info?.delegatee &&
+          <ToFrom item={<ShowNameAddress nameAddress={{ address: info.delegatee, name: undefined }} title={t('Delegatee')} />} noDivider toCopy={info.delegatee} />
+        }
         {info?.amount &&
           <Amount amount={String(amountToMachine(info.amount, decimal))} decimal={decimal} label={t('Amount')} token={info?.token || token} />
+        }
+        {info?.conviction &&
+          <Item item={`${t('Conviction')}: ${info.conviction}`} noDivider />
+        }
+        {info?.class &&
+          <Item item={`${t('Track Id')}: #${info.class}`} noDivider />
         }
         {info?.fee &&
           <Amount amount={info?.fee} decimal={decimal} label={t('Fee')} token={token} />
@@ -95,9 +111,9 @@ export default function HistoryDetailModal ({ chainName, decimal, info, setShowD
       </Grid>
       <PButton
         _ml={0}
-        _onClick={_onBack}
+        _onClick={onBack}
         _width={90}
-        text={t<string>('Back')}
+        text={t('Back')}
       />
     </>
   );
