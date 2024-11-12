@@ -50,7 +50,7 @@ export default function ReferendumPost (): React.ReactElement {
 
   useFullscreen();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedSubMenu, setSelectedSubMenu] = useState<string | undefined>();
+  const [selectedSubMenu, setSelectedSubMenu] = useState<string>('');
   const [currentTreasuryApprovalList, setCurrentTreasuryApprovalList] = useState<Proposal[]>();
   const [showCastVote, setShowCastVote] = useState<boolean>(false);
   const [showAboutVoting, setShowAboutVoting] = useState<boolean>(false);
@@ -80,7 +80,7 @@ export default function ReferendumPost (): React.ReactElement {
       ref.current = chainName;
     } else if (ref.current !== chainName) {
       history.push({
-        pathname: `/governance/${address}/${topMenu}`,
+        pathname: `/governance/${address}/${topMenu}`
       });
     }
   }, [address, chainName, history, topMenu]);
@@ -144,6 +144,7 @@ export default function ReferendumPost (): React.ReactElement {
           postId={postId}
           setSelectedSubMenu={setSelectedSubMenu}
           subMenu={toTitleCase(referendum?.trackName) || state?.selectedSubMenu || '...'}
+          // @ts-ignore
           topMenu={topMenu}
         />
         <Container disableGutters sx={{ maxHeight: parent.innerHeight - 170, maxWidth: 'inherit', opacity: menuOpen ? 0.3 : 1, overflowY: 'scroll' }}>
