@@ -81,7 +81,7 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
       // eslint-disable-next-line react/jsx-no-bind
       alignItems='center' container item justifyContent='center' onClick={() => _assetToShow ? onclick(_assetToShow) : null}
       sx={{
-        border: _assetToShow ? `${isAssetSelected ? '2px' : '1px'} solid` : 'none',
+        border: _assetToShow ? `${isAssetSelected ? '1.1px' : '1px'} solid` : 'none',
         borderColor: isAssetSelected
           ? 'secondary.light'
           : theme.palette.mode === 'dark'
