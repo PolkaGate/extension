@@ -13,7 +13,11 @@ export default function useIsHideNumbers (): boolean | undefined {
       setHideNumbers(!!isHide);
     }).catch(console.error);
 
-    watchStorage('hide_numbers', setHideNumbers).catch(console.error);
+    const unsubscribe = watchStorage('hide_numbers', setHideNumbers);
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return hideNumbers;

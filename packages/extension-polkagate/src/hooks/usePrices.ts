@@ -31,7 +31,11 @@ export default function usePrices (): Prices | undefined | null {
   const [updatedPrice, setUpdatedPrice] = useState<PricesInCurrencies | null>();
 
   useEffect(() => {
-    watchStorage('pricesInCurrencies', setUpdatedPrice).catch(console.error);
+    const unsubscribe = watchStorage('pricesInCurrencies', setUpdatedPrice);
+
+    return () => {
+      unsubscribe();
+    };
   }, [currency]);
 
   useEffect(() => {

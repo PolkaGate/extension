@@ -80,7 +80,11 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
 
-    watchStorage('profile', setSelectedProfile).catch(console.error);
+    const unsubscribe = watchStorage('profile', setSelectedProfile);
+
+    return () => {
+      unsubscribe();
+    };
   }, [setSelectedProfile, t]);
 
   return (

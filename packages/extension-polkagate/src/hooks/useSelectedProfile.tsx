@@ -16,7 +16,11 @@ export default function useSelectedProfile (): string | undefined | null {
       })
       .catch(console.error);
 
-    watchStorage('profile', setSelectedProfile).catch(console.error);
+    const unsubscribe = watchStorage('profile', setSelectedProfile);
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return selectedProfile;

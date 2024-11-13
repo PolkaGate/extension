@@ -66,17 +66,25 @@ export const getStorage = (label: string, parse = false): Promise<object | strin
   });
 };
 
-export const watchStorage = (label: string, setChanges: ((value: any) => void), parse = false) => {
-  return new Promise((resolve) => {
-    chrome.storage.onChanged.addListener(function (changes, areaName) {
-      if (areaName === 'local' && label in changes) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const newValue = changes[label].newValue;
+export const watchStorage = (label: string, setChanges: (value: any) => void, parse = false) => {
+  // eslint-disable-next-line no-undef
+  const listener = (changes: Record<string, chrome.storage.StorageChange>, areaName: 'sync' | 'local' | 'managed' | 'session') => {
+    if (areaName === 'local' && label in changes) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const change = changes[label];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const newValue = change.newValue; // This is optional, so handle accordingly
 
-        resolve(setChanges(parse ? JSON.parse((newValue || '{}') as string) : newValue));
-      }
-    });
-  });
+      setChanges(parse ? JSON.parse((newValue || '{}') as string) : newValue);
+    }
+  };
+
+  chrome.storage.onChanged.addListener(listener);
+
+  // Return an unsubscribe function
+  return () => {
+    chrome.storage.onChanged.removeListener(listener);
+  };
 };
 
 export const setStorage = (label: string, data: unknown, stringify = false) => {
