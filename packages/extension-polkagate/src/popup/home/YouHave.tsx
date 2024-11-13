@@ -9,7 +9,7 @@ import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
-import { FormatPrice, HideIcon, ShowIcon } from '../../components';
+import { FormatPrice } from '../../components';
 import HideBalance from '../../components/SVG/HideBalance';
 import { useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
@@ -27,8 +27,6 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
-
-  const shadow = theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 5px 0px rgba(0, 0, 0, 0.1)';
 
   const onHideClick = useCallback(() => {
     setHideNumbers(!hideNumbers);
