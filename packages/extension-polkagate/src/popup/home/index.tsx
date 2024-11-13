@@ -97,7 +97,7 @@ export default function Home (): React.ReactElement {
         >
           <Grid padding='0px' textAlign='center' xs={12}>
             <HeaderBrand
-              noBorder={theme.palette.mode === 'light'}
+              noBorder
               showBrand
               showFullScreen
               showMenu
