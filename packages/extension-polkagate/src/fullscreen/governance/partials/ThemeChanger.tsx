@@ -61,7 +61,7 @@ function ThemeChanger ({ color = 'white', left = '7px', noBorder }: {color?: str
   const toggleTheme = useCallback(() => colorMode.toggleColorMode(), [colorMode]);
 
   return (
-    <Grid container item onClick={toggleTheme} sx={{ border: noBorder ? undefined : '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', overflow: 'hidden', position: 'relative', width: '42px' }}>
+    <Grid container item onClick={toggleTheme} sx={{ border: noBorder ? undefined : 2, borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', overflow: 'hidden', position: 'relative', width: '42px' }}>
       <LightModeOutlinedIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? sunSlide.go : sunSlide.come}`, ...themeIconsStyle }} />
       <DarkModeOutlinedIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? moonSlide.come : moonSlide.go}`, ...themeIconsStyle }} />
     </Grid>

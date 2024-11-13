@@ -38,7 +38,7 @@ interface QuickActionButtonType {
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
 
-const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) => {
+const QuickActionButton = React.memo(function QuickActionButton ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) {
   const theme = useTheme();
 
   return (
@@ -54,15 +54,15 @@ const QuickActionButton = ({ disabled, divider, icon, onClick, title }: QuickAct
         </Grid>
       </Grid>
       {divider &&
-          <Grid alignItems='center' item justifyContent='center'>
-            <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', width: '2px' }} />
-          </Grid>
+        <Grid alignItems='center' item justifyContent='center'>
+          <Divider orientation='vertical' sx={{ bgcolor: 'text.primary', height: '30px', width: '2px' }} />
+        </Grid>
       }
     </>
   );
-};
+});
 
-export default function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -182,7 +182,7 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
     <Grid item sx={{ bottom: 0, left: 0, position: 'absolute', top: 0, width: 'fit-content' }}>
       <ClickAwayListener onClickAway={handleClose}>
         <Grid container item onClick={isSlideOpen ? handleClose : handleOpen} sx={{ inset: '0 auto 0 -1px', position: 'absolute', width: '15px' }}>
-          <Box sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : '#74747475', borderRadius: '5px 0 0 5px', cursor: 'pointer', inset: '0 auto 0 0', position: 'absolute', width: '15.5px', zIndex: 6 }} />
+          <Box sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : '#353535', borderRadius: '5px 0 0 5px', cursor: 'pointer', inset: '0 auto 0 0', position: 'absolute', width: '15.5px', zIndex: 6 }} />
           <IconButton sx={{ '&:hover': { backgroundColor: 'background.paper' }, bgcolor: 'background.paper', borderRadius: isSlideOpen ? '20px 0 0 20px' : '0 20px 20px 0', height: '25.98px', inset: isSlideOpen ? 'auto -1px 72px auto' : 'auto auto 72px -1px', p: 0, position: 'absolute', transition: 'border-radius 0.2s ease, inset 0.2s ease', width: '15px', zIndex: 6 }}>
             <ArrowForwardIosIcon sx={{ color: theme.palette.mode === 'light' ? 'secondary.light' : 'white', fontSize: ARROW_ICON_SIZE, stroke: theme.palette.mode === 'dark' ? 'black' : 'white', strokeWidth: '0.5px', transform: isSlideOpen ? 'rotate(-180deg)' : 'none', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
           </IconButton>
@@ -209,3 +209,5 @@ export default function QuickActionFullScreen ({ address, assetId, containerRef,
     </Grid>
   );
 }
+
+export default React.memo(QuickActionFullScreen);
