@@ -15,7 +15,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
-import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
+import { useCurrency, useIsHideNumbers, usePrices, useTranslation, useYouHave } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
@@ -25,7 +25,6 @@ import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
 import Chart from './Chart';
 
 interface Props {
-  hideNumbers: boolean | undefined;
   setGroupedAssets: React.Dispatch<React.SetStateAction<AssetsWithUiAndPrice[] | undefined>>
 }
 
@@ -118,13 +117,14 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
   );
 };
 
-function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
 
   const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
+  const isHideNumbers = useIsHideNumbers();
 
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
@@ -215,7 +215,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
           {t('My Portfolio')}
         </Typography>
         <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ my: '13px' }}>
-          {hideNumbers || hideNumbers === undefined || !youHave
+          {!youHave || isHideNumbers
             ? <Box
               component='img'
               src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
@@ -250,7 +250,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
                 asset={asset}
-                hideNumbers={hideNumbers}
+                hideNumbers={isHideNumbers}
                 key={index}
               />
             ))}
@@ -260,7 +260,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                   {assets.slice(3).map((asset, index) => (
                     <DisplayAssetRow
                       asset={asset}
-                      hideNumbers={hideNumbers}
+                      hideNumbers={isHideNumbers}
                       key={index}
                     />
                   ))}

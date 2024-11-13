@@ -19,7 +19,7 @@ import { type BN, noop } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import NftManager from '../../../class/nftManager';
 import FormatPrice from '../../../components/FormatPrice';
-import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
+import { useAccount, useCurrency, useIsHideNumbers, usePrices, useTranslation } from '../../../hooks';
 import { tieAccount } from '../../../messaging';
 import { amountToHuman } from '../../../util/utils';
 import AOC from '../../accountDetails/components/AOC';
@@ -37,7 +37,6 @@ interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
   selectedAsset: FetchedBalance | undefined;
-  hideNumbers: boolean | undefined
   setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   isChild?: boolean;
 }
@@ -106,7 +105,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   );
 };
 
-function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForHome ({ accountAssets, address, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const nftManager = useMemo(() => new NftManager(), []);
 
   const { t } = useTranslation();
@@ -114,6 +113,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const account = useAccount(address);
+  const isHideNumbers = useIsHideNumbers();
 
   const [displayPopup, setDisplayPopup] = useState<number>();
   const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
@@ -195,7 +195,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
             gridSize={5.6}
           />
           <AccountTotal
-            hideNumbers={hideNumbers}
+            hideNumbers={isHideNumbers}
             totalBalance={totalBalance}
           />
         </Grid>
@@ -207,7 +207,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
                 <AOC
                   accountAssets={assetsToShow}
                   address={address}
-                  hideNumbers={hideNumbers}
+                  hideNumbers={isHideNumbers}
                   mode='Home'
                   onclick={onAssetBoxClicked}
                   selectedAsset={selectedAsset}

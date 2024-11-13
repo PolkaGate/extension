@@ -21,13 +21,12 @@ import AccountInformationForHome from './AccountInformationForHome';
 
 interface Props {
   account: AccountWithChildren;
-  hideNumbers: boolean | undefined;
   quickActionOpen: string | boolean | undefined;
   setQuickActionOpen: React.Dispatch<React.SetStateAction<string | boolean | undefined>>;
   id?: number;
 }
 
-function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem ({ account, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(account.address);
   const accountAssets = useAccountAssets(account.address);
@@ -63,7 +62,6 @@ function AccountItem ({ account, hideNumbers, id, quickActionOpen, setQuickActio
         <AccountInformationForHome
           accountAssets={accountAssets}
           address={account.address}
-          hideNumbers={hideNumbers}
           isChild={!!hasParent}
           selectedAsset={assetToShow}
           setSelectedAsset={setSelectedAsset}

@@ -27,7 +27,6 @@ function HomePageFullScreen (): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
   const { accounts: accountsInExtension } = useContext(AccountContext);
 
-  const [hideNumbers, setHideNumbers] = useState<boolean>();
   const [groupedAssets, setGroupedAssets] = useState<AssetsWithUiAndPrice[] | undefined>();
 
   const profileAccounts = useProfileAccounts(initialAccountList);
@@ -45,8 +44,6 @@ function HomePageFullScreen (): React.ReactElement {
       <FullScreenHeader
         _otherComponents={
           <HeaderComponents
-            hideNumbers={hideNumbers}
-            setHideNumbers={setHideNumbers}
           />
         }
         noAccountDropDown
@@ -61,7 +58,6 @@ function HomePageFullScreen (): React.ReactElement {
             <Grid container direction='column' item rowGap='20px' width='760px'>
               {profileAccounts &&
                 <DraggableAccountsList
-                  hideNumbers={hideNumbers}
                   initialAccountList={profileAccounts}
                 />
               }
@@ -72,7 +68,6 @@ function HomePageFullScreen (): React.ReactElement {
             <Grid container direction='column' item rowGap='20px' width='fit-content'>
               <Grid container item width='fit-content'>
                 <TotalBalancePieChart
-                  hideNumbers={hideNumbers}
                   setGroupedAssets={setGroupedAssets}
                 />
               </Grid>

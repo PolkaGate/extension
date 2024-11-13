@@ -10,34 +10,24 @@ import React, { useCallback, useEffect } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
 import { FormatPrice } from '../../components';
+import { setStorage } from '../../components/Loading';
 import HideBalance from '../../components/SVG/HideBalance';
-import { useYouHave } from '../../hooks';
+import { useIsHideNumbers, useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
-
-interface Props {
-  hideNumbers: boolean | undefined;
-  setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>
-}
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+export default function YouHave (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
+  const isHideNumbers = useIsHideNumbers();
 
   const onHideClick = useCallback(() => {
-    setHideNumbers(!hideNumbers);
-    window.localStorage.setItem('hide_numbers', hideNumbers ? 'false' : 'true');
-  }, [hideNumbers, setHideNumbers]);
-
-  useEffect(() => {
-    const isHide = window.localStorage.getItem('hide_numbers');
-
-    isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
-  }, [setHideNumbers]);
+    setStorage('hide_numbers', !isHideNumbers).catch(console.error);
+  }, [isHideNumbers]);
 
   return (
     <Grid container sx={{ pb: '10px', position: 'relative', pt: '5px', textAlign: 'center', zIndex: 1 }}>
@@ -47,7 +37,7 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
         </Typography>
       </Grid>
       <Grid container item justifyContent='center' xs={12}>
-        {hideNumbers || hideNumbers === undefined
+        {isHideNumbers
           ? <Box
             component='img'
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
@@ -67,7 +57,7 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
         <Grid alignItems='center' item sx={{ position: 'absolute', right: '14px', top: '25px' }}>
           <HideBalance
             border={false}
-            hide={hideNumbers}
+            hide={isHideNumbers}
             lightColor={theme.palette.secondary.light}
             onClick={onHideClick}
             size={22}
