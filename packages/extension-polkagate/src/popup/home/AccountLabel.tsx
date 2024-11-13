@@ -28,7 +28,6 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   const { accountProfiles, defaultProfiles, userDefinedProfiles } = useProfiles(account);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.15)' : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
   const containerMaxWidth = useMemo(() => isExtensionMode ? '300px' : '700px', [isExtensionMode]);
 
   const getColorOfUserDefinedProfile = useCallback((profile: string) => {
@@ -41,6 +40,8 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
 
     return getProfileColor(index, theme);
   }, [defaultProfiles, theme, userDefinedProfiles]);
+
+  const shadow = useCallback((profile: string) => isDarkMode ? `0px 0px 2px 1px ${getColorOfUserDefinedProfile(profile)}` : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [getColorOfUserDefinedProfile, isDarkMode]);
 
   const maybeAccountDefaultProfile = useMemo(() => {
     if (account?.isHardware) {
@@ -114,16 +115,15 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   }, [profiles.length]);
 
   return (
-    <Grid container item ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '16px', left: ml || '15px', position: 'absolute', px: 1, top: 0, overflowX: 'scroll', whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
+    <Grid container item justifyContent='flex-end' ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '18px', left: ml || '15px', overflowX: 'scroll', position: 'absolute', px: 1, top: 0, whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
       {profiles?.map((profile, index) =>
         <Grid
           key={index}
           sx={{
-            border: 1,
-            borderColor: getColorOfUserDefinedProfile(profile),
             borderRadius: '0 0 5px 5px',
-            boxShadow: shadow,
+            boxShadow: shadow(profile),
             fontSize: '11px',
+            height: '16px',
             ml: '5px',
             px: 1,
             textWrap: 'nowrap',

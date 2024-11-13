@@ -103,13 +103,14 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           '&:hover': {
             boxShadow: shadowOnHover
           },
-          border: 1,
+          border: 2,
           borderColor: getProfileColor(index, theme) || 'background.paper',
           borderRadius: '15px',
           boxShadow: shadow,
           cursor: 'pointer',
           flexShrink: 0,
           minWidth: '100px',
+          mt: '2px',
           opacity: isDarkMode ? (visibleContent ? 1 : 0.3) : undefined,
           position: 'relative',
           transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,

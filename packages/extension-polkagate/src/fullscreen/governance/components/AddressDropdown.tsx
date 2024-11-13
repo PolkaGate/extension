@@ -20,9 +20,10 @@ interface Props {
   selectedAddress: string | undefined;
   chainGenesis: string | undefined;
   unableToChangeAccount?: boolean;
+  inHeading?: boolean;
 }
 
-export default function AddressDropdown ({ api, chainGenesis, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
+export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const { accounts } = useContext(AccountContext);
@@ -43,7 +44,7 @@ export default function AddressDropdown ({ api, chainGenesis, onSelect, selected
 
   return (
     <Grid container style={{ position: 'relative' }}>
-      <Grid container sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', color: 'white' }}>
+      <Grid container sx={{ border: inHeading ? 2 : 1, borderColor: inHeading ? 'divider' : 'secondary.light', borderRadius: '5px', color: 'white' }}>
         <Grid alignItems='center' container item justifyContent='space-around' maxWidth='calc(100% - 40px)' width='fit-content'>
           <Identity
             address={selectedAddress}
@@ -63,7 +64,7 @@ export default function AddressDropdown ({ api, chainGenesis, onSelect, selected
           />
         </Grid>
         {!unableToChangeAccount &&
-          <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: '1px solid', borderLeftColor: 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
+          <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: inHeading ? 2 : 1, borderLeftColor: inHeading ? 'divider' : 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
         }

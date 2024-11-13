@@ -104,6 +104,7 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
                 <AddressDropdown
                   api={api}
                   chainGenesis={chain?.genesisHash}
+                  inHeading
                   onSelect={onAccountChange}
                   selectedAddress={address}
                   unableToChangeAccount={unableToChangeAccount}
@@ -119,9 +120,9 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
                 </Grid>
                 <Grid container item justifyContent='flex-end' width='50px'>
                   {chain &&
-                       <RemoteNodeSelectorWithSignals
-                         address={address}
-                       />
+                    <RemoteNodeSelectorWithSignals
+                      address={address}
+                    />
                   }
                 </Grid>
               </>
