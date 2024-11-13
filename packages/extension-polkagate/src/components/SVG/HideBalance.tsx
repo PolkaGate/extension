@@ -8,6 +8,8 @@ interface Props {
   border?: boolean;
   hide?: boolean;
   size?: number;
+  darkColor?: string;
+  lightColor?: string;
   onClick: () => void
 }
 
@@ -60,10 +62,10 @@ const OpenEye = ({ color, size = 20 }: IconProps) => (
   </svg>
 );
 
-const HideBalance = ({ border = true, hide = false, onClick, size = 20 }: Props) => {
+const HideBalance = ({ border = true, darkColor, hide = false, lightColor, onClick, size = 20 }: Props) => {
   const theme = useTheme();
 
-  const color = theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary;
+  const color = theme.palette.mode === 'dark' ? darkColor || theme.palette.text.primary : lightColor || theme.palette.text.secondary;
 
   return (
     <Grid

@@ -55,23 +55,22 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '36px', width: '154px' }}
           />
-          : <Grid item pr='15px'>
-            <FormatPrice
-              fontSize='32px'
-              fontWeight={500}
-              height={36}
-              num={youHave?.portfolio }
-              skeletonHeight={36}
-              textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
-              width='223px'
-              withCountUp
-            />
-          </Grid>
+          : <FormatPrice
+            fontSize='32px'
+            fontWeight={500}
+            height={36}
+            num={youHave?.portfolio }
+            skeletonHeight={36}
+            textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+            width='223px'
+            withCountUp
+          />
         }
         <Grid alignItems='center' item sx={{ position: 'absolute', right: '14px', top: '25px' }}>
           <HideBalance
             border={false}
             hide={hideNumbers}
+            lightColor={theme.palette.secondary.light}
             onClick={onHideClick}
             size={22}
           />
