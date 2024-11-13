@@ -6,7 +6,7 @@
 import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { Box, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
 import { FormatPrice } from '../../components';
