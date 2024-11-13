@@ -125,7 +125,7 @@ function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<
 
   return (
     <Grid container item>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
+      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
         {selectedChainName &&
          <Box
            sx={{

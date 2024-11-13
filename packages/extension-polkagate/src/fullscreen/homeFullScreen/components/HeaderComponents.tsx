@@ -21,7 +21,7 @@ const HideNumbers = ({ hideNumbers, onHideClick }: { hideNumbers: boolean | unde
   const { t } = useTranslation();
 
   return (
-    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', minWidth: '92px', p: '2px 6px', width: 'fit-content' }}>
+    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', minWidth: '92px', p: '2px 6px', width: 'fit-content' }}>
       {hideNumbers
         ? <ShowIcon color='#fff' height={18} scale={1.2} width={40} />
         : <HideIcon color='#fff' height={18} scale={1.2} width={40} />
@@ -63,7 +63,7 @@ function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactE
   }, [isTestNetEnabled, selectedChains]);
 
   return (
-    <Grid columnGap='18px' container item pl='18px' width='fit-content'>
+    <Grid columnGap='18px' container item pl='5px' width='fit-content'>
       <Currency />
       <Badge badgeContent={badgeCount} color='success'>
         <FavoriteChains />

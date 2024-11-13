@@ -47,7 +47,7 @@ export default function Currency (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}>
         <Infotip2 text={currencyToShow?.currency}>
           <Typography color={textColor} fontSize='25px' fontWeight={600}>
             {currencyToShow?.sign || '$'}

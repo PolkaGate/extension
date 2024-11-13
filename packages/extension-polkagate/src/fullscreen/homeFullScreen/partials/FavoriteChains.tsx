@@ -29,7 +29,7 @@ export default function FavoriteChains (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
         <FontAwesomeIcon
           color='#fff'
           fontSize='24px'
