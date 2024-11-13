@@ -219,7 +219,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
             ? <Box
               component='img'
               src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-              sx={{ height: '32px', width: '154px' }}
+              sx={{ height: '28px', width: '154px' }}
             />
             : <>
               <FormatPrice
