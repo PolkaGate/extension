@@ -10,6 +10,7 @@ import React, { useCallback, useEffect } from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
 import { FormatPrice, HideIcon, ShowIcon } from '../../components';
+import HideBalance from '../../components/SVG/HideBalance';
 import { useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
@@ -67,14 +68,13 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
             />
           </Grid>
         }
-        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: shadow, cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '20px' }}>
-          {hideNumbers
-            ? <ShowIcon />
-            : <HideIcon />
-          }
-          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>
-            {hideNumbers ? t('Show') : t('Hide')}
-          </Typography>
+        <Grid alignItems='center' item sx={{ position: 'absolute', right: '14px', top: '25px' }}>
+          <HideBalance
+            border={false}
+            hide={hideNumbers}
+            onClick={onHideClick}
+            size={22}
+          />
         </Grid>
       </Grid>
     </Grid>

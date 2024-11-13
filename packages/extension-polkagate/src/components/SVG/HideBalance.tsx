@@ -5,6 +5,7 @@ import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 interface Props {
+  border?: boolean;
   hide?: boolean;
   size?: number;
   onClick: () => void
@@ -59,7 +60,7 @@ const OpenEye = ({ color, size = 20 }: IconProps) => (
   </svg>
 );
 
-const HideBalance = ({ hide = false, onClick, size = 20 }: Props) => {
+const HideBalance = ({ border = true, hide = false, onClick, size = 20 }: Props) => {
   const theme = useTheme();
 
   const color = theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary;
@@ -73,7 +74,7 @@ const HideBalance = ({ hide = false, onClick, size = 20 }: Props) => {
       item
       justifyContent='center'
       onClick={onClick}
-      sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}
+      sx={{ bgcolor: 'transparent', border: border ? '1px solid' : 'none', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}
     >
       { hide
         ? <ClosedEye
