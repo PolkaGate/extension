@@ -179,7 +179,7 @@ export default function AccountDetails (): React.ReactElement {
                 label={
                   <AccountLabel
                     account={account}
-                    ml='0px'
+                    right='0px'
                     parentName={parentNameSuri}
                   />
                 }

@@ -1,8 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, useTheme } from '@mui/material';
@@ -16,9 +14,10 @@ interface Props {
   account: AccountJson | undefined;
   parentName: string | undefined;
   ml?: string;
+  right?: string;
 }
 
-export function AccountLabel ({ account, ml, parentName }: Props): React.ReactElement<Props> {
+export function AccountLabel ({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
@@ -115,7 +114,13 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   }, [profiles.length]);
 
   return (
-    <Grid container item justifyContent='flex-end' ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '18px', left: ml || '15px', overflowX: 'scroll', position: 'absolute', px: 1, top: 0, whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
+    <Grid
+      container
+      item
+      justifyContent='flex-end'
+      ref={scrollContainerRef}
+      sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '18px', left: right ? undefined : ml || '15px', overflowX: 'scroll', position: 'absolute', px: 1, right, top: 0, whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}
+    >
       {profiles?.map((profile, index) =>
         <Grid
           key={index}
