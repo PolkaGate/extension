@@ -3,11 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Badge, Grid, Typography } from '@mui/material';
+import { Badge, Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { HideIcon, ShowIcon } from '../../../components';
-import { useIsTestnetEnabled, useSelectedChains, useTranslation } from '../../../hooks';
+import HideBalance from '../../../components/SVG/HideBalance';
+import { useIsTestnetEnabled, useSelectedChains } from '../../../hooks';
 import { TEST_NETS } from '../../../util/constants';
 import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
@@ -16,22 +16,6 @@ interface Props {
   hideNumbers: boolean | undefined;
   setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
-
-const HideNumbers = ({ hideNumbers, onHideClick }: { hideNumbers: boolean | undefined, onHideClick: () => void}) => {
-  const { t } = useTranslation();
-
-  return (
-    <Grid alignItems='center' container direction='column' item onClick={onHideClick} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', minWidth: '92px', p: '2px 6px', width: 'fit-content' }}>
-      {hideNumbers
-        ? <ShowIcon color='#fff' height={18} scale={1.2} width={40} />
-        : <HideIcon color='#fff' height={18} scale={1.2} width={40} />
-      }
-      <Typography sx={{ color: '#fff', fontSize: '12px', fontWeight: 500, textWrap: 'nowrap', userSelect: 'none' }}>
-        {hideNumbers ? t('Show numbers') : t('Hide numbers')}
-      </Typography>
-    </Grid>
-  );
-};
 
 function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
   const selectedChains = useSelectedChains();
@@ -68,9 +52,10 @@ function HeaderComponents ({ hideNumbers, setHideNumbers }: Props): React.ReactE
       <Badge badgeContent={badgeCount} color='success'>
         <FavoriteChains />
       </Badge>
-      <HideNumbers
-        hideNumbers={hideNumbers}
-        onHideClick={onHideClick}
+      <HideBalance
+        hide={hideNumbers}
+        onClick={onHideClick}
+        size={28}
       />
     </Grid>
   );

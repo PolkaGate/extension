@@ -16,6 +16,8 @@ export default function FavoriteChains (): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
+  const color = theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary;
+
   const onChainListClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   }, []);
@@ -31,7 +33,7 @@ export default function FavoriteChains (): React.ReactElement {
     <>
       <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
         <FontAwesomeIcon
-          color='#fff'
+          color={color}
           fontSize='24px'
           icon={faSliders}
         />
