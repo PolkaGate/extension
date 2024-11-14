@@ -26,7 +26,6 @@ export function AccountLabel ({ account, ml, parentName, right }: Props): React.
   const selectedProfile = useSelectedProfile();
   const { accountProfiles, defaultProfiles, userDefinedProfiles } = useProfiles(account);
 
-  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const containerMaxWidth = useMemo(() => isExtensionMode ? '300px' : '700px', [isExtensionMode]);
 
   const getColorOfUserDefinedProfile = useCallback((profile: string) => {
@@ -40,7 +39,7 @@ export function AccountLabel ({ account, ml, parentName, right }: Props): React.
     return getProfileColor(index, theme);
   }, [defaultProfiles, theme, userDefinedProfiles]);
 
-  const shadow = useCallback((profile: string) => isDarkMode ? `0px 0px 2px 1px ${getColorOfUserDefinedProfile(profile)}` : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [getColorOfUserDefinedProfile, isDarkMode]);
+  const shadow = useCallback((profile: string) => `0px 0px 2px 1px ${getColorOfUserDefinedProfile(profile)}`, [getColorOfUserDefinedProfile]);
 
   const maybeAccountDefaultProfile = useMemo(() => {
     if (account?.isHardware) {
@@ -125,8 +124,9 @@ export function AccountLabel ({ account, ml, parentName, right }: Props): React.
         <Grid
           key={index}
           sx={{
-            borderRadius: '0 0 5px 5px',
+            borderRadius: '0 0 2px 2px',
             boxShadow: shadow(profile),
+            color: 'secondary.contrastText',
             fontSize: '11px',
             height: '16px',
             ml: '5px',

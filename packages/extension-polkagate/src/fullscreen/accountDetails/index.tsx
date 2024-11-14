@@ -179,8 +179,8 @@ export default function AccountDetails (): React.ReactElement {
                 label={
                   <AccountLabel
                     account={account}
-                    right='0px'
                     parentName={parentNameSuri}
+                    right='0px'
                   />
                 }
                 price={currentPrice}
