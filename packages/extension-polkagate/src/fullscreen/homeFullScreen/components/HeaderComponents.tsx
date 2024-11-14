@@ -3,12 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Badge, Grid } from '@mui/material';
-import React, { useMemo } from 'react';
+
+import { Grid } from '@mui/material';
+import React, { useCallback } from 'react';
 
 import HideBalance from '../../../components/SVG/HideBalance';
-import { useIsHideNumbers, useIsTestnetEnabled, useSelectedChains } from '../../../hooks';
-import { TEST_NETS } from '../../../util/constants';
+import { useIsHideNumbers } from '../../../hooks';
 import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
 
@@ -17,31 +17,19 @@ function HeaderComponents (): React.ReactElement {
   const isTestNetEnabled = useIsTestnetEnabled();
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
-  const badgeCount = useMemo(() => {
-    if (!selectedChains?.length) {
-      return 0;
-    }
-
-    let filteredList = selectedChains;
-
-    if (!isTestNetEnabled) {
-      filteredList = selectedChains.filter((item) => !TEST_NETS.includes(item));
-    }
-
-    return filteredList.length;
-  }, [isTestNetEnabled, selectedChains]);
+  const spacings = '5px';
 
   return (
-    <Grid columnGap='18px' container item pl='18px' width='fit-content'>
+    <Grid columnGap={spacings} container item pl={spacings} width='fit-content'>
       <Currency />
-      <Badge badgeContent={badgeCount} color='success'>
-        <FavoriteChains />
-      </Badge>
       <HideBalance
         hide={isHideNumbers}
         onClick={toggleHideNumbers}
-        size={28}
+        noBorder={false}
+        onClick={onHideClick}
+        size={22}
       />
+      <FavoriteChains />
     </Grid>
   );
 }

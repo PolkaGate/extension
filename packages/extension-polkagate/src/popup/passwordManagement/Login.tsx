@@ -43,7 +43,6 @@ function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Re
       <Grid container sx={{ my: '10px' }}>
         <Grid alignItems='center' direction='column' item onClick={toggleHideNumbers} sx={{ '&:hover': { opacity: 1 }, cursor: 'pointer', display: 'flex', opacity: 0.5, position: 'absolute', pt: '3px', right: '35px', top: '15px' }}>
           <HideBalance
-            border={false}
             hide={isHideNumbers}
             lightColor={theme.palette.secondary.light}
             onClick={noop}

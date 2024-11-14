@@ -8,6 +8,7 @@ import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 
 import Infotip2 from '../../../components/Infotip2';
 import { getStorage } from '../../../components/Loading';
+import { HEADER_COMPONENT_STYLE } from '../../governance/FullScreenHeader';
 import CurrencySwitch from '../components/CurrencySwitch';
 
 export interface CurrencyItemType {
@@ -47,9 +48,9 @@ export default function Currency (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE }}>
         <Infotip2 text={currencyToShow?.currency}>
-          <Typography color={textColor} fontSize='25px' fontWeight={600}>
+          <Typography color={textColor} fontSize='22px' fontWeight={500}>
             {currencyToShow?.sign || '$'}
           </Typography>
         </Infotip2>
