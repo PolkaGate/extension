@@ -1,16 +1,17 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { noop } from '@polkadot/util';
 
 import { Password, PButton, WrongPasswordAlert } from '../../components';
-import { setStorage } from '../../components/Loading';
 import HideBalance from '../../components/SVG/HideBalance';
+import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
 import { useIsExtensionPopup, useIsHideNumbers, useTranslation } from '../../hooks';
 import { STEPS } from './constants';
 
@@ -26,7 +27,7 @@ function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Re
   const theme = useTheme();
 
   const isPopup = useIsExtensionPopup();
-  const isHideNumbers = useIsHideNumbers();
+  const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   const onForgotPassword = useCallback((): void => {
     if (isPopup) {
@@ -37,19 +38,15 @@ function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Re
     openOrFocusTab('/forgot-password', true);
   }, [isPopup, setStep]);
 
-  const onHideClick = useCallback(() => {
-    setStorage('hide_numbers', !isHideNumbers).catch(console.error);
-  }, [isHideNumbers]);
-
   return (
     <>
       <Grid container sx={{ my: '10px' }}>
-        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '35px', top: '15px', opacity: 0.5, '&:hover': { opacity: 1 } }}>
+        <Grid alignItems='center' direction='column' item onClick={toggleHideNumbers} sx={{ '&:hover': { opacity: 1 }, cursor: 'pointer', display: 'flex', opacity: 0.5, position: 'absolute', pt: '3px', right: '35px', top: '15px' }}>
           <HideBalance
             border={false}
             hide={isHideNumbers}
             lightColor={theme.palette.secondary.light}
-            onClick={onHideClick}
+            onClick={noop}
             size={25}
           />
           <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>

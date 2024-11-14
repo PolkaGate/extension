@@ -6,11 +6,10 @@
 import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { Box, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
 import { FormatPrice } from '../../components';
-import { setStorage } from '../../components/Loading';
 import HideBalance from '../../components/SVG/HideBalance';
 import { useIsHideNumbers, useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
@@ -23,11 +22,7 @@ export default function YouHave (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
-  const isHideNumbers = useIsHideNumbers();
-
-  const onHideClick = useCallback(() => {
-    setStorage('hide_numbers', !isHideNumbers).catch(console.error);
-  }, [isHideNumbers]);
+  const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   return (
     <Grid container sx={{ pb: '10px', position: 'relative', pt: '5px', textAlign: 'center', zIndex: 1 }}>
@@ -59,7 +54,7 @@ export default function YouHave (): React.ReactElement {
             border={false}
             hide={isHideNumbers}
             lightColor={theme.palette.secondary.light}
-            onClick={onHideClick}
+            onClick={toggleHideNumbers}
             size={22}
           />
         </Grid>

@@ -1,24 +1,35 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { getStorage, watchStorage } from '../components/Loading';
+import { getStorage, setStorage, watchStorage } from '../components/Loading';
 
-export default function useIsHideNumbers (): boolean | undefined {
+interface HideNumbersProps {
+  isHideNumbers: boolean | undefined;
+  toggleHideNumbers: () => void;
+}
+
+const HIDE_NUMBERS = 'hide_numbers';
+
+export default function useIsHideNumbers (): HideNumbersProps {
   const [hideNumbers, setHideNumbers] = useState<boolean>();
 
+  const toggleHideNumbers = useCallback(() => {
+    setStorage(HIDE_NUMBERS, !hideNumbers).catch(console.error);
+  }, [hideNumbers]);
+
   useEffect(() => {
-    getStorage('hide_numbers').then((isHide) => {
+    getStorage(HIDE_NUMBERS).then((isHide) => {
       setHideNumbers(!!isHide);
     }).catch(console.error);
 
-    const unsubscribe = watchStorage('hide_numbers', setHideNumbers);
+    const unsubscribe = watchStorage(HIDE_NUMBERS, setHideNumbers);
 
     return () => {
       unsubscribe();
     };
   }, []);
 
-  return hideNumbers;
+  return { isHideNumbers: hideNumbers, toggleHideNumbers };
 }
