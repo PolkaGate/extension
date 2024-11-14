@@ -90,7 +90,7 @@ export default function Convictions ({ address, children, conviction, setConvict
             color: 'primary.main' // Thumb color
           },
           '& .MuiSlider-track': {
-            color: 'secondary.light' // Selected track color
+            color: 'secondary.main' // Selected track color
           },
           mx: '10px'
         }}
