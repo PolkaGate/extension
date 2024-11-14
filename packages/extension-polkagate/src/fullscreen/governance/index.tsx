@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import { ReferendaContext, Warning } from '../../components';
-import { useDecidingCount, useFullscreen, useInfo, useTracks, useTranslation } from '../../hooks';
+import { useDecidingCount, useFullscreen, useInfo, useManifest, useTracks, useTranslation } from '../../hooks';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
@@ -35,6 +35,7 @@ export default function Governance (): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
   const { t } = useTranslation();
+  const manifest = useManifest();
   const { state } = useLocation() as unknown as {state: {selectedSubMenu?: string}};
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
 
@@ -57,25 +58,9 @@ export default function Governance (): React.ReactElement {
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
-  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const notSupported = useMemo(() => chain?.genesisHash && !(GOVERNANCE_CHAINS.includes(chain.genesisHash ?? '')), [chain?.genesisHash]);
-
-  const fetchJson = () => {
-    fetch('./manifest.json')
-      .then((response) => {
-        return response.json();
-      }).then((data: chrome.runtime.Manifest) => {
-        setManifest(data);
-      }).catch((e: Error) => {
-        console.log(e.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchJson();
-  }, []);
 
   const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replaceAll(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
