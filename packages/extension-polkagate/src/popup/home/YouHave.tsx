@@ -47,6 +47,7 @@ export default function YouHave (): React.ReactElement {
             textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
             width='223px'
             withCountUp
+            withSmallDecimal
           />
         }
         <Grid alignItems='center' item sx={{ position: 'absolute', right: '14px', top: '25px' }}>

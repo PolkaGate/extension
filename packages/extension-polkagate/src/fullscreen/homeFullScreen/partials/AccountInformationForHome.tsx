@@ -98,6 +98,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
               num={totalBalance}
               skeletonHeight={28}
               width='180px'
+              withSmallDecimal
             />
         }
       </Grid>
