@@ -18,12 +18,18 @@ export interface CurrencyItemType {
   sign: string;
 }
 
-export default function Currency (): React.ReactElement {
+interface Props {
+  fontSize?: string;
+  color?: string;
+  noBorder?: boolean;
+}
+
+export default function Currency ({ color, fontSize = '22px', noBorder }: Props): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<CurrencyItemType | undefined>();
 
-  const textColor = useMemo(() => theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary, [theme.palette.mode, theme.palette.text.primary, theme.palette.text.secondary]);
+  const textColor = useMemo(() => color || (theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary), [color, theme]);
 
   useLayoutEffect(() => {
     if (currencyToShow) {
@@ -48,9 +54,9 @@ export default function Currency (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE }}>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border }}>
         <Infotip2 text={currencyToShow?.currency}>
-          <Typography color={textColor} fontSize='22px' fontWeight={500}>
+          <Typography color={textColor} fontSize={ fontSize } fontWeight={500}>
             {currencyToShow?.sign || '$'}
           </Typography>
         </Infotip2>

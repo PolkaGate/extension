@@ -10,17 +10,18 @@ import { Box, Grid, IconButton, Stack, Typography, useTheme } from '@mui/materia
 import React, { useCallback, useMemo, useState } from 'react';
 import CountUp from 'react-countup';
 
-import { stars6Black, stars6White } from '../../assets/icons';
+import { stars5Black, stars5White } from '../../assets/icons';
 import { logoBlack, logoWhite } from '../../assets/logos';
 import { FormatPrice } from '../../components';
 import HideBalance from '../../components/SVG/HideBalance';
+import Currency from '../../fullscreen/homeFullScreen/partials/Currency';
 import { changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
 import { useCurrency, useIsHideNumbers, useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
 import Menu from '../../partials/Menu';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../util/api/getPrices';
-import { countDecimalPlaces, fixFloatingPoint } from '../../util/utils';
+import { countDecimalPlaces, fixFloatingPoint, pgBoxShadow } from '../../util/utils';
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
@@ -49,37 +50,31 @@ export default function YouHave (): React.ReactElement {
   }, []);
 
   return (
-    <>
-      <Grid container sx={{ p: '5px', position: 'relative' }}>
+    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '130px', mx: '10px', my: '15px', width: '100%', boxShadow: pgBoxShadow(theme) }}>
+      <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
         <Grid container item sx={{ textAlign: 'left' }}>
           <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', mt: '10px' }}>
             {t('My Portfolio')}
           </Typography>
-          <HideBalance
-            darkColor={theme.palette.secondary.light}
-            hide={isHideNumbers}
-            lightColor={theme.palette.secondary.light}
-            onClick={toggleHideNumbers}
-            size={20}
-          />
         </Grid>
         <Grid container item justifyContent='flex-start' pt='15px'>
           {isHideNumbers
             ? <Box
               component='img'
-              src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-              sx={{ height: '36px', width: '154px' }}
+              src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
+              sx={{ height: '30px', width: '154px' }}
             />
             : <>
-              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ textAlign: 'start', width: '100%', pr: '15px' }}>
+              <Stack alignItems='flex-end' direction='row' justifyContent='space-between' sx={{ textAlign: 'start', width: '100%', pr: '15px' }}>
                 <FormatPrice
-                  fontSize='26px'
+                  fontSize='28px'
                   fontWeight={500}
                   num={youHave?.portfolio}
-                  skeletonHeight={36}
+                  skeletonHeight={28}
                   textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
-                  width='223px'
+                  width='100px'
                   withCountUp
+                  withSmallDecimal
                 />
                 <Typography sx={{ color: !youHave?.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 400 }}>
                   <CountUp
@@ -91,14 +86,14 @@ export default function YouHave (): React.ReactElement {
                   />
                 </Typography>
               </Stack>
-              <Stack alignItems='center' direction='row' spacing={1} sx={{ mt: '10px', textAlign: 'start', width: '100%' }}>
+              <Stack alignItems='center' direction='row' spacing={1} sx={{ mt: '5px', textAlign: 'start', width: '100%' }}>
                 <FormatPrice
                   fontSize='14px'
                   fontWeight={400}
                   num={youHave?.available}
-                  skeletonHeight={36}
+                  skeletonHeight={14}
                   textColor={'primary.light' }
-                  width='223px'
+                  width='100px'
                   withCountUp
                 />
                 <Typography sx={{ color: 'primary.light', fontSize: '14px', fontWeight: 300 }}>
@@ -109,23 +104,39 @@ export default function YouHave (): React.ReactElement {
           }
           <IconButton
             onClick={onMenuClick}
-            sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '10px' }}
+            sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '11px' }}
           >
             <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
           </IconButton>
         </Grid>
-        <Box
-          component='img'
-          src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-          sx={{ height: 52, left: '150px', opacity: '0.2', position: 'absolute', top: '40px', width: 52 }}
-        />
+        <Grid item sx={{ position: 'absolute', right: '55px', top: '8px' }}>
+          <HideBalance
+            darkColor={theme.palette.secondary.light}
+            hide={isHideNumbers}
+            lightColor={theme.palette.secondary.light}
+            onClick={toggleHideNumbers}
+            size={20}
+          />
+        </Grid>
+        <Grid item sx={{ position: 'absolute', right: '25px', top: '10px' }}>
+          <Currency
+            color='secondary.light'
+            fontSize='19px'
+            noBorder
+          />
+        </Grid>
       </Grid>
+      <Box
+        component='img'
+        src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
+        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 52, left: '150px', opacity: '0.1', position: 'absolute', top: '18px', width: 52 }}
+      />
       {isMenuOpen &&
         <Menu
           setShowMenu={setOpenMenu}
           theme={theme}
         />
       }
-    </>
+    </Grid>
   );
 }

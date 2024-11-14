@@ -18,7 +18,6 @@ import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
 import { useAccountsOrder, useIsHideNumbers, useManifest, useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
-import { pgBoxShadow } from '../../util/utils';
 import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
@@ -95,9 +94,7 @@ export default function Home (): React.ReactElement {
           position: 'relative'
         }}
         >
-          <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', height: '140px', mx: '10px', my: '15px', width: '100%', boxShadow: pgBoxShadow (theme)}}>
-            <YouHave />
-          </Grid>
+          <YouHave />
           {hasActiveRecovery &&
             <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
               <Warning
