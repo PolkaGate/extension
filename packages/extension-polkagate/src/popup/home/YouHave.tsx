@@ -56,7 +56,6 @@ export default function YouHave (): React.ReactElement {
         }
         <Grid alignItems='center' item sx={{ position: 'absolute', right: '14px', top: '25px' }}>
           <HideBalance
-            border={false}
             hide={isHideNumbers}
             lightColor={theme.palette.secondary.light}
             onClick={onHideClick}

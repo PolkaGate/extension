@@ -5,15 +5,21 @@
 
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Popover, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Badge, Grid, Popover, useTheme } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 
+import { useIsTestnetEnabled, useSelectedChains } from '../../../hooks';
+import { TEST_NETS } from '../../../util/constants';
+import { HEADER_COMPONENT_STYLE } from '../../governance/FullScreenHeader';
 import ChainList from '../components/ChainList';
 
 export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; };
 
 export default function FavoriteChains (): React.ReactElement {
   const theme = useTheme();
+  const selectedChains = useSelectedChains();
+  const isTestNetEnabled = useIsTestnetEnabled();
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const color = theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary;
@@ -29,12 +35,26 @@ export default function FavoriteChains (): React.ReactElement {
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
+  const badgeCount = useMemo(() => {
+    if (!selectedChains?.length) {
+      return 0;
+    }
+
+    let filteredList = selectedChains;
+
+    if (!isTestNetEnabled) {
+      filteredList = selectedChains.filter((item) => !TEST_NETS.includes(item));
+    }
+
+    return filteredList.length;
+  }, [isTestNetEnabled, selectedChains]);
+
   return (
-    <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ bgcolor: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', p: '2px 6px', position: 'relative', width: '42px' }}>
+    <Badge badgeContent={badgeCount} color='success'>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ ...HEADER_COMPONENT_STYLE}}>
         <FontAwesomeIcon
           color={color}
-          fontSize='24px'
+          fontSize='22px'
           icon={faSliders}
         />
       </Grid>
@@ -60,6 +80,6 @@ export default function FavoriteChains (): React.ReactElement {
           anchorEl={anchorEl}
         />
       </Popover>
-    </>
+    </Badge>
   );
 }

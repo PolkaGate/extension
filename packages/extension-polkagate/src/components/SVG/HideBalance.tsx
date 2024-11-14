@@ -4,11 +4,12 @@
 import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
+import { HEADER_COMPONENT_STYLE } from '../../fullscreen/governance/FullScreenHeader';
 import { useTranslation } from '../../hooks';
 import Infotip2 from '../Infotip2';
 
 interface Props {
-  border?: boolean;
+  noBorder?: boolean;
   hide?: boolean;
   size?: number;
   darkColor?: string;
@@ -65,7 +66,7 @@ const OpenEye = ({ color, size = 20 }: IconProps) => (
   </svg>
 );
 
-const HideBalance = ({ border = true, darkColor, hide = false, lightColor, onClick, size = 20 }: Props) => {
+const HideBalance = ({ darkColor, hide = false, lightColor, noBorder = true, onClick, size = 20 }: Props) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -78,11 +79,10 @@ const HideBalance = ({ border = true, darkColor, hide = false, lightColor, onCli
         aria-label={hide ? 'Show balance' : 'Hide balance'}
         component='button'
         container
-        direction='column'
         item
         justifyContent='center'
         onClick={onClick}
-        sx={{ bgcolor: 'transparent', border: border ? '1px solid' : 'none', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: '42px', minWidth: '42px', p: '2px 6px', position: 'relative', width: 'fit-content' }}
+        sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border }}
         type='button'
       >
         { hide

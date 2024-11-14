@@ -26,6 +26,18 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
+export const HEADER_COMPONENT_STYLE = {
+  bgcolor: 'transparent',
+  border: '1px solid',
+  borderColor: 'divider',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  height: '42px',
+  overflow: 'hidden',
+  position: 'relative',
+  width: '42px'
+};
+
 function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useContext(GenesisHashOptionsContext);
