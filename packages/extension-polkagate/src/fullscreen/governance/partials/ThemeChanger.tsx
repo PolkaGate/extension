@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { DarkModeOutlined as DarkModeOutlinedIcon, LightModeOutlined as LightModeOutlinedIcon } from '@mui/icons-material';
-import { Grid, keyframes, type SxProps, type Theme, useTheme } from '@mui/material';
+import { Grid, keyframes, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ColorContext } from '../../../components';
