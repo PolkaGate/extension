@@ -109,7 +109,7 @@ export default function Home (): React.ReactElement {
             </Grid>
           }
           <ProfileTabs orderedAccounts={accountsOrder} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 252 : 197)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}

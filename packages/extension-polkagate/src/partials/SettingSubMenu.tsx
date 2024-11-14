@@ -96,7 +96,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
                 <IconButton
                   sx={{ height: '35px', p: 0, width: '35px' }}
                 >
-                  <ThemeChanger color= 'secondary.light' left='4px' noBorder />
+                  <ThemeChanger color= 'secondary.light' noBorder />
                 </IconButton>
               </Infotip2>
             </Grid>

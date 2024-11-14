@@ -32,6 +32,8 @@ export default function YouHave (): React.ReactElement {
   const youHave = useYouHave();
   const currency = useCurrency();
 
+  const isDark = theme.palette.mode === 'dark';
+
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
   const [isMenuOpen, setOpenMenu] = useState(false);
 
@@ -50,7 +52,7 @@ export default function YouHave (): React.ReactElement {
   }, []);
 
   return (
-    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', mx: '10px', my: '20px', width: '100%', boxShadow: pgBoxShadow(theme) }}>
+    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', m: '20px 10px 10px', width: '100%', boxShadow: isDark ? '3px 2px 15px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 2px rgba(0, 0, 0, 0.10)' }}>
       <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
         <Grid container item sx={{ textAlign: 'left' }}>
           <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', mt: '10px' }}>
@@ -65,17 +67,28 @@ export default function YouHave (): React.ReactElement {
               sx={{ height: '30px', width: '154px' }}
             />
             : <>
-              <Stack alignItems='flex-end' direction='row' justifyContent='space-between' sx={{ textAlign: 'start', width: '100%', pr: '15px' }}>
-                <FormatPrice
-                  fontSize='28px'
-                  fontWeight={500}
-                  num={youHave?.portfolio}
-                  skeletonHeight={28}
-                  textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
-                  width='100px'
-                  withCountUp
-                  withSmallDecimal
-                />
+              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', textAlign: 'start', width: '100%' }}>
+                <Stack alignItems='flex-start' direction='row' sx= {{ ml: '-5px' }}>
+                  <Currency
+                    bgcolor='background.paper'
+                    color='secondary.light'
+                    fontSize='28px'
+                    height='30px'
+                    minWidth='27px'
+                    noBorder
+                  />
+                  <FormatPrice
+                    fontSize='28px'
+                    fontWeight={500}
+                    num={youHave?.portfolio}
+                    sign= ' '
+                    skeletonHeight={28}
+                    textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+                    width='100px'
+                    withCountUp
+                    withSmallDecimal
+                  />
+                </Stack>
                 <Typography sx={{ color: !youHave?.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 400 }}>
                   <CountUp
                     decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
@@ -109,20 +122,13 @@ export default function YouHave (): React.ReactElement {
             <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
           </IconButton>
         </Grid>
-        <Grid item sx={{ position: 'absolute', right: '55px', top: '8px' }}>
+        <Grid item sx={{ position: 'absolute', right: '30px', top: '8px' }}>
           <HideBalance
             darkColor={theme.palette.secondary.light}
             hide={isHideNumbers}
             lightColor={theme.palette.secondary.light}
             onClick={toggleHideNumbers}
             size={20}
-          />
-        </Grid>
-        <Grid item sx={{ position: 'absolute', right: '25px', top: '10px' }}>
-          <Currency
-            color='secondary.light'
-            fontSize='19px'
-            noBorder
           />
         </Grid>
       </Grid>

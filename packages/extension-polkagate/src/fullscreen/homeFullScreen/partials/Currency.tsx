@@ -21,10 +21,13 @@ export interface CurrencyItemType {
 interface Props {
   fontSize?: string;
   color?: string;
+  bgcolor?: string;
+  height?: string;
+  minWidth?: string;
   noBorder?: boolean;
 }
 
-export default function Currency ({ color, fontSize = '22px', noBorder }: Props): React.ReactElement {
+export default function Currency ({ bgcolor, color, fontSize = '22px', height, minWidth, noBorder }: Props): React.ReactElement {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<CurrencyItemType | undefined>();
@@ -54,7 +57,9 @@ export default function Currency ({ color, fontSize = '22px', noBorder }: Props)
 
   return (
     <>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border }}>
+      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} 
+      // eslint-disable-next-line sort-keys
+        sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border, bgcolor: bgcolor || HEADER_COMPONENT_STYLE?.bgcolor, height: height || HEADER_COMPONENT_STYLE?.height, minWidth: minWidth || HEADER_COMPONENT_STYLE?.minWidth }}>
         <Infotip2 text={currencyToShow?.currency}>
           <Typography color={textColor} fontSize={ fontSize } fontWeight={500}>
             {currencyToShow?.sign || '$'}
