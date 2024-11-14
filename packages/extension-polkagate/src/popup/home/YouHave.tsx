@@ -50,7 +50,7 @@ export default function YouHave (): React.ReactElement {
   }, []);
 
   return (
-    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '130px', mx: '10px', my: '15px', width: '100%', boxShadow: pgBoxShadow(theme) }}>
+    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', mx: '10px', my: '20px', width: '100%', boxShadow: pgBoxShadow(theme) }}>
       <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
         <Grid container item sx={{ textAlign: 'left' }}>
           <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', mt: '10px' }}>
@@ -129,7 +129,7 @@ export default function YouHave (): React.ReactElement {
       <Box
         component='img'
         src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 52, left: '150px', opacity: '0.1', position: 'absolute', top: '18px', width: 52 }}
+        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 40, left: 'calc(50% - 26px)', position: 'absolute', top: '5px', width: 40 }}
       />
       {isMenuOpen &&
         <Menu
