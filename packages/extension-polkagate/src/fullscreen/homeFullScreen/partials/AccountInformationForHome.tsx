@@ -16,7 +16,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { type BN, noop } from '@polkadot/util';
 
-import { stars6Black, stars6White } from '../../../assets/icons';
+import { stars5Black, stars5White } from '../../../assets/icons';
 import NftManager from '../../../class/nftManager';
 import FormatPrice from '../../../components/FormatPrice';
 import { useAccount, useCurrency, useIsHideNumbers, usePrices, useTranslation } from '../../../hooks';
@@ -90,7 +90,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
         </Typography>
         {
           hideNumbers || hideNumbers === undefined
-            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
+            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string} sx={{ height: '19px', width: '110px' }} />
             : <FormatPrice
               commify
               fontSize='21px'
