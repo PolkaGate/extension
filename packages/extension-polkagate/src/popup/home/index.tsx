@@ -38,7 +38,7 @@ export default function Home (): React.ReactElement {
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
-  const isHideNumbers = useIsHideNumbers();
+  const { isHideNumbers } = useIsHideNumbers();
 
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();

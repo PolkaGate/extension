@@ -113,7 +113,7 @@ function AccountInformationForHome ({ accountAssets, address, isChild, selectedA
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const account = useAccount(address);
-  const isHideNumbers = useIsHideNumbers();
+  const { isHideNumbers } = useIsHideNumbers();
 
   const [displayPopup, setDisplayPopup] = useState<number>();
   const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
