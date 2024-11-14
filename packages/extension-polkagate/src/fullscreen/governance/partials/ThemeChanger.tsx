@@ -5,13 +5,15 @@
 
 import { DarkModeOutlined as DarkModeOutlinedIcon, LightModeOutlined as LightModeOutlinedIcon } from '@mui/icons-material';
 import { Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ColorContext } from '../../../components';
 
-function ThemeChanger ({ color = 'white', left = '7px', noBorder }: {color?: string, left?: string, noBorder?: boolean}): React.ReactElement {
+function ThemeChanger ({ color, left = '7px', noBorder }: {color?: string, left?: string, noBorder?: boolean}): React.ReactElement {
   const theme = useTheme();
   const colorMode = useContext(ColorContext);
+
+  const _color = useMemo(() => color || theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary, [theme, color]);
 
   const moonSlide = {
     come: keyframes`
@@ -50,7 +52,7 @@ function ThemeChanger ({ color = 'white', left = '7px', noBorder }: {color?: str
   const themeIconsStyle = {
     animationDuration: '250ms',
     animationFillMode: 'forwards',
-    color,
+    color: _color,
     fontSize: '27px',
     left,
     m: 'auto',

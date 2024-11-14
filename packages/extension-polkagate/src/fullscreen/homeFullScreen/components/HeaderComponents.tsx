@@ -37,7 +37,7 @@ function HeaderComponents (): React.ReactElement {
   }, [isTestNetEnabled, selectedChains]);
 
   return (
-    <Grid columnGap='18px' container item pl='5px' width='fit-content'>
+    <Grid columnGap='18px' container item pl='18px' width='fit-content'>
       <Currency />
       <Badge badgeContent={badgeCount} color='success'>
         <FavoriteChains />
