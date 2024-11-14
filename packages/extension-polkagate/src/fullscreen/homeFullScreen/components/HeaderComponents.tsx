@@ -3,9 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-
 import { Grid } from '@mui/material';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import HideBalance from '../../../components/SVG/HideBalance';
 import { useIsHideNumbers } from '../../../hooks';
@@ -13,8 +12,6 @@ import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
 
 function HeaderComponents (): React.ReactElement {
-  const selectedChains = useSelectedChains();
-  const isTestNetEnabled = useIsTestnetEnabled();
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   const spacings = '5px';
@@ -24,9 +21,8 @@ function HeaderComponents (): React.ReactElement {
       <Currency />
       <HideBalance
         hide={isHideNumbers}
-        onClick={toggleHideNumbers}
         noBorder={false}
-        onClick={onHideClick}
+        onClick={toggleHideNumbers}
         size={22}
       />
       <FavoriteChains />
