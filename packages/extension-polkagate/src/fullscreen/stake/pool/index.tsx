@@ -152,7 +152,7 @@ export default function Index (): React.ReactElement {
           <Bread />
           <Title
             height='85px'
-            logo={<PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />}
+            logo={<PoolStakingIcon color={theme.palette.text.primary} height={50} width={50} />}
             ml='-9px'
             padding='0px'
             spacing={0}

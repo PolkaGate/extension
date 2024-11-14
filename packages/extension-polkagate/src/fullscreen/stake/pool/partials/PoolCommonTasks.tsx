@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { faHand, faLock, faLockOpen, faPenToSquare, faPersonCircleXmark, faRightFromBracket, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faHandDots, faLock, faLockOpen, faPenToSquare, faPersonCircleXmark, faRightFromBracket, faWrench } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -151,7 +151,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
                       <FontAwesomeIcon
                         color={`${poolState === 'Destroying' || !poolRoot ? theme.palette.action.disabledBackground : theme.palette.text.primary}`}
                         fontSize='22px'
-                        icon={faHand}
+                        icon={faHandDots}
                       />
                     }
                     mr='0px'

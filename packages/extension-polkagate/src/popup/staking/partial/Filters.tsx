@@ -148,39 +148,39 @@ export default function Filters ({ allValidators, allValidatorsIdentities, apply
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' my='20px'>
         <Typography fontSize='20px' fontWeight={400} lineHeight={1.4}>
-          {t<string>('Filters')}
+          {t('Filters')}
         </Typography>
       </Grid>
       <Grid container justifyContent='center'>
-        <Divider sx={{ bgcolor: 'secondary.main', width: '80%' }} />
+        <Divider sx={{ bgcolor: 'secondary.light', width: '80%' }} />
         <Checkbox2
           checked={filters?.withIdentity}
-          label={t<string>('With verified identity')}
+          label={t('With verified identity')}
           onChange={() => onFilters('withIdentity')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.noWaiting}
-          label={t<string>('Not waiting (currently elected)')}
+          label={t('Not waiting (currently elected)')}
           onChange={() => onFilters('noWaiting')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.noOversubscribed}
-          label={t<string>('No oversubscribed')}
+          label={t('No oversubscribed')}
           onChange={() => onFilters('noOversubscribed')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.noSlashed}
           disabled
-          label={t<string>('No slashed before')}
+          label={t('No slashed before')}
           onChange={() => onFilters('noSlashed')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '80%' }}
         />
         <Checkbox2
           checked={filters?.maxCommission?.check}
-          label={`${t<string>('Maximum Commission')} %`}
+          label={`${t('Maximum Commission')} %`}
           onChange={() => onFilters('maxCommission')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '63%' }}
         />
@@ -203,7 +203,7 @@ export default function Filters ({ allValidators, allValidatorsIdentities, apply
         />
         <Checkbox2
           checked={filters?.limitOfValidatorsPerOperator?.check}
-          label={t<string>('Limit of validators per operator')}
+          label={t('Limit of validators per operator')}
           onChange={() => onFilters('limitOfValidatorsPerOperator')}
           style={{ fontSize: '14px', fontWeight: '300', mt: '15px', width: '63%' }}
         />
@@ -239,8 +239,8 @@ export default function Filters ({ allValidators, allValidatorsIdentities, apply
         ml={isFullscreen ? '0px' : undefined}
         onPrimaryClick={onApply}
         onSecondaryClick={onClear}
-        primaryBtnText={t<string>('Apply')}
-        secondaryBtnText={t<string>('Reset All')}
+        primaryBtnText={t('Apply')}
+        secondaryBtnText={t('Reset All')}
         variant='text'
       />
       <IconButton
@@ -253,14 +253,14 @@ export default function Filters ({ allValidators, allValidatorsIdentities, apply
           top: isFullscreen ? '15px' : '65px'
         }}
       >
-        <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
+        <CloseIcon sx={{ color: 'text.primary', fontSize: 30 }} />
       </IconButton>
     </Grid>
   );
 
   if (isFullscreen) {
     return (
-      <DraggableModal onClose={onCloseFilter} open={show}>
+      <DraggableModal onClose={onCloseFilter} open={show} px={0}>
         {page}
       </DraggableModal>
     );

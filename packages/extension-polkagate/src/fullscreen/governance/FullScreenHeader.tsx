@@ -26,6 +26,18 @@ interface Props {
   unableToChangeAccount?: boolean;
 }
 
+export const HEADER_COMPONENT_STYLE = {
+  bgcolor: 'transparent',
+  border: '1px solid',
+  borderColor: 'divider',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  height: '42px',
+  overflow: 'hidden',
+  position: 'relative',
+  width: '42px'
+};
+
 function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useContext(GenesisHashOptionsContext);
@@ -77,7 +89,7 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
     , [isThisHome]);
 
   return (
-    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'secondary.light', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px', minWidth: '810px', px: '40px' }}>
+    <Grid alignItems='center' container id='header' justifyContent='space-between' sx={{ bgcolor: '#000000', borderBottom: '1px solid', borderBottomColor: 'divider', color: 'text.secondary', fontSize: '42px', fontWeight: 400, height: '70px', minWidth: '810px', px: '40px' }}>
       <Container disableGutters sx={{ maxWidth: MAX_WIDTH }}>
         <Grid alignItems='center' container justifyContent='space-between'>
           <Grid alignItems='center' container item justifyContent='flex-start' xs={5}>
@@ -104,6 +116,7 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
                 <AddressDropdown
                   api={api}
                   chainGenesis={chain?.genesisHash}
+                  inHeading
                   onSelect={onAccountChange}
                   selectedAddress={address}
                   unableToChangeAccount={unableToChangeAccount}
@@ -119,9 +132,9 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
                 </Grid>
                 <Grid container item justifyContent='flex-end' width='50px'>
                   {chain &&
-                       <RemoteNodeSelectorWithSignals
-                         address={address}
-                       />
+                    <RemoteNodeSelectorWithSignals
+                      address={address}
+                    />
                   }
                 </Grid>
               </>

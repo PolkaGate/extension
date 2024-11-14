@@ -5,63 +5,72 @@
 
 import { DarkModeOutlined as DarkModeOutlinedIcon, LightModeOutlined as LightModeOutlinedIcon } from '@mui/icons-material';
 import { Grid, keyframes, useTheme } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
 import { ColorContext } from '../../../components';
+import { HEADER_COMPONENT_STYLE } from '../FullScreenHeader';
 
-function ThemeChanger ({ color = 'white', left = '7px', noBorder }: {color?: string, left?: string, noBorder?: boolean}): React.ReactElement {
+interface Props {
+  color?: string;
+  left?: string;
+  noBorder?: boolean
+}
+
+const moonSlide = {
+  come: keyframes`
+    from{
+      transform: translateY(-50px);
+    }
+    to{
+      transform: translateY(7px);
+    }`,
+  go: keyframes`
+    from{
+      transform: translateY(7px);
+    }
+    to{
+      transform: translateY(-50px);
+    }`
+};
+
+const sunSlide = {
+  come: keyframes`
+    from{
+      transform: translateY(50px);
+    }
+    to{
+      transform: translateY(7px);
+    }`,
+  go: keyframes`
+    from{
+      transform: translateY(7px);
+    }
+    to{
+      transform: translateY(50px);
+    }`
+};
+
+function ThemeChanger ({ color, left = '7px', noBorder }: Props): React.ReactElement {
   const theme = useTheme();
   const colorMode = useContext(ColorContext);
 
-  const moonSlide = {
-    come: keyframes`
-    from{
-      transform: translateY(-50px);
-    }
-    to{
-      transform: translateY(7px);
-    }`,
-    go: keyframes`
-    from{
-      transform: translateY(7px);
-    }
-    to{
-      transform: translateY(-50px);
-    }`
-  };
-
-  const sunSlide = {
-    come: keyframes`
-    from{
-      transform: translateY(50px);
-    }
-    to{
-      transform: translateY(7px);
-    }`,
-    go: keyframes`
-    from{
-      transform: translateY(7px);
-    }
-    to{
-      transform: translateY(50px);
-    }`
-  };
+  const _color = useMemo(() => color || (theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary), [theme, color]);
 
   const themeIconsStyle = {
     animationDuration: '250ms',
     animationFillMode: 'forwards',
-    color,
+    color: _color,
     fontSize: '27px',
     left,
     m: 'auto',
     position: 'absolute',
-    top: 0
+    top: '0px'
   };
 
   const toggleTheme = useCallback(() => colorMode.toggleColorMode(), [colorMode]);
 
   return (
-    <Grid container item onClick={toggleTheme} sx={{ border: noBorder ? undefined : '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: '42px', overflow: 'hidden', position: 'relative', width: '42px' }}>
+    <Grid alignItems='center' container item justifyContent='center' onClick={toggleTheme} sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border }}>
       <LightModeOutlinedIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? sunSlide.go : sunSlide.come}`, ...themeIconsStyle }} />
       <DarkModeOutlinedIcon sx={{ animationName: `${theme.palette.mode === 'dark' ? moonSlide.come : moonSlide.go}`, ...themeIconsStyle }} />
     </Grid>

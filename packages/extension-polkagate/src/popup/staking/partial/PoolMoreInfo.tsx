@@ -77,7 +77,7 @@ const ShowMembers = ({ address, poolToShow }: InsidersProps) => {
   }, [poolMembers]);
 
   return (
-    <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: isExtensionPopup ? '130px' : '220px', minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
+    <Grid container direction='column' display='block' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', maxHeight: isExtensionPopup ? '130px' : '220px', minHeight: '80px', mt: '10px', overflowX: 'hidden', overflowY: 'scroll' }}>
       <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Grid item width='50%'>
           <Typography fontSize='12px' fontWeight={300} lineHeight='30px' textAlign='center'>
@@ -123,7 +123,7 @@ const ShowMembers = ({ address, poolToShow }: InsidersProps) => {
         </Grid>
       }
     </Grid>
-  )
+  );
 };
 
 const ShowReward = ({ address, poolToShow }: InsidersProps) => {
@@ -131,8 +131,8 @@ const ShowReward = ({ address, poolToShow }: InsidersProps) => {
   const { decimal, token } = useInfo(address);
 
   return (
-    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px' }}>
-      <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', my: '10px' }}>
+      <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
           {t('Pool Claimable')}
         </Typography>
@@ -147,7 +147,7 @@ const ShowReward = ({ address, poolToShow }: InsidersProps) => {
         />
       </Grid>
     </Grid>
-  )
+  );
 };
 
 const ShowClaimableCommission = ({ address, poolToShow, setShowClaimCommission }: InsidersProps) => {
@@ -157,11 +157,11 @@ const ShowClaimableCommission = ({ address, poolToShow, setShowClaimCommission }
 
   const onClaimCommission = useCallback(() => {
     setShowClaimCommission && setShowClaimCommission(true);
-  }, []);
+  }, [setShowClaimCommission]);
 
   return (
-    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', my: '10px', pb: '5px' }}>
-      <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+    <Grid container sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', my: '10px', pb: '5px' }}>
+      <Grid container item justifyContent='center' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
         <Typography fontSize='12px' fontWeight={300} lineHeight='25px'>
           {t('Claimable Commission')}
         </Typography>

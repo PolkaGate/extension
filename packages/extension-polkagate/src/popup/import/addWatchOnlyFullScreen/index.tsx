@@ -13,6 +13,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
@@ -102,16 +103,13 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:tag' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Add Watch-Only Account')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Title
+            height='85px'
+            logo={
+              <VaadinIcon icon='vaadin:tag' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            }
+            text= {t('Add Watch-Only Account')}
+          />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.')}
           </Typography>

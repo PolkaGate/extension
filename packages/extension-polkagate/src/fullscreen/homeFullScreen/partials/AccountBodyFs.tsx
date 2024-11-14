@@ -51,7 +51,7 @@ function AccountBodyFs ({ address, goToDetails = noop, gridSize }: Props): React
           chain={chain}
           noIdenticon
           onClick={goToDetails}
-          style={{ width: 'calc(100% - 40px)' }}
+          style={{ fontSize: '22px', width: 'calc(100% - 40px)' }}
           subIdOnly
         />
         <Grid item width='40px'>

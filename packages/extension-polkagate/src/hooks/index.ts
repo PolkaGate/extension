@@ -55,6 +55,7 @@ export { default as useIdentity } from './useIdentity';
 export { default as useInfo } from './useInfo';
 export { default as useIsExposed } from './useIsExposed';
 export { default as useIsExtensionPopup } from './useIsExtensionPopup';
+export { default as useIsHideNumbers } from './useIsHideNumbers';
 export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsMounted } from './useIsMounted';
 export { default as useIsRecoverableTooltipText } from './useIsRecoverableTooltipText';

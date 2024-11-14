@@ -15,7 +15,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
-import { useCurrency, usePrices, useTranslation, useYouHave } from '../../../hooks';
+import { useCurrency, useIsHideNumbers, usePrices, useTranslation, useYouHave } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
@@ -25,7 +25,6 @@ import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
 import Chart from './Chart';
 
 interface Props {
-  hideNumbers: boolean | undefined;
   setGroupedAssets: React.Dispatch<React.SetStateAction<AssetsWithUiAndPrice[] | undefined>>
 }
 
@@ -118,13 +117,14 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
   );
 };
 
-function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
 
   const pricesInCurrencies = usePrices();
   const youHave = useYouHave();
+  const { isHideNumbers } = useIsHideNumbers();
 
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
@@ -211,20 +211,20 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
   return (
     <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
       <Grid alignItems='flex-start' container item justifyContent='flex-start'>
-        <Typography sx={{ fontSize: '22px', fontVariant: 'small-caps', fontWeight: 400 }}>
+        <Typography sx={{ fontSize: '21px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('My Portfolio')}
         </Typography>
         <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ my: '13px' }}>
-          {hideNumbers || hideNumbers === undefined || !youHave
+          {!youHave || isHideNumbers
             ? <Box
               component='img'
               src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
-              sx={{ height: '32px', width: '154px' }}
+              sx={{ height: '28px', width: '154px' }}
             />
             : <>
               <FormatPrice
                 commify
-                fontSize='30px'
+                fontSize='28px'
                 fontWeight={700}
                 num={youHave?.portfolio}
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
@@ -250,7 +250,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
             {assets.slice(0, 3).map((asset, index) => (
               <DisplayAssetRow
                 asset={asset}
-                hideNumbers={hideNumbers}
+                hideNumbers={isHideNumbers}
                 key={index}
               />
             ))}
@@ -260,7 +260,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                   {assets.slice(3).map((asset, index) => (
                     <DisplayAssetRow
                       asset={asset}
-                      hideNumbers={hideNumbers}
+                      hideNumbers={isHideNumbers}
                       key={index}
                     />
                   ))}
@@ -268,7 +268,7 @@ function TotalBalancePieChart ({ hideNumbers, setGroupedAssets }: Props): React.
                 <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '10px', width: '100%' }} />
                 <Grid alignItems='center' container item onClick={toggleAssets} sx={{ cursor: 'pointer', p: '5px', width: 'fit-content' }}>
                   <Typography color='secondary.light' fontSize='14px' fontWeight={400}>
-                    {t<string>(showMore ? t('Less') : t('More'))}
+                    {t(showMore ? t('Less') : t('More'))}
                   </Typography>
                   <ArrowDropDownIcon sx={{ color: 'secondary.light', fontSize: '20px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-180deg)' : 'rotate(0deg)', transitionDuration: '0.2s', transitionProperty: 'transform' }} />
                 </Grid>

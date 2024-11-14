@@ -15,7 +15,6 @@ import AccountItem from './AccountItem';
 
 interface Props {
   initialAccountList: AccountsOrder[];
-  hideNumbers: boolean | undefined;
 }
 
 export const saveNewOrder = (newOrder: AccountsOrder[]) => {
@@ -24,7 +23,7 @@ export const saveNewOrder = (newOrder: AccountsOrder[]) => {
   chrome.storage.local.set({ addressOrder }).catch(console.error);
 };
 
-function DraggableAccountList ({ hideNumbers, initialAccountList }: Props) {
+function DraggableAccountList ({ initialAccountList }: Props) {
   const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>(initialAccountList);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 
@@ -56,7 +55,6 @@ function DraggableAccountList ({ hideNumbers, initialAccountList }: Props) {
         {accountsOrder.map(({ account, id }) => (
           <AccountItem
             account={account}
-            hideNumbers={hideNumbers}
             id={id}
             key={id}
             quickActionOpen={quickActionOpen}

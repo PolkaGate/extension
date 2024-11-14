@@ -6,39 +6,23 @@
 import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { Box, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 
 import { stars6Black, stars6White } from '../../assets/icons';
-import { FormatPrice, HideIcon, ShowIcon } from '../../components';
-import { useYouHave } from '../../hooks';
+import { FormatPrice } from '../../components';
+import HideBalance from '../../components/SVG/HideBalance';
+import { useIsHideNumbers, useYouHave } from '../../hooks';
 import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
-
-interface Props {
-  hideNumbers: boolean | undefined;
-  setHideNumbers: React.Dispatch<React.SetStateAction<boolean | undefined>>
-}
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.ReactElement {
+export default function YouHave (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
-
-  const shadow = theme.palette.mode === 'dark' ? '0px 0px 3px rgba(50, 50, 50, 1)' : '0px 0px 5px 0px rgba(0, 0, 0, 0.1)';
-
-  const onHideClick = useCallback(() => {
-    setHideNumbers(!hideNumbers);
-    window.localStorage.setItem('hide_numbers', hideNumbers ? 'false' : 'true');
-  }, [hideNumbers, setHideNumbers]);
-
-  useEffect(() => {
-    const isHide = window.localStorage.getItem('hide_numbers');
-
-    isHide === 'false' || isHide === null ? setHideNumbers(false) : setHideNumbers(true);
-  }, [setHideNumbers]);
+  const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   return (
     <Grid container sx={{ pb: '10px', position: 'relative', pt: '5px', textAlign: 'center', zIndex: 1 }}>
@@ -48,33 +32,30 @@ export default function YouHave ({ hideNumbers, setHideNumbers }: Props): React.
         </Typography>
       </Grid>
       <Grid container item justifyContent='center' xs={12}>
-        {hideNumbers || hideNumbers === undefined
+        {isHideNumbers
           ? <Box
             component='img'
             src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string}
             sx={{ height: '36px', width: '154px' }}
           />
-          : <Grid item pr='15px'>
-            <FormatPrice
-              fontSize='32px'
-              fontWeight={500}
-              height={36}
-              num={youHave?.portfolio }
-              skeletonHeight={36}
-              textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
-              width='223px'
-              withCountUp
-            />
-          </Grid>
+          : <FormatPrice
+            fontSize='32px'
+            fontWeight={500}
+            height={36}
+            num={youHave?.portfolio }
+            skeletonHeight={36}
+            textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+            width='223px'
+            withCountUp
+          />
         }
-        <Grid alignItems='center' direction='column' item onClick={onHideClick} sx={{ backgroundColor: 'background.paper', borderRadius: '5px', boxShadow: shadow, cursor: 'pointer', display: 'flex', position: 'absolute', pt: '3px', right: '20px' }}>
-          {hideNumbers
-            ? <ShowIcon />
-            : <HideIcon />
-          }
-          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>
-            {hideNumbers ? t('Show') : t('Hide')}
-          </Typography>
+        <Grid alignItems='center' item sx={{ position: 'absolute', right: '14px', top: '25px' }}>
+          <HideBalance
+            hide={isHideNumbers}
+            lightColor={theme.palette.secondary.light}
+            onClick={toggleHideNumbers}
+            size={22}
+          />
         </Grid>
       </Grid>
     </Grid>

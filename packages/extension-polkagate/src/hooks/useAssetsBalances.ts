@@ -259,7 +259,11 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       setFetchedAssets(savedAssets as SavedAssets);
     }).catch(console.error);
 
-    watchStorage(ASSETS_NAME_IN_STORAGE, setFetchedAssets, true).catch(console.error);
+    const unsubscribe = watchStorage(ASSETS_NAME_IN_STORAGE, setFetchedAssets, true);
+
+    return () => {
+      unsubscribe();
+    };
   }, [SHOULD_FETCH_ASSETS, addresses]);
 
   const handleSetWorkersCall = useCallback((worker: Worker, terminate?: 'terminate') => {

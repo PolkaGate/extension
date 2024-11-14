@@ -12,7 +12,7 @@
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import { QrCode2 } from '@mui/icons-material';
-import { Box, Divider, Grid, Link, Typography } from '@mui/material';
+import { Box, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -29,6 +29,8 @@ interface Props {
 
 function AccountBrief ({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const { account, chainName, formatted } = useInfo(address);
   const history = useHistory();
   const { pathname } = useLocation();
@@ -81,13 +83,13 @@ function AccountBrief ({ address, identity, showDivider = true, showName = true 
               target='_blank'
               underline='none'
             >
-              <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan as string} width='20px' />
+              <Box alt={'subscan'} component='img' height='20px' mt='9px' src={subscan as string} sx={{ filter: theme.palette.mode === 'dark' ? 'grayscale(50)' : 'none' }} width='20px' />
             </Link>
           </Infotip>
         </Grid>
       </Grid>
       {showDivider &&
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '0px' }} />
+        <Divider sx={{ bgcolor: 'secondary.light', height: '2px', mt: '0px' }} />
       }
     </>
   );

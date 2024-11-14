@@ -16,10 +16,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { type BN, noop } from '@polkadot/util';
 
-import { stars6Black, stars6White } from '../../../assets/icons';
+import { stars5Black, stars5White } from '../../../assets/icons';
 import NftManager from '../../../class/nftManager';
 import FormatPrice from '../../../components/FormatPrice';
-import { useAccount, useCurrency, usePrices, useTranslation } from '../../../hooks';
+import { useAccount, useCurrency, useIsHideNumbers, usePrices, useTranslation } from '../../../hooks';
 import { tieAccount } from '../../../messaging';
 import { amountToHuman } from '../../../util/utils';
 import AOC from '../../accountDetails/components/AOC';
@@ -37,7 +37,6 @@ interface AddressDetailsProps {
   accountAssets: FetchedBalance[] | null | undefined;
   address: string | undefined;
   selectedAsset: FetchedBalance | undefined;
-  hideNumbers: boolean | undefined
   setSelectedAsset: React.Dispatch<React.SetStateAction<FetchedBalance | undefined>>;
   isChild?: boolean;
 }
@@ -86,15 +85,15 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   return (
     <Grid alignItems='center' container item xs>
       <Grid alignItems='center' container gap='15px' item justifyContent='center' width='fit-content'>
-        <Typography fontSize='16px' fontWeight={400} pl='15px'>
+        <Typography color='secondary.contrastText' fontSize='16px' fontWeight={400} pl='15px'>
           {t('Total')}:
         </Typography>
         {
           hideNumbers || hideNumbers === undefined
-            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars6White : stars6Black) as string} sx={{ height: '36px', width: '154px' }} />
+            ? <Box component='img' src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string} sx={{ height: '19px', width: '110px' }} />
             : <FormatPrice
               commify
-              fontSize='24px'
+              fontSize='21px'
               fontWeight={700}
               num={totalBalance}
               skeletonHeight={28}
@@ -106,7 +105,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   );
 };
 
-function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForHome ({ accountAssets, address, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const nftManager = useMemo(() => new NftManager(), []);
 
   const { t } = useTranslation();
@@ -114,6 +113,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const account = useAccount(address);
+  const { isHideNumbers } = useIsHideNumbers();
 
   const [displayPopup, setDisplayPopup] = useState<number>();
   const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
@@ -195,7 +195,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
             gridSize={5.6}
           />
           <AccountTotal
-            hideNumbers={hideNumbers}
+            hideNumbers={isHideNumbers}
             totalBalance={totalBalance}
           />
         </Grid>
@@ -207,7 +207,7 @@ function AccountInformationForHome ({ accountAssets, address, hideNumbers, isChi
                 <AOC
                   accountAssets={assetsToShow}
                   address={address}
-                  hideNumbers={hideNumbers}
+                  hideNumbers={isHideNumbers}
                   mode='Home'
                   onclick={onAssetBoxClicked}
                   selectedAsset={selectedAsset}

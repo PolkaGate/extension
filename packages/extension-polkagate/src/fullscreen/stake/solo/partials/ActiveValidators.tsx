@@ -31,7 +31,7 @@ export default function ActiveValidators ({ address, isValidator }: Props): Reac
   const stakingConsts = useStakingConsts(address);
   const [showDetails, setShowDetails] = useState<boolean>();
 
-  const SKELETON_COUNT = 4;
+  const SKELETON_COUNT = 5;
 
   const toggleDetails = useCallback(() => {
     setShowDetails(!showDetails);

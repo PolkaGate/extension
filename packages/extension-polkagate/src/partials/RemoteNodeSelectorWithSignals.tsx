@@ -250,7 +250,7 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, 
   }, [onExtension]);
 
   return (
-    <Grid aria-describedby={id} component='button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
+    <Grid aria-describedby={id} component='button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: '2px solid', borderColor: 'divider', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
       {isLightClient
         ? <LightClientEndpointIcon sx={{ bottom: '2px', color: SIGNAL_COLORS.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }} />
         : <NodeStatusIcon

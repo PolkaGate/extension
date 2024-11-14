@@ -193,7 +193,7 @@ export default function AddNewChain (): React.ReactElement {
         <Bread />
         <Title
           height='100px'
-          logo={<VaadinIcon icon='vaadin:globe-wire' style={{ color: `${theme.palette.text.primary}`, fontSize: '23px' }} />}
+          logo={<VaadinIcon icon='vaadin:globe-wire' style={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }} />}
           text={t('Add New Chain')}
         />
         <Typography fontSize='14px' fontWeight={400} mb={2}>

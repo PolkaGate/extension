@@ -198,7 +198,7 @@ export default function AccountDetails (): React.ReactElement {
             />
           </Grid>
         </Grid>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '9px' }} />
+        <Divider sx={{ bgcolor: 'secondary.light', height: '2px', mt: '9px' }} />
         {!showStakingOptions
           ? <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
             {assetId !== undefined
@@ -246,7 +246,7 @@ export default function AccountDetails (): React.ReactElement {
           </Grid>
           : <StakingOption balance={balances} setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
+        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.light', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
           <HorizontalMenuItem
             divider
             icon={

@@ -32,7 +32,7 @@ const Price = ({ balanceToShow, isPriceOutdated, price }: PriceJSXType) => (
   <FormatPrice
     amount={getValue('total', balanceToShow)}
     decimals={balanceToShow?.decimal}
-    fontSize='28px'
+    fontSize='21px'
     fontWeight= { 400 }
     price={price}
     skeletonHeight={22}
@@ -78,7 +78,7 @@ interface BalanceRowJSXType {
 }
 
 const BalanceRow = ({ balanceToShow, isBalanceOutdated, isPriceOutdated, price }: BalanceRowJSXType) => (
-  <Grid alignItems='center' container fontSize='26px' item xs>
+  <Grid alignItems='center' container fontSize='21px' item xs>
     <Balance balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} />
     <Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '30px', mx: '10px', my: 'auto' }} />
     <Price balanceToShow={balanceToShow} isPriceOutdated={isPriceOutdated} price={price} />
@@ -104,9 +104,9 @@ const SelectedAssetBox = ({ balanceToShow, genesisHash, isBalanceOutdated, isPri
       {genesisHash
         ? <>
           <Grid item pl='7px'>
-            <AssetLogo assetSize='42px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            <AssetLogo assetSize='32px' baseTokenSize='20px' genesisHash={balanceToShow?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
           </Grid>
-          <Grid item sx={{ ml: '5px' }}>
+          <Grid item sx={{ ml: '10px' }}>
             <BalanceRow balanceToShow={balanceToShow} isBalanceOutdated={isBalanceOutdated} isPriceOutdated={isPriceOutdated} price={price} />
           </Grid>
         </>

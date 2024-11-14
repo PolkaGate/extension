@@ -76,7 +76,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
       <Title
         height='70px'
         logo={
-          <PoolStakingIcon color={theme.palette.text.primary} height={60} width={60} />
+          <PoolStakingIcon color={theme.palette.text.primary} height={50} width={50} />
         }
         ml='-10px'
         padding='0px'

@@ -80,7 +80,11 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
 
-    watchStorage('profile', setSelectedProfile).catch(console.error);
+    const unsubscribe = watchStorage('profile', setSelectedProfile);
+
+    return () => {
+      unsubscribe();
+    };
   }, [setSelectedProfile, t]);
 
   return (
@@ -103,13 +107,14 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           '&:hover': {
             boxShadow: shadowOnHover
           },
-          border: 1,
+          border: 2,
           borderColor: getProfileColor(index, theme) || 'background.paper',
           borderRadius: '15px',
           boxShadow: shadow,
           cursor: 'pointer',
           flexShrink: 0,
           minWidth: '100px',
+          mt: '2px',
           opacity: isDarkMode ? (visibleContent ? 1 : 0.3) : undefined,
           position: 'relative',
           transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
@@ -119,9 +124,9 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           width: 'fit-content'
         }}
       >
-        <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
+        <VaadinIcon icon={'vaadin:check'} style={{ height: '12px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
         <Typography
-          color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400}
+          color={'text.primary'} display='block' fontSize='16px' fontWeight={400}
           sx={{
             maxWidth: '100px',
             overflow: 'hidden',

@@ -11,6 +11,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { DISABLED_NETWORKS, FULLSCREEN_WIDTH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { SelectChain, TwoButtons, VaadinIcon, Warning } from '../../../components';
@@ -99,16 +100,13 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
       <Grid container item sx={{ display: 'block', px: '10%' }}>
-        <Grid alignContent='center' alignItems='center' container item>
-          <Grid item sx={{ mr: '20px' }}>
-            <VaadinIcon icon='vaadin:file-tree' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
-          </Grid>
-          <Grid item>
-            <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-              {t('Ledger Account Migration')}
-            </Typography>
-          </Grid>
-        </Grid>
+        <Title
+          height='85px'
+          logo={
+            <VaadinIcon icon='vaadin:automation' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+          }
+          text= {t('Ledger Account Migration')}
+        />
         <Typography fontSize='16px' fontWeight={400} pt='15px' textAlign='left' width='100%'>
           <b>1</b>. {t('Connect your ledger device to the computer.')}<br />
           <b>2</b>. {t('Open Polkadot Migration App on the ledger device.')}<br />

@@ -17,6 +17,7 @@ import { QrScanAddress } from '@polkadot/react-qr';
 
 import { AccountNamePasswordCreation, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
 import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
+import { Title } from '../../../fullscreen/sendFund/InputPage';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
@@ -121,16 +122,13 @@ export default function AttachQrFullScreen (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:qrcode' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Attach QR-signer')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Title
+            height='85px'
+            logo={
+              <VaadinIcon icon='vaadin:qrcode' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            }
+            text= {t('Attach QR-signer')}
+          />
           {!account &&
             <Grid alignItems='center' container justifyContent='center'>
               <Typography fontSize='16px' m='auto' pt='40px' textAlign='center' width='92%'>

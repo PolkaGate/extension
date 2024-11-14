@@ -7,6 +7,7 @@ import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/mater
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { FULLSCREEN_WIDTH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
@@ -109,16 +110,13 @@ function CreateAccount (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:plus-circle' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Create a new account')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Title
+            height='85px'
+            logo={
+              <VaadinIcon icon='vaadin:plus-circle' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            }
+            text= {t('Create a new account')}
+          />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
           </Typography>

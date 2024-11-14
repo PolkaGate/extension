@@ -13,6 +13,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
@@ -147,16 +148,13 @@ export default function ImportSeed (): React.ReactElement {
       />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <VaadinIcon icon='vaadin:book' style={{ height: '40px', color: `${theme.palette.text.primary}`, width: '40px' }} />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t<string>('Import from recovery phrase')}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Title
+            height='100px'
+            logo={
+              <VaadinIcon icon='vaadin:book' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+            }
+            text={t('Import from recovery phrase')}
+          />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('Enter your account\'s recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
           </Typography>

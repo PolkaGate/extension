@@ -119,7 +119,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
       <Bread />
       <Title
         height='100px'
-        logo={<VaadinIcon icon='vaadin:sitemap' style={{ fontSize: '23px', color: `${theme.palette.text.primary}` }} />}
+        logo={<VaadinIcon icon='vaadin:sitemap' style={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }} />}
         text={t('Proxy Management')}
       />
       <Typography fontSize='14px' fontWeight={400}>

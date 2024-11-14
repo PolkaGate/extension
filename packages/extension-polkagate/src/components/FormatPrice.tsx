@@ -108,7 +108,8 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
         : <Skeleton
           animation='wave'
           height={skeletonHeight}
-          sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width }}
+          sx={{ fontWeight: 'bold', transform: 'none', width }}
+          variant='text'
         />
       }
     </Grid>

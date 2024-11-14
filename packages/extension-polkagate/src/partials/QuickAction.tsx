@@ -186,7 +186,7 @@ export default function QuickAction ({ address, quickActionOpen, setQuickActionO
 
   return (
     <Grid container item onClick={isSlideOpen ? handleClose : handleOpen} sx={{ inset: '0 auto 0 -1px', position: 'absolute', width: '10px' }}>
-      <Grid container item sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : 'secondary.light', borderRadius: '5px 0 0 5px', cursor: 'pointer', inset: '0 auto 0 0', position: 'absolute', width: '10px', zIndex: 6 }}></Grid>
+      <Grid container item sx={{ bgcolor: theme.palette.mode === 'light' ? 'black' : '#74747475', borderRadius: '5px 0 0 5px', cursor: 'pointer', inset: '0 auto 0 0', position: 'absolute', width: '10px', zIndex: 6 }}></Grid>
       <IconButton
         sx={{ '&:hover': { backgroundColor: 'background.paper' }, bgcolor: 'background.paper', borderRadius: isSlideOpen ? '20px 0 0 20px' : '0 20px 20px 0', height: '17px', inset: isSlideOpen ? 'auto -1px 20px auto' : 'auto auto 20px -1px', p: 0, position: 'absolute', transition: 'border-radius 0.2s ease, inset 0.2s ease', width: '10px', zIndex: 6 }}
       >
