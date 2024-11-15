@@ -56,6 +56,7 @@ export function nFormatter (num: number, decimalPoint: number) {
 }
 
 const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
+const SMALL_DECIMALS_FONT_SIZE_REDUCTION = 20;
 
 function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
@@ -129,7 +130,7 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
           </Typography>
           {withSmallDecimal && Number(total) > 0 &&
             <Typography
-              fontSize={reduceFontSize(fontSize, 20)}
+              fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
               fontWeight={fontWeight}
               lineHeight={lineHeight}
               sx={{ color: theme.palette.secondary.contrastText }}
@@ -142,7 +143,8 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
                 />
                 : <>
                   {`.${getDecimal(total)}`}
-                </>}
+                </>
+              }
             </Typography>
           }
         </Stack>
