@@ -103,7 +103,6 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
     });
   }, []);
 
-
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
       setSearchKeyword('');
@@ -134,7 +133,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
   return (
     <Grid container item sx={{ width: '280px' }}>
       <Grid container item justifyContent='space-between' px='10px'>
-        <Typography fontSize='16px' fontWeight={500} py='10px' textAlign='center' width='100%'>
+        <Typography color='secondary.contrastText' fontSize='14px' fontWeight={400} py='10px' textAlign='center' width='100%'>
           {t('Select chains to view assets on')}
         </Typography>
         <Button
