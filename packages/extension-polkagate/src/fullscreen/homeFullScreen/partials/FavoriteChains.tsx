@@ -5,7 +5,7 @@
 
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Badge, Grid, Popover, useTheme } from '@mui/material';
+import { Badge, Dialog, Slide, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useIsTestnetEnabled, useSelectedChains } from '../../../hooks';
@@ -13,7 +13,7 @@ import { TEST_NETS } from '../../../util/constants';
 import { HEADER_COMPONENT_STYLE } from '../../governance/FullScreenHeader';
 import ChainList from '../components/ChainList';
 
-export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; };
+export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; }
 
 export default function FavoriteChains (): React.ReactElement {
   const theme = useTheme();
@@ -32,9 +32,6 @@ export default function FavoriteChains (): React.ReactElement {
     setAnchorEl(null);
   }, []);
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
   const badgeCount = useMemo(() => {
     if (!selectedChains?.length) {
       return 0;
@@ -50,36 +47,54 @@ export default function FavoriteChains (): React.ReactElement {
   }, [isTestNetEnabled, selectedChains]);
 
   return (
-    <Badge badgeContent={badgeCount} color='success'>
-      <Grid alignItems='center' aria-describedby={id} component='button' container direction='column' item justifyContent='center' onClick={onChainListClick} sx={{ ...HEADER_COMPONENT_STYLE}}>
+    <Badge
+      badgeContent={badgeCount}
+      color='success'
+    >
+      <Grid
+        alignItems='center'
+        component='button'
+        container
+        direction='column'
+        item
+        justifyContent='center'
+        onClick={onChainListClick}
+        sx={{ ...HEADER_COMPONENT_STYLE }}
+      >
         <FontAwesomeIcon
           color={color}
           fontSize='22px'
           icon={faSliders}
         />
       </Grid>
-      <Popover
+      { anchorEl &&
+      <Dialog
         PaperProps={{
-          sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'secondary.light' : 'transparent', borderRadius: '7px', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)', pt: '5px' }
+          sx: {
+            bgcolor: 'background.paper',
+            borderRadius: '7px',
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
+              : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
+            left: anchorEl?.getBoundingClientRect().right - 300,
+            position: 'absolute',
+            top: anchorEl?.getBoundingClientRect().bottom - 45
+          }
         }}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          horizontal: 'right',
-          vertical: 'bottom'
-        }}
-        id={id}
+        TransitionComponent={Slide}
         onClose={handleClose}
-        open={open}
-        sx={{ mt: '5px' }}
-        transformOrigin={{
-          horizontal: 'right',
-          vertical: 'top'
+        open={!!anchorEl}
+        slotProps={{
+          backdrop: {
+            sx: {
+              backdropFilter: 'blur(8px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)'
+            }
+          }
         }}
       >
-        <ChainList
-          anchorEl={anchorEl}
-        />
-      </Popover>
+        <ChainList anchorEl={anchorEl} />
+      </Dialog>}
     </Badge>
   );
 }

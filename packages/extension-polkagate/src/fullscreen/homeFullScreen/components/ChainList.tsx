@@ -6,8 +6,8 @@
 import type { SavedAssets } from '../../../hooks/useAssetsBalances';
 import type { DropdownOption } from '../../../util/types';
 
-import { AddCircle as AddIcon, ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, RestartAlt as ResetIcon } from '@mui/icons-material';
-import { Button, Collapse, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { AddCircle as AddIcon, RestartAlt as ResetIcon } from '@mui/icons-material';
+import { Button, Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InputFilter } from '../../../components';
@@ -23,15 +23,12 @@ interface Props {
   anchorEl: HTMLButtonElement | null;
 }
 
-const DEFAULT_SELECTED_CHAINS_COUNT = 10;
-
 function ChainList ({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
   const isTestnetEnabled = useIsTestnetEnabled();
 
-  const [showOtherChains, setShowOtherChains] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
@@ -82,7 +79,6 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
 
   useEffect(() => {
     if (anchorEl === null) {
-      setShowOtherChains(false);
       setSearchKeyword('');
       selectedChains?.size &&
         handleChainsChanges();
@@ -107,7 +103,6 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
     });
   }, []);
 
-  const onOtherChains = useCallback(() => setShowOtherChains(!showOtherChains), [showOtherChains]);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
@@ -137,7 +132,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
   }, [updateSavedAssetsInStorage]);
 
   return (
-    <Grid container item sx={{ maxHeight: '650px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '280px' }}>
+    <Grid container item sx={{ width: '280px' }}>
       <Grid container item justifyContent='space-between' px='10px'>
         <Typography fontSize='16px' fontWeight={500} py='10px' textAlign='center' width='100%'>
           {t('Select chains to view assets on')}
@@ -160,39 +155,17 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         </Button>
       </Grid>
       <Divider sx={{ bgcolor: 'divider', height: '2px', mb: '5px', width: '100%' }} />
-      {[...sortedChainsToShow.slice(0, DEFAULT_SELECTED_CHAINS_COUNT)].map((item, index) => (
-        <ChainItem
-          chain={item}
-          disabled={!isTestnetEnabled && TEST_NETS.includes(item.value as string)}
-          isSelected={selectedChains.has(item.value as string)}
-          key={index}
-          onclick={onChainSelect}
-        />
-      ))}
-      <Grid container item onClick={onOtherChains} sx={{ bgcolor: 'secondary.light', borderRadius: '5px', cursor: 'pointer' }}>
-        <ArrowForwardIosRoundedIcon
-          sx={{
-            color: 'background.default',
-            fontSize: '20px',
-            m: 'auto',
-            stroke: `${theme.palette.background.default}`,
-            strokeWidth: 1.5,
-            transform: showOtherChains ? 'rotate(-90deg)' : 'rotate(90deg)',
-            transition: 'transform 150ms ease-in-out'
-          }}
+      <Grid container p='5px' sx={{ display: 'list-item' }}>
+        <InputFilter
+          autoFocus
+          onChange={onSearch}
+          placeholder={t<string>('🔍 Search chain')}
+          theme={theme}
+          value={searchKeyword ?? ''}
         />
       </Grid>
-      <Collapse in={showOtherChains} sx={{ width: '100%' }} timeout={{ enter: 700, exit: 150 }}>
-        <Grid container py='5px' sx={{ display: 'list-item' }}>
-          <InputFilter
-            autoFocus
-            onChange={onSearch}
-            placeholder={t<string>('🔍 Search chain')}
-            theme={theme}
-            value={searchKeyword ?? ''}
-          />
-        </Grid>
-        {[...(searchedChain ?? sortedChainsToShow.slice(DEFAULT_SELECTED_CHAINS_COUNT))].map((item, index) => (
+      <Grid container item sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out' }}>
+        {[...(searchedChain ?? sortedChainsToShow)].map((item, index) => (
           <ChainItem
             chain={item}
             disabled={!isTestnetEnabled && TEST_NETS.includes(item.value as string)}
@@ -201,8 +174,9 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
             onclick={onChainSelect}
           />
         ))}
-      </Collapse>
+      </Grid>
     </Grid>
+
   );
 }
 
