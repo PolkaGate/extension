@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 import type { CurrencyItemType } from '../partials/Currency';
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';
 import { chainsPolkadotCircleSVG } from '@polkagate/apps-config/ui/logos/chains';
 import * as flags from 'country-flag-icons/string/3x2';
@@ -45,16 +45,21 @@ function CurrencyItem ({ currency, onclick }: Props): React.ReactElement {
   return (
     // eslint-disable-next-line react/jsx-no-bind
     <Grid alignItems='center' container onClick={() => onclick(currency)} sx={{ ':hover': { bgcolor: theme.palette.mode === 'light' ? 'rgba(24, 7, 16, 0.1)' : 'rgba(255, 255, 255, 0.1)' }, cursor: 'pointer', height: '45px', px: '15px' }}>
-      <Grid alignItems='center' container item mr='10px' width='fit-content'>
-        <Box
-          component='img'
-          src={flagSVG}
-          sx={{ height: '17px' }}
-        />
-      </Grid>
-      <Typography fontSize='16px' fontWeight={400}>
-        {`${currency.country} - ${currency.sign}`}
-      </Typography>
+      <Stack direction='row' justifyContent='space-between' width='100%'>
+        <Grid alignItems='center' container item mr='10px' width='fit-content'>
+          <Box
+            component='img'
+            src={flagSVG}
+            sx={{ height: '17px' }}
+          />
+          <Typography fontSize='16px' fontWeight={400} px ='5px'>
+            {currency.country}
+          </Typography>
+        </Grid>
+        <Typography fontSize='16px' fontWeight={500}>
+          {currency.sign}
+        </Typography>
+      </Stack>
     </Grid>
   );
 }
