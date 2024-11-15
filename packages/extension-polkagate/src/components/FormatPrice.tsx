@@ -3,13 +3,13 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Grid, Skeleton, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
 import { useCurrency } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
-import { amountToHuman, fixFloatingPoint } from '../util/utils';
+import { amountToHuman, fixFloatingPoint, getDecimal } from '../util/utils';
 
 interface Props {
   amount?: BN | null;
@@ -29,6 +29,7 @@ interface Props {
   height?: number;
   width?: string;
   withCountUp?: boolean;
+  withSmallDecimal?: boolean;
 }
 
 export function nFormatter (num: number, decimalPoint: number) {
@@ -55,9 +56,11 @@ export function nFormatter (num: number, decimalPoint: number) {
 }
 
 const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
+const SMALL_DECIMALS_FONT_SIZE_REDUCTION = 20;
 
-function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp }: Props): React.ReactElement<Props> {
+function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
+  const theme = useTheme();
 
   const total = useMemo(() => {
     if (num !== undefined) {
@@ -72,12 +75,28 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
   }, [amount, decimals, num, price]);
 
   const _decimalPoint = useMemo(() => {
+    if (withSmallDecimal) {
+      return 0;
+    }
+
     if (currency?.code && ASSETS_AS_CURRENCY_LIST.includes(currency.code)) {
       return DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY;
     }
 
     return decimalPoint;
-  }, [currency?.code, decimalPoint]);
+  }, [currency?.code, decimalPoint, withSmallDecimal]);
+
+  const reduceFontSize = useCallback((fontSize: string | undefined, percentage: number) => {
+    if (!fontSize) {
+      return undefined;
+    }
+
+    const numericValue = parseFloat(fontSize);
+
+    const reducedSize = numericValue * (1 - (percentage / 100));
+
+    return `${Math.round(reducedSize)}px`;
+  }, []);
 
   return (
     <Grid
@@ -87,24 +106,48 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
       textAlign={textAlign}
     >
       {total !== undefined
-        ? <Typography
-          fontSize={fontSize}
-          fontWeight={fontWeight}
-          lineHeight={lineHeight}
-          sx={{ color: textColor }}
+        ? <Stack
+          alignItems='baseline'
+          direction='row'
         >
-          {withCountUp
-            ? <CountUp
-              decimals={_decimalPoint}
-              duration={1}
-              end={parseFloat(String(total))}
-              prefix={sign || currency?.sign || ''}
-            />
-            : <>
-              {sign || currency?.sign || ''}{ commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
-            </>
+          <Typography
+            fontSize={fontSize}
+            fontWeight={fontWeight}
+            lineHeight={lineHeight}
+            sx={{ color: textColor }}
+          >
+            {withCountUp
+              ? <CountUp
+                decimals={_decimalPoint}
+                duration={1}
+                end={parseFloat(String(total))}
+                prefix={sign || currency?.sign || ''}
+              />
+              : <>
+                {sign || currency?.sign || ''}{commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
+              </>
+            }
+          </Typography>
+          {withSmallDecimal && Number(total) > 0 &&
+            <Typography
+              fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
+              fontWeight={fontWeight}
+              lineHeight={lineHeight}
+              sx={{ color: theme.palette.secondary.contrastText }}
+            >
+              {withCountUp
+                ? <CountUp
+                  duration={1}
+                  end={Number(getDecimal(total))}
+                  prefix={'.'}
+                />
+                : <>
+                  {`.${getDecimal(total)}`}
+                </>
+              }
+            </Typography>
           }
-        </Typography>
+        </Stack>
         : <Skeleton
           animation='wave'
           height={skeletonHeight}
