@@ -5,7 +5,7 @@
 
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Badge, Dialog, Slide, Grid, useTheme } from '@mui/material';
+import { Badge, Dialog, Grid, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useIsTestnetEnabled, useSelectedChains } from '../../../hooks';
@@ -25,8 +25,8 @@ export default function FavoriteChains (): React.ReactElement {
   const color = theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary;
 
   const onChainListClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  }, [anchorEl]);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -59,7 +59,7 @@ export default function FavoriteChains (): React.ReactElement {
         item
         justifyContent='center'
         onClick={onChainListClick}
-        sx={{ ...HEADER_COMPONENT_STYLE }}
+        sx={{ ...HEADER_COMPONENT_STYLE, zIndex: anchorEl && theme.zIndex.modal + 1 }}
       >
         <FontAwesomeIcon
           color={color}
@@ -76,9 +76,9 @@ export default function FavoriteChains (): React.ReactElement {
             boxShadow: theme.palette.mode === 'dark'
               ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
               : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
-            left: anchorEl?.getBoundingClientRect().right - 300,
+            left: anchorEl?.getBoundingClientRect().right - 310,
             position: 'absolute',
-            top: anchorEl?.getBoundingClientRect().bottom - 45
+            top: anchorEl?.getBoundingClientRect().bottom - 30
           }
         }}
         TransitionComponent={Slide}

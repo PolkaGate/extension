@@ -37,8 +37,8 @@ export default function Currency (): React.ReactElement {
   }, [currencyToShow]);
 
   const onCurrencyClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  }, [anchorEl]);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -46,7 +46,7 @@ export default function Currency (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE }}>
+      <Grid alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE, zIndex: anchorEl && theme.zIndex.modal + 1 }}>
         <Infotip2 text={currencyToShow?.currency}>
           <Typography color={textColor} fontSize='22px' fontWeight={500}>
             {currencyToShow?.sign || '$'}
@@ -62,9 +62,9 @@ export default function Currency (): React.ReactElement {
               boxShadow: theme.palette.mode === 'dark'
                 ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
                 : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
-              left: anchorEl?.getBoundingClientRect().right - 300,
+              left: anchorEl?.getBoundingClientRect().right - 260,
               position: 'absolute',
-              top: anchorEl?.getBoundingClientRect().bottom - 45
+              top: anchorEl?.getBoundingClientRect().bottom - 30
             }
           }}
           TransitionComponent={Slide}

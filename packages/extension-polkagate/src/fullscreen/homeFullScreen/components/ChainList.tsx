@@ -157,8 +157,9 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
       <Grid container p='5px' sx={{ display: 'list-item' }}>
         <InputFilter
           autoFocus
+          fontSize='14px'
           onChange={onSearch}
-          placeholder={t<string>('🔍 Search chain')}
+          placeholder={t('🔍 Search chain')}
           theme={theme}
           value={searchKeyword ?? ''}
         />

@@ -71,6 +71,7 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
       <Grid container p='5px' sx={{ display: 'list-item' }}>
         <InputFilter
           autoFocus
+          fontSize='14px'
           onChange={onSearch}
           placeholder={t('🔍 Search currency')}
           theme={theme}
