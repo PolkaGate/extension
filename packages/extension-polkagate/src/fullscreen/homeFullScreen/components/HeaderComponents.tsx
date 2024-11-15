@@ -18,13 +18,13 @@ function HeaderComponents (): React.ReactElement {
 
   return (
     <Grid columnGap={spacings} container item pl={spacings} width='fit-content'>
-      <Currency />
       <HideBalance
         hide={isHideNumbers}
         noBorder={false}
         onClick={toggleHideNumbers}
         size={22}
       />
+      <Currency />
       <FavoriteChains />
     </Grid>
   );
