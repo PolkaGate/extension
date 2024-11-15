@@ -62,8 +62,8 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
 
   return (
     <Grid container item sx={{ transition: 'height 5000ms ease-in-out', width: '230px' }}>
-      <Grid container item justifyContent='space-between' px='5px'>
-        <Typography fontSize='14px' fontWeight={400} py='10px' textAlign='center' width='100%' color='secondary.contrastText'>
+      <Grid container item justifyContent='space-between' px='5px' role='dialog'>
+        <Typography color='secondary.contrastText' fontSize='14px' fontWeight={400} py='10px' textAlign='center' width='100%'>
           {t('Select the currency for your balance')}
         </Typography>
       </Grid>
@@ -78,8 +78,8 @@ function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Rea
           value={searchKeyword ?? ''}
         />
       </Grid>
-      <Grid container item sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'hidden', overflowY: 'scroll' }}>
-        {[...(searchedCurrency ?? CURRENCY_LIST)].map((item, index) => (
+      <Grid container item role='listbox' sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'hidden', overflowY: 'scroll' }}>
+        {(searchedCurrency ?? CURRENCY_LIST).map((item, index) => (
           <CurrencyItem
             currency={item}
             key={index}

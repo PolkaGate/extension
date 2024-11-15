@@ -165,7 +165,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
         />
       </Grid>
       <Grid container item sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out' }}>
-        {[...(searchedChain ?? sortedChainsToShow)].map((item, index) => (
+        {(searchedChain ?? sortedChainsToShow).map((item, index) => (
           <ChainItem
             chain={item}
             disabled={!isTestnetEnabled && TEST_NETS.includes(item.value as string)}
