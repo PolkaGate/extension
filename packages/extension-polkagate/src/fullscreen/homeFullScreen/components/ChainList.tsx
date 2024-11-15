@@ -137,7 +137,7 @@ function ChainList ({ anchorEl }: Props): React.ReactElement {
   }, [updateSavedAssetsInStorage]);
 
   return (
-    <Grid container item sx={{ maxHeight: '650px', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '280px' }}>
+    <Grid container item sx={{ maxHeight: 'calc(100vh - 100px)', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '280px' }}>
       <Grid container item justifyContent='space-between' px='10px'>
         <Typography fontSize='16px' fontWeight={500} py='10px' textAlign='center' width='100%'>
           {t('Select chains to view assets on')}

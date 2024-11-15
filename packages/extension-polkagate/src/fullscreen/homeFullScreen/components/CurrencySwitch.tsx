@@ -68,7 +68,7 @@ function CurrencySwitch ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): R
   }, []);
 
   return (
-    <Grid container item sx={{ maxHeight: window.innerHeight - 100, overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '230px' }}>
+    <Grid container item sx={{ maxHeight: 'calc(100vh - 100px)', overflow: 'hidden', overflowY: 'scroll', transition: 'height 5000ms ease-in-out', width: '230px' }}>
       {[...CURRENCY_LIST.slice(0, DEFAULT_CURRENCIES_TO_SHOW)].map((item, index) => (
         <CurrencyItem
           currency={item}
