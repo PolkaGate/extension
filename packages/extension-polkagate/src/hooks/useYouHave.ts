@@ -10,6 +10,7 @@ import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
 export interface YouHaveType {
+  available: number;
   change: number;
   date: number;
   portfolio: number;

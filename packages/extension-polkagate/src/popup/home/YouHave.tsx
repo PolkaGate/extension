@@ -21,7 +21,7 @@ import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
 import Menu from '../../partials/Menu';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../util/api/getPrices';
-import { countDecimalPlaces, fixFloatingPoint, pgBoxShadow } from '../../util/utils';
+import { countDecimalPlaces, fixFloatingPoint } from '../../util/utils';
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
