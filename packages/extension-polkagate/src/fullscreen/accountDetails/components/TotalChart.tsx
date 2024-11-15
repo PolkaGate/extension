@@ -144,6 +144,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
             num={totalWorth}
             skeletonHeight={22}
             withCountUp
+            withSmallDecimal
           />
           <Typography sx={{ color: !totalChange ? 'secondary.contrastText' : totalChange > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 500, mt: '10px' }}>
             <CountUp

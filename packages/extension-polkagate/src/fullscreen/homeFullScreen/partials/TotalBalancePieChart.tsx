@@ -229,6 +229,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
                 num={youHave?.portfolio}
                 textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
                 withCountUp
+                withSmallDecimal
               />
               <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
                 <CountUp

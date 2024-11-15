@@ -10,7 +10,28 @@ export const USD_CURRENCY = {
   sign: '$'
 };
 
+const CRYPTO_AS_CURRENCY = [{
+  code: 'BTC',
+  country: 'Bitcoin',
+  currency: 'Bitcoin',
+  sign: '₿'
+},
+{
+  code: 'ETH',
+  country: 'Ethereum',
+  currency: 'Ethereum',
+  sign: 'Ξ'
+},
+{
+  code: 'DOT',
+  country: 'Polkadot',
+  currency: 'Polkadot',
+  sign: '𝒫'
+}
+];
+
 export const CURRENCY_LIST = [
+  ...CRYPTO_AS_CURRENCY,
   USD_CURRENCY,
   {
     code: 'EUR',
@@ -23,24 +44,6 @@ export const CURRENCY_LIST = [
     country: 'Great British',
     currency: 'Pound',
     sign: '£'
-  },
-  {
-    code: 'BTC',
-    country: 'Bitcoin',
-    currency: 'Bitcoin',
-    sign: '₿'
-  },
-  {
-    code: 'ETH',
-    country: 'Ethereum',
-    currency: 'Ethereum',
-    sign: 'Ξ'
-  },
-  {
-    code: 'DOT',
-    country: 'Polkadot',
-    currency: 'Polkadot',
-    sign: '𝒫'
   },
   {
     code: 'AED',
