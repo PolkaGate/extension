@@ -4,7 +4,7 @@
 import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
 import { useCurrency } from '../hooks';
@@ -85,7 +85,7 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
     return decimalPoint;
   }, [currency?.code, decimalPoint, withSmallDecimal]);
 
-  function reduceFontSize (fontSize: string | undefined, percentage: number) {
+  const reduceFontSize = useCallback((fontSize: string | undefined, percentage: number) => {
     if (!fontSize) {
       return undefined;
     }
@@ -95,7 +95,7 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
     const reducedSize = numericValue * (1 - (percentage / 100));
 
     return `${Math.round(reducedSize)}px`;
-  }
+  }, []);
 
   return (
     <Grid
