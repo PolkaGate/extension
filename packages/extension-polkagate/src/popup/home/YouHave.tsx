@@ -67,7 +67,7 @@ export default function YouHave (): React.ReactElement {
               sx={{ height: '30px', width: '154px' }}
             />
             : <>
-              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', textAlign: 'start', width: '100%' }}>
+              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', mr: '15px', textAlign: 'start', width: '100%' }}>
                 <Stack alignItems='flex-start' direction='row' sx= {{ ml: '-5px' }}>
                   <Currency
                     bgcolor='background.paper'
