@@ -17,7 +17,7 @@ interface Props {
   right?: string;
 }
 
-export function AccountLabel ({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
+function AccountLabel ({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
@@ -141,3 +141,5 @@ export function AccountLabel ({ account, ml, parentName, right }: Props): React.
     </Grid>
   );
 }
+
+export default React.memo(AccountLabel);

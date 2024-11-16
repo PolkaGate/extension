@@ -18,7 +18,7 @@ import { AccountContext, ActionContext, Warning } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTokenPrice, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
-import { AccountLabel } from '../../popup/home/AccountLabel';
+import AccountLabel from '../../popup/home/AccountLabel';
 import ReceiveModal from '../../popup/receive/ReceiveModal';
 import { ASSET_HUBS, GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';

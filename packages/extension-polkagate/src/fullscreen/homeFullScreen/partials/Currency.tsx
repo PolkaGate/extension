@@ -26,7 +26,7 @@ interface Props {
   minWidth?: string;
 }
 
-export default function Currency ({ color, fontSize = '22px', height, minWidth, dialogLeft=260 }: Props): React.ReactElement {
+function Currency ({ color, fontSize = '22px', height, minWidth, dialogLeft=260 }: Props): React.ReactElement {
 // export default function Currency ({ color, fontSize = '22px' }: Props): React.ReactElement {
   const theme = useTheme();
 
@@ -106,3 +106,5 @@ export default function Currency ({ color, fontSize = '22px', height, minWidth, 
     </>
   );
 }
+
+export default React.memo(Currency);

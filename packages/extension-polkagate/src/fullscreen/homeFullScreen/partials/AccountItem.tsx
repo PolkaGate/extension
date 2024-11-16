@@ -15,7 +15,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import { AccountContext } from '../../../components';
 import { useAccountAssets, useChain } from '../../../hooks';
 import QuickActionFullScreen from '../../../partials/QuickActionFullScreen';
-import { AccountLabel } from '../../../popup/home/AccountLabel';
+import AccountLabel from '../../../popup/home/AccountLabel';
 import getParentNameSuri from '../../../util/getParentNameSuri';
 import AccountInformationForHome from './AccountInformationForHome';
 

@@ -68,7 +68,7 @@ const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, 
   );
 };
 
-const Price = ({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPriceOutdated: boolean, price: number | undefined, priceChainName: string | undefined, balanceToShow: BalancesInfo | undefined}) => {
+const Price = React.memo(function Price ({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPriceOutdated: boolean, price: number | undefined, priceChainName: string | undefined, balanceToShow: BalancesInfo | undefined}) {
   return (
     <>
       {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
@@ -84,9 +84,9 @@ const Price = ({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPr
       }
     </>
   );
-};
+});
 
-const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined}) => {
+const Balance = React.memo(function Balance ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined}) {
   return (
     <>
       {balanceToShow?.decimal
@@ -102,7 +102,7 @@ const Balance = ({ balanceToShow, isBalanceOutdated }: { balanceToShow: Balances
       }
     </>
   );
-};
+});
 
 const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: boolean | undefined}) => {
   const theme = useTheme();
