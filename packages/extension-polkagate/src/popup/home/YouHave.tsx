@@ -64,7 +64,7 @@ export default function YouHave (): React.ReactElement {
             ? <Box
               component='img'
               src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
-              sx={{ height: '30px', width: '154px' }}
+              sx={{ height: '20px', width: '317px' }}
             />
             : <>
               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', mr: '15px', textAlign: 'start', width: '100%' }}>
