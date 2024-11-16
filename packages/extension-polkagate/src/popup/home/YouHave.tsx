@@ -32,7 +32,33 @@ export default function YouHave (): React.ReactElement {
   const youHave = useYouHave();
   const currency = useCurrency();
 
-  const isDark = theme.palette.mode === 'dark';
+  const shadow = theme.palette.mode === 'dark'
+    ? '0px 0px 5px 2px rgba(255, 255, 255, 0.1)'
+    : '0px 0px 10px rgba(0, 0, 0, 0.10)';
+
+  const youHaveStyle = {
+    '&::before': {
+      background: 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), transparent)',
+      content: '""',
+      height: '100%',
+      left: '-50%',
+      pointerEvents: 'none',
+      position: 'absolute',
+      top: '-50%',
+      transform: 'rotate(12deg)',
+      width: '100%'
+    },
+    bgcolor: 'divider',
+    border: '1px solid',
+    borderColor: 'divider',
+    borderRadius: '10px',
+    boxShadow: shadow,
+    m: '20px 4% 10px',
+    minHeight: '125px',
+    overflow: 'hidden',
+    position: 'relative',
+    width: '100%'
+  };
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
   const [isMenuOpen, setOpenMenu] = useState(false);
@@ -52,98 +78,104 @@ export default function YouHave (): React.ReactElement {
   }, []);
 
   return (
-    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', m: '20px 4% 10px', width: '100%', boxShadow: isDark ? '3px 2px 15px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 2px rgba(0, 0, 0, 0.10)' }}>
-      <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
-        <Grid container item sx={{ textAlign: 'left' }}>
-          <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, mt: '10px' }}>
-            {t('My Portfolio')}
-          </Typography>
-        </Grid>
-        <Grid container item justifyContent='flex-start' pt='15px'>
-          {isHideNumbers
-            ? <Box
-              component='img'
-              src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
-              sx={{ height: '20px', width: '130px' }}
-            />
-            : <>
-              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', mr: '15px', textAlign: 'start', width: '100%' }}>
-                <Stack alignItems='flex-start' direction='row' sx= {{ ml: '-5px' }}>
-                  <Currency
-                    color='secondary.light'
-                    dialogLeft ={64}
-                    fontSize='25px'
-                    height='27px'
-                    minWidth='27px'
-                  />
+    <>
+      <Grid
+        alignItems='flex-start' container sx={{ ...youHaveStyle }}
+      >
+        <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
+          <Grid container item sx={{ textAlign: 'left' }}>
+            <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, mt: '10px', lineHeight: 'normal' }}>
+              {t('My Portfolio')}
+            </Typography>
+          </Grid>
+          <Grid container item justifyContent='flex-start' pt='15px'>
+            {isHideNumbers
+              ? <Box
+                component='img'
+                src={(theme.palette.mode === 'dark' ? stars5White : stars5Black) as string}
+                sx={{ height: '20px', width: '130px' }}
+              />
+              : <>
+                <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', mr: '15px', textAlign: 'start', width: '100%' }}>
+                  <Stack alignItems='flex-start' direction='row' sx= {{ ml: '-5px' }}>
+                    <Currency
+                      color='secondary.light'
+                      dialogLeft ={64}
+                      fontSize='25px'
+                      height='27px'
+                      minWidth='27px'
+                    />
+                    <Grid item sx={{ ml: '5px' }}>
+                      <FormatPrice
+                        fontSize='28px'
+                        fontWeight={500}
+                        num={youHave?.portfolio}
+                        sign= ' '
+                        skeletonHeight={28}
+                        textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+                        width='100px'
+                        withCountUp
+                        withSmallDecimal
+                      />
+                    </Grid>
+                  </Stack>
+                  <Typography sx={{ color: !youHave?.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 400 }}>
+                    <CountUp
+                      decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
+                      duration={1}
+                      end={portfolioChange}
+                      prefix={`${changeSign(youHave?.change)}${currency?.sign}`}
+                      suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
+                    />
+                  </Typography>
+                </Stack>
+                <Stack alignItems='center' direction='row' spacing={1} sx={{ ml: '5px', mt: '5px', textAlign: 'start', width: '100%' }}>
                   <FormatPrice
-                    fontSize='28px'
-                    fontWeight={500}
-                    num={youHave?.portfolio}
-                    sign= ' '
-                    skeletonHeight={28}
-                    textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+                    fontSize='14px'
+                    fontWeight={400}
+                    num={youHave?.available}
+                    skeletonHeight={14}
+                    textColor={ 'primary.light' }
                     width='100px'
                     withCountUp
-                    withSmallDecimal
                   />
+                  <Typography sx={{ color: 'primary.light', fontSize: '14px', fontWeight: 400 }}>
+                    {t('available')}
+                  </Typography>
                 </Stack>
-                <Typography sx={{ color: !youHave?.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 400 }}>
-                  <CountUp
-                    decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
-                    duration={1}
-                    end={portfolioChange}
-                    prefix={`${changeSign(youHave?.change)}${currency?.sign}`}
-                    suffix={`(${COIN_GECKO_PRICE_CHANGE_DURATION}h)`}
-                  />
-                </Typography>
-              </Stack>
-              <Stack alignItems='center' direction='row' spacing={1} sx={{ ml: '5px', mt: '5px', textAlign: 'start', width: '100%' }}>
-                <FormatPrice
-                  fontSize='14px'
-                  fontWeight={400}
-                  num={youHave?.available}
-                  skeletonHeight={14}
-                  textColor={ 'primary.light' }
-                  width='100px'
-                  withCountUp
-                />
-                <Typography sx={{ color: 'primary.light', fontSize: '14px', fontWeight: 400 }}>
-                  {t('available')}
-                </Typography>
-              </Stack>
-            </>
-          }
-          <Infotip2 text={t('Menu options')}>
-            <IconButton
-              onClick={onMenuClick}
-              sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
-            >
-              <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
-            </IconButton>
-          </Infotip2>
+              </>
+            }
+            <Infotip2 text={t('Menu options')}>
+              <IconButton
+                onClick={onMenuClick}
+                sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
+              >
+                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+              </IconButton>
+            </Infotip2>
+          </Grid>
+          <Grid item sx={{ position: 'absolute', right: '30px', top: '5px' }}>
+            <HideBalance
+              darkColor={theme.palette.secondary.light}
+              hide={isHideNumbers}
+              lightColor={theme.palette.secondary.light}
+              onClick={toggleHideNumbers}
+              size={20}
+            />
+          </Grid>
         </Grid>
-        <Grid item sx={{ position: 'absolute', right: '30px', top: '5px' }}>
-          <HideBalance
-            darkColor={theme.palette.secondary.light}
-            hide={isHideNumbers}
-            lightColor={theme.palette.secondary.light}
-            onClick={toggleHideNumbers}
-            size={20}
-          />
-        </Grid>
-      </Grid>
-      <Box
-        alt={t('PolkaGate logo')}
-        component='img'
-        src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 40, left: 'calc(50% - 20px)', position: 'absolute', top: '5px', width: 40 }}
-      />
-      {isMenuOpen &&
+
+      </Grid> {isMenuOpen &&
         <Menu
           setShowMenu={setOpenMenu}
         />
       }
-    </Grid>
+      <Box
+        alt={t('PolkaGate logo')}
+        component='img'
+        src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
+        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 34, left: 'calc(50% - 17px)', position: 'absolute', top: '5px', width: 34 }}
+      />
+    </>
   );
 }
