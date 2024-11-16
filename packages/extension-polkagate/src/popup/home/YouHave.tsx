@@ -97,10 +97,10 @@ export default function YouHave (): React.ReactElement {
               />
               : <>
                 <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', mr: '15px', textAlign: 'start', width: '100%' }}>
-                  <Stack alignItems='flex-start' direction='row' sx= {{ ml: '-5px' }}>
+                  <Stack alignItems='flex-start' direction='row' sx={{ ml: '-5px' }}>
                     <Currency
                       color='secondary.light'
-                      dialogLeft ={64}
+                      dialogLeft={64}
                       fontSize='25px'
                       height='27px'
                       minWidth='27px'
@@ -110,7 +110,7 @@ export default function YouHave (): React.ReactElement {
                         fontSize='28px'
                         fontWeight={500}
                         num={youHave?.portfolio}
-                        sign= ' '
+                        sign=' '
                         skeletonHeight={28}
                         textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
                         width='100px'
@@ -135,7 +135,7 @@ export default function YouHave (): React.ReactElement {
                     fontWeight={400}
                     num={youHave?.available}
                     skeletonHeight={14}
-                    textColor={ 'primary.light' }
+                    textColor={'primary.light'}
                     width='100px'
                     withCountUp
                   />
@@ -165,16 +165,16 @@ export default function YouHave (): React.ReactElement {
           </Grid>
         </Grid>
 
-      </Grid> {isMenuOpen &&
-        <Menu
-          setShowMenu={setOpenMenu}
-        />
-      }
+      </Grid>
+      <Menu
+        isMenuOpen={isMenuOpen}
+        setShowMenu={setOpenMenu}
+      />
       <Box
-        alt={t('PolkaGate logo')}
+        alt='PolkaGate logo'
         component='img'
         src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 34, left: 'calc(50% - 17px)', position: 'absolute', top: '5px', width: 34 }}
+        sx={{ borderRadius: '30px', boxShadow: '0px 0px 5px 1px rgba(0,0,0,0.15)', height: 34, left: 'calc(50% - 17px)', position: 'absolute', top: '5px', width: 34 }}
       />
     </>
   );
