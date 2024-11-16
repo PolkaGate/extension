@@ -219,7 +219,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
   const page = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isFullscreen ? 0 : '46px'} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' mb='20px'>
-        <Typography fontSize='28px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.light' }}>
+        <Typography fontSize='20px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.light' }}>
           {t('Validator’s Info')}
         </Typography>
       </Grid>
@@ -242,7 +242,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
 
   if (isFullscreen) {
     return (
-      <DraggableModal onClose={onClose} open={showValidatorInfo} px={0}>
+      <DraggableModal blurBackdrop onClose={onClose} open={showValidatorInfo} px={0}>
         {page}
       </DraggableModal>
     );
