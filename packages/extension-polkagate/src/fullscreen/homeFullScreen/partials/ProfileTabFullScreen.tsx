@@ -25,7 +25,7 @@ interface Props {
   index: number;
 }
 
-export default function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { alerts, notify } = useAlerts();
@@ -114,6 +114,7 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           cursor: 'pointer',
           flexShrink: 0,
           minWidth: '100px',
+          mr: '5px',
           mt: '2px',
           opacity: isDarkMode ? (visibleContent ? 1 : 0.3) : undefined,
           position: 'relative',
@@ -151,3 +152,5 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
     </Infotip2>
   );
 }
+
+export default React.memo(ProfileTabFullScreen);
