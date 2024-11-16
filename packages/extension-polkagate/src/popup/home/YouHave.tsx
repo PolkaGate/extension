@@ -12,7 +12,7 @@ import CountUp from 'react-countup';
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { logoBlack, logoWhite } from '../../assets/logos';
-import { FormatPrice } from '../../components';
+import { FormatPrice, Infotip2 } from '../../components';
 import HideBalance from '../../components/SVG/HideBalance';
 import Currency from '../../fullscreen/homeFullScreen/partials/Currency';
 import { changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
@@ -114,12 +114,14 @@ export default function YouHave (): React.ReactElement {
               </Stack>
             </>
           }
-          <IconButton
-            onClick={onMenuClick}
-            sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
-          >
-            <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
-          </IconButton>
+          <Infotip2 text={t('Menu options')}>
+            <IconButton
+              onClick={onMenuClick}
+              sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
+            >
+              <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+            </IconButton>
+          </Infotip2>
         </Grid>
         <Grid item sx={{ position: 'absolute', right: '30px', top: '5px' }}>
           <HideBalance
@@ -132,6 +134,7 @@ export default function YouHave (): React.ReactElement {
         </Grid>
       </Grid>
       <Box
+        alt={t('PolkaGate logo')}
         component='img'
         src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
         sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 40, left: 'calc(50% - 20px)', position: 'absolute', top: '5px', width: 40 }}
