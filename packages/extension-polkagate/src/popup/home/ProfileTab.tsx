@@ -93,7 +93,7 @@ function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, t
           height: COLLAPSED_SIZE,
           my: '2px',
           opacity: isDarkMode ? (isContainerHovered || isSelected ? 1 : 0.3) : undefined,
-          transition: visibleContent ? 'box-shadow 1s, opacity 1s' : 'box-shadow 0.2s'
+          transition: visibleContent ? 'width 0.3s, box-shadow 1s, opacity 1s' : 'width 0.3s, box-shadow 0.2s, opacity 1s'
         }}
       >
         <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>
