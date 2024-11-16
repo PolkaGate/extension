@@ -44,7 +44,7 @@ export default function Others ({ address, balances, chain, identity, setShow, s
       isSubId={!!identity?.displayParent}
       judgement={_judgement}
       prefix={chain?.ss58Format ?? 42}
-      size={40}
+      size={30}
       value={formatted}
     />
   );
@@ -65,12 +65,12 @@ export default function Others ({ address, balances, chain, identity, setShow, s
         />
         <Container disableGutters sx={{ px: '15px' }}>
           <Grid container item justifyContent='center'>
-            <Typography sx={{ fontSize: '22px', fontWeight: 400, maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Typography sx={{ fontSize: '20px', fontWeight: 400, maxWidth: '82%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {identity?.display || accountName}
             </Typography>
           </Grid>
           <Grid container item justifyContent='center'>
-            <Typography sx={{ fontSize: '20px', fontWeight: 400, letterSpacing: '-0.015em' }}>
+            <Typography sx={{ fontSize: '18px', fontWeight: 500, letterSpacing: '-0.015em' }}>
               {t('Others')}
             </Typography>
           </Grid>
