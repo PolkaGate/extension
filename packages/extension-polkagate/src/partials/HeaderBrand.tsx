@@ -212,16 +212,14 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL =
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
         }
       </Container>
-      {isMenuOpen &&
-        <Menu
-          setShowMenu={setOpenMenu}
-        />
-      }
-      {isAccountMenuOpen && address &&
+      <Menu
+        isMenuOpen={isMenuOpen}
+        setShowMenu={setOpenMenu}
+      />
+      {address &&
         <AccountMenu
           address={address}
           isMenuOpen={isAccountMenuOpen}
-          noMargin
           setShowMenu={setShowAccountMenu}
         />
       }

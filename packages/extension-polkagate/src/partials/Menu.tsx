@@ -3,9 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { TransitionProps } from '@mui/material/transitions';
+
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Divider, Grid, IconButton, Typography } from '@mui/material';
-import { keyframes, useTheme } from '@mui/material/styles';
+import { Dialog, Divider, Grid, IconButton, Slide, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon, Warning } from '../components';
@@ -20,6 +22,7 @@ import VersionSocial from './VersionSocial';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  isMenuOpen: boolean;
 }
 
 const enum COLLAPSIBLE_MENUS {
@@ -29,9 +32,13 @@ const enum COLLAPSIBLE_MENUS {
   SETTING
 }
 
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>;}, ref: React.Ref<unknown>) {
+  return <Slide direction='left' ref={ref} {...props} />;
+});
+
 const Div = () => <Divider sx={{ bgcolor: 'divider', height: '1px', justifySelf: 'flex-end', mx: '10px', width: '83%' }} />;
 
-function Menu ({ setShowMenu }: Props): React.ReactElement<Props> {
+function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -39,7 +46,6 @@ function Menu ({ setShowMenu }: Props): React.ReactElement<Props> {
   const [collapsedMenu, setCollapsedMenu] = useState(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnableConfirmed, setIsTestnetEnableConfirmed] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
-  const [closeMenu, setCloseMenu] = useState<boolean>(false);
   const { accounts } = useContext(AccountContext);
 
   const toggleImportSubMenu = useCallback(() => {
@@ -61,8 +67,7 @@ function Menu ({ setShowMenu }: Props): React.ReactElement<Props> {
   }, [collapsedMenu]);
 
   const onCloseMenu = useCallback(() => {
-    setCloseMenu(true);
-    setTimeout(() => setShowMenu(false), 300);
+    setShowMenu(false);
   }, [setShowMenu]);
 
   const _goToExportAll = useCallback(() => {
@@ -94,112 +99,100 @@ function Menu ({ setShowMenu }: Props): React.ReactElement<Props> {
     }
   }, [accounts, isTestnetEnableConfirmed]);
 
-  const slideLeft = keyframes`
-  0% {
-    width: 0;
-  }
-  100%{
-    width: 100%;
-  }
-`;
-
-  const slideRight = keyframes`
-  0% {
-    width: 100%;
-  }
-  100%{
-    width: 0;
-  }
-`;
-
   return (
-    <Grid bgcolor={theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'} container height='100%' justifyContent='end' sx={[{ animationDuration: '0.2s', animationFillMode: 'forwards', animationName: `${!closeMenu ? slideLeft : slideRight}`, position: 'absolute', right: 0, top: 0, mixBlendMode: 'normal', overflowY: 'scroll', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none', width: 0 } }]} zIndex={10}>
-      <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
-        {!showWarning
-          ? <>
-            <MenuItem
-              iconComponent={
-                <VaadinIcon icon='vaadin:plus-circle' spin={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-              }
-              onClick={toggleNewAccountSubMenu}
-              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
-              text={t('New account')}
-              withHoverEffect
-            >
-              <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
-            </MenuItem>
-            <Div />
-            <MenuItem
-              iconComponent={
-                <VaadinIcon float ={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} icon='vaadin:upload-alt' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-              }
-              onClick={toggleImportSubMenu}
-              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
-              text={t('Import account')}
-              withHoverEffect
-            >
-              <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
-            </MenuItem>
-            <Div />
-            <MenuItem
-              iconComponent={
-                <VaadinIcon icon='vaadin:download' style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-              }
-              onClick={_goToExportAll}
-              text={t('Export all accounts')}
-              withHoverEffect
-            />
-            <Div />
-            <MenuItem
-              iconComponent={
-                <VaadinIcon icon='vaadin:cog' spin={collapsedMenu === COLLAPSIBLE_MENUS.SETTING} style={{ height: '18px', color: `${theme.palette.text.primary}` }} />
-              }
-              onClick={toggleSettingSubMenu}
-              showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
-              text={t('Settings')}
-              withHoverEffect
-            >
-              <SettingSubMenu
-                isTestnetEnabledChecked={isTestnetEnableConfirmed}
-                onChange={onEnableTestNetClick}
-                setTestnetEnabledChecked={setIsTestnetEnableConfirmed}
-                show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
-              />
-            </MenuItem>
-          </>
-          : <Grid container justifyContent='space-between' sx={{ pt: '30px' }}>
-            <Grid item xs={12} sx={{ textAlign: 'center', pb: '35px' }}>
-              <Typography fontSize='20px'>
-                {t('Warning')}
-              </Typography>
-            </Grid>
-            <Grid container sx={{ textAlign: 'justify', '> div': { pl: 0 } }}>
-              <Warning
-                iconDanger
-                isBelowInput
-                marginTop={0}
-                theme={theme}
+    <Dialog
+      TransitionComponent={Transition}
+      fullScreen
+      open={isMenuOpen}
+    >
+      <Grid bgcolor='divider' container height='100%' justifyContent='end' zIndex={10}>
+        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
+          {!showWarning
+            ? <>
+              <MenuItem
+                iconComponent={
+                  <VaadinIcon icon='vaadin:plus-circle' spin={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+                }
+                onClick={toggleNewAccountSubMenu}
+                showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT}
+                text={t('New account')}
+                withHoverEffect
               >
-                {t('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
-              </Warning>
-            </Grid>
-            <Grid container>
-              <TwoButtons
-                mt='55px'
-                onPrimaryClick={onEnableTestnetConfirm}
-                onSecondaryClick={onEnableTestnetReject}
-                primaryBtnText={t<string>('Confirm')}
-                secondaryBtnText={t<string>('Reject')}
+                <NewAccountSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.NEW_ACCOUNT} />
+              </MenuItem>
+              <Div />
+              <MenuItem
+                iconComponent={
+                  <VaadinIcon float={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} icon='vaadin:upload-alt' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+                }
+                onClick={toggleImportSubMenu}
+                showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT}
+                text={t('Import account')}
+                withHoverEffect
+              >
+                <ImportAccSubMenu show={collapsedMenu === COLLAPSIBLE_MENUS.IMPORT_ACCOUNT} toggleSettingSubMenu={toggleSettingSubMenu} />
+              </MenuItem>
+              <Div />
+              <MenuItem
+                iconComponent={
+                  <VaadinIcon icon='vaadin:download' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+                }
+                onClick={_goToExportAll}
+                text={t('Export all accounts')}
+                withHoverEffect
               />
+              <Div />
+              <MenuItem
+                iconComponent={
+                  <VaadinIcon icon='vaadin:cog' spin={collapsedMenu === COLLAPSIBLE_MENUS.SETTING} style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+                }
+                onClick={toggleSettingSubMenu}
+                showSubMenu={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
+                text={t('Settings')}
+                withHoverEffect
+              >
+                <SettingSubMenu
+                  isTestnetEnabledChecked={isTestnetEnableConfirmed}
+                  onChange={onEnableTestNetClick}
+                  setTestnetEnabledChecked={setIsTestnetEnableConfirmed}
+                  show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
+                />
+              </MenuItem>
+            </>
+            : <Grid container justifyContent='space-between' sx={{ pt: '30px' }}>
+              <Grid item sx={{ pb: '35px', textAlign: 'center' }} xs={12}>
+                <Typography fontSize='20px'>
+                  {t('Warning')}
+                </Typography>
+              </Grid>
+              <Grid container sx={{ '> div': { pl: 0 }, textAlign: 'justify' }}>
+                <Warning
+                  iconDanger
+                  isBelowInput
+                  marginTop={0}
+                  theme={theme}
+                >
+                  {t('Enabling testnet chains may cause instability or crashes since they\'re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
+                </Warning>
+              </Grid>
+              <Grid container>
+                <TwoButtons
+                  mt='55px'
+                  onPrimaryClick={onEnableTestnetConfirm}
+                  onSecondaryClick={onEnableTestnetReject}
+                  primaryBtnText={t<string>('Confirm')}
+                  secondaryBtnText={t<string>('Reject')}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        }
-        <VersionSocial fontSize='11px' />
+          }
+          <VersionSocial fontSize='11px' />
+        </Grid>
+        <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
+          <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
+        </IconButton>
       </Grid>
-      <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
-        <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
-      </IconButton>
-    </Grid>
+    </Dialog>
   );
 }
 
