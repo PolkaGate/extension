@@ -50,6 +50,11 @@ export default function FavoriteChains (): React.ReactElement {
     <Badge
       badgeContent={badgeCount}
       color='success'
+      sx={{
+        '& .MuiBadge-badge': {
+          color: 'white'
+        },
+      }}
     >
       <Grid
         alignItems='center'
