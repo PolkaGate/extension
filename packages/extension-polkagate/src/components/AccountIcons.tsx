@@ -53,7 +53,7 @@ function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }:
           isSubId={isSubId}
           judgement={judgements}
           prefix={prefix}
-          size={40}
+          size={35}
           value={formatted || address}
         />
       </Grid>
