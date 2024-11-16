@@ -52,7 +52,7 @@ export default function YouHave (): React.ReactElement {
   }, []);
 
   return (
-    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', m: '20px 10px 10px', width: '100%', boxShadow: isDark ? '3px 2px 15px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 2px rgba(0, 0, 0, 0.10)' }}>
+    <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', m: '20px 4% 10px', width: '100%', boxShadow: isDark ? '3px 2px 15px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 2px rgba(0, 0, 0, 0.10)' }}>
       <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
         <Grid container item sx={{ textAlign: 'left' }}>
           <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, mt: '10px' }}>
@@ -98,7 +98,7 @@ export default function YouHave (): React.ReactElement {
                   />
                 </Typography>
               </Stack>
-              <Stack alignItems='center' direction='row' spacing={1} sx={{ mt: '5px', textAlign: 'start', width: '100%' }}>
+              <Stack alignItems='center' direction='row' spacing={1} sx={{ ml: '5px', mt: '5px', textAlign: 'start', width: '100%' }}>
                 <FormatPrice
                   fontSize='14px'
                   fontWeight={400}
