@@ -19,6 +19,7 @@ export interface CurrencyItemType {
 }
 
 interface Props {
+  borderColor?: string;
   color?: string;
   dialogLeft?: number;
   fontSize?: string;
@@ -26,8 +27,7 @@ interface Props {
   minWidth?: string;
 }
 
-function Currency ({ color, fontSize = '22px', height, minWidth, dialogLeft=260 }: Props): React.ReactElement {
-// export default function Currency ({ color, fontSize = '22px' }: Props): React.ReactElement {
+function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -59,6 +59,7 @@ function Currency ({ color, fontSize = '22px', height, minWidth, dialogLeft=260 
         alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick}
         sx={{
           ...HEADER_COMPONENT_STYLE,
+          borderColor: borderColor || HEADER_COMPONENT_STYLE?.borderColor,
           height: height || HEADER_COMPONENT_STYLE?.height,
           minWidth: minWidth || HEADER_COMPONENT_STYLE?.minWidth,
           zIndex: anchorEl && theme.zIndex.modal + 1

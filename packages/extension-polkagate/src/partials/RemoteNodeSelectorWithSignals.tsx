@@ -38,7 +38,6 @@ interface ListIndicatorProps {
   defaultColor: string;
   endpointUrl: string | undefined;
   iconSize: number;
-  isDark: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   setCurrentDelay: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
@@ -252,7 +251,7 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, onCl
   }, [onExtension]);
 
   return (
-    <Grid container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: isDark && !onExtension ? 2 : 1, borderColor: onExtension ? theme.palette.secondary.light : 'divider', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
+    <Grid component = 'button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: isDark && !onExtension ? 2 : 1, borderColor: onExtension ? theme.palette.secondary.light : 'divider', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
       {isLightClient
         ? <LightClientEndpointIcon sx={{ bottom: '2px', color: SIGNAL_COLORS.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }} />
         : <NodeStatusIcon

@@ -103,7 +103,7 @@ export default function YouHave (): React.ReactElement {
                   <Stack alignItems='flex-start' direction='row' sx={{ ml: '-5px' }}>
                     <Currency
                       color='secondary.light'
-                      dialogLeft={64}
+                      dialogLeft={60}
                       fontSize='25px'
                       height='27px'
                       minWidth='27px'
