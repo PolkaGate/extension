@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.30.0](https://github.com/polkagate/extension/compare/v0.29.1...v0.30.0) (2024-11-16)
+
+
+### Features
+
+* new you have (Portfolio) for Extension mode ([#1655](https://github.com/polkagate/extension/issues/1655)) ([013f454](https://github.com/polkagate/extension/commit/013f4548db9a2f5181a5f5aa1cb07fe77034f5c8))
+
 ## [0.29.1](https://github.com/polkagate/extension/compare/v0.29.0...v0.29.1) (2024-11-14)
 
 
