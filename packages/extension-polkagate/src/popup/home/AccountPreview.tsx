@@ -35,7 +35,7 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-export default function AccountPreview ({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+function AccountPreview ({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const onExtension = useIsExtensionPopup();
   const { chain, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);
@@ -94,17 +94,16 @@ export default function AccountPreview ({ address, hideNumbers, isHidden, name, 
         toggleVisibility={_toggleVisibility}
       />
       <AccountFeatures chain={chain} goToAccount={goToAccount} menuOnClick={menuOnClick} />
-      {
-        showAccountMenu &&
-        <AccountMenu
-          address={address}
-          isMenuOpen={showAccountMenu}
-          setShowMenu={setShowAccountMenu}
-        />
-      }
+      <AccountMenu
+        address={address}
+        isMenuOpen={showAccountMenu}
+        setShowMenu={setShowAccountMenu}
+      />
       <Grid item sx={{ bottom: 0, left: 0, position: 'absolute', top: 0, width: 'fit-content' }}>
         <QuickAction address={address} quickActionOpen={quickActionOpen} setQuickActionOpen={setQuickActionOpen} />
       </Grid>
     </Grid>
   );
 }
+
+export default React.memo(AccountPreview);
