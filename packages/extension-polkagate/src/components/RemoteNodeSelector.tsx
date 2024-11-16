@@ -40,7 +40,7 @@ export default function RemoteNodeSelector ({ address, genesisHash }: Props): Re
     <>
       {endpoint &&
         <Select
-          _mt='10px'
+          _mt='3px'
           defaultValue={undefined}
           label={t('Remote node')}
           onChange={onChangeEndpoint}

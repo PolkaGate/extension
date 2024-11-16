@@ -12,7 +12,7 @@ import { noop } from '../util/utils';
 interface Props {
   disabled?: boolean;
   icon?: string;
-  iconComponent?: JSX.Element;
+  iconComponent?: React.JSX.Element;
   text: string;
   children?: React.ReactElement<Props>;
   onClick?: MouseEventHandler<HTMLDivElement>;
@@ -35,8 +35,8 @@ export default function MenuItem ({ children, disabled = false, fontSize, icon, 
 
   return (
     <>
-      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? noop : onClick} pl={pl} py={py} sx={{ cursor: disabled ? '' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
-        <Grid alignItems='center' container item xs sx={{ flexWrap: 'nowrap' }}>
+      <Grid alignItems='center' color={disabled ? '#4B4B4B' : 'inherit'} container item justifyContent='space-between' my='4px' onClick={disabled ? noop : onClick} pl={pl} py={py} sx={{ cursor: disabled ? 'default' : 'pointer', ...(withHoverEffect ? hoverEffectStyles : {}) }} textAlign='left' xs={12}>
+        <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
           <Grid alignItems='center' container item xs={1}>
             {iconComponent ??
               <Box

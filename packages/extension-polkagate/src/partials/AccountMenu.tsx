@@ -29,6 +29,8 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
   return <Slide direction='up' ref={ref} {...props} />;
 });
 
+const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '3px' }} />;
+
 function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -92,8 +94,6 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
     return !supportedChains.includes(currentGenesisHash);
   }, [currentGenesisHash]);
 
-  const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />;
-
   const vaadinIconStyle = { color: `${theme.palette.text.primary}`, height: '18px' };
 
   return (
@@ -104,12 +104,13 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
     >
       <Grid bgcolor='divider' container height='100%' width='357px' zIndex={10}>
         <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
-          <Grid container item justifyContent='center' my='12px' pl='8px'>
-            <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} subIdOnly />
+          <Grid container item justifyContent='center' my='8px'>
+            <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={30} showSocial={false} style={{ fontSize: '24px' }} subIdOnly />
           </Grid>
           <MenuSeparator />
           <MenuItem
             disabled={isDisabled(IDENTITY_CHAINS)}
+            fontSize='16px'
             iconComponent={
               <FontAwesomeIcon
                 color={isDisabled(IDENTITY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}
@@ -123,6 +124,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
           />
           <MenuItem
             disabled={isDisabled(PROXY_CHAINS)}
+            fontSize='16px'
             iconComponent={
               <VaadinIcon icon='vaadin:sitemap' style={{ color: `${isDisabled(PROXY_CHAINS) ? theme.palette.text.disabled : theme.palette.text.primary}`, height: '18px' }} />
             }
@@ -132,6 +134,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
           />
           <MenuItem
             disabled={isDisabled(SOCIAL_RECOVERY_CHAINS)}
+            fontSize='16px'
             iconComponent={
               <SocialRecoveryIcon
                 color={
@@ -148,6 +151,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
           />
           <MenuItem
             disabled={false} // We check NFTs across all supported chains, so this feature is not specific to the current chain and should not be disabled.
+            fontSize='16px'
             iconComponent={
               <FontAwesomeIcon
                 color={theme.palette.text.primary}
@@ -164,8 +168,10 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
             address={address}
             closeParentMenu={closeMenu}
           />
+          <MenuSeparator />
           {hasPrivateKey &&
             <MenuItem
+              fontSize='16px'
               iconComponent={
                 <VaadinIcon icon='vaadin:download-alt' style={vaadinIconStyle} />
               }
@@ -175,6 +181,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
             />}
           {hasPrivateKey &&
             <MenuItem
+              fontSize='16px'
               iconComponent={
                 <VaadinIcon icon='vaadin:road-branch' style={vaadinIconStyle} />
               }
@@ -184,6 +191,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
             />
           }
           <MenuItem
+            fontSize='16px'
             iconComponent={
               <VaadinIcon icon='vaadin:edit' style={vaadinIconStyle} />
             }
@@ -192,6 +200,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
             withHoverEffect
           />
           <MenuItem
+            fontSize='16px'
             iconComponent={
               <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
             }
@@ -207,7 +216,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
             label={t('Chain')}
             onChange={onChangeNetwork}
             options={options}
-            style={{ width: '100%' }}
+            style={{ pt: 0, width: '100%' }}
           />
           <RemoteNodeSelector
             address={address}
@@ -219,7 +228,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
               left: '15px',
               p: 0,
               position: 'absolute',
-              top: '65px'
+              top: '58px'
             }}
           >
             <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
