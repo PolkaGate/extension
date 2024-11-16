@@ -32,13 +32,16 @@ export default function YouHave (): React.ReactElement {
   const youHave = useYouHave();
   const currency = useCurrency();
 
-  const shadow = theme.palette.mode === 'dark'
+  const isDark = theme.palette.mode === 'dark';
+  const shadow = isDark
     ? '0px 0px 5px 2px rgba(255, 255, 255, 0.1)'
     : '0px 0px 10px rgba(0, 0, 0, 0.10)';
 
   const youHaveStyle = {
     '&::before': {
-      background: 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), transparent)',
+      background: isDark
+        ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), transparent)'
+        : 'linear-gradient(to bottom right, rgba(66, 61, 61, 0.276), transparent)',
       content: '""',
       height: '100%',
       left: '-50%',
