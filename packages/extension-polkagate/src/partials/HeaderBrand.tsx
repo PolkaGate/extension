@@ -144,7 +144,6 @@ const RightItem = ({ _handleMenuClick, _onClose, fullScreenURL, isRefreshing, on
 };
 
 function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const setIconRef = useRef(null);
   const setMenuRef = useRef(null);
