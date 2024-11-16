@@ -25,7 +25,7 @@ interface Props {
   isMenuOpen: boolean;
 }
 
-const enum COLLAPSIBLE_MENUS {
+enum COLLAPSIBLE_MENUS {
   NONE,
   NEW_ACCOUNT,
   IMPORT_ACCOUNT,
