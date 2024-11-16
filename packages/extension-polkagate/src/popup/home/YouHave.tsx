@@ -84,7 +84,7 @@ export default function YouHave (): React.ReactElement {
       >
         <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
           <Grid container item sx={{ textAlign: 'left' }}>
-            <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, mt: '10px', lineHeight: 'normal' }}>
+            <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, lineHeight: 'normal', mt: '10px' }}>
               {t('My Portfolio')}
             </Typography>
           </Grid>
