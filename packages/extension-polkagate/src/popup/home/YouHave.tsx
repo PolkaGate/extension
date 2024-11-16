@@ -104,11 +104,11 @@ export default function YouHave (): React.ReactElement {
                   fontWeight={400}
                   num={youHave?.available}
                   skeletonHeight={14}
-                  textColor={'primary.light' }
+                  textColor={ 'primary.light' }
                   width='100px'
                   withCountUp
                 />
-                <Typography sx={{ color: 'primary.light', fontSize: '14px', fontWeight: 300 }}>
+                <Typography sx={{ color: 'primary.light', fontSize: '14px', fontWeight: 400 }}>
                   {t('available')}
                 </Typography>
               </Stack>
