@@ -216,7 +216,6 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL =
       {isMenuOpen &&
         <Menu
           setShowMenu={setOpenMenu}
-          theme={theme}
         />
       }
       {isAccountMenuOpen && address &&
