@@ -3,11 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Theme } from '@mui/material/styles';
-
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
-import { keyframes } from '@mui/material/styles';
+import { keyframes, useTheme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { AccountContext, ActionContext, MenuItem, TwoButtons, VaadinIcon, Warning } from '../components';
@@ -21,24 +19,24 @@ import SettingSubMenu from './SettingSubMenu';
 import VersionSocial from './VersionSocial';
 
 interface Props {
-  theme: Theme;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const COLLAPSIBLE_MENUS = {
-  NONE: 0,
-  NEW_ACCOUNT: 1,
-  IMPORT_ACCOUNT: 2,
-  SETTING: 3
-};
+const enum COLLAPSIBLE_MENUS {
+  NONE,
+  NEW_ACCOUNT,
+  IMPORT_ACCOUNT,
+  SETTING
+}
 
 const Div = () => <Divider sx={{ bgcolor: 'divider', height: '1px', justifySelf: 'flex-end', mx: '10px', width: '83%' }} />;
 
-function Menu ({ setShowMenu, theme }: Props): React.ReactElement<Props> {
+function Menu ({ setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
-  const [collapsedMenu, setCollapsedMenu] = useState<number>(COLLAPSIBLE_MENUS.SETTING);
+  const [collapsedMenu, setCollapsedMenu] = useState(COLLAPSIBLE_MENUS.SETTING);
   const [isTestnetEnableConfirmed, setIsTestnetEnableConfirmed] = useState<boolean>();
   const [showWarning, setShowWarning] = useState<boolean>();
   const [closeMenu, setCloseMenu] = useState<boolean>(false);

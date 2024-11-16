@@ -142,7 +142,6 @@ export default function YouHave (): React.ReactElement {
       {isMenuOpen &&
         <Menu
           setShowMenu={setOpenMenu}
-          theme={theme}
         />
       }
     </Grid>
