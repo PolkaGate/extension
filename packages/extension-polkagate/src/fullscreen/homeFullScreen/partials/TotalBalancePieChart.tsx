@@ -212,7 +212,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
     <Grid alignItems='flex-start' container direction='column' item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', height: 'fit-content', p: '15px 25px 10px', width: '430px' }}>
       <Grid alignItems='flex-start' container item justifyContent='flex-start'>
         <Typography sx={{ fontSize: '18px', fontVariant: 'small-caps', fontWeight: 400 }}>
-          {t('My Portfolio')}
+          {t('Total balance')}
         </Typography>
         <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ m: '13px 0 5px 0' }}>
           {!youHave || isHideNumbers

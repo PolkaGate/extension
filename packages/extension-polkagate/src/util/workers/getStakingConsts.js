@@ -8,7 +8,7 @@
 import { MAX_NOMINATIONS } from '../constants';
 import getApi from '../getApi.ts';
 
-async function getStakingConsts(endpoint) {
+async function getStakingConsts (endpoint) {
   try {
     const api = await getApi(endpoint);
     const at = await api.rpc.chain.getFinalizedHead();
