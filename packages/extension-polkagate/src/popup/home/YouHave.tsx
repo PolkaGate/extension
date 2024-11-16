@@ -122,7 +122,7 @@ export default function YouHave (): React.ReactElement {
                       />
                     </Grid>
                   </Stack>
-                  <Typography sx={{ color: !youHave?.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '15px', fontWeight: 400 }}>
+                  <Typography sx={{ color: !youHave?.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.contrastText' : 'warning.main', fontSize: '15px', fontWeight: 400 }}>
                     <CountUp
                       decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
                       duration={1}

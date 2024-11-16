@@ -231,7 +231,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
                 withCountUp
                 withSmallDecimal
               />
-              <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.main' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
+              <Typography sx={{ color: !youHave.change ? 'secondary.contrastText' : youHave.change > 0 ? 'success.contrastText' : 'warning.main', fontSize: '16px', fontWeight: 500 }}>
                 <CountUp
                   decimals={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
                   duration={1}
