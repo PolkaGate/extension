@@ -55,7 +55,7 @@ export default function YouHave (): React.ReactElement {
     <Grid alignItems='flex-start' container sx={{ bgcolor: 'background.paper', borderRadius: '10px', minHeight: '125px', m: '20px 10px 10px', width: '100%', boxShadow: isDark ? '3px 2px 15px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 2px rgba(0, 0, 0, 0.10)' }}>
       <Grid container sx={{ position: 'relative', px: '10px', py: '5px' }}>
         <Grid container item sx={{ textAlign: 'left' }}>
-          <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', mt: '10px' }}>
+          <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, mt: '10px' }}>
             {t('My Portfolio')}
           </Typography>
         </Grid>
@@ -70,12 +70,11 @@ export default function YouHave (): React.ReactElement {
               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexWrap: 'wrap', mr: '15px', textAlign: 'start', width: '100%' }}>
                 <Stack alignItems='flex-start' direction='row' sx= {{ ml: '-5px' }}>
                   <Currency
-                    bgcolor='background.paper'
                     color='secondary.light'
-                    fontSize='28px'
-                    height='30px'
+                    dialogLeft ={64}
+                    fontSize='25px'
+                    height='27px'
                     minWidth='27px'
-                    noBorder
                   />
                   <FormatPrice
                     fontSize='28px'
@@ -117,12 +116,12 @@ export default function YouHave (): React.ReactElement {
           }
           <IconButton
             onClick={onMenuClick}
-            sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '11px' }}
+            sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
           >
             <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
           </IconButton>
         </Grid>
-        <Grid item sx={{ position: 'absolute', right: '30px', top: '8px' }}>
+        <Grid item sx={{ position: 'absolute', right: '30px', top: '5px' }}>
           <HideBalance
             darkColor={theme.palette.secondary.light}
             hide={isHideNumbers}
@@ -135,7 +134,7 @@ export default function YouHave (): React.ReactElement {
       <Box
         component='img'
         src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 40, left: 'calc(50% - 26px)', position: 'absolute', top: '5px', width: 40 }}
+        sx={{ filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5))', height: 40, left: 'calc(50% - 20px)', position: 'absolute', top: '5px', width: 40 }}
       />
       {isMenuOpen &&
         <Menu

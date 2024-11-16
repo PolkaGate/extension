@@ -19,15 +19,15 @@ export interface CurrencyItemType {
 }
 
 interface Props {
-  fontSize?: string;
   color?: string;
-  bgcolor?: string;
+  dialogLeft?: number;
+  fontSize?: string;
   height?: string;
   minWidth?: string;
-  noBorder?: boolean;
 }
 
-export default function Currency ({ bgcolor, color, fontSize = '22px', height, minWidth, noBorder }: Props): React.ReactElement {
+export default function Currency ({ color, fontSize = '22px', height, minWidth, dialogLeft=260 }: Props): React.ReactElement {
+// export default function Currency ({ color, fontSize = '22px' }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -55,7 +55,15 @@ export default function Currency ({ bgcolor, color, fontSize = '22px', height, m
 
   return (
     <>
-      <Grid alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE, zIndex: anchorEl && theme.zIndex.modal + 1 }}>
+      <Grid
+        alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick}
+        sx={{
+          ...HEADER_COMPONENT_STYLE,
+          height: height || HEADER_COMPONENT_STYLE?.height,
+          minWidth: minWidth || HEADER_COMPONENT_STYLE?.minWidth,
+          zIndex: anchorEl && theme.zIndex.modal + 1
+        }}
+      >
         <Infotip2 text={currencyToShow?.currency}>
           <Typography color={textColor} fontSize={ fontSize } fontWeight={500}>
             {currencyToShow?.sign || '$'}
@@ -71,7 +79,7 @@ export default function Currency ({ bgcolor, color, fontSize = '22px', height, m
               boxShadow: theme.palette.mode === 'dark'
                 ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
                 : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
-              left: anchorEl?.getBoundingClientRect().right - 260,
+              left: anchorEl?.getBoundingClientRect().right - dialogLeft,
               position: 'absolute',
               top: anchorEl?.getBoundingClientRect().bottom - 30
             }

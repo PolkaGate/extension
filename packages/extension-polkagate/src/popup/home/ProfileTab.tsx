@@ -96,11 +96,12 @@ function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, t
         }}
       >
         <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>
-          <Typography color='text.primary' fontSize='14px' fontWeight={400} sx={{ lineHeight: 'normal', maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', userSelect: 'none', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
+          <Typography color='text.primary' fontSize='14px' sx={{ lineHeight: 'normal', maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', userSelect: 'none', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
             {t(text)}
           </Typography>
           {areAllHidden && isSelected &&
-            <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />}
+            <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />
+          }
         </Grid>
       </Collapse>
     </Grid>
