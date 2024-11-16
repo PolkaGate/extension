@@ -18,13 +18,22 @@ export interface CurrencyItemType {
   sign: string;
 }
 
-export default function Currency (): React.ReactElement {
+interface Props {
+  borderColor?: string;
+  color?: string;
+  dialogLeft?: number;
+  fontSize?: string;
+  height?: string;
+  minWidth?: string;
+}
+
+function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<CurrencyItemType | undefined>();
 
-  const textColor = useMemo(() => theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary, [theme.palette.mode, theme.palette.text.primary, theme.palette.text.secondary]);
+  const textColor = useMemo(() => color || (theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary), [color, theme]);
 
   useLayoutEffect(() => {
     if (currencyToShow) {
@@ -46,9 +55,18 @@ export default function Currency (): React.ReactElement {
 
   return (
     <>
-      <Grid alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick} sx={{ ...HEADER_COMPONENT_STYLE, zIndex: anchorEl && theme.zIndex.modal + 1 }}>
+      <Grid
+        alignItems='center' component='button' container direction='column' item justifyContent='center' onClick={onCurrencyClick}
+        sx={{
+          ...HEADER_COMPONENT_STYLE,
+          borderColor: borderColor || HEADER_COMPONENT_STYLE?.borderColor,
+          height: height || HEADER_COMPONENT_STYLE?.height,
+          minWidth: minWidth || HEADER_COMPONENT_STYLE?.minWidth,
+          zIndex: anchorEl && theme.zIndex.modal + 1
+        }}
+      >
         <Infotip2 text={currencyToShow?.currency}>
-          <Typography color={textColor} fontSize='22px' fontWeight={500}>
+          <Typography color={textColor} fontSize={ fontSize } fontWeight={500}>
             {currencyToShow?.sign || '$'}
           </Typography>
         </Infotip2>
@@ -62,7 +80,7 @@ export default function Currency (): React.ReactElement {
               boxShadow: theme.palette.mode === 'dark'
                 ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
                 : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
-              left: anchorEl?.getBoundingClientRect().right - 260,
+              left: anchorEl?.getBoundingClientRect().right - dialogLeft,
               position: 'absolute',
               top: anchorEl?.getBoundingClientRect().bottom - 30
             }
@@ -89,3 +107,5 @@ export default function Currency (): React.ReactElement {
     </>
   );
 }
+
+export default React.memo(Currency);

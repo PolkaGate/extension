@@ -13,7 +13,7 @@ import { useActiveRecoveries, useApi, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { SOCIAL_RECOVERY_CHAINS } from '../../util/constants';
 import getParentNameSuri from '../../util/getParentNameSuri';
-import { AccountLabel } from './AccountLabel';
+import AccountLabel from './AccountLabel';
 import AccountPreview from './AccountPreview';
 
 interface Props extends AccountWithChildren {
@@ -24,7 +24,7 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -99,3 +99,5 @@ export default function AccountsTree ({ hideNumbers, parentName, quickActionOpen
     </>
   );
 }
+
+export default React.memo(AccountsTree);

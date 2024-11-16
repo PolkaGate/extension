@@ -18,8 +18,6 @@ import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
 import { useAccountsOrder, useIsHideNumbers, useManifest, useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { EXTENSION_NAME } from '../../util/constants';
 import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
@@ -96,16 +94,7 @@ export default function Home (): React.ReactElement {
           position: 'relative'
         }}
         >
-          <Grid padding='0px' textAlign='center' xs={12}>
-            <HeaderBrand
-              noBorder
-              showBrand
-              showFullScreen
-              showMenu
-              style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
-              text={EXTENSION_NAME}
-            />
-          </Grid>
+          <YouHave />
           {hasActiveRecovery &&
             <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
               <Warning
@@ -119,9 +108,8 @@ export default function Home (): React.ReactElement {
               </Warning>
             </Grid>
           }
-          <YouHave />
           <ProfileTabs orderedAccounts={accountsOrder} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 252 : 197)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}

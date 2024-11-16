@@ -41,7 +41,7 @@ export const lightTheme: ThemeOptions = {
     backgroundFL: { primary: '#DFDFDF', secondary: '#F1F1F1' },
     text: { primary: '#63364D', secondary: '#FFFFFF', disabled: '#747474' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
-    success: { main: '#1F7720', light: '#46890C' },
+    success: { main: '#1F7720', light: '#46890C', contrastText: '#228B22' },
     warning: { main: '#FF002B' },
     divider: '#cecece'
   },
