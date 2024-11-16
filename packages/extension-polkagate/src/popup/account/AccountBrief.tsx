@@ -58,7 +58,7 @@ function AccountBrief ({ address, identity, showDivider = true, showName = true 
     < >
       {showName &&
         <Grid alignItems='center' container justifyContent='center' xs={12}>
-          <Typography sx={{ fontSize: '36px', fontWeight: 400, lineHeight: '38px', maxWidth: '92%', mt: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography sx={{ fontSize: '24px', fontWeight: 400, lineHeight: '38px', maxWidth: '92%', mt: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {identity?.display || account?.name}
           </Typography>
         </Grid>
