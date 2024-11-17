@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.30.2](https://github.com/polkagate/extension/compare/v0.30.1...v0.30.2) (2024-11-17)
+
+
+### Bug Fixes
+
+* scroll profiles issue and right arrow displaying ([#1661](https://github.com/polkagate/extension/issues/1661)) ([bcf06ab](https://github.com/polkagate/extension/commit/bcf06ab3344605a463e296ddd6d004447d466bbe))
+
 ## [0.30.1](https://github.com/polkagate/extension/compare/v0.30.0...v0.30.1) (2024-11-17)
 
 
