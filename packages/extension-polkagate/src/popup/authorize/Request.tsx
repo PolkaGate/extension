@@ -86,7 +86,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
       </Grid>
       <AccountsTable
         areAllCheck={areAllCheck}
-        maxHeight={hasBanner ? '150px' : '170px'}
+        maxHeight={hasBanner ? '280px' : '300px'}
         selectedAccounts={selectedAccounts}
         setSelectedAccounts={setSelectedAccounts}
         style={{
