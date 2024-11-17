@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.31.0](https://github.com/polkagate/extension/compare/v0.30.2...v0.31.0) (2024-11-17)
+
+
+### Features
+
+* sort the already authorized accounts to the bottom of the list to easier auth the unauthorized accounts ([#1662](https://github.com/polkagate/extension/issues/1662)) ([8f0fc1d](https://github.com/polkagate/extension/commit/8f0fc1d809589b61f691ccc385ed7a436bf1538f))
+
 ## [0.30.2](https://github.com/polkagate/extension/compare/v0.30.1...v0.30.2) (2024-11-17)
 
 
