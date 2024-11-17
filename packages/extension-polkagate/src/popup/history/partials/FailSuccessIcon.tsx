@@ -41,6 +41,7 @@ export function AnimatedCheckIcon ({ fontSize, initial = true, isVisible = true 
             display: 'flex',
             height: iconStyles.fontSize,
             justifyContent: 'center',
+            justifySelf: 'center',
             width: iconStyles.fontSize
           }}
           viewBox='0 0 24 24'
