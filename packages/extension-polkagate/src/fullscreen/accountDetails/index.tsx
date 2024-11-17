@@ -8,7 +8,7 @@ import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import type { BalancesInfo } from '../../util/types';
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -164,13 +164,17 @@ export default function AccountDetails (): React.ReactElement {
       <FullScreenHeader page='accountDetails' />
       <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
         <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Bread />
-          <Title
-            height='60px'
-            icon={faFileInvoice}
-            padding='0px'
-            text={t('Account Details')}
-          />
+          <Stack alignItems='center' direction='row' mt='10px' spacing={2}>
+            <Bread />
+            <Grid container item width='fit-content'>
+              <Title
+                height='60px'
+                icon={faFileInvoice}
+                padding='0px'
+                text={t('Account Details')}
+              />
+            </Grid>
+          </Stack>
           <Grid container item justifyContent='space-between' mb='15px'>
             <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 300px - 3%)'>
               <AccountInformationForDetails
