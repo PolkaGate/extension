@@ -44,11 +44,12 @@ function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement 
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleScroll = useCallback(() => {
-    if (scrollContainerRef.current && isContentReady) {
-      const container = scrollContainerRef.current;
-      const scrollLeft = Math.round(container.scrollLeft);
-      const scrollWidth = container.scrollWidth;
-      const clientWidth = container.clientWidth;
+    const container = scrollContainerRef.current;
+
+    if (container && isContentReady) {
+      let { clientWidth, scrollLeft, scrollWidth } = container;
+
+      scrollLeft = Math.round(scrollLeft);
 
       // Check if content is actually scrollable
       const isScrollable = scrollWidth > clientWidth;
