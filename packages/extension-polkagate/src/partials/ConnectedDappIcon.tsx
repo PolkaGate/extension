@@ -7,6 +7,7 @@ import { Avatar } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ActionContext } from '../components';
+import { useAnimateOnce } from '../hooks';
 import { getAuthList } from '../messaging';
 import { extractBaseUrl } from '../util/utils';
 
@@ -22,7 +23,8 @@ export default function ConnectedDappIcon (): React.ReactElement {
   const [isConnected, setIsConnected] = useState<boolean | undefined>(undefined);
   const [favIconUrl, setFavIconUrl] = useState<string | undefined>(undefined);
   const [dappId, setDappId] = useState<string | undefined>(undefined);
-  const [flip, setFlip] = useState(false);
+
+  const flip = useAnimateOnce(Boolean(favIconUrl), { delay: 1000, duration: 1000 });
 
   const isOnHomePage = window.location.hash === '#/';
 
@@ -56,15 +58,6 @@ export default function ConnectedDappIcon (): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!favIconUrl) {
-      return;
-    }
-
-    setFlip(true);
-    setTimeout(() => setFlip(false), 1000);
-  }, [favIconUrl]);
-
-  useEffect(() => {
     if (isOnHomePage && isConnected === undefined && !checking && favIconUrl === undefined) {
       checkTab().catch(console.error);
     }
@@ -84,14 +77,15 @@ export default function ConnectedDappIcon (): React.ReactElement {
       src={favIconUrl}
       sx={{
         borderRadius: '50%',
-        bottom: 5,
         cursor: 'pointer',
         height: '15px',
         position: 'absolute',
-        right: 10,
+        right: '44%',
+        top: 6,
         transform: flip ? 'rotateY(180deg)' : 'rotateY(0deg)',
         transition: 'transform 1s',
-        width: '15px'
+        width: '15px',
+        zIndex: 10
       }}
       variant='circular'
     />
