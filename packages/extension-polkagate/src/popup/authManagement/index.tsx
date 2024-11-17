@@ -37,7 +37,7 @@ interface FSModeType {
   open: boolean;
 }
 
-const ExtensionMode = ({ dappInfo, onBackClick, setDappInfo }: ExtensionModeType) => {
+const ExtensionMode = React.memo(function ExtensionMode ({ dappInfo, onBackClick, setDappInfo }: ExtensionModeType) {
   const { t } = useTranslation();
 
   return (
@@ -53,9 +53,9 @@ const ExtensionMode = ({ dappInfo, onBackClick, setDappInfo }: ExtensionModeType
       }
     </>
   );
-};
+});
 
-const FSMode = ({ backToAccountFS, dappInfo, onBackClick, open, setDappInfo }: FSModeType) => {
+const FSMode = React.memo(function FSMode ({ backToAccountFS, dappInfo, onBackClick, open, setDappInfo }: FSModeType) {
   const { t } = useTranslation();
 
   return (
@@ -73,9 +73,9 @@ const FSMode = ({ backToAccountFS, dappInfo, onBackClick, open, setDappInfo }: F
       </Grid>
     </DraggableModal>
   );
-};
+});
 
-export default function AuthManagement ({ open, setDisplayPopup }: Props): React.ReactElement {
+function AuthManagement ({ open, setDisplayPopup }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const isExtensionMode = useIsExtensionPopup();
   const { id: dappId } = useParams<{ id: string | undefined }>();
@@ -104,11 +104,12 @@ export default function AuthManagement ({ open, setDisplayPopup }: Props): React
 
   return (
     <>
-      {
-        isExtensionMode
-          ? <ExtensionMode dappInfo={dappInfo} onBackClick={onBackClick} setDappInfo={setDappInfo} />
-          : <FSMode backToAccountFS={backToAccountFS} dappInfo={dappInfo} onBackClick={onBackClick} open={!!open} setDappInfo={setDappInfo} />
+      {isExtensionMode
+        ? <ExtensionMode dappInfo={dappInfo} onBackClick={onBackClick} setDappInfo={setDappInfo} />
+        : <FSMode backToAccountFS={backToAccountFS} dappInfo={dappInfo} onBackClick={onBackClick} open={!!open} setDappInfo={setDappInfo} />
       }
     </>
   );
 }
+
+export default React.memo(AuthManagement);
