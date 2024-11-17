@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.30.1](https://github.com/polkagate/extension/compare/v0.30.0...v0.30.1) (2024-11-17)
+
+
+### Bug Fixes
+
+* incorporate era length which may be less than a day for some chains while calc a validators APY ([#1659](https://github.com/polkagate/extension/issues/1659)) ([b700e65](https://github.com/polkagate/extension/commit/b700e6531bf458681cf101db15a3e3bfd8d4a35d))
+
 # [0.30.0](https://github.com/polkagate/extension/compare/v0.29.1...v0.30.0) (2024-11-16)
 
 
