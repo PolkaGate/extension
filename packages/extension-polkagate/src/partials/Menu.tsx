@@ -19,6 +19,7 @@ import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 import VersionSocial from './VersionSocial';
+import TLFActions from './TLFActions';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -106,6 +107,7 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
       open={isMenuOpen}
     >
       <Grid bgcolor='divider' container height='100%' justifyContent='end' zIndex={10}>
+        <TLFActions />
         <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
           {!showWarning
             ? <>
