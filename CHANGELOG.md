@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.31.1](https://github.com/polkagate/extension/compare/v0.31.0...v0.31.1) (2024-11-17)
+
+
+### Bug Fixes
+
+* checkmark position issue ([90f912e](https://github.com/polkagate/extension/commit/90f912e9564302425e7bb950ca18cec23c53c1e7))
+
 # [0.31.0](https://github.com/polkagate/extension/compare/v0.30.2...v0.31.0) (2024-11-17)
 
 
