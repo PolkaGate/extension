@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 
@@ -17,29 +16,34 @@ export const A_DAY = new BN(24 * 60 * 60 * 1000);
 const THRESHOLD = BN_THOUSAND.div(BN_TWO);
 const DEFAULT_TIME = new BN(6_000);
 
-function calcInterval(api: ApiPromise): BN {
-    return bnMin(A_DAY, (
-        // Babe, e.g. Relay chains (Substrate defaults)
-        api.consts.babe?.expectedBlockTime ||
-        // POW, eg. Kulupu
-        api.consts.difficulty?.targetBlockTime ||
-        // Subspace
-        api.consts.subspace?.expectedBlockTime || (
-            // Check against threshold to determine value validity
-            api.consts.timestamp?.minimumPeriod.gte(THRESHOLD)
-                // Default minimum period config
-                ? api.consts.timestamp.minimumPeriod.mul(BN_TWO)
-                : api.query.parachainSystem
-                    // default guess for a parachain
-                    ? DEFAULT_TIME.mul(BN_TWO)
-                    // default guess for others
-                    : DEFAULT_TIME
-        )
-    ));
+export function calcInterval (api: ApiPromise | undefined): BN {
+  if (!api) {
+    return DEFAULT_TIME;
+  }
+
+  return bnMin(A_DAY, (
+    // Babe, e.g. Relay chains (Substrate defaults)
+    api.consts['babe']?.['expectedBlockTime'] as unknown as BN ||
+      // POW, eg. Kulupu
+      api.consts['difficulty']?.['targetBlockTime'] as unknown as BN ||
+    // Subspace
+      // Subspace
+      api.consts['subspace']?.['expectedBlockTime'] || (
+    // Check against threshold to determine value validity
+      (api.consts['timestamp']?.['minimumPeriod'] as unknown as BN).gte(THRESHOLD)
+      // Default minimum period config
+        ? (api.consts['timestamp']['minimumPeriod'] as unknown as BN).mul(BN_TWO)
+        : api.query['parachainSystem']
+        // default guess for a parachain
+          ? DEFAULT_TIME.mul(BN_TWO)
+        // default guess for others
+          : DEFAULT_TIME
+    )
+  ));
 }
 
-export default function useBlockInterval(address: string | undefined): BN | undefined {
-    const api = useApi(address);
+export default function useBlockInterval (address: string | undefined): BN | undefined {
+  const api = useApi(address);
 
-    return useMemo(() => api && calcInterval(api), [api]);
+  return useMemo(() => api && calcInterval(api), [api]);
 }

@@ -10,15 +10,17 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
+import { calcInterval } from './useBlockInterval';
+
 interface ValidatorEraInfo {
   netReward: number;
   total: BN;
 }
 
-const AVG_SECONDS_PER_BLOCK = 6; // sec
-
 export default function useValidatorApy (api: ApiPromise | undefined, validatorAddress: string, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
+  const blockInterval = calcInterval(api);
+  const blockIntervalInSec = blockInterval.toNumber() / 1000;
 
   const calculateValidatorAPY = useCallback(async (validatorAddress: string) => {
     if (!api) {
@@ -37,7 +39,7 @@ export default function useValidatorApy (api: ApiPromise | undefined, validatorA
     const currentEra = ((await api.query['staking']['activeEra']()) as Option<PalletStakingActiveEraInfo>).unwrap().index.toNumber();
     const { commission } = await api.query['staking']['validators'](validatorAddress) as PalletStakingValidatorPrefs;
 
-    const eraLengthInHrs = eraLength.toNumber() * AVG_SECONDS_PER_BLOCK / 3600; // 3600 = 1hr in seconds
+    const eraLengthInHrs = eraLength.toNumber() * blockIntervalInSec / 3600; // 3600 = 1hr in seconds
     const eraPerDay = 24 / eraLengthInHrs;
     const eraDepth = 10 * eraPerDay; // eras to calculate
 
