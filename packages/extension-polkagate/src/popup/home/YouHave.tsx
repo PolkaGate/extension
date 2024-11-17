@@ -148,7 +148,7 @@ export default function YouHave (): React.ReactElement {
               </Stack>
             </>
           }
-          <Infotip2 text={t('Menu options')}>
+          <Infotip2 placement = 'bottom' text={t('Menu options')}>
             <IconButton
               onClick={onMenuClick}
               sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}

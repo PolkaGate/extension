@@ -5,7 +5,7 @@ import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { HEADER_COMPONENT_STYLE } from '../../fullscreen/governance/FullScreenHeader';
-import { useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import Infotip2 from '../Infotip2';
 
 interface Props {
@@ -69,11 +69,12 @@ const OpenEye = ({ color, size = 20 }: IconProps) => (
 const HideBalance = ({ darkColor, hide = false, lightColor, noBorder = true, onClick, size = 20 }: Props) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isExtensionMode = useIsExtensionPopup();
 
   const color = theme.palette.mode === 'dark' ? darkColor || theme.palette.text.primary : lightColor || theme.palette.text.secondary;
 
   return (
-    <Infotip2 text={t(hide ? 'Show numbers' : 'Hide numbers')}>
+    <Infotip2 text={t(hide ? 'Show numbers' : 'Hide numbers')} placement = { isExtensionMode ? 'left' : 'bottom'}>
       <Grid
         alignItems='center'
         aria-label={hide ? 'Show balance' : 'Hide balance'}
