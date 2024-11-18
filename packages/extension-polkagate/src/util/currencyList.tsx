@@ -112,7 +112,7 @@ export const CURRENCY_LIST = [
     sign: '¥'
   },
   {
-    code: 'CNY',
+    code: 'CZK',
     country: 'Czech',
     currency: 'Koruna',
     sign: 'CZK'
