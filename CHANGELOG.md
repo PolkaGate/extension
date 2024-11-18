@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.32.0](https://github.com/polkagate/extension/compare/v0.31.2...v0.32.0) (2024-11-18)
+
+
+### Features
+
+* add spanish language ([b837bad](https://github.com/polkagate/extension/commit/b837badf9730791e2996b22782d092ec64512e97))
+
 ## [0.31.2](https://github.com/polkagate/extension/compare/v0.31.1...v0.31.2) (2024-11-18)
 
 
