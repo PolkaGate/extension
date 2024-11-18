@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.31.2](https://github.com/polkagate/extension/compare/v0.31.1...v0.31.2) (2024-11-18)
+
+
+### Bug Fixes
+
+* wrong currency code, style: fix transparency issue ([#1665](https://github.com/polkagate/extension/issues/1665)) ([4edaec6](https://github.com/polkagate/extension/commit/4edaec63560273dbc9724ead60d57ca5ce8522af))
+
 ## [0.31.1](https://github.com/polkagate/extension/compare/v0.31.0...v0.31.1) (2024-11-17)
 
 
