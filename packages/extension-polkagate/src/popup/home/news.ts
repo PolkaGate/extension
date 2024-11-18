@@ -10,7 +10,14 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.23.0',
+    version: '0.32.1',
+    notes: [
+      'Support Spanish: Access PolkaGate in your preferred language.',
+      'Fix Czech Republic flag: It was incorrectly displayed as the China flag.'
+    ]
+  },
+  {
+    version: '0.31.1',
     notes: [
       'Support for NFTs: View the details of your account’s NFTs.',
       'View Portfolio Price Change: Display the portfolio’s price change over the last 24 hours with an engaging count-up effect.',
