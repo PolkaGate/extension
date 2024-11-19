@@ -53,7 +53,7 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
       <Grid alignItems='center' container item width='fit-content'>
         <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
           <Grid alignItems='center' container item width='fit-content'>
-            <Grid item sx={{ fontSize: '22px', fontWeight: 600, m: 'auto' }}>
+            <Grid item sx={{ fontSize: '20px', fontWeight: 600, m: 'auto' }}>
               <ShowBalance
                 balance={totalLocked}
                 decimal={decimal}
@@ -65,7 +65,7 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
             <FormatPrice
               amount={totalLocked}
               decimals={decimal}
-              fontSize= '22px'
+              fontSize= '20px'
               fontWeight={ 400}
               price={price}
               skeletonHeight={20}

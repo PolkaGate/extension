@@ -68,7 +68,7 @@ export default function AccountSetting ({ address, setDisplayPopup }: Props): Re
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
       <Grid alignItems='center' container item onClick={toggleAccountSetting} sx={{ cursor: 'pointer', width: 'fit-content' }}>
-        <Typography fontSize='22px' fontWeight={700} sx={{ mr: '20px' }}>
+        <Typography fontSize='20px' fontWeight={700} sx={{ mr: '20px' }}>
           {t('Account settings')}
         </Typography>
         <ArrowForwardIosRoundedIcon

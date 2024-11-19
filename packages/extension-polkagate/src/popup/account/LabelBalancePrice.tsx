@@ -45,7 +45,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
             </Grid>
           }
           <Grid alignItems='flex-end' container direction='column' item xs>
-            <Grid item sx={{ fontSize: label === 'Total' ? '28px' : '20px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
+            <Grid item sx={{ fontSize: label === 'Total' ? '20px' : '18px', fontWeight: label === 'Total' ? 500 : 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance
                 api={api}
                 balance={value}
@@ -59,7 +59,7 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
               <FormatPrice
                 amount={value}
                 decimals={balances?.decimal}
-                fontSize= {label === 'Total' ? '20px' : '16px'}
+                fontSize= {label === 'Total' ? '18px' : '16px'}
                 fontWeight= {label === 'Total' ? 400 : 300}
                 price={price}
               />

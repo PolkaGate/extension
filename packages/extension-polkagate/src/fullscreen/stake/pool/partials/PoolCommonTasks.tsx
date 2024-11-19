@@ -106,7 +106,7 @@ export default function PoolCommonTasks({ address }: Props): React.ReactElement 
   return (
     <>
       <Grid container item justifyContent='center' sx={{ bgcolor: 'background.paper', borderRadius: '10px', boxShadow: '2px 3px 4px 0px rgba(0, 0, 0, 0.1)', p: '15px' }} width='inherit'>
-        <Typography fontSize='22px' fontWeight={700}>
+        <Typography fontSize='20px' fontWeight={700}>
           {t('Most common tasks')}
         </Typography>
         <Divider sx={{ bgcolor: 'divider', height: '2px', m: '5px auto 15px', width: '90%' }} />

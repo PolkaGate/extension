@@ -84,7 +84,7 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
 
 const CenterItem = ({ showBrand, text, withSteps }: { showBrand?: boolean, text?: React.ReactNode, withSteps?: Step | null}) => (
   <Grid display='inline-flex' item>
-    <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '29px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
+    <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '29px' : '18px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
       {text}
     </Typography>
     {
