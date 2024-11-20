@@ -10,10 +10,10 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.32.0',
+    version: '0.32.1',
     notes: [
       'Support Spanish: Access PolkaGate in your preferred language.',
-      'Fix Czech Republic flag: It was incorrectly displayed as the China flag.'
+      'Fix known issues: correct the Czech Republic flag display and resolve the favorite chain dialog issue.'
     ]
   },
   {
