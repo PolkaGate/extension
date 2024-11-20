@@ -12,7 +12,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import useReservedDetails, { type Reserved } from '@polkadot/extension-polkagate/src/hooks/useReservedDetails';
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN } from '@polkadot/util';
 
 import { ShowValue } from '../../../components';
 import { useInfo } from '../../../hooks';
@@ -20,7 +19,7 @@ import { toTitleCase } from '../../governance/utils/util';
 import DisplayBalance from './DisplayBalance';
 
 interface Props {
-  assetId: number | undefined,
+  assetId: string | number | undefined,
   address: string | undefined;
   amount: BN | Balance | undefined;
   assetToken?: string | undefined;
@@ -40,7 +39,7 @@ interface WaitForReservedProps {
   style?: SxProps<Theme> | undefined;
 }
 
-function WaitForReserved({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement {
+function WaitForReserved ({ rows = 2, skeletonHeight = 20, skeletonWidth = 60, style }: WaitForReservedProps): React.ReactElement {
   return (
     <Grid container justifyContent='center' sx={{ ...style }}>
       {Array.from({ length: rows }).map((_, index) => (
@@ -73,11 +72,12 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
     const reasons = Object.values(reservedDetails);
 
     const isStillFetchingSomething = reasons.some((reason) => reason === undefined);
+
     setStillFetching(isStillFetchingSomething);
 
     // details are still fetching
     if (reasons.length === 0) {
-      return undefined
+      return undefined;
     }
 
     const noReason = reasons.every((reason) => reason === null);
@@ -94,7 +94,7 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
 
     return Object.values(filteredReservedDetails).length > 0
       ? filteredReservedDetails
-      : undefined
+      : undefined;
   }, [reservedDetails]);
 
   return (
@@ -130,12 +130,12 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
   );
 };
 
-export default function ReservedDisplayBalance({ address, amount, assetToken, assetId, disabled, price }: Props): React.ReactElement {
+function ReservedDisplayBalance ({ address, amount, assetId, assetToken, disabled, price }: Props): React.ReactElement {
   const { t } = useTranslation();
   const reservedDetails = useReservedDetails(address);
   const { decimal, genesisHash, token } = useInfo(address);
 
-  const notOnNativeAsset = useMemo(() => (assetId !== undefined && assetId > 0) || assetToken?.toLowerCase() !== token?.toLowerCase(), [assetId, assetToken, token]);
+  const notOnNativeAsset = useMemo(() => (assetId !== undefined && Number(assetId) > 0) || assetToken?.toLowerCase() !== token?.toLowerCase(), [assetId, assetToken, token]);
 
   const [showReservedDetails, setShowReservedDetails] = useState<boolean>(false);
 
@@ -168,3 +168,5 @@ export default function ReservedDisplayBalance({ address, amount, assetToken, as
       </Grid>
     );
 }
+
+export default React.memo(ReservedDisplayBalance);
