@@ -53,10 +53,11 @@ export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props):
       </Grid>
       <AccountsTable
         areAllCheck={areAllCheck}
+        manageConnectedAccounts
         maxHeight={window.innerHeight - 300}
         selectedAccounts={selectedAccounts}
         setSelectedAccounts={setSelectedAccounts}
-        style={{ margin: '35px auto 0', width: '92%' }}
+        style={{ margin: '25px auto 0', width: '92%' }}
       />
       <TwoButtons
         disabled={noChanges}

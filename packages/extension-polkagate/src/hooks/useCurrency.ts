@@ -22,7 +22,11 @@ export default function useCurrency (): CurrencyItemType | undefined {
       setCurrency(res as CurrencyItemType || USD_CURRENCY);
     }).catch(console.error);
 
-    watchStorage('currency', setCurrency).catch(console.error);
+    const unsubscribe = watchStorage('currency', setCurrency);
+
+    return () => {
+      unsubscribe();
+    };
   }, [setCurrency]);
 
   return currency;

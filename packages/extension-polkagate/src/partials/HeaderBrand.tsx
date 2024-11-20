@@ -84,7 +84,7 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
 
 const CenterItem = ({ showBrand, text, withSteps }: { showBrand?: boolean, text?: React.ReactNode, withSteps?: Step | null}) => (
   <Grid display='inline-flex' item>
-    <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '29px' : '20px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
+    <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '29px' : '18px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
       {text}
     </Typography>
     {
@@ -144,7 +144,6 @@ const RightItem = ({ _handleMenuClick, _onClose, fullScreenURL, isRefreshing, on
 };
 
 function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const setIconRef = useRef(null);
   const setMenuRef = useRef(null);
@@ -213,17 +212,14 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL =
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
         }
       </Container>
-      {isMenuOpen &&
-        <Menu
-          setShowMenu={setOpenMenu}
-          theme={theme}
-        />
-      }
-      {isAccountMenuOpen && address &&
+      <Menu
+        isMenuOpen={isMenuOpen}
+        setShowMenu={setOpenMenu}
+      />
+      {address &&
         <AccountMenu
           address={address}
           isMenuOpen={isAccountMenuOpen}
-          noMargin
           setShowMenu={setShowAccountMenu}
         />
       }

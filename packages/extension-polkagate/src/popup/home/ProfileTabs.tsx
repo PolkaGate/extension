@@ -35,7 +35,11 @@ function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
       })
       .catch(console.error);
 
-    watchStorage('profile', setSelectedProfile).catch(console.error);
+    const unsubscribe = watchStorage('profile', setSelectedProfile);
+
+    return () => {
+      unsubscribe();
+    };
   }, [t]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);

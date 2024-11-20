@@ -19,7 +19,11 @@ export default function useSelectedChains (): string[] | undefined {
       setSelected(res as string[] || defaultSelectedGenesisHashes);
     }).catch(console.error);
 
-    watchStorage('selectedChains', setSelected).catch(console.error);
+    const unsubscribe = watchStorage('selectedChains', setSelected);
+
+    return () => {
+      unsubscribe();
+    };
   }, [defaultSelectedGenesisHashes, setSelected]);
 
   return selected;

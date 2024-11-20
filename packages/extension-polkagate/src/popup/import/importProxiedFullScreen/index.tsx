@@ -129,7 +129,7 @@ function ImportProxiedFS (): React.ReactElement {
           <Title
             height='85px'
             logo={
-              <VaadinIcon icon='vaadin:sitemap' style={{ color: `${theme.palette.text.primary}`, height: '40px', transform: 'rotate(180deg)', width: '40px' }} />
+              <VaadinIcon icon='vaadin:cluster' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
             }
             text={t('Import proxied accounts')}
           />

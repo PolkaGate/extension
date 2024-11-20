@@ -32,7 +32,7 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, op
         {title}
       </Typography>
       <Grid alignItems='center' container item width='fit-content'>
-        <Grid item sx={{ fontSize: '22px', fontWeight: 600 }}>
+        <Grid item sx={{ fontSize: '20px', fontWeight: 600 }}>
           <ShowBalance
             balance={amount}
             decimal={decimal}
@@ -45,7 +45,7 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, op
         <FormatPrice
           amount={amount}
           decimals={decimal}
-          fontSize= '22px'
+          fontSize= '20px'
           fontWeight= {400}
           price={price}
           skeletonHeight={20}

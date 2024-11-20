@@ -167,7 +167,11 @@ export default function Popup (): React.ReactElement {
       .then((maybeTheme) => setAccountIconTheme((maybeTheme as IconTheme | undefined) || DEFAULT_ACCOUNT_ICON_THEME))
       .catch(console.error);
 
-    watchStorage('iconTheme', setAccountIconTheme).catch(console.error);
+    const unsubscribe = watchStorage('iconTheme', setAccountIconTheme);
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

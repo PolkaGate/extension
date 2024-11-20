@@ -3,26 +3,29 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { TransactionDetail, Transfers } from '../../util/types';
+import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
 
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import { useInfo } from '../../hooks';
+import { getGovHistory } from '../../util/api/getGovHistory';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { STAKING_ACTIONS } from '../../util/constants';
 import { getHistoryFromStorage } from '../../util/utils';
-
-enum TAB_MAP {
-  ALL,
-  TRANSFERS,
-  STAKING
-}
+import { TAB_MAP } from './HistoryTabs';
 
 interface RecordTabStatus {
   pageNum: number,
   isFetching?: boolean,
   hasMore?: boolean,
   transactions?: Transfers[]
+}
+
+interface RecordTabStatusGov {
+  pageNum: number,
+  isFetching?: boolean,
+  hasMore?: boolean,
+  transactions?: Extrinsics[]
 }
 
 const SINGLE_PAGE_SIZE = 50;
@@ -37,14 +40,16 @@ const INITIAL_STATE = {
 
 export interface TransactionHistoryOutput{
   grouped: Record<string, TransactionDetail[]> | null | undefined;
-  tabHistory: TransactionDetail[] | null
-  transfersTx: object & RecordTabStatus
+  tabHistory: TransactionDetail[] | null;
+  transfersTx: object & RecordTabStatus;
+  governanceTx: object & RecordTabStatusGov;
 }
 
 export default function useTransactionHistory (address: string | undefined, tabIndex: TAB_MAP): TransactionHistoryOutput {
-  const { chainName, formatted } = useInfo(address);
+  const { chain, chainName, decimal, formatted } = useInfo(address);
 
-  const [fetchedHistoriesFromSubscan, setFetchedHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
+  const [fetchedTransferHistoriesFromSubscan, setFetchedTransferHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
+  const [fetchedGovernanceHistoriesFromSubscan, setFetchedGovernanceHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
@@ -52,11 +57,18 @@ export default function useTransactionHistory (address: string | undefined, tabI
     return Object.assign({}, state, action);
   }
 
+  function stateReducerGov (state: object, action: RecordTabStatusGov) {
+    return Object.assign({}, state, action);
+  }
+
   const [transfersTx, setTransfersTx] = useReducer(stateReducer, INITIAL_STATE);
+  const [governanceTx, setGovernanceTx] = useReducer(stateReducerGov, INITIAL_STATE);
   const observerInstance = useRef<IntersectionObserver>();
   const receivingTransfers = useRef<RecordTabStatus>();
+  const receivingGovernance = useRef<RecordTabStatusGov>();
 
   receivingTransfers.current = transfersTx;
+  receivingGovernance.current = governanceTx;
 
   const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
     if (!tabHistory) {
@@ -82,6 +94,35 @@ export default function useTransactionHistory (address: string | undefined, tabI
 
     return temp;
   }, [tabHistory]);
+
+  useEffect(() => {
+    if (!governanceTx?.transactions?.length || !decimal) {
+      return;
+    }
+
+    const govHistoryFromSubscan: TransactionDetail[] = [];
+
+    governanceTx.transactions.forEach((govTx: Extrinsics): void => {
+      govHistoryFromSubscan.push({
+        action: 'Governance',
+        amount: govTx.amount !== undefined ? (Number(govTx.amount) / (10 ** decimal)).toString() : undefined,
+        block: govTx.block_num,
+        class: govTx.class,
+        conviction: govTx.conviction,
+        date: govTx.block_timestamp * 1000, // to be consistent with the locally saved times
+        delegatee: govTx.delegatee,
+        fee: govTx.fee,
+        from: { address: govTx.account_display.address, name: '' },
+        refId: govTx.refId,
+        subAction: govTx.call_module_function,
+        success: govTx.success,
+        txHash: govTx.extrinsic_hash,
+        voteType: govTx.voteType
+      });
+    });
+
+    setFetchedGovernanceHistoriesFromSubscan(govHistoryFromSubscan);
+  }, [decimal, formatted, governanceTx.transactions, transfersTx]);
 
   useEffect(() => {
     if (!transfersTx?.transactions?.length) {
@@ -121,16 +162,16 @@ export default function useTransactionHistory (address: string | undefined, tabI
       }
     });
 
-    setFetchedHistoriesFromSubscan(historyFromSubscan);
+    setFetchedTransferHistoriesFromSubscan(historyFromSubscan);
   }, [formatted, transfersTx]);
 
   useEffect(() => {
-    if (!localHistories && !fetchedHistoriesFromSubscan) {
+    if (!localHistories && !fetchedTransferHistoriesFromSubscan && !fetchedGovernanceHistoriesFromSubscan) {
       return;
     }
 
-    const filteredLocalHistories = localHistories?.filter((h1) => !fetchedHistoriesFromSubscan?.find((h2) => h1.txHash === h2.txHash));
-    let history = filteredLocalHistories.concat(fetchedHistoriesFromSubscan);
+    const filteredLocalHistories = localHistories?.filter((h1) => !fetchedTransferHistoriesFromSubscan?.find((h2) => h1.txHash === h2.txHash));
+    let history = filteredLocalHistories.concat(fetchedTransferHistoriesFromSubscan).concat(fetchedGovernanceHistoriesFromSubscan);
 
     history = history.sort((a, b) => b.date - a.date);
 
@@ -141,18 +182,42 @@ export default function useTransactionHistory (address: string | undefined, tabI
       case (TAB_MAP.STAKING):
         history = history.filter((h) => STAKING_ACTIONS.includes(h.action));
         break;
+      case (TAB_MAP.GOVERNANCE):
+        history = history.filter((h) => ['Governance', 'Unlock Referenda'].includes(h.action));
+        break;
       default:
         break;
     }
 
     setTabHistory(history);
-  }, [tabIndex, fetchedHistoriesFromSubscan, localHistories]);
+  }, [tabIndex, fetchedTransferHistoriesFromSubscan, localHistories, fetchedGovernanceHistoriesFromSubscan]);
 
   useEffect(() => {
     formatted && getHistoryFromStorage(String(formatted)).then((h) => {
       setLocalHistories(h || []);
     }).catch(console.error);
   }, [formatted, chainName]);
+
+  const getGovExtrinsics = useCallback(async (outerState: RecordTabStatusGov): Promise<void> => {
+    const { pageNum, transactions } = outerState;
+
+    setGovernanceTx({
+      isFetching: true,
+      pageNum
+    });
+
+    const res = await getGovHistory(chainName ?? '', String(formatted), pageNum, chain?.ss58Format);
+
+    const { count, extrinsics } = res.data || {};
+    const nextPageNum = pageNum + 1;
+
+    setGovernanceTx({
+      hasMore: !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE,
+      isFetching: false,
+      pageNum: nextPageNum,
+      transactions: transactions?.concat(extrinsics || [])
+    });
+  }, [chainName, formatted, chain?.ss58Format]);
 
   const getTransfers = useCallback(async (outerState: RecordTabStatus): Promise<void> => {
     const { pageNum, transactions } = outerState;
@@ -187,11 +252,11 @@ export default function useTransactionHistory (address: string | undefined, tabI
         return; // If the observer object is not in view, do nothing
       }
 
-      if (receivingTransfers.current?.isFetching) {
+      if (receivingTransfers.current?.isFetching && receivingGovernance.current?.isFetching) {
         return; // If already fetching, do nothing
       }
 
-      if (!receivingTransfers.current?.hasMore) {
+      if (!receivingTransfers.current?.hasMore && !receivingTransfers.current?.hasMore) {
         observerInstance.current?.disconnect();
         console.log('No more data to load, disconnecting observer.');
 
@@ -199,6 +264,11 @@ export default function useTransactionHistory (address: string | undefined, tabI
       }
 
       getTransfers(receivingTransfers.current) // Fetch more transfers if available
+        .catch((error) => {
+          console.error('Error fetching transfers:', error);
+        });
+
+      receivingGovernance.current && getGovExtrinsics(receivingGovernance.current) // Fetch more governance history if available
         .catch((error) => {
           console.error('Error fetching transfers:', error);
         });
@@ -221,7 +291,7 @@ export default function useTransactionHistory (address: string | undefined, tabI
     return () => {
       observerInstance.current?.disconnect();
     };
-  }, [chainName, formatted, getTransfers]);
+  }, [chainName, formatted, getGovExtrinsics, getTransfers, governanceTx]);
 
-  return { grouped, tabHistory, transfersTx };
+  return { governanceTx, grouped, tabHistory, transfersTx };
 }

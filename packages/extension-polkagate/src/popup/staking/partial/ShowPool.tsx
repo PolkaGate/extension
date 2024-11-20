@@ -66,10 +66,10 @@ export default function ShowPool ({ api, chain, label, labelPosition = 'left', m
         <Typography fontSize='16px' fontWeight={400} sx={{ textAlign: labelPosition }} width='100%'>
           {label}
         </Typography>
-        <Grid container direction='column' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px' }}>
+        <Grid container direction='column' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px' }}>
           {pool
             ? <>
-              <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
+              <Grid container item lineHeight='35px' px='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
                 <Grid fontSize='16px' fontWeight={400} item justifyContent='center' overflow='hidden' textAlign='center' textOverflow='ellipsis' whiteSpace='nowrap' width={_showInfo ? '92%' : '100%'}>
                   <Infotip text={pool?.metadata ?? t('Unknown')}>
                     {pool?.stashIdAccount?.accountId
@@ -86,37 +86,37 @@ export default function ShowPool ({ api, chain, label, labelPosition = 'left', m
                   </Grid>
                 }
               </Grid>
-              <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', fontWeight: 400 }}>
+              <Grid container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', fontWeight: 400 }}>
                 {!hasCommission &&
-                  <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='13%'>
-                    {t<string>('Index')}
+                  <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} textAlign='center' width='13%'>
+                    {t('Index')}
                   </Typography>
                 }
-                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='30%'>
-                  {t<string>('Staked')}
+                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} textAlign='center' width='30%'>
+                  {t('Staked')}
                 </Typography>
-                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='18%'>
-                  {t<string>('Members')}
+                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} textAlign='center' width='18%'>
+                  {t('Members')}
                 </Typography>
                 {hasCommission &&
-                  <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='13%'>
-                    {t<string>('Com.')}
+                  <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} textAlign='center' width='13%'>
+                    {t('Com.')}
                   </Typography>
                 }
-                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} textAlign='center' width='22%'>
-                  {t<string>('Status')}
+                <Typography fontSize='12px' lineHeight='30px' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} textAlign='center' width='22%'>
+                  {t('Status')}
                 </Typography>
                 <Typography fontSize='12px' lineHeight='30px' textAlign='center' width='16%'>
-                  {t<string>('Rewards')}
+                  {t('Rewards')}
                 </Typography>
               </Grid>
               <Grid container fontSize='14px' fontWeight={400} item lineHeight='37px' textAlign='center'>
                 {!hasCommission &&
-                  <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='13%'>
+                  <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='13%'>
                     {pool.poolId.toString()}
                   </Grid>
                 }
-                <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='30%'>
                   <ShowBalance
                     api={api}
                     balance={poolStaked as unknown as BN}
@@ -126,15 +126,15 @@ export default function ShowPool ({ api, chain, label, labelPosition = 'left', m
                     token={pool?.token}
                   />
                 </Grid>
-                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='18%'>
+                <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='18%'>
                   {pool.bondedPool?.memberCounter?.toString()}
                 </Grid>
                 {hasCommission &&
-                  <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='13%'>
+                  <Grid alignItems='center' item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='13%'>
                     {commission}%
                   </Grid>
                 }
-                <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='22%'>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='22%'>
                   {mode === 'Default' ? poolStatus : mode}
                 </Grid>
                 <Grid alignItems='center' item justifyContent='center' onClick={onRewardsChart} width='16%' sx={{ cursor: 'pointer' }}>
@@ -147,7 +147,7 @@ export default function ShowPool ({ api, chain, label, labelPosition = 'left', m
                 <Circle color='#99004F' scaleEnd={0.7} scaleStart={0.4} size={25} />
               </Grid>
               <Typography fontSize='13px' lineHeight='59px' pl='10px'>
-                {t<string>('Loading pool information...')}
+                {t('Loading pool information...')}
               </Typography>
             </Grid>
           }

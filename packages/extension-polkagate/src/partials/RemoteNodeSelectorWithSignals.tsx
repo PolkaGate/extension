@@ -38,7 +38,6 @@ interface ListIndicatorProps {
   defaultColor: string;
   endpointUrl: string | undefined;
   iconSize: number;
-  id: 'simple-popover' | undefined;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   setCurrentDelay: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
@@ -232,9 +231,11 @@ const NodesList = ({ address, defaultColor, endpointsDelay, setCurrentDelay, set
   );
 };
 
-const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, onClick, setCurrentDelay }: ListIndicatorProps) => {
+const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, onClick, setCurrentDelay }: ListIndicatorProps) => {
   const isLightClient = endpointUrl?.startsWith('light');
   const onExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   useEffect(() => {
     // to reset signal bar on chain change
@@ -250,7 +251,7 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, 
   }, [onExtension]);
 
   return (
-    <Grid aria-describedby={id} component='button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
+    <Grid component = 'button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: isDark && !onExtension ? 2 : 1, borderColor: onExtension ? theme.palette.secondary.light : 'divider', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
       {isLightClient
         ? <LightClientEndpointIcon sx={{ bottom: '2px', color: SIGNAL_COLORS.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }} />
         : <NodeStatusIcon
@@ -266,6 +267,7 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, id, 
 
 function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
+
   const { endpoint } = useEndpoint(address);
   const genesisHash = useGenesisHash(address);
   const endpointOptions = useEndpoints(genesisHash);
@@ -329,7 +331,6 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
   }, []);
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
   return (
     <>
@@ -338,7 +339,6 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
         defaultColor={DEFAULT_GREY}
         endpointUrl={endpoint}
         iconSize={iconSize}
-        id={id}
         onClick={onClick}
         setCurrentDelay={setCurrentDelay}
       />
@@ -351,7 +351,6 @@ function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): Reac
           horizontal: 'right',
           vertical: 'bottom'
         }}
-        id={id}
         onClose={handleClose}
         open={open}
         sx={{ mt: '5px' }}

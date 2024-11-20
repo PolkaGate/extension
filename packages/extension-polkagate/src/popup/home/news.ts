@@ -10,11 +10,20 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.23.0',
+    version: '0.32.0',
     notes: [
-      'Support for NFTS: View your account’s NFTs and their details',
-      'Set Conviction with the Slider: Easily set convictions in governance using the slider.',
-      'View Portfolio Price Change: Display the portfolio’s price change over the last 24 hours with an engaging count-up effect.'
+      'Support Spanish: Access PolkaGate in your preferred language.',
+      'Fix Czech Republic flag: It was incorrectly displayed as the China flag.'
+    ]
+  },
+  {
+    version: '0.31.1',
+    notes: [
+      'Support for NFTs: View the details of your account’s NFTs.',
+      'View Portfolio Price Change: Display the portfolio’s price change over the last 24 hours with an engaging count-up effect.',
+      'View Governance History: Access governance histories for supported chains, alongside transfer and staking histories, on the history page.',
+      'View Validators APY: Check the Annual Percentage Yield (APY) of validators to make informed and strategic selections.',
+      'Set Conviction with the Slider: Easily adjust convictions in governance using the slider.'
     ]
   },
   {

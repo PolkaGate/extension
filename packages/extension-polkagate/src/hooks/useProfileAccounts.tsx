@@ -37,7 +37,11 @@ export default function useProfileAccounts (initialAccountList: AccountsOrder[] 
       console.error('Error while reading profile from storage', error);
     });
 
-    watchStorage('profile', setProfile).catch(console.error);
+    const unsubscribe = watchStorage('profile', setProfile);
+
+    return () => {
+      unsubscribe();
+    };
   }, [profile, t]);
 
   useLayoutEffect(() => {

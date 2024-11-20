@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -12,7 +11,7 @@ interface Props {
   show: boolean;
 }
 
-export default function SlidePopUp({ children, show }: Props): React.ReactElement<Props> {
+export default function SlidePopUp ({ children, show }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const ref = React.useRef(null);
 

@@ -1,8 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, useTheme } from '@mui/material';
@@ -16,9 +14,10 @@ interface Props {
   account: AccountJson | undefined;
   parentName: string | undefined;
   ml?: string;
+  right?: string;
 }
 
-export function AccountLabel ({ account, ml, parentName }: Props): React.ReactElement<Props> {
+function AccountLabel ({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
@@ -27,8 +26,6 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   const selectedProfile = useSelectedProfile();
   const { accountProfiles, defaultProfiles, userDefinedProfiles } = useProfiles(account);
 
-  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
-  const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.15)' : '0px 0px 1px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
   const containerMaxWidth = useMemo(() => isExtensionMode ? '300px' : '700px', [isExtensionMode]);
 
   const getColorOfUserDefinedProfile = useCallback((profile: string) => {
@@ -41,6 +38,8 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
 
     return getProfileColor(index, theme);
   }, [defaultProfiles, theme, userDefinedProfiles]);
+
+  const shadow = useCallback((profile: string) => `0px 0px 2px 1px ${getColorOfUserDefinedProfile(profile)}`, [getColorOfUserDefinedProfile]);
 
   const maybeAccountDefaultProfile = useMemo(() => {
     if (account?.isHardware) {
@@ -114,15 +113,22 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
   }, [profiles.length]);
 
   return (
-    <Grid container item ref={scrollContainerRef} sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '16px', left: ml || '15px', position: 'absolute', px: 1, top: 0, overflowX: 'scroll', whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}>
+    <Grid
+      container
+      item
+      justifyContent='flex-end'
+      ref={scrollContainerRef}
+      sx={{ display: 'flex', flexWrap: 'nowrap', fontSize: '10px', height: '18px', left: right ? undefined : ml || '15px', overflowX: 'scroll', position: 'absolute', px: 1, right, top: 0, whiteSpace: 'nowrap', width: containerMaxWidth, zIndex: 1 }}
+    >
       {profiles?.map((profile, index) =>
         <Grid
           key={index}
           sx={{
-            bgcolor: getColorOfUserDefinedProfile(profile),
-            borderRadius: '0 0 5px 5px',
-            boxShadow: shadow,
+            borderRadius: '0 0 2px 2px',
+            boxShadow: shadow(profile),
+            color: 'secondary.contrastText',
             fontSize: '11px',
+            height: '16px',
             ml: '5px',
             px: 1,
             textWrap: 'nowrap',
@@ -135,3 +141,5 @@ export function AccountLabel ({ account, ml, parentName }: Props): React.ReactEl
     </Grid>
   );
 }
+
+export default React.memo(AccountLabel);

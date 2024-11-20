@@ -3,8 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
 import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTasks';
 import { useTranslation } from '../hooks';
@@ -22,23 +24,48 @@ interface Props {
   accountTypeFilter?: AccountTypeFilterType;
   selectedAccounts: string[];
   setSelectedAccounts: React.Dispatch<React.SetStateAction<string[]>>;
+  manageConnectedAccounts?: boolean;
 }
 
-export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
+const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
+  const isASelected = selectedList.includes(accountA.address);
+  const isBSelected = selectedList.includes(accountB.address);
+
+  if (!isASelected && isBSelected) {
+    return -1;
+  } else if (isASelected && !isBSelected) {
+    return 1;
+  }
+
+  return 0;
+};
+
+function AccountsTable ({ accountTypeFilter, areAllCheck, label, manageConnectedAccounts, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
 
+  // Sort only on the first render, store result in a ref
+  const sortedAccountsRef = useRef<AccountJson[] | null>(null);
+
   const accountsToShow = useMemo(() => {
-    const filtered = accounts.filter(({ isExternal, isHardware, isHidden, isQR }) =>
+    const filtered = [...accounts].filter(({ isExternal, isHardware, isHidden, isQR }) =>
       (accountTypeFilter?.includes('Watch-Only') && !isExternal) ||
       (accountTypeFilter?.includes('Hardware') && !isHardware) ||
       (accountTypeFilter?.includes('QR') && !isQR) ||
       !isHidden
     );
 
-    return filtered;
-  }, [accountTypeFilter, accounts]);
+    // Only sort accounts when:
+    // 1. We're in manage authorized accounts mode (manageConnectedAccounts is true)
+    // 2. The accounts haven't been sorted yet (sortedAccountsRef.current is null)
+    // 3. There are some selected accounts (selectedAccounts.length !== 0)
+    if (manageConnectedAccounts && !sortedAccountsRef.current && selectedAccounts.length !== 0) {
+      sortedAccountsRef.current = [...filtered].sort((a, b) => sortAccounts(a, b, selectedAccounts));
+    }
+
+    return filtered; // .sort((a, b) => sortAccounts(a, b, selectedAccounts))
+  }, [accountTypeFilter, accounts, manageConnectedAccounts, selectedAccounts]);
 
   const onCheck = useCallback((address: string) => {
     const isAlreadySelected = selectedAccounts.includes(address);
@@ -106,7 +133,7 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
               />
             </Grid>
           }
-          {accountsToShow.map(({ address }, index) => (
+          {(sortedAccountsRef.current ?? accountsToShow).map(({ address }, index) => (
             <Grid container item key={index} sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, height: '37px', textAlign: 'center' }} xs={12}>
               <Grid alignItems='center' container item justifyContent='left' pl='15px' xs={8}>
                 <Identity address={address} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '14px' }} subIdOnly />
@@ -130,3 +157,5 @@ export default function AccountsTable ({ accountTypeFilter, areAllCheck, label, 
     </Grid>
   );
 }
+
+export default React.memo(AccountsTable);

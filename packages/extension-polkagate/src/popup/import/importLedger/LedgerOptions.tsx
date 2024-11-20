@@ -10,6 +10,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 
 import { PButton, VaadinIcon } from '../../../components';
 import { openOrFocusTab } from '../../../fullscreen/accountDetails/components/CommonTasks';
+import { Title } from '../../../fullscreen/sendFund/InputPage';
 import { useTranslation } from '../../../hooks';
 import LedgerOption from './LedgerOption';
 import { METADATA_DASHBOARD } from './partials';
@@ -34,16 +35,13 @@ export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
   return (
     <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
       <Grid container item sx={{ display: 'block', px: '10%' }}>
-        <Grid alignContent='center' alignItems='center' container item>
-          <Grid item sx={{ mr: '20px' }}>
-            <VaadinIcon icon='vaadin:wallet' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />
-          </Grid>
-          <Grid item>
-            <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-              {t('Attach ledger device')}
-            </Typography>
-          </Grid>
-        </Grid>
+        <Title
+          height='85px'
+          logo={
+            <VaadinIcon icon='vaadin:wallet' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
+          }
+          text= {t('Attach ledger device')}
+        />
         <Typography fontSize='14px' py='20px' width='100%'>
           {t('Choose the type of Ledger connection. The Polkadot Generic app is new and recommended. However, if you already have assets on a Ledger device for chains other than Polkadot and its asset hub, you can use the Ledger Legacy apps. In this case, you will need to migrate your assets to the Polkadot Generic app using the Migration app, provided that your desired chain has upgraded its runtime and is compatible with the Polkadot Generic app. To find out if your chain is upgraded, check: ')}
           {
@@ -59,19 +57,19 @@ export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
         </Typography>
         <Grid container item justifyContent='space-between' mb='25px' mt='10px' rowGap='15px'>
           <LedgerOption
-            logo={<VaadinIcon icon='vaadin:file-tree' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />}
+            logo={<VaadinIcon icon='vaadin:file-tree' style={{ color: `${theme.palette.text.primary}`, height: '30px', width: '30px' }} />}
             onClick={onPolkadotGeneric}
             subTitle={t('It can be used with all supported Polkadot chains and parachains.')}
             title={t('Polkadot Generic app')}
           />
           <LedgerOption
-            logo={<VaadinIcon icon='vaadin:automation' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />}
+            logo={<VaadinIcon icon='vaadin:automation' style={{ color: `${theme.palette.text.primary}`, height: '30px', width: '30px' }} />}
             onClick={onMigration}
             subTitle={t('Migrate your accounts from the Legacy apps to the Polkadot Generic app.')}
             title={t('Migration app')}
           />
           <LedgerOption
-            logo={<VaadinIcon icon='vaadin:form' style={{ color: `${theme.palette.text.primary}`, height: '40px', width: '40px' }} />}
+            logo={<VaadinIcon icon='vaadin:form' style={{ color: `${theme.palette.text.primary}`, height: '30px', width: '30px' }} />}
             onClick={onPolkadotLegacy}
             subTitle={t('Each chain and parachain may have a dedicated app on the Ledger device, but this is now deprecated as chains upgrade to align with the Polkadot generic app.')}
             title={t('Legacy apps')}

@@ -6,7 +6,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
 
-import { faHand, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHandDots, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
@@ -200,7 +200,7 @@ export default function Index(): React.ReactElement {
   }, [redeemable]);
 
   const ToBeReleased = () => (
-    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.main', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.light', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '10px', width: '93%' }}>
       <Grid item pt='10px' xs={12}>
         {t('To be released')}
       </Grid>
@@ -336,7 +336,7 @@ export default function Index(): React.ReactElement {
           />
         </Grid>
       </Container>
-      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '3px', width: '92%' }}>
+      <Grid container justifyContent='space-around' sx={{ borderTop: '2px solid', borderTopColor: 'secondary.light', bottom: 0, left: '4%', position: 'absolute', pt: '5px', pb: '3px', width: '92%' }}>
         <HorizontalMenuItem
           divider
           icon={
@@ -344,7 +344,7 @@ export default function Index(): React.ReactElement {
               color={`${theme.palette.text.primary}`}
               icon={faPlus}
               shake={shake}
-              style={{ height: '34px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px', marginBottom: '-4px' }}
+              style={{ height: '34px', marginBottom: '-4px', stroke: `${theme.palette.text.primary}`, strokeWidth: 30, width: '40px' }}
             />
           }
           onClick={goToStake}
@@ -356,7 +356,7 @@ export default function Index(): React.ReactElement {
             <FontAwesomeIcon
               bounce={staked !== undefined && !staked.isZero() && (pool?.bondedPool?.state as unknown as string) !== 'Destroying' && pool?.stashIdAccount?.nominators?.length === 0} // do when has stake but does not nominations
               color={`${theme.palette.text.primary}`}
-              icon={faHand}
+              icon={faHandDots}
               size='lg'
             />
           }

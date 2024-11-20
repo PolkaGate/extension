@@ -162,7 +162,7 @@ export default function AccountDetails (): React.ReactElement {
     <Motion>
       <HeaderBrand
         _centerItem={
-          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={40} showSocial={false} style={{ fontSize: '32px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
+          <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={35} showSocial={false} style={{ fontSize: '20px', height: '40px', lineHeight: 'initial', maxWidth: '65%' }} subIdOnly />
         }
         address={address}
         fullScreenURL={`/accountfs/${address}/0`}
@@ -198,7 +198,7 @@ export default function AccountDetails (): React.ReactElement {
             />
           </Grid>
         </Grid>
-        <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '9px' }} />
+        <Divider sx={{ bgcolor: 'secondary.light', height: '2px', mt: '9px' }} />
         {!showStakingOptions
           ? <Grid item pt='10px' sx={{ height: window.innerHeight - 208, overflowY: 'scroll' }} xs>
             {assetId !== undefined
@@ -246,7 +246,7 @@ export default function AccountDetails (): React.ReactElement {
           </Grid>
           : <StakingOption balance={balances} setShowStakingOptions={setShowStakingOptions} showStakingOptions={showStakingOptions} />
         }
-        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.main', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
+        <Grid container justifyContent='space-around' sx={{ bgcolor: 'background.default', borderTop: '2px solid', borderTopColor: 'secondary.light', bottom: 0, height: '62px', left: '4%', position: 'absolute', pt: '7px', pb: '5px', width: '92%' }}>
           <HorizontalMenuItem
             divider
             icon={

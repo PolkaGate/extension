@@ -73,8 +73,8 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
   }, [api, validatorInfo, validatorsIdentities]);
 
   const ValidatorInformation = () => (
-    <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.main', mb: '5px', pb: '2px' }}>
+    <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', m: '20px auto', p: '10px', pb: '5px', width: '92%' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderBottom: '1px solid', borderColor: 'secondary.light', mb: '5px', pb: '2px' }}>
         <Grid item lineHeight={1} maxWidth='85%' width='fit-content'>
           <Identity accountInfo={accountInfo} address={validatorInfo?.accountId} api={api} chain={chain} formatted={validatorInfo?.accountId?.toString()} identiconSize={25} style={{ fontSize: '16px' }} withShortAddress />
         </Grid>
@@ -96,7 +96,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
         </Grid>
       </Grid>
       <Grid container item>
-        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
+        <Grid container direction='column' item sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='50%'>
           <Grid display='inline-flex' fontSize='12px' fontWeight={400} item>
             <Typography fontSize='12px' fontWeight={300} lineHeight='25px' pr='5px'>
               {t('Own')}:
@@ -169,16 +169,16 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
       label={label}
       style={{ margin: '20px auto', width: '92%' }}
     >
-      <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.main', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll' }}>
+      <Grid container direction='column' display='block' item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', maxHeight: parent.innerHeight * 1 / 2, overflowY: 'scroll' }}>
         {sortedNominators?.length
           ? <>
-            <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
-              <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='50%'>
+            <Grid container item sx={{ '> :last-child': { border: 'none' }, borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>
+              <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='50%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
                   {t('Account')}
                 </Typography>
               </Grid>
-              <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
+              <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='30%'>
                 <Typography fontSize='12px' fontWeight={300} lineHeight='30px'>
                   {t('Staked')}
                 </Typography>
@@ -190,11 +190,11 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
               </Grid>
             </Grid>
             {sortedNominators?.map(({ value, who }, index) => (
-              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.main', lineHeight: '40px' }}>
-                <Grid container item justifyContent='flex-start' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main', pl: '10px' }} width='50%'>
+              <Grid container item key={index} sx={{ '> :last-child': { border: 'none' }, bgcolor: index === myIndex ? 'rgba(153, 0, 79, 0.4)' : 'transparent', borderBottom: '1px solid', borderBottomColor: 'secondary.light', lineHeight: '40px' }}>
+                <Grid container item justifyContent='flex-start' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light', pl: '10px' }} width='50%'>
                   <Identity api={api} chain={chain} formatted={who.toString()} identiconSize={25} showShortAddress showSocial={false} style={{ fontSize: '16px' }} />
                 </Grid>
-                <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.main' }} width='30%'>
+                <Grid container item justifyContent='center' sx={{ borderRight: '1px solid', borderRightColor: 'secondary.light' }} width='30%'>
                   <ShowBalance
                     api={api}
                     balance={stakedValue(String(value))}
@@ -219,7 +219,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
   const page = (
     <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt={isFullscreen ? 0 : '46px'} sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
       <Grid container justifyContent='center' mb='20px'>
-        <Typography fontSize='28px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.main' }}>
+        <Typography fontSize='20px' fontWeight={400} lineHeight={1.4} sx={{ borderBottom: '2px solid', borderColor: 'secondary.light' }}>
           {t('Validator’s Info')}
         </Typography>
       </Grid>
@@ -232,17 +232,17 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
           p: 0,
           position: 'absolute',
           right: isFullscreen ? '35px' : undefined,
-          top: isFullscreen ? '35px' : '65px'
+          top: isFullscreen ? '30px' : '65px'
         }}
       >
-        <CloseIcon sx={{ color: 'text.primary', fontSize: 35 }} />
+        <CloseIcon sx={{ color: 'text.primary', fontSize: 30 }} />
       </IconButton>
     </Grid>
   );
 
   if (isFullscreen) {
     return (
-      <DraggableModal onClose={onClose} open={showValidatorInfo} px={0}>
+      <DraggableModal blurBackdrop onClose={onClose} open={showValidatorInfo} px={0}>
         {page}
       </DraggableModal>
     );

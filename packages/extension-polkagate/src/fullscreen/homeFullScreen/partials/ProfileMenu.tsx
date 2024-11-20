@@ -60,13 +60,15 @@ const InputBox = ({ addToNewProfile, editName, newName }: InputBoxProps) => {
 };
 
 interface AddProfileProps {
-  address: string | undefined
+  address: string | undefined;
   showName: boolean | undefined;
   setShowName: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  handleClose: () => void
+  handleClose: () => void;
+  closeParentMenu: () => void
+  extensionMode: boolean;
 }
 
-const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProps) => {
+const AddMenu = ({ address, closeParentMenu, extensionMode, handleClose, setShowName, showName }: AddProfileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { userDefinedProfiles } = useProfiles();
@@ -103,11 +105,12 @@ const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProp
     updateMeta(String(address), metaData)
       .then(() => {
         handleClose();
+        closeParentMenu();
       }).catch(console.error);
-  }, [account, address, handleClose]);
+  }, [account, address, closeParentMenu, handleClose]);
 
   return (
-    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
+    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: extensionMode ? '5px' : '10px' }}>
       {showName
         ? <InputBox
           addToNewProfile={addToNewProfile}
@@ -115,6 +118,7 @@ const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProp
           newName={newName}
         />
         : <MenuItem
+          fontSize={extensionMode ? '16px' : undefined}
           iconComponent={
             <VaadinIcon icon='vaadin:plus' style={{ color: theme.palette.text.primary, height: '20px' }} />
           }
@@ -123,10 +127,11 @@ const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProp
           withHoverEffect
         />
       }
-      <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px' }} />
+      <Divider sx={{ bgcolor: 'divider', height: '1px', my: extensionMode ? '3px' : '6px' }} />
       {userDefinedProfiles.length > 0
         ? userDefinedProfiles.map((profile) => (
           <MenuItem
+            fontSize={extensionMode ? '16px' : undefined}
             iconComponent={
               <VaadinIcon icon='vaadin:folder-open-o' style={{ color: theme.palette.text.primary, height: '20px' }} />
             }
@@ -139,6 +144,7 @@ const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProp
         ))
         : <MenuItem
           disabled
+          fontSize={extensionMode ? '16px' : undefined}
           iconComponent={
             <VaadinIcon icon='vaadin:minus' style={{ color: `${theme.palette.text.disabled}`, height: '20px' }} />
           }
@@ -153,18 +159,20 @@ const AddMenu = ({ address, handleClose, setShowName, showName }: AddProfileProp
 interface RemoveProfileProps {
   profileNames: string[] | undefined;
   onRemove: (profile: string) => void;
+  extensionMode: boolean;
 }
 
-const RemoveMenu = ({ onRemove, profileNames }: RemoveProfileProps) => {
+const RemoveMenu = ({ extensionMode, onRemove, profileNames }: RemoveProfileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: '10px' }}>
+    <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', minWidth: '300px', p: extensionMode ? '5px' : '10px' }}>
       {profileNames?.map((profileName) => (
         // eslint-disable-next-line react/jsx-no-bind
         <Grid component='button' container item key={profileName} onClick={() => onRemove(profileName)} sx={{ '> div div:last-child p': { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
           <MenuItem
+            fontSize={extensionMode ? '16px' : undefined}
             iconComponent={
               <VaadinIcon icon='vaadin:folder-remove' style={{ color: theme.palette.text.primary, height: '20px' }} />
             }
@@ -206,8 +214,7 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
   const handleClose = useCallback(() => {
     setAnchorEl(null);
     setShowName(false);
-    closeParentMenu();
-  }, [closeParentMenu]);
+  }, []);
 
   const onAddClick = useCallback((event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -240,14 +247,18 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
 
         if (isLastAccountWithTheProfile && currentProfile === profileToBeRemoved) {
           setStorage('profile', PROFILE_TAGS.ALL)
-            .then(handleClose)
+            .then(() => {
+              handleClose();
+              closeParentMenu();
+            })
             .catch(console.error);
         } else {
           handleClose();
+          closeParentMenu();
         }
       })
       .catch(console.error);
-  }, [profileNames, accounts, address, currentProfile, handleClose]);
+  }, [address, profileNames, accounts, currentProfile, handleClose, closeParentMenu]);
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover 2' : undefined;
@@ -256,6 +267,7 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
     <>
       <Grid aria-describedby={id} component='button' container item onClick={onAddClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
         <MenuItem
+          fontSize={isExtensionMode ? '16px' : undefined}
           iconComponent={
             <VaadinIcon icon='vaadin:folder-add' style={{ color: `${theme.palette.text.primary}`, height: '20px' }} />
           }
@@ -284,6 +296,7 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
       {isExtensionMode && profileNames && profileNames.length > 0 &&
         <Grid aria-describedby={id} component='button' container item onClick={onRemoveMenuClick} sx={{ bgcolor: 'transparent', border: 'none', color: theme.palette.text.primary, height: 'fit-content', p: 0, width: 'inherit' }}>
           <MenuItem
+            fontSize='16px'
             iconComponent={
               <VaadinIcon icon='vaadin:folder-remove' style={{ color: theme.palette.text.primary, height: '20px' }} />
             }
@@ -293,7 +306,6 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
           />
         </Grid>
       }
-      {isExtensionMode && <Divider sx={{ bgcolor: 'divider', height: '1px', my: '6px', width: '100%' }} />}
       <Popover
         PaperProps={{
           sx: {
@@ -322,12 +334,15 @@ function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<P
         {status === STATUS.SHOW_ADD &&
           <AddMenu
             address={address}
+            closeParentMenu={closeParentMenu}
+            extensionMode={isExtensionMode}
             handleClose={handleClose}
             setShowName={setShowName}
             showName={showName}
           />}
         {status === STATUS.SHOW_REMOVE &&
           <RemoveMenu
+            extensionMode={isExtensionMode}
             onRemove={onRemove}
             profileNames={profileNames}
           />

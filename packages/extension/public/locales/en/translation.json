@@ -751,7 +751,6 @@
   "Date of initiation": "",
   "Releasing deposit": "",
   "Initiation Deposit": "",
-  "Deposit they made": "",
   "Initiation recovery deposit to be released": "",
   "For those funds that are available to withdraw later, you need to come back to this page to complete the process.": "",
   "Modify your account recoverability": "",
@@ -1460,5 +1459,13 @@
   "The chosen blockchain does not support NFTs/Uniques.": "",
   "Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.": "",
   "APY": "",
-  "Unable to fetch NFT/Unique items!": ""
+  "Unable to fetch NFT/Unique items!": "",
+  "Referenda Id": "",
+  "Track Id": "",
+  "Select the currency for your balance": "",
+  "available": "",
+  "Menu options": "",
+  "PolkaGate logo": "",
+  "Total balance": "",
+  "Deposit they made": ""
 }

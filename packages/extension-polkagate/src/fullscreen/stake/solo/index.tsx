@@ -118,7 +118,7 @@ export default function Index (): React.ReactElement {
           <Bread />
           <Title
             height='85px'
-            logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '62px' }} />}
+            logo={<BoyIcon sx={{ color: 'text.primary', fontSize: '50px' }} />}
             ml='-25px'
             padding='0px'
             spacing={0}

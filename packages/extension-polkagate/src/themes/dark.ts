@@ -32,7 +32,7 @@ export const darkTheme: ThemeOptions = {
   palette: {
     mode: 'dark',
     primary: { main: '#99004F', light: '#838383', contrastText: '#212121' },
-    secondary: { main: '#BA2882', light: '#BA2682', contrastText: '#747474' },
+    secondary: { main: '#BA2882', light: '#8D94A4', contrastText: '#747474' },
     support: { main: '#BCE2DB', contrastText: '#008080' },
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
@@ -42,7 +42,7 @@ export const darkTheme: ThemeOptions = {
     backgroundFL: { primary: '#000000', secondary: '#171717' },
     text: { primary: '#D5D5D5', secondary: '#000000', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
-    success: { main: '#1F7720', light: '#46890C' },
+    success: { main: '#1F7720', light: '#46890C', contrastText: '#2ECC71' },
     warning: { main: '#FF002B' },
     divider: 'rgba(255, 255, 255, 0.1)'
   },

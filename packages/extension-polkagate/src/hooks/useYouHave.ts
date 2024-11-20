@@ -10,6 +10,7 @@ import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
 export interface YouHaveType {
+  available: number;
   change: number;
   date: number;
   portfolio: number;
@@ -45,8 +46,9 @@ export default function useYouHave (): YouHaveType | undefined | null {
       return undefined;
     }
 
-    let totalPrice = 0;
-    let totalBeforeChange = 0;
+    let portfolio = 0;
+    let available = 0;
+    let change = 0;
     const balances = accountsAssets.balances;
     const date = Math.min(accountsAssets.timeStamp, pricesInCurrencies.date);
 
@@ -56,14 +58,16 @@ export default function useYouHave (): YouHaveType | undefined | null {
           const tokenValue = pricesInCurrencies.prices[asset.priceId]?.value ?? 0;
           const tokenPriceChange = pricesInCurrencies.prices[asset.priceId]?.change ?? 0;
           const currentAssetPrice = calcPrice(tokenValue, asset.totalBalance, asset.decimal);
+          const currentAvailableAssetPrice = calcPrice(tokenValue, asset.availableBalance, asset.decimal);
 
-          totalPrice += currentAssetPrice;
-          totalBeforeChange += calcChange(tokenValue, Number(asset.totalBalance) / (10 ** asset.decimal), tokenPriceChange);
+          portfolio += currentAssetPrice;
+          available += currentAvailableAssetPrice;
+          change += calcChange(tokenValue, Number(asset.totalBalance) / (10 ** asset.decimal), tokenPriceChange);
         });
       });
     });
 
-    return { change: totalBeforeChange, date, portfolio: totalPrice } as unknown as YouHaveType;
+    return { available, change, date, portfolio } as unknown as YouHaveType;
   }, [accountsAssets, pricesInCurrencies]);
 
   return youHave;

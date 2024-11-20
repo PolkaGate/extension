@@ -1,5 +1,68 @@
 # Change Log
 
+# [0.32.0](https://github.com/polkagate/extension/compare/v0.31.2...v0.32.0) (2024-11-18)
+
+
+### Features
+
+* add spanish language ([b837bad](https://github.com/polkagate/extension/commit/b837badf9730791e2996b22782d092ec64512e97))
+
+## [0.31.2](https://github.com/polkagate/extension/compare/v0.31.1...v0.31.2) (2024-11-18)
+
+
+### Bug Fixes
+
+* wrong currency code, style: fix transparency issue ([#1665](https://github.com/polkagate/extension/issues/1665)) ([4edaec6](https://github.com/polkagate/extension/commit/4edaec63560273dbc9724ead60d57ca5ce8522af))
+
+## [0.31.1](https://github.com/polkagate/extension/compare/v0.31.0...v0.31.1) (2024-11-17)
+
+
+### Bug Fixes
+
+* checkmark position issue ([90f912e](https://github.com/polkagate/extension/commit/90f912e9564302425e7bb950ca18cec23c53c1e7))
+
+# [0.31.0](https://github.com/polkagate/extension/compare/v0.30.2...v0.31.0) (2024-11-17)
+
+
+### Features
+
+* sort the already authorized accounts to the bottom of the list to easier auth the unauthorized accounts ([#1662](https://github.com/polkagate/extension/issues/1662)) ([8f0fc1d](https://github.com/polkagate/extension/commit/8f0fc1d809589b61f691ccc385ed7a436bf1538f))
+
+## [0.30.2](https://github.com/polkagate/extension/compare/v0.30.1...v0.30.2) (2024-11-17)
+
+
+### Bug Fixes
+
+* scroll profiles issue and right arrow displaying ([#1661](https://github.com/polkagate/extension/issues/1661)) ([bcf06ab](https://github.com/polkagate/extension/commit/bcf06ab3344605a463e296ddd6d004447d466bbe))
+
+## [0.30.1](https://github.com/polkagate/extension/compare/v0.30.0...v0.30.1) (2024-11-17)
+
+
+### Bug Fixes
+
+* incorporate era length which may be less than a day for some chains while calc a validators APY ([#1659](https://github.com/polkagate/extension/issues/1659)) ([b700e65](https://github.com/polkagate/extension/commit/b700e6531bf458681cf101db15a3e3bfd8d4a35d))
+
+# [0.30.0](https://github.com/polkagate/extension/compare/v0.29.1...v0.30.0) (2024-11-16)
+
+
+### Features
+
+* new you have (Portfolio) for Extension mode ([#1655](https://github.com/polkagate/extension/issues/1655)) ([013f454](https://github.com/polkagate/extension/commit/013f4548db9a2f5181a5f5aa1cb07fe77034f5c8))
+
+## [0.29.1](https://github.com/polkagate/extension/compare/v0.29.0...v0.29.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* adjust width in HEADER_COMPONENT_STYLE ([07d2d09](https://github.com/polkagate/extension/commit/07d2d0945159a617ddfd9d2252669f91fd01ec42))
+
+# [0.29.0](https://github.com/polkagate/extension/compare/v0.28.0...v0.29.0) (2024-11-12)
+
+
+### Features
+
+* support governance tx history ([#1630](https://github.com/polkagate/extension/issues/1630)) ([4044d3b](https://github.com/polkagate/extension/commit/4044d3b83a268ce2af7da4f42323cc866d477e19))
+
 # [0.28.0](https://github.com/polkagate/extension/compare/v0.27.0...v0.28.0) (2024-11-11)
 
 

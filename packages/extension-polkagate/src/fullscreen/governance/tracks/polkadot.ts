@@ -127,6 +127,12 @@ export const polkadot: Record<string, TrackInfo[]> = {
       text: 'Origin able to dispatch a whitelisted call'
     },
     {
+      id: 2,
+      name: 'wish_for_change',
+      origin: { Origins: 'WishForChange' },
+      text: 'Origin for signaling that the network wishes for some change'
+    },
+    {
       id: 10,
       name: 'staking_admin',
       origin: { Origins: 'StakingAdmin' },

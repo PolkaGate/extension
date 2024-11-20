@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
 
 import { ReferendaContext, Warning } from '../../components';
-import { useDecidingCount, useFullscreen, useInfo, useTracks, useTranslation } from '../../hooks';
+import { useDecidingCount, useFullscreen, useInfo, useManifest, useTracks, useTranslation } from '../../hooks';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
 import HorizontalWaiting from './components/HorizontalWaiting';
 import { getAllVotes } from './post/myVote/util';
@@ -35,6 +35,7 @@ export default function Governance (): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
   const { t } = useTranslation();
+  const manifest = useManifest();
   const { state } = useLocation() as unknown as {state: {selectedSubMenu?: string}};
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
 
@@ -57,27 +58,11 @@ export default function Governance (): React.ReactElement {
   const [myVotedReferendaIndexes, setMyVotedReferendaIndexes] = useState<number[] | null>();
   const [fellowships, setFellowships] = useState<Fellowship[] | null>();
   const [notSupportedChain, setNotSupportedChain] = useState<boolean>();
-  const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const notSupported = useMemo(() => chain?.genesisHash && !(GOVERNANCE_CHAINS.includes(chain.genesisHash ?? '')), [chain?.genesisHash]);
 
-  const fetchJson = () => {
-    fetch('./manifest.json')
-      .then((response) => {
-        return response.json();
-      }).then((data: chrome.runtime.Manifest) => {
-        setManifest(data);
-      }).catch((e: Error) => {
-        console.log(e.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchJson();
-  }, []);
-
-  const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_'))?.[0]?.toNumber()!;
+  const referendaTrackId = tracks?.find((t) => String(t[1].name) === selectedSubMenu.toLowerCase().replaceAll(' ', '_'))?.[0]?.toNumber();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const currentTrack = useMemo(() => {
     if (!tracks && !fellowshipTracks) {
@@ -86,7 +71,7 @@ export default function Governance (): React.ReactElement {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return (tracks || []).concat(fellowshipTracks || []).find((t) =>
-      String(t[1].name) === selectedSubMenu.toLowerCase().replace(' ', '_') ||
+      String(t[1].name) === selectedSubMenu.toLowerCase().replaceAll(' ', '_') ||
       String(t[1].name) === selectedSubMenu.toLowerCase() // fellowship tracks have no underscore!
     );
   }, [fellowshipTracks, selectedSubMenu, tracks]);
@@ -212,9 +197,6 @@ export default function Governance (): React.ReactElement {
       return;
     }
 
-    fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
-    setReferenda(refsContext.refs?.[_key]);
-
     async function fetchRef (key: string) {
       if (!chainName) {
         return;
@@ -227,7 +209,7 @@ export default function Governance (): React.ReactElement {
       // Reset referenda list on menu change
       if (isSubMenuChanged || isTopMenuChanged) {
         // setReferenda(undefined);
-        // setFilteredReferenda(undefined);
+        setFilteredReferenda(undefined);
         list = [];
         pageTrackRef.current.subMenu = selectedSubMenu; // Update the ref with new values
         pageTrackRef.current.page = 1;
@@ -293,6 +275,9 @@ export default function Governance (): React.ReactElement {
 
       handleSettingReferenda(key, concatenated);
     }
+
+    fetchRef(_key).then(() => setIsFetching(false)).catch(console.error);
+    setReferenda(refsContext.refs?.[_key]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addFellowshipOriginsFromSb, chainName, fellowshipTracks, _key, getMore, isSubMenuChanged, isTopMenuChanged, referendaTrackId, selectedSubMenu, topMenu, tracks]);
 
@@ -381,13 +366,11 @@ export default function Governance (): React.ReactElement {
             decidingCounts={decidingCounts}
             menuOpen={menuOpen}
             setMenuOpen={setMenuOpen}
-            // @ts-ignore
             setSelectedSubMenu={setSelectedSubMenu}
           />
           <Container disableGutters sx={{ maxWidth: 'inherit' }}>
             <Bread
               address={address}
-              // @ts-ignore
               setSelectedSubMenu={setSelectedSubMenu}
               subMenu={selectedSubMenu}
               // @ts-ignore

@@ -25,7 +25,7 @@ interface Props {
   index: number;
 }
 
-export default function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { alerts, notify } = useAlerts();
@@ -80,7 +80,11 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
 
-    watchStorage('profile', setSelectedProfile).catch(console.error);
+    const unsubscribe = watchStorage('profile', setSelectedProfile);
+
+    return () => {
+      unsubscribe();
+    };
   }, [setSelectedProfile, t]);
 
   return (
@@ -103,12 +107,15 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           '&:hover': {
             boxShadow: shadowOnHover
           },
-          bgcolor: getProfileColor(index, theme) || 'background.paper',
-          borderRadius: '0 0 12px 12px',
+          border: 2,
+          borderColor: getProfileColor(index, theme) || 'background.paper',
+          borderRadius: '15px',
           boxShadow: shadow,
           cursor: 'pointer',
           flexShrink: 0,
           minWidth: '100px',
+          mr: '5px',
+          mt: '2px',
           opacity: isDarkMode ? (visibleContent ? 1 : 0.3) : undefined,
           position: 'relative',
           transform: hideCard ? `translateY(-${HIDDEN_PERCENT})` : undefined,
@@ -118,9 +125,9 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
           width: 'fit-content'
         }}
       >
-        <VaadinIcon icon={'vaadin:check'} style={{ height: '13px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
+        <VaadinIcon icon={'vaadin:check'} style={{ height: '12px', visibility: isSelected ? 'visible' : 'hidden', width: '15px' }} />
         <Typography
-          color={'text.primary'} display='block' fontSize='16px' fontWeight={isSelected ? 500 : 400}
+          color={'text.primary'} display='block' fontSize='16px' fontWeight={400}
           sx={{
             maxWidth: '100px',
             overflow: 'hidden',
@@ -145,3 +152,5 @@ export default function ProfileTabFullScreen ({ index, isHovered, orderedAccount
     </Infotip2>
   );
 }
+
+export default React.memo(ProfileTabFullScreen);

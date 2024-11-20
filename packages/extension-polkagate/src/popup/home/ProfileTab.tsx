@@ -25,7 +25,7 @@ interface Props {
 const COLLAPSED_SIZE = '20px';
 const HIDDEN_PERCENT = '50%';
 
-export default function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
+function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -75,7 +75,7 @@ export default function ProfileTab ({ index, isContainerHovered, isSelected, ord
   const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
-    <Grid container item sx={{ transform: !isContainerHovered && !isSelected ? `translateY(${HIDDEN_PERCENT})` : undefined, transition: 'transform 0.2s', width: 'fit-content' }}>
+    <Grid container item sx={{ transform: !isContainerHovered && !isSelected ? `translateY(${HIDDEN_PERCENT})` : undefined, transition: 'transform 0.75s', width: 'fit-content' }}>
       <Collapse
         collapsedSize={COLLAPSED_SIZE}
         in={visibleContent}
@@ -85,24 +85,28 @@ export default function ProfileTab ({ index, isContainerHovered, isSelected, ord
         orientation='horizontal'
         sx={{
           '&:hover': { boxShadow: shadowOnHover },
-          border:1,
+          border: 2,
           borderColor: getProfileColor(index, theme) || 'background.paper',
           borderRadius: '10px',
           boxShadow: shadow,
           cursor: 'pointer',
           height: COLLAPSED_SIZE,
           my: '2px',
-          opacity: isDarkMode ? (isContainerHovered || isSelected ? 1 : 0.3) : undefined
+          opacity: isDarkMode ? (isContainerHovered || isSelected ? 1 : 0.3) : undefined,
+          transition: visibleContent ? 'width 0.3s, box-shadow 1s, opacity 1s' : 'width 0.3s, box-shadow 0.2s, opacity 1s'
         }}
       >
         <Grid alignItems='center' container item justifyContent='center' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', minWidth: '40px', px: '8px', width: 'fit-content' }}>
-          <Typography color='text.primary' fontSize='14px' fontWeight={isSelected ? 500 : 400} sx={{ maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', userSelect: 'none', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
+          <Typography color='text.primary' fontSize='14px' sx={{ lineHeight: 'normal', maxWidth: '100px', overflowX: 'hidden', textOverflow: 'ellipsis', transition: 'visibility 0.1s ease', userSelect: 'none', visibility: visibleContent ? 'visible' : 'hidden', whiteSpace: 'nowrap', width: 'fit-content' }} textAlign='center'>
             {t(text)}
           </Typography>
           {areAllHidden && isSelected &&
-            <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />}
+            <VaadinIcon icon='vaadin:eye-slash' style={{ display: 'block', height: '13px', marginLeft: '5px', width: '15px' }} />
+          }
         </Grid>
       </Collapse>
     </Grid>
   );
 }
+
+export default React.memo(ProfileTab);

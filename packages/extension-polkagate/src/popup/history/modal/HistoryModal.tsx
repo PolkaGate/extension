@@ -32,7 +32,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
   const [detailInfo, setDetailInfo] = useState<TransactionDetail>();
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const { grouped, tabHistory, transfersTx } = useTransactionHistory(address, tabIndex);
+  const { governanceTx, grouped, tabHistory, transfersTx } = useTransactionHistory(address, tabIndex);
 
   const backToAccount = useCallback(() => setDisplayPopup(undefined), [setDisplayPopup]);
 
@@ -71,12 +71,12 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                     />
                   ));
                 })}
-              {grouped === null && transfersTx.isFetching === false &&
+              {grouped === null && transfersTx.isFetching === false && governanceTx.isFetching === false &&
                 <Grid item mt='50px' mx='auto' textAlign='center'>
                   {t('Nothing to show')}
                 </Grid>
               }
-              {(grouped === undefined || (transfersTx.isFetching && tabHistory?.length === 0)) &&
+              {(grouped === undefined || ((transfersTx.isFetching || governanceTx.isFetching) && tabHistory?.length === 0)) &&
                <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
               }
               {grouped &&

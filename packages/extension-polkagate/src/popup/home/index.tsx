@@ -16,10 +16,8 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, Warning } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useAccountsOrder, useManifest, useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
+import { useAccountsOrder, useIsHideNumbers, useManifest, useMerkleScience, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { EXTENSION_NAME } from '../../util/constants';
 import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AccountsTree from './AccountsTree';
@@ -38,7 +36,8 @@ export default function Home (): React.ReactElement {
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
-  const [hideNumbers, setHideNumbers] = useState<boolean>();
+  const { isHideNumbers } = useIsHideNumbers();
+
   const [show, setShowAlert] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
   const [hasActiveRecovery, setHasActiveRecovery] = useState<string | null | undefined>(); // if exists, include the account address
@@ -95,16 +94,7 @@ export default function Home (): React.ReactElement {
           position: 'relative'
         }}
         >
-          <Grid padding='0px' textAlign='center' xs={12}>
-            <HeaderBrand
-              noBorder={theme.palette.mode === 'light'}
-              showBrand
-              showFullScreen
-              showMenu
-              style={{ '> div div:nth-child(3)': { minWidth: '23%' }, pr: '10px' }}
-              text={EXTENSION_NAME}
-            />
-          </Grid>
+          <YouHave />
           {hasActiveRecovery &&
             <Grid container item sx={{ '> div.belowInput .warningImage': { fontSize: '18px' }, '> div.belowInput.danger': { m: 0, position: 'relative' }, height: '55px', pt: '8px', width: '92%' }}>
               <Warning
@@ -118,14 +108,13 @@ export default function Home (): React.ReactElement {
               </Warning>
             </Grid>
           }
-          <YouHave hideNumbers={hideNumbers} setHideNumbers={setHideNumbers} />
           <ProfileTabs orderedAccounts={accountsOrder} />
-          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 220 : 165)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
+          <Container disableGutters sx={[{ m: 'auto', maxHeight: `${self.innerHeight - (hasActiveRecovery ? 252 : 197)}px`, overflowY: 'scroll', pb: '10px', px: '4%' }]}>
             {initialAccountList.map((json, index): React.ReactNode => (
               <AccountsTree
                 {...json}
                 address={json.address}
-                hideNumbers={hideNumbers}
+                hideNumbers={isHideNumbers}
                 key={index}
                 quickActionOpen={quickActionOpen}
                 setHasActiveRecovery={setHasActiveRecovery}

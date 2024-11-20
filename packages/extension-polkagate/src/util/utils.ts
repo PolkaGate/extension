@@ -56,6 +56,12 @@ export function countDecimalPlaces (n: number) {
   return match ? match[1].length : 0;
 }
 
+export function getDecimal (n: string | number, count = 2) {
+  const decimalPart = n.toString().split('.')[1];
+
+  return decimalPart ? decimalPart.slice(0, count) : 0;
+}
+
 export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
 
@@ -78,7 +84,7 @@ export function fixFloatingPoint (_number: number | string, decimalDigit = FLOAT
     }
   }
 
-  const fractionalDigits = sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
+  const fractionalDigits = decimalDigit === 0 ? '' : sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
 
   integerDigits = commify ? Number(integerDigits).toLocaleString() : integerDigits;
 

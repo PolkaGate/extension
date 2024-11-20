@@ -55,7 +55,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
   const ifOverSubscribed = isOversubscribed?.safe || isOversubscribed?.notSafe;
 
   return (
-    <Grid alignItems='center' container item p='3px 5px' rowGap={!allInOneRow ? '5px' : undefined} sx={{ borderRight: allInOneRow ? '1px solid' : undefined, borderRightColor: allInOneRow ? 'secondary.main' : undefined }} width={allInOneRow ? '94%' : '100%'}>
+    <Grid alignItems='center' container item p='3px 5px' rowGap={!allInOneRow ? '5px' : undefined} sx={{ borderRight: allInOneRow ? '1px solid' : undefined, borderRightColor: allInOneRow ? 'secondary.light' : undefined }} width={allInOneRow ? '94%' : '100%'}>
       {showCheckbox &&
         <Grid item width='5%'>
           <Checkbox2
@@ -65,7 +65,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
           />
         </Grid>
       }
-      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '30%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
+      <Grid container fontSize='14px' item maxWidth={showCheckbox ? '29%' : allInOneRow ? '50%' : '100%'} textAlign='left' width={allInOneRow ? 'fit-content' : '100%'}>
         <Identity
           accountInfo={accountInfo}
           api={api}

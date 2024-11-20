@@ -81,7 +81,7 @@ function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): Rea
           />
           <TaskButton
             icon={
-              <VaadinIcon icon='vaadin:sitemap' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px', transform: 'rotate(180deg)' }} />
+              <VaadinIcon icon='vaadin:cluster' style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
             }
             isSubMenu
             onClick={onImportProxiedFullScreen}

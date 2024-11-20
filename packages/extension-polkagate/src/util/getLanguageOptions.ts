@@ -25,6 +25,10 @@ export default function getLanguageOptions (): DropdownOption[] {
     {
       text: 'हिन्दी',
       value: 'hi'
+    },
+    {
+      text: 'español',
+      value: 'es'
     }
   ];
 }

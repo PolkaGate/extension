@@ -57,7 +57,7 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
             {t('Locked in Referenda')}
           </Grid>
           <Grid alignItems='flex-end' container direction='column' item sx={{ width: 'fit-content' }}>
-            <Grid item sx={{ fontSize: '20px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
+            <Grid item sx={{ fontSize: '18px', fontWeight: 400, lineHeight: '20px' }} textAlign='right'>
               <ShowBalance
                 api={api}
                 balance={totalLocked}
@@ -71,6 +71,7 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
               <FormatPrice
                 amount={totalLocked}
                 decimals={decimal}
+                fontSize='16px'
                 price={price}
               />
             </Grid>

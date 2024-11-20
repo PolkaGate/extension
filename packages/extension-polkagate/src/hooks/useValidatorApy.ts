@@ -3,37 +3,45 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Option, u128 } from '@polkadot/types';
-//@ts-ignore
+// @ts-ignore
 import type { PalletStakingActiveEraInfo, PalletStakingEraRewardPoints, PalletStakingValidatorPrefs, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { BN, BN_HUNDRED, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
+
+import { calcInterval } from './useBlockInterval';
 
 interface ValidatorEraInfo {
-  netReward: BN;
+  netReward: number;
   total: BN;
 }
 
 export default function useValidatorApy (api: ApiPromise | undefined, validatorAddress: string, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
+  const blockInterval = calcInterval(api);
+  const blockIntervalInSec = blockInterval.toNumber() / 1000;
 
   const calculateValidatorAPY = useCallback(async (validatorAddress: string) => {
     if (!api) {
       return;
     }
 
-    // Define the number of past eras you want to check (e.g., last 10 eras)
-    const eraDepth = 10;
     const decimal = new BN(10 ** api.registry.chainDecimals[0]);
-    let totalRewards = BN_ZERO;
+    let totalRewards = 0;
     let totalPoints = BN_ZERO;
     let validatorPoints = BN_ZERO;
     let totalStaked = BN_ZERO;
     const validatorEraInfo: ValidatorEraInfo[] = [];
 
+    const { eraLength } = await api.derive.session.progress();
+
     const currentEra = ((await api.query['staking']['activeEra']()) as Option<PalletStakingActiveEraInfo>).unwrap().index.toNumber();
     const { commission } = await api.query['staking']['validators'](validatorAddress) as PalletStakingValidatorPrefs;
+
+    const eraLengthInHrs = eraLength.toNumber() * blockIntervalInSec / 3600; // 3600 = 1hr in seconds
+    const eraPerDay = 24 / eraLengthInHrs;
+    const eraDepth = 10 * eraPerDay; // eras to calculate
 
     // Loop over the past eras to calculate rewards for the validator
     for (let eraIndex = currentEra - eraDepth; eraIndex <= currentEra; eraIndex++) {
@@ -61,7 +69,7 @@ export default function useValidatorApy (api: ApiPromise | undefined, validatorA
         totalPoints = totalPoints.add(eraPoints.total);
         const _eraReward = eraReward.unwrap();
 
-        netReward = _eraReward.mul(validatorPoints).div(totalPoints).muln(100 - (commission.toNumber() / 1e7)).div(BN_HUNDRED);
+        netReward = _eraReward.toNumber() * (validatorPoints.toNumber() / totalPoints.toNumber()) * (100 - (commission.toNumber() / 1e7)) / 100;
       } else {
         continue;
       }
@@ -92,7 +100,7 @@ export default function useValidatorApy (api: ApiPromise | undefined, validatorA
     }
 
     validatorEraInfo.forEach(({ netReward, total }) => {
-      totalRewards = totalRewards.add(netReward);
+      totalRewards += netReward;
       totalStaked = totalStaked.add(total);
     });
 
@@ -100,11 +108,8 @@ export default function useValidatorApy (api: ApiPromise | undefined, validatorA
 
     totalStaked = totalStaked.div(decimal).divn(actualDepth);
 
-    const dailyReward = totalRewards.div(decimal).divn(actualDepth);
-
-    // Calculate daily return as a fraction of the staked amount
-    const dailyReturn = dailyReward.toNumber() / totalStaked.toNumber();
-
+    const dailyReward = (totalRewards / decimal.toNumber() / actualDepth) * eraPerDay;
+    const dailyReturn = dailyReward / totalStaked.toNumber();
     const APY = (dailyReturn * 365 * 100).toFixed(2);
 
     if (!isFinite(+APY) || isNaN(+APY)) {
