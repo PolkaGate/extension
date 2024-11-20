@@ -1,27 +1,24 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { Option } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
+// @ts-ignore
+import type { PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { Proxy } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
-import { amountToHuman, amountToMachine } from '../util/utils';
 
-type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets';
-export type Reserved = { [key in Item]?: Balance };
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
+export type Reserved = { [key in Item]?: Balance | null };
 
-export default function useReservedDetails(address: string | undefined): Reserved {
+export default function useReservedDetails (address: string | undefined): Reserved {
   const { api, decimal, formatted, genesisHash } = useInfo(address);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
@@ -39,10 +36,10 @@ export default function useReservedDetails(address: string | undefined): Reserve
       return undefined;
     }
 
-    return api.createType('Balance', value);
+    return api.createType('Balance', value) as unknown as Balance;
   }, [api]);
 
-  const setValue = useCallback((item: string, value: BN | null | undefined) => {
+  const setValue = useCallback((item: Item, value: BN | null | undefined) => {
     setReserved((prev) => {
       const newState = { ...prev };
 
@@ -59,60 +56,73 @@ export default function useReservedDetails(address: string | undefined): Reserve
       return;
     }
 
-
     try {
       // TODO: needs to incorporate people chain?
       /** fetch identity  */
-      if (api.query?.identity?.identityOf) {
+      api.query?.['identity']?.['identityOf'](formatted).then(async (id) => {
         setValue('identity', undefined);
+        const basicDeposit = api.consts['identity']['basicDeposit'] as unknown as BN;
+        // const subAccountDeposit = api.consts['identity']['subAccountDeposit'] as unknown as BN;
 
-        api.query.identity.identityOf(formatted).then(async (id) => {
-          const basicDeposit = api.consts.identity.basicDeposit as unknown as BN;
-          const subAccountDeposit = api.consts.identity.subAccountDeposit as unknown as BN;
+        const subs = await api.query['identity']['subsOf'](formatted) as unknown as BN[];
 
-          const subs = await api.query.identity.subsOf(formatted);
+        const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
 
-          const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
+        const sum = (basicDeposit.add(subAccountsDeposit)) as unknown as BN;
 
-          const sum = (basicDeposit.add(subAccountsDeposit)) as unknown as BN;
-
+        if (!id.isEmpty) {
           setValue('identity', sum);
-        }).catch((error) => {
-          console.error(error);
+        } else {
           setValue('identity', null);
-        });
-      } else {
+        }
+      }).catch((error) => {
+        console.error(error);
         setValue('identity', null);
-      }
+      });
 
       /** fetch proxy  */
-      if (api.query?.proxy && PROXY_CHAINS.includes(genesisHash)) {
-        setValue('identity', undefined);
-
-        api.query.proxy.proxies(formatted).then((p) => {
-          const mayBeDeposit = p?.[1] as BN;
       if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
-        api.query['proxy']['proxies'](formatted).then((p) => {
-          const maybeDeposit = p?.[1] as BN;
+        setValue('proxy', undefined);
 
-          if (!maybeDeposit?.isZero()) {
-            setReserved((prev) => {
-              prev.proxy = toBalance(maybeDeposit);
+        api.query['proxy']['proxies'](formatted).then((proxyInformation) => {
+          type ProxiesInformation = [Proxy[], number];
 
-              return prev;
-            });
+          const proxiesInformation = proxyInformation.toPrimitive() as ProxiesInformation;
+
+          const maybeDeposit = proxiesInformation?.[1];
+
+          if (maybeDeposit !== 0) {
+            setValue('proxy', new BN(maybeDeposit));
+          } else {
+            setValue('proxy', null);
           }
-        }).catch(console.error);
+        }).catch((error) => {
+          console.error(error);
+          setValue('proxy', null);
+        });
       }
 
       /** fetch social recovery  */
-      if (api.query?.recovery) {
+      if (api.query?.['recovery']) {
         setValue('recovery', undefined);
 
-        api.query.recovery.recoverable(formatted).then((r) => {
-          const recoveryInfo = r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null;
+        api.query['recovery']['recoverable'](formatted).then((r) => {
+          interface RecoveryType {
+            delayPeriod: number;
+            deposit: number;
+            threshold: number;
+            friends: string[];
+          }
 
-          const recoveryDeposit = (recoveryInfo?.deposit as unknown as BN || BN_ZERO).add(activeLost?.deposit as unknown as BN || BN_ZERO);
+          const recoveryInfo = r.isEmpty ? null : r.toPrimitive() as unknown as RecoveryType;
+
+          if (!recoveryInfo) {
+            setValue('recovery', null);
+
+            return;
+          }
+
+          const recoveryDeposit = (new BN(recoveryInfo.deposit)).add(activeLost?.deposit || BN_ZERO);
 
           setValue('recovery', recoveryDeposit);
         }).catch((error) => {
@@ -124,14 +134,15 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch referenda  */
-      if (api.query?.referenda?.referendumInfoFor) {
+      if (api.query?.['referenda']?.['referendumInfoFor']) {
         setValue('referenda', undefined);
 
         let referendaDepositSum = BN_ZERO;
 
         api.query['referenda']['referendumInfoFor'].entries().then((referenda) => {
           referenda.forEach(([_, value]) => {
-            if (value.isSome) {
+            if (!value.isEmpty) {
+              // @ts-ignore
               const ref = (value.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
 
               if (!ref) {
@@ -170,18 +181,31 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch bounties  */
-      if (api.query?.bounties?.bounties) {
+      if (api.query?.['bounties']?.['bounties']) {
         setValue('bounty', undefined);
 
         let sum = BN_ZERO;
 
         api.query['bounties']['bounties'].entries().then((bounties) => {
           bounties.forEach(([_, value]) => {
-            if (value.isSome) {
-              const bounty = (value.unwrap());
+            if (!value.isEmpty && decimal) {
+              interface Bounty {
+                bond: number;
+                curatorDeposit: number;
+                fee: number;
+                proposer: string;
+                value: number;
+                status: {
+                  active: {
+                    curator: string;
+                    updateDue: number;
+                  };
+                };
+              }
+              const bounty = value.toPrimitive() as unknown as Bounty;
 
               if (bounty.proposer.toString() === formatted) {
-                sum = sum.add(bounty.curatorDeposit);
+                sum = sum.add(new BN(bounty.curatorDeposit));
               }
             }
           });
@@ -196,18 +220,18 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch indices  */
-      if (api.query?.indices?.accounts) {
+      if (api.query?.['indices']?.['accounts']) {
         setValue('index', undefined);
 
         let sum = BN_ZERO;
 
         api.query['indices']['accounts'].entries().then((indices) => {
           indices.forEach(([_, value]) => {
-            if (value.isSome) {
-              const [address, deposit, _status] = value.unwrap() as [AccountId, BN, boolean];
+            if (!value.isEmpty) {
+              const [address, deposit, _status] = value.toPrimitive() as [string, number, boolean];
 
               if (address.toString() === formatted) {
-                sum = sum.add(deposit);
+                sum = sum.add(new BN(deposit));
               }
             }
           });
@@ -222,18 +246,18 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch multisig  */
-      if (api.query?.multisig) {
+      if (api.query?.['multisig']) {
         setValue('multisig', undefined);
 
         let sum = BN_ZERO;
 
         api.query['multisig']['multisigs'].entries().then((multisigs) => {
           multisigs.forEach(([_, value]) => {
-            if (value.isSome) {
-              const { deposit, depositor } = value.unwrap() as PalletMultisigMultisig;
+            if (!value.isEmpty) {
+              const { deposit, depositor } = value.toPrimitive() as { deposit: number, depositor: string };
 
-              if (depositor.toString() === formatted) {
-                sum = sum.add(deposit);
+              if (depositor === formatted) {
+                sum = sum.add(new BN(deposit));
               }
             }
           });
@@ -248,23 +272,21 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch preImage  */
-      if (api.query?.preimage?.requestStatusFor) {
+      if (api.query?.['preimage']?.['requestStatusFor']) {
         setValue('preimage', undefined);
 
         let sum = BN_ZERO;
 
         api.query['preimage']['requestStatusFor'].entries().then((preimages) => {
           preimages.forEach(([_, value]) => {
-            if (value.isSome) {
-              const status = value.unwrap() as PalletPreimageRequestStatus;
+            if (!value.isEmpty) {
+              const status = value.toPrimitive() as { unrequested?: { len: number, ticket: [string, number] } };
 
-              const request = status.isUnrequested ? status.asUnrequested : undefined;
-
-              if (request) {
-                const [accountId, deposit] = request.ticket;
+              if (status.unrequested) {
+                const [accountId, deposit] = status.unrequested.ticket;
 
                 if (accountId.toString() === formatted) {
-                  sum = sum.add(deposit);
+                  sum = sum.add(new BN(deposit));
                 }
               }
             }
@@ -280,7 +302,7 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** Fetch society  */
-      if (api.query?.society) {
+      if (api.query?.['society']) {
         setValue('society', undefined);
 
         let sum = BN_ZERO;
@@ -313,20 +335,48 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** assets on asset hubs */
-      if (api.consts?.assets && ASSET_HUBS.includes(genesisHash)) {
+      if (api.consts?.['assets'] && ASSET_HUBS.includes(genesisHash)) {
         setValue('assets', undefined);
 
-        api.query.assets.asset.entries().then(async (assets) => {
-          const myAssets = assets.filter((asset) => asset[1].toHuman()['owner'] === formatted);
-          const myAssetsId = myAssets.map(([assetId, assetInfo]) => String(assetId.toHuman()[0]).replaceAll(',', ''));
-          const assetDeposit = api.consts.assets.assetDeposit as BN;
+        api.query['assets']['asset'].entries().then(async (assets) => {
+          interface Assets {
+            deposit: number;
+            owner: string;
+          }
 
-          const myAssetsMetadata = await Promise.all(myAssetsId.map((assetId) => api.query.assets.metadata(assetId)));
+          const myAssets = assets.filter(([_id, asset]) => {
+            if (asset.isEmpty || _id.isEmpty) {
+              return false;
+            }
+
+            const assetInPrimitive = asset.toPrimitive() as unknown as Assets;
+
+            return assetInPrimitive.owner === formatted;
+          });
+
+          if (myAssets.length === 0) {
+            setValue('assets', null);
+
+            return;
+          }
+
+          const myAssetsId = myAssets.map(([assetId, _]) => {
+            const assetIdInHuman = assetId.toHuman() as string[];
+
+            return assetIdInHuman[0].replaceAll(',', '');
+          });
+          const assetDeposit = api.consts['assets']['assetDeposit'] as unknown as BN;
+
+          interface AssetMetadata {
+            decimals: number;
+            deposit: number;
+            isFrozen: boolean;
+          }
+
+          const myAssetsMetadata = await Promise.all(myAssetsId.map((assetId) => api.query['assets']['metadata'](assetId))) as unknown as (AssetMetadata | undefined)[];
 
           const totalAssetDeposit = myAssetsMetadata.reduce((acc, metadata) => {
-            const metaDeposit = metadata.deposit as BN;
-
-            return acc.add(metaDeposit);
+            return acc.add(metadata?.deposit ? new BN(metadata?.deposit) : BN_ZERO);
           }, BN_ZERO);
 
           const finalDeposit = totalAssetDeposit.add(assetDeposit.muln(myAssetsId.length));
@@ -341,64 +391,134 @@ export default function useReservedDetails(address: string | undefined): Reserve
       }
 
       /** nft */
-      if (api.query?.nfts) {
-        setValue('NFT', null);
+      // if (api.query?.['nfts']) {
+      //   setValue('NFT', undefined);
 
-        api.query.nfts.item.entries().then(async (nft) => {
+      //   api.query['nfts']['collection'].entries().then(async (collections) => {
+      //     interface Collection {
+      //       owner: string;
+      //       ownerDeposit: number;
+      //       items: number;
+      //       itemMetadatas: number;
+      //       itemConfigs: number;
+      //       attributes: number;
+      //     }
 
-          const myNFTs = nft.filter(([ntfId, nftInfo]) => String(nftInfo.toPrimitive().deposit.account) === formatted).map(([ntfId, nftInfo]) => [ntfId.toHuman(), nftInfo.toPrimitive()]);
-          const nftDepositRequests = myNFTs.map(([nftId, nftInfo]) => api.query.nfts.itemMetadataOf(...nftId));
-          const nftDepositAmount = (await Promise.all(nftDepositRequests)).map((deposit) => deposit.toPrimitive().deposit.amount);
+      //     const my = collections.filter(([_, collection]) => {
+      //       if (collection.isEmpty) {
+      //         return false;
+      //       }
 
-          const totalNftDeposits = nftDepositAmount.reduce((acc, deposit) => {
-            const depositAsBn = amountToMachine(String(deposit / (10 ** decimal)), decimal);
+      //       const collectionInPrimitive = collection.toPrimitive() as unknown as Collection;
 
-            return acc.add(depositAsBn);
-          }, BN_ZERO);
+      //       return collectionInPrimitive.owner === formatted;
+      //     });
 
-          const myNFTDeposits = myNFTs.map(([ntfId, nftInfo]) => nftInfo.deposit.amount as number);
-          const totalNFTDeposit = myNFTDeposits.reduce((acc, deposit) => {
-            const depositAsBn = amountToMachine(String(deposit / (10 ** decimal)), decimal);
+      //     const myCollections = my.map(([_, collection]) => collection.toPrimitive() as unknown as Collection);
 
-            return acc.add(depositAsBn);
-          }, BN_ZERO);
+      //     console.log('myCollections :::', my.map(([id, collection]) => [id.toHuman(), collection.toPrimitive() as unknown as Collection]));
 
-          const finalNFTDeposit = totalNFTDeposit.add(totalNftDeposits);
+      //     const totalCollectionDeposit = myCollections.reduce((acc, collectionInformation) => {
+      //       if (!collectionInformation.ownerDeposit) {
+      //         return acc.add(BN_ZERO);
+      //       }
 
-          setValue('NFT', finalNFTDeposit);
-        }).catch((error) => {
-          console.error(error);
-          setValue('NFT', null);
-        });
-      } else {
-        setValue('NFT', null);
-      }
+      //       return acc.add(new BN(collectionInformation.ownerDeposit));
+      //     }, BN_ZERO);
 
-      /** uniques_NFT */
-      if (api.query?.uniques) {
-        setValue('uniques_NFT', null);
+      //     // ATTRIBUTES
+      //     const attributeDepositBase = api.consts['nfts']['attributeDepositBase'] as unknown as BN;
+      //     const totalCollectionsAttribute = myCollections.reduce((acc, { attributes }) => {
+      //       return acc + attributes;
+      //     }, 0);
 
-        api.query.uniques.class.entries().then((classes) => {
-          const myClasses = classes.filter(([uniquesId, uniquesInfo]) => String(uniquesInfo.toPrimitive().owner) === formatted).map(([uniquesId, uniquesInfo]) => uniquesInfo.toPrimitive());
+      //     const totalAttributesDeposit = attributeDepositBase.muln(totalCollectionsAttribute);
 
-          const totalClassesDeposit = myClasses.reduce((acc, myClass) => {
-            const depositAsBn = amountToMachine(String(myClass.totalDeposit / (10 ** decimal)), decimal);
+      //     interface NFTInformation {
+      //       deposit: {
+      //         account: string;
+      //         amount: number;
+      //       },
+      //       owner: string;
+      //     }
 
-            return acc.add(depositAsBn);
-          }, BN_ZERO);
+      //     const nft = await api.query['nfts']['item'].entries();
 
-          setValue('uniques_NFT', totalClassesDeposit);
-        }).catch((error) => {
-          console.error(error);
-          setValue('uniques_NFT', null);
-        });
-      } else {
-        setValue('uniques_NFT', null);
-      }
+      //     const myNFTs = nft.filter(([nftId, nftInfo]) => {
+      //       if (nftInfo.isEmpty || nftId.isEmpty) {
+      //         return false;
+      //       }
+
+      //       const nftInformation = nftInfo.toPrimitive() as unknown as NFTInformation;
+
+      //       return nftInformation.deposit.account === formatted;
+      //     }).map(([id, nftInfo]) => {
+      //       const nftInformation = nftInfo.toPrimitive() as unknown as NFTInformation;
+      //       const nftId = id.toHuman() as [string, string]; // [collectionId, nftId]
+
+      //       nftId.forEach((value, index) => {
+      //         nftId[index] = value.replaceAll(/,/g, '');
+      //       });
+
+      //       return { nftId, nftInformation };
+      //     });
+
+      //     console.log('myNFTs :::', myNFTs);
+
+      //     const totalItemDeposit = myNFTs.reduce((acc, { nftInformation }) => {
+      //       return acc.add(new BN(nftInformation.deposit.amount));
+      //     }, BN_ZERO);
+
+      //     setValue('NFT', totalCollectionDeposit.add(totalItemDeposit).add(totalAttributesDeposit));
+      //   }).catch((error) => {
+      //     console.error(error);
+      //     setValue('NFT', null);
+      //   });
+      // } else {
+      //   setValue('NFT', null);
+      // }
+
+      /** uniques */
+      // if (api.query?.['uniques']) {
+      //   setValue('uniques', undefined);
+
+      //   interface Unique {
+      //     admin: string;
+      //     attributes: number;
+      //     freeHolding: boolean;
+      //     freezer: string;
+      //     isFrozen: boolean;
+      //     issuer: string;
+      //     itemMetadatas: number;
+      //     items: number;
+      //     owner: string;
+      //     totalDeposit: number;
+      //   }
+
+      //   api.query['uniques']['class'].entries().then((classes) => {
+      //     const myClasses = classes.filter(([_, uniqueInfo]) => {
+      //       const uniqueInfoInPrimitive = uniqueInfo.toPrimitive() as unknown as Unique;
+
+      //       return uniqueInfoInPrimitive.owner === formatted;
+      //     })
+      //       .map(([_, uniquesInfo]) => uniquesInfo.toPrimitive() as unknown as Unique);
+
+      //     console.log('myClasses:', myClasses);
+
+      //     const totalClassesDeposit = myClasses.reduce((acc, { totalDeposit }) => acc.add(new BN(totalDeposit)), BN_ZERO);
+
+      //     setValue('uniques', totalClassesDeposit);
+      //   }).catch((error) => {
+      //     console.error(error);
+      //     setValue('uniques', null);
+      //   });
+      // } else {
+      //   setValue('uniques', null);
+      // }
     } catch (e) {
-      console.error('Fatal error while fetching reserved details:', e)
+      console.error('Fatal error while fetching reserved details:', e);
     }
-  }, [activeLost?.deposit, api, formatted, genesisHash]);
+  }, [activeLost?.deposit, api, decimal, formatted, genesisHash, setValue]);
 
   useEffect(() => {
     setReserved({});
