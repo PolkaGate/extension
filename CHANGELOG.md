@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.32.1](https://github.com/polkagate/extension/compare/v0.32.0...v0.32.1) (2024-11-20)
+
+
+### Bug Fixes
+
+* dialog positioning issue ([5954fda](https://github.com/polkagate/extension/commit/5954fda8c216f2660b5fde02210ff7a10182601d))
+
 # [0.32.0](https://github.com/polkagate/extension/compare/v0.31.2...v0.32.0) (2024-11-18)
 
 
