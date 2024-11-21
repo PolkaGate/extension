@@ -3,19 +3,17 @@
 
 // @ts-nocheck
 
-import { createAssets } from '@polkagate/apps-config/assets';
-
-import { getSubstrateAddress } from '../utils';
+import { getSubstrateAddress } from '../../utils';
 // eslint-disable-next-line import/extensions
-import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
+import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 
-async function getAssets (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
+export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
-  const result = metadataFromApi(api);
+  const { metadata } = metadataFromApi(api);
 
-  postMessage(JSON.stringify(result));
+  postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', metadata }));
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
@@ -56,42 +54,10 @@ async function getAssets (addresses, assetsToBeFetched, chainName, userAddedEndp
 
       results[address]?.push(asset) ?? (results[address] = [asset]);
     } else {
-      console.log(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
+      console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
     }
   });
 
-  postMessage(JSON.stringify(results));
+  postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', results }));
   closeWebsockets(connections);
 }
-
-onmessage = async (e) => {
-  const { addresses, chainName, userAddedEndpoints } = e.data;
-
-  const assetsChains = createAssets();
-  const assetsToBeFetched = assetsChains[chainName];
-
-  /** if assetsToBeFetched === undefined then we don't fetch assets by default at first, but wil fetch them on-demand later in account details page*/
-  if (!assetsToBeFetched) {
-    console.info(`getAssetOnMultiAssetChain: No assets to be fetched on ${chainName}`);
-
-    return postMessage(undefined); // FIXME: if this happens, should be handled in caller
-  }
-
-  let tryCount = 1;
-
-  while (tryCount >= 1 && tryCount <= 5) {
-    try {
-      await getAssets(addresses, assetsToBeFetched, chainName, userAddedEndpoints);
-
-      tryCount = 0;
-
-      return;
-    } catch (error) {
-      console.error(`getAssetOnMultiAssetChain: Error while fetching assets on ${chainName}, ${5 - tryCount} times to retry`, error);
-
-      tryCount === 5 && postMessage(undefined);
-    }
-
-    tryCount++;
-  }
-};
