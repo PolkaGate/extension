@@ -20,9 +20,7 @@ export default function ShowValue ({ height = 20, unit, value, width = '90px' }:
   return (
     <>
       {value !== undefined
-        ? <>
-          {value}{' '}{unit}
-        </>
+        ? `${value} ${unit}`
         : <Skeleton
           animation='wave'
           height={height}

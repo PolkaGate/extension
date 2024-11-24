@@ -552,13 +552,17 @@ export const decodeHexValues = (obj: unknown) => {
     return obj;
   }
 
-  const objAsRecord = { ...obj } as Record<string, unknown>;
+  const objAsRecord = { ...obj } as Record<string, any>;
 
   Object.keys(objAsRecord).forEach((key) => {
     if (typeof objAsRecord[key] === 'string' && objAsRecord[key].startsWith('0x')) {
       objAsRecord[key] = hexToString(objAsRecord[key]);
     }
   });
+
+  if ('interior' in objAsRecord && 'x1' in objAsRecord['interior']) {
+    objAsRecord['interior'].x1 = [objAsRecord['interior'].x1];
+  }
 
   return objAsRecord;
 };
@@ -575,6 +579,8 @@ export const decodeMultiLocation = (hexString: HexString) => {
 
     return null;
   }
+
+  console.log('decodedMultiLocation :::', JSON.stringify(decodedMultiLocation));
 
   return decodeHexValues(decodedMultiLocation);
 };

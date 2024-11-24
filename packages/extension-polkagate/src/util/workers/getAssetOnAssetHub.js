@@ -59,13 +59,16 @@ async function getAssets (addresses, api, assets, chainName, results) {
       });
     }
   } catch (e) {
-    console.error('Something went wrong while fetching assets', e);
+    console.error('Something went wrong while fetching assets', chainName, e);
   }
 }
 
 // @ts-ignore
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
+
+  console.log('endpoints:', endpoints);
+
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);
