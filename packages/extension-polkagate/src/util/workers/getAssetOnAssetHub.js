@@ -67,8 +67,6 @@ async function getAssets (addresses, api, assets, chainName, results) {
 async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
 
-  console.log('endpoints:', endpoints);
-
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const result = metadataFromApi(api);

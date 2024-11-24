@@ -580,7 +580,5 @@ export const decodeMultiLocation = (hexString: HexString) => {
     return null;
   }
 
-  console.log('decodedMultiLocation :::', JSON.stringify(decodedMultiLocation));
-
   return decodeHexValues(decodedMultiLocation);
 };
