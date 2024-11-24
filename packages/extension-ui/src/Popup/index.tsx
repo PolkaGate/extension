@@ -1,6 +1,8 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
+
 import type { AccountJson, AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
 import type { AlertType, APIs, Fetching, LatestRefs, Prices, PricesInCurrencies, UserAddedChains } from '@polkadot/extension-polkagate/src/util/types';
@@ -117,6 +119,50 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
     master
   };
 }
+
+interface WrapWithErrorBoundaryProps {
+  children: React.ReactElement;
+  isExtensionMode: boolean;
+  trigger?: string;
+}
+
+const WrapWithErrorBoundary = React.memo(function WrapWithErrorBoundary ({ children, isExtensionMode, trigger }: WrapWithErrorBoundaryProps): React.ReactElement {
+  return (
+    <ErrorBoundary trigger={trigger}>
+      <>
+        {children}
+        {!isExtensionMode && <AlertBox />}
+      </>
+    </ErrorBoundary>
+  );
+});
+
+interface RootProps {
+  hasAuthRequest: boolean;
+  isExtensionMode: boolean;
+  hasMetaRequest: boolean;
+  hasSignRequest: boolean;
+}
+
+const Root = React.memo(function Root ({ hasAuthRequest, hasMetaRequest, hasSignRequest, isExtensionMode }: RootProps) {
+  return (
+    hasAuthRequest
+      ? <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='authorize'>
+        <Authorize />
+      </WrapWithErrorBoundary>
+      : hasMetaRequest
+        ? <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='metadata'>
+          <Metadata />
+        </WrapWithErrorBoundary>
+        : hasSignRequest
+          ? <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='signing'>
+            <Signing />
+          </WrapWithErrorBoundary>
+          : <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='accounts'>
+            <Home />
+          </WrapWithErrorBoundary>
+  );
+});
 
 export default function Popup (): React.ReactElement {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
@@ -284,25 +330,6 @@ export default function Popup (): React.ReactElement {
       .catch(console.error);
   }, [cameraOn]);
 
-  const wrapWithErrorBoundary = useCallback((component: React.ReactElement, trigger?: string): React.ReactElement => {
-    return <ErrorBoundary trigger={trigger}>
-      <>
-        {component}
-        {!isExtensionMode && <AlertBox />}
-      </>
-    </ErrorBoundary>;
-  }, [isExtensionMode]);
-
-  const Root = useCallback(() =>
-    authRequests?.length
-      ? wrapWithErrorBoundary(<Authorize />, 'authorize')
-      : metaRequests?.length
-        ? wrapWithErrorBoundary(<Metadata />, 'metadata')
-        : signRequests?.length
-          ? wrapWithErrorBoundary(<Signing />, 'signing')
-          : wrapWithErrorBoundary(<Home />, 'accounts')
-  , [authRequests?.length, metaRequests?.length, signRequests?.length, wrapWithErrorBoundary]);
-
   return (
     <AnimatePresence mode='wait'>
       <ExtensionLockProvider>
@@ -326,69 +353,309 @@ export default function Popup (): React.ReactElement {
                                         <SigningReqContext.Provider value={signRequests}>
                                           <UserAddedChainContext.Provider value={userAddedChainCtx}>
                                             <Switch>
-                                              <Route path='/addNewChain/'>{wrapWithErrorBoundary(<AddNewChain />, 'add-new-chain')}</Route>
-                                              <Route path='/account/:genesisHash/:address/'>{wrapWithErrorBoundary(<AccountEx />, 'account')}</Route>
-                                              <Route path='/account/create'>{wrapWithErrorBoundary(<CreateAccount />, 'account-creation')}</Route>
-                                              <Route path='/account/export-all'>{wrapWithErrorBoundary(<ExportAll />, 'export-all-address')}</Route>
-                                              <Route path='/account/import-ledger'>{wrapWithErrorBoundary(<ImportLedger />, 'import-ledger')}</Route>
-                                              <Route path='/account/import-seed'>{wrapWithErrorBoundary(<ImportSeed />, 'import-seed')}</Route>
-                                              <Route path='/account/import-raw-seed'>{wrapWithErrorBoundary(<ImportRawSeed />, 'import-raw-seed')}</Route>
-                                              <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
-                                              <Route path='/accountfs/:address/:paramAssetId'>{wrapWithErrorBoundary(<AccountFS />, 'account')}</Route>
-                                              <Route path='/auth-list/:id?'>{wrapWithErrorBoundary(<AuthList />, 'auth-list')}</Route>
-                                              <Route path='/crowdloans/:address'>{wrapWithErrorBoundary(<CrowdLoans />, 'crowdloans')}</Route>
-                                              <Route path='/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
-                                              <Route path='/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
-                                              <Route path='/derivefs/:address/'>{wrapWithErrorBoundary(<FullscreenDerive />, 'fullscreen-account-derive')}</Route>
-                                              <Route path='/export/:address'>{wrapWithErrorBoundary(<Export />, 'export-address')}</Route>
-                                              <Route path='/forget/:address/:isExternal'>{wrapWithErrorBoundary(<ForgetAccount />, 'forget-address')}</Route>
-                                              <Route path='/forgot-password'>{wrapWithErrorBoundary(<ForgotPassword />, 'forgot-password')}</Route>
-                                              <Route path='/reset-wallet'>{wrapWithErrorBoundary(<ResetWallet />, 'reset-wallet')}</Route>
-                                              <Route path='/fullscreenProxyManagement/:address/'>{wrapWithErrorBoundary(<FullScreenManageProxies />, 'fullscreen-proxy-management')}</Route>
-                                              <Route path='/governance/:address/:topMenu/:postId'>{wrapWithErrorBoundary(<ReferendumPost />, 'governance')}</Route>
-                                              <Route path='/governance/:address/:topMenu'>{wrapWithErrorBoundary(<Governance />, 'governance')}</Route>
-                                              <Route path='/history/:address'>{wrapWithErrorBoundary(<History />, 'history')}</Route>
-                                              <Route path='/import/add-watch-only'>{wrapWithErrorBoundary(<AddWatchOnly />, 'import-add-watch-only')}</Route>
-                                              <Route path='/import/add-watch-only-full-screen'>{wrapWithErrorBoundary(<AddWatchOnlyFullScreen />, 'import-add-watch-only-full-screen')}</Route>
-                                              <Route path='/import/attach-qr'>{wrapWithErrorBoundary(<AttachQR />, 'attach-qr')}</Route>
-                                              <Route path='/import/attach-qr-full-screen'>{wrapWithErrorBoundary(<AttachQrFullScreen />, 'attach-qr-full-screen')}</Route>
-                                              <Route path='/import/proxied'>{wrapWithErrorBoundary(<ImportProxied />, 'import-proxied')}</Route>
-                                              <Route path='/import/proxied-full-screen'>{wrapWithErrorBoundary(<ImportProxiedFullScreen />, 'import-add-watch-only-full-screen')}</Route>
-                                              <Route path='/login-password'>{wrapWithErrorBoundary(<LoginPassword />, 'manage-login-password')}</Route>
-                                              <Route path='/manageProxies/:address'>{wrapWithErrorBoundary(<ManageProxies />, 'manageProxies')}</Route>
-                                              <Route path='/manageIdentity/:address'>{wrapWithErrorBoundary(<ManageIdentity />, 'manage-identity')}</Route>
-                                              <Route path='/manageValidators/:address'>{wrapWithErrorBoundary(<ManageValidators />, 'manage-validators-fullscreen')}</Route>
-                                              <Route path='/managePoolValidators/:address'>{wrapWithErrorBoundary(<ManageValidatorsPoolfs />, 'manage-validators-fullscreen')}</Route>
-                                              <Route path='/nft/:address'>{wrapWithErrorBoundary(<NFTAlbum />, 'nft-album')}</Route>
-                                              <Route path='/onboarding'>{wrapWithErrorBoundary(<Onboarding />, 'onboarding')}</Route>
-                                              <Route path='/pool/create/:address'>{wrapWithErrorBoundary(<CreatePool />, 'pool-create')}</Route>
-                                              <Route path='/pool/join/:address'>{wrapWithErrorBoundary(<JoinPool />, 'pool-join')}</Route>
-                                              <Route path='/pool/stake/:address'>{wrapWithErrorBoundary(<PoolStake />, 'pool-stake')}</Route>
-                                              <Route path='/pool/myPool/:address'>{wrapWithErrorBoundary(<PoolInformation />, 'pool-poolInfromation')}</Route>
-                                              <Route path='/pool/nominations/:address'>{wrapWithErrorBoundary(<PoolNominations />, 'pool-nominations')}</Route>
-                                              <Route path='/pool/unstake/:address'>{wrapWithErrorBoundary(<PoolUnstake />, 'pool-unstake')}</Route>
-                                              <Route path='/pool/:address'>{wrapWithErrorBoundary(<Pool />, 'pool-staking')}</Route>
-                                              <Route path='/poolfs/:address'>{wrapWithErrorBoundary(<PoolFS />, 'pool-staking-fullscreen')}</Route>
-                                              <Route path='/rename/:address'>{wrapWithErrorBoundary(<Rename />, 'rename')}</Route>
-                                              <Route path='/receive/:address'>{wrapWithErrorBoundary(<Receive />, 'receive')}</Route>
-                                              <Route path='/send/:address/:assetId'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                                              <Route path='/send/:address'>{wrapWithErrorBoundary(<Send />, 'send')}</Route>
-                                              <Route path='/stake/:address'>{wrapWithErrorBoundary(<Stake />, 'stake')}</Route>
-                                              <Route path='/socialRecovery/:address/:closeRecovery'>{wrapWithErrorBoundary(<SocialRecovery />, 'social-recovery')}</Route>
-                                              <Route path='/solo/fastUnstake/:address'>{wrapWithErrorBoundary(<FastUnstake />, 'solo-fast-unstake')}</Route>
-                                              <Route path='/solo/nominations/:address'>{wrapWithErrorBoundary(<SoloNominations />, 'solo-nominations')}</Route>
-                                              <Route path='/solo/payout/:address'>{wrapWithErrorBoundary(<SoloPayout />, 'solo-payout')}</Route>
-                                              <Route path='/solo/restake/:address'>{wrapWithErrorBoundary(<SoloRestake />, 'solo-restake')}</Route>
-                                              <Route path='/solo/stake/:address'>{wrapWithErrorBoundary(<SoloStake />, 'solo-stake')}</Route>
-                                              <Route path='/solo/unstake/:address'>{wrapWithErrorBoundary(<SoloUnstake />, 'solo-unstake')}</Route>
-                                              <Route path='/solo/:address'>{wrapWithErrorBoundary(<Solo />, 'solo-staking')}</Route>
-                                              <Route path='/solofs/:address'>{wrapWithErrorBoundary(<SoloFS />, 'solo-staking-fullscreen')}</Route>
-                                              <Route path='/tuneup/:address'>{wrapWithErrorBoundary(<TuneUp />, 'tuneup')}</Route>
-                                              <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
-                                              <Route
-                                                exact
-                                                path='/'
-                                              >{Root}</Route>
+                                              <Route path='/addNewChain/'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='add-new-chain'>
+                                                  <AddNewChain />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/:genesisHash/:address/'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='account'>
+                                                  <AccountEx />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/create'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='account-creation'>
+                                                  <CreateAccount />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/export-all'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='export-all-address'>
+                                                  <ExportAll />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/import-ledger'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-ledger'>
+                                                  <ImportLedger />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/import-seed'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-seed'>
+                                                  <ImportSeed />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/import-raw-seed'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-raw-seed'>
+                                                  <ImportRawSeed />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/account/restore-json'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='restore-json'>
+                                                  <RestoreJson />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/accountfs/:address/:paramAssetId'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='account-full-screen'>
+                                                  <AccountFS />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/auth-list/:id?'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='auth-list'>
+                                                  <AuthList />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/crowdloans/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='crowdloans'>
+                                                  <CrowdLoans />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/derive/:address/locked'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='derived-address-locked'>
+                                                  <Derive isLocked />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/derive/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='derive-address'>
+                                                  <Derive />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/derivefs/:address/'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='fullscreen-account-derive'>
+                                                  <FullscreenDerive />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/export/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='export-address'>
+                                                  <Export />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/forget/:address/:isExternal'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='forget-address'>
+                                                  <ForgetAccount />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/forgot-password'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='forgot-password'>
+                                                  <ForgotPassword />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/reset-wallet'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='reset-wallet'>
+                                                  <ResetWallet />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/fullscreenProxyManagement/:address/'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='fullscreen-proxy-management'>
+                                                  <FullScreenManageProxies />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/governance/:address/:topMenu/:postId'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='governance-ref'>
+                                                  <ReferendumPost />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/governance/:address/:topMenu'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='signing'>
+                                                  <Governance />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/history/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='history'>
+                                                  <History />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/import/add-watch-only'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-add-watch-only'>
+                                                  <AddWatchOnly />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/import/add-watch-only-full-screen'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-add-watch-only-full-screen'>
+                                                  <AddWatchOnlyFullScreen />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/import/attach-qr'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='attach-qr'>
+                                                  <AttachQR />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/import/attach-qr-full-screen'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='attach-qr-full-screen'>
+                                                  <AttachQrFullScreen />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/import/proxied'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-proxied'>
+                                                  <ImportProxied />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/import/proxied-full-screen'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='import-proxied-full-screen'>
+                                                  <ImportProxiedFullScreen />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/login-password'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='manage-login-password'>
+                                                  <LoginPassword />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/manageProxies/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='manageProxies'>
+                                                  <ManageProxies />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/manageIdentity/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='manage-identity'>
+                                                  <ManageIdentity />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/manageValidators/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='manage-validators-fullscreen'>
+                                                  <ManageValidators />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/managePoolValidators/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='manage-pool-validators-fullscreen'>
+                                                  <ManageValidatorsPoolfs />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/nft/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='nft-album'>
+                                                  <NFTAlbum />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/onboarding'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='onboarding'>
+                                                  <Onboarding />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/create/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-create'>
+                                                  <CreatePool />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/join/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-join'>
+                                                  <JoinPool />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/stake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-stake'>
+                                                  <PoolStake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/myPool/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-information'>
+                                                  <PoolInformation />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/nominations/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-nominations'>
+                                                  <PoolNominations />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/unstake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-unstake'>
+                                                  <PoolUnstake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/pool/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-staking'>
+                                                  <Pool />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/poolfs/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='pool-staking-fullscreen'>
+                                                  <PoolFS />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/rename/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='rename'>
+                                                  <Rename />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/receive/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='sign-receiving'>
+                                                  <Receive />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/send/:address/:assetId'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='send-full-screen'>
+                                                  <Send />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/send/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='send'>
+                                                  <Send />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/stake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='stake'>
+                                                  <Stake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/socialRecovery/:address/:closeRecovery'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='social-recovery'>
+                                                  <SocialRecovery />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/fastUnstake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-fast-unstake'>
+                                                  <FastUnstake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/nominations/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-nominations'>
+                                                  <SoloNominations />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/payout/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-payout'>
+                                                  <SoloPayout />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/restake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-restake'>
+                                                  <SoloRestake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/stake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-stake'>
+                                                  <SoloStake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/unstake/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-unstake'>
+                                                  <SoloUnstake />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solo/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-staking'>
+                                                  <Solo />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/solofs/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='solo-staking-fullscreen'>
+                                                  <SoloFS />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path='/tuneup/:address'>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='tuneup'>
+                                                  <TuneUp />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>
+                                                <WrapWithErrorBoundary isExtensionMode={isExtensionMode} trigger='phishing-page-redirect'>
+                                                  <PhishingDetected />
+                                                </WrapWithErrorBoundary>
+                                              </Route>
+                                              <Route exact path='/'>
+                                                <Root
+                                                  hasAuthRequest={!!authRequests.length}
+                                                  hasMetaRequest={!!metaRequests.length}
+                                                  hasSignRequest={!!signRequests.length}
+                                                  isExtensionMode={isExtensionMode}
+                                                />
+                                              </Route>
                                             </Switch>
                                           </UserAddedChainContext.Provider>
                                         </SigningReqContext.Provider>
