@@ -19,6 +19,7 @@ import { useApiWithChain, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata } from '../../../messaging';
 import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
+import { addressToChain, getSubstrateAddress } from '../../../util/utils';
 
 export default function AddAddressOnly (): React.ReactElement {
   const { t } = useTranslation();
@@ -35,6 +36,12 @@ export default function AddAddressOnly (): React.ReactElement {
 
   const disabledItems = useMemo(() => (['Allow use on any chain']), []);
 
+  const getChain = useCallback((genesisHash: string) => {
+    getMetadata(genesisHash, true).then(setChain).catch((error): void => {
+      console.error(error);
+    });
+  }, []);
+
   useEffect(() => {
     cryptoWaitReady().then(() => {
       keyring.loadAll({ store: new AccountsStore() });
@@ -46,39 +53,48 @@ export default function AddAddressOnly (): React.ReactElement {
   }, [realAddress, chain]);
 
   useEffect(() => {
-    realAddress && api?.query['proxy']?.['proxies'](realAddress).then((proxies) => {
-      const fetchedProxyItems = (JSON.parse(JSON.stringify((proxies as unknown as unknown[])?.[0])) as Proxy[])?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+    if (realAddress) {
+      const addressChain = addressToChain(realAddress);
 
-      setProxies(fetchedProxyItems);
-    });
-  }, [api, chain, realAddress]);
+      addressChain?.genesisHash && getChain(addressChain.genesisHash);
+
+      api?.query['proxy']?.['proxies'](realAddress)
+        .then((proxies) => {
+          const fetchedProxyItems = (JSON.parse(JSON.stringify((proxies as unknown as unknown[])?.[0])) as Proxy[])?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+
+          setProxies(fetchedProxyItems);
+        })
+        .catch(console.error);
+    }
+  }, [api, getChain, realAddress]);
 
   const goHome = useCallback(() => onAction('/'), [onAction]);
+  const goToAccountDetail = useCallback((genesisHash: string, address: string) => onAction(`/account/${genesisHash}/${address}/`), [onAction]);
 
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 
   const onChangeGenesis = useCallback((genesisHash?: string | null): void => {
     setProxies(undefined);
-    genesisHash && getMetadata(genesisHash, true).then(setChain).catch((error): void => {
-      console.error(error);
-    });
-  }, []);
+    genesisHash && getChain(genesisHash);
+  }, [getChain]);
 
   const handleAdd = useCallback(() => {
     if (name && realAddress && chain?.genesisHash) {
       setIsBusy(true);
 
+      const substrateAddress = getSubstrateAddress(realAddress);
+
       createAccountExternal(name, realAddress, chain.genesisHash as HexString)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
-          goHome();
         })
+        .finally(() => goToAccountDetail(chain.genesisHash ?? '', substrateAddress ?? ''))
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, goHome, name, realAddress]);
+  }, [chain?.genesisHash, goToAccountDetail, name, realAddress]);
 
   return (
     <>

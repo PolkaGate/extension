@@ -16,7 +16,8 @@ import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
-import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS } from './constants';
+import allChains from './chains';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
 
 interface Meta {
   docs: Text[];
@@ -577,4 +578,28 @@ export const decodeMultiLocation = (hexString: HexString) => {
   }
 
   return decodeHexValues(decodedMultiLocation);
+};
+
+export const addressToChain = (address: string) => {
+  if (!isValidAddress(address)) {
+    console.log('Not a valid address');
+
+    return null;
+  }
+
+  if (getSubstrateAddress(address) === address) {
+    return {
+      chainName: 'Westend',
+      genesisHash: WESTEND_GENESIS_HASH
+    };
+  }
+
+  const publicKey = decodeAddress(address, true);
+
+  const chain = allChains.find(({ ss58Format }) => encodeAddress(publicKey, ss58Format) === address);
+
+  return {
+    chainName: chain?.chain,
+    genesisHash: chain?.genesisHash
+  };
 };
