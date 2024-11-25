@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.33.0](https://github.com/polkagate/extension/compare/v0.32.1...v0.33.0) (2024-11-25)
+
+
+### Features
+
+* get chain using the address ([#1671](https://github.com/polkagate/extension/issues/1671)) ([1fa7798](https://github.com/polkagate/extension/commit/1fa77981877308b758cb15a72b8a3524ce050f09))
+
 ## [0.32.1](https://github.com/polkagate/extension/compare/v0.32.0...v0.32.1) (2024-11-20)
 
 
