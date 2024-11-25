@@ -14,7 +14,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 
 import { AssetLogo, FormatPrice, ShowBalance } from '../../../components';
-import { useApi, useNotifyOnChainChange, usePrices, useTranslation } from '../../../hooks';
+import { useApi, useNotifyOnChainChange, usePrices, useSelectedChains, useTranslation } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
 interface Props {
@@ -120,6 +120,7 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
 
   const api = useApi(address);
   const pricesInCurrencies = usePrices();
+  const selectedChains = useSelectedChains();
 
   useNotifyOnChainChange(address);
 
@@ -128,12 +129,14 @@ function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, s
   const toggleAssets = useCallback(() => setShowMore(!showMore), [showMore]);
 
   const assets = useMemo(() => {
-    if (accountAssets && accountAssets.length > 0) {
-      return accountAssets;
+    if (accountAssets && accountAssets.length > 0 && selectedChains) {
+      // filter non selected chains
+
+      return accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
     } else {
       return [undefined, undefined]; // two undefined to show two skeletons
     }
-  }, [accountAssets]);
+  }, [accountAssets, selectedChains]);
 
   const shouldShowCursor = useMemo(() => (mode === 'Detail' && accountAssets && accountAssets.length > 5) || (mode !== 'Detail' && accountAssets && accountAssets.length > 6), [accountAssets, mode]);
 

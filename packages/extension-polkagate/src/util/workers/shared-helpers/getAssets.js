@@ -3,11 +3,10 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { decodeMultiLocation } from '../utils';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from './utils';
+import { decodeMultiLocation } from '../../utils';
 
 //@ts-ignore
-async function getAssets (addresses, api, assets, chainName, results) {
+export async function getAssets (addresses, api, assets, chainName, results) {
   try {
     for (const asset of assets) {
       const isForeignAssets = asset.isForeign;
@@ -59,66 +58,6 @@ async function getAssets (addresses, api, assets, chainName, results) {
       });
     }
   } catch (e) {
-    console.error('Something went wrong while fetching assets', chainName, e);
+    console.error(`Something went wrong while fetching assets on ${chainName}`, e);
   }
 }
-
-// @ts-ignore
-async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
-  const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-
-  const { api, connections } = await fastestEndpoint(endpoints);
-
-  const result = metadataFromApi(api);
-
-  postMessage(JSON.stringify(result));
-
-  const results = await toGetNativeToken(addresses, api, chainName);
-
-  // @ts-ignore
-  const nonNativeAssets = assetsToBeFetched.filter((asset) => !asset.extras?.isNative);
-
-  /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
-  // const allForeignAssets = await api.query.foreignAssets.asset.entries();
-  // for (const [key, _others] of allForeignAssets) {
-  //   const id = key.args[0];
-  //   const assetMetaData = await api.query.foreignAssets.metadata(id);
-
-  //   if (assetMetaData.toHuman().symbol === 'MYTH') {
-  //     console.log('new foreign asset id:', encodeMultiLocation(id));
-  //   }
-  // }
-
-  await getAssets(addresses, api, nonNativeAssets, chainName, results);
-
-  postMessage(JSON.stringify(results));
-  closeWebsockets(connections);
-}
-
-onmessage = async (e) => {
-  let { addresses, assetsToBeFetched, chainName, userAddedEndpoints } = e.data;
-
-  if (!assetsToBeFetched) {
-    console.warn(`getAssetOnAssetHub: No assets to be fetched on ${chainName}, but just Native Token`);
-
-    assetsToBeFetched = [];
-  }
-
-  let tryCount = 1;
-
-  while (tryCount >= 1 && tryCount <= 5) {
-    try {
-      await getAssetOnAssetHub(addresses, assetsToBeFetched, chainName, userAddedEndpoints);
-
-      tryCount = 0;
-
-      return;
-    } catch (error) {
-      console.error(`getAssetOnAssetHub: Error while fetching assets on asset hubs, ${5 - tryCount} times to retry`, error);
-
-      tryCount === 5 && postMessage(undefined);
-    }
-
-    tryCount++;
-  }
-};
