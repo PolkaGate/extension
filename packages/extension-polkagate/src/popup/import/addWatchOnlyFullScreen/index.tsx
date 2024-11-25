@@ -93,7 +93,10 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
         .then(() => {
           setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         })
-        .finally(() => openOrFocusTab(`/accountfs/${substrateAddress}/0`, true))
+        .finally(() => substrateAddress
+          ? openOrFocusTab(`/accountfs/${substrateAddress}/0`, true)
+          : openOrFocusTab('/', true)
+        )
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);

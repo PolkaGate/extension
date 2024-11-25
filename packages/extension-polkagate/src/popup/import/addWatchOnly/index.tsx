@@ -88,13 +88,15 @@ export default function AddAddressOnly (): React.ReactElement {
         .then(() => {
           setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         })
-        .finally(() => goToAccountDetail(chain.genesisHash ?? '', substrateAddress ?? ''))
+        .finally(() => chain.genesisHash && substrateAddress
+          ? goToAccountDetail(chain.genesisHash, substrateAddress)
+          : goHome)
         .catch((error: Error) => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [chain?.genesisHash, goToAccountDetail, name, realAddress]);
+  }, [chain?.genesisHash, goHome, goToAccountDetail, name, realAddress]);
 
   return (
     <>
