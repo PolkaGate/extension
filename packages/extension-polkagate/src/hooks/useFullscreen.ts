@@ -1,11 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
-export default function useFullscreen(): void {
-  useEffect(() => {
+export default function useFullscreen (): void {
+  useLayoutEffect(() => {
     /** to change app width to full screen */
     const root = document.getElementById('root');
 

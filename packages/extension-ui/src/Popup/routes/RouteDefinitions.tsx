@@ -389,7 +389,6 @@ const PASSWORD_ROUTES: RouteConfig[] = [
 const ROOT_ROUTES: RouteConfig[] = [
   {
     Component: Onboarding,
-    exact: true,
     path: '/onboarding',
     trigger: 'onboarding'
   },
@@ -406,25 +405,16 @@ const ROOT_ROUTES: RouteConfig[] = [
   },
   {
     Component: Authorize,
-    exact: true,
     path: '/authorize',
     trigger: 'authorize'
   },
   {
     Component: Metadata,
-    exact: true,
     path: '/metadata',
     trigger: 'metadata'
   },
   {
     Component: Signing,
-    exact: true,
-    path: '/signing',
-    trigger: 'signing'
-  },
-  {
-    Component: Signing,
-    exact: true,
     path: '/signing',
     trigger: 'signing'
   }

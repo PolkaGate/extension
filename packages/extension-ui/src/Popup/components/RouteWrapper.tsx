@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import ErrorBoundary from '../components/ErrorBoundary';
+
+import ErrorBoundary from './ErrorBoundary';
 
 interface RouteWrapperProps {
-    component: React.ComponentType;
-    trigger?: string;
-    props?: Record<string, unknown>;
+  component: React.ComponentType;
+  trigger?: string;
+  props?: Record<string, unknown>;
 }
 
 const RouteWrapper = ({ component: Component, props, trigger }: RouteWrapperProps) => (
-    <ErrorBoundary trigger={trigger}>
-        <Component {...props} />
-    </ErrorBoundary>
+  <ErrorBoundary trigger={trigger}>
+    <Component {...props} />
+  </ErrorBoundary>
 );
 
 export default React.memo(RouteWrapper);

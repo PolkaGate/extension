@@ -112,8 +112,6 @@ export default function Popup (): React.ReactElement {
       _onAction('/metadata');
     } else if (signRequests.length) {
       _onAction('/signing');
-    } else {
-      _onAction('/');
     }
   }, [_onAction, authRequests, authRequests?.length, metaRequests, metaRequests?.length, signRequests, signRequests?.length]);
 
@@ -207,6 +205,8 @@ export default function Popup (): React.ReactElement {
     getStorage('userAddedEndpoint').then((info) => {
       info && setUserAddedChainCtx(info as UserAddedChains);
     }).catch(console.error);
+
+    _onAction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
