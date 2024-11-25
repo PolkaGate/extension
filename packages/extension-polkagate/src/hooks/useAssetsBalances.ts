@@ -10,7 +10,7 @@ import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { Chance } from 'chance';
-import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN, isObject } from '@polkadot/util';
 
@@ -24,7 +24,7 @@ import { TIME_TO_REMOVE_ALERT } from './useAlerts';
 import useSelectedChains from './useSelectedChains';
 import { useIsTestnetEnabled, useTranslation } from '.';
 
-type WorkerMessage = Record<string, MessageBody[]>;
+interface WorkerMessage { functionName?: string, metadata?: MetadataDef, results?: Record<string, MessageBody[]> }
 type Assets = Record<string, FetchedBalance[]>;
 type AssetsBalancesPerChain = Record<string, FetchedBalance[]>;
 type AssetsBalancesPerAddress = Record<string, AssetsBalancesPerChain>;
@@ -105,7 +105,7 @@ const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 export const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN (balances: object | string | undefined): BalancesDetails | {} {
+function allHexToBN (balances: object | string | undefined): BalancesDetails | object {
   if (!balances) {
     return {};
   }
@@ -126,30 +126,32 @@ function allHexToBN (balances: object | string | undefined): BalancesDetails | {
 
 const assetsChains = createAssets();
 
+const FUNCTIONS = ['getAssetOnRelayChain', 'getAssetOnAssetHub', 'getAssetOnMultiAssetChain'];
+
 /**
  * @description To fetch accounts assets on different selected chains
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: Worker): SavedAssets | undefined | null {
   const { t } = useTranslation();
 
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
+  const workerCallsCount = useRef<number>(0);
 
   const random = useMemo(() => new Chance(), []);
 
   /** to limit calling of this heavy call on just home and account details */
-  const SHOULD_FETCH_ASSETS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
+  const FETCH_PATHS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts?.length]);
 
   const [fetchedAssets, setFetchedAssets] = useState<SavedAssets | undefined | null>();
-  const [isWorking, setIsWorking] = useState<boolean>(false);
-  const [workersCalled, setWorkersCalled] = useState<Worker[]>();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [roundDone, setRoundDone] = useState<boolean>(false);
 
   const addAlert = useCallback(() => {
     const id = random.string({ length: 10 });
@@ -161,12 +163,12 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   }, [random, setAlerts, t]);
 
   useEffect(() => {
-    SHOULD_FETCH_ASSETS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+    FETCH_PATHS && getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
 
       setIsUpdate(Boolean(isUpToDate(_timeStamp)));
     }).catch(console.error);
-  }, [SHOULD_FETCH_ASSETS]);
+  }, [FETCH_PATHS]);
 
   const removeZeroBalanceRecords = useCallback((toBeSavedAssets: SavedAssets): SavedAssets => {
     const _toBeSavedAssets = { ...toBeSavedAssets };
@@ -212,36 +214,32 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
     setFetchedAssets(updatedAssetsToBeSaved);
     setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
-    setWorkersCalled(undefined);
     setIsUpdate(true);
   }, [addresses, fetchedAssets, removeZeroBalanceRecords]);
 
   useEffect(() => {
     /** when one round fetch is done, we will save fetched assets in storage */
-    if (addresses && workersCalled?.length === 0) {
+    if (addresses && roundDone) {
+      setRoundDone(false);
       handleAccountsSaving();
       addAlert();
     }
-  }, [addAlert, addresses, handleAccountsSaving, workersCalled?.length]);
+  }, [addAlert, addresses, handleAccountsSaving, roundDone]);
 
   useEffect(() => {
     /** chain list may have changed */
-    isUpdate && !isWorking && selectedChains?.length && setIsUpdate(false);
+    isUpdate && !workerCallsCount.current && selectedChains?.length && setIsUpdate(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChains]);
 
   useEffect(() => {
-    /** account list may have changed */
-    isUpdate && !isWorking && addresses?.length && setIsUpdate(false);
+    /** accounts list may have changed */
+    isUpdate && !workerCallsCount.current && addresses?.length && setIsUpdate(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses]);
 
   useEffect(() => {
-    setIsWorking(!!workersCalled?.length);
-  }, [workersCalled?.length]);
-
-  useEffect(() => {
-    if (!SHOULD_FETCH_ASSETS) {
+    if (!FETCH_PATHS) {
       return;
     }
 
@@ -264,20 +262,18 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     return () => {
       unsubscribe();
     };
-  }, [SHOULD_FETCH_ASSETS, addresses]);
+  }, [FETCH_PATHS, addresses]);
 
-  const handleSetWorkersCall = useCallback((worker: Worker, terminate?: 'terminate') => {
-    terminate && worker.terminate();
+  console.info('workerCallsCount.current', workerCallsCount.current);
 
-    setWorkersCalled((workersCalled) => {
-      terminate
-        ? workersCalled?.pop()
-        : !workersCalled
-          ? workersCalled = [worker]
-          : workersCalled.push(worker);
+  const handleRequestCount = useCallback((functionName: string) => {
+    if (FUNCTIONS.includes(functionName) && workerCallsCount.current) {
+      workerCallsCount.current--;
 
-      return workersCalled && [...workersCalled] as Worker[];
-    });
+      if (workerCallsCount.current === 0) {
+        setRoundDone(true);
+      }
+    }
   }, []);
 
   const combineAndSetAssets = useCallback((assets: Assets) => {
@@ -307,168 +303,124 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     });
   }, [addresses]);
 
-  const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
-    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnRelayChain.js', import.meta.url));
-    const _assets: Assets = {};
-
-    handleSetWorkersCall(worker);
-
-    worker.postMessage({ addresses: _addresses, chainName, userAddedEndpoints });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
+  const handleWorkerMessages = useCallback(() => {
+    if (!worker) {
+      return;
+    }
 
     worker.onmessage = (e: MessageEvent<string>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = e.data;
 
       if (!message) {
-        console.info(`No assets found on ${chainName}`);
-        handleSetWorkersCall(worker, 'terminate');
+        return; // may receive unknown messages!
+      }
+
+      const { functionName, metadata, results } = JSON.parse(message) as WorkerMessage;
+
+      if (metadata) {
+        updateMetadata(metadata).catch(console.error);
 
         return;
       }
 
-      const parsedMessage = JSON.parse(message) as WorkerMessage;
-
-      if ('metadata' in parsedMessage) {
-        const metadata = parsedMessage['metadata'];
-
-        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
-
+      if (!functionName) {
         return;
       }
 
-      Object.keys(parsedMessage).forEach((address) => {
-        /** We use index 0 because we consider each relay chain has only one asset */
-        _assets[address] = [
-          {
-            price: undefined,
-            ...parsedMessage[address][0],
-            ...allHexToBN(parsedMessage[address][0].balanceDetails) as BalancesDetails,
-            date: Date.now(),
-            decimal: Number(parsedMessage[address][0].decimal),
-            totalBalance: isHexToBn(parsedMessage[address][0].totalBalance)
-          }];
+      handleRequestCount(functionName); // need to count chains instead of workers since we are using shared worker
 
-        /** since balanceDetails is already converted all to BN, hence we can delete that field */
-        delete _assets[address][0].balanceDetails;
-      });
-
-      combineAndSetAssets(_assets);
-      handleSetWorkersCall(worker, 'terminate');
-    };
-  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
-
-  const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
-    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnAssetHub.js', import.meta.url));
-    const _assets: Assets = {};
-
-    handleSetWorkersCall(worker);
-    worker.postMessage({ addresses: _addresses, assetsToBeFetched, chainName, userAddedEndpoints });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
-    worker.onmessage = (e: MessageEvent<string>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message = e.data;
-
-      if (!message) {
-        console.info(`No assets found on ${chainName}`);
-        handleSetWorkersCall(worker, 'terminate');
-
-        return;
-      }
-
-      const parsedMessage = JSON.parse(message) as WorkerMessage;
-
-      if ('metadata' in parsedMessage) {
-        const metadata = parsedMessage['metadata'];
-
-        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
-
-        return;
-      }
-
-      Object.keys(parsedMessage).forEach((address) => {
-        _assets[address] = parsedMessage[address]
-          .map((message) => {
-            const _asset = {
-              ...message,
-              ...allHexToBN(message.balanceDetails) as BalancesDetails,
-              date: Date.now(),
-              decimal: Number(message.decimal),
-              totalBalance: isHexToBn(message.totalBalance)
-            };
-
-            delete _asset.balanceDetails;
-
-            return _asset;
-          });
-      });
-
-      combineAndSetAssets(_assets);
-      handleSetWorkersCall(worker, 'terminate');
-    };
-  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
-
-  const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
-    const worker: Worker = new Worker(new URL('../util/workers/getAssetOnMultiAssetChain.js', import.meta.url));
-
-    handleSetWorkersCall(worker);
-    worker.postMessage({ addresses, chainName, userAddedEndpoints });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
-    worker.onmessage = (e: MessageEvent<string>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message = e.data;
-
-      if (!message) {
-        console.info(`No assets found on ${chainName}`);
-        handleSetWorkersCall(worker, 'terminate');
-
-        return;
-      }
-
-      const parsedMessage = JSON.parse(message) as WorkerMessage;
-
-      if ('metadata' in parsedMessage) {
-        const metadata = parsedMessage['metadata'];
-
-        updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
-
+      if (!results) {
         return;
       }
 
       const _assets: Assets = {};
 
-      Object.keys(parsedMessage).forEach((address) => {
-        _assets[address] = parsedMessage[address].map(
-          (message) => {
-            const temp = {
-              ...message,
-              ...allHexToBN(message.balanceDetails) as BalancesDetails,
+      if (functionName === 'getAssetOnRelayChain') {
+        Object.keys(results).forEach((address) => {
+          /** We use index 0 because we consider each relay chain has only one asset */
+          _assets[address] = [
+            {
+              price: undefined,
+              ...results[address][0],
+              ...allHexToBN(results[address][0].balanceDetails) as BalancesDetails,
               date: Date.now(),
-              decimal: Number(message.decimal),
-              totalBalance: isHexToBn(message.totalBalance)
-            };
+              decimal: Number(results[address][0].decimal),
+              totalBalance: isHexToBn(results[address][0].totalBalance)
+            }];
 
-            delete temp.balanceDetails;
+          /** since balanceDetails is already converted all to BN, hence we can delete that field */
+          delete _assets[address][0].balanceDetails;
+        });
+      }
 
-            return temp;
-          });
-      });
+      if (['getAssetOnAssetHub', 'getAssetOnMultiAssetChain'].includes(functionName)) {
+        Object.keys(results).forEach((address) => {
+          _assets[address] = results[address].map(
+            (message) => {
+              const temp = {
+                ...message,
+                ...allHexToBN(message.balanceDetails) as BalancesDetails,
+                date: Date.now(),
+                decimal: Number(message.decimal),
+                totalBalance: isHexToBn(message.totalBalance)
+              };
+
+              delete temp.balanceDetails;
+
+              return temp;
+            });
+        });
+      }
 
       combineAndSetAssets(_assets);
-      handleSetWorkersCall(worker, 'terminate');
     };
-  }, [combineAndSetAssets, handleSetWorkersCall, userAddedEndpoints]);
+  }, [combineAndSetAssets, handleRequestCount, worker]);
+
+  const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
+    if (!worker) {
+      return;
+    }
+
+    const functionName = 'getAssetOnRelayChain';
+
+    worker.postMessage({ functionName, parameters: { address: _addresses, chainName, userAddedEndpoints } });
+
+    worker.onerror = (err) => {
+      console.log(err);
+    };
+
+    handleWorkerMessages();
+  }, [handleWorkerMessages, userAddedEndpoints, worker]);
+
+  const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
+    if (!worker) {
+      return;
+    }
+
+    const functionName = 'getAssetOnAssetHub';
+
+    worker.postMessage({ functionName, parameters: { address: _addresses, assetsToBeFetched, chainName, userAddedEndpoints } });
+
+    worker.onerror = (err) => {
+      console.log(err);
+    };
+  }, [userAddedEndpoints, worker]);
+
+  const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
+    if (!worker) {
+      return;
+    }
+
+    const functionName = 'getAssetOnMultiAssetChain';
+
+    worker.postMessage({ functionName, parameters: { addresses, chainName, userAddedEndpoints } });
+
+    worker.onerror = (err) => {
+      console.log(err);
+    };
+
+    handleWorkerMessages();
+  }, [handleWorkerMessages, userAddedEndpoints, worker]);
 
   const fetchMultiAssetChainAssets = useCallback((chainName: string) => {
     return addresses && fetchAssetOnMultiAssetChain(addresses, chainName);
@@ -486,7 +438,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
         return;
       }
 
-      return chainName && fetchAssetOnRelayChain(addresses!, chainName);
+      workerCallsCount.current++;
+
+      return fetchAssetOnRelayChain(addresses!, chainName);
     }
 
     if (ASSET_HUBS.includes(genesisHash)) { /** Checking assets balances on Asset Hub chains */
@@ -500,17 +454,21 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       const assetsToBeFetched = assetsChains[chainName]; /** we fetch asset hubs assets only if it is whitelisted via PolkaGate/apps-config */
 
+      workerCallsCount.current++;
+
       return fetchAssetOnAssetHubs(addresses!, chainName, assetsToBeFetched);
     }
 
     /** Checking assets balances on chains with more than one assets such as Acala, Hydration, etc, */
     if (maybeMultiAssetChainName) {
+      workerCallsCount.current++;
+
       fetchMultiAssetChainAssets(maybeMultiAssetChainName);
     }
   }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets, genesisOptions]);
 
   useEffect(() => {
-    if (!SHOULD_FETCH_ASSETS || !addresses || addresses.length === 0 || isWorking || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
+    if (!FETCH_PATHS || !worker || !addresses || addresses.length === 0 || workerCallsCount.current || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
       return;
     }
 
@@ -531,7 +489,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [SHOULD_FETCH_ASSETS, addresses, fetchAssets, isTestnetEnabled, isUpdate, isWorking, selectedChains, genesisOptions]);
+  }, [FETCH_PATHS, addresses, fetchAssets, worker, isTestnetEnabled, isUpdate, selectedChains, genesisOptions]);
 
   return fetchedAssets;
 }
