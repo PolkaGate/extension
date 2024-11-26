@@ -173,7 +173,7 @@ const IMPORT_ROUTES: RouteConfig[] = [
   {
     Component: ImportProxiedFullScreen,
     path: '/import/proxied-full-screen',
-    trigger: 'import-add-watch-only-full-screen'
+    trigger: 'import-proxied-full-screen'
   }
 ];
 
@@ -198,7 +198,7 @@ const STAKING_ROUTES: RouteConfig[] = [
   {
     Component: PoolInformation,
     path: '/pool/myPool/:address',
-    trigger: 'pool-poolInfromation'
+    trigger: 'pool-poolInformation'
   },
   {
     Component: PoolNominations,

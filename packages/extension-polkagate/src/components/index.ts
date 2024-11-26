@@ -31,7 +31,6 @@ export * from './contexts';
 export { default as Convictions } from './Convictions';
 export { default as CopyAddressButton } from './CopyAddressButton';
 export { default as DisplayInfo } from './DisplayInfo';
-export { default as ErrorBoundary } from '../../../extension-ui/src/Popup/components/ErrorBoundary';
 export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';
 export { default as FormatPrice } from './FormatPrice';

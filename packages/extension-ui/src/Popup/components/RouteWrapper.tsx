@@ -11,10 +11,10 @@ interface RouteWrapperProps {
   props?: Record<string, unknown>;
 }
 
-const RouteWrapper = ({ component: Component, props, trigger }: RouteWrapperProps) => (
-  <ErrorBoundary trigger={trigger}>
-    <Component {...props} />
-  </ErrorBoundary>
-);
-
-export default React.memo(RouteWrapper);
+export default function RouteWrapper ({ component: Component, props, trigger }: RouteWrapperProps) {
+  return (
+    <ErrorBoundary trigger={trigger}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+}
