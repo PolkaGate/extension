@@ -30,7 +30,7 @@ const TLFActions = () => {
   }, [setExtensionLock]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-around' pl='43px' py='5px'>
+    <Grid alignItems='center' container item justifyContent='space-around' pl='35px' py='5px' mr='-7px'>
       {isLoginEnabled &&
         <>
           <Grid container item width='fit-content'>
