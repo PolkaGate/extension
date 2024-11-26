@@ -102,19 +102,34 @@ export default function Popup (): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!authRequests || !metaRequests || !signRequests) {
-      return;
-    }
+    // Use a flag to prevent race conditions
+    let isMounted = true;
 
-    if (authRequests.length) {
-      _onAction('/authorize');
-    } else if (metaRequests.length) {
-      _onAction('/metadata');
-    } else if (signRequests.length) {
-      _onAction('/signing');
-    } else if (['/authorize', '/metadata', '/signing'].includes(pathname)) {
-      _onAction('/');
-    }
+    const handleRouting = () => {
+      if (!isMounted) {
+        return;
+      }
+
+      if (!authRequests || !metaRequests || !signRequests) {
+        return;
+      }
+
+      if (authRequests.length) {
+        _onAction('/authorize');
+      } else if (metaRequests.length) {
+        _onAction('/metadata');
+      } else if (signRequests.length) {
+        _onAction('/signing');
+      } else if (['/authorize', '/metadata', '/signing'].includes(pathname)) {
+        _onAction('/');
+      }
+    };
+
+    handleRouting();
+
+    return () => {
+      isMounted = false;
+    };
   }, [_onAction, authRequests, authRequests?.length, metaRequests, metaRequests?.length, pathname, signRequests, signRequests?.length]);
 
   useEffect(() => {
