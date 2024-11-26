@@ -32,6 +32,7 @@ const TLFActions = () => {
   return (
     <Grid alignItems='center' container item justifyContent='space-around' pl='43px' py='5px'>
       {isLoginEnabled &&
+        <>
           <Grid container item width='fit-content'>
             <Infotip2
               text={t('Lock Extension')}
@@ -44,11 +45,13 @@ const TLFActions = () => {
               </IconButton>
             </Infotip2>
           </Grid>
+          <Grid item>
+            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
+          </Grid>
+        </>
       }
       <>
-        <Grid item>
-          <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
-        </Grid>
+
         <Grid item>
           <Infotip2
             text={t('Switch Theme')}

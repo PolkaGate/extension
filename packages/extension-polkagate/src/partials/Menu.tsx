@@ -108,7 +108,7 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
     >
       <Grid bgcolor='divider' container height='100%' justifyContent='end' zIndex={10}>
         <TLFActions />
-        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
+        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: '94%', minWidth: '307px', position: 'relative' }} width='86%'>
           {!showWarning
             ? <>
               <MenuItem
