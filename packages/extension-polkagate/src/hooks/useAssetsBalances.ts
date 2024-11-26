@@ -264,8 +264,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     };
   }, [FETCH_PATHS, addresses]);
 
-  console.info('workerCallsCount.current', workerCallsCount.current);
-
   const handleRequestCount = useCallback((functionName: string) => {
     if (FUNCTIONS.includes(functionName) && workerCallsCount.current) {
       workerCallsCount.current--;
