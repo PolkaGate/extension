@@ -77,7 +77,7 @@ export default function Request ({ account: { accountIndex, addressOffset, isExt
   const _onSignature = useCallback(
     ({ signature }: { signature: HexString }): void => {
       approveSignSignature(signId, signature)
-        .then(() => onAction())
+        .then(() => onAction('/'))
         .catch((error: Error): void => {
           setError(error.message);
           console.error(error);
@@ -101,7 +101,7 @@ export default function Request ({ account: { accountIndex, addressOffset, isExt
     extrinsic.addSignature(_address, signature, _raw.toHex());
 
     approveSignSignature(signId, signature, extrinsic.toHex())
-      .then(() => onAction())
+      .then(() => onAction('/'))
       .catch((error: Error): void => {
         setError(error.message);
         console.error(error);

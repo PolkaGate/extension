@@ -59,7 +59,7 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
       approveSignPassword(signId, savePass, password)
         .then((): void => {
           setIsBusy(false);
-          onAction();
+          onAction('/');
         })
         .catch((error: Error): void => {
           setIsBusy(false);
