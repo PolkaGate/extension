@@ -60,7 +60,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
 
   const onApprove = useCallback((): void => {
     approveAuthRequest(selectedAccounts, requests[requestIndex].id)
-      .then(() => onAction())
+      .then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [onAction, requestIndex, requests, selectedAccounts]);
 
@@ -70,7 +70,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
     (alreadySelectedAccounts.length
       ? approveAuthRequest(alreadySelectedAccounts, id)
       : ignoreAuthRequest(id)
-    ).then(() => onAction())
+    ).then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [alreadySelectedAccounts, onAction, requestIndex, requests]);
 
