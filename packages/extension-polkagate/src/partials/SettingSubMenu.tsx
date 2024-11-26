@@ -5,19 +5,15 @@
 
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LockIcon from '@mui/icons-material/Lock';
-import { Collapse, Divider, Grid, IconButton, useTheme } from '@mui/material';
+import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
-import { ActionContext, Checkbox2, FullScreenIcon, Infotip2, MenuItem, Select, SelectIdenticonTheme, VaadinIcon } from '../components';
-import { getStorage, updateStorage } from '../components/Loading';
-import { useExtensionLockContext } from '../context/ExtensionLockContext';
-import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
-import { useIsExtensionPopup, useIsLoginEnabled, useTranslation } from '../hooks';
-import { lockExtension, setNotification } from '../messaging';
-import { NO_PASS_PERIOD } from '../util/constants';
+import { ActionContext, Checkbox2, MenuItem, Select, SelectIdenticonTheme, VaadinIcon } from '../components';
+import { getStorage } from '../components/Loading';
+import { useTranslation } from '../hooks';
+import { setNotification } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
 
 interface Props {
@@ -30,10 +26,7 @@ interface Props {
 export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isPopup = useIsExtensionPopup();
-  const isLoginEnabled = useIsLoginEnabled();
   const onAction = useContext(ActionContext);
-  const { setExtensionLock } = useExtensionLockContext();
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
@@ -44,13 +37,6 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
-
-  const onLockExtension = useCallback((): void => {
-    updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
-      setExtensionLock(true);
-      lockExtension().catch(console.error);
-    }).catch(console.error);
-  }, [setExtensionLock]);
 
   const onAuthManagement = useCallback(() => {
     onAction('/auth-list');
@@ -87,48 +73,8 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
     <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
       <Grid container item justifyContent='flex-end'>
         <Divider sx={{ bgcolor: 'divider', height: '1px', mx: '10px', width: '83%' }} />
-        <Grid container direction='column' pl='40px' pr= '5px' pt='10px'>
-          <Grid alignItems='center' container item justifyContent='space-around' pr='10px'>
-            <Grid item>
-              <Infotip2
-                text={t('Switch Theme')}
-              >
-                <IconButton
-                  sx={{ height: '35px', p: 0, width: '35px' }}
-                >
-                  <ThemeChanger color= 'secondary.light' noBorder />
-                </IconButton>
-              </Infotip2>
-            </Grid>
-            {isLoginEnabled &&
-              <>
-                <Grid item>
-                  <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
-                </Grid>
-                <Grid container item width='fit-content'>
-                  <Infotip2
-                    text={t('Lock Extension')}
-                  >
-                    <IconButton
-                      onClick={onLockExtension}
-                      sx={{ height: '35px', ml: '-5px', p: 0, width: '35px' }}
-                    >
-                      <LockIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: '27px' }} />
-                    </IconButton>
-                  </Infotip2>
-                </Grid>
-              </>
-            }
-            {isPopup &&
-              <>
-                <Grid item>
-                  <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
-                </Grid>
-                <FullScreenIcon isSettingSubMenu url='/' />
-              </>
-            }
-          </Grid>
-          <Grid item pt='15px' textAlign='left'>
+        <Grid container direction='column' pl='40px' pr='5px' pt='10px'>
+          <Grid item pt='5px' textAlign='left'>
             <Checkbox2
               checked={isTestnetEnabledChecked}
               iconStyle={{ transform: 'scale(1.13)' }}
