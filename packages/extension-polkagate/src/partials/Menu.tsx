@@ -190,8 +190,8 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
           }
           <VersionSocial fontSize='11px' />
         </Grid>
-        <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
-          <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
+        <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '1%' }}>
+          <CloseIcon sx={{ color: 'white', fontSize: 35 }} />
         </IconButton>
       </Grid>
     </Dialog>
