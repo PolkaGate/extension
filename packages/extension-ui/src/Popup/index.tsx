@@ -64,7 +64,7 @@ export default function Popup (): React.ReactElement {
   const genesisHashOptionsCtx = useGenesisHashOptions();
   const workerRef = useRef<Worker | undefined>(undefined);
 
-  useLocation();// just to trigger component to fix forgot pass issue
+  const { pathname } = useLocation(); // also to trigger component to fix forgot pass issue
 
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [userAddedChainCtx, setUserAddedChainCtx] = useState<UserAddedChains>({});
@@ -112,8 +112,10 @@ export default function Popup (): React.ReactElement {
       _onAction('/metadata');
     } else if (signRequests.length) {
       _onAction('/signing');
+    } else if (['/authorize', '/metadata', '/signing'].includes(pathname)) {
+      _onAction('/');
     }
-  }, [_onAction, authRequests, authRequests?.length, metaRequests, metaRequests?.length, signRequests, signRequests?.length]);
+  }, [_onAction, authRequests, authRequests?.length, metaRequests, metaRequests?.length, pathname, signRequests, signRequests?.length]);
 
   useEffect(() => {
     workerRef.current = new Worker(new URL('../../../extension-polkagate/src/util/workers/sharedWorker.js', import.meta.url));
