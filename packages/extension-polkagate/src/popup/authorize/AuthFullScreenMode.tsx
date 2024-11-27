@@ -32,12 +32,11 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
 
-  const url = requests[requestIndex].url;
-  const faviconUrl = useFavIcon(url);
+  const _url = requests[requestIndex]?.url;
+  const faviconUrl = useFavIcon(_url);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [alreadySelectedAccounts, setAlreadySelectedAccounts] = useState<string[]>([]);
-
 
   const allAccounts = useMemo(() => accounts.map(({ address }) => address), [accounts]);
   const areAllCheck = useMemo(() => areArraysEqual([allAccounts, selectedAccounts]), [allAccounts, selectedAccounts]);
@@ -45,7 +44,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
   useEffect(() => {
     getAuthList()
       .then(({ list: authList }) => {
-        const dappURL = extractBaseUrl(url);
+        const dappURL = extractBaseUrl(_url);
 
         const availableDapp = Object.values(authList).find(({ url }) => dappURL === extractBaseUrl(url));
 
@@ -57,11 +56,11 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
         }
       })
       .catch(console.error);
-  }, [url]);
+  }, [_url]);
 
   const onApprove = useCallback((): void => {
     approveAuthRequest(selectedAccounts, requests[requestIndex].id)
-      .then(() => onAction())
+      .then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [onAction, requestIndex, requests, selectedAccounts]);
 
@@ -71,7 +70,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
     (alreadySelectedAccounts.length
       ? approveAuthRequest(alreadySelectedAccounts, id)
       : ignoreAuthRequest(id)
-    ).then(() => onAction())
+    ).then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [alreadySelectedAccounts, onAction, requestIndex, requests]);
 
@@ -118,7 +117,7 @@ function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, request
               variant='circular'
             />
             <span style={{ fontSize: '15px', fontWeight: 400, overflowWrap: 'anywhere' }}>
-              {extractBaseUrl(url)}
+              {extractBaseUrl(_url)}
             </span>
           </Grid>
           <Grid container item sx={{ marginBottom: '15px', marginTop: '10px' }}>

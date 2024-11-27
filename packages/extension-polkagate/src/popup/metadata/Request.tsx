@@ -25,19 +25,19 @@ export default function Request ({ metaId, request, url }: Props): React.ReactEl
   const chain = useMetadata(request.genesisHash, true);
   const onAction = useContext(ActionContext);
 
-  const _onApprove = useCallback(
+  const onApprove = useCallback(
     (): void => {
       approveMetaRequest(metaId)
-        .then(() => onAction())
+        .then(() => onAction('/'))
         .catch(console.error);
     },
     [metaId, onAction]
   );
 
-  const _onReject = useCallback(
+  const onReject = useCallback(
     (): void => {
       rejectMetaRequest(metaId)
-        .then(() => onAction())
+        .then(() => onAction('/'))
         .catch(console.error);
     },
     [metaId, onAction]
@@ -111,8 +111,8 @@ export default function Request ({ metaId, request, url }: Props): React.ReactEl
         </Warning>
       </Grid>
       <TwoButtons
-        onPrimaryClick={_onApprove}
-        onSecondaryClick={_onReject}
+        onPrimaryClick={onApprove}
+        onSecondaryClick={onReject}
         primaryBtnText={t('Approve')}
         secondaryBtnText={t('Reject')}
         variant='text'

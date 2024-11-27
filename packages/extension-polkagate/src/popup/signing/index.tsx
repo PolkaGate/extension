@@ -55,7 +55,7 @@ export default function Signing (): React.ReactElement {
     }
 
     cancelSignRequest(request.id)
-      .then(() => onAction())
+      .then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [onAction, request?.id]);
 

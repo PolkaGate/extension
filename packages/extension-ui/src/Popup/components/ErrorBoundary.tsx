@@ -8,10 +8,11 @@ import type { WithTranslation } from 'react-i18next';
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import HeaderBrand from '../partials/HeaderBrand';
-import { EXTENSION_NAME } from '../util/constants';
-import translate from './translate';
-import { PButton } from '.';
+import { PButton } from '@polkadot/extension-polkagate/src/components';
+import translate from '@polkadot/extension-polkagate/src/components/translate';
+import AlertBox from '@polkadot/extension-polkagate/src/partials/AlertBox';
+import HeaderBrand from '@polkadot/extension-polkagate/src/partials/HeaderBrand';
+import { EXTENSION_NAME } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props extends WithTranslation {
   children: React.ReactNode;
@@ -26,6 +27,26 @@ interface State {
 
 // NOTE: This is the only way to do an error boundary, via extend
 class ErrorBoundary extends React.Component<Props> {
+  private isExtensionPopup: boolean;
+
+  constructor (props: Props) {
+    super(props);
+
+    // Initialize extension detection in constructor
+    this.isExtensionPopup = false;
+
+    if (chrome?.extension?.getViews) {
+      const extensionViews = chrome.extension.getViews({ type: 'popup' });
+      const isPopupOpenedByExtension = extensionViews.includes(window);
+
+      if (isPopupOpenedByExtension) {
+        this.isExtensionPopup = true;
+      }
+    } else {
+      this.isExtensionPopup = window.innerWidth <= 357 && window.innerHeight <= 621;
+    }
+  }
+
   public override state: State = { error: null };
 
   public static getDerivedStateFromError (error: Error): Partial<State> {
@@ -73,10 +94,12 @@ class ErrorBoundary extends React.Component<Props> {
             _onClick={this.#goHome}
             text={t<string>('Back to home')}
           />
-          {/* </ButtonArea> */}
         </>
       )
-      : children;
+      : <>
+        {children}
+        {!this.isExtensionPopup && <AlertBox />}
+      </>;
   }
 }
 

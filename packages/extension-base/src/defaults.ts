@@ -16,6 +16,12 @@ const START_WITH_PATH = [
   '/derivefs/'
 ] as const;
 
+const ROOT_PATH = [
+  '/authorize',
+  '/signing',
+  '/metadata'
+] as const;
+
 const EXTENSION_PREFIX = 'POLKAGATE';
 
 const PORT_PREFIX = `${EXTENSION_PREFIX || 'unknown'}-${process.env['PORT_PREFIX'] || 'unknown'}`;
@@ -40,5 +46,6 @@ export {
   PHISHING_PAGE_REDIRECT,
   PORT_CONTENT,
   PORT_EXTENSION,
+  ROOT_PATH, // Added for PolkaGate
   START_WITH_PATH// Added for PolkaGate
 };
