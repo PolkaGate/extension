@@ -18,6 +18,8 @@
     { "path": "../extension-inject/tsconfig.build.json"
     },
     { "path": "../extension-mocks/tsconfig.build.json"
+    },
+    { "path": "../extension-polkagate/tsconfig.build.json"
     }
   ]
 }
