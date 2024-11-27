@@ -10,12 +10,12 @@ import { APIContext } from '@polkadot/extension-polkagate/src/components/context
 export default function ApiProvider ({ children }: { children: React.ReactNode }) {
   const [apis, setApis] = useState<APIs>({});
 
-  const setIt = (change: APIs) => {
+  const updateApis = React.useCallback((change: APIs) => {
     setApis(change);
-  };
+  }, []);
 
   return (
-    <APIContext.Provider value={{ apis, setIt }}>
+    <APIContext.Provider value={{ apis, setIt: updateApis }}>
       {children}
     </APIContext.Provider>
   );
