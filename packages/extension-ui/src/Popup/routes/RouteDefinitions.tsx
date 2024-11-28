@@ -430,7 +430,7 @@ const ALL_ROUTES: RouteConfig[] = [
   ...ROOT_ROUTES
 ];
 
-const Routes = () => {
+export default function Routes () {
   const routeComponents = useMemo(() =>
     ALL_ROUTES.map(({ Component, exact, path, props, trigger }) => (
       <Route
@@ -451,6 +451,4 @@ const Routes = () => {
       {routeComponents}
     </Switch>
   );
-};
-
-export default React.memo(Routes);
+}
