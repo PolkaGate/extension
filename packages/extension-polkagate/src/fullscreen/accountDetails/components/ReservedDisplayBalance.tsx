@@ -68,12 +68,16 @@ const ReservedDetails = ({ reservedDetails, showReservedDetails }: ReservedDetai
   const { t } = useTranslation();
   const [stillFetching, setStillFetching] = useState<boolean>(false);
 
-  const reasonsToShow = useMemo(() => {
+  useEffect(() => {
     const reasons = Object.values(reservedDetails);
 
     const isStillFetchingSomething = reasons.some((reason) => reason === undefined);
 
     setStillFetching(isStillFetchingSomething);
+  }, [reservedDetails]);
+
+  const reasonsToShow = useMemo(() => {
+    const reasons = Object.values(reservedDetails);
 
     // details are still fetching
     if (reasons.length === 0) {

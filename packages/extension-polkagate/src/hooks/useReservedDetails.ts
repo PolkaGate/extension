@@ -5,6 +5,7 @@ import type { Option, StorageKey } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { AnyTuple, Codec } from '@polkadot/types-codec/types';
 import type { Proxy } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,8 +15,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
-import type { AnyTuple, Codec } from '@polkadot/types-codec/types';
-import type { ApiPromise } from '@polkadot/api';
 
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
 export type Reserved = { [key in Item]?: Balance | null };
@@ -155,7 +154,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
         let referendaDepositSum = BN_ZERO;
 
         api.query['referenda']['referendumInfoFor'].entries().then((referenda) => {
-          referenda.forEach(([num, value]) => {
+          referenda.forEach(([_, value]) => {
             if (!value.isEmpty) {
               // @ts-ignore
               const ref = value.toPrimitive() as Referenda;
