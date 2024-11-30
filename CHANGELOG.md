@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.33.1](https://github.com/polkagate/extension/compare/v0.33.0...v0.33.1) (2024-11-30)
+
+
+### Bug Fixes
+
+* filter unaccessible endpoints ([#1678](https://github.com/polkagate/extension/issues/1678)) ([910108c](https://github.com/polkagate/extension/commit/910108c9523e527932a47de57b257cc3b54cd6f0))
+* scroll issue ([75d3ead](https://github.com/polkagate/extension/commit/75d3eaddc49d411585cc8cf066694e9d0bab9357))
+
 # [0.33.0](https://github.com/polkagate/extension/compare/v0.32.1...v0.33.0) (2024-11-25)
 
 
