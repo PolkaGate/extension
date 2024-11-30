@@ -36,8 +36,13 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     }
 
     const endpoints = allEndpoints?.filter((e) => e.value &&
-      (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
-        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? ''))
+      // Check if e.value matches the pattern 'wss://<any_number>'
+      !/^wss:\/\/\d+$/.test(e.value) &&
+      !e.value.includes('onfinality') && // ignore due to its rate limits
+      (
+        String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
+        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? '')
+      )
     );
 
     if (!endpoints) {
@@ -52,7 +57,7 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     }
 
     endpointOptions.length > 1 &&
-    endpointOptions?.unshift(AUTO_MODE);
+      endpointOptions?.unshift(AUTO_MODE);
 
     if (!endpointOptions?.length && userAddedEndpoint) {
       return userAddedEndpoint;
