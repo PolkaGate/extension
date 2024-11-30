@@ -10,6 +10,12 @@ export async function fastestEndpoint (endpoints) {
   let connection;
 
   const connections = endpoints.map(({ value }) => {
+    // Check if e.value matches the pattern 'wss://<any_number>'
+    // ignore due to its rate limits
+    if (/^wss:\/\/\d+$/.test(value) || (value).includes('onfinality')) {
+      return undefined;
+    }
+
     const wsProvider = new WsProvider(value);
 
     connection = ApiPromise.create({ provider: wsProvider });
@@ -18,7 +24,7 @@ export async function fastestEndpoint (endpoints) {
       connection,
       wsProvider
     };
-  });
+  }).filter((i) => !!i);
 
   const api = await Promise.any(connections.map(({ connection }) => connection));
 

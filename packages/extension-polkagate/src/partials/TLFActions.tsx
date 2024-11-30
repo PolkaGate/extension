@@ -11,14 +11,13 @@ import { FullScreenIcon, Infotip2 } from '../components';
 import { updateStorage } from '../components/Loading';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
-import { useIsExtensionPopup, useIsLoginEnabled, useTranslation } from '../hooks';
+import { useIsLoginEnabled, useTranslation } from '../hooks';
 import { lockExtension } from '../messaging';
 import { NO_PASS_PERIOD } from '../util/constants';
 
 const TLFActions = () => {
   const { t } = useTranslation();
 
-  const isPopup = useIsExtensionPopup();
   const isLoginEnabled = useIsLoginEnabled();
   const { setExtensionLock } = useExtensionLockContext();
 
@@ -30,7 +29,7 @@ const TLFActions = () => {
   }, [setExtensionLock]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-around' pl='35px' py='5px' mr='-7px'>
+    <Grid alignItems='center' container item justifyContent='flex-end' spacing={4} py='5px' mr='13px'>
       {isLoginEnabled &&
         <>
           <Grid container item width='fit-content'>
@@ -51,7 +50,6 @@ const TLFActions = () => {
         </>
       }
       <>
-
         <Grid item>
           <Infotip2
             text={t('Switch Theme')}
@@ -64,14 +62,10 @@ const TLFActions = () => {
           </Infotip2>
         </Grid>
       </>
-      {isPopup &&
-        <>
-          <Grid item>
-            <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
-          </Grid>
-          <FullScreenIcon isSettingSubMenu url='/' />
-        </>
-      }
+      <Grid item>
+        <Divider orientation='vertical' sx={{ bgcolor: 'divider', height: '20px', my: 'auto' }} />
+      </Grid>
+      <FullScreenIcon isSettingSubMenu url='/' />
     </Grid>
   );
 };
