@@ -65,7 +65,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
   const unlockClass = api.tx['convictionVoting']['unlock']; // (class)
   const batchAll = api.tx['utility']['batchAll'];
 
-  const estimatedFee = useEstimatedFee(address, batchAll(params));
+  const estimatedFee = useEstimatedFee(address, params ? batchAll(params) : undefined);
 
   const extraInfo = useMemo(() => ({
     action: 'Unlock Referenda',
