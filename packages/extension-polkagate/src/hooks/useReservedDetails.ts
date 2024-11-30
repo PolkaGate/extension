@@ -1,10 +1,10 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Option } from '@polkadot/types';
+import type { Option, StorageKey } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
-import type { PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
 import type { Proxy } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,6 +14,8 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useInfo } from '.';
+import type { AnyTuple, Codec } from '@polkadot/types-codec/types';
+import type { ApiPromise } from '@polkadot/api';
 
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
 export type Reserved = { [key in Item]?: Balance | null };
@@ -137,37 +139,62 @@ export default function useReservedDetails (address: string | undefined): Reserv
       if (api.query?.['referenda']?.['referendumInfoFor']) {
         setValue('referenda', undefined);
 
+        interface ReferendaDeposit {
+          who: string;
+          amount: number;
+        }
+
+        interface Referenda {
+          approved?: [number, null, null];
+          timedOut?: [number, ReferendaDeposit, null];
+          rejected?: [number, ReferendaDeposit, null];
+          cancelled?: [number, ReferendaDeposit, null];
+          ongoing?: { submissionDeposit: ReferendaDeposit, decisionDeposit: ReferendaDeposit };
+        }
+
         let referendaDepositSum = BN_ZERO;
 
         api.query['referenda']['referendumInfoFor'].entries().then((referenda) => {
-          referenda.forEach(([_, value]) => {
+          referenda.forEach(([num, value]) => {
             if (!value.isEmpty) {
               // @ts-ignore
-              const ref = (value.unwrap()) as PalletReferendaReferendumInfoRankedCollectiveTally | undefined;
+              const ref = value.toPrimitive() as Referenda;
 
-              if (!ref) {
+              if (!ref || 'approved' in ref) {
                 return;
               }
 
-              const info = (ref.isCancelled
-                ? ref.asCancelled
-                : ref.isRejected
-                  ? ref.asRejected
-                  : ref.isOngoing
-                    ? ref.asOngoing
-                    : ref.isApproved ? ref.asApproved : undefined) as PalletReferendaReferendumStatusRankedCollectiveTally | undefined;
+              if (ref.timedOut || ref.rejected || ref.cancelled) {
+                const who = ref?.timedOut?.[1]?.who || ref?.rejected?.[1]?.who || ref?.cancelled?.[1]?.who;
 
-              if (info?.submissionDeposit && info.submissionDeposit.who.toString() === formatted) {
-                referendaDepositSum = referendaDepositSum.add(info.submissionDeposit.amount);
-              }
+                if (who === formatted) {
+                  const amount = ref?.timedOut?.[1]?.amount ?? ref?.rejected?.[1]?.amount ?? ref?.cancelled?.[1]?.amount ?? 0;
 
-              if (info?.decisionDeposit?.isSome) {
-                const decisionDeposit = info?.decisionDeposit.unwrap();
-
-                if (decisionDeposit.who.toString() === formatted) {
-                  referendaDepositSum = referendaDepositSum.add(decisionDeposit.amount);
+                  referendaDepositSum = referendaDepositSum.add(new BN(amount));
                 }
               }
+
+              if (ref.ongoing) {
+                if (ref.ongoing.submissionDeposit && ref.ongoing.submissionDeposit.who === formatted) {
+                  referendaDepositSum = referendaDepositSum.add(new BN(ref.ongoing.submissionDeposit.amount));
+                }
+
+                if (ref.ongoing.decisionDeposit && ref.ongoing.decisionDeposit.who === formatted) {
+                  referendaDepositSum = referendaDepositSum.add(new BN(ref.ongoing.decisionDeposit.amount));
+                }
+              }
+
+              // if (info?.submissionDeposit && info.submissionDeposit.who.toString() === formatted) {
+              //   referendaDepositSum = referendaDepositSum.add(info.submissionDeposit.amount);
+              // }
+
+              // if (info?.decisionDeposit?.isSome) {
+              //   const decisionDeposit = info?.decisionDeposit.unwrap();
+
+              //   if (decisionDeposit.who.toString() === formatted) {
+              //     referendaDepositSum = referendaDepositSum.add(decisionDeposit.amount);
+              //   }
+              // }
             }
           });
 
@@ -275,28 +302,82 @@ export default function useReservedDetails (address: string | undefined): Reserv
       if (api.query?.['preimage']?.['requestStatusFor']) {
         setValue('preimage', undefined);
 
-        let sum = BN_ZERO;
+        interface Preimage {
+          unrequested?: {
+            len: number;
+            ticket: [string, number]; // address, amount
+            deposit?: [string, number] | null; // address, amount (for old preimage)
+          };
+          requested?: {
+            maybeTicket: [string, number]; // address, amount
+            deposit?: [string, number] | null; // address, amount (for old preimage)
+          } | null;
+        }
 
-        api.query['preimage']['requestStatusFor'].entries().then((preimages) => {
+        const calculatePreimageDeposit = (preimages: [StorageKey<AnyTuple>, Codec][] | undefined, formatted: string): BN => {
+          let sum = new BN(0);
+
+          if (!preimages) {
+            return sum;
+          }
+
           preimages.forEach(([_, value]) => {
-            if (!value.isEmpty) {
-              const status = value.toPrimitive() as { unrequested?: { len: number, ticket: [string, number] } };
-
-              if (status.unrequested) {
-                const [accountId, deposit] = status.unrequested.ticket;
-
-                if (accountId.toString() === formatted) {
-                  sum = sum.add(new BN(deposit));
-                }
-              }
+            if (value.isEmpty) {
+              return;
             }
+
+            const status = value.toPrimitive() as unknown as Preimage;
+
+            // Helper function to add deposit if account matches
+            const addDepositIfMatched = (ticket: [string, number] | null | undefined) => {
+              if (!ticket) {
+                return;
+              }
+
+              const [accountId, deposit] = ticket;
+
+              if (accountId === formatted) {
+                sum = sum.add(new BN(deposit));
+              }
+            };
+
+            // Check unrequested and requested preimage statuses
+            addDepositIfMatched(status?.unrequested?.ticket);
+            addDepositIfMatched(status?.requested?.maybeTicket);
+            addDepositIfMatched(status?.unrequested?.deposit);
+            addDepositIfMatched(status?.requested?.deposit);
           });
 
-          setValue('preimage', sum);
-        }).catch((error) => {
-          console.error(error);
-          setValue('preimage', null);
-        });
+          return sum;
+        };
+
+        const fetchPreimageDeposits = async () => {
+          if (!formatted) {
+            return;
+          }
+
+          try {
+            // Fetch both new and old preimage entries
+            const [newPreimage, oldPreimage] = await Promise.all([
+              api.query['preimage']['requestStatusFor'].entries(),
+              api.query['preimage']['statusFor'].entries()
+            ]);
+
+            // Calculate deposits for both new and old preimages
+            const totalSum = calculatePreimageDeposit(newPreimage, formatted).add(calculatePreimageDeposit(oldPreimage, formatted));
+
+            setValue('preimage', totalSum);
+          } catch (error) {
+            console.error(error);
+            setValue('preimage', null);
+          }
+        };
+
+        fetchPreimageDeposits()
+          .catch((error) => {
+            console.error(error);
+            setValue('preimage', null);
+          });
       } else {
         setValue('preimage', null);
       }
