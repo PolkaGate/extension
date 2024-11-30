@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { StakingInputs } from '../../type';
 
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
@@ -16,10 +15,10 @@ import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import { MAX_AMOUNT_LENGTH } from '@polkadot/extension-polkagate/src/util/constants';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, TwoButtons, Warning } from '../../../../components';
-import { useInfo, useStakingAccount, useTranslation } from '../../../../hooks';
+import { useEstimatedFee, useInfo, useStakingAccount, useTranslation } from '../../../../hooks';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -36,7 +35,7 @@ interface Props {
 export default function Unstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, decimal, formatted, token } = useInfo(address);
+  const { api, decimal, token } = useInfo(address);
 
   const stakingAccount = useStakingAccount(address);
 
@@ -47,13 +46,13 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   const [alert, setAlert] = useState<string | undefined>();
   const [restakeAllAmount, setRestakeAllAmount] = useState<boolean>(false);
   const [unlockingAmount, setUnlockingAmount] = useState<BN | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
 
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as BN | undefined, [stakingAccount?.stakingLedger?.active]);
   const amountAsBN = useMemo(() => restakeAllAmount ? unlockingAmount : amountToMachine(amount, decimal), [amount, decimal, restakeAllAmount, unlockingAmount]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && amountAsBN && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx['staking']['rebond']; // signer: Controller
+  const rebonded = api?.tx['staking']['rebond']; // signer: Controller
+  const estimatedFee = useEstimatedFee(address, rebonded, [amountAsBN]);
 
   useEffect(() => {
     if (!stakingAccount) {
@@ -82,18 +81,6 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
 
     setAlert(undefined);
   }, [unlockingAmount, t, amountAsBN]);
-
-  useEffect(() => {
-    if (!rebonded || !formatted) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    rebonded(amountAsBN).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, api, formatted, rebonded]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!decimal) {

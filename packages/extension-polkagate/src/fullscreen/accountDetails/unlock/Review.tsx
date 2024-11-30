@@ -10,7 +10,6 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { Lock } from '../../../hooks/useAccountLocks';
@@ -20,10 +19,10 @@ import { faLockOpen, faUserAstronaut } from '@fortawesome/free-solid-svg-icons';
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN_ONE, isBn } from '@polkadot/util';
+import { isBn } from '@polkadot/util';
 
 import { AccountHolderWithProxy, AmountFee, SignArea2, Warning, WrongPasswordAlert } from '../../../components';
-import { useInfo, useProxies, useTranslation } from '../../../hooks';
+import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { SubTitle } from '../../../partials';
 import { PROXY_TYPE } from '../../../util/constants';
 import { amountToHuman } from '../../../util/utils';
@@ -56,7 +55,6 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
   const [step, setStep] = useState<number>(STEPS.INDEX);
 
@@ -66,6 +64,8 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
   const remove = api.tx['convictionVoting']['removeVote']; // (class, index)
   const unlockClass = api.tx['convictionVoting']['unlock']; // (class)
   const batchAll = api.tx['utility']['batchAll'];
+
+  const estimatedFee = useEstimatedFee(address, batchAll(params));
 
   const extraInfo = useMemo(() => ({
     action: 'Unlock Referenda',
@@ -93,12 +93,6 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
     const params = [...removes, ...unlocks];
 
     setParams(params);
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance | undefined);
-    }
-
-    batchAll(params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
   }, [api, batchAll, formatted, classToUnlock, remove, unlockClass]);
 
   useEffect((): void => {

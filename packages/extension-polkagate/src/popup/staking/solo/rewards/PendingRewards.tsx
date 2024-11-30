@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -8,16 +7,17 @@
  * @description to show pending rewards and let user to call payout
  * */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
+import type { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
 import type { Forcing } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ApiPromise } from '@polkadot/api';
-import type { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, Checkbox2, Identity, Motion, ShowBalance, TwoButtons } from '../../../../components';
 import { useCurrentBlockNumber, useInfo, usePendingRewards2, useTranslation } from '../../../../hooks';

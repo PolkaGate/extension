@@ -3,13 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { Proxy, TxInfo } from '../../../../../util/types';
 import type { StakingInputs } from '../../../type';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import DisplayValue from '@polkadot/extension-polkagate/src/fullscreen/governance/post/castVote/partial/DisplayValue';
 import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
@@ -17,7 +16,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { ShowBalance, SignArea2, WrongPasswordAlert } from '../../../../../components';
 import { useTranslation } from '../../../../../components/translate';
-import { useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
+import { useEstimatedFee, useInfo, useStakingAccount, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
 import { STEPS } from '../../../pool/stake';
 import ValidatorsTableFS from '../../partials/ValidatorsTableFS';
 
@@ -40,11 +39,11 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
 
   const { api, formatted, token } = useInfo(address);
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
   const { call, params, selectedValidators } = inputs;
+  const estimatedFee = useEstimatedFee(address, call, params);
 
   const extraInfo = useMemo(() => ({
     action: 'Solo Staking',
@@ -52,15 +51,6 @@ export default function Review({ address, inputs, setStep, setTxInfo, step }: Pr
     subAction: 'Select Validator',
     validatorsCount: selectedValidators?.length
   }), [estimatedFee, selectedValidators?.length]);
-
-  useEffect(() => {
-    if (call && params && formatted) {
-      call(...params)
-        .paymentInfo(formatted)
-        .then((i) => setEstimatedFee(i?.partialFee))
-        .catch(console.error);
-    }
-  }, [formatted, params, call]);
 
   const handleCancel = useCallback(
     () => setStep(STEPS.INDEX)

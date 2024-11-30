@@ -10,7 +10,6 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, StakingConsts, TxInfo, ValidatorInfo } from '../../../util/types';
 
@@ -18,10 +17,9 @@ import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
-import { BN_ONE } from '@polkadot/util';
 
 import { ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../components';
-import { useAccountDisplay, useChain, useDecimal, useFormatted, useProxies, useToken, useTranslation } from '../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import Confirmation from '../../../partials/Confirmation';
 import broadcast from '../../../util/api/broadcast';
@@ -44,13 +42,12 @@ interface Props {
 
 export default function Review ({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(address);
-  const chain = useChain(address);
+
+  const { chain, decimal, formatted, token} = useInfo(address);
   const proxies = useProxies(api, formatted);
-  const token = useToken(address);
-  const decimal = useDecimal(address);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);
+
   const [password, setPassword] = useState<string | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -58,7 +55,6 @@ export default function Review ({ address, allValidatorsIdentities, api, newSele
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const nominated = api && (poolId ? api.tx['nominationPools']['nominate'] : api.tx['staking']['nominate']);
   const params = useMemo(() => {
@@ -69,6 +65,7 @@ export default function Review ({ address, allValidatorsIdentities, api, newSele
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
+  const estimatedFee = useEstimatedFee(address, nominated, params);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -81,18 +78,6 @@ export default function Review ({ address, allValidatorsIdentities, api, newSele
 
     onAction('/');
   }, [onAction, setShow]);
-
-  useEffect((): void => {
-    if (!api) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    nominated && formatted && nominated(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [nominated, formatted, params, api]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

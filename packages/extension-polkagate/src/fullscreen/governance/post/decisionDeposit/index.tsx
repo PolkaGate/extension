@@ -1,10 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Balance } from '@polkadot/types/interfaces';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -12,16 +11,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN_ONE } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Identity, ShowBalance, SignArea2, Warning } from '../../../../components';
-import { useAccountDisplay, useBalances, useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useBalances, useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { ThroughProxy } from '../../../../partials';
 import { getValue } from '../../../../popup/account/util';
-import { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
@@ -61,27 +57,12 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
 
-  const tx = api && api.tx['referenda']['placeDecisionDeposit'];
+  const tx = api?.tx['referenda']['placeDecisionDeposit'];
   const amount = track?.[1]?.decisionDeposit;
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-
-  useEffect(() => {
-    if (!formatted || !tx) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    const feeDummyParams = [1];
-
-    tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, tx]);
+  const estimatedFee = useEstimatedFee(address, tx, [1]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -121,6 +102,8 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
     if (step === STEPS.CONFIRM) {
       return t('Paying Confirmation');
     }
+
+    return undefined;
   }, [step, t]);
 
   const HEIGHT = 550;
@@ -193,7 +176,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
             </Grid>
             <Grid container item sx={{ bottom: '20px', left: '4%', position: 'absolute', width: '92%' }}>
               <SignArea2
-                address={address as string}
+                address={address!}
                 call={tx}
                 disabled={notEnoughBalance}
                 extraInfo={extraInfo}

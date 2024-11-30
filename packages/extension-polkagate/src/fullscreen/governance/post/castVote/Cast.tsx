@@ -170,7 +170,7 @@ export default function Cast ({ address, notVoted, previousVote, refIndex, setSt
     const dummyVote = undefined;
     const feeDummyParams = ['1', dummyVote];
 
-    tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    tx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee))).catch(console.error);
   }, [api, formatted, tx]);
 
   useEffect(() => {
