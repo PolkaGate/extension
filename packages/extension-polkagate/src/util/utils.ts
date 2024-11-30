@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -11,11 +12,11 @@ import type { Compact, u128 } from '@polkadot/types-codec';
 import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
+import { fastestEndpoint } from './workers/utils';
 import allChains from './chains';
 import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
 
@@ -499,18 +500,9 @@ export async function updateRecentChains (addressKey: string, genesisHashKey: st
 
 export async function fastestConnection (endpoints: DropdownOption[]): Promise<FastestConnectionType> {
   try {
-    const connections = endpoints.map(({ value }) => {
-      const wsProvider = new WsProvider(value as string);
+    const urls = endpoints.map(({ value }) => ({ value: value as string }));
+    const { api, connections } = await fastestEndpoint(urls);
 
-      const connection = ApiPromise.create({ provider: wsProvider });
-
-      return {
-        connection,
-        wsProvider
-      };
-    });
-
-    const api = await Promise.any(connections.map(({ connection }) => connection));
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
