@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Dialog, Grid, Slide, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import Infotip2 from '../../../components/Infotip2';
 import { getStorage } from '../../../components/Loading';
@@ -29,11 +29,18 @@ interface Props {
 
 function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
   const theme = useTheme();
+  const ref = useRef<DOMRect>();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<CurrencyItemType | undefined>();
 
   const textColor = useMemo(() => color || (theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary), [color, theme]);
+
+  useEffect(() => {
+    if (anchorEl?.getBoundingClientRect()) {
+      ref.current = anchorEl.getBoundingClientRect();
+    }
+  }, [anchorEl]);
 
   useLayoutEffect(() => {
     if (currencyToShow) {
@@ -71,39 +78,37 @@ function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', he
           </Typography>
         </Infotip2>
       </Grid>
-      {anchorEl &&
-        <Dialog
-          PaperProps={{
+      <Dialog
+        PaperProps={{
+          sx: {
+            bgcolor: 'background.paper',
+            borderRadius: '7px',
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
+              : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
+            left: ((anchorEl?.getBoundingClientRect() || ref.current)?.right ?? 0) - dialogLeft,
+            position: 'absolute',
+            top: ((anchorEl?.getBoundingClientRect() || ref.current)?.bottom ?? 0) - 30
+          }
+        }}
+        TransitionComponent={Slide}
+        onClose={handleClose}
+        open={!!anchorEl}
+        slotProps={{
+          backdrop: {
             sx: {
-              bgcolor: 'background.paper',
-              borderRadius: '7px',
-              boxShadow: theme.palette.mode === 'dark'
-                ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
-                : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
-              left: anchorEl?.getBoundingClientRect().right - dialogLeft,
-              position: 'absolute',
-              top: anchorEl?.getBoundingClientRect().bottom - 30
+              backdropFilter: 'blur(8px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)'
             }
-          }}
-          TransitionComponent={Slide}
-          onClose={handleClose}
-          open={!!anchorEl}
-          slotProps={{
-            backdrop: {
-              sx: {
-                backdropFilter: 'blur(8px)',
-                backgroundColor: 'rgba(0, 0, 0, 0.3)'
-              }
-            }
-          }}
-        >
-          <CurrencyList
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
-            setCurrencyToShow={setCurrencyToShow}
-          />
-        </Dialog>
-      }
+          }
+        }}
+      >
+        <CurrencyList
+          anchorEl={anchorEl}
+          setAnchorEl={setAnchorEl}
+          setCurrencyToShow={setCurrencyToShow}
+        />
+      </Dialog>
     </>
   );
 }

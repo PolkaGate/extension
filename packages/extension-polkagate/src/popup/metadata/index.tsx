@@ -16,7 +16,7 @@ export default function Metadata (): React.ReactElement {
   const onReject = useCallback(
     (): void => {
       rejectMetaRequest(requests[0].id)
-        .then(() => onAction())
+        .then(() => onAction('/'))
         .catch(console.error);
     },
     [onAction, requests]
@@ -26,7 +26,7 @@ export default function Metadata (): React.ReactElement {
     <>
       <Header
         onClose={onReject}
-        text={t<string>('Metadata')}
+        text={t('Metadata')}
       />
       {requests[0]
         ? (

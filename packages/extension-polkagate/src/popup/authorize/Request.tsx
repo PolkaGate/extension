@@ -53,7 +53,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
 
   const onApprove = useCallback((): void => {
     approveAuthRequest(selectedAccounts, authRequest.id)
-      .then(() => onAction())
+      .then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [authRequest.id, onAction, selectedAccounts]);
 
@@ -63,7 +63,7 @@ export default function Request ({ authRequest, hasBanner }: Props): React.React
     (alreadySelectedAccounts.length
       ? approveAuthRequest(alreadySelectedAccounts, id)
       : ignoreAuthRequest(id)
-    ).then(() => onAction())
+    ).then(() => onAction('/'))
       .catch((error: Error) => console.error(error));
   }, [alreadySelectedAccounts, authRequest.id, onAction]);
 

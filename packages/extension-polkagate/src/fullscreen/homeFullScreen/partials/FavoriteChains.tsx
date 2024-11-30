@@ -6,7 +6,7 @@
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Badge, Dialog, Grid, Slide, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useIsTestnetEnabled, useSelectedChains } from '../../../hooks';
 import { TEST_NETS } from '../../../util/constants';
@@ -19,10 +19,17 @@ export default function FavoriteChains (): React.ReactElement {
   const theme = useTheme();
   const selectedChains = useSelectedChains();
   const isTestNetEnabled = useIsTestnetEnabled();
+  const ref = useRef<DOMRect>();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const color = theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.text.secondary;
+
+  useEffect(() => {
+    if (anchorEl?.getBoundingClientRect()) {
+      ref.current = anchorEl.getBoundingClientRect();
+    }
+  }, [anchorEl]);
 
   const onChainListClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -53,7 +60,7 @@ export default function FavoriteChains (): React.ReactElement {
       sx={{
         '& .MuiBadge-badge': {
           color: 'white'
-        },
+        }
       }}
     >
       <Grid
@@ -72,7 +79,6 @@ export default function FavoriteChains (): React.ReactElement {
           icon={faSliders}
         />
       </Grid>
-      { anchorEl &&
       <Dialog
         PaperProps={{
           sx: {
@@ -81,9 +87,9 @@ export default function FavoriteChains (): React.ReactElement {
             boxShadow: theme.palette.mode === 'dark'
               ? '0px 4px 4px rgba(255, 255, 255, 0.25)'
               : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)',
-            left: anchorEl?.getBoundingClientRect().right - 310,
+            left: ((anchorEl?.getBoundingClientRect() || ref.current)?.right ?? 0) - 310,
             position: 'absolute',
-            top: anchorEl?.getBoundingClientRect().bottom - 30
+            top: ((anchorEl?.getBoundingClientRect() || ref.current)?.bottom ?? 0) - 30
           }
         }}
         TransitionComponent={Slide}
@@ -99,7 +105,7 @@ export default function FavoriteChains (): React.ReactElement {
         }}
       >
         <ChainList anchorEl={anchorEl} />
-      </Dialog>}
+      </Dialog>
     </Badge>
   );
 }

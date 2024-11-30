@@ -19,6 +19,7 @@ import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
 import SettingSubMenu from './SettingSubMenu';
 import VersionSocial from './VersionSocial';
+import TLFActions from './TLFActions';
 
 interface Props {
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -106,7 +107,8 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
       open={isMenuOpen}
     >
       <Grid bgcolor='divider' container height='100%' justifyContent='end' zIndex={10}>
-        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: 'parent.innerHeight', minWidth: '307px', position: 'relative' }} width='86%'>
+        <TLFActions />
+        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='10px' sx={{ height: '94%', minWidth: '307px', position: 'relative' }} width='86%'>
           {!showWarning
             ? <>
               <MenuItem
@@ -188,8 +190,8 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
           }
           <VersionSocial fontSize='11px' />
         </Grid>
-        <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '2%' }}>
-          <CloseIcon sx={{ color: 'text.secondary', fontSize: 35 }} />
+        <IconButton onClick={onCloseMenu} sx={{ left: '3%', p: 0, position: 'absolute', top: '1%' }}>
+          <CloseIcon sx={{ color: 'white', fontSize: 35 }} />
         </IconButton>
       </Grid>
     </Dialog>

@@ -15,5 +15,5 @@ export interface StakingInputs {
   pool?: MyPoolInfo,
   estimatedFee?: Balance;
   selectedValidators?: ValidatorInfo[],
-  extraInfo?: Record<string, unknown>
+  extraInfo?: Record<string, any>
 }
