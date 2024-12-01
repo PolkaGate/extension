@@ -88,7 +88,7 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
     const params = [...removes, ...unlocks];
 
     setParams(params as any);
-  }, [api, batchAll, formatted, classToUnlock, remove, unlockClass]);
+  }, [classToUnlock, formatted, remove, unlockClass]);
 
   const goToAccount = useCallback(() => {
     setShow(false);

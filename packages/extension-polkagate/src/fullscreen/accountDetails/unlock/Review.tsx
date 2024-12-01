@@ -93,7 +93,7 @@ export default function Review ({ address, api, classToUnlock, setDisplayPopup, 
     const params = [...removes, ...unlocks];
 
     setParams(params);
-  }, [api, batchAll, formatted, classToUnlock, remove, unlockClass]);
+  }, [classToUnlock, formatted, remove, unlockClass]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
