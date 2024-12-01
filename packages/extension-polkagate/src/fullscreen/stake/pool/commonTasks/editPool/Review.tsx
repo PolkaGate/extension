@@ -13,7 +13,7 @@ import type { StakingInputs } from '../../../type';
 import type { ChangesProps } from '.';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import SelectProxyModal2 from '@polkadot/extension-polkagate/src/fullscreen/governance/components/SelectProxyModal2';
 import { PROXY_TYPE } from '@polkadot/extension-polkagate/src/util/constants';
