@@ -9,24 +9,30 @@ interface WorkerProviderProps {
   children: React.ReactNode;
 }
 
-export default function WorkerProvider ({ children }: WorkerProviderProps) {
-  const [worker, setWorker] = useState<Worker | undefined>(undefined);
+export default function WorkerProvider({ children }: WorkerProviderProps) {
+  const [port, setPort] = useState<MessagePort | undefined>(undefined);
 
   useEffect(() => {
-    const newWorker = new Worker(new URL('@polkadot/extension-polkagate/src/util/workers/sharedWorker.js', import.meta.url));
+    const sharedWorker = new SharedWorker(new URL('@polkadot/extension-polkagate/src/util/workers/sharedWorker.js', import.meta.url));
 
-    setWorker(newWorker);
+    // Access the worker's communication port
+    const workerPort = sharedWorker.port;
+
+    // Start the port for communication
+    workerPort.start();
+
+    setPort(workerPort);
 
     return () => {
       // Cleanup on unmount
-      if (newWorker) {
-        newWorker.terminate();
+      if (workerPort) {
+        workerPort.close();
       }
     };
   }, []);
 
   return (
-    <WorkerContext.Provider value={worker}>
+    <WorkerContext.Provider value={port}>
       {children}
     </WorkerContext.Provider>
   );

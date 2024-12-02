@@ -4,15 +4,21 @@
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 import { getAssets } from './getAssets.js';
 
-// @ts-ignore
-
-export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints) {
+/**
+ *
+ * @param {string[]} addresses
+ * @param {import('@polkagate/apps-config/assets/types').Asset[]} assetsToBeFetched
+ * @param {string} chainName
+ * @param {import('../../types').UserAddedChains} userAddedEndpoints
+ * @param {MessagePort} port
+ */
+export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const { metadata } = metadataFromApi(api);
 
-  postMessage(JSON.stringify({ functionName: 'getAssetOnAssetHub', metadata }));
+  port.postMessage(JSON.stringify({ functionName: 'getAssetOnAssetHub', metadata }));
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
@@ -32,6 +38,6 @@ export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainNam
 
   await getAssets(addresses, api, nonNativeAssets, chainName, results);
 
-  postMessage(JSON.stringify({ functionName: 'getAssetOnAssetHub', results }));
+  port.postMessage(JSON.stringify({ functionName: 'getAssetOnAssetHub', results }));
   closeWebsockets(connections);
 }

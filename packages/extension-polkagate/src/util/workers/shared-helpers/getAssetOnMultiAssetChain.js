@@ -1,23 +1,29 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import { getSubstrateAddress } from '../../utils';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 
-export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints) {
+/**
+ *
+ * @param {import('@polkagate/apps-config/assets/types').Asset[]} assetsToBeFetched
+ * @param {string[]} addresses
+ * @param {string} chainName
+ * @param {import('../../types').UserAddedChains} userAddedEndpoints
+ * @param {MessagePort} port
+ */
+export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const { metadata } = metadataFromApi(api);
 
-  postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', metadata }));
+  port.postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', metadata }));
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
-  const maybeTheAssetOfAddresses = addresses.map((address) => api.query.tokens.accounts.entries(address));
+  const maybeTheAssetOfAddresses = addresses.map((address) => api.query['tokens']['accounts'].entries(address));
   const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
 
   balanceOfAssetsOfAddresses.flat().forEach((entry) => {
@@ -25,9 +31,11 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
       return;
     }
 
+    // @ts-ignore
     const formatted = entry[0].toHuman()[0];
     const storageKey = entry[0].toString();
 
+    // @ts-ignore
     const foundAsset = assetsToBeFetched.find((_asset) => {
       const currencyId = _asset?.extras?.currencyIdScale.replace('0x', '');
 
@@ -35,6 +43,7 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     });
 
     const balance = entry[1];
+    // @ts-ignore
     const totalBalance = balance.free.add(balance.reserved);
 
     if (foundAsset) {
@@ -52,12 +61,13 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
 
       const address = getSubstrateAddress(formatted);
 
+      // @ts-ignore
       results[address]?.push(asset) ?? (results[address] = [asset]);
     } else {
       console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
     }
   });
 
-  postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', results }));
+  port.postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', results }));
   closeWebsockets(connections);
 }

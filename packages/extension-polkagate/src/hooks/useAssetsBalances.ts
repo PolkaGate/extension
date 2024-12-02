@@ -133,7 +133,7 @@ const FUNCTIONS = ['getAssetOnRelayChain', 'getAssetOnAssetHub', 'getAssetOnMult
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: Worker): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
 
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -383,10 +383,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
     worker.postMessage({ functionName, parameters: { address: _addresses, chainName, userAddedEndpoints } });
 
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
     handleWorkerMessages();
   }, [handleWorkerMessages, userAddedEndpoints, worker]);
 
@@ -398,10 +394,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const functionName = 'getAssetOnAssetHub';
 
     worker.postMessage({ functionName, parameters: { address: _addresses, assetsToBeFetched, chainName, userAddedEndpoints } });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
   }, [userAddedEndpoints, worker]);
 
   const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
@@ -412,10 +404,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const functionName = 'getAssetOnMultiAssetChain';
 
     worker.postMessage({ functionName, parameters: { addresses, chainName, userAddedEndpoints } });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
 
     handleWorkerMessages();
   }, [handleWorkerMessages, userAddedEndpoints, worker]);
