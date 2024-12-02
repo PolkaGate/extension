@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -11,24 +10,23 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { Balance } from '@polkadot/types/interfaces';
 import type { AnyTuple } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useDecimal, useProxies, useToken, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -46,12 +44,11 @@ interface Props {
   rebonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
 }
 
-export default function Review({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
+export default function Review ({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const decimal = useDecimal(address);
+  const { decimal, token } = useInfo(address);
   const name = useAccountDisplay(address);
   const proxies = useProxies(api, formatted);
-  const token = useToken(address);
   const onAction = useContext(ActionContext);
 
   const [password, setPassword] = useState<string | undefined>();

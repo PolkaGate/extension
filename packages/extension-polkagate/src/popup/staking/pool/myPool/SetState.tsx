@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
@@ -11,10 +10,9 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
-import { BN_ONE } from '@polkadot/util';
 
 import { AccountWithProxyInConfirmation, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowBalance, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
@@ -53,28 +51,14 @@ export default function SetState ({ address, formatted, headerText, helperText, 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
-
   const batchAll = api?.tx['utility']['batchAll'];
   const chilled = api?.tx['nominationPools']['chill'];
   const poolSetState = api?.tx['nominationPools']['setState'](pool.poolId.toString(), state); // (poolId, state)
+  const estimatedFee = useEstimatedFee(address, poolSetState);
 
   const backToStake = useCallback(() => {
     setShow(false);
   }, [setShow]);
-
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    // eslint-disable-next-line no-void
-    void poolSetState?.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, poolSetState]);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);

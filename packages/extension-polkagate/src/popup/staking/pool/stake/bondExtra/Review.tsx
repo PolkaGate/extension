@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,12 +8,16 @@
  * this component opens bondExtra review page
  * */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
+//@ts-ignore
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
+import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -23,11 +26,8 @@ import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation }
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { PROXY_TYPE } from '../../../../../util/constants';
-import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import BondExtraTxDetail from './partial/BondExtraTxDetail';
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
-import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 
 interface Props {
   api: ApiPromise;
@@ -39,7 +39,7 @@ interface Props {
   pool: MyPoolInfo;
 }
 
-export default function Review({ address, api, bondAmount, estimatedFee, pool, setShowReview, showReview }: Props): React.ReactElement {
+export default function Review ({ address, api, bondAmount, estimatedFee, pool, setShowReview, showReview }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chain = useChain(address);
   const onAction = useContext(ActionContext);

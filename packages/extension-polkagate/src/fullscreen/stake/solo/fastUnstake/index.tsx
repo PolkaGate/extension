@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { StakingInputs } from '../../type';
 
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
@@ -16,10 +15,10 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER } from '@polkadot/util';
 
 import { PButton, Progress, Warning } from '../../../../components';
-import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
+import { useBalances, useEstimatedFee, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
 import Confirmation from '../../partials/Confirmation';
 import Review from '../../partials/Review';
 import { STEPS } from '../../pool/stake';
@@ -36,16 +35,17 @@ interface Props {
 export default function FastUnstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, decimal, formatted, token } = useInfo(address);
+  const { api, decimal, token } = useInfo(address);
   const stakingAccount = useStakingAccount(address);
   const myBalances = useBalances(address);
   const stakingConsts = useStakingConsts(address);
   const isExposed = useIsExposed(address);
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [step, setStep] = useState(STEPS.INDEX);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<StakingInputs>();
+
+  const estimatedFee = useEstimatedFee(address, inputs?.call?.());
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
@@ -87,18 +87,6 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
       params
     });
   }, [api, availableBalance, decimal, myBalances, staked]);
-
-  useEffect((): void => {
-    if (!api) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    inputs?.call && address && inputs.call().paymentInfo(address).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, address, inputs, formatted]);
 
   const onNext = useCallback(() => {
     setStep(STEPS.REVIEW);

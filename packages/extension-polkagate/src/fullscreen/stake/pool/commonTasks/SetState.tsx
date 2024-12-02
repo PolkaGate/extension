@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { MyPoolInfo, TxInfo } from '../../../../util/types';
 import type { StakingInputs } from '../../type';
 import type { PoolState } from '../partials/PoolCommonTasks';
@@ -15,10 +14,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
-import { BN_ONE } from '@polkadot/util';
 
 import { AccountWithProxyInConfirmation } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { useEstimatedFee, useTranslation } from '../../../../hooks';
 import Review from '../../partials/Review';
 import { ModalTitle } from '../../solo/commonTasks/configurePayee';
 import Confirmation from '../partials/Confirmation';
@@ -40,7 +38,8 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [inputs, setInputs] = useState<StakingInputs>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
+
+  const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
   const helperText = useMemo(() =>
     state === 'Blocked'
@@ -84,19 +83,6 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
       params
     });
   }, [api, extraInfo, formatted, pool.bondedPool?.roles.nominator, pool.bondedPool?.roles.root, pool.poolId, pool.stashIdAccount?.nominators, state]);
-
-  useEffect(() => {
-    if (!api || !inputs?.call) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    // eslint-disable-next-line no-void
-    void inputs?.call(...inputs.params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, inputs]);
 
   // this page doesn't have an INDEX, When the ModalTitle close button is clicked, it will set the step to STEPS.INDEX, triggering the modal to close
   useEffect(() => {

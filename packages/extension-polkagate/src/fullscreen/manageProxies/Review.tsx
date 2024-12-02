@@ -1,23 +1,21 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
+import { BN_ZERO } from '@polkadot/util';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
-
-import { CanPayErrorAlert, ShowBalance, SignArea2, WrongPasswordAlert, VaadinIcon } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useTranslation } from '../../hooks';
+import { CanPayErrorAlert, ShowBalance, SignArea2, VaadinIcon, WrongPasswordAlert } from '../../components';
+import { useCanPayFeeAndDeposit, useEstimatedFee, useFormatted, useTranslation } from '../../hooks';
 import { ThroughProxy } from '../../partials';
 import { PROXY_TYPE } from '../../util/constants';
 import { pgBoxShadow } from '../../util/utils';
@@ -41,14 +39,13 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Review({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function Review ({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
 
@@ -66,10 +63,9 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
     }
   }, [depositedValue, newDepositValue]);
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
-  const removeProxy = api && api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
-  const addProxy = api && api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
-  const batchAll = api && api.tx['utility']['batchAll'];
+  const removeProxy = api?.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+  const addProxy = api?.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+  const batchAll = api?.tx['utility']['batchAll'];
 
   const changedItems = useMemo(() => proxyItems?.filter(({ status }) => status !== 'current'), [proxyItems]);
 
@@ -97,7 +93,7 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
 
     return {
       mode: 'managing proxy(ies)',
-      reviewText: `You are ${toAdds && toAdds > 0 ? `adding ${toAdds} ${toRemoves && toRemoves > 0 ? ' and' : ''}` : ''} ${toRemoves && toRemoves > 0 ? `removing ${toRemoves}` : ''} ${toAdds + toRemoves > 1 ? 'proxies' : 'proxy'}`
+      reviewText: `You are ${toAdds && toAdds > 0 ? `adding ${toAdds} ${toRemoves && toRemoves > 0 ? ' and' : ''}` : ''} ${toRemoves && toRemoves > 0 ? `removing ${toRemoves}` : ''} ${(toAdds ?? 0) + (toRemoves ?? 0) > 1 ? 'proxies' : 'proxy'}`
     };
   }, [proxyItems]);
 
@@ -120,24 +116,14 @@ function Review({ address, api, chain, depositedValue, newDepositValue, proxyIte
       : temp[0];
   }, [addProxy, batchAll, proxyItems, removeProxy]);
 
+  const estimatedFee = useEstimatedFee(address, call);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
+
   const extraInfo = useMemo(() => ({
     action: 'Proxy Management',
     fee: String(estimatedFee || 0),
     subAction: toTitleCase(mode)
   }), [estimatedFee, mode]);
-
-  useEffect(() => {
-    if (!formatted || !call) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    // eslint-disable-next-line no-void
-    void call.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, call]);
 
   const backToManage = useCallback(() => {
     setStep(STEPS.MANAGE);

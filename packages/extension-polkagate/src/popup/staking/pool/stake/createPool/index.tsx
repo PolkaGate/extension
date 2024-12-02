@@ -154,11 +154,11 @@ export default function CreatePool(): React.ReactElement {
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api.createType('Balance', BN_ONE));
+      return setEstimatedFee(api.createType('Balance', BN_ONE) as Balance);
     }
 
     api && api.tx['nominationPools']['create'](String(amountAsBN.gte(BN_ONE) ? amountAsBN : BN_ONE), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
-      setEstimatedFee(api.createType('Balance', i?.partialFee));
+      setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
 
     api && api.tx['nominationPools']['create'](String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {

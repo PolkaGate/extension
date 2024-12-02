@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -43,7 +42,7 @@ export const CONDITION_MAP = {
   REMOVE_ALL: 2
 };
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -147,7 +146,7 @@ export default function Index(): React.ReactElement {
     const params = [formatted, amountToMachine(amount, decimal)];
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     // eslint-disable-next-line no-void
@@ -155,12 +154,11 @@ export default function Index(): React.ReactElement {
       const fee = i?.partialFee;
 
       if (unlockingLen < maxUnlockingChunks) {
-        setEstimatedFee(fee);
+        setEstimatedFee(api.createType('Balance', fee) as Balance);
       } else {
         const dummyParams = [1, 1];
 
-        // eslint-disable-next-line no-void
-        void poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee))));
+        poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted).then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee)) as Balance)).catch(console.error);
       }
     }).catch(console.error);
   }, [amount, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);

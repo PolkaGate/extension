@@ -10,8 +10,6 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { Chain } from '@polkadot/extension-chains/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { Lock } from '../../../hooks/useAccountLocks';
@@ -22,10 +20,10 @@ import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
-import { BN_ONE, isBn } from '@polkadot/util';
+import { isBn } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../components';
-import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../partials';
 import { signAndSend } from '../../../util/api';
 import { PROXY_TYPE } from '../../../util/constants';
@@ -59,7 +57,6 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [estimatedFee, setEstimatedFee] = useState<BN>();
   const [params, setParams] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>[]>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -69,6 +66,8 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
   const remove = api.tx['convictionVoting']['removeVote']; // (class, index)
   const unlockClass = api.tx['convictionVoting']['unlock']; // (class)
   const batchAll = api.tx['utility']['batchAll'];
+
+  const estimatedFee = useEstimatedFee(address, batchAll(params));
 
   useEffect((): void => {
     if (!formatted) {
@@ -89,13 +88,7 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
     const params = [...removes, ...unlocks];
 
     setParams(params as any);
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    batchAll(params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, batchAll, formatted, classToUnlock, remove, unlockClass]);
+  }, [classToUnlock, formatted, remove, unlockClass]);
 
   const goToAccount = useCallback(() => {
     setShow(false);
@@ -180,7 +173,7 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
         <Container disableGutters sx={{ px: '30px' }}>
           <AccountHolderWithProxy
             address={address}
-            chain={chain as Chain}
+            chain={chain}
             selectedProxyAddress={selectedProxyAddress}
             showDivider
             style={{ mt: '-5px' }}
@@ -189,7 +182,7 @@ export default function Review ({ address, api, classToUnlock, setRefresh, setSh
           <AmountFee
             address={address}
             amount={amount}
-            fee={estimatedFee as Balance}
+            fee={estimatedFee}
             label={t('Available to unlock')}
             showDivider={!totalLocked.sub(unlockableAmount).isZero()}
             token={token}

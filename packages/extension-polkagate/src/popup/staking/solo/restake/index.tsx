@@ -1,11 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
@@ -13,10 +11,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
-import { useInfo, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useEstimatedFee, useInfo, useStakingAccount, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
 import Asset from '../../../../partials/Asset';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
@@ -42,7 +40,6 @@ export default function Index(): React.ReactElement {
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [amount, setAmount] = useState<string>();
   const [alert, setAlert] = useState<string | undefined>();
   const [showReview, setShowReview] = useState<boolean>(false);
@@ -53,7 +50,9 @@ export default function Index(): React.ReactElement {
   const amountAsBN = useMemo(() => amountToMachine(amount, decimal), [amount, decimal]);
   const totalStakeAfter = useMemo(() => staked && unlockingAmount && staked.add(amountAsBN), [amountAsBN, staked, unlockingAmount]);
 
-  const rebonded = api && api.tx['staking']['rebond']; // signer: Controller
+  const rebonded = api?.tx['staking']['rebond'];
+
+  const estimatedFee = useEstimatedFee(address, rebonded, [amountAsBN]);
 
   useEffect(() => {
     if (!stakingAccount) {
@@ -82,18 +81,6 @@ export default function Index(): React.ReactElement {
 
     setAlert(undefined);
   }, [unlockingAmount, t, amountAsBN]);
-
-  useEffect(() => {
-    if (!rebonded || !formatted) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    rebonded(amountAsBN).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [amountAsBN, api, formatted, rebonded]);
 
   const onBackClick = useCallback(() => {
     history.push({
