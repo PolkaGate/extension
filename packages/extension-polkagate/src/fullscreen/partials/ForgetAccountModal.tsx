@@ -35,6 +35,8 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
   const [isPasswordError, setIsPasswordError] = useState(false);
   const needsPasswordConfirmation = !account.isExternal;
 
+  const notOnHome = window.location.hash !== '#/';
+
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
@@ -80,7 +82,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
           notify(t('{{accountName}} has been successfully removed!', { replace: { accountName: account?.name || 'Unknown' } }), 'success');
 
           backToAccount();
-          onAction('/');
+          notOnHome && onAction('/');
         })
         .catch((error: Error) => {
           setIsBusy(false);
@@ -91,7 +93,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
       setIsBusy(false);
       console.error('Error forgetting the account:', error);
     }
-  }, [account, backToAccount, needsPasswordConfirmation, notify, onAction, password, t, updateAuthAccountsList]);
+  }, [account.address, account?.name, backToAccount, notOnHome, needsPasswordConfirmation, notify, onAction, password, t, updateAuthAccountsList]);
 
   const onChangePass = useCallback((pass: string): void => {
     setPassword(pass);
