@@ -35,12 +35,12 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export interface ExpandedRewards {
-  eraIndex: number;
-  validator: string;
-  page: number;
-  value: BN;
-}
+export type ExpandedRewards = [
+  eraIndex: string,
+  validator: string,
+  page: number,
+  value: BN
+]
 
 export default function Pending ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -98,7 +98,7 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
       []
     );
 
-    setExpandedRewards(rewardsArray as any);
+    setExpandedRewards(rewardsArray);
   }, [rewards]);
 
   const totalPending = useMemo(() => {
@@ -144,9 +144,7 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
 
     const params =
       selectedToPayout.length === 1
-        // @ts-ignore
         ? [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]]
-        // @ts-ignore
         : [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))];
 
     const amount = amountToHuman(totalSelectedPending, decimal);
@@ -281,8 +279,7 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
                       </Typography>
                     </Grid>
                     : <> {expandedRewards?.map((info, index) => {
-                      // @ts-ignore
-                      const [eraIndex, validator, page, value] = info;
+                      const [eraIndex, validator,, value] = info;
 
                       return (
                         <Grid container item key={index}>

@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.33.2](https://github.com/polkagate/extension/compare/v0.33.1...v0.33.2) (2024-12-02)
+
+
+### Bug Fixes
+
+* fee issue utilizing fee hook ([#1679](https://github.com/polkagate/extension/issues/1679)) ([b52a392](https://github.com/polkagate/extension/commit/b52a39206f07c753964777f144ba18b7fd09f780))
+
 ## [0.33.1](https://github.com/polkagate/extension/compare/v0.33.0...v0.33.1) (2024-11-30)
 
 

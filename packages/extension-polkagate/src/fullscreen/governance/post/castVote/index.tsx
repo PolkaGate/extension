@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import type { Vote } from '../myVote/util';
 
@@ -12,10 +11,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, noop } from '@polkadot/util';
+import { BN, noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { DraggableModalWithTitle } from '../../components/DraggableModalWithTitle';
@@ -76,7 +75,6 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const [proxyItems, setProxyItems] = useState<ProxyItem[]>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [voteInformation, setVoteInformation] = useState<VoteInformation | undefined>();
   const [step, setStep] = useState<number>(showAbout ? STEPS.ABOUT : STEPS.CHECK_SCREEN);
   const [alterType, setAlterType] = useState<'modify' | 'remove'>();
@@ -84,6 +82,8 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
 
   const voteTx = api?.tx['convictionVoting']['vote'];
   const removeTx = api?.tx['convictionVoting']['removeVote'];
+
+  const estimatedFee = useEstimatedFee(address, voteTx, ['1', undefined]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
@@ -148,22 +148,6 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
         return '';
     }
   }, [step, hasVoted, alterType, t]);
-
-  useEffect(() => {
-    if (!formatted || !voteTx) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    const dummyVote = undefined;
-    const feeDummyParams = ['1', dummyVote];
-
-    voteTx(...feeDummyParams).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, voteTx]);
 
   const handleClose = useCallback(() => {
     if (step === STEPS.PROXY) {

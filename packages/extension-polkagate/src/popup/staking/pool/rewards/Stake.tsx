@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,23 +9,21 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Container } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './partials/TxDetail';
 
@@ -42,7 +39,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsStakeReview({ address, amount, api, chain, formatted, setRefresh, setShow, show, staked }: Props): React.ReactElement {
+export default function RewardsStakeReview ({ address, amount, api, chain, formatted, setRefresh, setShow, show, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -55,13 +52,14 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const tx = api.tx['nominationPools']['bondExtra'];
   const params = useMemo(() => ['Rewards'], []);
   const decimal = api.registry.chainDecimals[0];
+
+  const estimatedFee = useEstimatedFee(address, tx, params);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -74,18 +72,6 @@ export default function RewardsStakeReview({ address, amount, api, chain, format
 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
-
-  useEffect((): void => {
-    if (!api) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [tx, formatted, params, api]);
 
   const submit = useCallback(async () => {
     try {

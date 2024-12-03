@@ -21,12 +21,12 @@ import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Divider, Grid, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { CanPayErrorAlert, EndRecoveryIcon, Identity, Infotip2, MakeRecoverableIcon, Motion, RescueRecoveryIcon, ShortAddress, ShowBalance, SignArea2, VouchRecoveryIcon, Warning, WrongPasswordAlert } from '../../components';
-import { useCanPayFeeAndDeposit, useCurrentBlockNumber, useInfo } from '../../hooks';
+import { useCanPayFeeAndDeposit, useCurrentBlockNumber, useEstimatedFee, useInfo } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import blockToDate from '../../popup/crowdloans/partials/blockToDate';
@@ -68,7 +68,6 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
   const { chainName, decimal, formatted } = useInfo(address);
   const currentBlockNumber = useCurrentBlockNumber(address);
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -104,8 +103,6 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
       return depositValue;
     }
   }, [depositValue, mode, recoveryInfo]);
-
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const withdrawTXs = useCallback((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!api || !batchAll || !redeem || !poolRedeem || !unbond || !clearIdentity || !claimRecovery || !removeProxies || !asRecovered || !closeRecovery || !unbonded || !removeRecovery || !chill || !withdrawInfo || !formatted || !transferAll || allActiveRecoveries === undefined) {
@@ -169,18 +166,8 @@ export default function Review ({ activeLost, address, allActiveRecoveries, api,
     return undefined;
   }, [activeLost, batchAll, closeRecovery, createRecovery, initiateRecovery, lostAccountAddress, mode, recoveryConfig, removeRecovery, vouchRecovery, vouchRecoveryInfo, withdrawInfo, withdrawTXs]);
 
-  useEffect(() => {
-    if (!formatted || !call) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    // eslint-disable-next-line no-void
-    void call.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, call]);
+  const estimatedFee = useEstimatedFee(address, call);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const extraInfo = useMemo(() => ({
     action: 'Social Recovery',

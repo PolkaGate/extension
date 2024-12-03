@@ -100,8 +100,8 @@ export default function RemoveDelegate ({ address, classicDelegateInformation, f
     }
 
     params.length === 1
-      ? undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error)
-      : batch(params.map((param) => undelegate(param))).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+      ? undelegate(BN_ZERO).paymentInfo(formatted).then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee) as Balance)).catch(console.error)
+      : batch(params.map((param) => undelegate(param))).paymentInfo(formatted).then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee) as Balance)).catch(console.error);
   }, [api, batch, formatted, params, setSelectedTracksLength, undelegate]);
 
   const extraInfo = useMemo(() => ({

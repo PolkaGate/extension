@@ -217,7 +217,7 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
 
       batch(txList)
         .paymentInfo(delegateInformation.delegateeAddress)
-        .then((i) => setEstimatedFee(i?.partialFee))
+        .then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee) as Balance))
         .catch(console.error);
     } else {
       const tx = delegate(...[
@@ -229,7 +229,7 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
 
       tx
         .paymentInfo(delegateInformation.delegateeAddress)
-        .then((i) => setEstimatedFee(i?.partialFee))
+        .then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee) as Balance))
         .catch(console.error);
     }
   }, [api, batch, delegate, delegateInformation, delegateInformation?.delegateeAddress]);

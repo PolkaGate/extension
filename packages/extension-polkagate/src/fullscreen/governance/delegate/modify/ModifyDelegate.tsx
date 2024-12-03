@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+//@ts-nocheck
 /* eslint-disable react/jsx-max-props-per-line */
 
 /**
@@ -9,25 +9,27 @@
  * this component opens Modify Delegate review page
  * */
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { ISubmittableResult } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../../hooks/useAccountLocks';
 import type { BalancesInfo, Proxy, TxInfo } from '../../../../util/types';
+import type { AlreadyDelegateInformation, DelegateInformation } from '..';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { ISubmittableResult } from '@polkadot/types/types';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { Identity, Motion, ShowValue, SignArea2, WrongPasswordAlert } from '../../../../components';
 import { useCurrentBlockNumber, useIdentity, useInfo, useTracks, useTranslation } from '../../../../hooks';
-import { Lock } from '../../../../hooks/useAccountLocks';
 import { ThroughProxy } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import DisplayValue from '../../post/castVote/partial/DisplayValue';
 import TracksList from '../partial/TracksList';
-import { AlreadyDelegateInformation, DelegateInformation, STEPS } from '..';
+import { STEPS } from '..';
 import Modify from './Modify';
 
 interface Props {
@@ -51,7 +53,7 @@ interface Props {
 
 export type ModifyModes = 'Modify' | 'ReviewModify';
 
-export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function ModifyDelegate ({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
@@ -76,11 +78,19 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
   const [newConviction, setNewConviction] = useState<number | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-  const undelegate = api && api.tx['convictionVoting']['undelegate'];
-  const delegate = api && api.tx['convictionVoting']['delegate'];
-  const batch = api && api.tx['utility']['batchAll'];
+  const undelegate = api?.tx['convictionVoting']['undelegate'];
+  const delegate = api?.tx['convictionVoting']['delegate'];
+  const batch = api?.tx['utility']['batchAll'];
 
-  const acceptableConviction = useMemo(() => newConviction !== undefined ? newConviction === 0.1 ? 0 : newConviction : conviction === 0.1 ? 0 : conviction, [conviction, newConviction]);
+  const acceptableConviction = useMemo(() =>
+    newConviction !== undefined
+      ? newConviction === 0.1
+        ? 0
+        : newConviction
+      : conviction === 0.1
+        ? 0
+        : conviction
+  , [conviction, newConviction]);
 
   const delegateAmountBN = useMemo(() => newDelegateAmount ? amountToMachine(newDelegateAmount, decimal) : classicDelegateInformation ? classicDelegateInformation.delegateAmountBN : BN_ZERO, [classicDelegateInformation, decimal, newDelegateAmount]);
   const delegatePower = useMemo(() => {
@@ -109,6 +119,7 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
 
   useEffect(() => {
     if (ref) {
+      // @ts-ignore
       setModalHeight(ref.current?.offsetHeight as number);
     }
   }, [setModalHeight]);
@@ -185,8 +196,8 @@ export default function ModifyDelegate({ accountLocks, address, balances, classi
     }
 
     txList.length === 1
-      ? txList[0].paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error)
-      : batch(txList).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+      ? txList[0].paymentInfo(formatted).then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee))).catch(console.error)
+      : batch(txList).paymentInfo(formatted).then((i) => setEstimatedFee(api?.createType('Balance', i?.partialFee))).catch(console.error);
   }, [api, batch, formatted, txList, undelegate]);
 
   const extraInfo = useMemo(() => ({

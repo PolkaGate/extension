@@ -1,29 +1,26 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { Balance } from '@polkadot/types/interfaces';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
-
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
 
 import { ActionContext, CanPayErrorAlert, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
-import { useAccount, useAccountDisplay, useCanPayFeeAndDeposit } from '../../hooks';
+import { useAccount, useAccountDisplay, useCanPayFeeAndDeposit, useEstimatedFee } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
 import Confirmation from '../../partials/Confirmation';
 import { signAndSend } from '../../util/api';
 import { PROXY_TYPE } from '../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../util/utils';
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
@@ -36,7 +33,7 @@ interface Props {
   depositToPay: BN | undefined;
 }
 
-export default function Review({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
+export default function Review ({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const account = useAccount(address);
@@ -44,7 +41,6 @@ export default function Review({ address, api, chain, depositToPay, depositValue
 
   const [helperText, setHelperText] = useState<string | undefined>();
   const [proxiesToChange, setProxiesToChange] = useState<ProxyItem[] | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [password, setPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState<boolean>(false);
@@ -55,8 +51,6 @@ export default function Review({ address, api, chain, depositToPay, depositValue
   const formatted = getFormattedAddress(address, undefined, chain.ss58Format);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
-
-  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const removeProxy = api.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
   const addProxy = api.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
@@ -82,19 +76,8 @@ export default function Review({ address, api, chain, depositToPay, depositValue
   }, [addProxy, proxiesToChange, removeProxy]);
 
   const tx = useMemo(() => calls.length !== 0 && calls.length > 1 ? batchAll(calls) : calls[0], [batchAll, calls]);
-
-  useEffect(() => {
-    if (!tx) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    // eslint-disable-next-line no-void
-    void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
-  }, [api, formatted, tx]);
+  const estimatedFee = useEstimatedFee(address, tx);
+  const canPayFeeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
 
   const onNext = useCallback(async (): Promise<void> => {
     try {

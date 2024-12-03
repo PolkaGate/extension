@@ -10,17 +10,15 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
-import { BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, Motion, PasswordUseProxyConfirm, Popup, ShowValue, WrongPasswordAlert } from '../../../../../components';
-import { useAccountDisplay, useProxies, useTranslation } from '../../../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useProxies, useTranslation } from '../../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import Confirmation from '../../../../../partials/Confirmation';
 import broadcast from '../../../../../util/api/broadcast';
@@ -51,9 +49,9 @@ export default function RemoveValidators ({ address, api, chain, formatted, setS
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const chilled = api?.tx['staking']['chill'];
+  const estimatedFee = useEstimatedFee(address, chilled?.());
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
@@ -75,18 +73,6 @@ export default function RemoveValidators ({ address, api, chain, formatted, setS
 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
-
-  useEffect((): void => {
-    if (!api) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
-    }
-
-    chilled?.().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, chilled, formatted]);
 
   const remove = useCallback(async () => {
     try {

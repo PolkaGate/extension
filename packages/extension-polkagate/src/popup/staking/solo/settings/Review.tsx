@@ -128,7 +128,7 @@ export default function Review({ address, api, newSettings, setRefresh, setShow,
     const tx = txs.length === 2 ? batchAll(txs) : txs[0];
 
     setTx(tx);
-    tx && tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO))).catch(console.error);
+    tx && tx.paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee ?? BN_ZERO)) as Balance).catch(console.error);
   }, [api, batchAll, formatted, isControllerDeprecated, newSettings?.controllerId, newSettings?.payee, setController, setPayee, settings.controllerId, settings.payee, settings.stashId]);
 
   const goToStakingHome = useCallback(() => {

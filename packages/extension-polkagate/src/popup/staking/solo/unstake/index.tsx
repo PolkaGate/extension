@@ -1,11 +1,11 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Motion, PButton, Warning } from '../../../../components';
 import { useInfo, useStakingAccount, useStakingConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
@@ -30,7 +30,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -89,7 +89,7 @@ export default function Index(): React.ReactElement {
     const txs = [];
 
     if (api && !api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
+      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
     if (redeem && chilled && unbonded && maxUnlockingChunks !== undefined && unlockingLen !== undefined && formatted && staked) {
@@ -109,7 +109,7 @@ export default function Index(): React.ReactElement {
 
       const partialFee = (await finalTx.paymentInfo(formatted))?.partialFee;
 
-      setEstimatedFee(api?.createType('Balance', partialFee));
+      setEstimatedFee(api?.createType('Balance', partialFee) as Balance);
     }
   }, [amountAsBN, api, chilled, formatted, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen, isUnstakeAll]);
 

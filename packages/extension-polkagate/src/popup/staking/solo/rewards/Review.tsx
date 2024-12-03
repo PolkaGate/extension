@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,23 +8,23 @@
  * this component opens unstake review page
  * */
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
+import type { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
+import type { ISubmittableResult } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
+
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
-import { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/pending';
-import type { Balance } from '@polkadot/types/interfaces';
-import { ISubmittableResult } from '@polkadot/types/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, Warning, WrongPasswordAlert } from '../../../../components';
-import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import { signAndSend } from '../../../../util/api';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
@@ -37,7 +36,7 @@ interface Props {
   selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -54,13 +53,14 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const amountInHuman = amountToHuman(amount, decimal);
   const [tx, setTx] = useState<SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>();
-  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
 
-  const payoutStakers = api && api.tx['staking']['payoutStakersByPage'];
-  const batch = api && api.tx['utility']['batchAll'];
+  const payoutStakers = api?.tx['staking']['payoutStakersByPage'];
+  const batch = api?.tx['utility']['batchAll'];
+
+  const estimatedFee = useEstimatedFee(address, tx);
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -85,18 +85,6 @@ export default function Review({ address, amount, selectedToPayout, setShow, sho
 
     setTx(_tx);
   }, [batch, payoutStakers, selectedToPayout]);
-
-  useEffect((): void => {
-    if (!tx || !formatted) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, formatted, tx]);
 
   useEffect((): void => {
     const fetchedProxyItems = proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];

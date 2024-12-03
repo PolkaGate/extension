@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Payee, ValidatorInfo } from 'extension-polkagate/src/util/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { StakingInputs } from '../../type';
 
@@ -16,7 +15,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, Infotip2, ShowBalance, TwoButtons, Warning } from '../../../../components';
 import { useTranslation } from '../../../../components/translate';
-import { useAvailableToSoloStake, useBalances, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
+import { useAvailableToSoloStake, useBalances, useEstimatedFee, useInfo, useMinToReceiveRewardsInSolo2, useStakingAccount, useStakingConsts } from '../../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
 import SelectValidatorsFs from '../partials/SelectValidatorsFs';
@@ -61,7 +60,6 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
   const availableToSoloStake = useAvailableToSoloStake(address, refresh);
 
   const [amount, setAmount] = useState<string | undefined>(inputs?.extraInfo?.['amount'] as string);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [isNextClicked, setNextIsClicked] = useState<boolean>();
   const [alert, setAlert] = useState<string | undefined>();
   const [payee, setPayee] = useState<Payee | undefined>(inputs?.payee);
@@ -85,6 +83,8 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
 
     return { call: undefined, params: undefined };
   }, [amountAsBN, api, newSelectedValidators, payee]);
+
+  const estimatedFee = useEstimatedFee(address, call, params);
 
   const buttonDisable = useMemo(() => !!alert || !amount, [alert, amount]);
   const isBusy = useMemo(() =>
@@ -134,15 +134,6 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
       console.log('cant stake!');
     }
   }, [amount, call, estimatedFee, newSelectedValidators, params, payee, setInputs]);
-
-  useEffect(() => {
-    if (call && params && formatted) {
-      call(...params)
-        .paymentInfo(formatted)
-        .then((i) => setEstimatedFee(i?.partialFee))
-        .catch(console.error);
-    }
-  }, [formatted, params, call]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!balances) {

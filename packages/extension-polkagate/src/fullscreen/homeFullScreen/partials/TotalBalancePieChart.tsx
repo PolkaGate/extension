@@ -3,8 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
-
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -146,19 +144,27 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
     Object.keys(balances).forEach((address) => {
       Object.keys(balances?.[address]).forEach((genesisHash) => {
         if (!TEST_NETS.includes(genesisHash)) {
-          // @ts-ignore
-          allAccountsAssets = allAccountsAssets.concat(balances[address][genesisHash]);
+          allAccountsAssets = allAccountsAssets.concat(balances[address][genesisHash] as unknown as AssetsWithUiAndPrice[]);
         }
       });
     });
 
-    // @ts-ignore
-    const groupedAssets = Object.groupBy(allAccountsAssets, ({ genesisHash, token }: { genesisHash: string, token: string }) => `${token}_${genesisHash}`);
+    const groupedAssets = allAccountsAssets.reduce((acc, asset) => {
+      const key = `${asset.token}_${asset.genesisHash}`;
+
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+
+      acc[key].push(asset);
+
+      return acc;
+    }, {} as Record<string, AssetsWithUiAndPrice[]>);
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
-      const assetSample = groupedAssets[index][0] as AssetsWithUiAndPrice;
+      const assetSample = groupedAssets[index][0];
       const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
-      const accumulatedPricePerAsset = groupedAssets[index].reduce((sum: BN, { totalBalance }: FetchedBalance) => sum.add(new BN(totalBalance)), BN_ZERO) as BN;
+      const accumulatedPricePerAsset = groupedAssets[index].reduce((sum, { totalBalance }) => sum.add(new BN(totalBalance)), BN_ZERO);
 
       const balancePrice = calcPrice(assetPrice, accumulatedPricePerAsset, assetSample.decimal ?? 0);
 

@@ -122,12 +122,12 @@ export default function Index (): React.ReactElement {
     if (isFirstTimeStaking && autoSelectedValidators?.length) {
       const ids = autoSelectedValidators.map((v) => v.accountId);
 
-      batchAll([tx(...params), nominated(ids)]).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+      batchAll([tx(...params), nominated(ids)]).paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance)).catch(console.error);
 
       return;
     }
 
-    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
+    tx(...params).paymentInfo(formatted).then((i) => setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance)).catch(console.error);
   }, [amountAsBN, api, autoSelectedValidators, batchAll, bond, formatted, isFirstTimeStaking, nominated, params, tx]);
 
   useEffect(() => {

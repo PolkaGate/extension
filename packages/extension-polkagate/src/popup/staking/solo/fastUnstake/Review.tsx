@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -10,23 +9,22 @@
  * */
 
 import type { ApiPromise } from '@polkadot/api';
+import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
+import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
 import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-import type { Balance } from '@polkadot/types/interfaces';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, AmountFee, Motion, PasswordUseProxyConfirm, Popup, ShowBalance2, Warning } from '../../../../components';
-import { useAccountDisplay, useDecimal, useProxies, useTranslation } from '../../../../hooks';
+import { useAccountDisplay, useDecimal, useEstimatedFee, useProxies, useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle, WaitScreen } from '../../../../partials';
 import Confirmation from '../../../../partials/Confirmation';
 import broadcast from '../../../../util/api/broadcast';
 import { PROXY_TYPE } from '../../../../util/constants';
-import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from '../partials/TxDetail';
 
@@ -41,7 +39,7 @@ interface Props {
   available: BN;
 }
 
-export default function FastUnstakeReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function FastUnstakeReview ({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(String(address));
@@ -56,11 +54,12 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showWaitScreen, setShowWaitScreen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxyAddress));
   const tx = api.tx['fastUnstake']['registerFastUnstake'];
+
+  const estimatedFee = useEstimatedFee(address, tx());
 
   const goToStakingHome = useCallback(() => {
     setShow(false);
@@ -73,18 +72,6 @@ export default function FastUnstakeReview({ address, amount, api, available, cha
 
     setProxyItems(fetchedProxyItems);
   }, [proxies]);
-
-  useEffect((): void => {
-    if (!api) {
-      return;
-    }
-
-    if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE));
-    }
-
-    tx().paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee)).catch(console.error);
-  }, [api, tx, formatted]);
 
   const submit = useCallback(async () => {
     try {
