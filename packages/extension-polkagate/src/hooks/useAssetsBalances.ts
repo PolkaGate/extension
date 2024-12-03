@@ -381,8 +381,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
         });
       }
 
-      console.log('_assets :::', _assets);
-
       combineAndSetAssets(_assets);
     };
 
