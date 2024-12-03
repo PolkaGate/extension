@@ -19,6 +19,7 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
 
   const { metadata } = metadataFromApi(api);
 
+  console.info('Shared worker, metadata fetched and sent for chain:', chainName);
   port.postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', metadata }));
 
   const results = await toGetNativeToken(addresses, api, chainName);
@@ -68,6 +69,7 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     }
   });
 
+  console.info('Shared worker, account assets fetched and send on chain:', chainName);
   port.postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', results }));
   closeWebsockets(connections);
 }
