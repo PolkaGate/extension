@@ -37,7 +37,7 @@ export default function useNFT (accountsFromContext: AccountJson[] | null) {
     setFetching(true);
     worker.postMessage({ functionName: NFT_FUNCTION_NAME, parameters: { addresses } });
 
-    worker.addEventListener('message', (messageEvent: MessageEvent<string>) => {
+    const handleMessage = (messageEvent: MessageEvent<string>) => {
       const NFTs = messageEvent.data;
 
       if (!NFTs) {
@@ -68,7 +68,13 @@ export default function useNFT (accountsFromContext: AccountJson[] | null) {
       saveToStorage(parsedNFTsInfo.results);
 
       // setFetching(false);
-    });
+    };
+
+    worker.addEventListener('message', handleMessage);
+
+    return () => {
+      worker.removeEventListener('message', handleMessage);
+    };
   }, [notify, saveToStorage, t, worker]);
 
   useEffect(() => {

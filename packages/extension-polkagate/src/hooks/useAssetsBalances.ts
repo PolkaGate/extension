@@ -317,7 +317,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       return;
     }
 
-    worker.addEventListener('message', (messageEvent: MessageEvent<string>) => {
+    const handleMessage = (messageEvent: MessageEvent<string>) => {
       const message = messageEvent.data;
 
       if (!message) {
@@ -384,7 +384,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       console.log('_assets :::', _assets);
 
       combineAndSetAssets(_assets);
-    });
+    };
+
+    worker.addEventListener('message', handleMessage);
+
+    return () => {
+      worker.removeEventListener('message', handleMessage);
+    };
   }, [combineAndSetAssets, handleRequestCount, worker]);
 
   const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
