@@ -93,7 +93,7 @@ export default function ForgetAccountModal ({ account, setDisplayPopup }: Props)
       setIsBusy(false);
       console.error('Error forgetting the account:', error);
     }
-  }, [account.address, account?.name, backToAccount, notOnHome, needsPasswordConfirmation, notify, onAction, password, t, updateAuthAccountsList]);
+  }, [account.address, account.name, backToAccount, notOnHome, needsPasswordConfirmation, notify, onAction, password, t, updateAuthAccountsList]);
 
   const onChangePass = useCallback((pass: string): void => {
     setPassword(pass);
