@@ -22,14 +22,25 @@ export async function fastestEndpoint (endpoints) {
 
     return {
       connection,
+      connectionEndpoint: value,
       wsProvider
     };
   }).filter((i) => !!i);
 
   const api = await Promise.any(connections.map(({ connection }) => connection));
 
+  // Find the matching connection that created this API
+  // @ts-ignore
+  const notConnectedEndpoint = connections.filter(({ connectionEndpoint }) => connectionEndpoint !== api?._options?.provider?.endpoint);
+  // @ts-ignore
+  const connectedEndpoint = connections.find(({ connectionEndpoint }) => connectionEndpoint === api?._options?.provider?.endpoint);
+
+  notConnectedEndpoint.forEach(({ wsProvider }) => {
+    wsProvider.disconnect().catch(() => null);
+  });
+
   return {
     api,
-    connections
+    connections: connectedEndpoint ? [connectedEndpoint] : []
   };
 }

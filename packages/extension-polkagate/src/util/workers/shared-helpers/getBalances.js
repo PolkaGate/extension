@@ -21,6 +21,7 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
   if (api.isConnected && api.derive.balances) {
     const { metadata } = metadataFromApi(api);
 
+    console.info('Shared worker, metadata fetched and sent for chain:', chainName);
     port.postMessage(JSON.stringify({ functionName: 'getAssetOnRelayChain', metadata }));
 
     const requests = addresses.map(async (address) => {
@@ -40,7 +41,8 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
       if (api.query['staking']?.['ledger']) {
         const ledger = await api.query['staking']['ledger'](address);
 
-        if (!ledger.isEmpty) {
+        // @ts-ignore
+        if (ledger.isSome) {
           // @ts-ignore
           soloTotal = ledger?.unwrap()?.total?.toString();
         }
