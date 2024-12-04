@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.33.3](https://github.com/polkagate/extension/compare/v0.33.2...v0.33.3) (2024-12-04)
+
+
+### Bug Fixes
+
+* back to onboarding page ([#1687](https://github.com/polkagate/extension/issues/1687)) ([b13be69](https://github.com/polkagate/extension/commit/b13be6932577ab904fe10a60c30a6a362727c7b5))
+
 ## [0.33.2](https://github.com/polkagate/extension/compare/v0.33.1...v0.33.2) (2024-12-02)
 
 
