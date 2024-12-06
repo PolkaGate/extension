@@ -2,19 +2,27 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
-import type { NftItemsType} from '../util/types';
+import type { NftItemsType } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import NftManager from '../class/nftManager';
 import { useTranslation } from '../components/translate';
 import useAlerts from './useAlerts';
+import { useWorker } from './useWorker';
+
+export interface NftItemsWorker {
+  functionName: string;
+  results: NftItemsType;
+}
 
 const nftManager = new NftManager();
+const NFT_FUNCTION_NAME = 'getNFTs';
 
 export default function useNFT (accountsFromContext: AccountJson[] | null) {
   const { t } = useTranslation();
   const { notify } = useAlerts();
+  const worker = useWorker();
 
   const [fetching, setFetching] = useState<boolean>(false);
 
@@ -27,18 +35,10 @@ export default function useNFT (accountsFromContext: AccountJson[] | null) {
 
   const fetchNFTs = useCallback((addresses: string[]) => {
     setFetching(true);
-    const getNFTsWorker: Worker = new Worker(new URL('../util/workers/getNFTs.js', import.meta.url));
+    worker.postMessage({ functionName: NFT_FUNCTION_NAME, parameters: { addresses } });
 
-    getNFTsWorker.postMessage({ addresses });
-
-    getNFTsWorker.onerror = (err) => {
-      console.error('Worker error:', err);
-      setFetching(false);
-      getNFTsWorker.terminate();
-    };
-
-    getNFTsWorker.onmessage = (e: MessageEvent<string>) => {
-      const NFTs = e.data;
+    const handleMessage = (messageEvent: MessageEvent<string>) => {
+      const NFTs = messageEvent.data;
 
       if (!NFTs) {
         notify(t('Unable to fetch NFT/Unique items!'), 'info');
@@ -47,27 +47,35 @@ export default function useNFT (accountsFromContext: AccountJson[] | null) {
         return;
       }
 
-      let parsedNFTsInfo: NftItemsType;
+      let parsedNFTsInfo: NftItemsWorker;
 
       try {
-        parsedNFTsInfo = JSON.parse(NFTs) as NftItemsType;
+        parsedNFTsInfo = JSON.parse(NFTs) as NftItemsWorker;
+
+        // console.log('All fetched NFTs:', parsedNFTsInfo);
+
+        if (parsedNFTsInfo.functionName !== NFT_FUNCTION_NAME) {
+          return;
+        }
       } catch (error) {
         console.error('Failed to parse NFTs JSON:', error);
         // setFetching(false);
-        getNFTsWorker.terminate();
 
         return;
       }
 
-      // console.log('All fetched NFTs:', parsedNFTsInfo);
-
       // Save all fetched items to Chrome storage
-      saveToStorage(parsedNFTsInfo);
+      saveToStorage(parsedNFTsInfo.results);
 
       // setFetching(false);
-      getNFTsWorker.terminate();
     };
-  }, [notify, saveToStorage, t]);
+
+    worker.addEventListener('message', handleMessage);
+
+    return () => {
+      worker.removeEventListener('message', handleMessage);
+    };
+  }, [notify, saveToStorage, t, worker]);
 
   useEffect(() => {
     if (!fetching && addresses && addresses.length > 0 && onWhitelistedPath) {
