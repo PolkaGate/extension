@@ -1,6 +1,6 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 /* eslint-disable header/header */
 
 // @ts-nocheck
@@ -9,7 +9,7 @@ import { BN, bnMax } from '@polkadot/util';
 
 import getApi from '../getApi.ts';
 
-async function getPoolStackingConsts(endpoint) {
+async function getPoolStackingConsts (endpoint) {
   try {
     const api = await getApi(endpoint);
     const at = await api.rpc.chain.getFinalizedHead();

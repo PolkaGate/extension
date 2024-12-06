@@ -27,7 +27,7 @@ const ToastContext = React.createContext<({ show: (message: string) => void })>(
 const UserAddedChainContext = React.createContext<UserAddedChains>({});
 const GenesisHashOptionsContext = React.createContext<DropdownOption[]>([]);
 const AccountIconThemeContext = React.createContext<AccountIconThemeContextType>({ accountIconTheme: undefined, setAccountIconTheme: noop });
-const WorkerContext = React.createContext<Worker | undefined>(undefined);
+const WorkerContext = React.createContext<MessagePort | undefined>(undefined);
 
 export { AccountContext,
   AccountIconThemeContext,

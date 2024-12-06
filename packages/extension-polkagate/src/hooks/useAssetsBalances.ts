@@ -133,7 +133,7 @@ const FUNCTIONS = ['getAssetOnRelayChain', 'getAssetOnAssetHub', 'getAssetOnMult
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: Worker): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
 
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -282,22 +282,33 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     }
 
     setFetchedAssets((fetchedAssets) => {
-      const combinedAsset = fetchedAssets || DEFAULT_SAVED_ASSETS;
+      // Create a new object reference each time
+      const combinedAsset = {
+        ...(fetchedAssets || DEFAULT_SAVED_ASSETS),
+        balances: {
+          ...(fetchedAssets?.balances || DEFAULT_SAVED_ASSETS.balances)
+        }
+      };
 
       Object.keys(assets).forEach((address) => {
-        if (combinedAsset.balances[address] === undefined) {
+        if (!combinedAsset.balances[address]) {
           combinedAsset.balances[address] = {};
         }
 
-        /** to group assets by their chain's genesisHash */
         const { genesisHash } = assets[address][0];
 
-        combinedAsset.balances[address][genesisHash] = assets[address];
+        // Create a new reference for this specific balances entry
+        combinedAsset.balances[address] = {
+          ...(combinedAsset.balances[address] || {}),
+          [genesisHash]: assets[address]
+        };
       });
 
-      combinedAsset.timeStamp = Date.now();
-
-      return combinedAsset;
+      // Ensure a new timestamp and object reference
+      return {
+        ...combinedAsset,
+        timeStamp: Date.now()
+      };
     });
   }, [addresses]);
 
@@ -306,8 +317,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       return;
     }
 
-    worker.onmessage = (e: MessageEvent<string>) => {
-      const message = e.data;
+    const handleMessage = (messageEvent: MessageEvent<string>) => {
+      const message = messageEvent.data;
 
       if (!message) {
         return; // may receive unknown messages!
@@ -372,6 +383,12 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       combineAndSetAssets(_assets);
     };
+
+    worker.addEventListener('message', handleMessage);
+
+    return () => {
+      worker.removeEventListener('message', handleMessage);
+    };
   }, [combineAndSetAssets, handleRequestCount, worker]);
 
   const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
@@ -382,13 +399,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const functionName = 'getAssetOnRelayChain';
 
     worker.postMessage({ functionName, parameters: { address: _addresses, chainName, userAddedEndpoints } });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
-    handleWorkerMessages();
-  }, [handleWorkerMessages, userAddedEndpoints, worker]);
+  }, [userAddedEndpoints, worker]);
 
   const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
     if (!worker) {
@@ -398,10 +409,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const functionName = 'getAssetOnAssetHub';
 
     worker.postMessage({ functionName, parameters: { address: _addresses, assetsToBeFetched, chainName, userAddedEndpoints } });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
   }, [userAddedEndpoints, worker]);
 
   const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
@@ -412,13 +419,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     const functionName = 'getAssetOnMultiAssetChain';
 
     worker.postMessage({ functionName, parameters: { addresses, chainName, userAddedEndpoints } });
-
-    worker.onerror = (err) => {
-      console.log(err);
-    };
-
-    handleWorkerMessages();
-  }, [handleWorkerMessages, userAddedEndpoints, worker]);
+  }, [userAddedEndpoints, worker]);
 
   const fetchMultiAssetChainAssets = useCallback((chainName: string) => {
     return addresses && fetchAssetOnMultiAssetChain(addresses, chainName);
@@ -480,6 +481,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       !multipleAssetsChainsNames.includes(toCamelCase(text) || '')
     );
 
+    handleWorkerMessages();
+
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
       const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
@@ -487,7 +490,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
     });
-  }, [FETCH_PATHS, addresses, fetchAssets, worker, isTestnetEnabled, isUpdate, selectedChains, genesisOptions]);
+  }, [FETCH_PATHS, addresses, fetchAssets, worker, isTestnetEnabled, isUpdate, selectedChains, genesisOptions, handleWorkerMessages]);
 
   return fetchedAssets;
 }
