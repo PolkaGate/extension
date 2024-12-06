@@ -111,8 +111,10 @@ module.exports = (entry, alias = {}) => ({
       ? []
       : [sentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        ipScrubbing: true,
         org: 'polkagate',
         project: 'javascript-react',
+        sendDefaultPii: false,
         telemetry: false
       })]
     )
