@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.34.0](https://github.com/polkagate/extension/compare/v0.33.3...v0.34.0) (2024-12-06)
+
+
+### Features
+
+* add real shared worker ([#1684](https://github.com/polkagate/extension/issues/1684)) ([b190fc1](https://github.com/polkagate/extension/commit/b190fc1780a92e517b1848d890aa0a7be8e26fc6))
+
 ## [0.33.3](https://github.com/polkagate/extension/compare/v0.33.2...v0.33.3) (2024-12-04)
 
 
