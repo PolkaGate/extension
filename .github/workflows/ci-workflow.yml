@@ -75,12 +75,13 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Set Sentry Auth Token
+        run: echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> $GITHUB_ENV
+
       - name: Build project
         run: yarn build
   
       - name: Upload source maps to Sentry
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: npx sentry-cli sourcemaps upload ./packages/extension/build
   
       - name: Run Semantic Release
