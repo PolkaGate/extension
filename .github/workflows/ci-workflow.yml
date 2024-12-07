@@ -78,13 +78,6 @@ jobs:
       - name: Build project
         run: yarn build
   
-      - name: Upload source maps to Sentry
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        run: npx sentry-cli sourcemaps upload ./packages/extension/build --org $SENTRY_ORG --project $SENTRY_PROJECT
-  
       - name: Run Semantic Release
         env:
           GH_TOKEN: ${{ secrets.SR_TOKEN }}
