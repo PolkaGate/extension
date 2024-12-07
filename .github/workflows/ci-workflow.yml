@@ -81,7 +81,7 @@ jobs:
       - name: Upload source maps to Sentry
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: npx sentry-cli upload-sourcemaps ./packages/extension/build
+        run: npx sentry-cli sourcemaps upload ./packages/extension/build
   
       - name: Run Semantic Release
         env:
