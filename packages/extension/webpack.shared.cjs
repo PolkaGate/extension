@@ -113,7 +113,7 @@ module.exports = (entry, alias = {}) => ({
         authToken: process.env.SENTRY_AUTH_TOKEN,
         ipScrubbing: true,
         org: 'polkagate',
-        project: 'javascript-react',
+        project: 'extension',
         sendDefaultPii: false,
         telemetry: false
       })]
