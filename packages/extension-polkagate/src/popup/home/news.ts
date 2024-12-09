@@ -10,6 +10,14 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.34.0',
+    notes: [
+      'Filter Inaccessible Endpoints: Exclude unresponsive RPC nodes to ensure smoother and more reliable connections.',
+      'Performance Improvements: Leverage shared workers to reduce memory usage, minimize extension overhead, and boost overall performance.',
+      'Fix Known Issues: Resolve known problems, including handling foreign assets on asset hubs and addressing other minor bugs.'
+    ]
+  },
+  {
     version: '0.32.1',
     notes: [
       'Support Spanish: Access PolkaGate in your preferred language.',
