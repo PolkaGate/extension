@@ -5,6 +5,7 @@
 
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -15,15 +16,17 @@ import { getStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { setNotification } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
+import { POPUP_MENUS } from './Menu';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;
   setTestnetEnabledChecked: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   show: boolean;
   onChange: () => void;
+  setShowPopup: React.Dispatch<React.SetStateAction<POPUP_MENUS>>;
 }
 
-export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
+export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, setShowPopup, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -49,6 +52,10 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
   const onManageLoginPassword = useCallback(() => {
     onAction('/login-password');
   }, [onAction]);
+
+  const onManageNotifications = useCallback(() => {
+    setShowPopup(POPUP_MENUS.NOTIFICATIONS);
+  }, [setShowPopup]);
 
   const onChangeNotification = useCallback((value: string | number): void => {
     const _value = value as string;
@@ -106,7 +113,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
               text={t('Manage website access')}
             />
           </Grid>
-          <Grid container item pb={'10px'}>
+          <Grid container item>
             <MenuItem
               fontSize='17px'
               iconComponent={
@@ -115,6 +122,17 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
               onClick={onManageLoginPassword}
               py='2px'
               text={t('Manage login password')}
+            />
+          </Grid>
+          <Grid container item>
+            <MenuItem
+              fontSize='17px'
+              iconComponent={
+                <NotificationsIcon sx={{ color: theme.palette.text.primary, fontSize: '23px' }} />
+              }
+              onClick={onManageNotifications}
+              py='2px'
+              text={t('Manage notifications')}
             />
           </Grid>
           <SelectIdenticonTheme
