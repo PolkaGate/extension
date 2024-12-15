@@ -118,7 +118,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
       open={isMenuOpen}
     >
       <Grid bgcolor='transparent' container height='100%' width='357px' zIndex={10}>
-        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', boxShadow: '0px 0px 10px rgba(255, 255, 255, 0.25)', height: 'parent.innerHeight' }} width='100%'>
           <Grid container item justifyContent='center' my='8px'>
             <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={30} showSocial={false} style={{ fontSize: '22px' }} subIdOnly />
           </Grid>

@@ -139,7 +139,7 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
       open={isMenuOpen}
     >
       <Grid container height='100%' item justifyContent='end' zIndex={10}>
-        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='5px 10px' sx={{ height: '100%', minWidth: '307px', position: 'relative' }} width='86%'>
+        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item p='5px 10px' sx={{ boxShadow: '0px 0px 10px rgba(255, 255, 255, 0.25)', height: '100%', minWidth: '307px', position: 'relative' }} width='86%'>
           {showPopup === POPUP_MENUS.NONE
             ? <>
               <Grid container item justifyContent='space-between'>
