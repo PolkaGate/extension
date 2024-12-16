@@ -16,8 +16,9 @@ interface Props {
   setShowPopup: React.Dispatch<React.SetStateAction<POPUP_MENUS>>;
 }
 
-interface NotificationSettingType {
+export interface NotificationSettingType {
   enable: boolean | undefined;
+  receivedFunds: boolean | undefined;
   governance: string[] | undefined; // chainNames
   stakingRewards: string[] | undefined; // chainNames
 }
@@ -25,12 +26,14 @@ interface NotificationSettingType {
 type NotificationSettingsActionType =
   | { type: 'INITIAL'; payload: NotificationSettingType }
   | { type: 'FUNCTION'; }
+  | { type: 'RECEIVED_FUNDS'; }
   | { type: 'GOVERNANCE'; payload: string[] }
   | { type: 'STAKING_REWARDS'; payload: string[] };
 
 const initialNotificationState: NotificationSettingType = {
   enable: undefined,
   governance: undefined,
+  receivedFunds: undefined,
   stakingRewards: undefined
 };
 
@@ -47,12 +50,14 @@ const notificationSettingReducer = (
       return { ...state, governance: action.payload };
     case 'STAKING_REWARDS':
       return { ...state, stakingRewards: action.payload };
+    case 'RECEIVED_FUNDS':
+      return { ...state, receivedFunds: !state.receivedFunds };
     default:
       return state;
   }
 };
 
-export default function NotificationSettings ({ setShowPopup }: Props) {
+export default function NotificationSettings({ setShowPopup }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -66,6 +71,10 @@ export default function NotificationSettings ({ setShowPopup }: Props) {
 
   const onToggleNotification = useCallback(() => {
     dispatch({ type: 'FUNCTION' });
+  }, []);
+
+  const onToggleReceivedFunds = useCallback(() => {
+    dispatch({ type: 'RECEIVED_FUNDS' });
   }, []);
 
   const onGovernanceChains = useCallback((chainName: string) => () => {
@@ -118,6 +127,16 @@ export default function NotificationSettings ({ setShowPopup }: Props) {
         </Grid>
         <Collapse in={notificationSetting.enable}>
           <>
+            <Grid alignItems='center' container item justifyContent='space-between' mb='15px' pr='10px'>
+              <Typography fontSize='16px' fontWeight={400}>
+                {t('Received Funds')}
+              </Typography>
+              <Switch
+                isChecked={notificationSetting.receivedFunds}
+                onChange={onToggleReceivedFunds}
+                theme={theme}
+              />
+            </Grid>
             <Grid container item justifyContent='space-evenly'>
               <Typography fontSize='16px' fontWeight={400} mb='5px' textAlign='left' width='100%'>
                 {t('Governance')}:

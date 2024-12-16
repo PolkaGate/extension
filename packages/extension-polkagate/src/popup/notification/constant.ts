@@ -13,6 +13,7 @@ export const BATCH_SIZE = 3;
 export const DEFAULT_NOTIFICATION_SETTING = {
   enable: true,
   governance: ['polkadot', 'kusama'],
+  receivedFunds: true,
   stakingRewards: ['polkadot', 'kusama']
 };
 
