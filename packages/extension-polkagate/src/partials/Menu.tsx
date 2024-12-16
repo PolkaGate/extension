@@ -37,8 +37,7 @@ enum COLLAPSIBLE_MENUS {
 
 export enum POPUP_MENUS {
   NONE,
-  TEST_NET,
-  NOTIFICATIONS
+  TEST_NET
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
@@ -223,14 +222,13 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
                 <SettingSubMenu
                   isTestnetEnabledChecked={isTestnetEnableConfirmed}
                   onChange={onEnableTestNetClick}
-                  setShowPopup={setShowPopup}
                   setTestnetEnabledChecked={setIsTestnetEnableConfirmed}
                   show={collapsedMenu === COLLAPSIBLE_MENUS.SETTING}
                 />
               </MenuItem>
             </>
-            : showPopup === POPUP_MENUS.TEST_NET
-              ? <Grid container justifyContent='space-between' sx={{ pt: '30px' }}>
+            : showPopup === POPUP_MENUS.TEST_NET &&
+              <Grid container justifyContent='space-between' sx={{ pt: '30px' }}>
                 <Grid item sx={{ pb: '35px', textAlign: 'center' }} xs={12}>
                   <Typography fontSize='20px'>
                     {t('Warning')}
@@ -256,7 +254,6 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
                   />
                 </Grid>
               </Grid>
-              : showPopup === POPUP_MENUS.NOTIFICATIONS && <NotificationSettings setShowPopup={setShowPopup} />
           }
           <VersionSocial fontSize='11px' />
         </Grid>

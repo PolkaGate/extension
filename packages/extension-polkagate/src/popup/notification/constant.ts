@@ -11,11 +11,14 @@ export const NOT_READ_BGCOLOR = '#ECF6FE';
 export const MAX_RETRIES = 3;
 export const BATCH_SIZE = 3;
 export const DEFAULT_NOTIFICATION_SETTING = {
+  accounts: [],
   enable: true,
   governance: ['polkadot', 'kusama'],
   receivedFunds: true,
   stakingRewards: ['polkadot', 'kusama']
 };
+export const SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN = ['polkadot', 'kusama', 'westend'];
+export const SUPPORTED_STAKING_NOTIFICATION_CHAIN = ['polkadot', 'kusama', 'westend'];
 
 export const SUBSCAN_SUPPORTED_CHAINS = [
   'Polkadot',

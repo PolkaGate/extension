@@ -16,17 +16,15 @@ import { getStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { setNotification } from '../messaging';
 import getLanguageOptions from '../util/getLanguageOptions';
-import { POPUP_MENUS } from './Menu';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;
   setTestnetEnabledChecked: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   show: boolean;
   onChange: () => void;
-  setShowPopup: React.Dispatch<React.SetStateAction<POPUP_MENUS>>;
 }
 
-export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setShowPopup, setTestnetEnabledChecked, show }: Props): React.ReactElement {
+export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -54,8 +52,8 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
   }, [onAction]);
 
   const onManageNotifications = useCallback(() => {
-    setShowPopup(POPUP_MENUS.NOTIFICATIONS);
-  }, [setShowPopup]);
+    onAction('/manage-notification');
+  }, [onAction]);
 
   const onChangeNotification = useCallback((value: string | number): void => {
     const _value = value as string;
