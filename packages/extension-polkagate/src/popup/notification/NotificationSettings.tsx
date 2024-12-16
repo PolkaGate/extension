@@ -106,7 +106,7 @@ export default function NotificationSettings ({ setShowPopup }: Props) {
         <Typography fontSize='16px' fontWeight={300} textAlign='left' width='100%'>
           {t('Set up notifications to track your accounts, governance updates, and staking rewards.')}
         </Typography>
-        <Grid alignItems='center' container item justifyContent='space-between' mb='40px' mt='20px'>
+        <Grid alignItems='center' container item justifyContent='space-between' mb='40px' mt='20px' pr='10px'>
           <Typography fontSize='16px' fontWeight={400}>
             {t('Enable notifications')}
           </Typography>
@@ -169,11 +169,13 @@ export default function NotificationSettings ({ setShowPopup }: Props) {
       </Grid>
       <Grid container item sx={{ bottom: '80px', height: '70px', position: 'absolute' }}>
         <TwoButtons
-          mt={notificationSetting.enable ? '75px' : '190px'}
+          ml='0px'
+          mt='1px'
           onPrimaryClick={onNotificationApply}
           onSecondaryClick={onNotificationCancel}
           primaryBtnText={t('Confirm')}
           secondaryBtnText={t('Reject')}
+          width='100%'
         />
       </Grid>
     </Grid>

@@ -26,7 +26,7 @@ interface Props {
   setShowPopup: React.Dispatch<React.SetStateAction<POPUP_MENUS>>;
 }
 
-export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, setShowPopup, show }: Props): React.ReactElement {
+export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setShowPopup, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -80,74 +80,63 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
     <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
       <Grid container item justifyContent='flex-end'>
         <Divider sx={{ bgcolor: 'divider', height: '1px', mx: '10px', width: '83%' }} />
-        <Grid container direction='column' pl='40px' pr='5px' pt='10px'>
-          <Grid item pt='5px' textAlign='left'>
-            <Checkbox2
-              checked={isTestnetEnabledChecked}
-              iconStyle={{ transform: 'scale(1.13)' }}
-              label={t('Enable testnet chains')}
-              labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
-              onChange={onChange}
-            />
-          </Grid>
-          <Grid item pt='15px' textAlign='left'>
-            <Checkbox2
-              checked={camera}
-              iconStyle={{ transform: 'scale(1.13)' }}
-              label={t('Allow QR camera access')}
-              labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
-              onChange={toggleCamera}
-            />
-          </Grid>
-          <Grid container item>
-            <MenuItem
-              fontSize='17px'
-              iconComponent={
-                <FontAwesomeIcon
-                  color={`${theme.palette.text.primary}`}
-                  fontSize='18px'
-                  icon={faListCheck}
-                />
-              }
-              onClick={onAuthManagement}
-              text={t('Manage website access')}
-            />
-          </Grid>
-          <Grid container item>
-            <MenuItem
-              fontSize='17px'
-              iconComponent={
-                <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
-              }
-              onClick={onManageLoginPassword}
-              py='2px'
-              text={t('Manage login password')}
-            />
-          </Grid>
-          <Grid container item>
-            <MenuItem
-              fontSize='17px'
-              iconComponent={
-                <NotificationsIcon sx={{ color: theme.palette.text.primary, fontSize: '23px' }} />
-              }
-              onClick={onManageNotifications}
-              py='2px'
-              text={t('Manage notifications')}
-            />
-          </Grid>
-          <SelectIdenticonTheme
-            style={{ pt: '12px', width: '100%' }}
+        <Grid container direction='column' sx={{ display: 'grid', p: '10px 5px 0 40px', rowGap: '10px' }}>
+          <Checkbox2
+            checked={isTestnetEnabledChecked}
+            iconStyle={{ transform: 'scale(1.13)' }}
+            label={t('Enable testnet chains')}
+            labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
+            onChange={onChange}
           />
-          <Grid item pt='10px'>
-            <Select
-              defaultValue={languageOptions[0].value}
-              label={t('Language')}
-              onChange={onChangeLang}
-              options={languageOptions}
-              value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
-            />
-          </Grid>
-          <Grid item pt='10px' sx={{ visibility: 'hidden' }}>
+          <Checkbox2
+            checked={camera}
+            iconStyle={{ transform: 'scale(1.13)' }}
+            label={t('Allow QR camera access')}
+            labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
+            onChange={toggleCamera}
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <FontAwesomeIcon
+                color={`${theme.palette.text.primary}`}
+                fontSize='18px'
+                icon={faListCheck}
+              />
+            }
+            onClick={onAuthManagement}
+            py='0px'
+            text={t('Manage website access')}
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <VaadinIcon icon='vaadin:key' style={{ color: `${theme.palette.text.primary}`, height: '18px' }} />
+            }
+            onClick={onManageLoginPassword}
+            py='0px'
+            text={t('Manage login password')}
+          />
+          <MenuItem
+            fontSize='17px'
+            iconComponent={
+              <NotificationsIcon sx={{ color: theme.palette.text.primary, fontSize: '23px' }} />
+            }
+            onClick={onManageNotifications}
+            py='0px'
+            text={t('Manage notifications')}
+          />
+          <SelectIdenticonTheme
+            style={{ width: '100%' }}
+          />
+          <Select
+            defaultValue={languageOptions[0].value}
+            label={t('Language')}
+            onChange={onChangeLang}
+            options={languageOptions}
+            value={settings.i18nLang !== 'default' ? settings.i18nLang : languageOptions[0].value}
+          />
+          <Grid item sx={{ visibility: 'hidden' }}>
             <Select
               defaultValue={notificationOptions[1].value}
               label={t('Notification')}

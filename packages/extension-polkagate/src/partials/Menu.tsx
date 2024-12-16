@@ -143,7 +143,7 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
           {showPopup === POPUP_MENUS.NONE
             ? <>
               <Grid container item justifyContent='space-between'>
-                <IconButton onClick={onCloseMenu} sx={{ pl: '0px' }}>
+                <IconButton onClick={onCloseMenu} sx={{ m: '8px', ml: 0, p: '0px' }}>
                   <CloseIcon sx={{ color: 'secondary.light', fontSize: 35 }} />
                 </IconButton>
                 <Grid alignItems='center' columnGap='10px' container item pr='15px' width='fit-content'>
