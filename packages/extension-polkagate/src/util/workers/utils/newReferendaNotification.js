@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { NOTIFICATION_GOVERNANCE_CHAINS, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM } from '@polkadot/extension-polkagate/src/popup/notification/constant';
+import { NOTIFICATION_GOVERNANCE_CHAINS, NOTIFICATIONS_KEY, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, REFERENDA_STATUS } from '@polkadot/extension-polkagate/src/popup/notification/constant';
 
 // interface ReferendaDeposit {
 //   who: string;
@@ -18,6 +18,16 @@ import { NOTIFICATION_GOVERNANCE_CHAINS, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA
 //    deciding: boolean | null;
 //  };
 // }
+
+const getRefStatus = (/** @type {{ [x: string]: any; }} */ item) => {
+  for (const status of REFERENDA_STATUS) {
+    if (item[status]) {
+      return status;
+    }
+  }
+
+  return 'ongoing';
+};
 
 /**
  * @param {import('@polkadot/api').ApiPromise} api
@@ -39,17 +49,7 @@ export async function newRefNotif (api, chainName, port) {
   const referendaInfo = await Promise.all(referendaInfoRequests);
 
   const info = referendaInfo.map((item, index) => {
-    let refStatus = 'ongoing';
-
-    if ('approved' in item) {
-      refStatus = 'approved';
-    } else if ('timedOut' in item) {
-      refStatus = 'timedOut';
-    } else if ('rejected' in item) {
-      refStatus = 'rejected';
-    } else if ('cancelled' in item) {
-      refStatus = 'cancelled';
-    }
+    const refStatus = getRefStatus(item);
 
     return {
       refId: latestRefId - index,
@@ -58,7 +58,7 @@ export async function newRefNotif (api, chainName, port) {
   });
 
   const message = {
-    functionName: 'notifications',
+    functionName: NOTIFICATIONS_KEY,
     message: {
       chainName,
       data: info,
