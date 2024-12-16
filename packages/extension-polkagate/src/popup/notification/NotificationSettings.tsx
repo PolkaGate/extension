@@ -2,21 +2,40 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-no-bind */
 
+import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Collapse, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react';
 
-import { Checkbox2, Switch, TwoButtons } from '../../components';
+import { AccountContext, ActionContext, Switch, TwoButtons } from '../../components';
 import { getStorage, setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
-import { POPUP_MENUS } from '../../partials/Menu';
-import { DEFAULT_NOTIFICATION_SETTING, NOTIFICATION_SETTING_KEY } from './constant';
+import { HeaderBrand } from '../../partials';
+import SelectAccounts from './partial/SelectAccounts';
+import SelectNetwork from './partial/SelectNetwork';
+import { DEFAULT_NOTIFICATION_SETTING, NOTIFICATION_SETTING_KEY, SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN, SUPPORTED_STAKING_NOTIFICATION_CHAIN } from './constant';
 
-interface Props {
-  setShowPopup: React.Dispatch<React.SetStateAction<POPUP_MENUS>>;
+interface OptionButtonProps {
+  text: string;
+  onClick: () => void;
 }
 
+const OptionButton = ({ onClick, text }: OptionButtonProps) => {
+  const theme = useTheme();
+
+  return (
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onClick} sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'secondary.main', borderRadius: '5px', cursor: 'pointer', p: '10px' }}>
+      <Typography fontSize='16px' fontWeight={400}>
+        {text}
+      </Typography>
+      <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, stroke: theme.palette.secondary.light, strokeWidth: '2px' }} />
+    </Grid>
+  );
+};
+
 export interface NotificationSettingType {
+  accounts: string[] | undefined; // substrate addresses
   enable: boolean | undefined;
   receivedFunds: boolean | undefined;
   governance: string[] | undefined; // chainNames
@@ -25,12 +44,14 @@ export interface NotificationSettingType {
 
 type NotificationSettingsActionType =
   | { type: 'INITIAL'; payload: NotificationSettingType }
-  | { type: 'FUNCTION'; }
-  | { type: 'RECEIVED_FUNDS'; }
-  | { type: 'GOVERNANCE'; payload: string[] }
-  | { type: 'STAKING_REWARDS'; payload: string[] };
+  | { type: 'TOGGLE_ENABLE'; }
+  | { type: 'TOGGLE_RECEIVED_FUNDS'; }
+  | { type: 'SET_ACCOUNTS'; payload: string[] }
+  | { type: 'SET_GOVERNANCE'; payload: string[] }
+  | { type: 'SET_STAKING_REWARDS'; payload: string[] };
 
 const initialNotificationState: NotificationSettingType = {
+  accounts: undefined,
   enable: undefined,
   governance: undefined,
   receivedFunds: undefined,
@@ -44,90 +65,154 @@ const notificationSettingReducer = (
   switch (action.type) {
     case 'INITIAL':
       return action.payload;
-    case 'FUNCTION':
+    case 'TOGGLE_ENABLE':
       return { ...state, enable: !state.enable };
-    case 'GOVERNANCE':
-      return { ...state, governance: action.payload };
-    case 'STAKING_REWARDS':
-      return { ...state, stakingRewards: action.payload };
-    case 'RECEIVED_FUNDS':
+    case 'TOGGLE_RECEIVED_FUNDS':
       return { ...state, receivedFunds: !state.receivedFunds };
+    case 'SET_GOVERNANCE':
+      return { ...state, governance: action.payload };
+    case 'SET_ACCOUNTS':
+      return { ...state, accounts: action.payload };
+    case 'SET_STAKING_REWARDS':
+      return { ...state, stakingRewards: action.payload };
     default:
       return state;
   }
 };
 
-export default function NotificationSettings({ setShowPopup }: Props) {
+export enum Popups {
+  NONE,
+  ACCOUNTS,
+  GOVERNANCE,
+  STAKING_REWARDS
+}
+
+export default function NotificationSettings () {
   const { t } = useTranslation();
   const theme = useTheme();
+  const onAction = useContext(ActionContext);
+  const { accounts } = useContext(AccountContext);
 
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
+  const [defaultFlag, setDefaultFlag] = useState<boolean>(false);
+  const [popups, setPopup] = useState<Popups>(Popups.NONE);
 
   useEffect(() => {
-    getStorage(NOTIFICATION_SETTING_KEY, true)
-      .then((notificationSetting) => dispatch({ payload: notificationSetting as NotificationSettingType | undefined ?? DEFAULT_NOTIFICATION_SETTING, type: 'INITIAL' }))
-      .catch(console.error);
+    const loadNotificationSettings = async () => {
+      try {
+        const storedSettings = await getStorage(NOTIFICATION_SETTING_KEY, true);
+
+        if (!storedSettings) {
+          setDefaultFlag(true);
+
+          return;
+        }
+
+        dispatch({
+          payload: storedSettings as NotificationSettingType,
+          type: 'INITIAL'
+        });
+      } catch (error) {
+        console.error('Failed to load notification settings:', error);
+        setDefaultFlag(true);
+      }
+    };
+
+    loadNotificationSettings().catch(console.error);
   }, []);
 
+  useEffect(() => {
+    if (!defaultFlag) {
+      return;
+    }
+
+    const addresses = accounts.map(({ address }) => address);
+
+    dispatch({
+      payload: {
+        ...DEFAULT_NOTIFICATION_SETTING,
+        accounts: addresses
+      },
+      type: 'INITIAL'
+    });
+  }, [accounts, defaultFlag]);
+
   const onToggleNotification = useCallback(() => {
-    dispatch({ type: 'FUNCTION' });
+    dispatch({ type: 'TOGGLE_ENABLE' });
   }, []);
 
   const onToggleReceivedFunds = useCallback(() => {
-    dispatch({ type: 'RECEIVED_FUNDS' });
+    dispatch({ type: 'TOGGLE_RECEIVED_FUNDS' });
   }, []);
 
-  const onGovernanceChains = useCallback((chainName: string) => () => {
-    const found = notificationSetting.governance?.find((network) => network.toLowerCase() === chainName.toLowerCase());
-    const newChainList = found
-      ? notificationSetting.governance?.filter((network) => network.toLowerCase() !== chainName.toLowerCase())
-      : [...(notificationSetting.governance ?? []), chainName];
+  const closePopup = useCallback(() => {
+    setPopup(Popups.NONE);
+  }, []);
 
-    dispatch({ payload: newChainList ?? [], type: 'GOVERNANCE' });
-  }, [notificationSetting.governance]);
+  const onGovernanceChains = useCallback((chainNames: string[]) => () => {
+    dispatch({ payload: chainNames, type: 'SET_GOVERNANCE' });
+    closePopup();
+  }, [closePopup]);
 
-  const onStakingRewardsChains = useCallback((chainName: string) => () => {
-    const found = notificationSetting.stakingRewards?.find((network) => network.toLowerCase() === chainName.toLowerCase());
-    const newChainList = found
-      ? notificationSetting.stakingRewards?.filter((network) => network.toLowerCase() !== chainName.toLowerCase())
-      : [...(notificationSetting.stakingRewards ?? []), chainName];
+  const onStakingRewardsChains = useCallback((chainNames: string[]) => () => {
+    dispatch({ payload: chainNames, type: 'SET_STAKING_REWARDS' });
+    closePopup();
+  }, [closePopup]);
 
-    dispatch({ payload: newChainList ?? [], type: 'STAKING_REWARDS' });
-  }, [notificationSetting.stakingRewards]);
+  const onAccounts = useCallback((addresses: string[]) => () => {
+    dispatch({ payload: addresses, type: 'SET_ACCOUNTS' });
+    closePopup();
+  }, [closePopup]);
 
   const onNotificationApply = useCallback(() => {
     setStorage(NOTIFICATION_SETTING_KEY, notificationSetting, true).catch(console.error);
-    setShowPopup(POPUP_MENUS.NONE);
-  }, [notificationSetting, setShowPopup]);
+    onAction('/');
+  }, [notificationSetting, onAction]);
 
   const onNotificationCancel = useCallback(() => {
-    setShowPopup(POPUP_MENUS.NONE);
-  }, [setShowPopup]);
+    onAction('/');
+  }, [onAction]);
+
+  const openPopup = useCallback((popup: Popups) => {
+    setPopup(popup);
+  }, []);
 
   return (
-    <Grid container justifyContent='space-between' sx={{ display: 'block', height: '100%', position: 'relative' }}>
-      <Grid item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main', mb: '20px', py: '10px', textAlign: 'center' }} xs={12}>
-        <Typography fontSize='20px'>
-          {t('Manage notification')}
-        </Typography>
-      </Grid>
-      <Grid container item justifyContent='space-between' mx='10px'>
-        <Typography fontSize='16px' fontWeight={300} textAlign='left' width='100%'>
+    <>
+      <HeaderBrand
+        onBackClick={onNotificationCancel}
+        showBackArrow
+        text={t('Manage Notification')}
+      />
+      <Grid container justifyContent='space-between' sx={{ display: 'block', height: innerHeight - 65, position: 'relative', px: '15px' }}>
+        <Typography fontSize='16px' fontWeight={300} mt='15px' textAlign='left' width='100%'>
           {t('Set up notifications to track your accounts, governance updates, and staking rewards.')}
         </Typography>
-        <Grid alignItems='center' container item justifyContent='space-between' mb='40px' mt='20px' pr='10px'>
-          <Typography fontSize='16px' fontWeight={400}>
-            {t('Enable notifications')}
-          </Typography>
-          <Switch
-            isChecked={notificationSetting.enable}
-            onChange={onToggleNotification}
-            theme={theme}
-          />
-        </Grid>
-        <Collapse in={notificationSetting.enable}>
-          <>
-            <Grid alignItems='center' container item justifyContent='space-between' mb='15px' pr='10px'>
+        <Grid container item justifyContent='space-between'>
+          <Grid alignItems='center' container item justifyContent='space-between' mb='40px' mt='20px' pr='10px'>
+            <Typography fontSize='16px' fontWeight={400}>
+              {t('Enable notifications')}
+            </Typography>
+            <Switch
+              isChecked={notificationSetting.enable}
+              onChange={onToggleNotification}
+              theme={theme}
+            />
+          </Grid>
+          <Collapse in={notificationSetting.enable} sx={{ width: '100%' }}>
+            <Grid alignItems='center' container item justifyContent='space-between' sx={{ pr: '10px', rowGap: '10px' }}>
+              <OptionButton
+                onClick={() => openPopup(Popups.ACCOUNTS)}
+                text={t('Accounts')}
+              />
+              <OptionButton
+                onClick={() => openPopup(Popups.GOVERNANCE)}
+                text={t('Governance')}
+              />
+              <OptionButton
+                onClick={() => openPopup(Popups.STAKING_REWARDS)}
+                text={t('Staking rewards')}
+              />
               <Typography fontSize='16px' fontWeight={400}>
                 {t('Received Funds')}
               </Typography>
@@ -137,66 +222,27 @@ export default function NotificationSettings({ setShowPopup }: Props) {
                 theme={theme}
               />
             </Grid>
-            <Grid container item justifyContent='space-evenly'>
-              <Typography fontSize='16px' fontWeight={400} mb='5px' textAlign='left' width='100%'>
-                {t('Governance')}:
-              </Typography>
-              <Grid item textAlign='left'>
-                <Checkbox2
-                  checked={notificationSetting.governance?.includes('polkadot')}
-                  iconStyle={{ transform: 'scale(1.13)' }}
-                  label='Polkadot'
-                  labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
-                  onChange={onGovernanceChains('polkadot')}
-                />
-              </Grid>
-              <Grid item textAlign='left'>
-                <Checkbox2
-                  checked={notificationSetting.governance?.includes('kusama')}
-                  iconStyle={{ transform: 'scale(1.13)' }}
-                  label='Kusama'
-                  labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
-                  onChange={onGovernanceChains('kusama')}
-                />
-              </Grid>
-            </Grid>
-            <Grid container item justifyContent='space-evenly' mt='25px'>
-              <Typography fontSize='16px' fontWeight={400} mb='5px' textAlign='left' width='100%'>
-                {t('Staking rewards')}:
-              </Typography>
-              <Grid item textAlign='left'>
-                <Checkbox2
-                  checked={notificationSetting.stakingRewards?.includes('polkadot')}
-                  iconStyle={{ transform: 'scale(1.13)' }}
-                  label='Polkadot'
-                  labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
-                  onChange={onStakingRewardsChains('polkadot')}
-                />
-              </Grid>
-              <Grid item textAlign='left'>
-                <Checkbox2
-                  checked={notificationSetting.stakingRewards?.includes('kusama')}
-                  iconStyle={{ transform: 'scale(1.13)' }}
-                  label='Kusama'
-                  labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
-                  onChange={onStakingRewardsChains('kusama')}
-                />
-              </Grid>
-            </Grid>
-          </>
-        </Collapse>
+          </Collapse>
+        </Grid>
+        <Grid container item sx={{ bottom: '25px', height: '70px', position: 'absolute' }}>
+          <TwoButtons
+            ml='1%'
+            mt='1px'
+            onPrimaryClick={onNotificationApply}
+            onSecondaryClick={onNotificationCancel}
+            primaryBtnText={t('Confirm')}
+            secondaryBtnText={t('Cancel')}
+            width='90%'
+          />
+        </Grid>
       </Grid>
-      <Grid container item sx={{ bottom: '80px', height: '70px', position: 'absolute' }}>
-        <TwoButtons
-          ml='0px'
-          mt='1px'
-          onPrimaryClick={onNotificationApply}
-          onSecondaryClick={onNotificationCancel}
-          primaryBtnText={t('Confirm')}
-          secondaryBtnText={t('Reject')}
-          width='100%'
-        />
-      </Grid>
-    </Grid>
+      {Popups.GOVERNANCE === popups
+        ? <SelectNetwork onApply={onGovernanceChains} onClose={closePopup} options={SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN} previousState={notificationSetting.governance ?? []} type='governance' />
+        : Popups.STAKING_REWARDS === popups
+          ? <SelectNetwork onApply={onStakingRewardsChains} onClose={closePopup} options={SUPPORTED_STAKING_NOTIFICATION_CHAIN} previousState={notificationSetting.stakingRewards ?? []} type='stakingReward' />
+          : Popups.ACCOUNTS === popups &&
+          <SelectAccounts onApply={onAccounts} onClose={closePopup} previousState={notificationSetting.accounts ?? []} />
+      }
+    </>
   );
 }
