@@ -9,6 +9,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { AccountContext, Identity, PButton, SlidePopUp, Switch } from '../../../components';
 import { useTranslation } from '../../../components/translate';
+import { MAX_ACCOUNT_COUNT_NOTIFICATION } from '../constant';
 
 interface Props {
   previousState: string[];
@@ -45,7 +46,7 @@ const SelectAccounts = ({ onApply, onClose, previousState }: Props): React.React
         </Typography>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
         <Typography fontSize='16px' fontWeight={300} p='20px'>
-          {t('Select up to 3 accounts to be notified when account activity')}
+          {t('Select up to {{count}} accounts to be notified when account activity', { replace: { count: MAX_ACCOUNT_COUNT_NOTIFICATION } })}
         </Typography>
       </Grid>
       <Grid alignItems='center' container item sx={{ maxHeight: '320px', overflowY: 'scroll', p: '30px 15px 0' }}>
@@ -66,7 +67,7 @@ const SelectAccounts = ({ onApply, onClose, previousState }: Props): React.React
       </Grid>
       <PButton
         _onClick={onApply(selected)}
-        disabled={isSelectionUnchanged}
+        disabled={isSelectionUnchanged || selected.length > MAX_ACCOUNT_COUNT_NOTIFICATION}
         text={t('Apply')}
       />
       <IconButton

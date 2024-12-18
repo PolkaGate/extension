@@ -92,7 +92,6 @@ export default function YouHave (): React.ReactElement {
             {t('Total balance')}
           </Typography>
           <Grid container item width='fit-content'>
-            <Notifications />
             <HideBalance
               darkColor={theme.palette.secondary.light}
               hide={isHideNumbers}
@@ -100,6 +99,7 @@ export default function YouHave (): React.ReactElement {
               onClick={toggleHideNumbers}
               size={20}
             />
+            <Notifications />
             <Infotip2 placement='bottom' text={t('Menu options')}>
               <IconButton
                 onClick={onMenuClick}
