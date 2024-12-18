@@ -1,7 +1,13 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { NotificationMessageType, ReferendaNotificationType } from '../../hooks/useNotifications';
+import type { DropdownOption } from '../../util/types';
+
+import { selectableNetworks } from '@polkadot/networks';
+
 import { postData } from '../../util/api';
+import { getSubstrateAddress } from '../../util/utils';
 import { BATCH_SIZE, MAX_RETRIES } from './constant';
 
 interface ApiResponse<T> {
@@ -37,6 +43,18 @@ interface Transfer {
   is_lock: boolean;
 }
 
+interface Payout {
+  era: number;
+  stash: string;
+  account: string;
+  validator_stash: string;
+  extrinsic_index: string;
+  amount: string;
+  block_timestamp: number;
+  module_id: string;
+  event_id: string;
+}
+
 interface AccountDisplay {
   address: string;
   people: Record<string, unknown>;
@@ -51,28 +69,99 @@ interface AccountDisplayWithMerkle extends AccountDisplay {
   };
 }
 
-interface TransfersProp {
-  extrinsicIndex: string;
+export interface TransfersProp {
   from: string,
   fromAccountDisplay: AccountDisplay,
-  to: string,
-  toAccountDisplay: AccountDisplay,
-  success: boolean,
-  blockTimestamp: number,
-  module: string,
+  toAccountId: AccountDisplay,
+  date: string,
+  timestamp: number;
   amount: string,
   assetSymbol: string
 }
 
-interface PayoutsProp {
+export interface PayoutsProp {
   era: number;
-  stash: string;
-  account: string;
-  validator_stash: string;
+  validatorStash: string;
   amount: string;
-  block_timestamp: number;
-  module_id: string;
-  event_id: string;
+  date: string;
+  decimal: number;
+  timestamp: number;
+}
+
+export interface ReceivedFundInformation {
+  address: string;
+  data: TransfersProp[];
+  network: DropdownOption;
+}
+
+export interface StakingRewardInformation {
+  address: string;
+  data: PayoutsProp[];
+  network: DropdownOption;
+}
+
+export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
+  // Ensure timestamp is a number and convert if it's a string
+  const timestampNum = Number(timestamp);
+
+  // Check if timestamp is valid
+  if (isNaN(timestampNum)) {
+    return 'Invalid Timestamp';
+  }
+
+  // Create a Date object (multiply by 1000 if it's a Unix timestamp in seconds)
+  const date = new Date(timestampNum * 1000);
+
+  // Different formatting options
+  switch (format) {
+    case 'full':
+      return date.toLocaleString('en-US', {
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        month: 'long',
+        second: '2-digit'
+      });
+
+    case 'short':
+      return date.toLocaleString('en-US', {
+        day: 'numeric',
+        month: 'short'
+      });
+
+    case 'relative':
+      return getRelativeTime(date);
+
+    default:
+      return date.toLocaleString();
+  }
+}
+
+// Helper function to get relative time
+function getRelativeTime (date: Date): string {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  const units = [
+    { name: 'year', seconds: 31536000 },
+    { name: 'month', seconds: 2592000 },
+    { name: 'week', seconds: 604800 },
+    { name: 'day', seconds: 86400 },
+    { name: 'hour', seconds: 3600 },
+    { name: 'minute', seconds: 60 }
+  ];
+
+  for (const unit of units) {
+    const value = Math.floor(diffInSeconds / unit.seconds);
+
+    if (value >= 1) {
+      return value === 1
+        ? `1 ${unit.name} ago`
+        : `${value} ${unit.name}s ago`;
+    }
+  }
+
+  return diffInSeconds <= 0 ? 'just now' : `${diffInSeconds} seconds ago`;
 }
 
 /**
@@ -80,9 +169,9 @@ interface PayoutsProp {
  * - Moves the specified suffixes (if present) to the beginning of the text, separated by a hyphen.
  * - Removes "relay chain" and "network" from the chain name, as these are considered invalid suffixes.
  *
- * @param {string} chainName - The original chain name to be modified.
- * @param {string[]} [suffixes=['assethub']] - An array of suffixes to move and reorder, defaulting to ['assethub'].
- * @returns {string} The modified chain name with the specified suffixes reordered.
+ * @param chainName - The original chain name to be modified.
+ * @param [suffixes=['assethub']] - An array of suffixes to move and reorder, defaulting to ['assethub'].
+ * @returns The modified chain name with the specified suffixes reordered.
  */
 const formatChainName = (chainName: string | undefined, suffixes: string[] = ['asset hub']): string => {
   // Handle undefined input
@@ -113,31 +202,29 @@ const formatChainName = (chainName: string | undefined, suffixes: string[] = ['a
   return formattedParts.reverse().join('-');
 };
 
-const transformTransfers = (address: string, transfers: Transfer[], networkName: string) => {
+const transformTransfers = (address: string, transfers: Transfer[], network: DropdownOption) => {
   // Initialize the accumulator for the reduce function
   const initialAccumulator = {
     address,
     data: [] as TransfersProp[],
-    network: networkName
+    network
   };
 
   // Sanitize each transfer item and accumulate results
   const result = transfers.reduce((accumulator, transfer) => {
-    if (transfer.to !== address) {
+    if (getSubstrateAddress(transfer.to) !== address) {
       return accumulator;
     }
 
     const sanitizedTransfer = {
-      amount: transfer.amount_v2,
+      amount: transfer.amount,
       assetSymbol: transfer.asset_symbol,
-      blockTimestamp: transfer.block_timestamp,
-      extrinsicIndex: transfer.extrinsic_index,
+      date: timestampToDate(transfer.block_timestamp),
       from: transfer.from,
       fromAccountDisplay: transfer.from_account_display,
-      module: transfer.module,
-      success: transfer.success,
-      to: transfer.to,
-      toAccountDisplay: transfer.to_account_display
+      timestamp: transfer.block_timestamp,
+      // module: transfer.module,
+      toAccountId: transfer.to_account_display
     };
 
     accumulator.data.push(sanitizedTransfer);
@@ -148,9 +235,43 @@ const transformTransfers = (address: string, transfers: Transfer[], networkName:
   return result;
 };
 
-export const getReceivedFundsInformation = async (addresses: string[], chainNames: string[]) => {
-  const results: { address: string, data: TransfersProp[]; network: string; }[] = [];
-  const networks = chainNames.map((chainName) => formatChainName(chainName));
+const transformPayouts = (address: string, payouts: Payout[], network: DropdownOption) => {
+  // Initialize the accumulator for the reduce function
+  const initialAccumulator = {
+    address,
+    data: [] as PayoutsProp[],
+    network
+  };
+  const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash as unknown as string) === network.text)?.decimals[0];
+
+  // Sanitize each transfer item and accumulate results
+  const result = payouts.reduce((accumulator, payout) => {
+    const sanitizedTransfer = {
+      amount: payout.amount,
+      date: timestampToDate(payout.block_timestamp),
+      decimal,
+      era: payout.era,
+      timestamp: payout.block_timestamp,
+      validatorStash: payout.validator_stash
+    } as PayoutsProp;
+
+    accumulator.data.push(sanitizedTransfer);
+
+    return accumulator;
+  }, initialAccumulator);
+
+  return result;
+};
+
+/**
+ * Fetches transfers information from subscan for the given addresses on the given chains
+ * @param addresses - An array of addresses for which payout information fetch
+ * @param chains - Name of the blockchain network
+ * @returns Array of payouts information
+ */
+export const getReceivedFundsInformation = async (addresses: string[], chains: DropdownOption[]): Promise<ReceivedFundInformation[]> => {
+  const results: ReceivedFundInformation[] = [];
+  const networks = chains.map(({ text, value }) => ({ text: formatChainName(text), value }));
 
   // Process each address
   for (const address of addresses) {
@@ -165,21 +286,25 @@ export const getReceivedFundsInformation = async (addresses: string[], chainName
 
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
           try {
-            const receivedInfo = await postData(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
+            const receivedInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/transfers`, {
               address,
               row: 10
             }) as ApiResponse<{
-              transfers: Transfer[]
+              transfers: Transfer[] | null
             }>;
 
             if (receivedInfo.code !== 0) {
               throw new Error('Not a expected status code');
             }
 
+            if (!receivedInfo.data.transfers) {
+              return null; // account doesn't have any history
+            }
+
             return transformTransfers(address, receivedInfo.data.transfers, network);
           } catch (error) {
             lastError = error;
-            console.warn(`Attempt ${attempt} failed for ${network} and address ${address} (RECEIVED). Retrying...`);
+            console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (RECEIVED). Retrying...`);
 
             // Exponential backoff
             await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
@@ -187,7 +312,7 @@ export const getReceivedFundsInformation = async (addresses: string[], chainName
         }
 
         // If all retries fail, log the final error
-        console.error(`(RECEIVED) Failed to fetch data for ${network} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
+        console.error(`(RECEIVED) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
 
         return null;
       });
@@ -210,9 +335,15 @@ export const getReceivedFundsInformation = async (addresses: string[], chainName
   return results;
 };
 
-export const getPayoutsInformation = async (addresses: string[], chainNames: string[]) => {
-  const results: { address: string, data: PayoutsProp[]; network: string; }[] = [];
-  const networks = chainNames.map((chainName) => formatChainName(chainName));
+/**
+ * Fetches payouts information from subscan for the given addresses on the given chains
+ * @param addresses - An array of addresses for which payout information fetch
+ * @param chainNames - Name of the blockchain network
+ * @returns Array of payouts information
+ */
+export const getPayoutsInformation = async (addresses: string[], chains: DropdownOption[]): Promise<StakingRewardInformation[]> => {
+  const results: StakingRewardInformation[] = [];
+  const networks = chains.map(({ text, value }) => ({ text: formatChainName(text), value }));
 
   // Process each address
   for (const address of addresses) {
@@ -227,25 +358,25 @@ export const getPayoutsInformation = async (addresses: string[], chainNames: str
 
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
           try {
-            const payoutInfo = await postData(`https://${network}.api.subscan.io/api/v2/scan/account/reward_slash`, {
+            const payoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
               address,
               row: 10
             }) as ApiResponse<{
-              list: PayoutsProp[]
+              list: Payout[]
             }>;
 
             if (payoutInfo.code !== 0) {
               throw new Error('Not a expected status code');
             }
 
-            return {
-              address,
-              data: payoutInfo.data.list,
-              network
-            };
+            if (!payoutInfo.data.list) {
+              return null; // account doesn't have any history
+            }
+
+            return transformPayouts(address, payoutInfo.data.list, network);
           } catch (error) {
             lastError = error;
-            console.warn(`Attempt ${attempt} failed for ${network} and address ${address} (PAYOUT). Retrying...`);
+            console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (PAYOUT). Retrying...`);
 
             // Exponential backoff
             await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
@@ -253,7 +384,7 @@ export const getPayoutsInformation = async (addresses: string[], chainNames: str
         }
 
         // If all retries fail, log the final error
-        console.error(`(PAYOUT) Failed to fetch data for ${network} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
+        console.error(`(PAYOUT) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
 
         return null;
       });
@@ -274,4 +405,143 @@ export const getPayoutsInformation = async (addresses: string[], chainNames: str
   }
 
   return results;
+};
+
+/**
+ * Generates notifications for new or updated referenda
+ * @param chainName - Name of the blockchain network
+ * @param previousReferenda - Previous state of referenda
+ * @param currentReferenda - Current state of referenda
+ * @returns Array of new notification messages
+ */
+export const generateReferendaNotifications = (
+  chain: DropdownOption,
+  previousReferenda: ReferendaNotificationType[],
+  currentReferenda: ReferendaNotificationType[]
+): NotificationMessageType[] => {
+  const newMessages: NotificationMessageType[] = [];
+
+  // Find new referenda (not in previous state)
+  const newReferenda = currentReferenda.filter(
+    (current) => !previousReferenda.some(
+      (previous) => previous.refId === current.refId
+    )
+  );
+
+  // Find referenda with status changes
+  const updatedReferenda = currentReferenda.filter(
+    (current) => previousReferenda.some(
+      (previous) =>
+        previous.refId === current.refId &&
+        previous.status !== current.status
+    )
+  );
+
+  // Generate notifications for new referenda
+  newReferenda.forEach((referenda) => {
+    newMessages.push({
+      chain,
+      read: false,
+      referenda,
+      type: 'referenda'
+    });
+  });
+
+  // Generate notifications for referenda with status changes
+  updatedReferenda.forEach((referenda) => {
+    newMessages.push({
+      chain,
+      read: false,
+      referenda,
+      type: 'referenda'
+    });
+  });
+
+  return newMessages;
+};
+
+/**
+ * Generates notifications for new staking rewards
+ * @param currentReferenda - Current state of referenda
+ * @returns Array of new notification messages
+ */
+export const generateStakingRewardNotifications = (
+  latestLoggedIn: number,
+  payouts: StakingRewardInformation[]
+): NotificationMessageType[] => {
+  const newMessages: NotificationMessageType[] = [];
+  const newPayouts = payouts.map(({ address, data, network }) => {
+    const payout = data.find(({ timestamp }) => timestamp >= latestLoggedIn);
+
+    return payout
+      ? {
+        address,
+        network,
+        payout
+      }
+      : undefined;
+  }).filter((item) => !!item);
+
+  // Generate notifications for new payouts
+  newPayouts.forEach(({ address, network, payout }) => {
+    newMessages.push({
+      chain: network,
+      forAccount: address,
+      payout,
+      read: false,
+      type: 'stakingReward'
+    });
+  });
+
+  return newMessages;
+};
+
+/**
+ * Generates notifications for new staking rewards
+ * @param currentReferenda - Current state of referenda
+ * @returns Array of new notification messages
+ */
+export const generateReceivedFundNotifications = (
+  latestLoggedIn: number,
+  transfers: ReceivedFundInformation[]
+): NotificationMessageType[] => {
+  const newMessages: NotificationMessageType[] = [];
+  const newReceivedFunds = transfers.map(({ address, data, network }) => {
+    const receivedFund = data.find(({ timestamp }) => timestamp >= latestLoggedIn);
+
+    return receivedFund
+      ? {
+        address,
+        network,
+        receivedFund
+      }
+      : undefined;
+  }).filter((item) => !!item);
+
+  // Generate notifications for new payouts
+  newReceivedFunds.forEach(({ address, network, receivedFund }) => {
+    newMessages.push({
+      chain: network,
+      forAccount: address,
+      read: false,
+      receivedFund,
+      type: 'receivedFund'
+    });
+  });
+
+  return newMessages;
+};
+
+/**
+ * Marks messages as read
+ * @param messages - Notification messages
+ * @returns Array of new notification messages
+ */
+export const markMessagesAsRead = (messages: NotificationMessageType[]) => {
+  return messages.map((message) => (
+    {
+      ...message,
+      read: true
+    }
+  ));
 };

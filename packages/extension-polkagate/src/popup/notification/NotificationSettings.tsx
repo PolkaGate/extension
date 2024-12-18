@@ -14,7 +14,8 @@ import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import SelectAccounts from './partial/SelectAccounts';
 import SelectNetwork from './partial/SelectNetwork';
-import { DEFAULT_NOTIFICATION_SETTING, NOTIFICATION_SETTING_KEY, SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN, SUPPORTED_STAKING_NOTIFICATION_CHAIN } from './constant';
+import { DEFAULT_NOTIFICATION_SETTING, MAX_ACCOUNT_COUNT_NOTIFICATION, NOTIFICATION_SETTING_KEY, SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN, SUPPORTED_STAKING_NOTIFICATION_CHAIN } from './constant';
+import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
 interface OptionButtonProps {
   text: string;
@@ -38,8 +39,8 @@ export interface NotificationSettingType {
   accounts: string[] | undefined; // substrate addresses
   enable: boolean | undefined;
   receivedFunds: boolean | undefined;
-  governance: string[] | undefined; // chainNames
-  stakingRewards: string[] | undefined; // chainNames
+  governance: DropdownOption[] | undefined; // chainNames
+  stakingRewards: DropdownOption[] | undefined; // chainNames
 }
 
 type NotificationSettingsActionType =
@@ -47,8 +48,8 @@ type NotificationSettingsActionType =
   | { type: 'TOGGLE_ENABLE'; }
   | { type: 'TOGGLE_RECEIVED_FUNDS'; }
   | { type: 'SET_ACCOUNTS'; payload: string[] }
-  | { type: 'SET_GOVERNANCE'; payload: string[] }
-  | { type: 'SET_STAKING_REWARDS'; payload: string[] };
+  | { type: 'SET_GOVERNANCE'; payload: DropdownOption[] }
+  | { type: 'SET_STAKING_REWARDS'; payload: DropdownOption[] };
 
 const initialNotificationState: NotificationSettingType = {
   accounts: undefined,
@@ -100,7 +101,7 @@ export default function NotificationSettings () {
   useEffect(() => {
     const loadNotificationSettings = async () => {
       try {
-        const storedSettings = await getStorage(NOTIFICATION_SETTING_KEY, true);
+        const storedSettings = await getStorage(NOTIFICATION_SETTING_KEY);
 
         if (!storedSettings) {
           setDefaultFlag(true);
@@ -126,11 +127,11 @@ export default function NotificationSettings () {
       return;
     }
 
-    const addresses = accounts.map(({ address }) => address);
+    const addresses = accounts.map(({ address }) => address).slice(0, MAX_ACCOUNT_COUNT_NOTIFICATION);
 
     dispatch({
       payload: {
-        ...DEFAULT_NOTIFICATION_SETTING,
+        ...DEFAULT_NOTIFICATION_SETTING, // accounts is an empty array in the constant file
         accounts: addresses
       },
       type: 'INITIAL'
@@ -149,13 +150,13 @@ export default function NotificationSettings () {
     setPopup(Popups.NONE);
   }, []);
 
-  const onGovernanceChains = useCallback((chainNames: string[]) => () => {
-    dispatch({ payload: chainNames, type: 'SET_GOVERNANCE' });
+  const onGovernanceChains = useCallback((chains: DropdownOption[]) => () => {
+    dispatch({ payload: chains, type: 'SET_GOVERNANCE' });
     closePopup();
   }, [closePopup]);
 
-  const onStakingRewardsChains = useCallback((chainNames: string[]) => () => {
-    dispatch({ payload: chainNames, type: 'SET_STAKING_REWARDS' });
+  const onStakingRewardsChains = useCallback((chains: DropdownOption[]) => () => {
+    dispatch({ payload: chains, type: 'SET_STAKING_REWARDS' });
     closePopup();
   }, [closePopup]);
 
@@ -165,7 +166,7 @@ export default function NotificationSettings () {
   }, [closePopup]);
 
   const onNotificationApply = useCallback(() => {
-    setStorage(NOTIFICATION_SETTING_KEY, notificationSetting, true).catch(console.error);
+    setStorage(NOTIFICATION_SETTING_KEY, notificationSetting).catch(console.error);
     onAction('/');
   }, [notificationSetting, onAction]);
 

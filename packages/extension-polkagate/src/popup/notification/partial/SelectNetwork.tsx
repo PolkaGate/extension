@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { DropdownOption } from '../../../util/types';
+
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -11,9 +13,9 @@ import { ChainLogo, PButton, SlidePopUp, Switch } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 
 interface Props {
-  options: string[];
-  previousState: string[];
-  onApply: (items: string[]) => () => void;
+  options: DropdownOption[];
+  previousState: DropdownOption[];
+  onApply: (items: DropdownOption[]) => () => void;
   type: 'stakingReward' | 'governance';
   onClose: () => void;
 }
@@ -24,9 +26,9 @@ const SelectNetwork = ({ onApply, onClose, options, previousState, type }: Props
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const [selected, setSelected] = useState<string[]>(previousState);
+  const [selected, setSelected] = useState<DropdownOption[]>(previousState);
 
-  const onSelect = useCallback((item: string) => () => {
+  const onSelect = useCallback((item: DropdownOption) => () => {
     setSelected((prevSelected) =>
       prevSelected.includes(item)
         ? prevSelected.filter((selectedItem) => selectedItem !== item)
@@ -66,9 +68,9 @@ const SelectNetwork = ({ onApply, onClose, options, previousState, type }: Props
         {options.map((option, index) => (
           <Grid alignItems='center' container item justifyContent='space-between' key={index}>
             <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-              <ChainLogo chainName={option} />
+              <ChainLogo chainName={option.text} />
               <Typography fontSize='16px' fontWeight={400}>
-                {isRelayChain(option)}
+                {isRelayChain(option.text)}
               </Typography>
             </Grid>
             <Switch

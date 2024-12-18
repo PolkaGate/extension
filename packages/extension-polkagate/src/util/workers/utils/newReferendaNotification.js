@@ -1,7 +1,7 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { NOTIFICATION_GOVERNANCE_CHAINS, NOTIFICATIONS_KEY, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, REFERENDA_STATUS } from '@polkadot/extension-polkagate/src/popup/notification/constant';
+import { NOTIFICATION_GOVERNANCE_CHAINS, NOTIFICATIONS_KEY, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, REFERENDA_STATUS } from '../../../popup/notification/constant';
 
 // interface ReferendaDeposit {
 //   who: string;
@@ -49,18 +49,18 @@ export async function newRefNotif (api, chainName, port) {
   const referendaInfo = await Promise.all(referendaInfoRequests);
 
   const info = referendaInfo.map((item, index) => {
-    const refStatus = getRefStatus(item);
+    const status = getRefStatus(item);
 
     return {
       refId: latestRefId - index,
-      refStatus
+      status
     };
   });
 
   const message = {
     functionName: NOTIFICATIONS_KEY,
     message: {
-      chainName,
+      chainGenesis: api.genesisHash.toHex(),
       data: info,
       type: 'referenda'
     }
