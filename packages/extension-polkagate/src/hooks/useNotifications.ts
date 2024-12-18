@@ -1,39 +1,52 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import type { ReferendaStatus } from '../popup/notification/constant';
+import type { NotificationSettingType } from '../popup/notification/NotificationSettings';
+import type { DropdownOption } from '../util/types';
 
+import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+
+import { AccountContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
-import { REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM } from '../popup/notification/constant';
+import { DEFAULT_NOTIFICATION_SETTING, KUSAMA_NOTIFICATION_CHAIN, MAX_ACCOUNT_COUNT_NOTIFICATION, NOTIFICATION_SETTING_KEY, NOTIFICATIONS_KEY, POLKADOT_NOTIFICATION_CHAIN, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
+import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, getPayoutsInformation, getReceivedFundsInformation, markMessagesAsRead, type PayoutsProp, type ReceivedFundInformation, type StakingRewardInformation, type TransfersProp } from '../popup/notification/util';
+import { sanitizeChainName } from '../util/utils';
 import { useWorker } from './useWorker';
+import { useGenesisHashOptions, useSelectedChains } from '.';
+import { KUSAMA_GENESIS_HASH } from '../util/constants';
 
 interface WorkerMessage {
   functionName: string;
   message: {
     type: 'referenda';
-    chainName: string;
-    data: { refId: number; refStatus: string; }[];
+    chainGenesis: string;
+    data: { refId: number; status: ReferendaStatus; }[];
   }
 }
 
-const NOTIFICATIONS = 'notifications';
-
 export interface ReferendaNotificationType {
-  read?: boolean;
-  status?: string;
+  status?: ReferendaStatus;
   refId?: number;
 }
 
+export interface NotificationMessageType {
+  chain?: DropdownOption;
+  type: 'referenda' | 'stakingReward' | 'receivedFund';
+  payout?: PayoutsProp;
+  referenda?: ReferendaNotificationType;
+  receivedFund?: TransfersProp;
+  forAccount?: string;
+  extrinsicIndex?: string;
+  read: boolean;
+}
+
 export interface NotificationsType {
+  notificationMessages: NotificationMessageType[] | undefined;
   kusamaReferenda: ReferendaNotificationType[] | null | undefined;
   polkadotReferenda: ReferendaNotificationType[] | null | undefined;
-  receivedFunds: {
-    address: string;
-    amount: number;
-    date?: number;
-    chainName: string;
-    read: boolean;
-  }[] | null | undefined;
+  receivedFunds: ReceivedFundInformation[] | null | undefined;
+  stakingRewards: StakingRewardInformation[] | null | undefined;
   latestLoggedIn: number | undefined;
   isFirstTime: boolean | undefined;
 }
@@ -41,16 +54,21 @@ export interface NotificationsType {
 type NotificationActionType =
   | { type: 'INITIALIZE'; }
   | { type: 'CHECK_FIRST_TIME'; }
+  | { type: 'MARK_AS_READ'; }
+  | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
   | { type: 'SET_KUSAMA_REF'; payload: ReferendaNotificationType[] }
   | { type: 'SET_POLKADOT_REF'; payload: ReferendaNotificationType[] }
-  | { type: 'SET_RECEIVED_FUNDS'; payload: NotificationsType['receivedFunds'] };
+  | { type: 'SET_RECEIVED_FUNDS'; payload: NotificationsType['receivedFunds'] }
+  | { type: 'SET_STAKING_REWARDS'; payload: NotificationsType['stakingRewards'] };
 
 const initialNotificationState: NotificationsType = {
   isFirstTime: undefined,
   kusamaReferenda: undefined,
-  latestLoggedIn: Date.now(),
+  latestLoggedIn: undefined,
+  notificationMessages: undefined,
   polkadotReferenda: undefined,
-  receivedFunds: undefined
+  receivedFunds: undefined,
+  stakingRewards: undefined
 };
 
 const notificationReducer = (
@@ -59,125 +77,197 @@ const notificationReducer = (
 ): NotificationsType => {
   switch (action.type) {
     case 'INITIALIZE':
-      return { ...state, isFirstTime: true, kusamaReferenda: null, polkadotReferenda: null, receivedFunds: null };
+      return {
+        isFirstTime: true,
+        kusamaReferenda: null,
+        latestLoggedIn: Math.floor(Date.now() / 1000), // timestamp must be in seconds not in milliseconds
+        notificationMessages: [],
+        polkadotReferenda: null,
+        receivedFunds: null,
+        stakingRewards: null
+      };
+
     case 'CHECK_FIRST_TIME':
       return { ...state, isFirstTime: true };
+
+    case 'MARK_AS_READ':
+      return { ...state, notificationMessages: markMessagesAsRead(state.notificationMessages ?? []) };
+
+    case 'LOAD_FROM_STORAGE':
+      return action.payload;
+
     case 'SET_KUSAMA_REF':
-      return { ...state, isFirstTime: false, kusamaReferenda: action.payload };
+      return {
+        ...state,
+        isFirstTime: false,
+        kusamaReferenda: action.payload,
+        notificationMessages: state.kusamaReferenda
+          ? [...generateReferendaNotifications(KUSAMA_NOTIFICATION_CHAIN, state.kusamaReferenda, action.payload), ...(state.notificationMessages ?? [])]
+          : state.notificationMessages
+      };
+
     case 'SET_POLKADOT_REF':
-      return { ...state, isFirstTime: false, polkadotReferenda: action.payload };
+      return {
+        ...state,
+        isFirstTime: false,
+        notificationMessages: state.polkadotReferenda
+          ? [...generateReferendaNotifications(POLKADOT_NOTIFICATION_CHAIN, state.polkadotReferenda, action.payload), ...(state.notificationMessages ?? [])]
+          : state.notificationMessages,
+        polkadotReferenda: action.payload
+      };
+
     case 'SET_RECEIVED_FUNDS':
-      return { ...state, isFirstTime: false, receivedFunds: action.payload };
+      return {
+        ...state,
+        isFirstTime: false,
+        notificationMessages: [...generateReceivedFundNotifications(state.latestLoggedIn ?? Math.floor(Date.now() / 1000), action.payload ?? []), ...(state.notificationMessages ?? [])],
+        receivedFunds: action.payload
+      };
+
+    case 'SET_STAKING_REWARDS':
+      return {
+        ...state,
+        isFirstTime: false,
+        notificationMessages: [...generateStakingRewardNotifications(state.latestLoggedIn ?? Math.floor(Date.now() / 1000), action.payload ?? []), ...(state.notificationMessages ?? [])],
+        stakingRewards: action.payload
+      };
+
     default:
       return state;
   }
 };
 
-export default function useNotifications() {
+enum status {
+  NONE,
+  FETCHING,
+  FETCHED
+}
+
+export default function useNotifications () {
   const worker = useWorker();
+  const selectedChains = useSelectedChains();
+  const allChains = useGenesisHashOptions(false);
+  const { accounts } = useContext(AccountContext);
 
-  const isSavingRef = useRef(false); // Flag to avoid duplicate saves
-  const kusamaRefUpdated = useRef(false); // Kusama ref updated flag
-  const polkadotRefUpdated = useRef(false); // polkadot ref updated flag
+  const isGettingReceivedFundRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getReceivedFundsInformation
+  const isGettingPayoutsRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getPayoutsInformation
+  const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
+  const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
 
+  const chains = useMemo(() => {
+    if (!selectedChains) {
+      return undefined;
+    }
+
+    return allChains
+      .filter(({ value }) => selectedChains.includes(value as string))
+      .map(({ text, value }) => ({ text, value } as DropdownOption));
+  }, [allChains, selectedChains]);
+
+  const [settings, setSettings] = useState<NotificationSettingType | undefined>();
+  const [defaultSettingFlag, setDefaultSettingFlag] = useState<boolean>(false);
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
-  const [savedNotificationsInfo, setSavedNotificationsInfo] = useState<NotificationsType | null | undefined>(undefined); // null - occurs the first time, when no data is yet saved in storage
-  const [fetchedNotificationsInfo, dispatchFetchedNotifications] = useReducer(notificationReducer, initialNotificationState);
 
-  const checkForNewNotifications = useCallback((fetchedNotifications: ReferendaNotificationType[], savedNotifications: ReferendaNotificationType[]) => {
-    // Logic to determine if there are genuinely new notifications
-    // This could compare fetchedNotifications with savedNotifications
-    // based on specific criteria like refId, status, etc.
-    const hasNewNotifications = fetchedNotifications.some((fetchedNotif) =>
-      !savedNotifications.some((savedNotif) =>
-        savedNotif.refId === fetchedNotif.refId ||
-        (savedNotif.refId === fetchedNotif.refId && savedNotif.status === fetchedNotif.status)
-      ));
+  const notificationIsOff = useMemo(() => !settings || settings.enable === false || settings.accounts?.length === 0, [settings]);
 
-    return hasNewNotifications;
+  const markAsRead = useCallback(() => {
+    dispatchNotifications({ type: 'MARK_AS_READ' });
   }, []);
 
-  const prepareToSave = useCallback((fetchedArray: ReferendaNotificationType[], savedArray: ReferendaNotificationType[], notificationArray: ReferendaNotificationType[] | null | undefined, chainName: string) => {
-    const count = chainName === 'polkadot'
-      ? REFERENDA_COUNT_TO_TRACK_DOT
-      : REFERENDA_COUNT_TO_TRACK_KSM;
+  const receivedFunds = useCallback(async () => {
+    if (chains && isGettingReceivedFundRef.current === status.NONE && settings?.accounts && settings.receivedFunds) {
+      isGettingReceivedFundRef.current = status.FETCHING;
 
-    const uniqueReferendas = Array.from(new Map([...savedArray, ...fetchedArray].map((item) => [item.refId, item])).values())
-      .sort((a, b) => (a.refId ?? 0) - (b.refId ?? 0))
-      .slice(0, count);
+      const filteredSupportedChains = chains.filter(({ text }) => {
+        const sanitized = sanitizeChainName(text)?.toLowerCase();
 
-    const updatedReferendas = uniqueReferendas.map((uniqueItem) => {
-      const found = notificationArray?.find(({ refId }) => refId === uniqueItem.refId);
+        if (!sanitized) {
+          return false;
+        }
 
-      // const anythingNew = JSON.stringify(found) === JSON.stringify(uniqueItem);
+        return SUBSCAN_SUPPORTED_CHAINS.find((chainName) => chainName.toLowerCase() === sanitized);
+      });
 
-      return found
-        // ? { ...uniqueItem, read: anythingNew }
-        ? { ...uniqueItem, read: found.read }
-        : uniqueItem;
+      const receivedFunds = await getReceivedFundsInformation(settings.accounts, filteredSupportedChains);
+
+      isGettingReceivedFundRef.current = status.FETCHED;
+      dispatchNotifications({
+        payload: receivedFunds,
+        type: 'SET_RECEIVED_FUNDS'
+      });
+    }
+  }, [chains, settings?.accounts, settings?.receivedFunds]);
+
+  const payoutsInfo = useCallback(async () => {
+    if (isGettingPayoutsRef.current === status.NONE && isGettingReceivedFundRef.current !== status.FETCHING && settings?.accounts && settings.stakingRewards && settings.stakingRewards.length !== 0) {
+      isGettingPayoutsRef.current = status.FETCHING;
+
+      const payouts = await getPayoutsInformation(settings.accounts, settings.stakingRewards);
+
+      isGettingPayoutsRef.current = status.FETCHED;
+      dispatchNotifications({
+        payload: payouts,
+        type: 'SET_STAKING_REWARDS'
+      });
+    }
+  }, [settings?.accounts, settings?.stakingRewards]);
+
+  useEffect(() => {
+    const getSettings = async () => {
+      const savedSettings = await getStorage(NOTIFICATION_SETTING_KEY) as NotificationSettingType;
+
+      if (!savedSettings) {
+        setDefaultSettingFlag(true);
+
+        return;
+      }
+
+      setSettings(savedSettings);
+    };
+
+    getSettings().catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!defaultSettingFlag) {
+      return;
+    }
+
+    const addresses = accounts.map(({ address }) => address).slice(0, MAX_ACCOUNT_COUNT_NOTIFICATION);
+
+    setSettings({
+      ...DEFAULT_NOTIFICATION_SETTING, // accounts is an empty array in the constant file
+      accounts: addresses
     });
-
-    return updatedReferendas;
-  }, []);
+  }, [accounts, defaultSettingFlag]);
 
   useEffect(() => {
-    if (savedNotificationsInfo === null) { // when no notification has been saved yet
-      dispatchNotifications({ type: 'INITIALIZE' });
-
+    if (notificationIsOff || !settings || initializedRef.current) {
       return;
     }
 
-    const noNewInfoFetchedYet = Object.values(fetchedNotificationsInfo).every((info) => info === undefined);
+    const loadSavedNotifications = async () => {
+      initializedRef.current = true;
 
-    if (savedNotificationsInfo === undefined || noNewInfoFetchedYet) {
-      return;
-    }
+      try {
+        const savedNotifications = await getStorage(NOTIFICATIONS_KEY) as NotificationsType | undefined;
 
-    if (fetchedNotificationsInfo.kusamaReferenda && checkForNewNotifications(fetchedNotificationsInfo.kusamaReferenda, savedNotificationsInfo?.kusamaReferenda ?? [])) {
-      const updatedKusamaReferenda = prepareToSave(fetchedNotificationsInfo.kusamaReferenda ?? [], savedNotificationsInfo?.kusamaReferenda ?? [], notifications.kusamaReferenda, 'kusama');
-
-      if (!kusamaRefUpdated.current) {
-        kusamaRefUpdated.current = true;
-
-        dispatchNotifications({
-          payload: updatedKusamaReferenda,
-          type: 'SET_KUSAMA_REF'
-        });
+        savedNotifications
+          ? dispatchNotifications({ payload: savedNotifications, type: 'LOAD_FROM_STORAGE' })
+          : dispatchNotifications({ type: 'INITIALIZE' }); // will happen only for the first time
+      } catch (error) {
+        console.error('Failed to load saved notifications:', error);
       }
-    }
+    };
 
-    if (fetchedNotificationsInfo.polkadotReferenda && checkForNewNotifications(fetchedNotificationsInfo.polkadotReferenda, savedNotificationsInfo?.polkadotReferenda ?? [])) {
-      const updatedPolkadotReferenda = prepareToSave(fetchedNotificationsInfo.polkadotReferenda ?? [], savedNotificationsInfo?.polkadotReferenda ?? [], notifications.polkadotReferenda, 'polkadot');
-
-      if (!polkadotRefUpdated.current) {
-        polkadotRefUpdated.current = true;
-
-        dispatchNotifications({
-          payload: updatedPolkadotReferenda,
-          type: 'SET_POLKADOT_REF'
-        });
-      }
-    }
-  }, [checkForNewNotifications, fetchedNotificationsInfo, notifications?.isFirstTime, notifications.kusamaReferenda, notifications.polkadotReferenda, prepareToSave, savedNotificationsInfo]);
-
-  const loadSavedNotifications = useCallback(async () => {
-    try {
-      const savedNotifications = await getStorage(NOTIFICATIONS) as NotificationsType;
-
-      console.info('savedNotifications ::: savedNotifications', savedNotifications);
-
-      setSavedNotificationsInfo(savedNotifications ?? null); // null - will happen only for the first time
-      (!savedNotifications || savedNotifications?.isFirstTime) && dispatchNotifications({ type: 'CHECK_FIRST_TIME' });
-    } catch (error) {
-      console.error('Failed to load saved notifications:', error);
-    }
-  }, []);
-
-  useEffect(() => {
     loadSavedNotifications().catch(console.error);
-  }, [loadSavedNotifications]);
+  }, [notificationIsOff, settings]);
 
   useEffect(() => {
+    if (notificationIsOff || settings?.governance?.length === 0) {
+      return;
+    }
+
     const handelMessage = (event: MessageEvent<string>) => {
       try {
         if (!event.data) {
@@ -186,24 +276,23 @@ export default function useNotifications() {
 
         const parsedMessage = JSON.parse(event.data) as WorkerMessage;
 
-        if (parsedMessage.functionName !== NOTIFICATIONS) {
+        if (parsedMessage.functionName !== NOTIFICATIONS_KEY) {
           return;
         }
 
         const { message } = parsedMessage;
 
-        switch (message.type) {
-          case 'referenda':
-            {
-              const { chainName, data } = message;
+        if (message.type !== 'referenda') {
+          return;
+        }
 
-              dispatchFetchedNotifications({
-                payload: data,
-                type: chainName === 'kusama' ? 'SET_KUSAMA_REF' : 'SET_POLKADOT_REF'
-              });
-            }
+        const { chainGenesis, data } = message;
 
-            break;
+        if (settings?.governance?.find(({ value }) => value === chainGenesis)) {
+          dispatchNotifications({
+            payload: data,
+            type: chainGenesis === KUSAMA_GENESIS_HASH ? 'SET_KUSAMA_REF' : 'SET_POLKADOT_REF'
+          });
         }
       } catch (error) {
         console.error('Error processing worker message:', error);
@@ -215,46 +304,41 @@ export default function useNotifications() {
     return () => {
       worker.removeEventListener('message', handelMessage);
     };
-  }, [worker]);
+  }, [notificationIsOff, settings?.governance, worker]);
+
+  useEffect(() => {
+    if (notificationIsOff || !settings) {
+      return;
+    }
+
+    if (settings.receivedFunds) {
+      receivedFunds().catch(console.error);
+    } else {
+      isGettingReceivedFundRef.current = status.FETCHED;
+    }
+
+    if (settings.stakingRewards?.length !== 0) {
+      payoutsInfo().catch(console.error);
+    }
+  }, [notificationIsOff, payoutsInfo, receivedFunds, settings]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (!isSavingRef.current && savedNotificationsInfo !== undefined) {
+      const notificationIsInitializing = notifications.isFirstTime && notifications.kusamaReferenda?.length === 0 && notifications.polkadotReferenda?.length;
+
+      if (!isSavingRef.current && !notificationIsInitializing) {
         isSavingRef.current = true;
 
-        let dataToSave = null;
+        const dataToSave = notifications;
 
-        const fetched = Boolean(fetchedNotificationsInfo.kusamaReferenda || fetchedNotificationsInfo.polkadotReferenda || fetchedNotificationsInfo.receivedFunds);
+        dataToSave.latestLoggedIn = Math.floor(Date.now() / 1000); // timestamp must be in seconds not in milliseconds
 
-        if (savedNotificationsInfo && !savedNotificationsInfo.isFirstTime) {
-          dataToSave = notifications;
-        } else {
-          if (fetched) {
-            dataToSave = fetchedNotificationsInfo;
-            dataToSave.kusamaReferenda?.forEach((item) => {
-              item.read = true;
-            });
-            dataToSave.polkadotReferenda?.forEach((item) => {
-              item.read = true;
-            });
-            dataToSave.receivedFunds?.forEach((item) => {
-              item.read = true;
-            });
-            dataToSave.isFirstTime = true;
-          }
-        }
-
-        console.info('dataToSave ::: dataToSave', dataToSave);
-
-        setStorage(NOTIFICATIONS, dataToSave)
+        setStorage(NOTIFICATIONS_KEY, dataToSave)
           .then(() => {
             console.log('Notifications saved successfully on unload.');
           })
           .catch((error) => {
             console.error('Failed to save notifications on unload:', error);
-          })
-          .finally(() => {
-            isSavingRef.current = false;
           });
       }
     };
@@ -265,7 +349,10 @@ export default function useNotifications() {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [fetchedNotificationsInfo, notifications, savedNotificationsInfo]);
+  }, [notifications]);
 
-  return notifications;
+  return {
+    markAsRead,
+    notifications
+  };
 }
