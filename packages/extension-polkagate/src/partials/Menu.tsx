@@ -16,7 +16,6 @@ import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
 import { useIsLoginEnabled, useTranslation } from '../hooks';
 import { lockExtension, tieAccount } from '../messaging';
-import NotificationSettings from '../popup/notification/NotificationSettings';
 import { NO_PASS_PERIOD, TEST_NETS } from '../util/constants';
 import ImportAccSubMenu from './ImportAccSubMenu';
 import NewAccountSubMenu from './NewAccountSubMenu';
