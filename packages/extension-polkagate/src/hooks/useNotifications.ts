@@ -9,12 +9,12 @@ import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useSta
 
 import { AccountContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
-import { DEFAULT_NOTIFICATION_SETTING, KUSAMA_NOTIFICATION_CHAIN, MAX_ACCOUNT_COUNT_NOTIFICATION, NOTIFICATION_SETTING_KEY, NOTIFICATIONS_KEY, POLKADOT_NOTIFICATION_CHAIN, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
-import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, getPayoutsInformation, getReceivedFundsInformation, markMessagesAsRead, type PayoutsProp, type ReceivedFundInformation, type StakingRewardInformation, type TransfersProp } from '../popup/notification/util';
+import { DEFAULT_NOTIFICATION_SETTING, KUSAMA_NOTIFICATION_CHAIN, MAX_ACCOUNT_COUNT_NOTIFICATION, NOTIFICATION_SETTING_KEY, NOTIFICATIONS_KEY, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
+import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, getPayoutsInformation, getReceivedFundsInformation, markMessagesAsRead, type PayoutsProp, type ReceivedFundInformation, type StakingRewardInformation, type TransfersProp, updateReferendas } from '../popup/notification/util';
+import { KUSAMA_GENESIS_HASH } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 import { useWorker } from './useWorker';
 import { useGenesisHashOptions, useSelectedChains } from '.';
-import { KUSAMA_GENESIS_HASH } from '../util/constants';
 
 interface WorkerMessage {
   functionName: string;
@@ -28,6 +28,7 @@ interface WorkerMessage {
 export interface ReferendaNotificationType {
   status?: ReferendaStatus;
   refId?: number;
+  chainName: string;
 }
 
 export interface NotificationMessageType {
@@ -43,8 +44,7 @@ export interface NotificationMessageType {
 
 export interface NotificationsType {
   notificationMessages: NotificationMessageType[] | undefined;
-  kusamaReferenda: ReferendaNotificationType[] | null | undefined;
-  polkadotReferenda: ReferendaNotificationType[] | null | undefined;
+  referendas: ReferendaNotificationType[] | null | undefined;
   receivedFunds: ReceivedFundInformation[] | null | undefined;
   stakingRewards: StakingRewardInformation[] | null | undefined;
   latestLoggedIn: number | undefined;
@@ -56,18 +56,16 @@ type NotificationActionType =
   | { type: 'CHECK_FIRST_TIME'; }
   | { type: 'MARK_AS_READ'; }
   | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
-  | { type: 'SET_KUSAMA_REF'; payload: ReferendaNotificationType[] }
-  | { type: 'SET_POLKADOT_REF'; payload: ReferendaNotificationType[] }
+  | { type: 'SET_REFERENDA'; payload: ReferendaNotificationType[] }
   | { type: 'SET_RECEIVED_FUNDS'; payload: NotificationsType['receivedFunds'] }
   | { type: 'SET_STAKING_REWARDS'; payload: NotificationsType['stakingRewards'] };
 
 const initialNotificationState: NotificationsType = {
   isFirstTime: undefined,
-  kusamaReferenda: undefined,
   latestLoggedIn: undefined,
   notificationMessages: undefined,
-  polkadotReferenda: undefined,
   receivedFunds: undefined,
+  referendas: undefined,
   stakingRewards: undefined
 };
 
@@ -79,11 +77,10 @@ const notificationReducer = (
     case 'INITIALIZE':
       return {
         isFirstTime: true,
-        kusamaReferenda: null,
         latestLoggedIn: Math.floor(Date.now() / 1000), // timestamp must be in seconds not in milliseconds
         notificationMessages: [],
-        polkadotReferenda: null,
         receivedFunds: null,
+        referendas: null,
         stakingRewards: null
       };
 
@@ -96,25 +93,19 @@ const notificationReducer = (
     case 'LOAD_FROM_STORAGE':
       return action.payload;
 
-    case 'SET_KUSAMA_REF':
-      return {
-        ...state,
-        isFirstTime: false,
-        kusamaReferenda: action.payload,
-        notificationMessages: state.kusamaReferenda
-          ? [...generateReferendaNotifications(KUSAMA_NOTIFICATION_CHAIN, state.kusamaReferenda, action.payload), ...(state.notificationMessages ?? [])]
-          : state.notificationMessages
-      };
+    case 'SET_REFERENDA': {
+      const chainName = action.payload[0].chainName;
+      const anyAvailableRefs = state.referendas?.find(({ chainName: network }) => network === chainName);
 
-    case 'SET_POLKADOT_REF':
       return {
         ...state,
         isFirstTime: false,
-        notificationMessages: state.polkadotReferenda
-          ? [...generateReferendaNotifications(POLKADOT_NOTIFICATION_CHAIN, state.polkadotReferenda, action.payload), ...(state.notificationMessages ?? [])]
+        notificationMessages: anyAvailableRefs
+          ? [...generateReferendaNotifications(KUSAMA_NOTIFICATION_CHAIN, state.referendas, action.payload), ...(state.notificationMessages ?? [])]
           : state.notificationMessages,
-        polkadotReferenda: action.payload
+        referendas: updateReferendas(state.referendas, action.payload, chainName)
       };
+    }
 
     case 'SET_RECEIVED_FUNDS':
       return {
@@ -289,9 +280,12 @@ export default function useNotifications () {
         const { chainGenesis, data } = message;
 
         if (settings?.governance?.find(({ value }) => value === chainGenesis)) {
+          const chainName = chainGenesis === KUSAMA_GENESIS_HASH ? 'kusama' : 'polkadot';
+          const payload = data.map((item) => ({ ...item, chainName }));
+
           dispatchNotifications({
-            payload: data,
-            type: chainGenesis === KUSAMA_GENESIS_HASH ? 'SET_KUSAMA_REF' : 'SET_POLKADOT_REF'
+            payload,
+            type: 'SET_REFERENDA'
           });
         }
       } catch (error) {
@@ -324,7 +318,7 @@ export default function useNotifications () {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const notificationIsInitializing = notifications.isFirstTime && notifications.kusamaReferenda?.length === 0 && notifications.polkadotReferenda?.length;
+      const notificationIsInitializing = notifications.isFirstTime && notifications.referendas?.length === 0;
 
       if (!isSavingRef.current && !notificationIsInitializing) {
         isSavingRef.current = true;

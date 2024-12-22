@@ -416,23 +416,24 @@ export const getPayoutsInformation = async (addresses: string[], chains: Dropdow
  */
 export const generateReferendaNotifications = (
   chain: DropdownOption,
-  previousReferenda: ReferendaNotificationType[],
+  previousReferenda: ReferendaNotificationType[] | null | undefined,
   currentReferenda: ReferendaNotificationType[]
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
 
   // Find new referenda (not in previous state)
   const newReferenda = currentReferenda.filter(
-    (current) => !previousReferenda.some(
-      (previous) => previous.refId === current.refId
+    (current) => !previousReferenda?.some(
+      (previous) => previous.refId === current.refId && previous.chainName === current.chainName
     )
   );
 
   // Find referenda with status changes
   const updatedReferenda = currentReferenda.filter(
-    (current) => previousReferenda.some(
+    (current) => previousReferenda?.some(
       (previous) =>
         previous.refId === current.refId &&
+        previous.chainName === current.chainName &&
         previous.status !== current.status
     )
   );
@@ -544,4 +545,10 @@ export const markMessagesAsRead = (messages: NotificationMessageType[]) => {
       read: true
     }
   ));
+};
+
+export const updateReferendas = (preciousRefs: ReferendaNotificationType[] | null | undefined, newRefs: ReferendaNotificationType[], network: string) => {
+  const filterOut = preciousRefs?.filter(({ chainName }) => chainName.toLowerCase() !== network.toLowerCase());
+
+  return (filterOut ?? []).concat(newRefs);
 };
