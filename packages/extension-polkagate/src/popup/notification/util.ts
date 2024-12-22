@@ -242,7 +242,7 @@ const transformPayouts = (address: string, payouts: Payout[], network: DropdownO
     data: [] as PayoutsProp[],
     network
   };
-  const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash as unknown as string) === network.text)?.decimals[0];
+  const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash[0] as unknown as string) === network.value)?.decimals[0];
 
   // Sanitize each transfer item and accumulate results
   const result = payouts.reduce((accumulator, payout) => {
