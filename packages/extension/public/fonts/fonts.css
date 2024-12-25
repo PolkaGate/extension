@@ -66,3 +66,13 @@
   src: local(''),
        url('./Roboto-Black.ttf') format('truetype'), /* Safari, Android, iOS */
 }
+
+/* OdibeeSans-Regular */
+@font-face {
+  font-family: 'OdibeeSans';
+  font-weight: 400;
+  font-style: normal;
+  src: url('./OdibeeSans-Regular.ttf'); /* IE9 Compat Modes */
+  src: local(''),
+       url('./OdibeeSans-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+}
