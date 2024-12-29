@@ -68,6 +68,7 @@ const BodyTheme = createGlobalStyle<{theme: Theme}>`
   }
   div#root{
    background-color: ${(props) => props.theme.palette.background.default};
+   background: ${(props) => props.theme.palette.gradient.primary};
   }
   * {
     scrollbar-width: none;

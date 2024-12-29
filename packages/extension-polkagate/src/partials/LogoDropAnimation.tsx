@@ -86,6 +86,7 @@ function LogoDropAnimation ({ ground = 200, style }: Props) {
         overflow: 'hidden',
         position: 'absolute',
         width: '100%',
+        zIndex: -1,
         ...style
       }}
     >

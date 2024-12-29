@@ -16,6 +16,7 @@ declare module '@mui/material/styles' {
     approval: Palette['primary'];
     support: Palette['primary'];
     backgroundFL: TypeText;
+    gradient: TypeText;
   }
   interface PaletteOptions {
     approval?: PaletteOptions['primary'];
@@ -24,6 +25,7 @@ declare module '@mui/material/styles' {
     label?: PaletteOptions['primary'];
     support?: PaletteOptions['primary'];
     backgroundFL?: Partial<TypeText>;
+    gradient?: Partial<TypeText>;
   }
 }
 export const darkTheme: ThemeOptions = {
@@ -38,13 +40,31 @@ export const darkTheme: ThemeOptions = {
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
     label: { main: '#63364D' },
-    background: { default: '#171717', paper: '#000000' },
+    background: { default: '#05091C', paper: '#000000' },
     backgroundFL: { primary: '#000000', secondary: '#171717' },
-    text: { primary: '#D5D5D5', secondary: '#000000', disabled: '#4B4B4B' },
+    text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
     success: { main: '#1F7720', light: '#46890C', contrastText: '#2ECC71' },
     warning: { main: '#FF002B' },
-    divider: 'rgba(255, 255, 255, 0.1)'
+    divider: 'rgba(255, 255, 255, 0.1)',
+    gradient: {
+      primary: `radial-gradient(
+        circle at 95% 19%, 
+        rgba(91, 0, 182, 0.35) 2%, 
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 4% 19%, 
+        rgba(91, 0, 182, 0.35) 2%, 
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 45% 8%,
+        rgba(255, 26, 177, 0.5) -2%,
+        transparent 40%
+      )`,
+      secondary: 'linear-gradient(to bottom, #000000, #171717)'
+    }
   },
   components: {
     MuiSkeleton: {

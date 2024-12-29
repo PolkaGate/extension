@@ -39,6 +39,7 @@ export default function ActionButton ({ StartIcon, disabled, isBusy, onClick, st
     },
     background: '#2D1E4A',
     borderRadius: `${style?.borderRadius ?? '12px'}`,
+    boxShadow: 'unset',
     justifyContent: 'flex-start',
     padding: '6px 24px',
     ...ButtonFontStyle
