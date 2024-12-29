@@ -6,6 +6,8 @@
 import { Box, Container, styled, type SxProps, type Theme, useTheme } from '@mui/material';
 import React from 'react';
 
+import { GradientBorder } from '../style';
+
 // Background glass effect layer
 const GlassBackground = styled(Box)(({ theme }) => ({
   '&::after': {
@@ -33,23 +35,6 @@ const GlassBackground = styled(Box)(({ theme }) => ({
   inset: 0,
   position: 'absolute',
   width: '100%'
-}));
-
-const GradientBorder = styled(Box)(() => ({
-  background: `linear-gradient(
-    262.56deg,
-    rgba(236, 180, 255, 0) 22.53%,
-    #ECB4FF 47.68%,
-    #ECB4FF 62.78%,
-    rgba(236, 180, 255, 0) 72.53%
-  )`,
-  height: '2px',
-  left: 0,
-  position: 'absolute',
-  right: 0,
-  top: 0,
-  width: '100%',
-  zIndex: 2
 }));
 
 const ContentWrapper = styled(Box)({

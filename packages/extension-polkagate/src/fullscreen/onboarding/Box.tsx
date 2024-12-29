@@ -6,6 +6,8 @@
 import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
+import { GradientBorder } from '../../style';
+
 const GlassCard = styled(Box)`
   position: relative;
   height: 500px;
@@ -52,21 +54,6 @@ const GlassCard = styled(Box)`
     pointer-events: none;
   }
 `;
-
-const GradientBorder = styled(Box)(() => ({
-  background: `linear-gradient(
-    262.56deg,
-    rgba(236, 180, 255, 0) 22.53%,
-    #ECB4FF 47.68%,
-    #ECB4FF 62.78%,
-    rgba(236, 180, 255, 0) 72.53%)`,
-  height: '2px',
-  left: 0,
-  position: 'absolute',
-  right: 0,
-  top: 0,
-  width: '100%'
-}));
 
 interface Props {
   children?: React.ReactNode;
