@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import { RedGradient } from '../style';
+
 interface Props {
   children: React.ReactNode;
   className?: string;
@@ -11,6 +13,7 @@ interface Props {
 export default function Main ({ children, className }: Props): React.ReactElement<Props> {
   return (
     <main className={className}>
+      <RedGradient style={{ top: '-35px' }} />
       {children}
     </main>
   );

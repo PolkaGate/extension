@@ -7,20 +7,22 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-const GlowBox = ({ style }: Props) => {
+const RedGradient = ({ style }: Props) => {
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     height: '200px',
     position: 'absolute',
+    right: '-10%', // positioned in the middle
+    top: 0,
     width: '450px',
     ...style
   };
 
   const ballStyle: React.CSSProperties = {
     borderRadius: '50%',
-    filter: 'blur(70px)', // Glow effect
+    filter: 'blur(80px)', // Glow effect
     height: '150px',
-    opacity: 0.8,
+    opacity: 0.9,
     position: 'absolute',
     width: '150px'
   };
@@ -37,7 +39,7 @@ const GlowBox = ({ style }: Props) => {
     ...ballStyle,
     backgroundColor: '#FF1AB1',
     left: '50%',
-    top: '50%',
+    top: '35%',
     transform: 'translate(-50%, -50%)'
   };
 
@@ -58,4 +60,4 @@ const GlowBox = ({ style }: Props) => {
   );
 };
 
-export default GlowBox;
+export default RedGradient;

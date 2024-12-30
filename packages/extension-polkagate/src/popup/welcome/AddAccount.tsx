@@ -96,7 +96,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
               {t('Already have a wallet')}
             </Typography>
           </Grid>
-          <RedGradient style={{ top: '-150px' }} />
+          <RedGradient style={{ top: '-130px' }} />
           <Box sx={{ maxHeight: '440px', overflow: 'scroll', position: 'relative', width: '100%' }}>
             <Grid container item justifyContent='center' sx={{ pb: '5px', position: 'relative', px: '32px', rowGap: '12px', zIndex: 1 }}>
               <ActionButton

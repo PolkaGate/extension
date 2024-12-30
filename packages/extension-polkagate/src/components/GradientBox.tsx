@@ -3,39 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Container, styled, type SxProps, type Theme, useTheme } from '@mui/material';
+import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
-import { GradientBorder } from '../style';
-
-// Background glass effect layer
-const GlassBackground = styled(Box)(({ theme }) => ({
-  '&::after': {
-    border: '2px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '32px',
-    boxShadow: '0 0 24px 8px rgba(78, 43, 114, 0.35) inset',
-    content: '""',
-    inset: 0,
-    pointerEvents: 'none',
-    position: 'absolute',
-    zIndex: 0
-  },
-
-  '&::before': {
-    background: theme.palette.gradient?.primary,
-    content: '""',
-    inset: 0,
-    position: 'absolute',
-    zIndex: 0
-  },
-
-  backdropFilter: 'blur(10px)',
-  borderRadius: '32px',
-  height: '100%',
-  inset: 0,
-  position: 'absolute',
-  width: '100%'
-}));
+import { GradientBorder, RedGradient } from '../style';
 
 const ContentWrapper = styled(Box)({
   borderRadius: '32px',
@@ -51,13 +22,20 @@ interface Props {
 }
 
 function GradientBox ({ children, style }: Props) {
-  const theme = useTheme();
+  const ContainerStyle = {
+    bgcolor: '#120D27',
+    border: '2px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '32px',
+    boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+    position: 'relative',
+    ...style
+  } as SxProps<Theme>;
 
   return (
-    <Container disableGutters sx={style}>
+    <Container disableGutters sx={ContainerStyle}>
+      <GradientBorder />
       <ContentWrapper>
-        <GlassBackground theme={theme} />
-        <GradientBorder />
+        <RedGradient style={{ top: '-100px' }} />
         <Box position='relative' zIndex={1}>
           {children}
         </Box>

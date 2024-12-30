@@ -3,7 +3,7 @@
 
 import { Box, styled } from '@mui/material';
 
-const GradientBorder = styled(Box)(() => ({
+const GradientBorder = styled(Box)(({ style }) => ({
   background: `linear-gradient(
       262.56deg,
       rgba(236, 180, 255, 0) 22.53%,
@@ -17,7 +17,8 @@ const GradientBorder = styled(Box)(() => ({
   right: 0,
   top: 0,
   width: '100%',
-  zIndex: 2
+  zIndex: 2,
+  ...style
 }));
 
 export default GradientBorder;
