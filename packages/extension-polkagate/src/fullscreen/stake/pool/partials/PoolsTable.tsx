@@ -4,21 +4,22 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { ApiPromise } from '@polkadot/api';
+import type { BN } from '@polkadot/util';
+import type { PoolFilter, PoolInfo } from '../../../../util/types';
+
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterAltOutlined as FilterIcon, MoreVert as MoreVertIcon, SearchOff as SearchOffIcon, SearchOutlined as SearchOutlinedIcon } from '@mui/icons-material';
 import { Divider, FormControlLabel, Grid, LinearProgress, Radio, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import Filters from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool/partials/Filters';
-import { BN } from '@polkadot/util';
 
 import { InputFilter, Progress, ShowBalance } from '../../../../components';
 import { useInfo, useStakingConsts, useTranslation } from '../../../../hooks';
 import PoolMoreInfo from '../../../../popup/staking/partial/PoolMoreInfo';
 import { DEFAULT_POOL_FILTERS } from '../../../../util/constants';
-import type { PoolFilter, PoolInfo } from '../../../../util/types';
 
 interface Props {
   api?: ApiPromise;
@@ -37,7 +38,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, setSearchedPools, api, numberOfFetchedPools, totalNumberOfPools, pools, poolsToShow, filteredPools, setFilteredPools, selected, setSelected, minHeight, maxHeight = window.innerHeight / 2.4, style }: Props): React.ReactElement {
+export default function PoolsTable ({ address, api, filteredPools, maxHeight = window.innerHeight / 2.4, minHeight, numberOfFetchedPools, pools, poolsToShow, selected, setFilteredPools, setSearchedPools, setSelected, style, totalNumberOfPools }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const { chain, decimal, token } = useInfo(address);

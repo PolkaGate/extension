@@ -8,10 +8,10 @@ import { BN } from '@polkadot/util';
 
 import { useApi, useToken } from '.';
 
-export default function useMinToReceiveRewardsInSolo(address: string): BN | undefined {
+export default function useMinToReceiveRewardsInSolo (address: string): BN | undefined {
   const api = useApi(address);
   const token = useToken(address);
-  const tokenFromApi = api && api.registry.chainTokens[0];
+  const tokenFromApi = api?.registry.chainTokens[0];
 
   const [min, setMin] = useState<BN | undefined>();
 
@@ -20,7 +20,7 @@ export default function useMinToReceiveRewardsInSolo(address: string): BN | unde
       return setMin(undefined);
     }
 
-    api.query.staking.minimumActiveStake().then((min) => {
+    api.query['staking']['minimumActiveStake']().then((min) => {
       setMin(new BN(min.toString()));
     }).catch(console.error);
   }, [api, token, tokenFromApi]);
