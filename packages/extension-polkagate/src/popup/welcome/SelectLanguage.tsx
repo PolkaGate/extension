@@ -5,7 +5,8 @@
 
 import type { DropdownOption } from '../../util/types';
 
-import { Box, Grid, styled, Typography } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import { Box, Fade, Grid, styled, Typography } from '@mui/material';
 import * as flags from 'country-flag-icons/string/3x2';
 import { Translate } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -50,15 +51,14 @@ const ListItem = styled(Grid)(() => ({
   },
   alignItems: 'center',
   borderRadius: '12px',
-  columnGap: '10px',
   cursor: 'pointer',
   height: '50px',
-  justifyContent: 'flex-start',
+  justifyContent: 'space-between',
   padding: '10px',
   transition: 'padding-left 0.3s ease, background-color 0.3s ease'
 }));
 
-const LanguageOptions = React.memo(function LanguageOptions ({ handleLanguageSelect, languageOptions, selectedLanguage }: LanguageOptionProps): React.ReactElement {
+const LanguageOptions = React.memo(function LanguageOptions({ handleLanguageSelect, languageOptions, selectedLanguage }: LanguageOptionProps): React.ReactElement {
   const flag = useCallback((value: string) => {
     const key = value.toUpperCase() as CountryCodeKey;
     const languageCode = COUNTRY_CODES[key] ?? '';
@@ -77,14 +77,19 @@ const LanguageOptions = React.memo(function LanguageOptions ({ handleLanguageSel
       {languageOptions.map(({ text, value }, index) => (
         <>
           <ListItem className={selectedLanguage === value ? 'selected' : ''} container item key={value} onClick={handleLanguageSelect(value as string)}>
-            <Box
-              component='img'
-              src={flag(value as string)}
-              sx={{ borderRadius: '999px', height: '18px', width: '18px' }}
-            />
-            <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
-              {text}
-            </Typography>
+            <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
+              <Box
+                component='img'
+                src={flag(value as string)}
+                sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
+              />
+              <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+                {text}
+              </Typography>
+            </Grid>
+            <Fade in={selectedLanguage === value} timeout={300}>
+              <CheckIcon sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', fontSize: '20px', p: '3px' }} />
+            </Fade>
           </ListItem>
           {index !== languageOptions.length - 1 &&
             <GradientDivider style={{ my: '5px' }} />
@@ -95,7 +100,7 @@ const LanguageOptions = React.memo(function LanguageOptions ({ handleLanguageSel
   );
 });
 
-function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
+function SelectLanguage({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
 
