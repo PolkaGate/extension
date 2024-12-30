@@ -2,5 +2,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
-export { default as endpointUrlPng } from './endpoint.png';
-export { default as Item1 } from './welcomeItems/Item1.svg';
+
+export { default as handWave } from './handWave.gif';

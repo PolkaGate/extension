@@ -6,4 +6,5 @@ export { default as logoMotionDark } from './logoMotionDark.gif';
 export { default as logoMotionLight } from './logoMotionLight.gif';
 export { default as logoBlack } from './pg-b.svg';
 export { default as logoPink } from './pg-p.svg';
+export { default as logoTransparent } from './pg-t.svg';
 export { default as logoWhite } from './pg-w.svg';

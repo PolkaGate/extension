@@ -3,134 +3,101 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
+import { AddCircle, Wallet } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { PButton, VaadinIcon } from '../../components';
-import { useTranslation } from '../../hooks';
+import { handWave } from '../../assets/gif';
+import { ActionButton, Carousel, GradientBox, GradientButton, GradientDivider } from '../../components';
+import { useManifest, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { EXTENSION_NAME } from '../../util/constants';
-import Privacy from './Privacy';
+import { LogoDropAnimation, WelcomeHeader } from '../../partials';
+import AddAccount from './AddAccount';
+
+export enum Popups {
+  NONE,
+  ADD_ACCOUNT
+}
 
 function Welcome (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const version = useManifest()?.version;
 
-  const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
+  const [popup, setPopup] = useState<Popups>(Popups.NONE);
 
-  const onRestoreFromJson = useCallback(
-    (): void => {
-      windowOpen('/account/restore-json').catch(console.error);
-    }, []
-  );
+  const onCreateAccount = useCallback((): void => {
+    windowOpen('/account/create').catch(console.error);
+  }, []);
 
-  const onImportLedger = useCallback(
-    (): void => {
-      windowOpen('/account/import-ledger').catch(console.error);
-    }, []
-  );
-
-  const onCreate = useCallback(
-    (): void => {
-      windowOpen('/account/create').catch(console.error);
-    }, []
-  );
-
-  const onAddWatchOnly = useCallback(
-    (): void => {
-      windowOpen('/import/add-watch-only-full-screen').catch(console.error);
-    }, []
-  );
-
-  const onImport = useCallback(
-    (): void => {
-      windowOpen('/account/import-seed').catch(console.error);
-    }, []
-  );
-
-  const onImportRawSeed = useCallback(
-    (): void => {
-      windowOpen('/account/import-raw-seed').catch(console.error);
-    }, []
-  );
-
-  const onAttachQR = useCallback(
-    (): void => {
-      windowOpen('/import/attach-qr-full-screen').catch(console.error);
-    }, []
-  );
+  const onAddAccount = useCallback((): void => {
+    setPopup(Popups.ADD_ACCOUNT);
+  }, []);
 
   return (
     <>
-      <HeaderBrand
-        showBrand
-        showMenu
-        text={EXTENSION_NAME}
-      />
-      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, pb: '5px', pt: '20px', textAlign: 'center' }}>
-        {t('Welcome!')}
-      </Typography>
-      <Typography sx={{ fontSize: '14px', fontWeight: 400, px: '24px' }}>
-        {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
-      </Typography>
-      <PButton
-        _mt='20px'
-        _onClick={onCreate}
-        _variant={'contained'}
-        startIcon={<VaadinIcon icon='vaadin:plus-circle' style={{ height: '18px' }} />}
-        text={t('Create a new account')}
-      />
-      <Divider sx={{ fontSize: '18px', fontWeight: 300, my: '10px', px: '20px' }}>
-        {t('Or')}
-      </Divider>
-      <PButton
-        _mt='0'
-        _onClick={onRestoreFromJson}
-        _variant={'outlined'}
-        text={t('Restore from file')}
-      />
-      <PButton
-        _mt='10px'
-        _onClick={onImport}
-        _variant={'outlined'}
-        text={t('Import from recovery phrase')}
-      />
-      <PButton
-        _mt='10px'
-        _onClick={onImportRawSeed}
-        _variant={'outlined'}
-        text={t('Import from raw seed')}
-      />
-      <PButton
-        _mt='10px'
-        _onClick={onAddWatchOnly}
-        _variant={'outlined'}
-        text={t('Add watch-only account')}
-      />
-      <PButton
-        _mt='10px'
-        _onClick={onAttachQR}
-        _variant={'outlined'}
-        text={t('Attach QR-signer')}
-      />
-      <PButton
-        _mt='10px'
-        _onClick={onImportLedger}
-        _variant={'outlined'}
-        text={t('Attach ledger device')}
-      />
-      <Grid container justifyContent='center'>
-        <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '12px', bottom: 0, position: 'absolute', textAlign: 'center', textDecoration: 'underline' }}>
-          {t('Privacy and Security')}
-        </Typography>
-      </Grid>
-      {showPrivacyAndSecurity &&
-        <Privacy
-          setShow={setShowPrivacyAndSecurity}
-          show={showPrivacyAndSecurity}
+      <Container disableGutters sx={{ position: 'relative' }}>
+        <WelcomeHeader />
+        <LogoDropAnimation
+          ground={210}
+          style={{
+            bottom: '200px',
+            left: 0,
+            right: 0,
+            top: 0
+          }}
         />
-      }
+        <Carousel />
+        <GradientBox style={{ m: 'auto', width: '359px' }}>
+          <Grid container item justifyContent='center' sx={{ p: '18px 32px' }}>
+            <Box
+              component='img'
+              src={handWave as string}
+              sx={{ height: '48px', width: '48px' }}
+            />
+            <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} pb='3px' textAlign='center' textTransform='uppercase' width='100%'>
+              {t('Welcome')}!
+            </Typography>
+            <Typography color={theme.palette.text.secondary} fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px' pb='16px' textAlign='center'>
+              {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
+            </Typography>
+            <GradientButton
+              contentPlacement='start'
+              onClick={onCreateAccount}
+              startIcon={<AddCircle color={theme.palette.text.primary} size='20' variant='Bulk' />}
+              style={{
+                borderRadius: '18px',
+                height: '46px',
+                width: '294px'
+              }}
+              text={t('Create a new account')}
+              variant='contained'
+            />
+            <GradientDivider style={{ my: '14px' }} />
+            <ActionButton
+              StartIcon={Wallet}
+              onClick={onAddAccount}
+              style={{
+                borderRadius: '18px',
+                height: '46px',
+                width: '294px'
+              }}
+              text={{
+                firstPart: t('Already'),
+                secondPart: t('have an account')
+              }}
+              variant='contained'
+            />
+          </Grid>
+        </GradientBox>
+        <Typography color='#674394' fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px' pt='8px' textAlign='center'>
+          {'v.'}{version}
+        </Typography>
+      </Container>
+      <AddAccount
+        openMenu={popup === Popups.ADD_ACCOUNT}
+        setPopup={setPopup}
+      />
     </>
   );
 }

@@ -12254,6 +12254,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iconsax-react@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "iconsax-react@npm:0.0.8"
+  dependencies:
+    prop-types: "npm:^15.7.2"
+  peerDependencies:
+    react: "*"
+  checksum: 10/efca59529aac927f979b7eef06dfeb424ffc9a94065baf461ff851bbbfa72f781024dcc1f860e4a2fdea0ee9aaa5e319d6ed34cfd937a0df2b068509e54425f9
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
@@ -18028,6 +18039,7 @@ __metadata:
     framer-motion: "npm:^11.11.13"
     husky: "npm:^9.1.5"
     i18next-scanner: "npm:^4.4.0"
+    iconsax-react: "npm:^0.0.8"
     intersection-observer: "npm:^0.12.0"
     jsdom-worker-fix: "npm:^0.1.8"
     memoize-one: "npm:^6.0.0"
