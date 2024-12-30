@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { DropdownOption } from '../../util/types';
+import type { DropdownOption } from '../util/types';
 
 import CheckIcon from '@mui/icons-material/Check';
 import { Box, Fade, Grid, styled, Typography } from '@mui/material';
@@ -13,14 +13,14 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import uiSetting from '@polkadot/ui-settings';
 
-import { ExtensionPopup, GradientButton, SettingsContext } from '../../components';
-import { useTranslation } from '../../hooks';
-import { GradientDivider } from '../../style';
-import getLanguageOptions from '../../util/getLanguageOptions';
-import { Popups } from '.';
+import { ExtensionPopup, GradientButton, SettingsContext } from '../components';
+import { useTranslation } from '../hooks';
+import { GradientDivider } from '../style';
+import getLanguageOptions from '../util/getLanguageOptions';
+import { WelcomeHeaderPopups } from './WelcomeHeader';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<Popups>>;
+  setPopup: React.Dispatch<React.SetStateAction<WelcomeHeaderPopups>>;
   openMenu: boolean;
 }
 
@@ -58,7 +58,7 @@ const ListItem = styled(Grid)(() => ({
   transition: 'padding-left 0.3s ease, background-color 0.3s ease'
 }));
 
-const LanguageOptions = React.memo(function LanguageOptions({ handleLanguageSelect, languageOptions, selectedLanguage }: LanguageOptionProps): React.ReactElement {
+const LanguageOptions = React.memo(function LanguageOptions ({ handleLanguageSelect, languageOptions, selectedLanguage }: LanguageOptionProps): React.ReactElement {
   const flag = useCallback((value: string) => {
     const key = value.toUpperCase() as CountryCodeKey;
     const languageCode = COUNTRY_CODES[key] ?? '';
@@ -100,7 +100,7 @@ const LanguageOptions = React.memo(function LanguageOptions({ handleLanguageSele
   );
 });
 
-function SelectLanguage({ openMenu, setPopup }: Props): React.ReactElement {
+function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
 
@@ -118,7 +118,7 @@ function SelectLanguage({ openMenu, setPopup }: Props): React.ReactElement {
     setSelectedLanguage(lang);
   }, []);
 
-  const handleClose = useCallback(() => setPopup(Popups.NONE), [setPopup]);
+  const handleClose = useCallback(() => setPopup(WelcomeHeaderPopups.NONE), [setPopup]);
 
   const applyLanguageChange = useCallback(() => {
     selectedLanguage && uiSetting.set({ i18nLang: selectedLanguage });

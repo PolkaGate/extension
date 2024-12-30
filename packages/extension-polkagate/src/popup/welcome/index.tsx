@@ -13,14 +13,10 @@ import { useManifest, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { LogoDropAnimation, WelcomeHeader } from '../../partials';
 import AddAccount from './AddAccount';
-import PrivacyPolicy from './PrivacyPolicy';
-import SelectLanguage from './SelectLanguage';
 
 export enum Popups {
   NONE,
-  ADD_ACCOUNT,
-  LANGUAGE,
-  PRIVACY
+  ADD_ACCOUNT
 }
 
 function Welcome (): React.ReactElement {
@@ -41,9 +37,7 @@ function Welcome (): React.ReactElement {
   return (
     <>
       <Container disableGutters sx={{ position: 'relative' }}>
-        <WelcomeHeader
-          setPopup={setPopup}
-        />
+        <WelcomeHeader />
         <LogoDropAnimation
           ground={210}
           style={{
@@ -100,14 +94,6 @@ function Welcome (): React.ReactElement {
           {'v.'}{version}
         </Typography>
       </Container>
-      <SelectLanguage
-        openMenu={popup === Popups.LANGUAGE}
-        setPopup={setPopup}
-      />
-      <PrivacyPolicy
-        openMenu={popup === Popups.PRIVACY}
-        setPopup={setPopup}
-      />
       <AddAccount
         openMenu={popup === Popups.ADD_ACCOUNT}
         setPopup={setPopup}

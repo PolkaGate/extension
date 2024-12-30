@@ -9,16 +9,16 @@ import { ShieldTick } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { Translation } from 'react-i18next';
 
-import { ExtensionPopup, GradientButton } from '../../components';
-import { useTranslation } from '../../hooks';
-import { Popups } from '.';
+import { ExtensionPopup, GradientButton } from '../components';
+import { useTranslation } from '../hooks';
+import { Popups } from '../popup/welcome';
 
 interface Props {
   setPopup: React.Dispatch<React.SetStateAction<Popups>>;
   openMenu: boolean;
 }
 
-function PrivacyPolicy({ openMenu, setPopup }: Props): React.ReactElement {
+function PrivacyPolicy ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
