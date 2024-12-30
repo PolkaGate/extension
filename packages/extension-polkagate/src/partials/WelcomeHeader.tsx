@@ -25,7 +25,7 @@ function WelcomeHeader ({ setPopup }: Props): React.ReactElement {
   }, [setPopup]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', p: '5px 15px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', p: '5px 15px', position: 'relative', zIndex: 1 }}>
       <Grid alignItems='center' container item onClick={openPrivacy} sx={{ bgcolor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
         <ShieldTick color='#AA83DC' size='24' variant='Bulk' />
       </Grid>

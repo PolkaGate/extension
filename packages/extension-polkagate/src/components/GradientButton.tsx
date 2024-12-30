@@ -33,13 +33,19 @@ export default function GradientButton ({ contentPlacement = 'center', disabled,
   }), []);
 
   const GradientButtonStyle = useMemo(() => ({
-    '&:after': {
+    '&.Mui-disabled': {
+      opacity: 0.3,
+      transition: 'opacity 0.3s ease'
+    },
+    '&::after': {
       background: 'linear-gradient(90deg, #AA0DEB 0%, #FF91E7 50%, #AA0DEB 100%)',
       borderRadius: `${style?.borderRadius ?? '12px'}`,
       boxShadow: 'none',
       content: '""',
       inset: '-2px',
+      opacity: 1,
       position: 'absolute',
+      transition: 'opacity 0.3s ease',
       zIndex: -1
     },
     '&:hover': {

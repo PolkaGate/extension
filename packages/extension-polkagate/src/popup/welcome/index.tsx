@@ -41,6 +41,9 @@ function Welcome (): React.ReactElement {
   return (
     <>
       <Container disableGutters sx={{ position: 'relative' }}>
+        <WelcomeHeader
+          setPopup={setPopup}
+        />
         <LogoDropAnimation
           ground={210}
           style={{
@@ -49,9 +52,6 @@ function Welcome (): React.ReactElement {
             right: 0,
             top: 0
           }}
-        />
-        <WelcomeHeader
-          setPopup={setPopup}
         />
         <Carousel />
         <GradientBox style={{ m: 'auto', width: '359px' }}>
