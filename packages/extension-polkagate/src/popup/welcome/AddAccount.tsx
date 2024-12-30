@@ -6,7 +6,7 @@
 import type { TransitionProps } from '@mui/material/transitions';
 
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
-import { Check, CloseSquare, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
+import { Check, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionButton, ActionContext, GradientDivider } from '../../components';
@@ -14,6 +14,7 @@ import { useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
 import { GradientBorder, RedGradient } from '../../style';
 import { DEMO_ACCOUNT, POLKADOT_GENESIS_HASH } from '../../util/constants';
+import { CustomCloseSquare } from './CustomCloseSquare';
 import { Popups } from '.';
 
 interface Props {
@@ -87,7 +88,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} variant='Linear' />
+          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'scroll', p: '10px', position: 'relative' }}>
           <GradientBorder />

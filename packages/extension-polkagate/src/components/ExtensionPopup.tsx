@@ -7,9 +7,9 @@ import type { TransitionProps } from '@mui/material/transitions';
 import type { Icon } from 'iconsax-react';
 
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
-import { CloseSquare } from 'iconsax-react';
 import React from 'react';
 
+import CustomCloseSquare from '../popup/welcome/CustomCloseSquare';
 import { RedGradient } from '../style';
 import { GradientDivider } from '.';
 
@@ -50,7 +50,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: 
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} variant='Linear' />
+          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }}/>
         </Grid>
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'scroll', p: '10px', pb: '10px', position: 'relative' }}>
           <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
