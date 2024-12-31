@@ -72,7 +72,6 @@ function Welcome (): React.ReactElement {
                 width: '294px'
               }}
               text={t('Create a new account')}
-              variant='contained'
             />
             <GradientDivider style={{ my: '14px' }} />
             <ActionButton

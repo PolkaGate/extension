@@ -21,7 +21,7 @@ export interface Props {
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' ref={ref} {...props} />;
+  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
 function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: Props): React.ReactElement<Props> {
