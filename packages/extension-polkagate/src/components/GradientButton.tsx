@@ -26,12 +26,15 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
 
   const [hovered, setHovered] = useState<boolean>(false);
 
-  const toggleHovered = useCallback(() => setHovered(!hovered), [hovered]);
+  const toggleHovered = useCallback(() => {
+    !disabled && setHovered(!hovered);
+  }, [disabled, hovered]);
 
   const GradientButtonStyle = {
     alignItems: 'center',
+    bgcolor: 'transparent',
     border: 'unset',
-    cursor: 'pointer',
+    cursor: disabled ? 'default' : 'pointer',
     justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     opacity: disabled ? 0.3 : 1,
     paddingInline: '24px',
