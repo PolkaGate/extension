@@ -10,8 +10,7 @@ import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import React from 'react';
 
 import CustomCloseSquare from '../popup/welcome/CustomCloseSquare';
-import { RedGradient } from '../style';
-import { GradientDivider } from '.';
+import { GradientDivider, RedGradient } from '../style';
 
 export interface Props {
   children: React.ReactNode;

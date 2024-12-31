@@ -42,7 +42,6 @@ export { default as FullscreenChainNames } from './FullscreenChainNames';
 export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as GradientBox } from './GradientBox';
 export { default as GradientButton } from './GradientButton';
-export { default as GradientDivider } from '../style/GradientDivider';
 export { default as Header } from './Header';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';
 export { default as IButton } from './IButton';

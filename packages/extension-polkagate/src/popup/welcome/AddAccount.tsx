@@ -9,10 +9,10 @@ import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import { Check, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionButton, ActionContext, GradientDivider } from '../../components';
+import { ActionButton, ActionContext } from '../../components';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
-import { GradientBorder, RedGradient } from '../../style';
+import { GradientBorder, GradientDivider, RedGradient } from '../../style';
 import { DEMO_ACCOUNT, POLKADOT_GENESIS_HASH } from '../../util/constants';
 import { CustomCloseSquare } from './CustomCloseSquare';
 import { Popups } from '.';

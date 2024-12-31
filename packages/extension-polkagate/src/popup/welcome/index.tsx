@@ -8,10 +8,11 @@ import { AddCircle, Wallet } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { handWave } from '../../assets/gif';
-import { ActionButton, Carousel, GradientBox, GradientButton, GradientDivider } from '../../components';
+import { ActionButton, Carousel, GradientBox, GradientButton } from '../../components';
 import { useManifest, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { LogoDropAnimation, WelcomeHeader } from '../../partials';
+import { GradientDivider } from '../../style';
 import AddAccount from './AddAccount';
 
 export enum Popups {
@@ -62,9 +63,9 @@ function Welcome (): React.ReactElement {
               {t('Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.')}
             </Typography>
             <GradientButton
+              StartIcon={AddCircle}
               contentPlacement='start'
               onClick={onCreateAccount}
-              startIcon={<AddCircle color={theme.palette.text.primary} size='20' variant='Bulk' />}
               style={{
                 borderRadius: '18px',
                 height: '46px',
