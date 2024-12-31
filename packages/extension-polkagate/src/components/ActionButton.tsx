@@ -35,13 +35,15 @@ export default function ActionButton ({ StartIcon, disabled, isBusy, onClick, st
 
   const GeneralButtonStyle = {
     '&:hover': {
-      background: '#674394'
+      background: '#674394',
+      transition: 'all 250ms ease-out'
     },
     background: '#2D1E4A',
     borderRadius: `${style?.borderRadius ?? '12px'}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
     padding: '6px 24px',
+    transition: 'all 250ms ease-out',
     ...ButtonFontStyle
   };
 
