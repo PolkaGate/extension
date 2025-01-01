@@ -1,13 +1,15 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { logoTransparent } from '../assets/logos';
+import CustomTooltip from '../components/Tooltip';
+import { useTranslation } from '../hooks';
 import { EXTENSION_NAME } from '../util/constants';
 import PrivacyPolicy from './PrivacyPolicy';
 import SelectLanguage from './SelectLanguage';
@@ -19,6 +21,9 @@ export enum WelcomeHeaderPopups {
 }
 
 function WelcomeHeader (): React.ReactElement {
+  const { t } = useTranslation();
+  const privacyPolicyRef = useRef<HTMLDivElement>(null);
+
   const [popup, setPopup] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
   const [hovered, setHovered] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
 
@@ -56,6 +61,7 @@ function WelcomeHeader (): React.ReactElement {
           onClick={openPopup(WelcomeHeaderPopups.PRIVACY)}
           onMouseEnter={onHoveredPopup(WelcomeHeaderPopups.PRIVACY)}
           onMouseLeave={onHoveredPopup()}
+          ref={privacyPolicyRef}
           sx={{ alignItems: 'center', borderRadius: '10px', cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}
         >
           <ShieldTick
@@ -101,6 +107,11 @@ function WelcomeHeader (): React.ReactElement {
       <PrivacyPolicy
         openMenu={popup === WelcomeHeaderPopups.PRIVACY}
         setPopup={setPopup}
+      />
+      <CustomTooltip
+        content={t('Privacy & Security')}
+        placement='bottom'
+        targetRef={privacyPolicyRef}
       />
     </>
   );

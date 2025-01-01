@@ -97,6 +97,7 @@ export { default as VouchRecoveryIcon } from './SVG/VouchRecoveryIcon';
 export { default as Switch } from './Switch';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { Input } from './TextInputs';
+export { default as Tooltip } from './Tooltip';
 export { default as TwoButtons } from './TwoButtons';
 export { default as VaadinIcon } from './VaadinIcon';
 export { default as ValidatedInput } from './ValidatedInput';
