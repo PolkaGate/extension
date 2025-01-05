@@ -19,12 +19,13 @@ const ContentWrapper = styled(Box)({
 interface Props {
   children?: React.ReactNode;
   style?: SxProps<Theme>;
+  noGradient?: boolean;
 }
 
-function GradientBox ({ children, style }: Props) {
+function GradientBox ({ children, noGradient = false, style }: Props) {
   const ContainerStyle = {
     bgcolor: '#120D27',
-    border: '2px solid rgba(255, 255, 255, 0.1)',
+    border: '2px solid rgba(255, 255, 255, 0.2)',
     borderRadius: '32px',
     boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
     position: 'relative',
@@ -33,9 +34,9 @@ function GradientBox ({ children, style }: Props) {
 
   return (
     <Container disableGutters sx={ContainerStyle}>
-      <GradientBorder />
+      <GradientBorder style={{ top: '-2px'}} />
       <ContentWrapper>
-        <RedGradient style={{ top: '-100px' }} />
+        {!noGradient && <RedGradient style={{ top: '-100px' }} />}
         <Box position='relative' zIndex={1}>
           {children}
         </Box>
