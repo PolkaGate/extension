@@ -62,6 +62,7 @@ export { default as Main } from './Main';
 export { default as MenuItem } from './MenuItem';
 export { default as MnemonicSeed } from './MnemonicSeed';
 export { default as Motion } from './Motion';
+export { default as NeonButton } from './NeonButton';
 export { default as NewAddress } from './NewAddress';
 export { default as OnActionToolTip } from './OnActionToolTip';
 export { default as OptionalCopyButton } from './OptionalCopyButton';
