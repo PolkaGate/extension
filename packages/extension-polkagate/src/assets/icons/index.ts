@@ -6,6 +6,7 @@
 export { default as auctionBlack } from './auctionBlack.svg';
 export { default as auctionRed } from './auctionRed.svg';
 export { default as auctionWhite } from './auctionWhite.svg';
+export { default as Box } from './Box.svg';
 export { default as checkBox } from './checkBox.svg';
 export { default as checkedBox } from './checkedBox.svg';
 export { default as controllerSettingBlack } from './controllerSettingBlack.svg';
