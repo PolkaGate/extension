@@ -32,7 +32,7 @@ async function getStakingConsts (endpoint) {
 
     return {
       bondingDuration,
-      eraIndex: Number(currentEraIndex?.toString(), '0'),
+      eraIndex: Number(currentEraIndex?.toString() || '0'),
       existentialDeposit,
       maxNominations,
       maxNominatorRewardedPerValidator,
