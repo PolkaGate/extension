@@ -5,23 +5,18 @@
 
 import type { Theme } from '@mui/material';
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { blake2AsHex } from '@polkadot/util-crypto';
+import { Box, Grid, useTheme } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
-import { useManifest } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
-import { isPasswordCorrect } from '../popup/passwordManagement';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
-import NeedHelp from '../popup/welcome/NeedHelp';
 import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
 
 interface Props {
@@ -113,24 +108,23 @@ const StillLogo = ({ theme }: { theme: Theme }) => (
 );
 
 const FlyingLogo = ({ theme }: { theme: Theme }) => (
-  <Box
-    component='img'
-    src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
-    sx={{ height: 'fit-content', width: '100%' }}
-  />
+  <Grid alignItems='center' container item justifyContent='center' sx={{ height: '100vh', width: '100%' }}>
+    <Box
+      component='img'
+      src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
+      sx={{ height: 'fit-content', width: '100%' }}
+    />
+  </Grid>
 );
 
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-  const manifest = useManifest();
 
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const isPopupOpenedByExtension = useIsExtensionPopup();
 
   const [isFlying, setIsFlying] = useState(true);
   const [step, setStep] = useState<number>();
-  const [hashedPassword, setHashedPassword] = useState<string>();
-  const [isPasswordError, setIsPasswordError] = useState(false);
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
@@ -204,35 +198,10 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   useEffect(() => {
     if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {
-    // The extension has been locked by the user through the settings menu.
+      // The extension has been locked by the user through the settings menu.
       setStep(STEPS.SHOW_LOGIN);
     }
   }, [isExtensionLocked, step]);
-
-  const onPassChange = useCallback((pass: string | null): void => {
-    if (!pass) {
-      return setHashedPassword(undefined);
-    }
-
-    setIsPasswordError(false);
-    const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
-
-    setHashedPassword(hashedPassword);
-  }, []);
-
-  const onUnlock = useCallback(async (): Promise<void> => {
-    try {
-      if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
-        await updateStorage('loginInfo', { lastLoginTime: Date.now(), status: 'set' });
-        setHashedPassword(undefined);
-        setExtensionLock(false);
-      } else {
-        setIsPasswordError(true);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [hashedPassword, setExtensionLock]);
 
   const showLoginPage = useMemo(() => {
     const extensionUrl = window.location.hash.replace('#', '');
@@ -249,7 +218,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
   return (
     <>
       {showLoginPage
-        ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: window.innerHeight }}>
+        ? <Grid container item>
           {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
             <ForgotPasswordConfirmation
               setStep={setStep}
@@ -265,42 +234,29 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
               </Grid>
             </>
           }
-          <Grid container item sx={{ p: '145px 0 70px' }}>
+          <Grid container item>
             {isFlying && isPopupOpenedByExtension
               ? <FlyingLogo theme={theme} />
               : <>
-                {step !== undefined && ([STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step)) &&
-                  <Grid container item justifyContent='center' mt='33px' my='35px'>
-                    <StillLogo theme={theme} />
-                  </Grid>
-                }
                 {step === STEPS.ASK_TO_SET_PASSWORD &&
                   <AskToSetPassword
                     setStep={setStep}
                   />
                 }
                 {step === STEPS.SET_PASSWORD &&
-                  <FirstTimeSetPassword
-                    hashedPassword={hashedPassword}
-                    onPassChange={onPassChange}
-                    setHashedPassword={setHashedPassword}
-                    setStep={setStep}
-                  />
+                  // <FirstTimeSetPassword
+                  //   hashedPassword={hashedPassword}
+                  //   onPassChange={onPassChange}
+                  //   setHashedPassword={setHashedPassword}
+                  //   setStep={setStep}
+                  // />
+                  <></>
                 }
                 {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
                   <Login
-                    isPasswordError={isPasswordError}
-                    onPassChange={onPassChange}
-                    onUnlock={onUnlock}
                     setStep={setStep}
                   />
                 }
-                <Grid alignItems='flex-end' container item justifyContent='space-between' sx={{ bottom: '5px', position: 'absolute', px: '20px' }}>
-                  <NeedHelp />
-                  <Typography sx={{ fontSize: '10px', opacity: '0.7' }}>
-                    {`${('V')}${(manifest?.version || '')}`}
-                  </Typography>
-                </Grid>
               </>
             }
           </Grid>
