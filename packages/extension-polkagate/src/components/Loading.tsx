@@ -13,11 +13,12 @@ import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
-import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
 import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
+
+// import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 
 interface Props {
   children?: React.ReactNode;

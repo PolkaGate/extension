@@ -5,12 +5,12 @@
 
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { logoTransparent } from '../../assets/logos';
 import { EXTENSION_NAME } from '../../util/constants';
 
-function Header(): React.ReactElement {
+function Header (): React.ReactElement {
   return (
     <>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', p: '5px 15px', position: 'relative', zIndex: 1 }}>
