@@ -68,8 +68,8 @@ function Welcome (): React.ReactElement {
               onClick={onCreateAccount}
               style={{
                 borderRadius: '18px',
-                height: '46px',
-                width: '294px'
+                height: '48px',
+                width: '299px'
               }}
               text={t('Create a new account')}
             />
@@ -79,8 +79,8 @@ function Welcome (): React.ReactElement {
               onClick={onAddAccount}
               style={{
                 borderRadius: '18px',
-                height: '46px',
-                width: '294px'
+                height: '44px',
+                width: '295px'
               }}
               text={{
                 firstPart: t('Already'),
