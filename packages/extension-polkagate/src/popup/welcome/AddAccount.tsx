@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -9,10 +9,10 @@ import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import { Check, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionButton, ActionContext, GradientDivider } from '../../components';
+import { ActionButton, ActionContext } from '../../components';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
-import { GradientBorder, RedGradient } from '../../style';
+import { GradientBorder, GradientDivider, RedGradient } from '../../style';
 import { DEMO_ACCOUNT, POLKADOT_GENESIS_HASH } from '../../util/constants';
 import { CustomCloseSquare } from './CustomCloseSquare';
 import { Popups } from '.';
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' ref={ref} {...props} />;
+  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
 function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {

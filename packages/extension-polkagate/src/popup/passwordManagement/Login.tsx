@@ -1,33 +1,63 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Box, Container, Grid, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
-import { noop } from '@polkadot/util';
+import { blake2AsHex } from '@polkadot/util-crypto';
 
-import { Password, PButton, WrongPasswordAlert } from '../../components';
-import HideBalance from '../../components/SVG/HideBalance';
+import { Box as BoxIcon } from '../../assets/icons';
+import { ActionButton, GradientBox, GradientButton, PasswordInput } from '../../components';
+import { updateStorage } from '../../components/Loading';
+import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
-import { useIsExtensionPopup, useIsHideNumbers, useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useManifest, useTranslation } from '../../hooks';
+import { RedGradient } from '../../style';
 import { STEPS } from './constants';
+import Header from './Header';
+import { isPasswordCorrect } from '.';
 
 interface Props {
-  isPasswordError: boolean;
-  onPassChange: (pass: string | null) => void;
-  onUnlock: () => Promise<void>;
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
+function Login ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
-
+  const version = useManifest()?.version;
   const isPopup = useIsExtensionPopup();
-  const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
+  // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
+  const { setExtensionLock } = useExtensionLockContext();
+
+  const [hashedPassword, setHashedPassword] = useState<string>();
+  // const [isPasswordError, setIsPasswordError] = useState(false);
+
+  const onPassChange = useCallback((pass: string | null): void => {
+    if (!pass) {
+      return setHashedPassword(undefined);
+    }
+
+    // setIsPasswordError(false);
+    const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
+
+    setHashedPassword(hashedPassword);
+  }, []);
+
+  const onUnlock = useCallback(async (): Promise<void> => {
+    try {
+      if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
+        await updateStorage('loginInfo', { lastLoginTime: Date.now(), status: 'set' });
+        setHashedPassword(undefined);
+        setExtensionLock(false);
+      } else {
+        // setIsPasswordError(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [hashedPassword, setExtensionLock]);
 
   const onForgotPassword = useCallback((): void => {
     if (isPopup) {
@@ -40,48 +70,51 @@ function Login ({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Re
 
   return (
     <>
-      <Grid container sx={{ my: '10px' }}>
-        <Grid alignItems='center' direction='column' item onClick={toggleHideNumbers} sx={{ '&:hover': { opacity: 1 }, cursor: 'pointer', display: 'flex', opacity: 0.5, position: 'absolute', pt: '3px', right: '35px', top: '15px' }}>
-          <HideBalance
-            hide={isHideNumbers}
-            lightColor={theme.palette.secondary.light}
-            onClick={noop}
-            size={25}
-          />
-          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>
-            {isHideNumbers ? t('Show numbers') : t('Hide numbers')}
-          </Typography>
-        </Grid>
-        {isPasswordError &&
-          <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
-        }
-      </Grid>
-      <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
-        <Typography fontSize={16}>
-          {t('Please enter your password to proceed.')}
+      <Container disableGutters sx={{ position: 'relative' }}>
+        <Header />
+        <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px' }}>
+          <RedGradient style={{ right: '-8%', top: '20px' }} />
+          <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
+            <Box
+              component='img'
+              src={BoxIcon as string}
+              sx={{ height: '145px', mt: '20px', width: '140px' }}
+            />
+            <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '15px', mt: '25px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+              {t('login')}
+            </Typography>
+            <PasswordInput
+              onEnterPress={onUnlock}
+              onPassChange={onPassChange}
+              title={t('Please enter your password to proceed')}
+            />
+            <GradientButton
+              contentPlacement='center'
+              disabled={!hashedPassword}
+              onClick={onUnlock}
+              style={{
+                height: '44px',
+                marginTop: '24px',
+                width: '325px'
+              }}
+              text={t('Unlock')}
+            />
+            <ActionButton
+              contentPlacement='center'
+              onClick={onForgotPassword}
+              style={{
+                height: '44px',
+                marginTop: '18px',
+                width: '325px'
+              }}
+              text={{ firstPart: t('Forgot password') }}
+            />
+          </Grid>
+        </GradientBox>
+        <Typography color='#674394' fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px' pt='8px' textAlign='center'>
+          {'v.'}{version}
         </Typography>
-        <Password
-          isFocused={true}
-          onChange={onPassChange}
-          onEnter={onUnlock}
-          style={{ marginBottom: '5px', marginTop: '5px' }}
-        />
-        <PButton
-          _ml={0}
-          _mt='20px'
-          _onClick={onUnlock}
-          _width={100}
-          text={t('Unlock')}
-        />
-        <PButton
-          _ml={0}
-          _mt='10px'
-          _onClick={onForgotPassword}
-          _variant='text'
-          _width={100}
-          text={t('Forgot password?')}
-        />
-      </Grid>
+      </Container>
     </>
   );
 }

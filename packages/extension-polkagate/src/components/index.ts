@@ -1,6 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+export { default as GradientDivider } from '../style/GradientDivider';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
@@ -42,7 +43,6 @@ export { default as FullscreenChainNames } from './FullscreenChainNames';
 export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as GradientBox } from './GradientBox';
 export { default as GradientButton } from './GradientButton';
-export { default as GradientDivider } from '../style/GradientDivider';
 export { default as Header } from './Header';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';
 export { default as IButton } from './IButton';
@@ -66,6 +66,7 @@ export { default as NewAddress } from './NewAddress';
 export { default as OnActionToolTip } from './OnActionToolTip';
 export { default as OptionalCopyButton } from './OptionalCopyButton';
 export { default as Password } from './Password';
+export { default as PasswordInput } from './PasswordInput';
 export { default as PasswordUseProxyConfirm } from './PasswordUseProxyConfirm';
 export { default as PButton } from './PButton';
 export { default as Popup } from './Popup';
@@ -98,6 +99,7 @@ export { default as VouchRecoveryIcon } from './SVG/VouchRecoveryIcon';
 export { default as Switch } from './Switch';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { Input } from './TextInputs';
+export { default as Tooltip } from './Tooltip';
 export { default as TwoButtons } from './TwoButtons';
 export { default as VaadinIcon } from './VaadinIcon';
 export { default as ValidatedInput } from './ValidatedInput';

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -14,12 +14,13 @@ interface Props {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
   // endIcon?: React.ReactNode;
-  text: string | { firstPart: string; secondPart: string; };
+  contentPlacement?: 'start' | 'center' | 'end';
+  text: string | { firstPart?: string; secondPart?: string; };
   variant?: 'text' | 'contained' | 'outlined';
   style?: React.CSSProperties;
 }
 
-export default function ActionButton ({ StartIcon, disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState(false);
@@ -30,18 +31,21 @@ export default function ActionButton ({ StartIcon, disabled, isBusy, onClick, st
     fontFamily: 'Inter',
     fontSize: '14px',
     fontWeight: 600,
+    justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     textTransform: 'none'
-  } as React.CSSProperties), []);
+  } as React.CSSProperties), [contentPlacement]);
 
   const GeneralButtonStyle = {
     '&:hover': {
-      background: '#674394'
+      background: '#674394',
+      transition: 'all 250ms ease-out'
     },
     background: '#2D1E4A',
     borderRadius: `${style?.borderRadius ?? '12px'}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
     padding: '6px 24px',
+    transition: 'all 250ms ease-out',
     ...ButtonFontStyle
   };
 
