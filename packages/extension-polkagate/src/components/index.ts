@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+export { default as GradientDivider } from '../style/GradientDivider';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
@@ -65,6 +66,7 @@ export { default as NewAddress } from './NewAddress';
 export { default as OnActionToolTip } from './OnActionToolTip';
 export { default as OptionalCopyButton } from './OptionalCopyButton';
 export { default as Password } from './Password';
+export { default as PasswordInput } from './PasswordInput';
 export { default as PasswordUseProxyConfirm } from './PasswordUseProxyConfirm';
 export { default as PButton } from './PButton';
 export { default as Popup } from './Popup';

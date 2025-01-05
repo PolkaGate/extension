@@ -14,12 +14,13 @@ interface Props {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
   // endIcon?: React.ReactNode;
-  text: string | { firstPart: string; secondPart: string; };
+  contentPlacement?: 'start' | 'center' | 'end';
+  text: string | { firstPart?: string; secondPart?: string; };
   variant?: 'text' | 'contained' | 'outlined';
   style?: React.CSSProperties;
 }
 
-export default function ActionButton ({ StartIcon, disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState(false);
@@ -30,8 +31,9 @@ export default function ActionButton ({ StartIcon, disabled, isBusy, onClick, st
     fontFamily: 'Inter',
     fontSize: '14px',
     fontWeight: 600,
+    justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     textTransform: 'none'
-  } as React.CSSProperties), []);
+  } as React.CSSProperties), [contentPlacement]);
 
   const GeneralButtonStyle = {
     '&:hover': {
