@@ -34,7 +34,7 @@ function GradientBox ({ children, noGradient = false, style }: Props) {
 
   return (
     <Container disableGutters sx={ContainerStyle}>
-      <GradientBorder style={{ top: '-2px'}} />
+      <GradientBorder style={{ top: '-2px' }} />
       <ContentWrapper>
         {!noGradient && <RedGradient style={{ top: '-100px' }} />}
         <Box position='relative' zIndex={1}>
