@@ -13,5 +13,6 @@ export { default as Passwords } from './Passwords';
 export { default as RemoteNodeSelectorWithSignals } from './RemoteNodeSelectorWithSignals';
 export { default as SubTitle } from './SubTitle';
 export { default as ThroughProxy } from './ThroughProxy';
+export { default as Version } from './Version';
 export { default as WaitScreen } from './WaitScreen';
 export { default as WelcomeHeader } from './WelcomeHeader';

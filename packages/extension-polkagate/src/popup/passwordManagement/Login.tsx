@@ -14,7 +14,8 @@ import { ActionButton, GradientBox, GradientButton, PasswordInput } from '../../
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
-import { useIsExtensionPopup, useManifest, useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import { Version } from '../../partials';
 import { RedGradient } from '../../style';
 import { STEPS } from './constants';
 import Header from './Header';
@@ -26,7 +27,6 @@ interface Props {
 
 function Login ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const version = useManifest()?.version;
   const isPopup = useIsExtensionPopup();
   // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
   const { setExtensionLock } = useExtensionLockContext();
@@ -69,53 +69,49 @@ function Login ({ setStep }: Props): React.ReactElement {
   }, [isPopup, setStep]);
 
   return (
-    <>
-      <Container disableGutters sx={{ position: 'relative' }}>
-        <Header />
-        <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px' }}>
-          <RedGradient style={{ right: '-8%', top: '20px' }} />
-          <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
-            <Box
-              component='img'
-              src={BoxIcon as string}
-              sx={{ height: '145px', mt: '20px', width: '140px' }}
-            />
-            <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '15px', mt: '25px', width: '100%' }} textAlign='center' textTransform='uppercase'>
-              {t('login')}
-            </Typography>
-            <PasswordInput
-              onEnterPress={onUnlock}
-              onPassChange={onPassChange}
-              title={t('Please enter your password to proceed')}
-            />
-            <GradientButton
-              contentPlacement='center'
-              disabled={!hashedPassword}
-              onClick={onUnlock}
-              style={{
-                height: '44px',
-                marginTop: '24px',
-                width: '325px'
-              }}
-              text={t('Unlock')}
-            />
-            <ActionButton
-              contentPlacement='center'
-              onClick={onForgotPassword}
-              style={{
-                height: '44px',
-                marginTop: '18px',
-                width: '325px'
-              }}
-              text={{ firstPart: t('Forgot password') }}
-            />
-          </Grid>
-        </GradientBox>
-        <Typography color='#674394' fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px' pt='8px' textAlign='center'>
-          {'v.'}{version}
-        </Typography>
-      </Container>
-    </>
+    <Container disableGutters sx={{ position: 'relative' }}>
+      <Header />
+      <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px' }}>
+        <RedGradient style={{ right: '-8%', top: '20px' }} />
+        <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
+          <Box
+            component='img'
+            src={BoxIcon as string}
+            sx={{ height: '145px', mt: '20px', width: '140px' }}
+          />
+          <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '15px', mt: '25px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+            {t('login')}
+          </Typography>
+          <PasswordInput
+            onEnterPress={onUnlock}
+            onPassChange={onPassChange}
+            title={t('Please enter your password to proceed')}
+          />
+          <GradientButton
+            contentPlacement='center'
+            disabled={!hashedPassword}
+            onClick={onUnlock}
+            style={{
+              height: '44px',
+              marginTop: '24px',
+              width: '325px'
+            }}
+            text={t('Unlock')}
+          />
+          <ActionButton
+            contentPlacement='center'
+            onClick={onForgotPassword}
+            style={{
+              height: '44px',
+              marginTop: '18px',
+              width: '325px'
+            }}
+            text={{ firstPart: t('Forgot password') }}
+          />
+        </Grid>
+      </GradientBox>
+      <Version />
+    </Container>
   );
 }
 
