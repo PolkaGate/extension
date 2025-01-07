@@ -15,13 +15,15 @@ interface Props {
   disabled?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
+  startIconNode?: React.ReactNode;
   EndIcon?: Icon;
+  endIconNode?: React.ReactNode;
   text: string;
   contentPlacement?: 'start' | 'center' | 'end';
   style?: React.CSSProperties;
 }
 
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, onClick, style, text }: Props): React.ReactElement<Props> {
+export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, onClick, startIconNode, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -39,6 +41,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     opacity: disabled ? 0.3 : 1,
     paddingInline: '24px',
     position: 'relative',
+    transition: 'all 250ms ease-out',
     ...style
   } as SxProps<Theme>;
 
@@ -76,10 +79,12 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
   return (
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
       {StartIcon && <StartIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
-      <Typography sx={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, px: '10px', width: 'fit-content', zIndex: 10 }}>
+      {startIconNode && startIconNode}
+      <Typography sx={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, pl: '10px', pr: '2px', width: 'fit-content', zIndex: 10 }}>
         {text}
       </Typography>
       {EndIcon && <EndIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
+      {endIconNode && endIconNode}
       <Grid sx={GradientBackground}></Grid>
     </Grid>
   );
