@@ -7,8 +7,6 @@
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { blake2AsHex } from '@polkadot/util-crypto';
-
 import { Lock as LockGif } from '../../assets/gif';
 import { DecisionButtons, GradientBox, MatchPasswordField } from '../../components';
 import { setStorage } from '../../components/Loading';
