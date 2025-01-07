@@ -8,17 +8,15 @@ import type { Theme } from '@mui/material';
 import { Box, Grid, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
+import { logoMotionDark, logoMotionLight } from '../assets/logos';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
+import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
-import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
 import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
-
-// import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 
 interface Props {
   children?: React.ReactNode;
@@ -100,13 +98,13 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
 
 const MAX_WAITING_TIME = 1000; // ms
 
-const StillLogo = ({ theme }: { theme: Theme }) => (
-  <Box
-    component='img'
-    src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-    sx={{ height: 'fit-content', width: '37%' }}
-  />
-);
+// const StillLogo = ({ theme }: { theme: Theme }) => (
+//   <Box
+//     component='img'
+//     src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
+//     sx={{ height: 'fit-content', width: '37%' }}
+//   />
+// );
 
 const FlyingLogo = ({ theme }: { theme: Theme }) => (
   <Grid alignItems='center' container item justifyContent='center' sx={{ height: '100vh', width: '100%' }}>
@@ -225,16 +223,6 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
               setStep={setStep}
             />
           }
-          {step === STEPS.SET_PASSWORD &&
-            <>
-              <Grid container item justifyContent='center' mt='33px' my='35px'>
-                <StillLogo theme={theme} />
-              </Grid>
-              <Grid container sx={{ position: 'absolute', top: '165px' }}>
-                <PasswordSettingAlert />
-              </Grid>
-            </>
-          }
           <Grid container item>
             {isFlying && isPopupOpenedByExtension
               ? <FlyingLogo theme={theme} />
@@ -245,13 +233,9 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
                   />
                 }
                 {step === STEPS.SET_PASSWORD &&
-                  // <FirstTimeSetPassword
-                  //   hashedPassword={hashedPassword}
-                  //   onPassChange={onPassChange}
-                  //   setHashedPassword={setHashedPassword}
-                  //   setStep={setStep}
-                  // />
-                  <></>
+                  <FirstTimeSetPassword
+                    setStep={setStep}
+                  />
                 }
                 {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
                   <Login

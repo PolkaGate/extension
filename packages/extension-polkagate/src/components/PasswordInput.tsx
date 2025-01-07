@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
+import { Container, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -57,14 +57,16 @@ interface Props {
   title?: string;
   onPassChange: (pass: string) => void;
   onEnterPress?: () => void;
+  style?: React.CSSProperties;
+  focused?: boolean;
 }
 
-export default function PasswordInput ({ onEnterPress, onPassChange, title }: Props) {
+export default function PasswordInput ({ focused = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [focused, setFocused] = useState<boolean>(false);
+  const [focusing, setFocused] = useState<boolean>(false);
 
   const toggle = useCallback(() => setFocused((isFocused) => !isFocused), []);
 
@@ -81,7 +83,7 @@ export default function PasswordInput ({ onEnterPress, onPassChange, title }: Pr
   }, [onEnterPress]);
 
   return (
-    <>
+    <Container disableGutters sx={style}>
       {title &&
         <Typography fontFamily='Inter' fontSize='13px' fontWeight={500} mb='12px' textAlign='left' width='100%'>
           {title}
@@ -106,10 +108,11 @@ export default function PasswordInput ({ onEnterPress, onPassChange, title }: Pr
           ),
           startAdornment: (
             <InputAdornment position='start'>
-              <Check color={focused ? '#3988FF' : '#AA83DC'} size='22' variant={focused ? 'Bold' : 'Bulk'} />
+              <Check color={focusing ? '#3988FF' : '#AA83DC'} size='22' variant={focusing ? 'Bold' : 'Bulk'} />
             </InputAdornment>
           )
         }}
+        autoFocus={focused}
         fullWidth
         onBlur={toggle}
         onChange={onChange}
@@ -119,6 +122,6 @@ export default function PasswordInput ({ onEnterPress, onPassChange, title }: Pr
         theme={theme}
         type={showPassword ? 'text' : 'password'}
       />
-    </>
+    </Container>
   );
 }

@@ -68,8 +68,8 @@ function PrivacyPolicy ({ openMenu, setPopup }: Props): React.ReactElement {
                   <span style={{ color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: '13px', fontWeight: 500, textAlign: 'left' }}>
                     {t('If you have any questions, please contact us at ')}
                   </span>
-                  <Link href='mailto:polkagate@outlook.com' sx={{ color: 'text.secondary', textDecoration: 'underline' }}>
-                    {'polkagate@outlook.com'}
+                  <Link href='mailto:support@polkagate.xyz' sx={{ color: 'text.secondary', textDecoration: 'underline' }}>
+                    {'support@polkagate.xyz'}
                   </Link>
                   <span style={{ color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: '13px', fontWeight: 500, textAlign: 'left' }}>
                     {t(' or follow us on our social media accounts.')}

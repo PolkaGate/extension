@@ -4,3 +4,4 @@
 // @ts-nocheck
 
 export { default as handWave } from './handWave.gif';
+export { default as Lock } from './Lock.gif';
