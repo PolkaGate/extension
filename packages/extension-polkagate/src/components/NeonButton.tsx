@@ -16,11 +16,10 @@ interface Props {
   EndIcon?: Icon;
   contentPlacement?: 'start' | 'center' | 'end';
   text: string | { firstPart?: string; secondPart?: string; };
-  variant?: 'text' | 'contained' | 'outlined';
   style?: React.CSSProperties;
 }
 
-export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState(false);
@@ -94,7 +93,6 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
         ? <StartIcon size={20} variant={hovered ? 'Bold' : 'Bulk'} />
         : undefined}
       sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...EndIconStyle, ...style }}
-      variant={variant}
     >
       {renderText}
     </Button>
