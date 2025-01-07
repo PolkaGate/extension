@@ -72,7 +72,7 @@ function Login ({ setStep }: Props): React.ReactElement {
     <Container disableGutters sx={{ position: 'relative' }}>
       <Header />
       <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px' }}>
-        <RedGradient style={{ right: '-8%', top: '20px' }} />
+        <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
         <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
           <Box
             component='img'
@@ -83,6 +83,7 @@ function Login ({ setStep }: Props): React.ReactElement {
             {t('login')}
           </Typography>
           <PasswordInput
+            focused
             onEnterPress={onUnlock}
             onPassChange={onPassChange}
             title={t('Please enter your password to proceed')}
