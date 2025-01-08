@@ -73,7 +73,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     /* BUTTON BACKGROUND GRADIENT */
     background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
     borderRadius: `${style?.borderRadius ?? '12px'}`,
-    inset: '2px',
+    inset: disabled ? 0 : '2px',
     position: 'absolute',
     transition: 'all 250ms ease-out'
   } as SxProps<Theme>;
