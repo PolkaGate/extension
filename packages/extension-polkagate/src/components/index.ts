@@ -9,6 +9,7 @@ export { default as AccountNamePasswordCreation } from './AccountNamePasswordCre
 export { default as AccountsTable } from './AccountsTable';
 export { default as AccountWithProxyInConfirmation } from './AccountWithProxyInConfirmation';
 export { default as ActionButton } from './ActionButton';
+export { default as ActionCard } from './ActionCard';
 export { default as ActionText } from './ActionText';
 export { default as Address } from './Address';
 export { default as AddressInput } from './AddressInput';

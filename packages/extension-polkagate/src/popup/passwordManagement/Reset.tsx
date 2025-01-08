@@ -3,68 +3,79 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Box, Container, Grid, Typography } from '@mui/material';
+import { Check, DocumentText } from 'iconsax-react';
+import React, { useCallback, useContext } from 'react';
 
-import { PButton, VaadinIcon } from '../../components';
+import { Lock } from '../../assets/gif';
+import { ActionCard, ActionContext, BackWithLabel } from '../../components';
+import { setStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import HeaderBrand from '../../partials/HeaderBrand';
-import { EXTENSION_NAME } from '../../util/constants';
+import { Version } from '../../partials';
+import Header from './Header';
 
 function Reset (): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
+  const onAction = useContext(ActionContext);
 
-  const _goToRestoreFromJson = useCallback((): void => {
+  const goToRestoreFromJson = useCallback((): void => {
     windowOpen('/account/restore-json').catch(console.error);
   }, []);
 
-  const _goToImport = useCallback((): void => {
+  const back = useCallback((): void => {
+    setStorage('loginInfo', { status: 'justSet' })
+      .then(() => onAction('/'))
+      .catch(console.error);
+  }, [onAction]);
+
+  const goToImport = useCallback((): void => {
     windowOpen('/account/import-seed').catch(console.error);
   }, []);
 
   return (
-    <>
-      <HeaderBrand
-        showBrand
-        text={EXTENSION_NAME}
+    <Container disableGutters sx={{ position: 'relative' }}>
+      <Header />
+      <BackWithLabel
+        onClick={back}
+        text={t('Back')}
       />
-      <Typography sx={{ fontSize: '36px', fontWeight: theme.palette.mode === 'dark' ? 300 : 400, p: '25px 0 10px', textAlign: 'center' }}>
-        {t('Reset Wallet')}
-      </Typography>
-      <Typography sx={{ fontSize: '14px', mb: '25px', px: '15px' }}>
-        {t('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
-      </Typography>
-      <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', p: '10px', width: '95%' }}>
-        <Typography sx={{ fontSize: '14px' }}>
-          {t('Restore from a previously exported accounts JSON backup file. This file contains the encrypted data of your accounts and can be used to restore them.')}
+      <Grid container item justifyContent='center' sx={{ px: '15px' }}>
+        <Box
+          component='img'
+          src={Lock as string}
+          sx={{ height: '55px', mt: '-3px', width: '55px' }}
+        />
+        <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '10px', mt: '10px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+          {t('Reset Wallet')}
         </Typography>
-        <PButton
-          _mt='15px'
-          _onClick={_goToRestoreFromJson}
-          _variant={'contained'}
-          startIcon={
-            <VaadinIcon icon='vaadin:file-text' style={{ height: '18px' }} />
-          }
-          text={t('Restore from JSON File')}
+        <Typography fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ color: 'text.secondary', px: '15px', width: '100%' }} textAlign='center'>
+          {t('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
+        </Typography>
+        <ActionCard
+          Icon={DocumentText}
+          description={t('Restore from a previously exported accounts JSON backup file. This file contains the encrypted data of your accounts and can be used to restore them.')}
+          iconWithBackground
+          onClick={goToRestoreFromJson}
+          style={{
+            mt: '12px'
+          }}
+          title={t('Restore from JSON File')}
+        />
+        <ActionCard
+          Icon={Check}
+          description={t('Import from the secret Recovery Phrase. This phrase is sequence of 12 words that can be used to generate your account.')}
+          iconWithBackground
+          onClick={goToImport}
+          style={{
+            height: '122px',
+            mt: '10px'
+          }}
+          title={t('Import from Recovery Phrase')}
         />
       </Grid>
-      <Grid container item sx={{ backgroundColor: 'background.paper', border: 1, borderColor: 'secondary.light', borderRadius: '5px', m: '10px', p: '10px', width: '95%' }}>
-        <Typography sx={{ fontSize: '14px' }}>
-          {t('Import from the secret Recovery Phrase. This phrase is a sequence of 12 words that can be used to generate your account.')}
-        </Typography>
-        <PButton
-          _mt='15px'
-          _onClick={_goToImport}
-          _variant={'contained'}
-          startIcon={
-            <VaadinIcon icon='vaadin:book' style={{ height: '18px' }} />
-          }
-          text={t('Import from Recovery Phrase')}
-        />
-      </Grid>
-    </>
+      <Version />
+    </Container>
   );
 }
 
