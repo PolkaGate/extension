@@ -58,16 +58,18 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
       zIndex: 1
     },
     /* BORDER GRADIENT */
-    '&::before': {
-      background: 'linear-gradient(90deg, #AA0DEB 0%, #FF91E7 50%, #AA0DEB 100%)',
-      borderRadius: `${style?.borderRadius ?? '12px'}`,
-      content: '""',
-      inset: '-2px',
-      opacity: hovered ? 0 : 1,
-      position: 'absolute',
-      transition: 'all 250ms ease-out',
-      zIndex: -1
-    },
+    ...(!disabled && {
+      '&::before': {
+        background: 'linear-gradient(90deg, #AA0DEB 0%, #FF91E7 50%, #AA0DEB 100%)',
+        borderRadius: `${style?.borderRadius ?? '12px'}`,
+        content: '""',
+        inset: '-2px',
+        opacity: hovered ? 0 : 1,
+        position: 'absolute',
+        transition: 'all 250ms ease-out',
+        zIndex: -1
+      }
+    }),
     /* BUTTON BACKGROUND GRADIENT */
     background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
     borderRadius: `${style?.borderRadius ?? '12px'}`,

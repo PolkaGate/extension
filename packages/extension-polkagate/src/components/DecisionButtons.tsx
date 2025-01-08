@@ -3,10 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, useTheme } from '@mui/material';
+import { Container, type SxProps, type Theme, useTheme } from '@mui/material';
 import React from 'react';
 
-import { GradientButton, NeonButton } from '.';
+import { ActionButton, GradientButton, GradientDivider, NeonButton } from '.';
 
 interface Props {
   arrow?: boolean;
@@ -15,19 +15,33 @@ interface Props {
   primaryBtnText: string;
   secondaryBtnText: string;
   disabled?: boolean;
+  cancelButton?: boolean;
+  style?: SxProps<Theme>;
+  divider?: boolean;
 }
 
-function DecisionButtons ({ arrow = false, disabled, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText }: Props): React.ReactElement {
+function DecisionButtons ({ arrow = false, cancelButton, disabled, divider = false, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, style }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '5px', display: 'flex', justifyContent: 'space-between' }}>
-      <NeonButton
-        contentPlacement='center'
-        onClick={onSecondaryClick}
-        style={{ height: '44px', width: '30%' }}
-        text={secondaryBtnText}
-      />
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '5px', display: 'flex', justifyContent: 'space-between', ...style }}>
+      {cancelButton
+        ? <ActionButton
+          contentPlacement='center'
+          onClick={onSecondaryClick}
+          style={{ height: '44px', width: '30%' }}
+          text={secondaryBtnText}
+        />
+        : <NeonButton
+          contentPlacement='center'
+          onClick={onSecondaryClick}
+          style={{ height: '44px', width: '30%' }}
+          text={secondaryBtnText}
+        />
+      }
+      {divider &&
+        <GradientDivider orientation='vertical' style={{ height: '90%', mx: '8px' }} />
+      }
       <GradientButton
         disabled={disabled}
         endIconNode={arrow
