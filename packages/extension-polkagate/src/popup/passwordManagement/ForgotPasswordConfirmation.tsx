@@ -3,26 +3,25 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Typography } from '@mui/material';
+import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
+import { BackWithLabel, DecisionButtons, GlowCheckbox, GradientBox } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import useTranslation from '../../hooks/useTranslation';
+import { Version } from '../../partials';
+import { RedGradient } from '../../style';
 import { STEPS } from './constants';
 import Header from './Header';
-import { BackWithLabel, Checkbox2, DecisionButtons, GlowCheckbox, GradientBox } from '../../components';
-import { RedGradient } from '../../style';
-import { Version } from '../../partials';
-import { Warning2 } from 'iconsax-react';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function ForgotPasswordConfirmation({ setStep }: Props): React.ReactElement<Props> {
+export default function ForgotPasswordConfirmation ({ setStep }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { setExtensionLock } = useExtensionLockContext();
 
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
@@ -80,44 +79,5 @@ export default function ForgotPasswordConfirmation({ setStep }: Props): React.Re
       </GradientBox>
       <Version />
     </Container>
-    // <Popup show={show}>
-    //   <Header
-    //     onClose={onClose}
-    //     text={t('Forgot Password')}
-    //   />
-    //   <Grid container direction='column' px='15px'>
-    //     <Grid container direction='column' item justifyContent='center' pb='20px' pt='50px'>
-    //       <Grid item textAlign='center'>
-    //         <FontAwesomeIcon
-    //           color={theme.palette.warning.main}
-    //           icon={faExclamationTriangle}
-    //           size='3x'
-    //         />
-    //       </Grid>
-    //       <Grid item textAlign='center'>
-    //         <Typography fontSize='16px' fontWeight={400} sx={{ color: 'warning.main' }}>
-    //           {t('Are you sure you want to proceed?')}
-    //         </Typography>
-    //       </Grid>
-    //       <Typography fontSize='16px' fontWeight={400} mt='25px' px='15px'>
-    //         {t('This action will permanently delete your account(s), and password recovery will not be possible. You can reset your wallet by importing from a backup (JSON file or recovery phrase). ')}
-    //       </Typography>
-    //     </Grid>
-    //     <Checkbox2
-    //       checked={isChecked}
-    //       label={t('I acknowledge permanent account(s) deletion.')}
-    //       labelStyle={{ fontSize: '14px' }}
-    //       onChange={onCheckChange}
-    //       style={{ bottom: 75, pl: '5px', position: 'absolute' }}
-    //     />
-    //   </Grid>
-    //   <TwoButtons
-    //     disabled={!isChecked}
-    //     onPrimaryClick={_onConfirmForgotPassword}
-    //     onSecondaryClick={onClose}
-    //     primaryBtnText={t('Proceed')}
-    //     secondaryBtnText={t('Cancel')}
-    //   />
-    // </Popup>
   );
 }
