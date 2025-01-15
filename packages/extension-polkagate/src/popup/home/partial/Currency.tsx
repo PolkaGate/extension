@@ -3,12 +3,26 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Share } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { useCurrency } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
+
+const containerStyle: SxProps<Theme> = {
+  '&:hover': {
+    bgcolor: '#674394',
+    transition: 'all 250ms ease-out'
+  },
+  bgcolor: '#BFA1FF26',
+  borderRadius: '12px',
+  columnGap: '2px',
+  cursor: 'pointer',
+  p: '5px 7px',
+  transition: 'all 250ms ease-out',
+  width: 'fit-content'
+};
 
 function Currency () {
   const currency = useCurrency();
@@ -19,7 +33,7 @@ function Currency () {
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='center' onClick={toggleMenu} sx={{ bgcolor: '#BFA1FF26', borderRadius: '12px', columnGap: '2px', cursor: 'pointer', p: '5px 7px', width: 'fit-content' }}>
+      <Grid alignItems='center' container item justifyContent='center' onClick={toggleMenu} sx={containerStyle}>
         <Share color='#BEAAD8' size='18' variant='Bold' />
         <Typography color='text.secondary' fontFamily='Inter' fontSize='14px' fontWeight={600} textTransform='uppercase'>
           {currency?.code}
