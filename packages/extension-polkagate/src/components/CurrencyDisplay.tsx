@@ -5,19 +5,20 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Skeleton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
 import { useCurrency, useIsHideNumbers } from '../hooks';
 import { amountToHuman } from '../util/utils';
 
-type DisplayStyle = 'full' | 'minimal';
+type DisplayStyle = 'portfolio' | 'asset' | '24h';
 
 interface Props {
   displayStyle?: DisplayStyle;
   amount?: string | number | BN | null;
   decimal?: number;
   decimalPartCount?: number;
+  fontStyle?: SxProps<Theme>;
 }
 
 interface FormattedValue {
@@ -32,13 +33,13 @@ const Dots = () => {
 
   return (
     <>
-      <Typography style={{ fontFamily: 'Inter', fontSize: '40px', fontWeight: 900, lineHeight: '35px', paddingLeft: '5px' }}>
+      <Typography sx={{ fontFamily: 'Inter', fontSize: '40px', fontWeight: 900, lineHeight: '35px', paddingLeft: '5px' }}>
         • •
       </Typography>
-      <Typography px='3px' sx={{ color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: '25px', fontWeight: 400, lineHeight: '40px', px: '5px' }}>
+      <Typography px='3px' sx={{ color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: '25px', fontWeight: 400, lineHeight: '30px', px: '5px' }}>
         .
       </Typography>
-      <Typography style={{ fontFamily: 'Inter', fontSize: '40px', fontWeight: 900, lineHeight: '35px' }}>
+      <Typography sx={{ fontFamily: 'Inter', fontSize: '40px', fontWeight: 900, lineHeight: '35px' }}>
         • •
       </Typography>
     </>
@@ -80,8 +81,38 @@ const formatValue = (input: Props['amount'], decimal?: number, decimalPlaces: nu
   }
 };
 
-const useStyles = (displayStyle: DisplayStyle = 'minimal') => {
+const useStyles = (displayStyle: DisplayStyle = 'asset') => {
   const theme = useTheme();
+  const { decimalFontSize, fontFamily, fontWeight, integerFontSize } = useMemo(() => {
+    const fontFamily = displayStyle === 'portfolio'
+      ? 'OdibeeSans'
+      : 'Inter';
+
+    const decimalFontSize = displayStyle === 'portfolio'
+      ? '25px'
+      : displayStyle === 'asset'
+        ? '14px'
+        : '13px';
+
+    const integerFontSize = displayStyle === 'portfolio'
+      ? '40px'
+      : displayStyle === 'asset'
+        ? '14px'
+        : '13px';
+
+    const fontWeight = displayStyle === 'portfolio'
+      ? 400
+      : displayStyle === 'asset'
+        ? 600
+        : 500;
+
+    return {
+      decimalFontSize,
+      fontFamily,
+      fontWeight,
+      integerFontSize
+    };
+  }, [displayStyle]);
 
   return useMemo(() => ({
     comma: {
@@ -89,26 +120,26 @@ const useStyles = (displayStyle: DisplayStyle = 'minimal') => {
     },
     decimal: {
       color: theme.palette.text.secondary,
-      fontFamily: displayStyle === 'full' ? 'OdibeeSans' : 'Inter',
-      fontSize: displayStyle === 'full' ? '25px' : '14px',
-      fontWeight: displayStyle === 'full' ? 400 : 600,
-      lineHeight: displayStyle === 'full' ? '25px' : '14px'
+      fontFamily,
+      fontSize: decimalFontSize,
+      fontWeight,
+      lineHeight: displayStyle === 'portfolio' ? '25px' : '14px'
     },
     integer: {
       color: '#fff',
-      fontFamily: displayStyle === 'full' ? 'OdibeeSans' : 'Inter',
-      fontSize: displayStyle === 'full' ? '40px' : '14px',
-      fontWeight: displayStyle === 'full' ? 400 : 600,
-      lineHeight: displayStyle === 'full' ? '40px' : '14px'
+      fontFamily,
+      fontSize: integerFontSize,
+      fontWeight,
+      lineHeight: displayStyle === 'portfolio' ? '40px' : '14px'
     }
-  }), [theme.palette.text.secondary, displayStyle]);
+  }), [theme.palette.text.secondary, fontFamily, decimalFontSize, fontWeight, displayStyle, integerFontSize]);
 };
 
-const RenderSkeleton = memo(function RenderSkeleton ({ displayStyle = 'minimal' }: { displayStyle: DisplayStyle }) {
+const RenderSkeleton = memo(function RenderSkeleton ({ displayStyle = 'asset' }: { displayStyle: DisplayStyle }) {
   return (
     <Skeleton
       animation='wave'
-      height={displayStyle === 'full' ? '40px' : '14px'}
+      height={displayStyle === 'portfolio' ? '40px' : '14px'}
       sx={{ fontWeight: 'bold', transform: 'none', width: '100%' }}
       variant='text'
     />
@@ -133,7 +164,7 @@ const RenderAmount = memo(function RenderAmount ({ displayStyle, value }: { valu
   );
 });
 
-function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_PLACES, displayStyle = 'minimal' }: Props): React.ReactElement {
+function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_PLACES, displayStyle = 'asset', fontStyle }: Props): React.ReactElement {
   const currency = useCurrency();
   const { isHideNumbers } = useIsHideNumbers();
   const styles = useStyles(displayStyle);
@@ -143,8 +174,10 @@ function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_
     return <RenderSkeleton displayStyle={displayStyle} />;
   }
 
+  const style = { '> p': { ...fontStyle }, '> span': { ...fontStyle } } as SxProps<Theme>;
+
   return (
-    <Stack alignItems='baseline' direction='row'>
+    <Stack alignItems='baseline' direction='row' sx={style}>
       {currency?.sign && (
         <Typography component='span' sx={styles.integer}>
           {currency.sign}
