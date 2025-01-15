@@ -18,13 +18,15 @@ export interface Props {
   openMenu: boolean;
   TitleIcon?: Icon;
   title: string;
+  withoutTopBorder?: boolean;
+  withoutBackground?: boolean;
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: Props): React.ReactElement<Props> {
+function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
   return (
     <Dialog
       PaperProps={{
@@ -49,7 +51,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: 
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }}/>
+          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
           <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
@@ -61,8 +63,8 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: 
               {title}
             </Typography>
           </Grid>
-          <GradientDivider />
-          <RedGradient style={{ top: '-140px' }} />
+          {!withoutTopBorder && <GradientDivider />}
+          {!withoutBackground && <RedGradient style={{ top: '-140px' }} />}
           <Box sx={{ maxHeight: '440px', overflow: 'scroll', position: 'relative', width: '100%' }}>
             {children}
           </Box>
