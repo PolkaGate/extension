@@ -4,21 +4,25 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid, type SxProps, type Theme } from '@mui/material';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { CurrencyDisplay } from '../../../components';
+import { useAccount, useAccountAssets, usePrices } from '../../../hooks';
+import { calcPrice } from '../../../hooks/useYouHave';
 import { GradientBorder, GradientDivider } from '../../../style';
 import AccountName from './AccountName';
+import AccountVisibilityToggler from './AccountVisibilityToggler';
 import Currency from './Currency';
+import DailyChange from './DailyChange';
 
-const PortfolioContainerStyle = {
+const PortfolioContainerStyle: SxProps<Theme> = {
   border: '2px solid transparent',
   borderRadius: '24px',
   height: '132px',
   overflow: 'hidden',
   position: 'relative',
   width: '359px'
-} as SxProps<Theme>;
+};
 
 const glowBallStyle: React.CSSProperties = {
   backgroundColor: '#FF59EE',
@@ -31,34 +35,68 @@ const glowBallStyle: React.CSSProperties = {
   width: '100px'
 };
 
-const fadeOutStyle = {
+const fadeOutStyle: React.CSSProperties = {
   background: 'linear-gradient(180deg, transparent 13.79%, #05091C 100%)',
+  height: '160px',
+  inset: 0,
+  position: 'absolute',
+  width: '375px'
+};
+
+const fadeStyle: React.CSSProperties = {
+  backgroundColor: 'rgba(255, 255, 255, 0.02)',
   height: '220px',
   inset: 0,
   position: 'absolute',
   width: '375px'
-} as React.CSSProperties;
+};
 
 function Portfolio (): React.ReactElement {
+  const account = useAccount('5CGQ7BPJZZKNirQgVhzbX9wdkgbnUHtJ5V7FkMXdZeVbXyr9');
+  const accountAssets = useAccountAssets('5CGQ7BPJZZKNirQgVhzbX9wdkgbnUHtJ5V7FkMXdZeVbXyr9');
+  const pricesInCurrency = usePrices();
+
+  const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
+
+  const totalWorth = useMemo(() => {
+    if (!accountAssets?.length) {
+      return 0;
+    }
+
+    return accountAssets.reduce((total, asset) => {
+      const assetWorth = calcPrice(
+        priceOf(asset.priceId),
+        asset.totalBalance,
+        asset.decimal
+      );
+
+      return total + assetWorth;
+    }, 0);
+  }, [accountAssets, priceOf]);
+
   return (
     <Container disableGutters sx={PortfolioContainerStyle}>
-      <GradientBorder />
-      <GradientDivider orientation='vertical' style={{ bottom: 0, left: 0, position: 'absolute', top: 0, width: '2px' }} />
-      <GradientDivider orientation='vertical' style={{ bottom: 0, position: 'absolute', right: 0, top: 0, width: '2px' }} />
-      <div style={glowBallStyle} />
-      <div style={fadeOutStyle} />
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px', position: 'relative', zIndex: 1 }}>
-        <AccountName accountName='Amir EF' />
+        <AccountName accountName={account?.name ?? ''} />
         <Currency />
         <Grid container item>
           <CurrencyDisplay
-            amount='132134456.1132132'
+            amount={totalWorth ?? 0}
             decimal={12}
             decimalPartCount={3}
-            displayStyle='full'
+            displayStyle='portfolio'
           />
         </Grid>
+        <DailyChange />
+        <AccountVisibilityToggler />
       </Grid>
+      {/* Styles */}
+      <GradientBorder />
+      <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', left: 0, m: 'auto', position: 'absolute', top: 0, width: '2px' }} />
+      <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', m: 'auto', position: 'absolute', right: 0, top: 0, width: '2px' }} />
+      <div style={glowBallStyle} />
+      <div style={fadeStyle} />
+      <div style={fadeOutStyle} />
     </Container>
   );
 }
