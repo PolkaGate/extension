@@ -10,7 +10,7 @@ export const USD_CURRENCY = {
   sign: '$'
 };
 
-const CRYPTO_AS_CURRENCY = [{
+export const CRYPTO_AS_CURRENCY = [{
   code: 'BTC',
   country: 'Bitcoin',
   currency: 'Bitcoin',
