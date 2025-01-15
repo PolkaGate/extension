@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React from 'react';
 
