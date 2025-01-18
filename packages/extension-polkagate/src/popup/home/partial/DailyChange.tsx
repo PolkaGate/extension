@@ -54,7 +54,7 @@ function DailyChange (): React.ReactElement {
     <Container disableGutters sx={containerStyle}>
       {youHave?.change && youHave.change > 0
         ? <ArrowUp2 color={color(youHave?.change)} size='15' variant='Bold' />
-        : portfolioChange < 0
+        : youHave?.change && youHave.change < 0
           ? <ArrowDown2 color={color(youHave?.change)} size='15' variant='Bold' />
           : null
       }

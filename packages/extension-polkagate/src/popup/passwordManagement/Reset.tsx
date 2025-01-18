@@ -9,7 +9,7 @@ import React, { useCallback, useContext } from 'react';
 
 import { Lock } from '../../assets/gif';
 import { ActionCard, ActionContext, BackWithLabel } from '../../components';
-import { setStorage } from '../../components/Loading';
+import { updateStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { Version } from '../../partials';
@@ -24,8 +24,8 @@ function Reset (): React.ReactElement {
   }, []);
 
   const back = useCallback((): void => {
-    setStorage('loginInfo', { status: 'justSet' })
-      .then(() => onAction('/'))
+    updateStorage('loginInfo', { status: 'set' })
+      .finally(() => onAction('/'))
       .catch(console.error);
   }, [onAction]);
 

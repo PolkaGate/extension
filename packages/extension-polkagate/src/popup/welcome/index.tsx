@@ -11,7 +11,7 @@ import { handWave } from '../../assets/gif';
 import { ActionButton, Carousel, GradientBox, GradientButton } from '../../components';
 import { useManifest, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import { LogoDropAnimation, WelcomeHeader } from '../../partials';
+import { WelcomeHeader } from '../../partials';
 import { GradientDivider } from '../../style';
 import AddAccount from './AddAccount';
 
@@ -39,15 +39,6 @@ function Welcome (): React.ReactElement {
     <>
       <Container disableGutters sx={{ position: 'relative' }}>
         <WelcomeHeader />
-        <LogoDropAnimation
-          ground={210}
-          style={{
-            bottom: '200px',
-            left: 0,
-            right: 0,
-            top: 0
-          }}
-        />
         <Carousel />
         <GradientBox style={{ m: 'auto', width: '359px' }}>
           <Grid container item justifyContent='center' sx={{ p: '18px 32px' }}>

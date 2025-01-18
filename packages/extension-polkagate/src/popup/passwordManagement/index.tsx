@@ -1,8 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { LoginInfo } from '../../components/Loading';
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -10,7 +13,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { ActionContext, WrongPasswordAlert } from '../../components';
-import { getStorage, LoginInfo } from '../../components/Loading';
+import { getStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import Confirmation from './Confirmation';

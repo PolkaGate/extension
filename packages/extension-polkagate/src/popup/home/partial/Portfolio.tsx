@@ -52,8 +52,8 @@ const fadeStyle: React.CSSProperties = {
 };
 
 function Portfolio (): React.ReactElement {
-  const account = useAccount('5CGQ7BPJZZKNirQgVhzbX9wdkgbnUHtJ5V7FkMXdZeVbXyr9');
-  const accountAssets = useAccountAssets('5CGQ7BPJZZKNirQgVhzbX9wdkgbnUHtJ5V7FkMXdZeVbXyr9');
+  const account = useAccount('5CoPBgUczmL9dRebSRpAcQQjadHcrJwPB3U5HKHcFr5o2yAF');
+  const accountAssets = useAccountAssets('5CoPBgUczmL9dRebSRpAcQQjadHcrJwPB3U5HKHcFr5o2yAF');
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
