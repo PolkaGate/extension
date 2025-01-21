@@ -7,12 +7,14 @@ import { Container } from '@mui/material';
 import React from 'react';
 
 import { HomeButton } from '../components';
+import AccountSelection from '../popup/home/partial/AccountSelection';
 import FullscreenModeButton from './FullscreenModeButton';
 
 function UserDashboardHeader () {
   return (
     <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between', p: '10px 15px' }}>
       <HomeButton type='active' />
+      <AccountSelection />
       <FullscreenModeButton />
     </Container>
   );
