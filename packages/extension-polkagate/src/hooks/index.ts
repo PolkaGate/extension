@@ -1,4 +1,4 @@
-// Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
@@ -100,6 +100,7 @@ export { default as useProxies } from './useProxies';
 export { default as useRedirectOnRefresh } from './useRedirectOnRefresh';
 export { default as useReferendum } from './useReferendum';
 export { default as useReservedDetails } from './useReservedDetails';
+export { default as useSelectedAccount } from './useSelectedAccount';
 export { default as useSelectedChains } from './useSelectedChains';
 export { default as useSelectedProfile } from './useSelectedProfile';
 export { default as useStakingAccount } from './useStakingAccount';
