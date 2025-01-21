@@ -10,11 +10,11 @@ import { Check, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax
 import React, { useCallback, useContext } from 'react';
 
 import { ActionButton, ActionContext } from '../../components';
+import { CustomCloseSquare } from '../../components/SVG/CustomCloseSquare';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
 import { GradientBorder, GradientDivider, RedGradient } from '../../style';
 import { DEMO_ACCOUNT, POLKADOT_GENESIS_HASH } from '../../util/constants';
-import { CustomCloseSquare } from './CustomCloseSquare';
 import { Popups } from '.';
 
 interface Props {

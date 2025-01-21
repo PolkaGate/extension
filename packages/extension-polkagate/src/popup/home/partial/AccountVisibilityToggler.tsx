@@ -8,12 +8,12 @@ import { Radar2 } from 'iconsax-react';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Tooltip } from '../../../components';
-import { useAccount, useTranslation } from '../../../hooks';
+import { useSelectedAccount, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
 
 function AccountVisibilityToggler (): React.ReactElement {
   const { t } = useTranslation();
-  const account = useAccount('5CGQ7BPJZZKNirQgVhzbX9wdkgbnUHtJ5V7FkMXdZeVbXyr9');
+  const account = useSelectedAccount();
   const ref = useRef(null);
 
   const [hovered, setHovered] = useState<boolean>(false);

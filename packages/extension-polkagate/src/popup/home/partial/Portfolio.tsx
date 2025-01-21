@@ -7,7 +7,7 @@ import { Container, Grid, type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { CurrencyDisplay } from '../../../components';
-import { useAccount, useAccountAssets, usePrices } from '../../../hooks';
+import { useAccountAssets, usePrices, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { GradientBorder, GradientDivider } from '../../../style';
 import AccountName from './AccountName';
@@ -52,8 +52,8 @@ const fadeStyle: React.CSSProperties = {
 };
 
 function Portfolio (): React.ReactElement {
-  const account = useAccount('5CoPBgUczmL9dRebSRpAcQQjadHcrJwPB3U5HKHcFr5o2yAF');
-  const accountAssets = useAccountAssets('5CoPBgUczmL9dRebSRpAcQQjadHcrJwPB3U5HKHcFr5o2yAF');
+  const account = useSelectedAccount();
+  const accountAssets = useAccountAssets(account?.address);
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);

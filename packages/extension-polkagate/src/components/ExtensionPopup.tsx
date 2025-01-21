@@ -9,8 +9,8 @@ import type { Icon } from 'iconsax-react';
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import React from 'react';
 
-import CustomCloseSquare from '../popup/welcome/CustomCloseSquare';
 import { GradientDivider, RedGradient } from '../style';
+import CustomCloseSquare from './SVG/CustomCloseSquare';
 
 export interface Props {
   children: React.ReactNode;
