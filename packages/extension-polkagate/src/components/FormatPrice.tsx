@@ -16,6 +16,7 @@ interface Props {
   decimalPoint?: number;
   decimals?: number;
   commify?: boolean;
+  fontFamily?: string;
   fontSize?: string;
   fontWeight?: number;
   lineHeight?: number;
@@ -68,7 +69,7 @@ const DecimalPart = ({ value, withCountUp }: { value: string | number, withCount
     : <>{`.${getDecimal(value)}`}</>
 );
 
-function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontFamily, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
   const theme = useTheme();
 
@@ -121,6 +122,7 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
           direction='row'
         >
           <Typography
+            fontFamily={fontFamily}
             fontSize={fontSize}
             fontWeight={fontWeight}
             lineHeight={lineHeight}
@@ -140,6 +142,7 @@ function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, f
           </Typography>
           {withSmallDecimal && Number(total) > 0 &&
             <Typography
+              fontFamily={fontFamily}
               fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
               fontWeight={fontWeight}
               lineHeight={lineHeight}
