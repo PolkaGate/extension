@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import semver from 'semver';
 
@@ -15,13 +15,15 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { AccountContext } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
 import { useManifest, useMerkleScience } from '../../hooks';
-import { UserDashboardHeader } from '../../partials';
+import { UserDashboardHeader, Version2 as Version } from '../../partials';
+import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
+import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
 import WhatsNew from './WhatsNew';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
 
@@ -70,6 +72,11 @@ export default function Home (): React.ReactElement {
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
           <UserDashboardHeader />
           <Portfolio />
+          <Grid container item sx={{ maxHeight: '342px', overflow: 'scroll' }}>
+            <AssetsBox />
+            <Version />
+          </Grid>
+          <HomeMenu />
         </Grid>
       }
     </>

@@ -10,12 +10,14 @@ import React, { useCallback, useState } from 'react';
 
 import CustomCommand from '../../../components/SVG/CustomCommand';
 import { useTranslation } from '../../../hooks';
+import { TAB } from './AssetsBox';
 
 interface TabProps {
   isActive?: boolean;
+  setTab?: React.Dispatch<React.SetStateAction<TAB>>;
 }
 
-function ChainTokensTab ({ isActive = false }: TabProps) {
+function ChainTokensTab ({ isActive = false, setTab }: TabProps) {
   const { t } = useTranslation();
 
   const [showChains, setShowChains] = useState(true);
@@ -24,6 +26,12 @@ function ChainTokensTab ({ isActive = false }: TabProps) {
 
   const handleToggle = useCallback(() => {
     if (!isActive) {
+      setShowChains((active) => {
+        setTab?.(active ? TAB.CHAINS : TAB.TOKENS);
+
+        return active;
+      });
+
       return;
     }
 
@@ -32,6 +40,7 @@ function ChainTokensTab ({ isActive = false }: TabProps) {
       setShowChains((active) => {
         const newValue = !active;
 
+        setTab?.(newValue ? TAB.CHAINS : TAB.TOKENS);
         setDisplayedText(newValue ? t('Chains') : t('Tokens'));
 
         return newValue;
@@ -39,7 +48,7 @@ function ChainTokensTab ({ isActive = false }: TabProps) {
 
       setTimeout(() => setTextOpacity(1), 50);
     }, 200);
-  }, [isActive, t]);
+  }, [isActive, setTab, t]);
 
   return (
     <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '82px' }}>
@@ -54,7 +63,7 @@ function ChainTokensTab ({ isActive = false }: TabProps) {
       <Typography color={showChains ? '#EAEBF1' : '#AA83DC'} fontFamily='Inter' fontSize='14px' fontWeight={600} sx={{ color: showChains ? '#EAEBF1' : '#AA83DC', opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }}>
         {displayedText}
       </Typography>
-      <UnfoldMoreIcon sx={{ color: '#EAEBF1', fontSize: '15px' }} />
+      <UnfoldMoreIcon sx={{ color: showChains ? '#AA83DC' : '#EAEBF1', fontSize: '15px' }} />
     </Container>
   );
 }
@@ -77,12 +86,17 @@ enum TAB_MAP {
   NFT
 }
 
-function AssetTabs (): React.ReactElement {
+interface Props {
+  setTab: React.Dispatch<React.SetStateAction<TAB>>;
+}
+
+function AssetTabs ({ setTab }: Props): React.ReactElement {
   const [tabIndex, setTabIndex] = useState<TAB_MAP>(TAB_MAP.CHAIN);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB_MAP) => {
+    value === TAB_MAP.NFT && setTab(TAB.NFTS);
     setTabIndex(value);
-  }, [setTabIndex]);
+  }, [setTab]);
 
   return (
     <Container disableGutters sx={{ display: 'flex', mx: '30px', width: '100%' }}>
@@ -102,12 +116,21 @@ function AssetTabs (): React.ReactElement {
         value={tabIndex}
       >
         <Tab
-          label={<ChainTokensTab isActive={tabIndex === TAB_MAP.CHAIN} />}
+          label={
+            <ChainTokensTab
+              isActive={tabIndex === TAB_MAP.CHAIN}
+              setTab={setTab}
+            />
+          }
           sx={{ m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' }}
           value={TAB_MAP.CHAIN}
         />
         <Tab
-          label={<NFTTab isActive={tabIndex === TAB_MAP.NFT} />}
+          label={
+            <NFTTab
+              isActive={tabIndex === TAB_MAP.NFT}
+            />
+          }
           sx={{ m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' }}
           value={TAB_MAP.NFT}
         />
