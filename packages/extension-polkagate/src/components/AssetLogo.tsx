@@ -15,9 +15,10 @@ interface Props {
   genesisHash?: string | undefined;
   logo?: string | undefined;
   subLogo: string | undefined;
+  subLogoPosition?: string;
 }
 
-function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, subLogo }: Props): React.ReactElement<Props> {
+function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, subLogo, subLogoPosition }: Props): React.ReactElement<Props> {
   const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find((chain) => chain.value === genesisHash)?.text;
@@ -30,6 +31,7 @@ function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash,
           asset={logo}
           assetSize={assetSize}
           baseLogo={subLogo}
+          baseLogoPosition={subLogoPosition}
           baseLogoSize={baseTokenSize}
         />
         : <ChainLogo

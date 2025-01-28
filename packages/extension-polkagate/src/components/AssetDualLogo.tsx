@@ -11,9 +11,10 @@ interface Props {
   baseLogo: string;
   assetSize?: string;
   baseLogoSize?: string;
+  baseLogoPosition?: string;
 }
 
-export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoSize = '20px' }: Props): React.ReactElement {
+export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px' }: Props): React.ReactElement {
   return (
     <Grid container sx={{ position: 'relative', width: 'fit-content' }}>
       <Avatar
@@ -23,7 +24,7 @@ export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, ba
       />
       <Avatar
         src={baseLogo}
-        sx={{ '> img': { borderRadius: '50%' }, bgcolor: 'white', borderRadius: '50%', height: baseLogoSize, inset: 'auto -5px -5px auto', p: '1px', position: 'absolute', width: baseLogoSize }}
+        sx={{ '> img': { borderRadius: '50%' }, bgcolor: 'white', borderRadius: '50%', height: baseLogoSize, inset: baseLogoPosition ?? 'auto -5px -5px auto', p: '1px', position: 'absolute', width: baseLogoSize }}
         variant='square'
       />
     </Grid>
