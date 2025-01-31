@@ -10,5 +10,13 @@ import { AccountContext } from '../components';
 export default function useSelectedAccount (): AccountJson | undefined {
   const { accounts } = useContext(AccountContext);
 
-  return useMemo(() => accounts.find(({ selected }) => selected), [accounts]);
+  return useMemo(() => {
+    let selected = accounts.find(({ selected }) => selected);
+
+    if (!selected) {
+      selected = accounts[0];
+    }
+
+    return selected;
+  }, [accounts]);
 }
