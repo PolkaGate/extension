@@ -9,7 +9,7 @@ import { Avatar, Container, Grid, Typography } from '@mui/material';
 import { ArrowSwapHorizontal, MonitorMobbile, User } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AccountContext, DecisionButtons, ExtensionPopup, GradientSwitch } from '../components';
+import { AccountContext, DecisionButtons, ExtensionPopup, GradientDivider, GradientSwitch } from '../components';
 import { sortAccounts } from '../components/AccountsTable';
 import { useTranslation } from '../hooks';
 import { getAuthList, updateAuthorization } from '../messaging';
@@ -112,7 +112,7 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
 
   return (
     <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1 }}>
-      <Grid container item sx={{ height: '275px', maxHeight: '275px', overflowY: 'scroll', pb: '10px' }}>
+      <Grid container item sx={{ height: '275px', pb: '10px' }}>
         <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
           <Grid alignItems='center' container item justifyContent='space-between' p='10px 15px'>
             <Grid container item sx={{ columnGap: '8px', width: 'fit-content' }}>
@@ -131,24 +131,29 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', p: '12px', width: '100%' }}>
+          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: '215px', overflowY: 'scroll', p: '8px 12px', width: '100%' }}>
             {accountsToShow.map(({ address, name }, index) => {
+              const noDivider = accountsToShow.length === index + 1;
+
               return (
-                <Grid container item justifyContent='space-between' key={index}>
-                  <Grid container item sx={{ columnGap: '8px', width: 'fit-content' }}>
-                    <PolkaGateIdenticon
-                      address={address}
-                      size={18}
+                <>
+                  <Grid alignItems='center' container item justifyContent='space-between' key={index} py='8px'>
+                    <Grid alignItems='center' container item sx={{ columnGap: '8px', width: 'fit-content' }}>
+                      <PolkaGateIdenticon
+                        address={address}
+                        size={24}
+                      />
+                      <Typography color='text.primary' fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {name}
+                      </Typography>
+                    </Grid>
+                    <GradientSwitch
+                      checked={selectedAccounts.includes(address)}
+                      onChange={handleSelect(address)}
                     />
-                    <Typography color='text.primary' fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {name}
-                    </Typography>
                   </Grid>
-                  <GradientSwitch
-                    checked={selectedAccounts.includes(address)}
-                    onChange={handleSelect(address)}
-                  />
-                </Grid>
+                  {!noDivider && <GradientDivider />}
+                </>
               );
             })}
           </Container>
@@ -244,7 +249,7 @@ export default function ConnectedDapp (): React.ReactElement {
         title={t('Connected Accounts')}
         withoutTopBorder
       >
-        <Grid container item justifyContent='center' sx={{ position: 'relative', py: '5px', zIndex: 1 }}>
+        <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
           <Typography color='text.secondary' fontFamily='Inter' fontSize='12px' fontWeight={500}>
             {t('Here you can manage the current connections to your accounts')}
           </Typography>
