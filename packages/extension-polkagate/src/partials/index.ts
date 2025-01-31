@@ -5,6 +5,7 @@ export { default as AccountMenu } from './AccountMenu';
 export { default as AddNewAccountButton } from './AddNewAccountButton';
 export { default as ChainSwitch } from './ChainSwitch';
 export { default as Confirmation } from './Confirmation';
+export { default as ConnectedDapp } from './ConnectedDapp';
 export { default as FullScreenChainSwitch } from './FullScreenChainSwitch';
 export { default as FullscreenModeButton } from './FullscreenModeButton';
 export { default as HeaderBrand } from './HeaderBrand';
