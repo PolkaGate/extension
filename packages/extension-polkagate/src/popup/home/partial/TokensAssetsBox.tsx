@@ -40,7 +40,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(() => ({
   }
 }));
 
-const Drawer = ({ length }: { length: number }) => {
+export const Drawer = ({ length }: { length: number }) => {
   return (
     <Container disableGutters sx={{ display: 'flex', height: length === 0 ? 0 : length > 1 ? '18px' : '9px', justifyContent: 'center', overflow: 'hidden', position: 'relative', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '100%' }}>
       <div style={{ background: '#24234DCC', borderRadius: '14px', height: length ? '50px' : 0, position: 'absolute', top: '-41px', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '300px' }} />
@@ -49,7 +49,7 @@ const Drawer = ({ length }: { length: number }) => {
   );
 };
 
-export function DailyChangeInPercent({ change }: { change: number }) {
+export function DailyChangeInPercent ({ change }: { change: number }) {
   const { bgcolor, color } = useMemo(() => ({
     bgcolor: !change
       ? '#AA83DC26'
@@ -78,7 +78,7 @@ export function DailyChangeInPercent({ change }: { change: number }) {
   );
 }
 
-export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: string }) {
+export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
   const pricesInCurrency = usePrices();
 
   return (
@@ -107,7 +107,7 @@ export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: s
   );
 }
 
-export function TokenBalanceDisplay({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
+export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
   return (
     <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: '#BEAAD8', fontFamily: 'Inter', fontSize: '11px', fontWeight: 500 }, rowGap: '6px', width: 'fit-content' }}>
       <CurrencyDisplay
@@ -127,7 +127,7 @@ export function TokenBalanceDisplay({ decimal = 0, token = '', totalBalanceBN, t
   );
 }
 
-function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
+function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -165,7 +165,7 @@ function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   );
 }
 
-function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
+function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
   const [expand, setExpand] = useState<boolean>(false);
 
   const toggleExpand = useCallback(() => setExpand((isExpanded) => !isExpanded), []);
@@ -191,7 +191,7 @@ function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
               totalBalancePrice={tokenDetail.assetsTotalBalancePrice}
             />
           </Grid>
-          <CloseCircle color='#674394' size='32' style={{ marginLeft: '8px', transition: 'all 250ms ease-out', width: expand ? '42px' : 0 }} variant='Bold' />
+          <CloseCircle color='#674394' size='32' style={{ marginLeft: '8px', transition: 'all 250ms ease-out', transitionDelay: expand ? '200ms' : 'unset', width: expand ? '42px' : 0 }} variant='Bold' />
         </Container>
         <Collapse in={expand} sx={{ width: '100%' }}>
           <Grid container item sx={{ background: '#1B133C', borderRadius: '12px', mt: '10px', p: '12px 8px', rowGap: '8px' }}>
@@ -216,7 +216,7 @@ function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
   );
 }
 
-function TokensAssetsBox() {
+function TokensAssetsBox () {
   const account = useSelectedAccount();
   const pricesInCurrency = usePrices();
   const accountAssets = useAccountAssets(account?.address);

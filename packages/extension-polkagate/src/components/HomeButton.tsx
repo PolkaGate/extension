@@ -30,9 +30,9 @@ function HomeButton ({ type = 'default' }: Props) {
       return logoWhiteTransparent as string;
     } else {
       if (hovered) {
-        return logoTransparent as string;
-      } else {
         return logoBlackBirdTransparent as string;
+      } else {
+        return logoTransparent as string;
       }
     }
   }, [hovered, type]);

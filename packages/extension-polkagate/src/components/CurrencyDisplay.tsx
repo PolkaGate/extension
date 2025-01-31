@@ -15,7 +15,7 @@ type DisplayStyle = 'portfolio' | 'asset' | '24h';
 
 interface Props {
   displayStyle?: DisplayStyle;
-  amount?: string | number | BN | null;
+  amount?: string | number | BN | null | undefined;
   decimal?: number;
   decimalPartCount?: number;
   fontStyle?: SxProps<Theme>;
@@ -139,8 +139,8 @@ const RenderSkeleton = memo(function RenderSkeleton ({ displayStyle = 'asset' }:
   return (
     <Skeleton
       animation='wave'
-      height={displayStyle === 'portfolio' ? '40px' : '14px'}
-      sx={{ fontWeight: 'bold', transform: 'none', width: '100%' }}
+      height={displayStyle === 'portfolio' ? '24px' : '12px'}
+      sx={{ fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
       variant='text'
     />
   );
@@ -170,7 +170,7 @@ function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_
   const styles = useStyles(displayStyle);
   const { decimal: decimalPart, integer } = formatValue(amount, decimal, decimalPartCount);
 
-  if (!integer && !decimalPart) {
+  if (integer === undefined && !decimalPart === undefined) {
     return <RenderSkeleton displayStyle={displayStyle} />;
   }
 
@@ -187,17 +187,13 @@ function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_
         ? <Dots />
         : (
           <>
-            {integer &&
-              <RenderAmount
-                displayStyle={displayStyle}
-                value={integer}
-              />
-            }
-            {decimalPart &&
-              <Typography component='span' sx={styles.decimal}>
-                .{decimalPart}
-              </Typography>
-            }
+            <RenderAmount
+              displayStyle={displayStyle}
+              value={integer ?? '0'}
+            />
+            <Typography component='span' sx={styles.decimal}>
+              .{decimalPart ?? '000'}
+            </Typography>
           </>
         )}
     </Stack>

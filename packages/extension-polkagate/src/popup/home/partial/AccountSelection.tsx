@@ -5,11 +5,12 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext } from '../../../components';
+import ScrollingTextBox from './ScrollingTextBox';
 import SelectAccount from './SelectAccount';
 
 function AccountSelection (): React.ReactElement {
@@ -50,20 +51,16 @@ function AccountSelection (): React.ReactElement {
         <Grid container item sx={{ background: '#2D1E4A', borderRadius: '9px', height: '26px', width: '26px' }}>
 
         </Grid>
-        <Typography
-          fontFamily='Inter'
-          fontSize='14px'
-          fontWeight={600}
-          sx={{
-            maxWidth: '65px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            width: 'fit-content'
+        <ScrollingTextBox
+          style={{
+            color: 'text.primary',
+            fontFamily: 'Inter',
+            fontSize: '14px',
+            fontWeight: 600
           }}
-        >
-          {selectedAccount?.name}
-        </Typography>
+          text={selectedAccount?.name ?? ''}
+          width={65}
+        />
         <ArrowDown2 color='#AA83DC' size='18' variant='Bold' />
       </Container>
       <SelectAccount

@@ -3,14 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Grid, type SxProps, type Theme } from '@mui/material';
+import { Container, Grid, styled, type SxProps, type Theme, Typography } from '@mui/material';
+import { Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
 import { CurrencyDisplay } from '../../../components';
-import { useAccountAssets, usePrices, useSelectedAccount } from '../../../hooks';
+import { useAccountAssets, useIsHideNumbers, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { GradientBorder, GradientDivider } from '../../../style';
-import AccountName from './AccountName';
 import AccountVisibilityToggler from './AccountVisibilityToggler';
 import Currency from './Currency';
 import DailyChange from './DailyChange';
@@ -24,7 +24,7 @@ const PortfolioContainerStyle: SxProps<Theme> = {
   width: '359px'
 };
 
-const glowBallStyle: React.CSSProperties = {
+const GlowBall = styled('div')({
   backgroundColor: '#FF59EE',
   borderRadius: '50%',
   filter: 'blur(60px)', // Glow effect
@@ -33,34 +33,36 @@ const glowBallStyle: React.CSSProperties = {
   position: 'absolute',
   top: '-75px',
   width: '100px'
-};
+});
 
-const fadeOutStyle: React.CSSProperties = {
+const FadeOut = styled('div')({
   background: 'linear-gradient(180deg, transparent 13.79%, #05091C 100%)',
   height: '160px',
   inset: 0,
   position: 'absolute',
   width: '375px'
-};
+});
 
-const fadeStyle: React.CSSProperties = {
+const Fade = styled('div')({
   backgroundColor: 'rgba(255, 255, 255, 0.02)',
   height: '220px',
   inset: 0,
   position: 'absolute',
   width: '375px'
-};
+});
 
 function Portfolio (): React.ReactElement {
+  const { t } = useTranslation();
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
   const pricesInCurrency = usePrices();
+  const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const totalWorth = useMemo(() => {
     if (!accountAssets?.length) {
-      return 0;
+      return undefined;
     }
 
     return accountAssets.reduce((total, asset) => {
@@ -77,11 +79,18 @@ function Portfolio (): React.ReactElement {
   return (
     <Container disableGutters sx={PortfolioContainerStyle}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px', position: 'relative', zIndex: 1 }}>
-        <AccountName accountName={account?.name ?? ''} />
+        <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
+          <Typography color='text.secondary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+            {t('Account Portfolio')}
+          </Typography>
+          {isHideNumbers
+            ? <EyeSlash color='#BEAAD8' onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
+            : <Eye color='#BEAAD8' onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />}
+        </Grid>
         <Currency />
         <Grid container item>
           <CurrencyDisplay
-            amount={totalWorth ?? 0}
+            amount={totalWorth}
             decimal={12}
             decimalPartCount={3}
             displayStyle='portfolio'
@@ -94,9 +103,9 @@ function Portfolio (): React.ReactElement {
       <GradientBorder />
       <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', left: 0, m: 'auto', position: 'absolute', top: 0, width: '2px' }} />
       <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', m: 'auto', position: 'absolute', right: 0, top: 0, width: '2px' }} />
-      <div style={glowBallStyle} />
-      <div style={fadeStyle} />
-      <div style={fadeOutStyle} />
+      <GlowBall />
+      <Fade />
+      <FadeOut />
     </Container>
   );
 }

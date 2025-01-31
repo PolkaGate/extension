@@ -3,9 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { CurrencyDisplay } from '../../../components';
 import { PORTFOLIO_CHANGE_DECIMAL } from '../../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
@@ -13,13 +13,24 @@ import { useIsHideNumbers, useYouHave } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
 
+const RenderSkeleton = memo(function RenderSkeleton () {
+  return (
+    <Skeleton
+      animation='wave'
+      height='20px'
+      sx={{ fontWeight: 'bold', transform: 'none', width: '122px' }}
+      variant='text'
+    />
+  );
+});
+
 function DailyChange (): React.ReactElement {
   const youHave = useYouHave();
   const { isHideNumbers } = useIsHideNumbers();
 
   const portfolioChange = useMemo(() => {
-    if (!youHave?.change) {
-      return 0;
+    if (youHave?.change === undefined) {
+      return undefined;
     }
 
     const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
@@ -29,9 +40,9 @@ function DailyChange (): React.ReactElement {
 
   const containerStyle: SxProps<Theme> = {
     alignItems: 'center',
-    bgcolor: youHave?.change && youHave.change > 0
+    bgcolor: portfolioChange && portfolioChange > 0
       ? '#FF165C26'
-      : portfolioChange < 0
+      : portfolioChange && portfolioChange < 0
         ? '#82FFA526'
         : '#AA83DC26',
     borderRadius: '9px',
@@ -50,6 +61,10 @@ function DailyChange (): React.ReactElement {
         : '#FF165C';
   }, []);
 
+  if (portfolioChange === undefined) {
+    return <RenderSkeleton />;
+  }
+
   return (
     <Container disableGutters sx={containerStyle}>
       {youHave?.change && youHave.change > 0
@@ -60,7 +75,7 @@ function DailyChange (): React.ReactElement {
       }
       <CurrencyDisplay
         amount={portfolioChange}
-        decimalPartCount={countDecimalPlaces(portfolioChange) || PORTFOLIO_CHANGE_DECIMAL}
+        decimalPartCount={countDecimalPlaces(portfolioChange ?? 0) || PORTFOLIO_CHANGE_DECIMAL}
         displayStyle='24h'
         fontStyle={{
           color: color(youHave?.change),

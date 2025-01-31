@@ -27,7 +27,7 @@ interface Props {
   manageConnectedAccounts?: boolean;
 }
 
-const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
+export const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
   const isASelected = selectedList.includes(accountA.address);
   const isBSelected = selectedList.includes(accountB.address);
 

@@ -10,9 +10,10 @@ import React, { useEffect, useRef, useState } from 'react';
 interface ScrollingTextBoxProps {
   text: string;
   width: number;
+  style?: SxProps<Theme>;
 }
 
-function ScrollingTextBox ({ text, width }: ScrollingTextBoxProps): React.ReactElement {
+function ScrollingTextBox ({ style, text, width }: ScrollingTextBoxProps): React.ReactElement {
   const textRef = useRef<HTMLDivElement>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
   const [textWidth, setTextWidth] = useState(0);
@@ -71,7 +72,7 @@ function ScrollingTextBox ({ text, width }: ScrollingTextBoxProps): React.ReactE
 
   return (
     <Box sx={containerStyle}>
-      <Typography ref={textRef} sx={textboxStyle}>
+      <Typography ref={textRef} sx={{ ...textboxStyle, ...style }}>
         {text}
       </Typography>
     </Box>
