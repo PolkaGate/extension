@@ -48,6 +48,7 @@ export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as GlowCheckbox } from './GlowCheckbox';
 export { default as GradientBox } from './GradientBox';
 export { default as GradientButton } from './GradientButton';
+export { default as GradientSwitch } from './GradientSwitch';
 export { default as Header } from './Header';
 export { default as HomeButton } from './HomeButton';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';
