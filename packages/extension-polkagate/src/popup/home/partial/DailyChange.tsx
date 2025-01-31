@@ -13,12 +13,12 @@ import { useIsHideNumbers, useYouHave } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
-const RenderSkeleton = memo(function RenderSkeleton() {
+const RenderSkeleton = memo(function RenderSkeleton () {
   return (
     <Skeleton
       animation='wave'
       height='20px'
-      sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '122px' }}
+      sx={{ fontWeight: 'bold', transform: 'none', width: '122px' }}
       variant='text'
     />
   );
