@@ -228,7 +228,7 @@ export default function ConnectedDapp (): React.ReactElement {
 
   return (
     <>
-      <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex' }}>
+      <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
         <ArrowSwapHorizontal color='#82FFA5' size='15' style={{ background: '#BFA1FF26' }} />
         <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: '#82FFA533', border: '2px solid', borderColor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
           <MonitorMobbile color='#82FFA5' size='22' variant='Bulk' />

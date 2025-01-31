@@ -3,18 +3,26 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container } from '@mui/material';
-import React from 'react';
+import { Container, Grid } from '@mui/material';
+import React, { useMemo } from 'react';
 
 import { HomeButton } from '../components';
 import AccountSelection from '../popup/home/partial/AccountSelection';
 import FullscreenModeButton from './FullscreenModeButton';
+import { ConnectedDapp } from '.';
 
 function UserDashboardHeader () {
+  const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
+
   return (
     <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between', p: '10px 15px' }}>
-      <HomeButton type='active' />
-      <AccountSelection />
+      <Grid columnGap='6px' container item width='fit-content'>
+        <Grid container item width='fit-content'>
+          <HomeButton type={isConnectedDapp.length ? 'default' : 'active'} />
+          <ConnectedDapp />
+        </Grid>
+        <AccountSelection />
+      </Grid>
       <FullscreenModeButton />
     </Container>
   );

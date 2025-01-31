@@ -71,7 +71,7 @@ function Loading (): React.ReactElement {
 function AssetLoading () {
   return (
     <div style={{ display: 'grid', position: 'relative', rowGap: '10px', zIndex: 1 }}>
-      {Array.from({ length: 3 }).map((_, index) => (
+      {Array.from({ length: 4 }).map((_, index) => (
         <Loading key={index} />
       ))}
     </div>

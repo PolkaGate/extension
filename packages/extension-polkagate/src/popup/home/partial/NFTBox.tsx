@@ -7,10 +7,11 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
 
-import { Avatar, Container, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Container, Grid, Typography } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { logoBlackBirdTransparent } from '../../../assets/logos';
 import NftManager from '../../../class/nftManager';
 import { ShowBalance } from '../../../components';
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
@@ -22,6 +23,23 @@ import { amountToMachine } from '../../../util/utils';
 
 const MAX_NFT_TO_SHOW = 2; // we're gonna display up to 2 nfts if they were available!
 const nftManager = new NftManager();
+
+const NftNull = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', display: 'grid', justifyItems: 'center', py: '33px', width: '100%' }}>
+      <Box
+        component='img'
+        src={logoBlackBirdTransparent as string}
+        sx={{ opacity: 0.4, width: '129px' }}
+      />
+      <Typography fontFamily='Inter' fontSize='14px' fontWeight={600} pt='10px'>
+        {t("You don't have any NFTs yet")}
+      </Typography>
+    </Container>
+  );
+};
 
 function ItemPrice ({ api, price }: { api: ApiPromise | undefined, price: number | null | undefined }) {
   const { t } = useTranslation();
@@ -143,22 +161,10 @@ function NFTBox () {
       return;
     }
 
-    // const noNeedToFetchMetadata = !itemsToShow.some((nft) => nft.data && (nft.image === undefined && nft.animation_url === undefined));
-
-    // if (noNeedToFetchMetadata) {
-    //   setIsLoading(false);
-
-    //   return;
-    // }
-
-    // setIsLoading(true);
-
     try {
       await Promise.all(itemsToShow.map((item) => fetchItemMetadata(account.address, item)));
     } catch (error) {
       console.error('Error fetching NFT metadata:', error);
-      // } finally {
-      //   setIsLoading(false);
     }
   }, [account, itemsToShow]);
 
@@ -176,21 +182,26 @@ function NFTBox () {
 
   return (
     <>
-      <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', justifyContent: 'space-evenly', py: '10px', width: '100%' }}>
-        {itemsToShow?.map((item, index) => (
-          <NFTItem
-            apis={apis}
-            item={item}
-            key={index}
-          />
-        ))}
-      </Container>
-      <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
-        <Typography color='#BEAAD8' fontFamily='Inter' fontSize='16px' fontWeight={600}>
-          {t('See all')}
-        </Typography>
-        <ArrowRight2 color='#BEAAD880' size='14' />
-      </Grid>
+      {nfts
+        ? <>
+          <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', justifyContent: 'space-evenly', py: '10px', width: '100%' }}>
+            {itemsToShow?.map((item, index) => (
+              <NFTItem
+                apis={apis}
+                item={item}
+                key={index}
+              />
+            ))}
+          </Container>
+          <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
+            <Typography color='#BEAAD8' fontFamily='Inter' fontSize='16px' fontWeight={600}>
+              {t('See all')}
+            </Typography>
+            <ArrowRight2 color='#BEAAD880' size='14' />
+          </Grid>
+        </>
+        : <NftNull />
+      }
     </>
   );
 }
