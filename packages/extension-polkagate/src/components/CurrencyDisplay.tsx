@@ -28,20 +28,30 @@ interface FormattedValue {
 
 const DEFAULT_DECIMAL_PLACES = 2;
 
-const Dots = () => {
+const Dots = ({ displayStyle }: { displayStyle: DisplayStyle }) => {
   const theme = useTheme();
+
+  const [height1, size1, weight1] = displayStyle === 'asset' ? [12, 14, 600] : [35, 40, 900];
+  const [height2, size2, weight2] = displayStyle === 'asset' ? [12, 20, 400] : [30, 25, 400];
+
+  const BigPart = ({ side }: { side: 'left' | 'right' }) => (
+    <Typography sx={{ fontFamily: 'Inter', fontSize: `${size1}px`, fontWeight: weight1, lineHeight: `${height1}px`, paddingLeft: displayStyle === 'portfolio' ? '5px' : 0 }}>
+      {displayStyle === 'portfolio'
+        ? '• •'
+        : side === 'left'
+          ? '•,•••'
+          : '••'
+      }
+    </Typography>
+  );
 
   return (
     <>
-      <Typography sx={{ fontFamily: 'Inter', fontSize: '40px', fontWeight: 900, lineHeight: '35px', paddingLeft: '5px' }}>
-        • •
-      </Typography>
-      <Typography px='3px' sx={{ color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: '25px', fontWeight: 400, lineHeight: '30px', px: '5px' }}>
+      <BigPart side='left' />
+      <Typography px='3px' sx={{ color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: `${size2}px`, fontWeight: weight2, lineHeight: `${height2}px`, px: displayStyle === 'portfolio' ? '5px' : 0 }}>
         .
       </Typography>
-      <Typography sx={{ fontFamily: 'Inter', fontSize: '40px', fontWeight: 900, lineHeight: '35px' }}>
-        • •
-      </Typography>
+      <BigPart side='right' />
     </>
   );
 };
@@ -184,7 +194,9 @@ function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_
         </Typography>
       )}
       {isHideNumbers
-        ? <Dots />
+        ? <Dots
+          displayStyle={displayStyle}
+        />
         : (
           <>
             <RenderAmount
