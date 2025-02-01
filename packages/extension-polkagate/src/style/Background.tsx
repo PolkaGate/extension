@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Container, type SxProps, type Theme } from '@mui/material';
+import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import { BackgroundLogo } from '../assets/logos';
@@ -16,21 +16,21 @@ const BallStyle: React.CSSProperties = {
   width: '128px'
 };
 
-const redBallStyle: React.CSSProperties = {
+const RedBall = styled('div')(() => ({
   ...BallStyle,
   backgroundColor: '#b30a0a',
   filter: 'blur(90px)', // Glow effect
   left: '35%',
   top: '-60px'
-};
+}));
 
-const blueBallStyle: React.CSSProperties = {
+const BlueBall = styled('div')(() => ({
   ...BallStyle,
   backgroundColor: '#5B00B6',
   filter: 'blur(100px)', // Glow effect
   left: '-35px',
   top: '-45px'
-};
+}));
 
 const backgroundImageStyle: SxProps<Theme> = {
   filter: 'blur(8px)',
@@ -43,13 +43,13 @@ const backgroundImageStyle: SxProps<Theme> = {
   width: '375px'
 };
 
-const fadeOutStyle = {
+const FadeOut = styled('div')(() => ({
   background: 'linear-gradient(180deg, transparent 13.79%, #05091C 100%)',
   height: '220px',
   inset: 0,
   position: 'absolute',
   width: '375px'
-} as React.CSSProperties;
+}));
 
 // const SmootherStyle = {
 //   background: 'linear-gradient(0deg, #7671A3 0%, #080610 100%)',
@@ -70,8 +70,8 @@ function Background ({ id, style }: Props): React.ReactNode {
   return (
     <Box id={id} sx={{ height: '220px', inset: 0, position: 'absolute', ...style }}>
       <Container disableGutters sx={{ height: '220px', overflow: 'hidden', position: 'relative', width: '100%' }}>
-        <div style={redBallStyle} />
-        <div style={blueBallStyle} />
+        <RedBall />
+        <BlueBall />
         {/* <div style={SmootherStyle} /> */}
         <Box
           component='img'
@@ -79,7 +79,7 @@ function Background ({ id, style }: Props): React.ReactNode {
           sx={backgroundImageStyle}
         />
       </Container>
-      <div style={fadeOutStyle} />
+      <FadeOut />
     </Box>
   );
 }

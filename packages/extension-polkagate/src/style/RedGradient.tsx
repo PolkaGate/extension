@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import { styled } from '@mui/material';
 import React from 'react';
 
 const containerStyle: React.CSSProperties = {
@@ -23,29 +24,29 @@ const ballStyle: React.CSSProperties = {
   width: '150px'
 };
 
-const leftBallStyle: React.CSSProperties = {
+const LeftBall = styled('div')(() => ({
   ...ballStyle,
   backgroundColor: '#5B00B6',
   left: '10%',
   top: '50%',
   transform: 'translate(-50%, -50%)'
-};
+}));
 
-const middleBallStyle: React.CSSProperties = {
+const MiddleBall = styled('div')(() => ({
   ...ballStyle,
   backgroundColor: '#FF1AB1',
   left: '50%',
   top: '35%',
   transform: 'translate(-50%, -50%)'
-};
+}));
 
-const rightBallStyle: React.CSSProperties = {
+const RightBall = styled('div')(() => ({
   ...ballStyle,
   backgroundColor: '#5B00B6',
   right: '10%',
   top: '50%',
   transform: 'translate(50%, -50%)'
-};
+}));
 
 interface Props {
   style?: React.CSSProperties;
@@ -55,9 +56,9 @@ interface Props {
 const RedGradient = ({ id, style }: Props) => {
   return (
     <div id={id} style={{ ...containerStyle, ...style }}>
-      <div style={leftBallStyle}></div>
-      <div style={middleBallStyle}></div>
-      <div style={rightBallStyle}></div>
+      <LeftBall />
+      <MiddleBall />
+      <RightBall />
     </div>
   );
 };
