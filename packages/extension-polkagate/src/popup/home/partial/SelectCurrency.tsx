@@ -210,8 +210,11 @@ function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
     <ExtensionPopup
       TitleIcon={Hashtag}
       handleClose={handleClose}
+      iconVariant='Linear'
       openMenu={openMenu}
+      pt={60}
       title={t('Currency for your balance')}
+      titleAlignment='flex-start'
       withoutBackground
       withoutTopBorder
     >

@@ -183,8 +183,11 @@ function SelectAccount ({ openMenu, setOpenMenu }: Props): React.ReactElement {
     <ExtensionPopup
       TitleIcon={Hashtag}
       handleClose={handleClose}
+      iconVariant='Linear'
       openMenu={openMenu}
+      pt={60}
       title={t('Select address')}
+      titleAlignment='flex-start'
       withoutBackground
       withoutTopBorder
     >
