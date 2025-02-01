@@ -237,9 +237,12 @@ function TokensAssetsBox () {
       }
 
       // filter non selected chains
-      const filtered = accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
+      const filteredUnselected = accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
 
-      return filtered.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
+      // filter non zero chains
+      const filteredNonZero = filteredUnselected.filter(({ totalBalance }) => !totalBalance.isZero());
+
+      return filteredNonZero.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
         const { token } = balance;
 
         // Initialize the array for the token if it doesn't exist
