@@ -85,12 +85,12 @@ function ActionCard ({ Icon, description, iconWithBackground, logoIcon, onClick,
       }
       <Grid container item>
         <Grid alignItems='center' container item>
-          <Typography color={hovered ? '#AA83DC' : theme.palette.text.primary} fontFamily='Inter' fontSize='14px' fontWeight={600} sx={{ transition: 'all 250ms ease-out' }}>
+          <Typography color={hovered ? '#AA83DC' : theme.palette.text.primary} sx={{ transition: 'all 250ms ease-out' }} variant='B-2'>
             {title}
           </Typography>
           <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />
         </Grid>
-        <Typography color={theme.palette.text.secondary} fontFamily='Inter' fontSize='12px' fontWeight={500}>
+        <Typography color={theme.palette.text.secondary} variant='B-4'>
           {description}
         </Typography>
       </Grid>

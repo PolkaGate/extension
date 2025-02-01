@@ -60,7 +60,7 @@ function ChainTokensTab ({ isActive = false, setTab }: TabProps) {
           transition: 'all 250ms ease-out'
         }}
       />
-      <Typography color={showChains ? '#EAEBF1' : '#AA83DC'} fontFamily='Inter' fontSize='14px' fontWeight={600} sx={{ color: showChains ? '#EAEBF1' : '#AA83DC', opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }}>
+      <Typography color={showChains ? '#EAEBF1' : '#AA83DC'} sx={{ color: showChains ? '#EAEBF1' : '#AA83DC', opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
         {displayedText}
       </Typography>
       <UnfoldMoreIcon sx={{ color: showChains ? '#AA83DC' : '#EAEBF1', fontSize: '15px' }} />
@@ -74,7 +74,7 @@ function NFTTab ({ isActive = false }: TabProps) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', width: 'fit-content' }}>
       <Triangle color='#AA83DC' size='16' variant='Bulk' />
-      <Typography color={isActive ? '#EAEBF1' : '#AA83DC'} fontFamily='Inter' fontSize='14px' fontWeight={600} textTransform='capitalize'>
+      <Typography color={isActive ? '#EAEBF1' : '#AA83DC'} textTransform='capitalize' variant='B-2'>
         {t('NFTs')}
       </Typography>
     </Container>

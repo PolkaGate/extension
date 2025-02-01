@@ -5,7 +5,7 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -14,6 +14,7 @@ import ScrollingTextBox from './ScrollingTextBox';
 import SelectAccount from './SelectAccount';
 
 function AccountSelection (): React.ReactElement {
+  const theme = useTheme();
   const { accounts } = useContext(AccountContext);
 
   const [selectedAccount, setSelectedAccount] = useState<AccountJson | undefined>();
@@ -54,9 +55,7 @@ function AccountSelection (): React.ReactElement {
         <ScrollingTextBox
           style={{
             color: 'text.primary',
-            fontFamily: 'Inter',
-            fontSize: '14px',
-            fontWeight: 600
+            ...theme.typography['B-2']
           }}
           text={selectedAccount?.name ?? ''}
           width={65}

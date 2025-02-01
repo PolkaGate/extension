@@ -5,7 +5,7 @@
 
 import type { RefObject } from 'react';
 
-import { Tooltip } from '@mui/material';
+import { Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface CustomTooltipProps {
@@ -37,6 +37,7 @@ interface Position {
 }
 
 const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targetRef }: CustomTooltipProps) => {
+  const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
 
@@ -99,9 +100,7 @@ const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targ
               backgroundColor: '#674394',
               borderRadius: '8px',
               color: '#fff',
-              fontFamily: 'Inter',
-              fontSize: '12px',
-              fontWeight: 400,
+              ...theme.typography['B-4'],
               p: '8px'
             }
           }

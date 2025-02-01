@@ -74,9 +74,7 @@ function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {},
 
   const LabelFontStyle = {
     color: theme.palette.text.primary,
-    fontFamily: 'Inter',
-    fontSize: '12px',
-    fontWeight: 500
+    ...theme.typography['B-4']
   } as React.CSSProperties;
 
   return (

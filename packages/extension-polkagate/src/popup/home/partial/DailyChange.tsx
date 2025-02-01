@@ -86,7 +86,7 @@ function DailyChange (): React.ReactElement {
       <Typography style={{ color: color(youHave?.change), fontFamily: 'Inter', fontSize: '14px', fontWeight: 900, lineHeight: '15px' }}>
         •
       </Typography>
-      <Typography style={{ color: color(youHave?.change), fontFamily: 'Inter', fontSize: '13px', fontWeight: 500, lineHeight: '15px' }}>
+      <Typography style={{ color: color(youHave?.change), lineHeight: '15px' }} variant='B-1'>
         {`${COIN_GECKO_PRICE_CHANGE_DURATION}h`}
       </Typography>
     </Container>

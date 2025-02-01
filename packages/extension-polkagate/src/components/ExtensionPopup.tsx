@@ -59,7 +59,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title, wi
               ? <TitleIcon color='#AA83DC' size={28} variant='Bold' />
               : undefined
             }
-            <Typography color='text.primary' fontFamily='OdibeeSans' fontSize='24px' fontWeight={400} textTransform='uppercase'>
+            <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
               {title}
             </Typography>
           </Grid>

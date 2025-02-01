@@ -49,7 +49,7 @@ function Reset (): React.ReactElement {
         <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '10px', mt: '10px', width: '100%' }} textAlign='center' textTransform='uppercase'>
           {t('Reset Wallet')}
         </Typography>
-        <Typography fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ color: 'text.secondary', px: '15px', width: '100%' }} textAlign='center'>
+        <Typography sx={{ color: 'text.secondary', px: '15px', width: '100%' }} textAlign='center' variant='B-4'>
           {t('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
         </Typography>
         <ActionCard

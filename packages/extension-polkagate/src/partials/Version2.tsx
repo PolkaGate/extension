@@ -20,15 +20,15 @@ export default function Version (): React.ReactElement {
 
   return (
     <Grid alignItems='center' container item justifyContent='center' sx={{ columnGap: '5px', py: '24px' }}>
-      <Typography color='#BEAAD880' fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px'>
+      <Typography color='#BEAAD880' variant='B-1'>
         {t('Version')}
       </Typography>
-      <Typography color='#BEAAD880' fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px'>
+      <Typography color='#BEAAD880' variant='B-1'>
         {version}
       </Typography>
       <GradientDivider orientation='vertical' />
       <Sparkles color={hovered ? '#AA83DC' : '#FF4FB9'} height={12} width={12} />
-      <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px' onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }}>
+      <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
         {t('What’s new page')}
       </Typography>
     </Grid>

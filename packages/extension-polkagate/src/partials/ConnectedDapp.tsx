@@ -34,7 +34,7 @@ const DappInfo = ({ dappName, favicon }: { favicon?: string, dappName: string })
         variant='square'
       />
       <Grid alignItems='center' container item justifyContent='center' xs>
-        <Typography color='text.secondary' fontFamily='Inter' fontSize='14px' fontWeight={600} sx={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Typography color='text.secondary' sx={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
           {dappName}
         </Typography>
       </Grid>
@@ -117,12 +117,12 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
           <Grid alignItems='center' container item justifyContent='space-between' p='10px 15px'>
             <Grid container item sx={{ columnGap: '8px', width: 'fit-content' }}>
               <User color='#AA83DC' size='18' variant='Bulk' />
-              <Typography color='#AA83DC' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+              <Typography color='#AA83DC' variant='B-2'>
                 {t('Accounts')}
               </Typography>
             </Grid>
             <Grid container item onClick={selectAllAccounts} sx={{ columnGap: '8px', cursor: 'pointer', width: 'fit-content' }}>
-              <Typography color='#AA83DC' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+              <Typography color='#AA83DC' variant='B-4'>
                 {isAllSelected ? t('Disconnect all') : t('Connect all')}
               </Typography>
               <GradientSwitch
@@ -143,7 +143,7 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
                         address={address}
                         size={24}
                       />
-                      <Typography color='text.primary' fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography color='text.primary' sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-4'>
                         {name}
                       </Typography>
                     </Grid>
@@ -250,7 +250,7 @@ export default function ConnectedDapp (): React.ReactElement {
         withoutTopBorder
       >
         <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
-          <Typography color='text.secondary' fontFamily='Inter' fontSize='12px' fontWeight={500}>
+          <Typography color='text.secondary' variant='B-4'>
             {t('Here you can manage the current connections to your accounts')}
           </Typography>
           <DappInfo

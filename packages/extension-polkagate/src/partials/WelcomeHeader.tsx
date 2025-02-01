@@ -90,7 +90,7 @@ function WelcomeHeader (): React.ReactElement {
           onMouseLeave={onHoveredPopup()}
           sx={{ alignItems: 'center', bgcolor: hovered === WelcomeHeaderPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
         >
-          <Typography color={hovered === WelcomeHeaderPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} fontFamily='Inter' fontSize='13px' fontWeight={500} sx={{ transition: 'all 250ms ease-out' }}>
+          <Typography color={hovered === WelcomeHeaderPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ transition: 'all 250ms ease-out' }} variant='B-1'>
             {'EN'}
           </Typography>
           <ArrowDown2

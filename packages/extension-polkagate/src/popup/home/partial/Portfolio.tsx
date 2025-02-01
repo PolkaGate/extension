@@ -80,7 +80,7 @@ function Portfolio (): React.ReactElement {
     <Container disableGutters sx={PortfolioContainerStyle}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px', position: 'relative', zIndex: 1 }}>
         <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
-          <Typography color='text.secondary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+          <Typography color='text.secondary' variant='B-2'>
             {t('Account Portfolio')}
           </Typography>
           {isHideNumbers

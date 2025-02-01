@@ -7,7 +7,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
 
-import { Avatar, Box, Container, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -34,7 +34,7 @@ const NftNull = () => {
         src={logoBlackBirdTransparent as string}
         sx={{ opacity: 0.4, width: '129px' }}
       />
-      <Typography fontFamily='Inter' fontSize='14px' fontWeight={600} pt='10px'>
+      <Typography pt='10px' variant='B-2'>
         {t("You don't have any NFTs yet")}
       </Typography>
     </Container>
@@ -77,6 +77,7 @@ interface NftItemProps {
 }
 
 function NFTItem ({ apis, item }: NftItemProps) {
+  const theme = useTheme();
   const api = apis[item.chainName];
 
   return (
@@ -99,10 +100,10 @@ function NFTItem ({ apis, item }: NftItemProps) {
         />
         <Grid container direction='column' item sx={{ p: '6px 12px' }}>
           <Grid container item width='fit-content'>
-            <span style={{ color: '#BEAAD880', fontFamily: 'Inter', fontSize: '14px', fontWeight: 600 }}>#</span>
-            <span style={{ color: '#EAEBF1', fontFamily: 'Inter', fontSize: '14px', fontWeight: 600 }}>{item.itemId}</span>
+            <span style={{ color: '#BEAAD880', ...theme.typography['B-2'] }}>#</span>
+            <span style={{ color: '#EAEBF1', ...theme.typography['B-2'] }}>{item.itemId}</span>
           </Grid>
-          <Typography color='#BEAAD8' fontFamily='Inter' fontSize='14px' fontWeight={600} sx={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography color='#BEAAD8' sx={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
             {item.name}
           </Typography>
         </Grid>
@@ -194,7 +195,7 @@ function NFTBox () {
             ))}
           </Container>
           <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
-            <Typography color='#BEAAD8' fontFamily='Inter' fontSize='16px' fontWeight={600}>
+            <Typography color='#BEAAD8' variant='B-2'>
               {t('See all')}
             </Typography>
             <ArrowRight2 color='#BEAAD880' size='14' />

@@ -60,13 +60,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
         ? <BuyCrypto color='#AA83DC' size={22} variant='Bulk' />
         : <Coin1 color='#AA83DC' size={22} variant='Bulk' />
       }
-      <Typography
-        fontFamily='Inter'
-        fontSize='11px'
-        fontWeight={600}
-        letterSpacing='1px'
-        textTransform='uppercase'
-      >
+      <Typography textTransform='uppercase' variant='S-1'>
         {type === 'crypto' ? t('Crypto') : t('Fiat')}
       </Typography>
     </Grid>
@@ -114,7 +108,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, selectedCurrency, ty
                 src={flagSVG(currency)}
                 sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
               />
-              <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+              <Typography color='text.primary' variant='B-2'>
                 {currency.country} - {currency.sign}
               </Typography>
             </Grid>
@@ -181,7 +175,7 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
           type='fiat'
         />
         {[...cryptos, ...fiats].length === 0 &&
-        <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600} mt='15px'>
+        <Typography color='text.primary' mt='15px' variant='B-2'>
           {t('Nothing found')}!
         </Typography>}
       </Grid>

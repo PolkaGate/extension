@@ -35,10 +35,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
   '& input::placeholder': {
     color: theme.palette.text.secondary,
-    fontFamily: 'Inter',
-    fontSize: '13px',
-    fontWeight: 500,
-    textAlign: 'center'
+    ...theme.typography['B-4']
   },
   transition: 'all 150ms ease-out'
 }));

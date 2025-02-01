@@ -109,7 +109,7 @@ function AccountItem ({ address, index, name, selected, setOpenMenu }: AccountIt
         address={address}
       />
       <Grid container item justifyContent='flex-start' sx={{ maxWidth: '150px', overflowX: 'hidden', width: '100%' }}>
-        <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600} textAlign='left' width='100%'>
+        <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
           {name}
         </Typography>
         <AssetsGroup address={address} />

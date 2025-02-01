@@ -35,7 +35,7 @@ function Currency () {
     <>
       <Grid alignItems='center' container item justifyContent='center' onClick={toggleMenu} sx={containerStyle}>
         <Share color='#BEAAD8' size='18' variant='Bold' />
-        <Typography color='text.secondary' fontFamily='Inter' fontSize='14px' fontWeight={600} textTransform='uppercase'>
+        <Typography color='text.secondary' textTransform='uppercase' variant='B-2'>
           {currency?.code}
         </Typography>
       </Grid>

@@ -6,7 +6,7 @@
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
-import { Badge, type BadgeProps, Collapse, Container, Divider, Grid, styled, Typography } from '@mui/material';
+import { Badge, type BadgeProps, Collapse, Container, Divider, Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ArrowUp2, CloseCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
@@ -71,7 +71,7 @@ export function DailyChangeInPercent ({ change }: { change: number }) {
           ? <ArrowDown2 color={color} size='12' variant='Bold' />
           : null
       }
-      <Typography color={color} fontFamily='Inter' fontSize='12px' fontWeight={500}>
+      <Typography color={color} variant='B-4'>
         {Math.abs(change).toFixed(2)}%
       </Typography>
     </Grid>
@@ -83,7 +83,7 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
 
   return (
     <Grid container direction='column' item sx={{ width: 'fit-content' }}>
-      <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+      <Typography color='text.primary' textAlign='left' variant='B-2'>
         {token}
       </Typography>
       <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
@@ -108,8 +108,10 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
 }
 
 export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
+  const theme = useTheme();
+
   return (
-    <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: '#BEAAD8', fontFamily: 'Inter', fontSize: '11px', fontWeight: 500 }, rowGap: '6px', width: 'fit-content' }}>
+    <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: '#BEAAD8', ...theme.typography['S-2'] }, rowGap: '6px', width: 'fit-content' }}>
       <CurrencyDisplay
         amount={totalBalancePrice}
         decimal={decimal}
@@ -147,10 +149,10 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
           <AssetLogo assetSize='26px' baseTokenSize='18px' genesisHash={tokenDetail.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-3px -8px auto auto' />
         </Grid>
         <Grid container direction='column' item sx={{ width: 'fit-content' }}>
-          <Typography color='text.secondary' fontFamily='Inter' fontSize='13px' fontWeight={500} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', px: '3px', width: 'fit-content' }}>
+          <Typography color='text.secondary' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
             {tokenDetail.token}
           </Typography>
-          <Typography color='text.secondary' fontFamily='Inter' fontSize='11px' fontWeight={500}>
+          <Typography color='text.secondary' variant='S-2'>
             {formatCamelCaseText(tokenDetail.chainName)}
           </Typography>
         </Grid>

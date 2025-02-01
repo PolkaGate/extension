@@ -43,7 +43,7 @@ const AssetNull = () => {
         src={SafeBox as string}
         sx={{ width: '135px' }}
       />
-      <Typography fontFamily='Inter' fontSize='14px' fontWeight={600} pt='10px'>
+      <Typography pt='10px' variant='B-2'>
         {t("You don't have any tokens yet")}
       </Typography>
     </Container>
