@@ -56,7 +56,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   const { t } = useTranslation();
 
   return (
-    <Grid alignItems='center' columnGap='4px' container item p='15px 10px 5px'>
+    <Grid alignItems='center' columnGap='4px' container item p='5px 10px 5px'>
       {type === 'crypto'
         ? <BuyCrypto color='#AA83DC' size={22} variant='Bulk' />
         : <Coin1 color='#AA83DC' size={22} variant='Bulk' />
@@ -162,7 +162,7 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
           placeholder='🔍 Search currency'
         />
       </Grid>
-      <Grid container item justifyContent='center' sx={{ display: 'block', height: '320px', maxHeight: '320px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ display: 'block', height: '290px', maxHeight: '290px', overflow: 'scroll', pt: '5px' }}>
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
@@ -215,7 +215,7 @@ function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
       withoutBackground
       withoutTopBorder
     >
-      <Grid container item justifyContent='center' sx={{ position: 'relative', py: '5px', zIndex: 1 }}>
+      <Grid container item justifyContent='center' sx={{ position: 'relative', py: '1px', zIndex: 1 }}>
         <CurrencyOptions
           handleCurrencySelect={handleCurrencySelect}
           selectedCurrency={selectedCurrency}

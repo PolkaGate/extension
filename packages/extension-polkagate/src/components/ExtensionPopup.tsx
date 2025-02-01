@@ -50,13 +50,13 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title, wi
       open={openMenu}
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '60px' }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
-          <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
+          <Grid alignItems='center' columnGap='10px' container item justifyContent='flex-start' p='10px'>
             {TitleIcon
-              ? <TitleIcon color='#AA83DC' size={28} variant='Bold' />
+              ? <TitleIcon color='#AA83DC' size={18} variant='Linear' />
               : undefined
             }
             <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
