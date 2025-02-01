@@ -53,14 +53,14 @@ function ChainTokensTab ({ isActive = false, setTab }: TabProps) {
   return (
     <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '82px' }}>
       <CustomCommand
-        color={showChains ? '#67439480' : '#FF4FB9'}
-        secondaryColor={showChains ? '#FF4FB9' : '#67439480'}
+        color={showChains ? '#AA83DC' : '#67439480'}
+        secondaryColor={showChains ? '#67439480' : '#FF4FB9'}
         size='12'
         style={{
           transition: 'all 250ms ease-out'
         }}
       />
-      <Typography color={showChains ? '#EAEBF1' : '#AA83DC'} sx={{ color: showChains ? '#EAEBF1' : '#AA83DC', opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
+      <Typography color='#EAEBF1' sx={{ opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
         {displayedText}
       </Typography>
       <UnfoldMoreIcon sx={{ color: showChains ? '#AA83DC' : '#EAEBF1', fontSize: '15px' }} />
