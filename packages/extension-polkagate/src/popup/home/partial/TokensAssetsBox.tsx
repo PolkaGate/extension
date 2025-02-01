@@ -226,7 +226,7 @@ function TokensAssetsBox () {
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
-  const assets: Assets = useMemo(() => {
+  const tokens: Assets = useMemo(() => {
     if (!selectedChains) {
       return undefined;
     }
@@ -258,11 +258,11 @@ function TokensAssetsBox () {
   }, [accountAssets, selectedChains]);
 
   const summary: Summary = useMemo(() => {
-    if (!assets) {
-      return assets;
+    if (!tokens) {
+      return tokens;
     }
 
-    return Object.entries(assets).map(([token, assets]) => {
+    return Object.entries(tokens).map(([token, assets]) => {
       const assetsTotalBalance = assets.reduce((sum, asset) => ({
         totalBalanceBN: sum.totalBalanceBN.add(asset.totalBalance),
         totalBalancePrice: sum.totalBalancePrice + calcPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal)
@@ -271,6 +271,12 @@ function TokensAssetsBox () {
       const network = selectableNetworks.find(({ symbols }) => symbols[0]?.toLowerCase() === token.toLowerCase());
       const priceId = assets[0].priceId;
 
+      const sortedAssets = assets.sort((a, b) => {
+        const totalPriceA = calcPrice(priceOf(a.priceId), a.totalBalance, a.decimal);
+        const totalPriceB = calcPrice(priceOf(b.priceId), b.totalBalance, b.decimal);
+
+        return totalPriceB - totalPriceA;
+      });
       let genesisHash: string | undefined;
       let logoInfo: LogoInfo | undefined;
       let decimal: number | undefined;
@@ -288,7 +294,7 @@ function TokensAssetsBox () {
       }
 
       return {
-        assets,
+        assets: sortedAssets,
         assetsTotalBalanceBN: assetsTotalBalance.totalBalanceBN,
         assetsTotalBalancePrice: assetsTotalBalance.totalBalancePrice,
         decimal,
@@ -297,8 +303,9 @@ function TokensAssetsBox () {
         priceId,
         token
       };
-    });
-  }, [assets, priceOf]);
+    })
+      .sort((a, b) => b.assetsTotalBalancePrice - a.assetsTotalBalancePrice);
+  }, [tokens, priceOf]);
 
   return (
     <>

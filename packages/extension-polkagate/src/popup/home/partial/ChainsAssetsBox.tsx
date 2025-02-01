@@ -98,9 +98,12 @@ function ChainsAssetsBox () {
       }
 
       // filter non selected chains
-      const filtered = accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
+      const filteredUnselected = accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
 
-      return filtered.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
+      // filter non zero chains
+      const filteredNonZero = filteredUnselected.filter(({ totalBalance }) => !totalBalance.isZero());
+
+      return filteredNonZero.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
         const { genesisHash } = balance;
 
         // Initialize the array for the genesisHash if it doesn't exist
@@ -130,20 +133,27 @@ function ChainsAssetsBox () {
         return sum + totalPrice;
       }, 0);
 
+      const sortedAssets = balances.sort((a, b) => {
+        const totalPriceA = calcPrice(priceOf(a.priceId), a.totalBalance, a.decimal);
+        const totalPriceB = calcPrice(priceOf(b.priceId), b.totalBalance, b.decimal);
+
+        return totalPriceB - totalPriceA;
+      });
       const network = selectableNetworks.find(({ genesisHash: networkGenesisHash, symbols }) => genesisHash === networkGenesisHash[0] && symbols.length);
       const token = network?.symbols[0];
       const logoInfo = getLogo2(genesisHash, token);
       const chainName = network?.displayName;
 
       return {
-        assets: balances,
+        assets: sortedAssets,
         chainName,
         chainTotalBalance,
         genesisHash,
         logoInfo,
         token
       };
-    });
+    })
+      .sort((a, b) => b.chainTotalBalance - a.chainTotalBalance);
   }, [assets, priceOf]);
 
   return (
