@@ -30,6 +30,7 @@ interface CurrencyOptionProps {
 interface CurrencyListProps extends CurrencyOptionProps {
   currencyList: CurrencyItemType[];
   type: 'crypto' | 'fiat';
+  noLastDivider?: boolean;
 }
 
 const ListItem = styled(Grid)(() => ({
@@ -55,19 +56,19 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   const { t } = useTranslation();
 
   return (
-    <Grid columnGap='8px' container item p='15px 10px 5px'>
+    <Grid alignItems='center' columnGap='4px' container item p='15px 10px 5px'>
       {type === 'crypto'
         ? <BuyCrypto color='#AA83DC' size={22} variant='Bulk' />
         : <Coin1 color='#AA83DC' size={22} variant='Bulk' />
       }
-      <Typography textTransform='uppercase' variant='S-1'>
+      <Typography color='#7956A5' letterSpacing='1px' textTransform='uppercase' variant='S-1'>
         {type === 'crypto' ? t('Crypto') : t('Fiat')}
       </Typography>
     </Grid>
   );
 };
 
-const CurrencyList = ({ currencyList, handleCurrencySelect, selectedCurrency, type }: CurrencyListProps) => {
+const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = false, selectedCurrency, type }: CurrencyListProps) => {
   const flagSVG = useCallback((currency: CurrencyItemType) => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
 
@@ -116,7 +117,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, selectedCurrency, ty
               <CheckIcon sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', fontSize: '20px', p: '3px' }} />
             </Fade>
           </ListItem>
-          {index !== currencyList.length - 1 &&
+          {(!noLastDivider || index !== currencyList.length - 1) &&
             <GradientDivider style={{ my: '5px' }} />
           }
         </>
@@ -171,6 +172,7 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
         <CurrencyList
           currencyList={fiats}
           handleCurrencySelect={handleCurrencySelect}
+          noLastDivider
           selectedCurrency={selectedCurrency}
           type='fiat'
         />
