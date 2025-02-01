@@ -36,7 +36,7 @@ interface CurrencyListProps extends CurrencyOptionProps {
 const ListItem = styled(Grid)(() => ({
   '&.selected': {
     backgroundColor: '#6743944D',
-    height: '50px',
+    height: '49px',
     padding: '10px',
     paddingLeft: '20px'
   },
@@ -118,7 +118,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
             </Fade>
           </ListItem>
           {(!noLastDivider || index !== currencyList.length - 1) &&
-            <GradientDivider style={{ my: '5px' }} />
+            <GradientDivider style={{ my: '3px' }} />
           }
         </>
       ))}
