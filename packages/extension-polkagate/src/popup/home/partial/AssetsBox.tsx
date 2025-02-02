@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, styled, Typography } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { SafeBox } from '../../../assets/icons';
 import { useAccountAssets, useSelectedAccount, useTranslation } from '../../../hooks';
@@ -54,17 +54,25 @@ function AssetsBox (): React.ReactElement {
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
 
-  const [tab, setTab] = useState<TAB>(TAB.CHAINS);
+  const [tab, setTab] = useState<TAB>();
 
   const isLoading = accountAssets === undefined;
   const nothingToShow = accountAssets === null;
+
+  useEffect(() => {
+    if (tab) {
+      window.localStorage.setItem('HomeTab', tab);
+    } else {
+      setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.CHAINS);
+    }
+  }, [tab]);
 
   const renderContent = useCallback(() => {
     if (TAB.NFTS === tab) {
       return <NFTBox />;
     }
 
-    if (isLoading) {
+    if (isLoading || !tab) {
       return <AssetLoading />;
     }
 
@@ -86,7 +94,7 @@ function AssetsBox (): React.ReactElement {
 
   return (
     <>
-      <AssetTabs setTab={setTab} />
+      <AssetTabs setTab={setTab} tab={tab} />
       <Container disableGutters sx={{ bgcolor: '#1B133C', borderRadius: '18px', mx: '15px', overflow: 'hidden', p: '4px', position: 'relative', width: '100%' }}>
         {renderContent()}
         <GlowBall />
