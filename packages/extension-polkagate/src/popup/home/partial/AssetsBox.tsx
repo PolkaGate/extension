@@ -95,12 +95,20 @@ function AssetsBox (): React.ReactElement {
   const isLoading = accountAssets === undefined;
   const nothingToShow = accountAssets === null;
 
+  useEffect(() => {
+    if (tab) {
+      window.localStorage.setItem('HomeTab', tab);
+    } else {
+      setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.CHAINS);
+    }
+  }, [tab]);
+
   const renderContent = useCallback(() => {
     if (TAB.NFTS === tab) {
       return <NFTBox />;
     }
 
-    if (isLoading) {
+    if (isLoading || !tab) {
       return <AssetLoading />;
     }
 
