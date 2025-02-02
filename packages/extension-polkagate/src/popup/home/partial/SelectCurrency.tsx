@@ -14,6 +14,7 @@ import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { CurrencyContext, ExtensionPopup, GradientButton, GradientDivider, SearchField } from '../../../components';
+import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import { CRYPTO_AS_CURRENCY, CURRENCY_LIST } from '../../../util/currencyList';
 
@@ -202,8 +203,12 @@ function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
 
   const applyLanguageChange = useCallback(() => {
-    selectedCurrency && setCurrency(selectedCurrency);
-    handleClose();
+    if (selectedCurrency) {
+      setCurrency(selectedCurrency);
+      setStorage('currency', selectedCurrency).then(() => {
+        handleClose();
+      }).catch(console.error);
+    }
   }, [selectedCurrency, setCurrency, handleClose]);
 
   return (
