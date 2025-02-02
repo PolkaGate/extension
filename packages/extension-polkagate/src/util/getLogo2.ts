@@ -14,6 +14,7 @@ const endpoints = createWsEndpoints();
 
 export interface LogoInfo {
   logo?: string | undefined;
+  logoSquare?: string | undefined;
   color?: string | undefined;
   subLogo?: string;
 }

@@ -68,7 +68,7 @@
     "@polkadot/types-support": "^14.3.1",
     "@polkadot/util": "^13.2.3",
     "@polkadot/util-crypto": "^13.2.3",
-    "@polkagate/apps-config": "^0.140.7",
+    "@polkagate/apps-config": "^0.140.9",
     "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",

@@ -31,7 +31,7 @@ function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
-        <AssetLogo assetSize='18px' baseTokenSize='16px' genesisHash={assetsDetail.genesisHash} logo={assetsDetail?.logoInfo?.logo} logoRoundness='6px' subLogo={undefined} />
+        <AssetLogo assetSize='18px' baseTokenSize='16px' genesisHash={assetsDetail.genesisHash} logo={assetsDetail?.logoInfo?.logoSquare} logoRoundness='6px' subLogo={undefined} />
         <Typography color='text.secondary' variant='B-2'>
           {assetsDetail.chainName}
         </Typography>
