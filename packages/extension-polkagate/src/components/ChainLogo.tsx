@@ -18,9 +18,10 @@ interface Props {
   genesisHash?: string | undefined | null;
   logo?: string;
   size?: number;
+  logoRoundness?: string;
 }
 
-function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.ReactElement<Props> {
+function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size = 25 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
   const options = useContext(GenesisHashOptionsContext);
@@ -38,7 +39,7 @@ function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.R
             ? <Avatar
               src={_logo}
               sx={{
-                borderRadius: '50%',
+                borderRadius: logoRoundness,
                 filter,
                 height: size,
                 width: size
@@ -50,7 +51,7 @@ function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.R
               icon={fas[convertToCamelCase(_logo)]}
               style={{
                 border: '0.5px solid',
-                borderRadius: '50%',
+                borderRadius: logoRoundness,
                 filter,
                 height: size,
                 width: size
@@ -61,7 +62,7 @@ function ChainLogo ({ chainName, genesisHash, logo, size = 25 }: Props): React.R
         : <Avatar
           sx={{
             bgcolor: maybeUserAddedChainColor,
-            borderRadius: '50%',
+            borderRadius: logoRoundness,
             fontSize: size * 0.7,
             height: size,
             width: size

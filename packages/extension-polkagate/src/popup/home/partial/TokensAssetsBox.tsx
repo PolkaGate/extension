@@ -149,8 +149,8 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-        <Grid item sx={{ border: '3px solid', borderColor: '#2D1E4A', borderRadius: '999px' }}>
-          <AssetLogo assetSize='26px' baseTokenSize='18px' genesisHash={tokenDetail.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-3px -8px auto auto' />
+        <Grid item sx={{ border: '3px solid', borderColor: '#2D1E4A', borderRadius: '8px' }}>
+          <AssetLogo assetSize='26px' baseTokenSize='18px' genesisHash={tokenDetail.genesisHash} logo={logoInfo?.logo} logoRoundness='8px' subLogo={logoInfo?.subLogo} subLogoPosition='-3px -8px auto auto' />
         </Grid>
         <Grid container direction='column' item sx={{ width: 'fit-content' }}>
           <Typography color='text.secondary' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
