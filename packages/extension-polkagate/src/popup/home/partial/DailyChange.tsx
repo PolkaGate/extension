@@ -18,7 +18,7 @@ const RenderSkeleton = memo(function RenderSkeleton() {
     <Skeleton
       animation='wave'
       height='20px'
-      sx={{ fontWeight: 'bold', transform: 'none', width: '122px' }}
+      sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '122px' }}
       variant='text'
     />
   );
