@@ -22,7 +22,7 @@ import useTranslation from '../../hooks/useTranslation';
 import ConnectedDappIcon from '../../partials/ConnectedDappIcon';
 import Menu from '../../partials/Menu';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../util/api/getPrices';
-import { countDecimalPlaces, fixFloatingPoint } from '../../util/utils';
+import { countDecimalPlaces, formatDecimal } from '../../util/utils';
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
@@ -74,7 +74,7 @@ export default function YouHave (): React.ReactElement {
       return 0;
     }
 
-    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
+    const value = formatDecimal(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [youHave?.change]);
@@ -148,7 +148,7 @@ export default function YouHave (): React.ReactElement {
               </Stack>
             </>
           }
-          <Infotip2 placement = 'bottom' text={t('Menu options')}>
+          <Infotip2 placement='bottom' text={t('Menu options')}>
             <IconButton
               onClick={onMenuClick}
               sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
