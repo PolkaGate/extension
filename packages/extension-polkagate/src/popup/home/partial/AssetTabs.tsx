@@ -56,11 +56,24 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
     }
   }, [isActiveTab, setTab, t]);
 
+  const { color, secondaryColor } = useMemo(() => ({
+    color: showChains
+      ? isActiveTab
+        ? '#FF4FB9'
+        : '#AA83DC'
+      : '#67439480',
+    secondaryColor: !showChains
+      ? isActiveTab
+        ? '#FF4FB9'
+        : '#AA83DC'
+      : '#67439480'
+  }), [isActiveTab, showChains]);
+
   return (
     <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '82px' }}>
       <CustomCommand
-        color={showChains ? '#AA83DC' : '#67439480'}
-        secondaryColor={showChains ? '#67439480' : '#FF4FB9'}
+        color={color}
+        secondaryColor={secondaryColor}
         size='12'
         style={{
           transition: 'all 250ms ease-out'
@@ -69,7 +82,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
       <Typography color='#EAEBF1' sx={{ opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
         {displayedText}
       </Typography>
-      <UnfoldMoreIcon sx={{ color: showChains ? '#AA83DC' : '#EAEBF1', fontSize: '15px' }} />
+      <UnfoldMoreIcon sx={{ color: isActiveTab ? '#EAEBF1' : '#AA83DC', fontSize: '15px' }} />
     </Container>
   );
 }
