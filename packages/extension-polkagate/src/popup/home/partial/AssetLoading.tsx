@@ -32,18 +32,18 @@ function Loading (): React.ReactElement {
                 <Skeleton
                   animation='wave'
                   height={12}
-                  sx={{ bgcolor: '#946CC826', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '30px' }}
+                  sx={{ bgcolor: '#946CC826', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '30px' }}
                 />
                 <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
                   <Skeleton
                     animation='wave'
                     height={12}
-                    sx={{ bgcolor: '#946CC840', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '45px' }}
+                    sx={{ bgcolor: '#946CC840', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '45px' }}
                   />
                   <Skeleton
                     animation='wave'
                     height={12}
-                    sx={{ bgcolor: '#BEAAD826', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '25px' }}
+                    sx={{ bgcolor: '#BEAAD826', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '25px' }}
                   />
                 </Grid>
               </Grid>
@@ -52,12 +52,12 @@ function Loading (): React.ReactElement {
               <Skeleton
                 animation='wave'
                 height={12}
-                sx={{ bgcolor: '#B094D340', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '70px' }}
+                sx={{ bgcolor: '#B094D340', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '70px' }}
               />
               <Skeleton
                 animation='wave'
                 height={12}
-                sx={{ bgcolor: '#946CC826', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '50px' }}
+                sx={{ bgcolor: '#946CC826', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '50px' }}
               />
             </Grid>
           </Grid>

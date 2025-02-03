@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Grid, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Skeleton, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
@@ -90,18 +90,26 @@ function Portfolio (): React.ReactElement {
         </Grid>
         <Currency />
         <Grid container item>
-          <FormatPrice
-            commify
-            decimalColor={theme.palette.text.secondary}
-            dotStyle={'big'}
-            fontFamily='OdibeeSans'
-            fontSize='40px'
-            fontWeight={400}
-            height={40}
-            num={totalWorth}
-            width='fit-content'
-            withSmallDecimal
-          />
+          {totalWorth === undefined
+            ? <Skeleton
+              animation='wave'
+              height='24px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
+              variant='text'
+            />
+            : <FormatPrice
+              commify
+              decimalColor={theme.palette.text.secondary}
+              dotStyle={'big'}
+              fontFamily='OdibeeSans'
+              fontSize='40px'
+              fontWeight={400}
+              height={40}
+              num={totalWorth}
+              width='fit-content'
+              withSmallDecimal
+            />
+          }
         </Grid>
         <DailyChange />
         <AccountVisibilityToggler />
