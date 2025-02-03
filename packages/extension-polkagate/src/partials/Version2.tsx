@@ -8,7 +8,7 @@ import React, { useCallback, useState } from 'react';
 
 import Sparkles from '../components/SVG/Sparkles';
 import { useManifest, useTranslation } from '../hooks';
-import { GradientDivider } from '../style';
+import { GradientBorder } from '../style';
 
 export default function Version (): React.ReactElement {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export default function Version (): React.ReactElement {
       <Typography color='#BEAAD880' variant='B-1'>
         {version}
       </Typography>
-      <GradientDivider orientation='vertical' />
+      <GradientBorder style={{ height: '1px', opacity: 0.5, position: 'static', rotate: '90deg', width: '14px' }} />
       <Sparkles color={hovered ? '#AA83DC' : '#FF4FB9'} height={12} width={12} />
       <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
         {t('What’s new page')}
