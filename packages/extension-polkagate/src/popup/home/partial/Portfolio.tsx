@@ -3,11 +3,11 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Grid, styled, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Grid, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
-import { CurrencyDisplay } from '../../../components';
+import { FormatPrice } from '../../../components';
 import { useAccountAssets, useIsHideNumbers, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { GradientBorder, GradientDivider } from '../../../style';
@@ -53,6 +53,7 @@ const Fade = styled('div')({
 
 function Portfolio (): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
   const pricesInCurrency = usePrices();
@@ -89,11 +90,17 @@ function Portfolio (): React.ReactElement {
         </Grid>
         <Currency />
         <Grid container item>
-          <CurrencyDisplay
-            amount={totalWorth}
-            decimal={12}
-            decimalPartCount={3}
-            displayStyle='portfolio'
+          <FormatPrice
+            commify
+            decimalColor={theme.palette.text.secondary}
+            dotStyle={'big'}
+            fontFamily='OdibeeSans'
+            fontSize='40px'
+            fontWeight={400}
+            height={40}
+            num={totalWorth}
+            width='fit-content'
+            withSmallDecimal
           />
         </Grid>
         <DailyChange />

@@ -13,7 +13,7 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, CurrencyDisplay, FormatBalance2, FormatPrice } from '../../../components';
+import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
 import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
@@ -90,12 +90,13 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
       <Typography color='text.primary' textAlign='left' variant='B-2'>
         {token}
       </Typography>
-      <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
+      <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content', lineHeight: '10px' }}>
         <FormatPrice
           commify
           fontFamily='Inter'
           fontSize='12px'
           fontWeight={500}
+          ignoreHide
           num={pricesInCurrency?.prices[priceId ?? '']?.value ?? 0}
           skeletonHeight={14}
           textColor='#AA83DC'
@@ -116,16 +117,25 @@ export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, 
 
   return (
     <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: '#BEAAD8', ...theme.typography['S-2'] }, rowGap: '6px', width: 'fit-content' }}>
-      <CurrencyDisplay
-        amount={totalBalancePrice}
-        decimal={decimal}
-        decimalPartCount={totalBalancePrice > 1 ? 2 : 3}
-        displayStyle='asset'
+      <FormatPrice
+        commify
+        decimalColor={theme.palette.text.secondary}
+        fontFamily='Inter'
+        fontSize='14px'
+        fontWeight={600}
+        num={totalBalancePrice}
+        skeletonHeight={14}
+        width='fit-content'
       />
       <FormatBalance2
-        className='balance'
         decimalPoint={2}
         decimals={[decimal]}
+        style={{
+          color: '#BEAAD8',
+          fontSize: '12px',
+          fontWeight: 500,
+          lineHeight: '10px'
+        }}
         tokens={[token]}
         value={totalBalanceBN}
       />
@@ -178,7 +188,7 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
 
   return (
     <div>
-      <Grid container item onClick={toggleExpand} sx={{ background: '#05091C', borderRadius: '14px', cursor: 'pointer', p: '10px' }}>
+      <Grid container item onClick={toggleExpand} sx={{ background: '#05091C', borderRadius: '14px', cursor: 'pointer', p: '12px 10px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex' }}>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ transition: 'all 250ms ease-out' }} xs>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>

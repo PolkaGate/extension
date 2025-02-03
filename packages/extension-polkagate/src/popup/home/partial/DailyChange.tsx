@@ -7,13 +7,13 @@ import { Container, Skeleton, type SxProps, type Theme, Typography } from '@mui/
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { CurrencyDisplay } from '../../../components';
+import { FormatPrice } from '../../../components';
 import { PORTFOLIO_CHANGE_DECIMAL } from '../../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
 import { useIsHideNumbers, useYouHave } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
-import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
+import { formatDecimal } from '../../../util/utils';
 
-const RenderSkeleton = memo(function RenderSkeleton () {
+const RenderSkeleton = memo(function RenderSkeleton() {
   return (
     <Skeleton
       animation='wave'
@@ -33,7 +33,7 @@ function DailyChange (): React.ReactElement {
       return undefined;
     }
 
-    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
+    const value = formatDecimal(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [youHave?.change]);
@@ -73,15 +73,15 @@ function DailyChange (): React.ReactElement {
           ? <ArrowDown2 color={color(youHave?.change)} size='15' variant='Bold' />
           : null
       }
-      <CurrencyDisplay
-        amount={portfolioChange}
-        decimalPartCount={countDecimalPlaces(portfolioChange ?? 0) || PORTFOLIO_CHANGE_DECIMAL}
-        displayStyle='24h'
-        fontStyle={{
-          color: color(youHave?.change),
-          fontSize: isHideNumbers ? '13px' : undefined,
-          lineHeight: isHideNumbers ? '15px' : undefined
-        }}
+      <FormatPrice
+        commify
+        fontFamily='Inter'
+        fontSize={'13px'}
+        fontWeight={500}
+        num={portfolioChange}
+        skeletonHeight={14}
+        textColor={color(youHave?.change)}
+        width='fit-content'
       />
       {!isHideNumbers &&
         <Typography style={{ color: color(youHave?.change), fontFamily: 'Inter', fontSize: '14px', fontWeight: 900, lineHeight: '15px' }}>
