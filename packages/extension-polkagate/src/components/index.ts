@@ -35,7 +35,6 @@ export { default as ColorContext } from './ColorContext';
 export * from './contexts';
 export { default as Convictions } from './Convictions';
 export { default as CopyAddressButton } from './CopyAddressButton';
-export { default as CurrencyDisplay } from './CurrencyDisplay';
 export { default as DecisionButtons } from './DecisionButtons';
 export { default as DisplayInfo } from './DisplayInfo';
 export { default as Dots } from './Dots';

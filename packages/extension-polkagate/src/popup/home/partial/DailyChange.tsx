@@ -13,7 +13,7 @@ import { useIsHideNumbers, useYouHave } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
-const RenderSkeleton = memo(function RenderSkeleton () {
+const RenderSkeleton = memo(function RenderSkeleton() {
   return (
     <Skeleton
       animation='wave'
