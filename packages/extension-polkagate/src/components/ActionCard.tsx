@@ -90,7 +90,7 @@ function ActionCard ({ Icon, description, iconWithBackground, logoIcon, onClick,
           </Typography>
           <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />
         </Grid>
-        <Typography color={theme.palette.text.secondary} variant='B-4'>
+        <Typography color={theme.palette.text.secondary} textAlign='left' variant='B-4'>
           {description}
         </Typography>
       </Grid>
