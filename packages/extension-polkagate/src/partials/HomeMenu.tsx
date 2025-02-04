@@ -4,10 +4,11 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
+import type { Pages } from '../popup/home/type';
 
 import { Container, Grid, styled } from '@mui/material';
 import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
@@ -37,26 +38,42 @@ const SelectedItemBackground = styled('div')(({ hovered }: { hovered: boolean })
 
 interface MenuItemProps {
   ButtonIcon: Icon;
-  buttonName: string;
+  tooltip: string;
+  isSelected: boolean;
+  onClick: () => void;
   withBorder?: boolean;
+  setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem ({ ButtonIcon, buttonName, withBorder = true }: MenuItemProps) {
+function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const [hovered, setHovered] = useState<boolean>(false);
+  const refContainer = useRef<HTMLDivElement>(null);
 
-  const refContainer = useRef(null);
+  const toggleHovered = useCallback(() => setHovered((prev) => !prev), []);
 
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  useEffect(() => {
+    if (isSelected && refContainer.current) {
+      setLeftPosition(refContainer.current.getBoundingClientRect().left);
+    }
+  }, [isSelected, setLeftPosition]);
 
   return (
     <>
-      <Grid container item onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
-        <ButtonIcon color={hovered ? '#FF4FB9' : '#AA83DC'} size='24' variant='Bulk' />
+      <Grid container item onClick={onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
+        <ButtonIcon color={hovered || isSelected ? '#FF4FB9' : '#AA83DC'} size='24' variant='Bulk' />
         <SelectedItemBackground hovered={hovered} />
       </Grid>
-      {withBorder && <GradientDivider orientation='vertical' style={{ height: '24px', opacity: 0.35 }} />}
+      {withBorder &&
+        <GradientDivider
+          orientation='vertical'
+          style={{
+            height: '24px',
+            opacity: 0.35
+          }}
+        />
+      }
       <Tooltip
-        content={buttonName}
+        content={tooltip}
         placement='top'
         positionAdjustment={{ left: -15, top: -540 }}
         targetRef={refContainer}
@@ -65,18 +82,36 @@ function MenuItem ({ ButtonIcon, buttonName, withBorder = true }: MenuItemProps)
   );
 }
 
-function HomeMenu (): React.ReactElement {
+interface Props {
+  page: Pages;
+  setPage: React.Dispatch<React.SetStateAction<Pages>>;
+}
+
+function HomeMenu ({ page, setPage }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const [leftPosition, setLeftPosition] = useState<number | null>(null);
+
+  const handleMenuClick = useCallback((page: Pages) => () => setPage(page), [setPage]);
+  const selectionLineStyle = useMemo(
+    () => ({
+      position: 'relative',
+      top: '2px',
+      transform: `translateX(${leftPosition ? leftPosition - 24 : 7}px)`,
+      transition: 'transform 0.3s ease-in-out'
+    }),
+    [leftPosition]
+  );
 
   return (
     <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)' }}>
+      {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
       <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
-        <MenuItem ButtonIcon={Logout} buttonName={t('Send')} />
-        <MenuItem ButtonIcon={ScanBarcode} buttonName={t('Receive')} />
-        <MenuItem ButtonIcon={BuyCrypto} buttonName={t('Staking')} />
-        <MenuItem ButtonIcon={MedalStar} buttonName={t('Governance')} />
-        <MenuItem ButtonIcon={Setting} buttonName={t('Settings')} />
-        <MenuItem ButtonIcon={Clock} buttonName={t('History')} withBorder={false} />
+        <MenuItem ButtonIcon={Logout} isSelected={page === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
+        <MenuItem ButtonIcon={ScanBarcode} isSelected={page === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
+        <MenuItem ButtonIcon={BuyCrypto} isSelected={page === 'staking'} onClick={handleMenuClick('staking')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
+        <MenuItem ButtonIcon={MedalStar} isSelected={page === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
+        <MenuItem ButtonIcon={Setting} isSelected={page === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
+        <MenuItem ButtonIcon={Clock} isSelected={page === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
         <Background />
       </Grid>
     </Container>
