@@ -54,12 +54,13 @@ export const lightTheme: ThemeOptions = {
         }
       }
     }
-  },
-  typography: {
-    allVariants: {
-      fontWeight: 400,
-      fontFamily: 'Roboto',
-      letterSpacing: '-0.015em'
-    }
   }
+  // ,
+  // typography: {
+  //   allVariants: {
+  //     fontWeight: 400,
+  //     fontFamily: 'Roboto',
+  //     letterSpacing: '-0.015em'
+  //   }
+  // }
 };

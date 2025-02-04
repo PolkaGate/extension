@@ -50,10 +50,10 @@ function AskToSetPassword ({ setStep }: Props): React.ReactElement {
             src={BoxIcon as string}
             sx={{ height: '145px', mt: '20px', width: '140px' }}
           />
-          <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '6px', mt: '25px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+          <Typography sx={{ mb: '6px', mt: '25px', width: '100%' }} textTransform='uppercase' variant='H-2'>
             {t('welcome')}!
           </Typography>
-          <Typography fontFamily='Inter' fontSize='13px' fontWeight={500} sx={{ color: 'text.secondary', width: '100%' }} textAlign='center'>
+          <Typography sx={{ color: 'text.secondary', width: '100%' }} variant='B-1'>
             {t('Would you like to set a login password?')}
           </Typography>
           <GradientButton

@@ -18,24 +18,25 @@ interface Props {
   cancelButton?: boolean;
   style?: SxProps<Theme>;
   divider?: boolean;
+  flexibleWidth?: boolean;
 }
 
-function DecisionButtons ({ arrow = false, cancelButton, disabled, divider = false, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, style }: Props): React.ReactElement {
+function DecisionButtons ({ arrow = false, cancelButton, disabled, divider = false, flexibleWidth, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, style }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '5px', display: 'flex', justifyContent: 'space-between', ...style }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '5px', display: 'flex', justifyContent: 'space-between', position: 'relative', zIndex: 1, ...style }}>
       {cancelButton
         ? <ActionButton
           contentPlacement='center'
           onClick={onSecondaryClick}
-          style={{ height: '44px', width: '30%' }}
+          style={{ height: '44px', width: flexibleWidth ? 'fit-content' : '30%' }}
           text={secondaryBtnText}
         />
         : <NeonButton
           contentPlacement='center'
           onClick={onSecondaryClick}
-          style={{ height: '44px', width: '30%' }}
+          style={{ height: '44px', width: flexibleWidth ? 'fit-content' : '30%' }}
           text={secondaryBtnText}
         />
       }
@@ -48,7 +49,7 @@ function DecisionButtons ({ arrow = false, cancelButton, disabled, divider = fal
           ? <ArrowForwardIosRoundedIcon sx={{ color: 'text.primary', fontSize: '13px', stroke: `${theme.palette.text.primary}`, strokeWidth: 1.1, zIndex: 10 }} />
           : undefined}
         onClick={onPrimaryClick}
-        style={{ height: '48px', width: '70%' }}
+        style={{ flex: flexibleWidth ? 1 : 'none', height: '48px', width: flexibleWidth ? 'auto' : '70%' }}
         text={primaryBtnText}
       />
     </Container>

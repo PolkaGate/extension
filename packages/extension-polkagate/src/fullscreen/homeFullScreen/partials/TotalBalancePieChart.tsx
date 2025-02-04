@@ -19,7 +19,7 @@ import { isPriceOutdated } from '../../../popup/home/YouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
+import { countDecimalPlaces, formatDecimal } from '../../../util/utils';
 import Chart from './Chart';
 
 interface Props {
@@ -209,7 +209,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
       return 0;
     }
 
-    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
+    const value = formatDecimal(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [youHave?.change]);
@@ -220,7 +220,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
         <Typography sx={{ fontSize: '18px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('Total balance')}
         </Typography>
-        <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ m: '13px 0 5px 0' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ m: '13px 0 5px 0' }}>
           {!youHave || isHideNumbers
             ? <Box
               component='img'
@@ -233,7 +233,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
                 fontSize='28px'
                 fontWeight={600}
                 num={youHave?.portfolio}
-                textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+                textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
                 withCountUp
                 withSmallDecimal
               />

@@ -13,7 +13,7 @@ export default function Version (): React.ReactElement {
 
   return (
     <Grid alignItems='center' container item justifyContent='center'>
-      <Typography color='#674394' fontFamily='Inter' fontSize='13px' fontWeight={500} lineHeight='18.2px' pt='8px' textAlign='center'>
+      <Typography color='#674394' pt='8px' variant='B-1'>
         {'v.'}{version}
       </Typography>
     </Grid>

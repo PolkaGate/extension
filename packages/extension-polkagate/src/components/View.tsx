@@ -14,10 +14,9 @@ import { chooseTheme, ColorContext, Main } from '.';
 
 interface Props {
   children: React.ReactNode;
-  className?: string;
 }
 
-function View ({ children, className }: Props): React.ReactElement<Props> {
+function View ({ children }: Props): React.ReactElement<Props> {
   const [mode, setMode] = useState<PaletteMode>(chooseTheme());
 
   useEffect(() => {
@@ -54,7 +53,7 @@ function View ({ children, className }: Props): React.ReactElement<Props> {
       <ThemeProvider theme={theme}>
         <CssBaseline enableColorScheme />
         <BodyTheme theme={theme} />
-        <Main className={className}>
+        <Main>
           {children}
         </Main>
       </ThemeProvider>

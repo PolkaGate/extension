@@ -9,22 +9,27 @@ import type { Icon } from 'iconsax-react';
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import React from 'react';
 
-import CustomCloseSquare from '../popup/welcome/CustomCloseSquare';
 import { GradientDivider, RedGradient } from '../style';
+import CustomCloseSquare from './SVG/CustomCloseSquare';
 
 export interface Props {
   children: React.ReactNode;
   handleClose?: () => void;
   openMenu: boolean;
   TitleIcon?: Icon;
+  iconVariant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone' | undefined;
   title: string;
+  pt?: number;
+  titleAlignment?: string;
+  withoutTopBorder?: boolean;
+  withoutBackground?: boolean;
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: Props): React.ReactElement<Props> {
+function ExtensionPopup ({ TitleIcon, children, handleClose, iconVariant, openMenu, pt, title, titleAlignment, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
   return (
     <Dialog
       PaperProps={{
@@ -48,21 +53,21 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, openMenu, title }: 
       open={openMenu}
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }}/>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
+          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
-          <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
+          <Grid alignItems='center' columnGap='10px' container item justifyContent={titleAlignment ?? 'center'} p='10px'>
             {TitleIcon
-              ? <TitleIcon color='#AA83DC' size={28} variant='Bold' />
+              ? <TitleIcon color='#AA83DC' size={18} variant={iconVariant ?? 'Bold'} />
               : undefined
             }
-            <Typography color='text.primary' fontFamily='OdibeeSans' fontSize='24px' fontWeight={400} textTransform='uppercase'>
+            <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
               {title}
             </Typography>
           </Grid>
-          <GradientDivider />
-          <RedGradient style={{ top: '-140px' }} />
+          {!withoutTopBorder && <GradientDivider />}
+          {!withoutBackground && <RedGradient style={{ top: '-140px' }} />}
           <Box sx={{ maxHeight: '440px', overflow: 'scroll', position: 'relative', width: '100%' }}>
             {children}
           </Box>

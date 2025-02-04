@@ -82,7 +82,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
       {StartIcon && <StartIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
       {startIconNode && startIconNode}
-      <Typography sx={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, pl: '10px', pr: '2px', width: 'fit-content', zIndex: 10 }}>
+      <Typography sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10 }} variant='B-2'>
         {text}
       </Typography>
       {EndIcon && <EndIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}

@@ -28,12 +28,10 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
 
   const ButtonFontStyle = useMemo(() => ({
     color: hovered ? '#FF4FB9' : '#BEAAD8',
-    fontFamily: 'Inter',
-    fontSize: '14px',
-    fontWeight: 600,
+    ...theme.typography['B-2'],
     justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     textTransform: 'none'
-  } as React.CSSProperties), [contentPlacement, hovered]);
+  } as React.CSSProperties), [contentPlacement, hovered, theme.typography]);
 
   const GeneralButtonStyle = {
     background: 'transparent',

@@ -19,7 +19,7 @@ import { calcChange, calcPrice } from '../../../hooks/useYouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
-import { countDecimalPlaces, fixFloatingPoint } from '../../../util/utils';
+import { countDecimalPlaces, formatDecimal } from '../../../util/utils';
 import { adjustColor, changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../homeFullScreen/partials/TotalBalancePieChart';
 
 interface Props {
@@ -123,7 +123,7 @@ export default function TotalChart ({ accountAssets, pricesInCurrency }: Props):
       return 0;
     }
 
-    const value = fixFloatingPoint(totalChange, PORTFOLIO_CHANGE_DECIMAL, false, true);
+    const value = formatDecimal(totalChange, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [totalChange]);

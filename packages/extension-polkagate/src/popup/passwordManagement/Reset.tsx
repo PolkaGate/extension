@@ -9,7 +9,7 @@ import React, { useCallback, useContext } from 'react';
 
 import { Lock } from '../../assets/gif';
 import { ActionCard, ActionContext, BackWithLabel } from '../../components';
-import { setStorage } from '../../components/Loading';
+import { updateStorage } from '../../components/Loading';
 import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { Version } from '../../partials';
@@ -24,8 +24,8 @@ function Reset (): React.ReactElement {
   }, []);
 
   const back = useCallback((): void => {
-    setStorage('loginInfo', { status: 'justSet' })
-      .then(() => onAction('/'))
+    updateStorage('loginInfo', { status: 'set' })
+      .finally(() => onAction('/'))
       .catch(console.error);
   }, [onAction]);
 
@@ -49,7 +49,7 @@ function Reset (): React.ReactElement {
         <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '10px', mt: '10px', width: '100%' }} textAlign='center' textTransform='uppercase'>
           {t('Reset Wallet')}
         </Typography>
-        <Typography fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ color: 'text.secondary', px: '15px', width: '100%' }} textAlign='center'>
+        <Typography sx={{ color: 'text.secondary', px: '15px', width: '100%' }} textAlign='center' variant='B-4'>
           {t('Resetting your wallet is a last resort option that will erase your current wallet data. Please make sure you have a backup JSON File or a Recovery Phrase before proceeding. To reset your wallet, you can choose one of the following methods:')}
         </Typography>
         <ActionCard

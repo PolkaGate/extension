@@ -79,7 +79,7 @@ function Login ({ setStep }: Props): React.ReactElement {
             src={BoxIcon as string}
             sx={{ height: '145px', mt: '20px', width: '140px' }}
           />
-          <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ mb: '15px', mt: '25px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+          <Typography sx={{ mb: '15px', mt: '25px', width: '100%' }} textTransform='uppercase' variant='H-2'>
             {t('login')}
           </Typography>
           <PasswordInput

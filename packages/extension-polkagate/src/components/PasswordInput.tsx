@@ -46,9 +46,8 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
   '& input::placeholder': {
     color: theme.palette.text.secondary,
-    fontFamily: 'Inter',
-    fontSize: '12px',
-    fontWeight: 500
+    ...theme.typography['B-4'],
+    textAlign: 'left'
   },
   transition: 'all 150ms ease-out'
 }));
@@ -85,7 +84,8 @@ export default function PasswordInput ({ focused = false, onEnterPress, onPassCh
   return (
     <Container disableGutters sx={style}>
       {title &&
-        <Typography fontFamily='Inter' fontSize='13px' fontWeight={500} mb='12px' textAlign='left' width='100%'>
+        // In design its variant is B-1
+        <Typography mb='12px' textAlign='left' variant='B-4' width='100%'>
           {title}
         </Typography>
       }

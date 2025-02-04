@@ -28,12 +28,10 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
   const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
 
   const ButtonFontStyle = useMemo(() => ({
-    fontFamily: 'Inter',
-    fontSize: '14px',
-    fontWeight: 600,
+    ...theme.typography['B-2'],
     justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     textTransform: 'none'
-  } as React.CSSProperties), [contentPlacement]);
+  } as React.CSSProperties), [contentPlacement, theme.typography]);
 
   const GeneralButtonStyle = {
     '&:hover': {

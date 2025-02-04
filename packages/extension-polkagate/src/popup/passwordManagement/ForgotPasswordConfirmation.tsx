@@ -54,10 +54,10 @@ export default function ForgotPasswordConfirmation ({ setStep }: Props): React.R
         <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
         <Grid container item justifyContent='center' sx={{ p: '18px 22px 22px' }}>
           <Warning2 color='#FFCE4F' size='50' variant='Bold' />
-          <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ lineHeight: '32px', mb: '15px', mt: '10px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+          <Typography sx={{ lineHeight: '32px', mb: '15px', mt: '10px', width: '100%' }} textTransform='uppercase' variant='H-2'>
             {t('Are you sure you want to proceed?')}
           </Typography>
-          <Typography fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ color: 'text.secondary', width: '100%' }} textAlign='center'>
+          <Typography sx={{ color: 'text.secondary', width: '100%' }} variant='B-4'>
             {t('This action will permanently delete your account(s), and password recovery will not be possible. You can reset your wallet by importing from a backup (JSON file or recovery phrase).')}
           </Typography>
           <GlowCheckbox

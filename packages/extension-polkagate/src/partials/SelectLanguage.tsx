@@ -83,7 +83,7 @@ const LanguageOptions = React.memo(function LanguageOptions ({ handleLanguageSel
                 src={flag(value as string)}
                 sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
               />
-              <Typography color='text.primary' fontFamily='Inter' fontSize='14px' fontWeight={600}>
+              <Typography color='text.primary' variant='B-2'>
                 {text}
               </Typography>
             </Grid>

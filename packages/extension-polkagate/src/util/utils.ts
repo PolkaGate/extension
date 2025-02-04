@@ -64,7 +64,7 @@ export function getDecimal (n: string | number, count = 2) {
   return decimalPart ? decimalPart.slice(0, count) : 0;
 }
 
-export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+export function formatDecimal (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
 
   // make number positive if it is negative
@@ -104,7 +104,7 @@ export function amountToHuman (_amount: string | number | BN | bigint | Compact<
 
   const x = 10 ** _decimals;
 
-  return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
+  return formatDecimal(Number(_amount) / x, decimalDigits, commify);
 }
 
 export function amountToMachine (amount: string | undefined, decimal: number | undefined): BN {

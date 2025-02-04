@@ -75,12 +75,13 @@ export const darkTheme: ThemeOptions = {
         }
       }
     }
-  },
-  typography: {
-    allVariants: {
-      fontWeight: 300,
-      fontFamily: 'Roboto',
-      letterSpacing: '-0.015em'
-    }
   }
+  // ,
+  // typography: {
+  //   allVariants: {
+  //     fontWeight: 300,
+  //     fontFamily: 'Roboto',
+  //     letterSpacing: '-0.015em'
+  //   }
+  // }
 };

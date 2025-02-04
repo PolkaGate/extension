@@ -52,10 +52,10 @@ function FirstTimeSetPassword ({ setStep }: Props): React.ReactElement {
             src={LockGif as string}
             sx={{ height: '53px', width: '53px' }}
           />
-          <Typography fontFamily='OdibeeSans' fontSize='29px' fontWeight={400} sx={{ lineHeight: '32px', mb: '12px', mt: '20px', width: '100%' }} textAlign='center' textTransform='uppercase'>
+          <Typography sx={{ lineHeight: '32px', mb: '12px', mt: '20px', width: '100%' }} textTransform='uppercase' variant='H-2'>
             {t('Remember your password well and keep it safe')}
           </Typography>
-          <Typography fontFamily='Inter' fontSize='12px' fontWeight={500} sx={{ color: 'text.secondary', mb: '22px', px: '7px', width: '100%' }} textAlign='center'>
+          <Typography sx={{ color: 'text.secondary', mb: '22px', px: '7px', width: '100%' }} variant='B-4'>
             {t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them')}
           </Typography>
           <MatchPasswordField

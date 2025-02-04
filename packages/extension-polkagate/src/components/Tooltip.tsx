@@ -5,7 +5,7 @@
 
 import type { RefObject } from 'react';
 
-import { Tooltip } from '@mui/material';
+import { Tooltip, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface CustomTooltipProps {
@@ -23,6 +23,10 @@ interface CustomTooltipProps {
   | 'top-start'
   | 'top';
   targetRef: RefObject<HTMLElement>;
+  positionAdjustment?: {
+    top?: number;
+    left?: number;
+  };
 }
 
 interface Position {
@@ -32,9 +36,8 @@ interface Position {
   height: number;
 }
 
-const OFFSET = 4;
-
-const CustomTooltip = ({ content, placement = 'bottom', targetRef }: CustomTooltipProps) => {
+const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targetRef }: CustomTooltipProps) => {
+  const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
 
@@ -56,12 +59,12 @@ const CustomTooltip = ({ content, placement = 'bottom', targetRef }: CustomToolt
     const rect = target.getBoundingClientRect();
 
     setPosition({
-      height: rect.height + OFFSET,
-      left: rect.left + window.scrollX + OFFSET,
-      top: rect.top + window.scrollY + OFFSET,
-      width: rect.width + OFFSET
+      height: rect.height,
+      left: rect.left + window.scrollX + (positionAdjustment?.left ?? 0),
+      top: rect.top + window.scrollY + (positionAdjustment?.top ?? 0),
+      width: rect.width
     });
-  }, [targetRef]);
+  }, [positionAdjustment?.left, positionAdjustment?.top, targetRef]);
 
   useEffect(() => {
     const target = targetRef.current;
@@ -88,7 +91,7 @@ const CustomTooltip = ({ content, placement = 'bottom', targetRef }: CustomToolt
         componentsProps={{
           popper: { sx: { m: '5px' } },
           tooltip: {
-            style: { margin: '5px' },
+            style: { margin: '5px', marginTop: '12px' },
             sx: {
               '& .MuiTooltip-arrow': {
                 color: '#674394',
@@ -97,9 +100,7 @@ const CustomTooltip = ({ content, placement = 'bottom', targetRef }: CustomToolt
               backgroundColor: '#674394',
               borderRadius: '8px',
               color: '#fff',
-              fontFamily: 'Inter',
-              fontSize: '12px',
-              fontWeight: 400,
+              ...theme.typography['B-4'],
               p: '8px'
             }
           }
