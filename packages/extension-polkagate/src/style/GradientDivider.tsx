@@ -7,9 +7,9 @@ import { Divider, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 interface GradientDividerProps {
-  style?: SxProps<Theme>;
-  orientation?: 'horizontal' | 'vertical';
   isSelectionLine?: boolean; // Add flag to differentiate selection line
+  orientation?: 'horizontal' | 'vertical';
+  style?: SxProps<Theme>;
 }
 
 /**

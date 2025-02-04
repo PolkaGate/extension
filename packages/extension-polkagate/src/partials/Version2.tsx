@@ -4,25 +4,29 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { type CSSProperties, useCallback, useState } from 'react';
 
 import Sparkles from '../components/SVG/Sparkles';
 import { useManifest, useTranslation } from '../hooks';
 import { GradientBorder } from '../style';
 
-export default function Version (): React.ReactElement {
+interface Props {
+  showLabel?: boolean;
+  style?: CSSProperties;
+}
+
+export default function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
-
   const [hovered, setHovered] = useState<boolean>(false);
-
   const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ columnGap: '5px', py: '24px' }}>
-      <Typography color='#BEAAD880' variant='B-1'>
-        {t('Version')}
-      </Typography>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ ...style }}>
+      {showLabel &&
+        <Typography color='#BEAAD880' variant='B-1'>
+          {t('Version')}
+        </Typography>}
       <Typography color='#BEAAD880' variant='B-1'>
         {version}
       </Typography>
