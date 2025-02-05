@@ -12,12 +12,12 @@ interface Props {
 }
 
 function SocialIcon ({ icon, link }: Props): React.ReactElement {
-  const goToLink = useCallback(() => () => window.open(link, '_blank'), [link]);
+  const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
 
   return (
     <Grid
       bgcolor='#2D1E4A'
-      onClick={goToLink()}
+      onClick={goToLink}
       sx={{
         alignItems: 'center',
         borderRadius: '50%',

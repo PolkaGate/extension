@@ -11,14 +11,18 @@ import AccountSelection from '../popup/home/partial/AccountSelection';
 import FullscreenModeButton from './FullscreenModeButton';
 import { ConnectedDapp } from '.';
 
-function UserDashboardHeader () {
+interface Props {
+  homeType?: 'default' | 'active';
+}
+
+function UserDashboardHeader ({ homeType }: Props) {
   const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
 
   return (
     <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between', p: '10px 15px' }}>
       <Grid columnGap='6px' container item width='fit-content'>
         <Grid container item width='fit-content'>
-          <HomeButton type={isConnectedDapp.length ? 'default' : 'active'} />
+          <HomeButton type={homeType || (isConnectedDapp.length ? 'default' : 'active')} />
           <ConnectedDapp />
         </Grid>
         <AccountSelection />

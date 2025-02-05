@@ -52,6 +52,8 @@ import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagem
 import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
 import Receive from '@polkadot/extension-polkagate/src/popup/receive';
 import Rename from '@polkadot/extension-polkagate/src/popup/rename';
+import Settings from '@polkadot/extension-polkagate/src/popup/settings';
+import About from '@polkadot/extension-polkagate/src/popup/settings/About';
 import Signing from '@polkadot/extension-polkagate/src/popup/signing';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
@@ -138,7 +140,7 @@ const ACCOUNT_ROUTES: RouteConfig[] = [
   },
   {
     Component: Receive,
-    path: '/receive/:address',
+    path: '/receive',
     trigger: 'receive'
   }
 ];
@@ -386,6 +388,19 @@ const PASSWORD_ROUTES: RouteConfig[] = [
   }
 ];
 
+const SETTINGS_ROUTES: RouteConfig[] = [
+  {
+    Component: Settings,
+    path: '/settings',
+    trigger: 'settings'
+  },
+  {
+    Component: About,
+    path: '/settings-about',
+    trigger: 'settings-about'
+  }
+];
+
 const ROOT_ROUTES: RouteConfig[] = [
   {
     Component: Onboarding,
@@ -427,7 +442,8 @@ const ALL_ROUTES: RouteConfig[] = [
   ...FEATURE_ROUTES,
   ...DERIVE_ROUTES,
   ...PASSWORD_ROUTES,
-  ...ROOT_ROUTES
+  ...ROOT_ROUTES,
+  ...SETTINGS_ROUTES
 ];
 
 export default function Routes () {

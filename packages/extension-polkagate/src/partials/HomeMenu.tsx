@@ -9,6 +9,7 @@ import type { Pages } from '../popup/home/type';
 import { Container, Grid, styled } from '@mui/material';
 import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
@@ -61,7 +62,7 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
     <>
       <Grid container item onClick={onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
         <ButtonIcon color={hovered || isSelected ? '#FF4FB9' : '#AA83DC'} size='24' variant='Bulk' />
-        <SelectedItemBackground hovered={hovered} />
+        <SelectedItemBackground hovered={hovered || isSelected} />
       </Grid>
       {withBorder &&
         <GradientDivider
@@ -82,16 +83,41 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
   );
 }
 
-interface Props {
-  page: Pages;
-  setPage: React.Dispatch<React.SetStateAction<Pages>>;
-}
-
-function HomeMenu ({ page, setPage }: Props): React.ReactElement {
+function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
-  const [leftPosition, setLeftPosition] = useState<number | null>(null);
+  const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
+  const history = useHistory();
 
-  const handleMenuClick = useCallback((page: Pages) => () => setPage(page), [setPage]);
+  const [leftPosition, setLeftPosition] = useState<number | null>(null);
+  const [currentMenu, setCurrentMenu] = useState<string>();
+
+  const page = useMemo(() => {
+    if (!pathname || pathname === '/') {
+      return 'home';
+    }
+
+    return pathname.slice(1).split('-')[0];
+  }, [pathname]);
+
+  useEffect(() => {
+    // to imitate GradientDivider movement
+    if (state?.previousUrl) {
+      setCurrentMenu(state.previousUrl);
+    }
+
+    const timeout = setTimeout(() => {
+      setCurrentMenu(page);
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [page, state?.previousUrl]);
+
+  const handleMenuClick = useCallback((input: Pages) =>
+    () => history.push({
+      pathname: `/${input}`,
+      state: { previousUrl: page }
+    }), [history, page]);
+
   const selectionLineStyle = useMemo(
     () => ({
       position: 'relative',
@@ -106,12 +132,12 @@ function HomeMenu ({ page, setPage }: Props): React.ReactElement {
     <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)' }}>
       {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
       <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
-        <MenuItem ButtonIcon={Logout} isSelected={page === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
-        <MenuItem ButtonIcon={ScanBarcode} isSelected={page === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
-        <MenuItem ButtonIcon={BuyCrypto} isSelected={page === 'staking'} onClick={handleMenuClick('staking')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
-        <MenuItem ButtonIcon={MedalStar} isSelected={page === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
-        <MenuItem ButtonIcon={Setting} isSelected={page === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
-        <MenuItem ButtonIcon={Clock} isSelected={page === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
+        <MenuItem ButtonIcon={Logout} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
+        <MenuItem ButtonIcon={ScanBarcode} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
+        <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'staking'} onClick={handleMenuClick('staking')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
+        <MenuItem ButtonIcon={MedalStar} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
+        <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
+        <MenuItem ButtonIcon={Clock} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
         <Background />
       </Grid>
     </Container>

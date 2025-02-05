@@ -32,7 +32,17 @@ export default function Lock (): React.ReactElement {
   }, [isLoginEnabled, setExtensionLock]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' justifyItems='center' onClick={onClick} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '39px', mt: '2px', width: '110px' }}>
+    <Grid
+      alignItems='center' container item justifyContent='center' justifyItems='center' onClick={onClick}
+      sx={{
+        bgcolor: '#05091C',
+        borderRadius: '14px',
+        cursor: isLoginEnabled ? 'pointer' : 'undefined',
+        height: '39px',
+        mt: '2px',
+        width: '110px'
+      }}
+    >
       <Unlock color={isLoginEnabled ? '#AA83DC' : 'grey'} size={18} variant='Bulk' />
       <Typography color={isLoginEnabled ? 'grey' : 'text.primary'} pl='2px' pt='4px' variant='B-4'>
         {t('Lock')}

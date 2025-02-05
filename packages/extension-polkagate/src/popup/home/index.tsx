@@ -4,10 +4,8 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Pages } from './type';
-
 import { Grid } from '@mui/material';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import semver from 'semver';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -20,7 +18,6 @@ import { useManifest, useMerkleScience } from '../../hooks';
 import { UserDashboardHeader, Version2 as Version } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
-import Settings from '../settings';
 import Welcome from '../welcome';
 import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
@@ -46,7 +43,6 @@ export default function Home (): React.ReactElement {
 
   const [show, setShowAlert] = useState<boolean>(false);
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
-  const [page, setPage] = useState<Pages>('home');
 
   useEffect(() => {
     if (!manifest?.version) {
@@ -75,17 +71,6 @@ export default function Home (): React.ReactElement {
     getStorage('loginInfo').then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
   }, []);
 
-  const selectedPage = useMemo(() => {
-    switch (page) {
-      case 'home':
-        return <AccountPortfolio />;
-      case 'settings':
-        return <Settings />;
-      default:
-        return <AccountPortfolio />;
-    }
-  }, [page]);
-
   return (
     <>
       <WhatsNew
@@ -98,8 +83,8 @@ export default function Home (): React.ReactElement {
           : <Welcome />
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
           <UserDashboardHeader />
-          {selectedPage}
-          <HomeMenu page={page} setPage={setPage} />
+          <AccountPortfolio />
+          <HomeMenu />
         </Grid>
       }
     </>
