@@ -6,3 +6,4 @@ export { default as GlowBox } from './GlowBox';
 export { default as GradientBorder } from './GradientBorder';
 export { default as GradientDivider } from './GradientDivider';
 export { default as RedGradient } from './RedGradient';
+export { default as VelvetBox } from './VelvetBox';
