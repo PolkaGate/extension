@@ -6,11 +6,11 @@
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { Divider, Grid, Typography } from '@mui/material';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useContext, useMemo } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 
-import { AssetLogo, FormatPrice } from '../../../components';
+import { ActionContext, AssetLogo, FormatPrice } from '../../../components';
 import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
@@ -53,6 +53,7 @@ function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
 }
 
 function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
+  const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -60,8 +61,12 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   const logoInfo = getLogo2(asset.genesisHash, asset.token);
   const balancePrice = calcPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
 
+  const onTokenClick = useCallback(() => {
+    onAction(`token/${asset.genesisHash}/${asset.assetId}`);
+  }, [asset.assetId, asset.genesisHash, onAction]);
+
   return (
-    <Grid alignItems='center' container item justifyContent='space-between'>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: '#1B133C', p: '4px 8px' }, borderRadius: '12px', cursor: 'pointer', p: '4px 0', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <TokenPriceInfo
@@ -159,7 +164,7 @@ function ChainsAssetsBox () {
   return (
     <>
       {summary?.map((assetsDetail, index) => (
-        <Grid container item key={index} sx={{ background: '#05091C', borderRadius: '14px', p: '10px', rowGap: '10px' }}>
+        <Grid container item key={index} sx={{ background: '#05091C', borderRadius: '14px', p: '10px', rowGap: '6px' }}>
           <AssetsHeader
             assetsDetail={assetsDetail}
           />

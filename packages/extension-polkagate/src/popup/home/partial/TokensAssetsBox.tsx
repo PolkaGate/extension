@@ -8,15 +8,16 @@ import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { Badge, type BadgeProps, Collapse, Container, Divider, Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ArrowUp2, CloseCircle } from 'iconsax-react';
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
+import { ActionContext, AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
 import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
+import DailyChange from './DailyChange';
 
 type Assets = Record<string, FetchedBalance[]> | null | undefined;
 interface AssetDetailType {
@@ -53,35 +54,6 @@ export const Drawer = ({ length }: { length: number }) => {
   );
 };
 
-export function DailyChangeInPercent ({ change }: { change: number }) {
-  const { bgcolor, color } = useMemo(() => ({
-    bgcolor: !change
-      ? '#AA83DC26'
-      : change > 0
-        ? '#82FFA526'
-        : '#FF165C26',
-    color: !change
-      ? '#AA83DC'
-      : change > 0
-        ? '#82FFA5'
-        : '#FF165C'
-  }), [change]);
-
-  return (
-    <Grid alignItems='center' container item sx={{ bgcolor, borderRadius: '8px', p: '2px', width: 'fit-content' }}>
-      {change > 0
-        ? <ArrowUp2 color={color} size='12' variant='Bold' />
-        : change < 0
-          ? <ArrowDown2 color={color} size='12' variant='Bold' />
-          : null
-      }
-      <Typography color={color} variant='B-4'>
-        {Math.abs(change).toFixed(2)}%
-      </Typography>
-    </Grid>
-  );
-}
-
 export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
   const pricesInCurrency = usePrices();
 
@@ -103,8 +75,12 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
           width='fit-content'
         />
         {priceId && pricesInCurrency?.prices[priceId]?.change &&
-          <DailyChangeInPercent
+          <DailyChange
             change={pricesInCurrency.prices[priceId].change}
+            iconSize={12}
+            showHours={false}
+            showPercentage
+            textVariant='B-4'
           />
         }
       </Grid>
@@ -144,6 +120,7 @@ export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, 
 }
 
 function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
+  const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -156,8 +133,12 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const logoInfo = getLogo2(tokenDetail.genesisHash, tokenDetail.token);
   const balancePrice = calcPrice(priceOf(tokenDetail.priceId), tokenDetail.totalBalance, tokenDetail.decimal);
 
+  const onTokenClick = useCallback(() => {
+    onAction(`token/${tokenDetail.genesisHash}/${tokenDetail.assetId}`);
+  }, [tokenDetail.assetId, tokenDetail.genesisHash, onAction]);
+
   return (
-    <Grid alignItems='center' container item justifyContent='space-between'>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: '#2D1E4A' }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <Grid item sx={{ border: '3px solid', borderColor: '#2D1E4A', borderRadius: '8px' }}>
           <AssetLogo assetSize='26px' baseTokenSize='18px' genesisHash={tokenDetail.genesisHash} logo={logoInfo?.logoSquare} logoRoundness='8px' subLogo={logoInfo?.subLogo} subLogoPosition='-3px -8px auto auto' />
@@ -210,7 +191,7 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
           <CloseCircle color='#674394' size='32' style={{ marginLeft: '8px', transition: 'all 250ms ease-out', transitionDelay: expand ? '200ms' : 'unset', width: expand ? '42px' : 0 }} variant='Bold' />
         </Container>
         <Collapse in={expand} sx={{ width: '100%' }}>
-          <Grid container item sx={{ background: '#1B133C', borderRadius: '12px', mt: '10px', p: '12px 8px', rowGap: '8px' }}>
+          <Grid container item sx={{ background: '#1B133C', borderRadius: '12px', mt: '10px', p: '4px 2px', rowGap: '4px' }}>
             {tokenDetail.assets.map((token, index) => {
               const showDivider = tokenDetail.assets.length !== index + 1;
 
