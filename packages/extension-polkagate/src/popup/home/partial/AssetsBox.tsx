@@ -3,11 +3,12 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Container, Grid, styled, Typography } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { SafeBox } from '../../../assets/icons';
 import { useAccountAssets, useSelectedAccount, useTranslation } from '../../../hooks';
+import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
 import ChainsAssetsBox from './ChainsAssetsBox';
@@ -19,19 +20,6 @@ export enum TAB {
   TOKENS = 'tokens',
   NFTS = 'nfts'
 }
-
-const GlowBall = styled('div')({
-  background: '#CC429D',
-  borderRadius: '50%',
-  filter: 'blur(25px)',
-  height: '32px',
-  left: 0,
-  opacity: 1,
-  pointerEvents: 'none', // Ensures the glow doesn't interfere with interactions
-  position: 'absolute',
-  top: 0,
-  width: '32px'
-});
 
 const AssetNull = () => {
   const { t } = useTranslation();
@@ -95,10 +83,9 @@ function AssetsBox (): React.ReactElement {
   return (
     <>
       <AssetTabs setTab={setTab} tab={tab} />
-      <Container disableGutters sx={{ bgcolor: '#1B133C', borderRadius: '18px', mx: '15px', overflow: 'hidden', p: '4px', position: 'relative', width: '100%' }}>
+      <VelvetBox style={{ mx: '15px' }}>
         {renderContent()}
-        <GlowBall />
-      </Container>
+      </VelvetBox>
     </>
   );
 }

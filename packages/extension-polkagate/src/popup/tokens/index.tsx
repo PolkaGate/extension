@@ -65,7 +65,7 @@ const ColumnAmounts = ({ decimal, dollarAmount, token, tokenAmount }: ColumnAmou
 
 const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; logoInfo: LogoInfo | undefined }) => (
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
-    <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogoPosition='' subLogo={undefined} />
+    <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
     <Typography color='text.primary' textTransform='capitalize' variant='H-3'>
       {token?.chainName}
     </Typography>
