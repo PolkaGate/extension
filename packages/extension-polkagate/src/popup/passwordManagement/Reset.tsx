@@ -38,7 +38,6 @@ function Reset (): React.ReactElement {
       <Header />
       <BackWithLabel
         onClick={back}
-        text={t('Back')}
       />
       <Grid container item justifyContent='center' sx={{ px: '15px' }}>
         <Box
