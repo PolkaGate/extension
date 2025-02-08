@@ -36,7 +36,9 @@ interface VelvetBoxProp {
 function VelvetBox ({ children, style }: VelvetBoxProp) {
   return (
     <VelvetBoxContainer disableGutters sx={style}>
-      {children}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {children}
+      </div>
       <GlowBall />
     </VelvetBoxContainer>
   );
