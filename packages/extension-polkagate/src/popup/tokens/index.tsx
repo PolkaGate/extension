@@ -21,6 +21,9 @@ import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import { TAB_MAP } from '../history/HistoryTabs';
+import HistoryBox from '../history/partials/HistoryBox';
+import useTransactionHistory2 from '../history/useTransactionHistory2';
 import DailyChange from '../home/partial/DailyChange';
 
 interface ColumnAmountsProps {
@@ -52,6 +55,7 @@ const ColumnAmounts = ({ decimal, dollarAmount, token, tokenAmount }: ColumnAmou
         decimals={[decimal]}
         style={{
           color: '#BEAAD8',
+          fontFamily: 'Inter',
           fontSize: '12px',
           fontWeight: 500,
           width: 'max-content'
@@ -66,7 +70,7 @@ const ColumnAmounts = ({ decimal, dollarAmount, token, tokenAmount }: ColumnAmou
 const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; logoInfo: LogoInfo | undefined }) => (
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
     <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
-    <Typography color='text.primary' textTransform='capitalize' variant='H-3'>
+    <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
       {token?.chainName}
     </Typography>
   </Grid>
@@ -225,6 +229,10 @@ function Tokens (): React.ReactElement {
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
+  const { grouped, transfersTx } = useTransactionHistory2(account?.address, genesisHash, TAB_MAP.ALL);
+
+  console.log('transfersTx:', transfersTx.isFetching, grouped);
+
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
   , [accountAssets, genesisHash, paramAssetId]);
@@ -252,76 +260,84 @@ function Tokens (): React.ReactElement {
       <BackWithLabel
         content={<BackButton logoInfo={logoInfo} token={token} />}
         onClick={backHome}
+        style={{ pb: 0 }}
       />
-      <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
-        <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
-          <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-        </Grid>
-        <Typography color='text.secondary' variant='B-2'>
-          {token?.token}
-        </Typography>
-        <FormatPrice
-          commify
-          decimalColor={theme.palette.text.secondary}
-          dotStyle={'big'}
-          fontFamily='OdibeeSans'
-          fontSize='40px'
-          fontWeight={400}
-          height={40}
-          num={totalBalance}
-          width='fit-content'
-          withSmallDecimal
-        />
-        <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
+      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: '495px', overflowY: 'scroll', pt: '15px' }}>
+        <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
+          <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
+            <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+          </Grid>
+          <Typography color='text.secondary' variant='B-2'>
+            {token?.token}
+          </Typography>
           <FormatPrice
             commify
-            fontFamily='Inter'
-            fontSize='12px'
-            fontWeight={500}
-            ignoreHide
-            num={tokenPrice}
-            skeletonHeight={14}
-            textColor='#AA83DC'
+            decimalColor={theme.palette.text.secondary}
+            dotStyle={'big'}
+            fontFamily='OdibeeSans'
+            fontSize='40px'
+            fontWeight={400}
+            height={40}
+            num={totalBalance}
             width='fit-content'
+            withSmallDecimal
           />
-          {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
-            <DailyChange
-              change={change}
-              textVariant='B-1'
+          <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
+            <FormatPrice
+              commify
+              fontFamily='Inter'
+              fontSize='12px'
+              fontWeight={500}
+              ignoreHide
+              num={tokenPrice}
+              skeletonHeight={14}
+              textColor='#AA83DC'
+              width='fit-content'
             />
-          }
+            {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
+              <DailyChange
+                change={change}
+                textVariant='B-1'
+              />
+            }
+          </Grid>
+        </GlowBox>
+        <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px' }}>
+          <TokenDetailBox
+            Icon={Trade}
+            amount={token?.availableBalance}
+            decimal={token?.decimal}
+            onClick={hasTransferableBalance ? toSendFund : undefined}
+            priceId={token?.priceId}
+            title={t('Transferable')}
+            token={token?.token}
+          />
+          <TokenDetailBox
+            Icon={Lock1}
+            amount={token?.lockedBalance}
+            decimal={token?.decimal}
+            description='locked'
+            priceId={token?.priceId}
+            title={t('Locked')}
+            token={token?.token}
+          />
+          <TokenDetailBox
+            Icon={Coin}
+            amount={token?.reservedBalance}
+            decimal={token?.decimal}
+            description='locked'
+            priceId={token?.priceId}
+            title={t('Reserved')}
+            token={token?.token}
+          />
+          <TokenStakingInfo tokenDetail={token} />
         </Grid>
-      </GlowBox>
-      <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px' }}>
-        <TokenDetailBox
-          Icon={Trade}
-          amount={token?.availableBalance}
-          decimal={token?.decimal}
-          onClick={hasTransferableBalance ? toSendFund : undefined}
-          priceId={token?.priceId}
-          title={t('Transferable')}
-          token={token?.token}
+        <HistoryBox
+          genesisHash={genesisHash}
+          historyItems={grouped}
+          style={{ mb: '15px', mx: '12px', width: 'calc(100% - 30px)' }}
         />
-        <TokenDetailBox
-          Icon={Lock1}
-          amount={token?.lockedBalance}
-          decimal={token?.decimal}
-          description='locked'
-          priceId={token?.priceId}
-          title={t('Locked')}
-          token={token?.token}
-        />
-        <TokenDetailBox
-          Icon={Coin}
-          amount={token?.reservedBalance}
-          decimal={token?.decimal}
-          description='locked'
-          priceId={token?.priceId}
-          title={t('Reserved')}
-          token={token?.token}
-        />
-        <TokenStakingInfo tokenDetail={token} />
-      </Grid>
+      </Container>
     </Grid>
   );
 }
