@@ -50,7 +50,7 @@ const Fade = styled('div')({
 
 function GlowBox ({ children, style }: { children: React.ReactNode, style?: SxProps<Theme> }): React.ReactElement {
   return (
-    <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: '100%', zIndex: 1, ...style }}>
+    <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
       {children}
       <GlowBoxContainer disableGutters>
         <GradientBorder />

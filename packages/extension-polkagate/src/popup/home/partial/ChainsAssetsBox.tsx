@@ -66,7 +66,7 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   }, [asset.assetId, asset.genesisHash, onAction]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: '#1B133C', p: '4px 8px' }, borderRadius: '12px', cursor: 'pointer', p: '4px 0', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <TokenPriceInfo
