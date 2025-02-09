@@ -84,6 +84,7 @@ export { default as Progress } from './Progress';
 export { default as ProxyTable } from './ProxyTable';
 export { default as RemoteNodeSelector } from './RemoteNodeSelector';
 export { default as RemoveAuth } from './RemoveAuth';
+export { default as ScrollingTextBox } from './ScrollingTextBox';
 export { default as SearchField } from './SearchField';
 export { default as Select } from './Select';
 export { default as Select2 } from './Select2';
