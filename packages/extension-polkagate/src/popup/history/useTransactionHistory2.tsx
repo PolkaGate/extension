@@ -13,7 +13,6 @@ import { getGovHistory } from '../../util/api/getGovHistory';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { STAKING_ACTIONS } from '../../util/constants';
 import { getHistoryFromStorage } from '../../util/utils';
-import { TAB_MAP } from './HistoryTabs';
 
 interface RecordTabStatus {
   pageNum: number,
@@ -46,7 +45,13 @@ export interface TransactionHistoryOutput{
   governanceTx: object & RecordTabStatusGov;
 }
 
-export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, tabIndex: TAB_MAP): TransactionHistoryOutput {
+interface FilterOptions {
+  transfers?: boolean;
+  governance?: boolean;
+  staking?: boolean;
+}
+
+export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const { chain, chainName, decimal } = useChainInfo(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
 
@@ -177,22 +182,18 @@ export default function useTransactionHistory (address: AccountId | string | und
 
     history = history.sort((a, b) => b.date - a.date);
 
-    switch (tabIndex) {
-      case (TAB_MAP.TRANSFERS):
-        history = history.filter((h) => ['send', 'receive'].includes(h.action.toLowerCase()));
-        break;
-      case (TAB_MAP.STAKING):
-        history = history.filter((h) => STAKING_ACTIONS.includes(h.action));
-        break;
-      case (TAB_MAP.GOVERNANCE):
-        history = history.filter((h) => ['Governance', 'Unlock Referenda'].includes(h.action));
-        break;
-      default:
-        break;
+    const filterHistory = filterOptions && !Object.values(filterOptions).every((filter) => filter);
+
+    if (filterHistory) {
+      history = history.filter(({ action }) =>
+        (filterOptions.transfers && ['send', 'receive'].includes(action.toLowerCase())) ||
+        (filterOptions.governance && ['Governance', 'Unlock Referenda'].includes(action)) ||
+        (filterOptions.staking && STAKING_ACTIONS.includes(action))
+      );
     }
 
     setTabHistory(history);
-  }, [tabIndex, fetchedTransferHistoriesFromSubscan, localHistories, fetchedGovernanceHistoriesFromSubscan]);
+  }, [fetchedTransferHistoriesFromSubscan, localHistories, fetchedGovernanceHistoriesFromSubscan, filterOptions]);
 
   useEffect(() => {
     formatted && getHistoryFromStorage(String(formatted)).then((h) => {
