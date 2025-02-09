@@ -12,6 +12,7 @@ declare module '@mui/material/styles' {
     'H-3': CSSProperties;
     'B-1': CSSProperties;
     'B-2': CSSProperties;
+    'B-3': CSSProperties;
     'B-4': CSSProperties;
     'S-1': CSSProperties;
     'S-2': CSSProperties;
@@ -22,6 +23,7 @@ declare module '@mui/material/styles' {
     'H-3': CSSProperties;
     'B-1': CSSProperties;
     'B-2': CSSProperties;
+    'B-3': CSSProperties;
     'B-4': CSSProperties;
     'S-1': CSSProperties;
     'S-2': CSSProperties;
@@ -34,6 +36,7 @@ declare module '@mui/material/Typography' {
     'H-3': true;
     'B-1': true;
     'B-2': true;
+    'B-3': true;
     'B-4': true;
     'S-1': true;
     'S-2': true;
@@ -56,6 +59,14 @@ export const baseTheme: ThemeOptions = {
       fontWeight: 600,
       letterSpacing: '-0.6px',
       // lineHeight: '18px',
+      textAlign: 'center'
+    },
+    'B-3': {
+      fontFamily: 'Inter',
+      fontSize: '16px',
+      fontWeight: 600,
+      letterSpacing: '-0.6px',
+      // lineHeight: '23px',
       textAlign: 'center'
     },
     'B-4': {
