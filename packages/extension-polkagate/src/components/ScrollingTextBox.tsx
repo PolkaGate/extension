@@ -11,9 +11,10 @@ interface ScrollingTextBoxProps {
   text: string;
   width: number;
   style?: SxProps<Theme>;
+  textStyle?: SxProps<Theme>;
 }
 
-function ScrollingTextBox ({ style, text, width }: ScrollingTextBoxProps): React.ReactElement {
+function ScrollingTextBox ({ style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
   const textRef = useRef<HTMLDivElement>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
   const [textWidth, setTextWidth] = useState(0);
@@ -32,11 +33,13 @@ function ScrollingTextBox ({ style, text, width }: ScrollingTextBoxProps): React
   const containerStyle: SxProps<Theme> = {
     '&::after': {
       background: shouldScroll ? 'linear-gradient(90deg, transparent 0%, #591467 100%)' : undefined,
+      opacity: 0.3,
       right: 0
     },
     '&::before': {
       background: shouldScroll ? 'linear-gradient(90deg, #20123E 0%, transparent 100%)' : undefined,
-      left: 0
+      left: 0,
+      opacity: 0.3
     },
     '&::before, &::after': {
       content: '""',
@@ -71,8 +74,8 @@ function ScrollingTextBox ({ style, text, width }: ScrollingTextBoxProps): React
   };
 
   return (
-    <Box sx={containerStyle}>
-      <Typography ref={textRef} sx={{ ...textboxStyle, ...style }}>
+    <Box sx={{ ...containerStyle, ...style }}>
+      <Typography ref={textRef} sx={{ ...textboxStyle, ...textStyle }}>
         {text}
       </Typography>
     </Box>
