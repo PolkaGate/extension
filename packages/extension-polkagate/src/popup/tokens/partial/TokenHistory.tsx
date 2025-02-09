@@ -1,0 +1,179 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import type { Icon } from 'iconsax-react';
+
+import { Container, Grid, IconButton, Typography } from '@mui/material';
+import { ArrowSwapHorizontal, MedalStar, Setting4 } from 'iconsax-react';
+import React, { useCallback, useMemo, useReducer, useState } from 'react';
+
+import { DecisionButtons, ExtensionPopup, GradientSwitch } from '../../../components';
+import SnowFlake from '../../../components/SVG/SnowFlake';
+import { useTranslation } from '../../../hooks';
+import { TAB_MAP } from '../../history/HistoryTabs';
+import HistoryBox from '../../history/partials/HistoryBox';
+import useTransactionHistory2 from '../../history/useTransactionHistory2';
+
+interface FilterState {
+  governance: boolean;
+  staking: boolean;
+  transfer: boolean;
+  apply: boolean;
+  reset: boolean;
+}
+
+interface FilterAction {
+  filter: keyof FilterState;
+}
+
+const INITIAL_STATE: FilterState = {
+  apply: true,
+  governance: true,
+  reset: false,
+  staking: true,
+  transfer: true
+};
+
+const filterReducer = (state: FilterState, action: FilterAction): FilterState => {
+  if (action.filter === 'apply') {
+    return {
+      ...state,
+      apply: true
+    };
+  } else if (action.filter === 'reset') {
+    return INITIAL_STATE;
+  } else {
+    return {
+      ...state,
+      [action.filter]: !state[action.filter],
+      apply: false
+    };
+  }
+};
+
+interface FilterItemProps {
+  Icon?: Icon;
+  Logo?: React.ReactNode;
+  name: string;
+  onClick: () => void;
+  checked: boolean;
+}
+
+const FilterItem = ({ Icon, Logo, checked, name, onClick }: FilterItemProps) => {
+  return (
+    <Grid alignItems='center' container item justifyContent='space-between'>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ columnGap: '8px', width: 'fit-content' }}>
+        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant='Outline' />}
+        {Logo}
+        <Typography color='text.primary' variant='B-1'>
+          {name}
+        </Typography>
+      </Grid>
+      <GradientSwitch
+        checked={checked}
+        onChange={onClick}
+      />
+    </Grid>
+  );
+};
+
+interface FilterHistoryProps {
+  openMenu: boolean;
+  setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  dispatchFilter: React.Dispatch<FilterAction>;
+  filter: FilterState;
+}
+
+function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: FilterHistoryProps) {
+  const { t } = useTranslation();
+
+  const closePopup = useCallback(() => {
+    setOpenMenu(false);
+  }, [setOpenMenu]);
+
+  const onFilters = useCallback((filter: keyof FilterState) => () => {
+    dispatchFilter({ filter });
+    ['apply', 'reset'].includes(filter) && closePopup();
+  }, [closePopup, dispatchFilter]);
+
+  return (
+    <ExtensionPopup
+      TitleIcon={Setting4}
+      handleClose={closePopup}
+      openMenu={openMenu}
+      title={t('Filters')}
+    >
+      <>
+        <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', height: '325px', justifyContent: 'flex-start', p: '5px', position: 'relative', pt: '25px', rowGap: '20px', zIndex: 1 }}>
+          <FilterItem
+            Icon={ArrowSwapHorizontal}
+            checked={filter.transfer}
+            name={t('Transfers')}
+            onClick={onFilters('transfer')}
+          />
+          <FilterItem
+            Icon={MedalStar}
+            checked={filter.governance}
+            name={t('Governance')}
+            onClick={onFilters('governance')}
+          />
+          <FilterItem
+            Logo={<SnowFlake size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} />}
+            checked={filter.staking}
+            name={t('Staking')}
+            onClick={onFilters('staking')}
+          />
+        </Container>
+        <DecisionButtons
+          direction='vertical'
+          onPrimaryClick={onFilters('apply')}
+          onSecondaryClick={onFilters('reset')}
+          primaryBtnText={t('Apply')}
+          secondaryBtnText={t('Reset Filters')}
+        />
+      </>
+    </ExtensionPopup>
+  );
+}
+
+interface Props {
+  genesisHash: string;
+  address: string | undefined;
+}
+
+export default function TokenHistory ({ address, genesisHash }: Props): React.ReactElement {
+  const { t } = useTranslation();
+
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const [filter, dispatchFilter] = useReducer(filterReducer, INITIAL_STATE);
+
+  const { grouped } = useTransactionHistory2(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
+
+  const openPopup = useCallback(() => setOpenMenu(true), []);
+
+  return (
+    <>
+      <Grid alignItems='center' columnGap='8px' container item pl='15px'>
+        <Typography color='text.primary' variant='B-3'>
+          {t('History')}
+        </Typography>
+        <IconButton onClick={openPopup} sx={{ ':hover': { background: '#674394' }, background: '#2D1E4A', borderRadius: '12px', p: '5px 8px' }}>
+          <Setting4 color='#AA83DC' size='18' variant='Bold' />
+        </IconButton>
+      </Grid>
+      <HistoryBox
+        genesisHash={genesisHash}
+        historyItems={grouped}
+        style={{ m: '10px 12px 15px', width: 'calc(100% - 24px)' }}
+      />
+      <FilterHistory
+        dispatchFilter={dispatchFilter}
+        filter={filter}
+        openMenu={openMenu}
+        setOpenMenu={setOpenMenu}
+      />
+    </>
+  );
+}
