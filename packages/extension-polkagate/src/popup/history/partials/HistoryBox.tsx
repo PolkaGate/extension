@@ -11,6 +11,7 @@ import React, { useCallback } from 'react';
 
 import { emptyHistoryList } from '../../../assets/icons/index';
 import { FormatBalance2, GradientDivider } from '../../../components';
+import ScrollingTextBox from '../../../components/ScrollingTextBox';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import { amountToMachine } from '../../../util/utils';
@@ -73,20 +74,26 @@ const HistoryItem = ({ decimal, historyDate, historyItems, token }: HistoryItemP
       const isSend = historyItem.action.toLowerCase() === 'send';
 
       return (
-        <Grid container item width='fit-content'>
+        <Grid alignItems='center' columnGap='4px' container item width='fit-content'>
           <Typography color='text.secondary' variant='B-4'>
             {isSend ? t('To') : t('From')}:
           </Typography>
-          <Typography color='#AA83DC' variant='B-4'>
-            {isSend
-              ? (historyItem.to?.name)
-              : historyItem.from.name
+          <ScrollingTextBox
+            style={{ lineHeight: '18px' }}
+            text={isSend
+              ? (historyItem.to?.name ?? historyItem.to?.address) ?? ''
+              : (historyItem.from.name ?? historyItem.from.address) ?? ''
             }
-          </Typography>
+            textStyle={{
+              color: '#AA83DC',
+              ...theme.typography['B-4']
+            }}
+            width={90}
+          />
         </Grid>
       );
     }
-  }, [t]);
+  }, [t, theme.typography]);
 
   const historyStatus = useCallback((status: boolean) => {
     return (
@@ -156,7 +163,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function HistoryBox({ genesisHash, historyItems, style }: Props) {
+function HistoryBox ({ genesisHash, historyItems, style }: Props) {
   const { decimal, token } = useChainInfo(genesisHash);
 
   return (
@@ -174,7 +181,7 @@ function HistoryBox({ genesisHash, historyItems, style }: Props) {
             />
           ))
         }
-        {/* one should be in the progress (doesn't designed yet), and one at the end of the HistoryItem list) */}
+        {/* TODO: one should be in the progress (doesn't designed yet), and one at the end of the HistoryItem list) */}
         <div id='observerObj' style={{ height: '1px' }} />
       </Container>
     </VelvetBox>
