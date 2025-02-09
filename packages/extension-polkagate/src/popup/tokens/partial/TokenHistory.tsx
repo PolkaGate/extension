@@ -7,13 +7,12 @@ import type { Icon } from 'iconsax-react';
 
 import { Container, Grid, IconButton, Typography } from '@mui/material';
 import { ArrowSwapHorizontal, MedalStar, Setting4 } from 'iconsax-react';
-import React, { useCallback, useMemo, useReducer, useState } from 'react';
+import React, { memo, useCallback, useReducer, useState } from 'react';
 
 import { DecisionButtons, ExtensionPopup, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
-import { TAB_MAP } from '../../history/HistoryTabs';
-import HistoryBox from '../../history/partials/HistoryBox';
+import HistoryBox from '../../history/newDesign/HistoryBox';
 import useTransactionHistory2 from '../../history/useTransactionHistory2';
 
 interface FilterState {
@@ -143,7 +142,7 @@ interface Props {
   address: string | undefined;
 }
 
-export default function TokenHistory ({ address, genesisHash }: Props): React.ReactElement {
+function TokenHistory ({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
@@ -177,3 +176,5 @@ export default function TokenHistory ({ address, genesisHash }: Props): React.Re
     </>
   );
 }
+
+export default memo(TokenHistory);
