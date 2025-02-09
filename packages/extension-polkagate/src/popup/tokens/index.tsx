@@ -18,13 +18,12 @@ import { ActionContext, AssetLogo, BackWithLabel, FormatBalance2, FormatPrice, T
 import SnowFlake from '../../components/SVG/SnowFlake';
 import { useAccountAssets, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { calcChange, calcPrice } from '../../hooks/useYouHave';
+import { windowOpen } from '../../messaging';
 import { UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
-import { TAB_MAP } from '../history/HistoryTabs';
-import HistoryBox from '../history/partials/HistoryBox';
-import useTransactionHistory2 from '../history/useTransactionHistory2';
 import DailyChange from '../home/partial/DailyChange';
+import TokenHistory from './partial/TokenHistory';
 
 interface ColumnAmountsProps {
   dollarAmount: number;
@@ -229,10 +228,6 @@ function Tokens (): React.ReactElement {
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
-  const { grouped, transfersTx } = useTransactionHistory2(account?.address, genesisHash, TAB_MAP.ALL);
-
-  console.log('transfersTx:', transfersTx.isFetching, grouped);
-
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
   , [accountAssets, genesisHash, paramAssetId]);
@@ -247,8 +242,8 @@ function Tokens (): React.ReactElement {
   const logoInfo = getLogo2(token?.genesisHash, token?.token);
 
   const toSendFund = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+    account?.address && windowOpen(`/send/${account.address}/${paramAssetId}`).catch(console.error);
+  }, [account?.address, paramAssetId]);
 
   const backHome = useCallback(() => {
     onAction('/');
@@ -302,7 +297,7 @@ function Tokens (): React.ReactElement {
             }
           </Grid>
         </GlowBox>
-        <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px' }}>
+        <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px', pb: '10px' }}>
           <TokenDetailBox
             Icon={Trade}
             amount={token?.availableBalance}
@@ -332,10 +327,9 @@ function Tokens (): React.ReactElement {
           />
           <TokenStakingInfo tokenDetail={token} />
         </Grid>
-        <HistoryBox
+        <TokenHistory
+          address={account?.address}
           genesisHash={genesisHash}
-          historyItems={grouped}
-          style={{ mb: '15px', mx: '12px', width: 'calc(100% - 30px)' }}
         />
       </Container>
     </Grid>
