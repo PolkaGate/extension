@@ -9,8 +9,7 @@ import { Container, Grid, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AccountContext } from '../../../components';
-import ScrollingTextBox from './ScrollingTextBox';
+import { AccountContext, ScrollingTextBox } from '../../../components';
 import SelectAccount from './SelectAccount';
 
 function AccountSelection (): React.ReactElement {
@@ -53,11 +52,11 @@ function AccountSelection (): React.ReactElement {
 
         </Grid>
         <ScrollingTextBox
-          style={{
+          text={selectedAccount?.name ?? ''}
+          textStyle={{
             color: 'text.primary',
             ...theme.typography['B-2']
           }}
-          text={selectedAccount?.name ?? ''}
           width={65}
         />
         <ArrowDown2 color='#AA83DC' size='18' variant='Bold' />

@@ -7,8 +7,8 @@ import { Grid, type SxProps, type Theme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React from 'react';
 
+import { ScrollingTextBox } from '../../../components';
 import useIsHideNumbers from '../../../hooks/useIsHideNumbers';
-import ScrollingTextBox from './ScrollingTextBox';
 
 interface Props {
   accountName: string;
