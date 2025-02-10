@@ -18,8 +18,6 @@ import { amountToMachine } from '../../../util/utils';
 interface HistoryItemProps {
   historyDate: string;
   historyItems: TransactionDetail[];
-  decimal: number;
-  token: string;
 }
 
 const historyIcon = (action: string): Icon => {
@@ -92,7 +90,7 @@ const HistoryStatus = memo(function HistoryStatus ({ status }: { status: boolean
   );
 });
 
-function HistoryItem ({ decimal, historyDate, historyItems, token }: HistoryItemProps) {
+function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
   const theme = useTheme();
 
   return (
@@ -120,16 +118,14 @@ function HistoryItem ({ decimal, historyDate, historyItems, token }: HistoryItem
                 <Grid container direction='column' item width='fit-content'>
                   <FormatBalance2
                     decimalPoint={2}
-                    decimals={[decimal]}
+                    decimals={[historyItem.decimal ?? 0]}
                     style={{
                       color: theme.palette.text.primary,
-                      fontFamily: 'Inter',
-                      fontSize: '14px',
-                      fontWeight: 600,
+                      ...theme.typography['B-2'],
                       width: 'max-content'
                     }}
-                    tokens={[token]}
-                    value={amountToMachine(historyItem.amount, decimal)}
+                    tokens={[historyItem.token ?? '']}
+                    value={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
                   />
                   <HistoryStatus status={historyItem.success} />
                 </Grid>

@@ -6,14 +6,14 @@
 import type { TransactionDetail } from '@polkadot/extension-polkagate/util/types';
 
 import { Box, Container, type SxProps, type Theme, Typography } from '@mui/material';
-import React from 'react';
+import React, { memo } from 'react';
 
 import { emptyHistoryList } from '../../../assets/icons/index';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import HistoryItem from './HistoryItem';
 
-const EmptyHistoryBox = () => {
+function EmptyHistoryBox () {
   const { t } = useTranslation();
 
   return (
@@ -28,37 +28,32 @@ const EmptyHistoryBox = () => {
       </Typography>
     </>
   );
-};
+}
 
 interface Props {
   historyItems: Record<string, TransactionDetail[]> | null | undefined;
-  genesisHash: string;
   style?: SxProps<Theme>;
 }
 
-function HistoryBox ({ genesisHash, historyItems, style }: Props) {
-  const { decimal, token } = useChainInfo(genesisHash);
-
+function HistoryBox ({ historyItems, style }: Props) {
   return (
     <VelvetBox style={style}>
       <Container disableGutters sx={{ display: 'grid', rowGap: '4px' }}>
-        {!historyItems
-          ? <EmptyHistoryBox />
-          : Object.entries(historyItems).map(([date, items], index) => (
-            <HistoryItem
-              decimal={decimal ?? 0}
-              historyDate={date}
-              historyItems={items}
-              key={index}
-              token={token ?? ''}
-            />
-          ))
+        {historyItems && Object.entries(historyItems).map(([date, items], index) => (
+          <HistoryItem
+            historyDate={date}
+            historyItems={items}
+            key={index}
+          />
+        ))
         }
-        {/* TODO: one should be in the progress (doesn't designed yet), and one at the end of the HistoryItem list) */}
         <div id='observerObj' style={{ height: '1px' }} />
+        {!historyItems &&
+          <EmptyHistoryBox />
+        }
       </Container>
     </VelvetBox>
   );
 }
 
-export default HistoryBox;
+export default memo(HistoryBox);
