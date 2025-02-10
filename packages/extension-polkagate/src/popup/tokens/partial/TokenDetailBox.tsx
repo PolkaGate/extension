@@ -63,10 +63,10 @@ function TokenDetailBox ({ Icon, amount, decimal, description, onClick, priceId,
         </Grid>
       </Grid>
       <ColumnAmounts
+        cryptoAmount={amount ?? BN_ZERO}
         decimal={decimal ?? 0}
-        dollarAmount={totalBalance}
+        fiatAmount={totalBalance}
         token={token ?? ''}
-        tokenAmount={amount ?? BN_ZERO}
       />
       <Tooltip
         content={description}

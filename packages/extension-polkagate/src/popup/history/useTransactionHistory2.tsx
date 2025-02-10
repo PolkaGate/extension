@@ -193,7 +193,8 @@ export default function useTransactionHistory (address: AccountId | string | und
     }
 
     setTabHistory(history);
-  }, [fetchedTransferHistoriesFromSubscan, localHistories, fetchedGovernanceHistoriesFromSubscan, filterOptions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchedGovernanceHistoriesFromSubscan, filterOptions?.transfers, filterOptions?.governance, filterOptions?.staking, fetchedTransferHistoriesFromSubscan, localHistories]);
 
   useEffect(() => {
     formatted && getHistoryFromStorage(String(formatted)).then((h) => {
