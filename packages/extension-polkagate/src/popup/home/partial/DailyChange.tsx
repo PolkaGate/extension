@@ -3,9 +3,9 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { FormatPrice } from '../../../components';
 import { PORTFOLIO_CHANGE_DECIMAL } from '../../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
@@ -13,7 +13,7 @@ import { useIsHideNumbers, useYouHave } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
-const RenderSkeleton = memo(function RenderSkeleton() {
+const RenderSkeleton = memo(function RenderSkeleton () {
   return (
     <Skeleton
       animation='wave'
@@ -24,11 +24,25 @@ const RenderSkeleton = memo(function RenderSkeleton() {
   );
 });
 
-function DailyChange (): React.ReactElement {
+interface DailyChangeProps {
+  change?: number | null;
+  style?: SxProps<Theme>;
+  textVariant?: string;
+  iconSize?: number;
+  showHours?: boolean;
+  showPercentage?: boolean;
+}
+
+function DailyChange ({ change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
+  const theme = useTheme();
   const youHave = useYouHave();
   const { isHideNumbers } = useIsHideNumbers();
 
-  const portfolioChange = useMemo(() => {
+  const changed = useMemo(() => {
+    if (change !== null) {
+      return change;
+    }
+
     if (youHave?.change === undefined) {
       return undefined;
     }
@@ -36,13 +50,13 @@ function DailyChange (): React.ReactElement {
     const value = formatDecimal(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
-  }, [youHave?.change]);
+  }, [change, youHave?.change]);
 
   const containerStyle: SxProps<Theme> = {
     alignItems: 'center',
-    bgcolor: portfolioChange && portfolioChange > 0
+    bgcolor: changed && changed > 0
       ? '#FF165C26'
-      : portfolioChange && portfolioChange < 0
+      : changed && changed < 0
         ? '#82FFA526'
         : '#AA83DC26',
     borderRadius: '9px',
@@ -53,43 +67,42 @@ function DailyChange (): React.ReactElement {
     width: 'fit-content'
   };
 
-  const color = useCallback((change: number | undefined) => {
-    return !change
-      ? '#AA83DC'
-      : change > 0
-        ? '#82FFA5'
-        : '#FF165C';
-  }, []);
+  const color = useMemo(() => !changed ? '#AA83DC' : changed > 0 ? '#82FFA5' : '#FF165C', [changed]);
 
-  if (portfolioChange === undefined) {
+  if (changed === undefined) {
     return <RenderSkeleton />;
   }
 
   return (
-    <Container disableGutters sx={containerStyle}>
+    <Container disableGutters sx={{ ...containerStyle, ...style }}>
       {youHave?.change && youHave.change > 0
-        ? <ArrowUp2 color={color(youHave?.change)} size='15' variant='Bold' />
+        ? <ArrowUp2 color={color} size={iconSize} variant='Bold' />
         : youHave?.change && youHave.change < 0
-          ? <ArrowDown2 color={color(youHave?.change)} size='15' variant='Bold' />
+          ? <ArrowDown2 color={color} size={iconSize} variant='Bold' />
           : null
       }
-      <FormatPrice
-        commify
-        fontFamily='Inter'
-        fontSize={'13px'}
-        fontWeight={500}
-        num={portfolioChange}
-        skeletonHeight={14}
-        textColor={color(youHave?.change)}
-        width='fit-content'
-      />
-      {!isHideNumbers &&
-        <Typography style={{ color: color(youHave?.change), fontFamily: 'Inter', fontSize: '14px', fontWeight: 900, lineHeight: '15px' }}>
+      {showPercentage
+        ? <Typography color={color} variant='B-4'>
+          {Math.abs(changed).toFixed(2)}%
+        </Typography>
+        : <FormatPrice
+          commify
+          num={changed}
+          skeletonHeight={14}
+          textColor={color}
+          width='fit-content'
+          {...(theme.typography[textVariant as never] as object)}
+        />
+      }
+      {showHours && !isHideNumbers &&
+        <Typography style={{ color, fontWeight: 900, lineHeight: '15px' }} variant={textVariant as never}>
           •
         </Typography>}
-      <Typography style={{ color: color(youHave?.change), lineHeight: '15px' }} variant='B-1'>
-        {`${COIN_GECKO_PRICE_CHANGE_DURATION}h`}
-      </Typography>
+      {showHours &&
+        <Typography style={{ color, lineHeight: '15px' }} variant={textVariant as never}>
+          {`${COIN_GECKO_PRICE_CHANGE_DURATION}h`}
+        </Typography>
+      }
     </Container>
   );
 }

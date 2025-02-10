@@ -51,15 +51,15 @@ const FadeOut = styled('div')(() => ({
   width: '375px'
 }));
 
-// const SmootherStyle = {
-//   background: 'linear-gradient(0deg, #7671A3 0%, #080610 100%)',
-//   height: '200px',
-//   inset: 0,
-//   maskMode: 'alpha',
-//   opacity: 0.05,
-//   position: 'absolute',
-//   width: '375px'
-// } as React.CSSProperties;
+const Smoother = styled('div')(() => ({
+  background: 'linear-gradient(0deg,rgba(118, 113, 163, 0.7) 0%, #080610 100%)',
+  height: '200px',
+  inset: 0,
+  maskMode: 'alpha',
+  opacity: 0.05,
+  position: 'absolute',
+  width: '375px'
+}));
 
 interface Props {
   style?: React.CSSProperties;
@@ -72,7 +72,7 @@ function Background ({ id, style }: Props): React.ReactNode {
       <Container disableGutters sx={{ height: '220px', overflow: 'hidden', position: 'relative', width: '100%' }}>
         <RedBall />
         <BlueBall />
-        {/* <div style={SmootherStyle} /> */}
+        <Smoother />
         <Box
           component='img'
           src={BackgroundLogo as string}

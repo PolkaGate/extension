@@ -70,6 +70,7 @@ import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rew
 import SoloStake from '@polkadot/extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
+import Token from '@polkadot/extension-polkagate/src/popup/tokens';
 
 import RouteWrapper from '../components/RouteWrapper';
 
@@ -80,6 +81,14 @@ interface RouteConfig {
   props?: Record<string, unknown>;
   exact?: boolean;
 }
+
+const TOKEN_ROUTE: RouteConfig[] = [
+  {
+    Component: Token,
+    path: '/token/:genesisHash/:paramAssetId/',
+    trigger: 'token'
+  }
+];
 
 // Account Management Routes
 const ACCOUNT_ROUTES: RouteConfig[] = [
@@ -443,7 +452,8 @@ const ALL_ROUTES: RouteConfig[] = [
   ...DERIVE_ROUTES,
   ...PASSWORD_ROUTES,
   ...ROOT_ROUTES,
-  ...SETTINGS_ROUTES
+  ...SETTINGS_ROUTES,
+  ...TOKEN_ROUTE
 ];
 
 export default function Routes () {
