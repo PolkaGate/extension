@@ -87,10 +87,10 @@ function TokenStakingInfo ({ tokenDetail }: TokenStakingInfoProp) {
       </Grid>
       <Grid alignItems='center' container item sx={{ rowGap: '4px', width: 'fit-content' }}>
         <ColumnAmounts
+          cryptoAmount={stakedAmount}
           decimal={tokenDetail?.decimal ?? 0}
-          dollarAmount={totalBalance}
+          fiatAmount={totalBalance}
           token={tokenDetail?.token ?? ''}
-          tokenAmount={stakedAmount}
         />
       </Grid>
     </Container>

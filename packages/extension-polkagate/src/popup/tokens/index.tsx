@@ -26,13 +26,13 @@ import TokenHistory from './partial/TokenHistory';
 import TokenStakingInfo from './partial/TokenStakingInfo';
 
 interface ColumnAmountsProps {
-  dollarAmount: number;
-  tokenAmount: BN;
+  fiatAmount: number;
+  cryptoAmount: BN;
   token: string;
   decimal: number;
 }
 
-export const ColumnAmounts = ({ decimal, dollarAmount, token, tokenAmount }: ColumnAmountsProps) => {
+export const ColumnAmounts = ({ cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) => {
   const theme = useTheme();
 
   return (
@@ -45,7 +45,7 @@ export const ColumnAmounts = ({ decimal, dollarAmount, token, tokenAmount }: Col
         fontSize='14px'
         fontWeight={600}
         height={18}
-        num={dollarAmount}
+        num={fiatAmount}
         width='fit-content'
         withSmallDecimal
       />
@@ -60,7 +60,7 @@ export const ColumnAmounts = ({ decimal, dollarAmount, token, tokenAmount }: Col
           width: 'max-content'
         }}
         tokens={[token]}
-        value={tokenAmount}
+        value={cryptoAmount}
       />
     </Grid>
   );
