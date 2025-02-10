@@ -7,7 +7,7 @@ import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { Badge, type BadgeProps, Collapse, Container, Divider, Grid, styled, Typography, useTheme } from '@mui/material';
-import { ArrowDown2, ArrowUp2, CloseCircle } from 'iconsax-react';
+import { CloseCircle } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
