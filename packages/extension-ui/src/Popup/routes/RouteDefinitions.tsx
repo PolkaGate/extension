@@ -452,7 +452,8 @@ const ALL_ROUTES: RouteConfig[] = [
   ...DERIVE_ROUTES,
   ...PASSWORD_ROUTES,
   ...ROOT_ROUTES,
-  ...SETTINGS_ROUTES
+  ...SETTINGS_ROUTES,
+  ...TOKEN_ROUTE
 ];
 
 export default function Routes () {

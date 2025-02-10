@@ -83,12 +83,7 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
   );
 }
 
-interface Props {
-  page: Pages;
-  setPage: React.Dispatch<React.SetStateAction<Pages>>;
-}
-
-function HomeMenu ({ page, setPage }: Props): React.ReactElement {
+function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const history = useHistory();

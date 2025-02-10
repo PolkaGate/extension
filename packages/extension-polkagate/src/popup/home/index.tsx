@@ -4,8 +4,6 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Pages } from './type';
-
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import semver from 'semver';
@@ -45,7 +43,6 @@ export default function Home (): React.ReactElement {
 
   const [show, setShowAlert] = useState<boolean>(false);
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();
-  const [page, setPage] = useState<Pages>('home');
 
   useEffect(() => {
     if (!manifest?.version) {

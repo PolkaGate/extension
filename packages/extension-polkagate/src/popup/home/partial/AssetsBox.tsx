@@ -80,42 +80,6 @@ function AssetsBox (): React.ReactElement {
     return null;
   }, [isLoading, nothingToShow, tab]);
 
-  const isLoading = accountAssets === undefined;
-  const nothingToShow = accountAssets === null;
-
-  useEffect(() => {
-    if (tab) {
-      window.localStorage.setItem('HomeTab', tab);
-    } else {
-      setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.CHAINS);
-    }
-  }, [tab]);
-
-  const renderContent = useCallback(() => {
-    if (TAB.NFTS === tab) {
-      return <NFTBox />;
-    }
-
-    if (isLoading || !tab) {
-      return <AssetLoading />;
-    }
-
-    if (nothingToShow) {
-      return <AssetNull />;
-    }
-
-    if ([TAB.CHAINS, TAB.TOKENS].includes(tab)) {
-      return (
-        <Grid container item sx={{ borderRadius: '14px', display: 'grid', maxHeight: '290px', overflowY: 'scroll', position: 'relative', rowGap: tab === TAB.TOKENS ? '10px' : '4px', transition: 'all 250ms ease-out', zIndex: 1 }}>
-          {tab === TAB.CHAINS && <ChainsAssetsBox />}
-          {tab === TAB.TOKENS && <TokensAssetsBox />}
-        </Grid>
-      );
-    }
-
-    return null;
-  }, [isLoading, nothingToShow, tab]);
-
   return (
     <>
       <AssetTabs setTab={setTab} tab={tab} />
