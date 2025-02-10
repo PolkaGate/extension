@@ -187,7 +187,9 @@ function Tokens (): React.ReactElement {
         </Grid>
         <TokenHistory
           address={account?.address}
+          decimal={token?.decimal}
           genesisHash={genesisHash}
+          token={token?.token}
         />
       </Container>
     </Grid>

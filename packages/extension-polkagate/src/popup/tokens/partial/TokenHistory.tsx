@@ -4,10 +4,11 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
+import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, IconButton, Typography } from '@mui/material';
 import { ArrowSwapHorizontal, MedalStar, Setting4 } from 'iconsax-react';
-import React, { memo, useCallback, useReducer, useState } from 'react';
+import React, { memo, useCallback, useMemo, useReducer, useState } from 'react';
 
 import { DecisionButtons, ExtensionPopup, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
@@ -140,15 +141,39 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
 interface Props {
   genesisHash: string;
   address: string | undefined;
+  decimal: number | undefined;
+  token: string | undefined;
 }
 
-function TokenHistory ({ address, genesisHash }: Props): React.ReactElement {
+function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [filter, dispatchFilter] = useReducer(filterReducer, INITIAL_STATE);
 
   const { grouped } = useTransactionHistory2(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
+
+  const historyItemsToShow = useMemo(() => {
+    if (!grouped) {
+      return grouped;
+    }
+
+    const result = Object.fromEntries(
+      Object.entries(grouped)
+        .map(([date, items]) => {
+          const filteredItems = items.filter(
+            ({ token: historyItemToken }) => historyItemToken === token
+          )
+            .map((item) => ({ ...item, decimal }));
+
+          return [date, filteredItems];
+        })
+        .filter(([, filteredItems]) => filteredItems.length > 0)
+    ) as Record<string, TransactionDetail[]>;
+
+    // Check if result is an empty object
+    return Object.keys(result).length === 0 ? null : result;
+  }, [decimal, grouped, token]);
 
   const openPopup = useCallback(() => setOpenMenu(true), []);
 
@@ -163,8 +188,7 @@ function TokenHistory ({ address, genesisHash }: Props): React.ReactElement {
         </IconButton>
       </Grid>
       <HistoryBox
-        genesisHash={genesisHash}
-        historyItems={grouped}
+        historyItems={historyItemsToShow}
         style={{ m: '10px 12px 15px', width: 'calc(100% - 24px)' }}
       />
       <FilterHistory

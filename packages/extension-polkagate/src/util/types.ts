@@ -151,6 +151,7 @@ export interface TransactionDetail extends TxResult {
   action: string; // send, Solo staking, pool staking, convictionvoting ...
   amount?: string;
   chain?: Chain;
+  decimal?: number;
   date: number;
   from: NameAddress;
   subAction?: string; // bond_extra, unbound, nominate, vote
