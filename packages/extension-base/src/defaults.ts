@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-base authors & contributors
+// Copyright 2019-2025 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/onboarding'] as const;
@@ -6,6 +6,7 @@ const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/
 const START_WITH_PATH = [
   '/account/',
   '/accountfs/',
+  '/addNewChain/',
   '/import/',
   '/governance/',
   '/manageIdentity/',

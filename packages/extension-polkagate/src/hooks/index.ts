@@ -20,6 +20,8 @@ export { default as useApiWithChain2 } from './useApiWithChain2';
 export { default as useAssetHubAssets } from './useAssetHubAssets';
 export { default as useAssetsBalances } from './useAssetsBalances';
 export { default as useAuction } from './useAuction';
+export { default as useAutoLock } from './useAutoLock';
+export { default as useAutoLockPeriod } from './useAutoLockPeriod';
 export { default as useAvailableToSoloStake } from './useAvailableToSoloStake';
 export { default as useBalances } from './useBalances';
 export { default as useBalancesOnAssethub } from './useBalancesOnAssethub';
@@ -40,6 +42,7 @@ export { default as useCurrentSupportThreshold } from './useCurrentSupportThresh
 export { default as useDecidingCount } from './useDecidingCount';
 export { default as useDecimal } from './useDecimal';
 export { default as useEndpoint } from './useEndpoint';
+export { default as useEndpoint2 } from './useEndpoint2';
 export { useEndpoints } from './useEndpoints';
 export { default as useEstimatedFee } from './useEstimatedFee';
 export { default as useFavIcon } from './useFavIcon';
@@ -55,6 +58,7 @@ export { default as useHasIdentityTooltipText } from './useHasIdentityTooltipTex
 export { default as useHasProxyTooltipText } from './useHasProxyTooltipText';
 export { default as useIdentity } from './useIdentity';
 export { default as useInfo } from './useInfo';
+export { default as useIsAutoEndpoint } from './useIsAutoEndpoint';
 export { default as useIsExposed } from './useIsExposed';
 export { default as useIsExtensionPopup } from './useIsExtensionPopup';
 export { default as useIsHideNumbers } from './useIsHideNumbers';

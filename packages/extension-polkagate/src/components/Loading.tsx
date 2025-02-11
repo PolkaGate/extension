@@ -10,13 +10,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { logoMotionDark, logoMotionLight } from '../assets/logos';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
+import { useAutoLockPeriod } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
-import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
+import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD } from '../util/constants';
 
 interface Props {
   children?: React.ReactNode;
@@ -98,14 +99,6 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
 
 const MAX_WAITING_TIME = 1000; // ms
 
-// const StillLogo = ({ theme }: { theme: Theme }) => (
-//   <Box
-//     component='img'
-//     src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-//     sx={{ height: 'fit-content', width: '37%' }}
-//   />
-// );
-
 const FlyingLogo = ({ theme }: { theme: Theme }) => (
   <Grid alignItems='center' container item justifyContent='center' sx={{ height: '100vh', width: '100%' }}>
     <Box
@@ -118,6 +111,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
 
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const autoLockPeriod = useAutoLockPeriod();
 
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const isPopupOpenedByExtension = useIsExtensionPopup();
@@ -141,6 +135,10 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   useEffect(() => {
     const handleInitLoginInfo = async () => {
+      if (autoLockPeriod === undefined) {
+        return;
+      }
+
       const info = await getStorage('loginInfo') as LoginInfo;
 
       if (!info?.status) {
@@ -176,7 +174,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
       }
 
       if (info.status === 'set') {
-        if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + NO_PASS_PERIOD))) {
+        if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + autoLockPeriod))) {
           setStep(STEPS.SHOW_LOGIN);
         } else {
           setStep(STEPS.IN_NO_LOGIN_PERIOD);
@@ -193,7 +191,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
     handleInitLoginInfo().catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [autoLockPeriod]);
 
   useEffect(() => {
     if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {

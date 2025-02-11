@@ -52,8 +52,6 @@ import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagem
 import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
 import Receive from '@polkadot/extension-polkagate/src/popup/receive';
 import Rename from '@polkadot/extension-polkagate/src/popup/rename';
-import Settings from '@polkadot/extension-polkagate/src/popup/settings';
-import About from '@polkadot/extension-polkagate/src/popup/settings/About';
 import Signing from '@polkadot/extension-polkagate/src/popup/signing';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
@@ -73,6 +71,7 @@ import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/un
 import Token from '@polkadot/extension-polkagate/src/popup/tokens';
 
 import RouteWrapper from '../components/RouteWrapper';
+import { SETTINGS_ROUTES } from './settingRoutes';
 
 interface RouteConfig {
   path: string;
@@ -394,19 +393,6 @@ const PASSWORD_ROUTES: RouteConfig[] = [
     Component: ResetWallet,
     path: '/reset-wallet',
     trigger: 'reset-wallet'
-  }
-];
-
-const SETTINGS_ROUTES: RouteConfig[] = [
-  {
-    Component: Settings,
-    path: '/settings',
-    trigger: 'settings'
-  },
-  {
-    Component: About,
-    path: '/settings-about',
-    trigger: 'settings-about'
   }
 ];
 

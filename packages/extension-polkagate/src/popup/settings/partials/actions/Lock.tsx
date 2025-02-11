@@ -3,45 +3,38 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Unlock } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
 import { updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { NO_PASS_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useExtensionLockContext } from '../../../../context/ExtensionLockContext';
-import { useIsLoginEnabled, useTranslation } from '../../../../hooks';
+import { useAutoLockPeriod, useIsLoginEnabled, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
-export default function Lock (): React.ReactElement {
+export default function Lock ({ style }: { style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
+  const autoLockPeriod = useAutoLockPeriod();
 
   const isLoginEnabled = useIsLoginEnabled();
   const { setExtensionLock } = useExtensionLockContext();
 
   const onClick = useCallback((): void => {
-    if (!isLoginEnabled) {
+    if (!isLoginEnabled || autoLockPeriod === undefined) {
       return;
     }
 
-    updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
+    updateStorage('loginInfo', { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
       setExtensionLock(true);
       lockExtension().catch(console.error);
     }).catch(console.error);
-  }, [isLoginEnabled, setExtensionLock]);
+  }, [autoLockPeriod, isLoginEnabled, setExtensionLock]);
 
   return (
     <Grid
       alignItems='center' container item justifyContent='center' justifyItems='center' onClick={onClick}
-      sx={{
-        bgcolor: '#05091C',
-        borderRadius: '14px',
-        cursor: isLoginEnabled ? 'pointer' : 'undefined',
-        height: '39px',
-        mt: '2px',
-        width: '110px'
-      }}
+      sx={{ ...style }}
     >
       <Unlock color={isLoginEnabled ? '#AA83DC' : 'grey'} size={18} variant='Bulk' />
       <Typography color={isLoginEnabled ? 'grey' : 'text.primary'} pl='2px' pt='4px' variant='B-4'>

@@ -6,7 +6,7 @@
 import { Container, styled, TextField, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme }) => ({
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& fieldset.MuiOutlinedInput-notchedOutline': {
@@ -21,15 +21,15 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      borderColor: '#BEAAD833',
+      border: '1px solid #BEAAD833',
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
     backgroundColor: '#1B133C',
-    borderColor: '#BEAAD833',
+    border: '1px solid #BEAAD833',
     borderRadius: '12px',
     color: theme.palette.text.secondary,
-    height: '44px',
+    height: height ?? '43px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },
@@ -59,6 +59,7 @@ function SearchField ({ focused = false, onInputChange, placeholder, style }: Pr
       <StyledTextField
         autoFocus={focused}
         fullWidth
+        height={style?.height as string}
         onChange={onChange}
         placeholder={placeholder}
         theme={theme}

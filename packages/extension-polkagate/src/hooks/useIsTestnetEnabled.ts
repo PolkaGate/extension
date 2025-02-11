@@ -1,12 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import { useEffect, useState } from 'react';
 
 import { getStorage } from '../components/Loading';
 
-export default function useIsTestnetEnabled(): boolean | undefined {
+export default function useIsTestnetEnabled (): boolean | undefined {
   const [isTestnetEnabled, setTestnetIsEnabled] = useState<boolean>();
 
   useEffect(() => {
