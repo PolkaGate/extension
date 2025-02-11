@@ -30,7 +30,7 @@ export default function AutoLockTimer (): React.ReactElement {
   const [delayType, setDelayType] = useState<AutoLockDelayType | undefined>();
 
   const onDelayValueChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(parseFloat(event.target.value));
+    setInputValue(parseFloat(event.target.value || '0'));
   }, []);
 
   const onDelayTypeChange = useCallback((event: SelectChangeEvent) => {

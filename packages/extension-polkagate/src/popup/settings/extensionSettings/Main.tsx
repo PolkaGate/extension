@@ -1,0 +1,25 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { Grid } from '@mui/material';
+import React from 'react';
+
+import AutoLockTimer from './partials/AutoLockTimer';
+import EnableCamera from './partials/EnableCamera';
+import EnableTestNet from './partials/EnableTestNet';
+import Language from './partials/Language';
+
+function Main (): React.ReactElement {
+  return (
+    <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'block', p: '10px' }}>
+      <EnableTestNet />
+      <EnableCamera />
+      <AutoLockTimer />
+      <Language />
+    </Grid>
+  );
+}
+
+export default React.memo(Main);

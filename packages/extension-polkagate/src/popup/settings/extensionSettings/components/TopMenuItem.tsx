@@ -6,19 +6,28 @@
 import type { Icon } from 'iconsax-react';
 
 import { Divider, Stack, Typography } from '@mui/material';
-import React, { } from 'react';
+import React, { useCallback, useContext } from 'react';
+import { useLocation } from 'react-router';
 
 import { noop } from '@polkadot/util';
 
+import { ActionContext } from '../../../../components/contexts';
+
 interface Props {
   Icon: Icon
-  isSelected?: boolean;
   label: string;
+  path: string;
 }
 
-function TopMenuItem ({ Icon, isSelected, label }: Props): React.ReactElement {
+function TopMenuItem ({ Icon, label, path }: Props): React.ReactElement {
+  const onAction = useContext(ActionContext);
+  const { pathname } = useLocation();
+
+  const isSelected = pathname === `/settings-extension/${path}`;
+  const onClick = useCallback(() => onAction(`/settings-extension/${path}`), [onAction, path]);
+
   return (
-    <Stack direction='column'>
+    <Stack direction='column' onClick={onClick} sx={{ cursor: 'pointer' }}>
       <Stack columnGap='4px' direction='row'>
         <Icon color={isSelected ? '#EAEBF1' : '#AA83DC'} onClick={noop} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
         <Typography color={isSelected ? '#EAEBF1' : '#AA83DC'} variant='B-2'>

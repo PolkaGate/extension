@@ -19,6 +19,9 @@ function SocialIcon ({ icon, link }: Props): React.ReactElement {
       bgcolor='#2D1E4A'
       onClick={goToLink}
       sx={{
+        '&:hover': {
+          bgcolor: '#CC429D'
+        },
         alignItems: 'center',
         borderRadius: '50%',
         cursor: 'pointer',

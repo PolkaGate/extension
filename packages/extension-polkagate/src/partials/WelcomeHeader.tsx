@@ -17,7 +17,8 @@ import SelectLanguage from './SelectLanguage';
 export enum WelcomeHeaderPopups {
   NONE,
   LANGUAGE,
-  PRIVACY
+  PRIVACY,
+  WARNING
 }
 
 function WelcomeHeader (): React.ReactElement {

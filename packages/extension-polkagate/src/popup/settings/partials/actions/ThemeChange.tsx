@@ -18,7 +18,7 @@ export default function ThemeChange (): React.ReactElement {
   const toggleTheme = useCallback(() => colorMode.toggleColorMode(), [colorMode]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-around' justifyItems='center' sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '14px', height: '39px', mt: '2px', position: 'relative', width: '97px', zIndex: 10 }}>
+    <Grid alignItems='center' container item justifyContent='space-around' justifyItems='center' sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '16px', height: '39px', mt: '2px', position: 'relative', width: '97px', zIndex: 10 }}>
       <Moon color={isDark ? '#EAEBF1' : '#AA83DC'} cursor='pointer' onClick={toggleTheme} size={18} variant='Bold' />
       <Sun1 color={isDark ? '#AA83DC' : '#EAEBF1'} cursor='pointer' onClick={toggleTheme} size={18} variant='Bold' />
       <Grid alignItems='center' container item justifyContent='center' justifyItems='center'

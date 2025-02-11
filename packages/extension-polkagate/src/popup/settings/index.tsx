@@ -26,7 +26,7 @@ function Settings (): React.ReactElement {
   const onAction = useContext(ActionContext);
 
   const onClick = useCallback((input: SETTING_PAGES) => {
-    return () => onAction(`/settings-${input}`);
+    return () => onAction(`/settings-${input}/`);
   }, [onAction]);
 
   return (

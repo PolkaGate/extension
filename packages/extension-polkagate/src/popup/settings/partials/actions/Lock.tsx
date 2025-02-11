@@ -37,7 +37,7 @@ export default function Lock ({ style }: { style: SxProps<Theme> }): React.React
       sx={{ ...style }}
     >
       <Unlock color={isLoginEnabled ? '#AA83DC' : 'grey'} size={18} variant='Bulk' />
-      <Typography color={isLoginEnabled ? 'grey' : 'text.primary'} pl='2px' pt='4px' variant='B-4'>
+      <Typography color={isLoginEnabled ? 'text.primary' : 'grey'} pl='2px' pt='4px' variant='B-4'>
         {t('Lock')}
       </Typography>
     </Grid>

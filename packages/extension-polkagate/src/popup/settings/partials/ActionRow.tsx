@@ -15,7 +15,8 @@ const style = {
     bgcolor: '#2D1E4A'
   },
   bgcolor: '#05091C',
-  borderRadius: '14px',
+  borderRadius: '16px',
+  cursor: 'pointer',
   height: '39px',
   mt: '2px',
   transition: 'background-color 0.3s ease',
@@ -24,7 +25,7 @@ const style = {
 
 export default function ActionRow (): React.ReactElement {
   return (
-    <Grid container item>
+    <Grid container item justifyContent='space-between'>
       <Lock style={style} />
       <ThemeChange />
       <Reload style={style} />

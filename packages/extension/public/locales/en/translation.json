@@ -1521,5 +1521,16 @@
   "Lock": "",
   "No activity recorded yet": "",
   "Reset Filters": "",
-  "Pooled Staking": ""
+  "Pooled Staking": "",
+  "+ Add Chain": "",
+  "Enable Connection": "",
+  "Auto Mode": "",
+  "NODES": "",
+  "Main": "",
+  "Enable Auto-Lock": "",
+  "Chains to View Assets": "",
+  "Enable Camera Access": "",
+  "Enable Testnet Chains": "",
+  "LANGUAGE": "",
+  "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": ""
 }

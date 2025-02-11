@@ -7,8 +7,6 @@ import { Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { noop } from '@polkadot/util';
-
 import EndpointManager2 from '../../../class/endpointManager2';
 import { ActionContext, BackWithLabel, ChainLogo } from '../../../components';
 import { useEndpoint2, useEndpoints, useMetadata, useTranslation } from '../../../hooks';
@@ -16,9 +14,9 @@ import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
+import DotIndicator from './components/DotIndicator';
 import PRadio from './components/Radio';
 import PSwitch from './components/Switch';
-import DotIndicator from './components/DotIndicator';
 
 const BackButton = ({ genesisHash }: { genesisHash: string; }) => {
   const chain = useMetadata(genesisHash, true);
@@ -67,7 +65,7 @@ function Endpoints (): React.ReactElement {
     });
   }, [genesisHash]);
 
-  const onBack = useCallback(() => onAction('/settings-extension'), [onAction]);
+  const onBack = useCallback(() => onAction('/settings-extension/chains'), [onAction]);
 
   const endpoints = useMemo(() => {
     if (!endpointOptions.length) {
@@ -119,50 +117,52 @@ function Endpoints (): React.ReactElement {
       <BackWithLabel
         content={<BackButton genesisHash={genesisHash} />}
         onClick={onBack}
-        style={{ pb: 0 }}
+        style={{ pb: 0, pt: '2px' }}
       />
-      <Grid container item sx={{ px: '10px' }}>
-        <Grid container height='420px' item sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflow: 'scroll', p: '4px', my: '10px' }}>
-          <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px' }}>
-            <PSwitch
-              checked={false}
-              columnGap='8px'
-              label={t('Enable Connection')}
-              onChange={noop}
-            />
-          </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px', mt: '4px' }}>
-            <PSwitch
-              checked={isAutoMode}
-              columnGap='8px'
-              label={t('Auto Mode')}
-              onChange={onChangeEndpoint}
-              value={AUTO_MODE.value}
-            />
-          </Grid>
-          {endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client')).map(({ delay, name, value }, index) => (
-            <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: index === 0 ? '100px' : '73px', px: '10px', flexWrap: 'nowrap', mt: '4px' }}>
-              {index === 0 &&
-                <Typography color='#7956A5' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ p: '8px' }}>
-                  {t('NODES')}
-                </Typography>}
-              <Stack alignItems='center' columnGap='10px' direction='row'>
-                <PRadio
-                  checked={endpoint === value}
-                  columnGap='5px'
-                  label={name}
-                  onChange={onChangeEndpoint}
-                  value={value}
-                />
-                <DotIndicator delay={delay} />
-              </Stack>
-              <Grid item sx={{ mt: '-5px', pl: '10px' }}>
-                <Typography color='#674394' variant='B-5'>
-                  {value}
-                </Typography>
-              </Grid>
+      <Grid container item sx={{ px: '15px' }}>
+        <Grid container item sx={{ border: '4px solid #1b143c', borderRadius: '14px', my: '10px' }}>
+          <Grid container height='420px' item sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflow: 'scroll' }}>
+            {/* <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px' }}>
+              <PSwitch
+                checked={false}
+                columnGap='8px'
+                label={t('Enable Connection')}
+                onChange={noop}
+              />
+            </Grid> */}
+            <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px', mt: '4px' }}>
+              <PSwitch
+                checked={isAutoMode}
+                columnGap='8px'
+                label={t('Auto Mode')}
+                onChange={onChangeEndpoint}
+                value={AUTO_MODE.value}
+              />
             </Grid>
-          ))}
+            {endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client')).map(({ delay, name, value }, index) => (
+              <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: index === 0 ? '100px' : '73px', px: '10px', flexWrap: 'nowrap', mt: '4px' }}>
+                {index === 0 &&
+                  <Typography color='#7956A5' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ p: '8px' }}>
+                    {t('NODES')}
+                  </Typography>}
+                <Stack alignItems='center' columnGap='10px' direction='row'>
+                  <PRadio
+                    checked={endpoint === value}
+                    columnGap='5px'
+                    label={name}
+                    onChange={onChangeEndpoint}
+                    value={value}
+                  />
+                  <DotIndicator delay={delay} />
+                </Stack>
+                <Grid item sx={{ mt: '-5px', pl: '10px' }}>
+                  <Typography color='#674394' variant='B-5'>
+                    {value}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
       </Grid>
       <HomeMenu />
