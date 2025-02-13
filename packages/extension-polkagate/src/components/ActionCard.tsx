@@ -10,16 +10,19 @@ import React, { useCallback, useState } from 'react';
 import { logoTransparent } from '../assets/logos';
 
 interface Props {
-  title: string;
-  description?: string;
   Icon?: IconType;
+  description?: string;
+  iconColor?: string;
+  iconSize?: number;
   iconWithBackground?: boolean;
+  iconWithoutTransform?: boolean;
   logoIcon?: boolean;
-  style?: SxProps<Theme>;
   onClick: () => void;
+  style?: SxProps<Theme>;
+  title: string;
 }
 
-function ActionCard ({ Icon, description, iconWithBackground, logoIcon, onClick, style, title }: Props): React.ReactElement {
+function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -62,7 +65,7 @@ function ActionCard ({ Icon, description, iconWithBackground, logoIcon, onClick,
     borderRadius: '12px',
     height: 'fit-content',
     padding: '5px',
-    transform: hovered ? 'rotate(-12deg)' : 'rotate(12deg)',
+    transform: iconWithoutTransform ? undefined : hovered ? 'rotate(-12deg)' : 'rotate(12deg)',
     transition: 'all 250ms ease-out',
     width: 'fit-content'
   };
@@ -75,7 +78,7 @@ function ActionCard ({ Icon, description, iconWithBackground, logoIcon, onClick,
       onMouseLeave={toggleHover}
       sx={ActionCardStyle}
     >
-      {Icon && <Icon color='#AA83DC' size={30} style={IconStyle} variant='Bulk' />}
+      {Icon && <Icon color={iconColor} size={iconSize} style={IconStyle} variant='Bulk' />}
       {logoIcon &&
         <Box
           component='img'
