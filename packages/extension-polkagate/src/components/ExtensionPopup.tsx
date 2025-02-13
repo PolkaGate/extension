@@ -52,7 +52,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
       componentsProps={{
         backdrop: {
           sx: {
-            backdropFilter: 'blur(10px)',
+            backdropFilter: 'blur(7px)',
             background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
             bgcolor: 'transparent'
           }

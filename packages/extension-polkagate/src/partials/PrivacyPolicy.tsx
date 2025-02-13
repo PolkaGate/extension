@@ -11,10 +11,10 @@ import { Translation } from 'react-i18next';
 
 import { ExtensionPopup, GradientButton } from '../components';
 import { useTranslation } from '../hooks';
-import { WelcomeHeaderPopups } from './WelcomeHeader';
+import { ExtensionPopups } from '../util/constants';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<WelcomeHeaderPopups>>;
+  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
   openMenu: boolean;
 }
 
@@ -22,7 +22,7 @@ function PrivacyPolicy ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const handleClose = useCallback(() => setPopup(WelcomeHeaderPopups.NONE), [setPopup]);
+  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
     <ExtensionPopup

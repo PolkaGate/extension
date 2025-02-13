@@ -70,6 +70,7 @@ export { default as MatchPasswordField } from './MatchPasswordField';
 export { default as MenuItem } from './MenuItem';
 export { default as MnemonicSeed } from './MnemonicSeed';
 export { default as Motion } from './Motion';
+export { default as MyTextField } from './MyTextField';
 export { default as NeonButton } from './NeonButton';
 export { default as NewAddress } from './NewAddress';
 export { default as OnActionToolTip } from './OnActionToolTip';

@@ -8,12 +8,11 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useTranslation } from '../../../../components/translate';
 import useIsTestnetEnabled from '../../../../hooks/useIsTestnetEnabled';
 import { tieAccount } from '../../../../messaging';
-import { WelcomeHeaderPopups } from '../../../../partials/WelcomeHeader';
 import MySwitch from '../components/Switch';
 import Warning from './Warning';
 
@@ -22,16 +21,16 @@ export default function EnableTestNet (): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
-  const [testnetWarning, setShowTestnetWarning] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
+  const [testnetWarning, setShowTestnetWarning] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onEnableTestNetClick = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     checked
-      ? setShowTestnetWarning(WelcomeHeaderPopups.WARNING)
+      ? setShowTestnetWarning(ExtensionPopups.WARNING)
       : setStorage('testnet_enabled', false).catch(console.error);
   }, []);
 
   const onEnableTestDone = useCallback(() => {
-    setShowTestnetWarning(WelcomeHeaderPopups.NONE);
+    setShowTestnetWarning(ExtensionPopups.NONE);
 
     setStorage('testnet_enabled', true).catch(console.error);
     accounts?.forEach(({ address, genesisHash }) => {
@@ -57,7 +56,7 @@ export default function EnableTestNet (): React.ReactElement {
       </Grid>
       <Warning
         onConfirm={onEnableTestDone}
-        open={testnetWarning === WelcomeHeaderPopups.WARNING}
+        open={testnetWarning === ExtensionPopups.WARNING}
         setPopup={setShowTestnetWarning}
       />
     </Stack>

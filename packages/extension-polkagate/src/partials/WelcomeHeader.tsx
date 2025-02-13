@@ -10,23 +10,16 @@ import React, { useCallback, useRef, useState } from 'react';
 import { logoTransparent } from '../assets/logos';
 import CustomTooltip from '../components/Tooltip';
 import { useTranslation } from '../hooks';
-import { EXTENSION_NAME } from '../util/constants';
+import { EXTENSION_NAME, ExtensionPopups } from '../util/constants';
 import PrivacyPolicy from './PrivacyPolicy';
 import SelectLanguage from './SelectLanguage';
-
-export enum WelcomeHeaderPopups {
-  NONE,
-  LANGUAGE,
-  PRIVACY,
-  WARNING
-}
 
 function WelcomeHeader (): React.ReactElement {
   const { t } = useTranslation();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
 
-  const [popup, setPopup] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
-  const [hovered, setHovered] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
+  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const [hovered, setHovered] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const shieldHoveredStyle = {
     '&::after': {
@@ -34,7 +27,7 @@ function WelcomeHeader (): React.ReactElement {
       borderRadius: '10px',
       content: '""',
       inset: 0,
-      opacity: hovered === WelcomeHeaderPopups.PRIVACY ? 1 : 0,
+      opacity: hovered === ExtensionPopups.PRIVACY ? 1 : 0,
       position: 'absolute',
       transition: 'all 250ms ease-out'
     },
@@ -45,12 +38,12 @@ function WelcomeHeader (): React.ReactElement {
     transition: 'all 250ms ease-out'
   } as SxProps<Theme>;
 
-  const openPopup = useCallback((popup: WelcomeHeaderPopups) => () => {
+  const openPopup = useCallback((popup: ExtensionPopups) => () => {
     setPopup(popup);
   }, [setPopup]);
 
-  const onHoveredPopup = useCallback((popup?: WelcomeHeaderPopups) => () => {
-    setHovered(popup ?? WelcomeHeaderPopups.NONE);
+  const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
+    setHovered(popup ?? ExtensionPopups.NONE);
   }, [setHovered]);
 
   return (
@@ -59,17 +52,17 @@ function WelcomeHeader (): React.ReactElement {
         <Grid
           container
           item
-          onClick={openPopup(WelcomeHeaderPopups.PRIVACY)}
-          onMouseEnter={onHoveredPopup(WelcomeHeaderPopups.PRIVACY)}
+          onClick={openPopup(ExtensionPopups.PRIVACY)}
+          onMouseEnter={onHoveredPopup(ExtensionPopups.PRIVACY)}
           onMouseLeave={onHoveredPopup()}
           ref={privacyPolicyRef}
           sx={{ alignItems: 'center', borderRadius: '10px', cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}
         >
           <ShieldTick
-            color={hovered === WelcomeHeaderPopups.PRIVACY ? '#EAEBF1' : '#AA83DC'}
+            color={hovered === ExtensionPopups.PRIVACY ? '#EAEBF1' : '#AA83DC'}
             size='24'
             style={{ transition: 'all 250ms ease-out', zIndex: 10 }}
-            variant={hovered === WelcomeHeaderPopups.PRIVACY ? 'Bold' : 'Bulk'}
+            variant={hovered === ExtensionPopups.PRIVACY ? 'Bold' : 'Bulk'}
           />
           <Grid sx={shieldHoveredStyle}></Grid>
         </Grid>
@@ -86,27 +79,27 @@ function WelcomeHeader (): React.ReactElement {
         <Grid
           container
           item
-          onClick={openPopup(WelcomeHeaderPopups.LANGUAGE)}
-          onMouseEnter={onHoveredPopup(WelcomeHeaderPopups.LANGUAGE)}
+          onClick={openPopup(ExtensionPopups.LANGUAGE)}
+          onMouseEnter={onHoveredPopup(ExtensionPopups.LANGUAGE)}
           onMouseLeave={onHoveredPopup()}
-          sx={{ alignItems: 'center', bgcolor: hovered === WelcomeHeaderPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
+          sx={{ alignItems: 'center', bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
         >
-          <Typography color={hovered === WelcomeHeaderPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ transition: 'all 250ms ease-out' }} variant='B-1'>
+          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ transition: 'all 250ms ease-out' }} variant='B-1'>
             {'EN'}
           </Typography>
           <ArrowDown2
             size='15'
-            style={{ color: hovered === WelcomeHeaderPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC80', transition: 'all 250ms ease-out' }}
+            style={{ color: hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC80', transition: 'all 250ms ease-out' }}
             variant='Bold'
           />
         </Grid>
       </Container>
       <SelectLanguage
-        openMenu={popup === WelcomeHeaderPopups.LANGUAGE}
+        openMenu={popup === ExtensionPopups.LANGUAGE}
         setPopup={setPopup}
       />
       <PrivacyPolicy
-        openMenu={popup === WelcomeHeaderPopups.PRIVACY}
+        openMenu={popup === ExtensionPopups.PRIVACY}
         setPopup={setPopup}
       />
       <CustomTooltip

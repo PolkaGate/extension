@@ -5,6 +5,7 @@ import type React from 'react';
 
 import Settings from '@polkadot/extension-polkagate/src/popup/settings';
 import About from '@polkadot/extension-polkagate/src/popup/settings/About';
+import AccountSettings from '@polkadot/extension-polkagate/src/popup/settings/AccountSettings';
 import ExtensionSettings from '@polkadot/extension-polkagate/src/popup/settings/ExtensionSettings';
 import Endpoints from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/Endpoints';
 
@@ -23,14 +24,19 @@ export const SETTINGS_ROUTES: RouteConfig[] = [
     trigger: 'settings'
   },
   {
-    Component: About,
-    path: '/settings-about',
+    Component: AccountSettings,
+    path: '/settings-account',
     trigger: 'settings-about'
   },
   {
     Component: ExtensionSettings,
     path: '/settings-extension/',
     trigger: 'settings-extension'
+  },
+  {
+    Component: About,
+    path: '/settings-about',
+    trigger: 'settings-about'
   },
   {
     Component: Endpoints,

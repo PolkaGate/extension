@@ -9,10 +9,10 @@ import React, { useCallback } from 'react';
 
 import { ExtensionPopup, GradientButton, NeonButton } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
-import { WelcomeHeaderPopups } from '../../../../partials/WelcomeHeader';
+import { ExtensionPopups } from '../../../../util/constants';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<WelcomeHeaderPopups>>;
+  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
   open: boolean;
   onConfirm: () => void
 }
@@ -20,7 +20,7 @@ interface Props {
 function Warning ({ onConfirm, open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const handleClose = useCallback(() => setPopup(WelcomeHeaderPopups.NONE), [setPopup]);
+  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
     <ExtensionPopup

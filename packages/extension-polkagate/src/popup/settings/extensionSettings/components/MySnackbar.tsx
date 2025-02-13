@@ -84,4 +84,4 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
   );
 };
 
-export default MySnackbar;
+export default React.memo(MySnackbar);

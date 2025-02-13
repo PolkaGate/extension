@@ -10,14 +10,14 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { SettingsContext } from '../../../../components/contexts';
 import { useTranslation } from '../../../../components/translate';
 import SelectLanguage from '../../../../partials/SelectLanguage';
-import { WelcomeHeaderPopups } from '../../../../partials/WelcomeHeader';
+import { ExtensionPopups } from '../../../../util/constants';
 import getLanguageOptions from '../../../../util/getLanguageOptions';
 
 export default function Language (): React.ReactElement {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
 
-  const [showPopUp, setShowPopUp] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
+  const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const language = useMemo(() => {
     const options = getLanguageOptions();
 
@@ -25,7 +25,7 @@ export default function Language (): React.ReactElement {
   }, [settings.i18nLang]);
 
   const onClick = useCallback(() => {
-    setShowPopUp(WelcomeHeaderPopups.LANGUAGE);
+    setShowPopUp(ExtensionPopups.LANGUAGE);
   }, []);
 
   return (
@@ -45,7 +45,7 @@ export default function Language (): React.ReactElement {
         </Stack>
       </Stack>
       <SelectLanguage
-        openMenu={showPopUp === WelcomeHeaderPopups.LANGUAGE}
+        openMenu={showPopUp === ExtensionPopups.LANGUAGE}
         setPopup={setShowPopUp}
       />
     </>

@@ -16,11 +16,11 @@ import uiSetting from '@polkadot/ui-settings';
 import { ExtensionPopup, GradientButton, SettingsContext } from '../components';
 import { useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
+import { ExtensionPopups } from '../util/constants';
 import getLanguageOptions from '../util/getLanguageOptions';
-import { WelcomeHeaderPopups } from './WelcomeHeader';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<WelcomeHeaderPopups>>;
+  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
   openMenu: boolean;
 }
 
@@ -118,7 +118,7 @@ function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
     setSelectedLanguage(lang);
   }, []);
 
-  const handleClose = useCallback(() => setPopup(WelcomeHeaderPopups.NONE), [setPopup]);
+  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   const applyLanguageChange = useCallback(() => {
     selectedLanguage && uiSetting.set({ i18nLang: selectedLanguage });
