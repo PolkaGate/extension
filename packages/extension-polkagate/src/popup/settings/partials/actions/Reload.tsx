@@ -5,6 +5,10 @@ import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Refresh2 } from 'iconsax-react';
 import React from 'react';
 
+function onReload () {
+  chrome.runtime.reload();
+}
+
 export default function Reload ({ style }: { style: SxProps<Theme> }): React.ReactElement {
   return (
     <Grid
@@ -13,6 +17,7 @@ export default function Reload ({ style }: { style: SxProps<Theme> }): React.Rea
       item
       justifyContent='center'
       justifyItems='center'
+      onClick={onReload}
       sx={{ ...style }}
     >
       <Refresh2
@@ -22,12 +27,12 @@ export default function Reload ({ style }: { style: SxProps<Theme> }): React.Rea
       />
       <Typography
         color='text.primary'
-        pl='2px'
-        pt='4px'
+        pl='3px'
+        pt='3px'
         variant='B-4'
       >
         Reload
       </Typography>
-    </Grid >
+    </Grid>
   );
 }
