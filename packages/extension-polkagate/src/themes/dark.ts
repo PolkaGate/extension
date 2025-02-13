@@ -40,6 +40,7 @@ export const darkTheme: ThemeOptions = {
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
     label: { main: '#63364D' },
+    error: { main: '#FF4FB9' },
     background: { default: '#05091C', paper: '#000000' },
     backgroundFL: { primary: '#000000', secondary: '#171717' },
     text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B' },

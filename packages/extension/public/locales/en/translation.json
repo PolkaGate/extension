@@ -1532,5 +1532,9 @@
   "Enable Camera Access": "",
   "Enable Testnet Chains": "",
   "LANGUAGE": "",
-  "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": ""
+  "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": "",
+  "REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE": "",
+  "Current Password": "",
+  "Confirm password": "",
+  "Set password": ""
 }

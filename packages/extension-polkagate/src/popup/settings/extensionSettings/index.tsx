@@ -15,11 +15,12 @@ import HomeMenu from '../../../partials/HomeMenu';
 import TopMenuItem from './components/TopMenuItem';
 import Chains from './Chains';
 import Main from './Main';
+import ManagePassword from './ManagePassword';
 
 function ExtensionSettings (): React.ReactElement {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
 
-  const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
   const onBack = useCallback(() => onAction('/settings'), [onAction]);
@@ -32,7 +33,7 @@ function ExtensionSettings (): React.ReactElement {
         text={t('Extension Settings')}
       />
       <Grid container item sx={{ px: '15px' }}>
-        <Stack columnGap='20px' direction='row' ml='7px' mt='12px'>
+        <Stack columnGap='20px' direction='row' ml='5px' mt='12px'>
           <TopMenuItem
             Icon={Trade}
             label={t('Main')}
@@ -53,6 +54,7 @@ function ExtensionSettings (): React.ReactElement {
           <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '14px', height: '373px', overflow: 'scroll' }}>
             {pathname === '/settings-extension/' && <Main />}
             {pathname === '/settings-extension/chains' && <Chains />}
+            {pathname === '/settings-extension/password' && <ManagePassword />}
           </Grid>
         </Grid>
       </Grid>

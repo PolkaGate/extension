@@ -36,6 +36,7 @@ export const lightTheme: ThemeOptions = {
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
+    error: { main: '#FF4FB9' },
     label: { main: '#FFFFFF' },
     background: { default: '#F1F1F1', paper: '#fff' },
     backgroundFL: { primary: '#DFDFDF', secondary: '#F1F1F1' },

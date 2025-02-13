@@ -9,7 +9,9 @@ import React, { useCallback, useState } from 'react';
 
 import { useTranslation } from '../hooks';
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== 'hasError'
+})<{ hasError?: boolean }>(({ hasError, theme }) => ({
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
@@ -22,7 +24,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
       },
       '& fieldset.MuiOutlinedInput-notchedOutline': {
         backgroundColor: 'unset',
-        borderColor: '#3988FF',
+        borderColor: hasError ? theme.palette.error.main : '#3988FF',
         borderWidth: '2px',
         transition: 'all 150ms ease-out'
       }
@@ -39,13 +41,17 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     backgroundColor: '#1B133C',
     borderColor: '#BEAAD833',
     borderRadius: '12px',
-    color: theme.palette.text.secondary,
+    color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
+    marginTop: '10px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  },
   '& input::placeholder': {
-    color: theme.palette.text.secondary,
+    color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
     ...theme.typography['B-4'],
     textAlign: 'left'
   },
@@ -58,9 +64,10 @@ interface Props {
   onEnterPress?: () => void;
   style?: React.CSSProperties;
   focused?: boolean;
+  hasError?: boolean;
 }
 
-export default function PasswordInput ({ focused = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
+export default function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -84,8 +91,7 @@ export default function PasswordInput ({ focused = false, onEnterPress, onPassCh
   return (
     <Container disableGutters sx={style}>
       {title &&
-        // In design its variant is B-1
-        <Typography mb='12px' textAlign='left' variant='B-4' width='100%'>
+        <Typography height='20px' textAlign='left' variant='B-1' width='100%'>
           {title}
         </Typography>
       }
@@ -108,12 +114,17 @@ export default function PasswordInput ({ focused = false, onEnterPress, onPassCh
           ),
           startAdornment: (
             <InputAdornment position='start'>
-              <Check color={focusing ? '#3988FF' : '#AA83DC'} size='22' variant={focusing ? 'Bold' : 'Bulk'} />
+              <Check
+                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : '#AA83DC'}
+                size='22'
+                variant={focusing ? 'Bold' : 'Bulk'}
+              />
             </InputAdornment>
           )
         }}
         autoFocus={focused}
         fullWidth
+        hasError={hasError}
         onBlur={toggle}
         onChange={onChange}
         onFocus={toggle}
@@ -122,6 +133,10 @@ export default function PasswordInput ({ focused = false, onEnterPress, onPassCh
         theme={theme}
         type={showPassword ? 'text' : 'password'}
       />
+      {hasError &&
+        <Typography color='#FF4FB9' variant='B-1' sx={{ display: 'flex', height: '6px' }}>
+          {t('Wrong password.')}
+        </Typography>}
     </Container>
   );
 }

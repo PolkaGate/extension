@@ -18,6 +18,8 @@ interface Props {
   setConfirmedPassword: React.Dispatch<React.SetStateAction<string | undefined>>;
   style?: React.CSSProperties;
   focused?: boolean;
+  title1?: string;
+  title2?: string;
 }
 
 export enum PASSWORD_STATUS {
@@ -30,7 +32,7 @@ export enum PASSWORD_STATUS {
 
 const MIN_LENGTH = 6;
 
-function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, statusSetter, style }: Props): React.ReactElement {
+function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, statusSetter, style, title1, title2 }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [password, setPassword] = useState<string>();
@@ -102,12 +104,12 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
         focused={focused}
         onPassChange={handlePasswordChange}
         style={{ marginBottom: '18px' }}
-        title={t('Password')}
+        title={title1 ?? t('Password')}
       />
       <PasswordInput
         onEnterPress={handleConfirm}
         onPassChange={handleRepeatPasswordChange}
-        title={t('Repeat the password')}
+        title={title2 ?? t('Repeat the password')}
       />
     </Container>
   );

@@ -32,14 +32,14 @@ function Login ({ setStep }: Props): React.ReactElement {
   const { setExtensionLock } = useExtensionLockContext();
 
   const [hashedPassword, setHashedPassword] = useState<string>();
-  // const [isPasswordError, setIsPasswordError] = useState(false);
+  const [isPasswordError, setIsPasswordError] = useState(false);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
       return setHashedPassword(undefined);
     }
 
-    // setIsPasswordError(false);
+    setIsPasswordError(false);
     const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
 
     setHashedPassword(hashedPassword);
@@ -52,7 +52,7 @@ function Login ({ setStep }: Props): React.ReactElement {
         setHashedPassword(undefined);
         setExtensionLock(false);
       } else {
-        // setIsPasswordError(true);
+        setIsPasswordError(true);
       }
     } catch (e) {
       console.error(e);
@@ -71,7 +71,7 @@ function Login ({ setStep }: Props): React.ReactElement {
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
       <Header />
-      <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px' }}>
+      <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px', height: '496px' }}>
         <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
         <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
           <Box
@@ -84,6 +84,7 @@ function Login ({ setStep }: Props): React.ReactElement {
           </Typography>
           <PasswordInput
             focused
+            hasError={isPasswordError}
             onEnterPress={onUnlock}
             onPassChange={onPassChange}
             title={t('Please enter your password to proceed')}

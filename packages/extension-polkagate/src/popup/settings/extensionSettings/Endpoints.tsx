@@ -138,6 +138,11 @@ function Endpoints (): React.ReactElement {
                 onChange={onChangeEndpoint}
                 value={AUTO_MODE.value}
               />
+              <Grid item sx={{ mt: '-5px' }}>
+                <Typography color='#674394' variant='B-5'>
+                  {t('Automatically select the highest-performing remote node.')}
+                </Typography>
+              </Grid>
             </Grid>
             {endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client')).map(({ delay, name, value }, index) => (
               <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: index === 0 ? '100px' : '73px', px: '10px', flexWrap: 'nowrap', mt: '4px' }}>
