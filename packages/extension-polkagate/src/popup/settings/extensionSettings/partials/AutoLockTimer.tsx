@@ -13,7 +13,7 @@ import { useTranslation } from '../../../../components/translate';
 import { useAutoLock } from '../../../../hooks';
 import Field from '../components/Field';
 import PSelect from '../components/Select';
-import PSwitch from '../components/Switch';
+import MySwitch from '../components/Switch';
 
 const autoLockOptions = [
   { text: 'min', value: 'min' },
@@ -74,7 +74,7 @@ export default function AutoLockTimer (): React.ReactElement {
         AUTO-LOCK TIMER
       </Typography>
       <Grid alignItems='center' columnGap='8px' container justifyContent='flex-start' pt='7px'>
-        <PSwitch checked={autoLock?.enabled} onChange={onSwitchChange} />
+        <MySwitch checked={autoLock?.enabled} onChange={onSwitchChange} />
         <Typography variant='B-1'>
           {t('Enable Auto-Lock')}
         </Typography>

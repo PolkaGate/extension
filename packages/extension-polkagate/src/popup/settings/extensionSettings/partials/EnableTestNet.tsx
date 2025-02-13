@@ -14,16 +14,14 @@ import { useTranslation } from '../../../../components/translate';
 import useIsTestnetEnabled from '../../../../hooks/useIsTestnetEnabled';
 import { tieAccount } from '../../../../messaging';
 import { WelcomeHeaderPopups } from '../../../../partials/WelcomeHeader';
-import PSwitch from '../components/Switch';
+import MySwitch from '../components/Switch';
 import Warning from './Warning';
 
 export default function EnableTestNet (): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-
   const isTestnetEnabled = useIsTestnetEnabled();
 
-  console.log('isTestnetEnabled:',isTestnetEnabled)
   const [testnetWarning, setShowTestnetWarning] = useState<WelcomeHeaderPopups>(WelcomeHeaderPopups.NONE);
 
   const onEnableTestNetClick = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -49,7 +47,7 @@ export default function EnableTestNet (): React.ReactElement {
         TETSTNETS
       </Typography>
       <Grid alignItems='center' columnGap='8px' container justifyContent='flex-start' pt='7px'>
-        <PSwitch
+        <MySwitch
           checked={Boolean(isTestnetEnabled)}
           onChange={onEnableTestNetClick}
         />

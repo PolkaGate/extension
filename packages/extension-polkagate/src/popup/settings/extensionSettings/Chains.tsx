@@ -16,7 +16,7 @@ import { useGenesisHashOptions } from '../../../hooks';
 import { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '../../../hooks/useAssetsBalances';
 import { windowOpen } from '../../../messaging';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
-import PSwitch from './components/Switch';
+import MySwitch from './components/Switch';
 
 export default function Chains (): React.ReactElement {
   const { t } = useTranslation();
@@ -155,7 +155,7 @@ export default function Chains (): React.ReactElement {
               </Typography>
               <ArrowRight2 color={theme.palette.text.primary} onClick={chainEndpoints(value as string)} size='12' style={{ cursor: 'pointer' }} />
             </Stack>
-            <PSwitch
+            <MySwitch
               checked={selectedChains.has(value as string)}
               // eslint-disable-next-line react/jsx-no-bind
               onChange={() => onChainSelect(value as string)}

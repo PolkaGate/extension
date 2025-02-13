@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../../../../components/translate';
-import PSwitch from '../components/Switch';
+import MySwitch from '../components/Switch';
 
 export default function EnableCamera (): React.ReactElement {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ export default function EnableCamera (): React.ReactElement {
         justifyContent='flex-start'
         pt='7px'
       >
-        <PSwitch
+        <MySwitch
           checked={settings.camera === 'on'}
           onChange={onChange}
         />

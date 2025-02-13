@@ -16,7 +16,7 @@ import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 import DotIndicator from './components/DotIndicator';
 import PRadio from './components/Radio';
-import PSwitch from './components/Switch';
+import MySwitch from './components/Switch';
 
 const BackButton = ({ genesisHash }: { genesisHash: string; }) => {
   const chain = useMetadata(genesisHash, true);
@@ -123,7 +123,7 @@ function Endpoints (): React.ReactElement {
         <Grid container item sx={{ border: '4px solid #1b143c', borderRadius: '14px', my: '10px' }}>
           <Grid container height='420px' item sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflow: 'scroll' }}>
             {/* <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px' }}>
-              <PSwitch
+              <MySwitch
                 checked={false}
                 columnGap='8px'
                 label={t('Enable Connection')}
@@ -131,7 +131,7 @@ function Endpoints (): React.ReactElement {
               />
             </Grid> */}
             <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px', mt: '4px' }}>
-              <PSwitch
+              <MySwitch
                 checked={isAutoMode}
                 columnGap='8px'
                 label={t('Auto Mode')}
