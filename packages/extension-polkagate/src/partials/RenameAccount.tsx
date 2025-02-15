@@ -7,11 +7,10 @@ import { Grid, Typography } from '@mui/material';
 import { Edit2, User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { DecisionButtons, ExtensionPopup, MyTextField } from '../components';
+import { Address2, DecisionButtons, ExtensionPopup, MyTextField } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { editAccount } from '../messaging';
 import MySnackbar from '../popup/settings/extensionSettings/components/MySnackbar';
-import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { ExtensionPopups } from '../util/constants';
 
 interface Props {
@@ -19,7 +18,7 @@ interface Props {
   open: boolean;
 }
 
-function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
+function RenameAccount({ open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -52,18 +51,11 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
         <Typography color='#BEAAD8' variant='B-4'>
           {t('Choose a new name for your account')}
         </Typography>
-        <Grid alignItems='center' container sx={{ bgcolor: '#05091C', borderRadius: '18px', columnGap: '10px', height: '52px', mt: '25px', pl: '10px' }}>
-          <PolkaGateIdenticon
+        {account &&
+          <Address2
             address={account?.address}
-            size={24}
-          />
-          <Grid container item justifyContent='flex-start' sx={{ maxWidth: '150px', overflowX: 'hidden', width: '100%' }}>
-            <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
-              {account?.name}
-            </Typography>
-          </Grid>
-
-        </Grid>
+            name={account?.name}
+          />}
         <MyTextField
           Icon={User}
           focused
@@ -75,6 +67,7 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
         />
         <DecisionButtons
           direction='vertical'
+          disabled={!newName}
           onPrimaryClick={onRename}
           onSecondaryClick={handleClose}
           primaryBtnText={t('Apply')}

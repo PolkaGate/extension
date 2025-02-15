@@ -72,7 +72,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
               ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />
               : undefined
             }
-            <Typography color='text.primary' textTransform='uppercase' variant={titleVariant} sx={{ ...titleStyle }}>
+            <Typography color='text.primary' sx={{ ...titleStyle }} textTransform='uppercase' variant={titleVariant}>
               {title}
             </Typography>
           </Grid>

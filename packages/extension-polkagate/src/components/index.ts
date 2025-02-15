@@ -12,6 +12,7 @@ export { default as ActionButton } from './ActionButton';
 export { default as ActionCard } from './ActionCard';
 export { default as ActionText } from './ActionText';
 export { default as Address } from './Address';
+export { default as Address2 } from './Address2';
 export { default as AddressInput } from './AddressInput';
 export { default as AddressInput2 } from './AddressInput2';
 export { default as Affirm } from './Affirm';

@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Variant } from '@mui/material/styles/createTypography';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { Grid, type SxProps, type Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { SHORT_ADDRESS_CHARACTERS } from '../util/constants';
@@ -21,16 +20,17 @@ interface Props {
   showCopy?: boolean;
   inParentheses?: boolean;
   clipped?: boolean;
+  variant?: Variant;
 }
 
-function ShortAddress ({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped = false, inParentheses = false, showCopy = false, style }: Props): React.ReactElement {
+function ShortAddress ({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped = false, inParentheses = false, showCopy = false, style, variant }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(1);
-  const pRef = useRef(null);
-  const cRef = useRef(null);
+  const pRef = useRef<HTMLDivElement>(null);
+  const cRef = useRef<HTMLSpanElement>(null);
 
   const decreaseCharactersCount = useCallback(() => clipped && setCharactersCount(charactersCount - 1), [charactersCount, clipped]);
 
-  ObserveResize(pRef?.current as unknown as Element, cRef?.current?.clientHeight + 3, decreaseCharactersCount);
+  ObserveResize(pRef?.current as unknown as Element, (cRef.current?.clientHeight ?? 0) + 3, decreaseCharactersCount);
 
   useEffect(() => {
     if (!clipped) {
@@ -41,16 +41,16 @@ function ShortAddress ({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped
 
     const offset = showCopy ? 55 : 25;
 
-    (cRef?.current?.offsetWidth < pRef?.current?.offsetWidth - offset) && setCharactersCount(charactersCount + 1);
+    (cRef.current && cRef.current.offsetWidth < (pRef?.current?.offsetWidth ?? 0) - offset) && setCharactersCount(charactersCount + 1);
   }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
 
   return (
     <Grid alignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>
-      <Grid item ref={cRef} width='fit-content'>
+      <Typography ref={cRef} variant={variant} width='fit-content'>
         {inParentheses ? '(' : ''}
-        {!charsCount || (charactersCount >= (address?.length ?? 2) / 2) ? address : `${address?.slice(0, charactersCount)}...${address?.slice(-charactersCount)}`}
+        {!charsCount || (charactersCount >= (address?.length ?? 2) / 2) ? String(address) : `${String(address)?.slice(0, charactersCount)}...${String(address)?.slice(-charactersCount)}`}
         {inParentheses ? ')' : ''}
-      </Grid>
+      </Typography>
       {showCopy &&
         <CopyAddressButton address={String(address)} />
       }

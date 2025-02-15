@@ -3,8 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
-import { Warning2 } from 'iconsax-react';
+import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ActionContext, GradientButton, MatchPasswordField, PasswordInput } from '../../../components';
@@ -12,6 +11,7 @@ import { type LoginInfo } from '../../../components/Loading';
 import { useTranslation } from '../../../components/translate';
 import { getStorage, setStorage } from '../../../util';
 import { isPasswordCorrect } from '../../passwordManagement';
+import WarningBox from '../partials/WarningBox';
 import MySnackbar from './components/MySnackbar';
 
 export default function ManagePassword(): React.ReactElement {
@@ -67,23 +67,15 @@ export default function ManagePassword(): React.ReactElement {
 
   return (
     <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ borderRadius: '14px', display: 'block', p: '1px' }}>
-      <Stack columnGap='15px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', p: '15px' }}>
-        <Box sx={{ bgcolor: '#FFCE4F', height: '32px', position: 'absolute', width: '32px', filter: 'blur(24px)', opacity: 0.9, borderRadius: '50%', transform: 'translate(-35%, -35%)' }} />
-        <Warning2 color='#FFCE4F' size='24px' style={{ marginTop: '10px' }} variant='Bold' />
-        <Stack alignContent='flex-start' direction='column' justifyContent='start' rowGap='10px' width='238px'>
-          <Typography color='#FFFFFF' lineHeight='19.94px' textAlign='start' variant='H-4'>
-            {t('REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE')}
-          </Typography>
-          <Typography color='#BEAAD8' textAlign='start' variant='B-4'>
-            {t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
-          </Typography>
-        </Stack>
-      </Stack>
+      <WarningBox
+        description={t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
+        title={t('REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE')}
+      />
       <Stack columnGap='15px' direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', p: '15px' }}>
         {hasAlreadySetPassword &&
           <PasswordInput
             focused
-            hasError = {passwordError}
+            hasError={passwordError}
             onPassChange={onCurrentPasswordChange}
             style={{ marginBottom: '18px' }}
             title={t('Current Password')}

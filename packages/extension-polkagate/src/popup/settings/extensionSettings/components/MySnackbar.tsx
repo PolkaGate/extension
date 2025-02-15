@@ -32,6 +32,8 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
 
       return () => clearTimeout(timeout);
     }
+
+    return undefined;
   }, [open, onClose]);
 
   return (

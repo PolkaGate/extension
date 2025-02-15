@@ -13,6 +13,7 @@ import { ActionCard, ActionContext, BackWithLabel } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
+import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
 import { ExtensionPopups } from '../../../util/constants';
 
@@ -23,8 +24,8 @@ function AccountSettings (): React.ReactElement {
   const onAction = useContext(ActionContext);
 
   const onBack = useCallback(() => onAction('/settings'), [onAction]);
-
   const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
+  const onForget = useCallback(() => setPopup(ExtensionPopups.FORGET), []);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -104,18 +105,22 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={noop}
+          onClick={onForget}
           style={{
             alignItems: 'center',
             height: '64px',
             mt: '8px'
           }}
-          title={t('Forget Account')}
+          title={t('Remove Account')}
         />
       </Grid>
       <HomeMenu />
       <RenameAccount
         open={popup === ExtensionPopups.RENAME}
+        setPopup={setPopup}
+      />
+      <RemoveAccount
+        open={popup === ExtensionPopups.FORGET}
         setPopup={setPopup}
       />
     </Container>

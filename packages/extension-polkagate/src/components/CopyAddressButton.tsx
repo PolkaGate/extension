@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { Grid, IconButton, Tooltip, useTheme } from '@mui/material';
+import { Grid, IconButton, Tooltip } from '@mui/material';
+import { Copy } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { useTranslation } from '../hooks';
-import { VaadinIcon } from '../components';
 
 interface Props {
   address: string | null | undefined;
@@ -15,8 +14,7 @@ interface Props {
   size?: number;
 }
 
-function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+function CopyAddressButton ({ address, showAddress = false, size = 14 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const shortAddress = `${address?.slice(0, 12) ?? ''}...${address?.slice(-12) ?? ''}`;
@@ -68,13 +66,13 @@ function CopyAddressButton({ address, showAddress = false, size = 20 }: Props): 
       >
         <IconButton
           onClick={_onCopy}
-          sx={{
-            height: '23px',
-            width: '36px'
-          }}
         >
           <CopyToClipboard text={String(address)}>
-            <VaadinIcon icon='vaadin:copy-o' style={{ color: `${theme.palette.secondary.light}`, width: `${size}px` }} />
+            <Copy
+              color='#AA83DC'
+              size={size}
+              variant={'Bulk'}
+            />
           </CopyToClipboard>
         </IconButton>
       </Tooltip>

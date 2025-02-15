@@ -1536,5 +1536,22 @@
   "REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE": "",
   "Current Password": "",
   "Confirm password": "",
-  "Set password": ""
+  "Set password": "",
+  "Wrong password.": "",
+  "Remove Account": "",
+  "WARNING": "",
+  "I want fo remove this account": "",
+  "Account successfully removed!": "",
+  "Choose a new name for your account": "",
+  "Enter your name": "",
+  "New name": "",
+  "Account successfully renamed!": "",
+  "Notifications": "",
+  "Manage Profile": "",
+  "Export Accounts": "",
+  "Automatically select the highest-performing remote node.": "",
+  "Current password is wrong!": "",
+  "Password has been changed!": "",
+  "New Password": "",
+  "Confirm Password": ""
 }

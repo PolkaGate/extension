@@ -3,11 +3,10 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Grid, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
-import { Icon } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import type { Icon } from 'iconsax-react';
 
-import { useTranslation } from '../hooks';
+import { Grid, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'

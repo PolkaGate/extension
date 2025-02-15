@@ -260,5 +260,6 @@ export enum ExtensionPopups {
   LANGUAGE,
   PRIVACY,
   WARNING,
-  RENAME
+  RENAME,
+  FORGET
 }
