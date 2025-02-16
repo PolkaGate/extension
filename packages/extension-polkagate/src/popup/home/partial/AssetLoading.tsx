@@ -9,7 +9,7 @@ import React from 'react';
 import { logoWhiteTransparent } from '../../../assets/logos';
 import { Drawer } from './TokensAssetsBox';
 
-function Loading (): React.ReactElement {
+function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   return (
     <div>
       <Grid container item sx={{ background: '#05091C', borderRadius: '14px', p: '10px' }}>
@@ -63,16 +63,16 @@ function Loading (): React.ReactElement {
           </Grid>
         </Container>
       </Grid>
-      <Drawer length={2} />
+      {!noDrawer && <Drawer length={2} />}
     </div>
   );
 }
 
-function AssetLoading () {
+function AssetLoading ({ itemsCount = 4, noDrawer = false }: { itemsCount?: number; noDrawer?: boolean; }) {
   return (
     <div style={{ display: 'grid', position: 'relative', rowGap: '10px', zIndex: 1 }}>
-      {Array.from({ length: 4 }).map((_, index) => (
-        <Loading key={index} />
+      {Array.from({ length: itemsCount }).map((_, index) => (
+        <Loading key={index} noDrawer={noDrawer} />
       ))}
     </div>
   );
