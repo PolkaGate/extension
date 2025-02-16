@@ -24,7 +24,7 @@ function EmptyHistoryBox () {
         sx={{ height: 'auto', m: '30px auto 15px', width: '125px' }}
       />
       <Typography color='text.secondary' mb='30px' variant='B-2'>
-        {t('No activity recorded yet')}!
+        {t('No transaction history is available yet')}
       </Typography>
     </>
   );

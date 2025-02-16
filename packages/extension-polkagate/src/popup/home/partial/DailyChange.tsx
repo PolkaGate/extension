@@ -75,9 +75,9 @@ function DailyChange ({ change = null, iconSize = 15, showHours = true, showPerc
 
   return (
     <Container disableGutters sx={{ ...containerStyle, ...style }}>
-      {youHave?.change && youHave.change > 0
+      {changed && changed > 0
         ? <ArrowUp2 color={color} size={iconSize} variant='Bold' />
-        : youHave?.change && youHave.change < 0
+        : changed && changed < 0
           ? <ArrowDown2 color={color} size={iconSize} variant='Bold' />
           : null
       }

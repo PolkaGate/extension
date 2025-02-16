@@ -9,7 +9,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useChainInfo } from '.';
 
-export default function useFormatted (address: AccountId | string | undefined, genesisHash: string | undefined, formatted?: AccountId | string): string | undefined {
+export default function useFormatted (address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
   const { chain } = useChainInfo(genesisHash);
 
   const encodedAddress = useMemo(() => {
