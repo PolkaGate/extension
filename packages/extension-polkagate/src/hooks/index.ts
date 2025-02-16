@@ -138,3 +138,4 @@ export { default as useValidators } from './useValidators';
 export { default as useValidatorsIdentities } from './useValidatorsIdentities';
 export { default as useValidatorSuggestion } from './useValidatorSuggestion';
 export { default as useYouHave } from './useYouHave';
+export { default as useYouHave2 } from './useYouHave2';

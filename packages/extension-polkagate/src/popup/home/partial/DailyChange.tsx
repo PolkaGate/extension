@@ -9,7 +9,7 @@ import React, { memo, useMemo } from 'react';
 
 import { FormatPrice } from '../../../components';
 import { PORTFOLIO_CHANGE_DECIMAL } from '../../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
-import { useIsHideNumbers, useYouHave } from '../../../hooks';
+import { useIsHideNumbers, useYouHave2 } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
@@ -35,7 +35,7 @@ interface DailyChangeProps {
 
 function DailyChange ({ change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
-  const youHave = useYouHave();
+  const youHave = useYouHave2();
   const { isHideNumbers } = useIsHideNumbers();
 
   const changed = useMemo(() => {
@@ -47,16 +47,19 @@ function DailyChange ({ change = null, iconSize = 15, showHours = true, showPerc
       return undefined;
     }
 
+    const isNegative = youHave.change < 0;
     const value = formatDecimal(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
-    return parseFloat(value);
+    return isNegative
+      ? -parseFloat(value)
+      : parseFloat(value);
   }, [change, youHave?.change]);
 
   const containerStyle: SxProps<Theme> = {
     alignItems: 'center',
-    bgcolor: changed && changed > 0
+    bgcolor: changed && changed < 0
       ? '#FF165C26'
-      : changed && changed < 0
+      : changed && changed > 0
         ? '#82FFA526'
         : '#AA83DC26',
     borderRadius: '9px',
@@ -75,11 +78,11 @@ function DailyChange ({ change = null, iconSize = 15, showHours = true, showPerc
 
   return (
     <Container disableGutters sx={{ ...containerStyle, ...style }}>
-      {changed && changed > 0
-        ? <ArrowUp2 color={color} size={iconSize} variant='Bold' />
-        : changed && changed < 0
-          ? <ArrowDown2 color={color} size={iconSize} variant='Bold' />
-          : null
+      {!changed
+        ? null
+        : changed > 0
+          ? <ArrowUp2 color={color} size={iconSize} variant='Bold' />
+          : <ArrowDown2 color={color} size={iconSize} variant='Bold' />
       }
       {showPercentage
         ? <Typography color={color} variant='B-4'>
