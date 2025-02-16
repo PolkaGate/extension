@@ -7,18 +7,20 @@ import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Container, Grid, Typography } from '@mui/material';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { ToggleDots } from '../../../components';
+import { ActionContext, ToggleDots } from '../../../components';
+import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { ColumnAmounts } from '..';
 
 interface TokenStakingInfoProp {
-  tokenDetail: FetchedBalance | undefined
+  tokenDetail: FetchedBalance | undefined;
+  address: string | undefined;
 }
 
 enum STAKING_TYPE {
@@ -26,8 +28,9 @@ enum STAKING_TYPE {
   POOL
 }
 
-function TokenStakingInfo ({ tokenDetail }: TokenStakingInfoProp) {
+function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
+  const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
 
   const [state, setState] = useState<STAKING_TYPE>();
@@ -48,9 +51,10 @@ function TokenStakingInfo ({ tokenDetail }: TokenStakingInfoProp) {
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
-  const isDoubleStaked = stakings?.hasPoolStake && stakings.hasPoolStake;
+  const isDoubleStaked = stakings?.hasPoolStake && stakings.hasSoloStake;
   const stakedAmount = (state === STAKING_TYPE.POOL ? tokenDetail?.pooledBalance : tokenDetail?.soloTotal) ?? BN_ZERO;
   const totalBalance = useMemo(() => calcPrice(priceOf(tokenDetail?.priceId ?? '0'), stakedAmount, tokenDetail?.decimal ?? 0), [priceOf, stakedAmount, tokenDetail?.decimal, tokenDetail?.priceId]);
+  const notStaked = useMemo(() => stakings && !stakings.hasPoolStake && !stakings.hasSoloStake, [stakings]);
 
   useEffect(() => {
     if (state === undefined && stakings) {
@@ -64,17 +68,28 @@ function TokenStakingInfo ({ tokenDetail }: TokenStakingInfoProp) {
     }
   }, [isDoubleStaked]);
 
-  if (stakings && !stakings.hasPoolStake && !stakings.hasSoloStake) {
-    return null;
-  }
+  const goToStaking = useCallback(() => {
+    if (notStaked) {
+      return;
+    }
+
+    const path = state === STAKING_TYPE.POOL
+      ? `/pool/${address}`
+      : `/solo/${address}`;
+
+    onAction(path);
+  }, [address, notStaked, onAction, state]);
 
   return (
-    <Container disableGutters sx={{ background: '#2D1E4A4D', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px' }}>
+    <Container disableGutters onClick={goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item onClick={toggleState} sx={{ columnGap: '4px', cursor: isDoubleStaked ? 'pointer' : 'default', width: 'fit-content' }}>
-        <SnowFlake size='20' />
+        {state === STAKING_TYPE.POOL
+          ? <Ice size='20' />
+          : <SnowFlake size='20' />
+        }
         <Typography color='text.secondary' variant='B-1'>
           {state === STAKING_TYPE.POOL
-            ? t('Pooled Staking')
+            ? t('Pool Staking')
             : t('Solo Staking')
           }
         </Typography>

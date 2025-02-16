@@ -3,24 +3,27 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, Trade } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useMemo } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 import { useParams } from 'react-router';
 
 import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, AssetLogo, BackWithLabel, FormatBalance2, FormatPrice } from '../../components';
-import { useAccountAssets, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
 import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
 import { UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
+import { GOVERNANCE_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 import DailyChange from '../home/partial/DailyChange';
+import ReservedLockedPopup from './partial/ReservedLockedPopup';
 import TokenDetailBox from './partial/TokenDetailBox';
 import TokenHistory from './partial/TokenHistory';
 import TokenStakingInfo from './partial/TokenStakingInfo';
@@ -30,9 +33,10 @@ interface ColumnAmountsProps {
   cryptoAmount: BN;
   token: string;
   decimal: number;
+  color?: string;
 }
 
-export const ColumnAmounts = ({ cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) => {
+export const ColumnAmounts = memo(function ColumnAmounts ({ color, cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) {
   const theme = useTheme();
 
   return (
@@ -46,6 +50,7 @@ export const ColumnAmounts = ({ cryptoAmount, decimal, fiatAmount, token }: Colu
         fontWeight={600}
         height={18}
         num={fiatAmount}
+        textColor={color}
         width='fit-content'
         withSmallDecimal
       />
@@ -53,7 +58,7 @@ export const ColumnAmounts = ({ cryptoAmount, decimal, fiatAmount, token }: Colu
         decimalPoint={2}
         decimals={[decimal]}
         style={{
-          color: '#BEAAD8',
+          color: color || '#BEAAD8',
           fontFamily: 'Inter',
           fontSize: '12px',
           fontWeight: 500,
@@ -64,7 +69,7 @@ export const ColumnAmounts = ({ cryptoAmount, decimal, fiatAmount, token }: Colu
       />
     </Grid>
   );
-};
+});
 
 const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; logoInfo: LogoInfo | undefined }) => (
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
@@ -75,6 +80,51 @@ const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; lo
   </Grid>
 );
 
+export type Type = 'locked' | 'reserved';
+
+interface LockedReservedState {
+  type: Type | undefined;
+  data: {
+    items: Record<string, BN | undefined>;
+    titleIcon: Icon;
+  } | undefined;
+}
+
+type Action =
+  | { type: 'OPEN_MENU'; payload: { menuType: Type; items: Record<string, BN | undefined>; titleIcon: Icon } }
+  | { type: 'CLOSE_MENU' }
+  | { type: 'UPDATE_ITEMS'; payload: Record<string, BN | undefined> };
+
+const lockedReservedReducer = (state: LockedReservedState, action: Action): LockedReservedState => {
+  switch (action.type) {
+    case 'OPEN_MENU':
+      return {
+        data: {
+          items: action.payload.items,
+          titleIcon: action.payload.titleIcon
+        },
+        type: action.payload.menuType
+      };
+    case 'CLOSE_MENU':
+      return {
+        data: undefined,
+        type: undefined
+      };
+    case 'UPDATE_ITEMS':
+      return state.data
+        ? {
+          ...state,
+          data: {
+            ...state.data,
+            items: action.payload
+          }
+        }
+        : state;
+    default:
+      return state;
+  }
+};
+
 function Tokens (): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -83,6 +133,15 @@ function Tokens (): React.ReactElement {
   const pricesInCurrency = usePrices();
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
+  const formatted = useFormatted3(account?.address, genesisHash);
+  const reservedReason = useReservedDetails2(formatted, genesisHash);
+  const { api } = useChainInfo(genesisHash);
+  const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(account?.address, genesisHash, undefined); // TODO: timeToUnlock!
+
+  const [lockedReservedState, dispatch] = useReducer(lockedReservedReducer, {
+    data: undefined,
+    type: undefined
+  });
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
@@ -90,109 +149,240 @@ function Tokens (): React.ReactElement {
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
   , [accountAssets, genesisHash, paramAssetId]);
 
-  const hasTransferableBalance = token?.availableBalance && !token.availableBalance.isZero();
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
   const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
 
-  const totalBalance = useMemo(() => calcPrice(priceOf(token?.priceId ?? '0'), token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+  const isMigrationEnabled = useMemo(() => !!api?.tx?.['nominationPools']?.['migrateDelegation'], [api]);
+  const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '0'), token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
-  const logoInfo = getLogo2(token?.genesisHash, token?.token);
+  const { lockedReasonLoading, reservedReasonLoading } = useMemo(() => {
+    const reasons = Object.values(reservedReason);
+    const reservedReasonLoading = reasons.length === 0 || reasons.some((reason) => reason === undefined);
+
+    const lockedReasonLoading = delegatedBalance === undefined || totalLocked === undefined;
+
+    return {
+      lockedReasonLoading,
+      reservedReasonLoading
+    };
+  }, [delegatedBalance, reservedReason, totalLocked]);
+
+  const lockedTooltip = useMemo(() => {
+    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(genesisHash) || !api) {
+      return undefined;
+    }
+
+    return (t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } }));
+  }, [api, genesisHash, t, unlockableAmount]);
+
+  const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+
+  const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
 
   const toSendFund = useCallback(() => {
     account?.address && windowOpen(`/send/${account.address}/${paramAssetId}`).catch(console.error);
   }, [account?.address, paramAssetId]);
+
+  const displayPopup = useCallback((type: Type) => () => {
+    const items: Record<string, BN | undefined> = {};
+
+    const addStakingItems = (shouldAdd: boolean) => {
+      if (!api) {
+        return;
+      }
+
+      if (shouldAdd && token?.soloTotal && hasAmount(token?.soloTotal)) {
+        items['Solo Staking'] = token.soloTotal;
+      }
+
+      if (shouldAdd && token?.pooledBalance && hasAmount(token?.pooledBalance)) {
+        items['Pool Staking'] = token.pooledBalance;
+      }
+    };
+
+    if (type === 'locked') {
+      addStakingItems(!isMigrationEnabled);
+
+      if (unlockableAmount && !unlockableAmount.isZero() && !items['Governance']) {
+        items['Governance'] = unlockableAmount;
+      }
+    } else {
+      if (reservedReason) {
+        Object.entries(reservedReason)
+          .forEach(([reason, amount]) => {
+            if (amount && !amount.isZero()) {
+              items[reason] = amount;
+            }
+          });
+      }
+
+      addStakingItems(!!isMigrationEnabled);
+    }
+
+    dispatch({
+      payload: {
+        items,
+        menuType: type,
+        titleIcon: type === 'locked' ? Lock1 : Coin
+      },
+      type: 'OPEN_MENU'
+    });
+  }, [api, hasAmount, isMigrationEnabled, reservedReason, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
+
+  useEffect(() => {
+    if (lockedReservedState.data === undefined || lockedReservedState.type === undefined) {
+      return;
+    }
+
+    const items: Record<string, BN | undefined> = lockedReservedState.data.items;
+
+    if (lockedReservedState.type === 'reserved') {
+      Object.entries(reservedReason).forEach(([reason, amount]) => {
+        if (amount && !amount.isZero() && !items[reason]) {
+          items[reason] = amount;
+        }
+      });
+
+      if (reservedReasonLoading) {
+        items['loading'] = undefined;
+      } else if (!reservedReasonLoading) {
+        delete items['loading'];
+      }
+    } else if (lockedReservedState.type === 'locked') {
+      if (delegatedBalance && !delegatedBalance.isZero() && !items['delegate']) {
+        items['delegate'] = delegatedBalance;
+      }
+
+      const hasVote = delegatedBalance && totalLocked && !totalLocked.isZero() && totalLocked.sub(delegatedBalance).gt(BN_ZERO) && !items['vote'];
+
+      if (hasVote) {
+        items['vote'] = totalLocked.sub(delegatedBalance);
+      }
+
+      if (lockedReasonLoading) {
+        items['loading'] = undefined;
+      } else if (!lockedReasonLoading) {
+        delete items['loading'];
+      }
+    }
+
+    dispatch({
+      payload: items,
+      type: 'UPDATE_ITEMS'
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delegatedBalance, lockedReasonLoading, JSON.stringify(lockedReservedState.data?.items), lockedReservedState.type, reservedReason, reservedReasonLoading, totalLocked]);
+
+  const closeMenu = useCallback(() => {
+    dispatch({ type: 'CLOSE_MENU' });
+  }, []);
 
   const backHome = useCallback(() => {
     onAction('/');
   }, [onAction]);
 
   return (
-    <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader />
-      <BackWithLabel
-        content={<BackButton logoInfo={logoInfo} token={token} />}
-        onClick={backHome}
-        style={{ pb: 0 }}
-      />
-      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: '495px', overflowY: 'scroll', pt: '15px' }}>
-        <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
-          <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
-            <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
-          </Grid>
-          <Typography color='text.secondary' variant='B-2'>
-            {token?.token}
-          </Typography>
-          <FormatPrice
-            commify
-            decimalColor={theme.palette.text.secondary}
-            dotStyle={'big'}
-            fontFamily='OdibeeSans'
-            fontSize='40px'
-            fontWeight={400}
-            height={40}
-            num={totalBalance}
-            width='fit-content'
-            withSmallDecimal
-          />
-          <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
+    <>
+      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+        <UserDashboardHeader />
+        <BackWithLabel
+          content={<BackButton logoInfo={logoInfo} token={token} />}
+          onClick={backHome}
+          style={{ pb: 0 }}
+        />
+        <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: '495px', overflowY: 'scroll', pt: '15px' }}>
+          <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
+            <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
+              <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+            </Grid>
+            <Typography color='text.secondary' variant='B-2'>
+              {token?.token}
+            </Typography>
             <FormatPrice
               commify
-              fontFamily='Inter'
-              fontSize='12px'
-              fontWeight={500}
-              ignoreHide
-              num={tokenPrice}
-              skeletonHeight={14}
-              textColor='#AA83DC'
+              decimalColor={theme.palette.text.secondary}
+              dotStyle={'big'}
+              fontFamily='OdibeeSans'
+              fontSize='40px'
+              fontWeight={400}
+              height={40}
+              num={totalBalancePrice}
               width='fit-content'
+              withSmallDecimal
             />
-            {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
-              <DailyChange
-                change={change}
-                textVariant='B-1'
+            <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
+              <FormatBalance2
+                decimalPoint={4}
+                decimals={[token?.decimal ?? 0]}
+                style={{
+                  color: '#BEAAD8',
+                  fontFamily: 'Inter',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  width: 'max-content'
+                }}
+                tokens={[token?.token ?? '']}
+                value={token?.totalBalance}
               />
-            }
+              {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
+                <DailyChange
+                  change={change}
+                  textVariant='B-1'
+                />
+              }
+            </Grid>
+          </GlowBox>
+          <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px', pb: '10px' }}>
+            <TokenDetailBox
+              Icon={Trade}
+              amount={token?.availableBalance}
+              decimal={token?.decimal}
+              onClick={hasAmount(token?.availableBalance) ? toSendFund : undefined}
+              priceId={token?.priceId}
+              title={t('Transferable')}
+              token={token?.token}
+            />
+            <TokenDetailBox
+              Icon={Lock1}
+              amount={token?.lockedBalance}
+              decimal={token?.decimal}
+              description={lockedTooltip}
+              onClick={hasAmount(token?.lockedBalance) ? displayPopup('locked') : undefined}
+              priceId={token?.priceId}
+              title={t('Locked')}
+              token={token?.token}
+            />
+            <TokenDetailBox
+              Icon={Coin}
+              amount={token?.reservedBalance}
+              decimal={token?.decimal}
+              onClick={hasAmount(token?.reservedBalance) ? displayPopup('reserved') : undefined}
+              priceId={token?.priceId}
+              title={t('Reserved')}
+              token={token?.token}
+            />
+            <TokenStakingInfo address={account?.address} tokenDetail={token} />
           </Grid>
-        </GlowBox>
-        <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px', pb: '10px' }}>
-          <TokenDetailBox
-            Icon={Trade}
-            amount={token?.availableBalance}
+          <TokenHistory
+            address={account?.address}
             decimal={token?.decimal}
-            onClick={hasTransferableBalance ? toSendFund : undefined}
-            priceId={token?.priceId}
-            title={t('Transferable')}
+            genesisHash={genesisHash}
             token={token?.token}
           />
-          <TokenDetailBox
-            Icon={Lock1}
-            amount={token?.lockedBalance}
-            decimal={token?.decimal}
-            description='locked'
-            priceId={token?.priceId}
-            title={t('Locked')}
-            token={token?.token}
-          />
-          <TokenDetailBox
-            Icon={Coin}
-            amount={token?.reservedBalance}
-            decimal={token?.decimal}
-            description='locked'
-            priceId={token?.priceId}
-            title={t('Reserved')}
-            token={token?.token}
-          />
-          <TokenStakingInfo tokenDetail={token} />
-        </Grid>
-        <TokenHistory
-          address={account?.address}
-          decimal={token?.decimal}
-          genesisHash={genesisHash}
-          token={token?.token}
-        />
-      </Container>
-    </Grid>
+        </Container>
+      </Grid>
+      <ReservedLockedPopup
+        TitleIcon={lockedReservedState.data?.titleIcon}
+        decimal={token?.decimal}
+        handleClose={closeMenu}
+        items={lockedReservedState.data?.items ?? {}}
+        openMenu={!!lockedReservedState.type}
+        price={tokenPrice}
+        title={lockedReservedState.type ?? ''}
+        token={token?.token}
+      />
+    </>
   );
 }
 

@@ -51,7 +51,7 @@ function AccountVisibilityToggler (): React.ReactElement {
         content={account?.isHidden
           ? t('This account is invisible to websites')
           : t('This account is visible to websites')}
-        positionAdjustment={{ left: -10, top: -50 }}
+        positionAdjustment={{ left: -8, top: -35 }}
         targetRef={ref}
       />
     </>

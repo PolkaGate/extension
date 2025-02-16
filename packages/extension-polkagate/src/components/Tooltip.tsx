@@ -22,7 +22,7 @@ interface CustomTooltipProps {
   | 'top-end'
   | 'top-start'
   | 'top';
-  targetRef: RefObject<HTMLElement>;
+  targetRef: RefObject<HTMLElement> | null;
   positionAdjustment?: {
     top?: number;
     left?: number;
@@ -50,7 +50,7 @@ const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targ
   }, []);
 
   const updatePosition = useCallback(() => {
-    const target = targetRef.current;
+    const target = targetRef?.current;
 
     if (!target) {
       return;
@@ -67,7 +67,7 @@ const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targ
   }, [positionAdjustment?.left, positionAdjustment?.top, targetRef]);
 
   useEffect(() => {
-    const target = targetRef.current;
+    const target = targetRef?.current;
 
     if (!target) {
       return;
@@ -75,52 +75,60 @@ const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targ
 
     updatePosition();
 
+    const observer = new IntersectionObserver(updatePosition, { threshold: 0.1 });
+
+    observer.observe(target);
+
+    window.addEventListener('scroll', updatePosition, true);
+    // window.addEventListener('resize', updatePosition);
     target.addEventListener('mouseenter', showTooltip);
     target.addEventListener('mouseleave', hideTooltip);
 
     return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', updatePosition, true);
+      // window.removeEventListener('resize', updatePosition);
+
       target?.removeEventListener('mouseenter', showTooltip);
       target?.removeEventListener('mouseleave', hideTooltip);
     };
   }, [hideTooltip, showTooltip, targetRef, updatePosition]);
 
   return (
-    <>
-      <Tooltip
-        arrow
-        componentsProps={{
-          popper: { sx: { m: '5px' } },
-          tooltip: {
-            style: { margin: '5px', marginTop: '12px' },
-            sx: {
-              '& .MuiTooltip-arrow': {
-                color: '#674394',
-                height: '9px'
-              },
-              backgroundColor: '#674394',
-              borderRadius: '8px',
-              color: '#fff',
-              ...theme.typography['B-4'],
-              p: '8px'
-            }
+    <Tooltip
+      arrow
+      componentsProps={{
+        popper: { sx: { m: '5px' } },
+        tooltip: {
+          style: { margin: '5px', marginTop: '12px' },
+          sx: {
+            '& .MuiTooltip-arrow': {
+              color: '#674394',
+              height: '9px'
+            },
+            backgroundColor: '#674394',
+            borderRadius: '8px',
+            color: '#fff',
+            ...theme.typography['B-4'],
+            p: '8px'
           }
+        }
+      }}
+      open={isVisible}
+      placement={placement}
+      title={content}
+    >
+      <div
+        style={{
+          height: position?.height,
+          left: position?.left,
+          pointerEvents: 'none',
+          position: 'absolute',
+          top: position?.top,
+          width: position?.width
         }}
-        open={isVisible}
-        placement={placement}
-        title={content}
-      >
-        <div
-          style={{
-            height: position?.height,
-            left: position?.left,
-            pointerEvents: 'none',
-            position: 'absolute',
-            top: position?.top,
-            width: position?.width
-          }}
-        />
-      </Tooltip>
-    </>
+      />
+    </Tooltip>
   );
 };
 

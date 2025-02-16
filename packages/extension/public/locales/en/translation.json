@@ -1553,5 +1553,7 @@
   "Current password is wrong!": "",
   "Password has been changed!": "",
   "New Password": "",
-  "Confirm Password": ""
+  "Confirm Password": "",
+  "No transaction history is available yet": "",
+  "No reason found!": ""
 }

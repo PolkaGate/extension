@@ -7,7 +7,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { selectableNetworks } from '@polkadot/networks';
 
 import { sanitizeChainName } from '../util/utils';
-import { useApiWithChain2, useMetadata } from '.';
+import { useApi2, useMetadata } from '.';
 
 interface ChainInfo {
   api: ApiPromise | undefined;
@@ -19,7 +19,7 @@ interface ChainInfo {
 
 export default function useChainInfo (genesisHash: string | null | undefined): ChainInfo {
   const chain = useMetadata(genesisHash);
-  const api = useApiWithChain2(chain);
+  const api = useApi2(genesisHash);
   const chainInfo = selectableNetworks.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash[0] === genesisHash);
 
   return {
