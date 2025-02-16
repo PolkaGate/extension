@@ -3,10 +3,10 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
+import AccountSettings from '@polkadot//extension-polkagate/src/popup/settings/accountSettings';
+import ExtensionSettings from '@polkadot//extension-polkagate/src/popup/settings/extensionSettings';
 import Settings from '@polkadot/extension-polkagate/src/popup/settings';
 import About from '@polkadot/extension-polkagate/src/popup/settings/About';
-import AccountSettings from '@polkadot/extension-polkagate/src/popup/settings/AccountSettings';
-import ExtensionSettings from '@polkadot/extension-polkagate/src/popup/settings/ExtensionSettings';
 import Endpoints from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/Endpoints';
 
 export const SETTINGS_ROUTES: RouteConfig[] = [
