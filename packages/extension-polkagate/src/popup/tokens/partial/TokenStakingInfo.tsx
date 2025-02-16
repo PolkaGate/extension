@@ -12,6 +12,7 @@ import React, { memo, useCallback, useContext, useEffect, useMemo, useState } fr
 import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, ToggleDots } from '../../../components';
+import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
@@ -82,7 +83,10 @@ function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   return (
     <Container disableGutters onClick={goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item onClick={toggleState} sx={{ columnGap: '4px', cursor: isDoubleStaked ? 'pointer' : 'default', width: 'fit-content' }}>
-        <SnowFlake size='20' />
+        {state === STAKING_TYPE.POOL
+          ? <Ice size='20' />
+          : <SnowFlake size='20' />
+        }
         <Typography color='text.secondary' variant='B-1'>
           {state === STAKING_TYPE.POOL
             ? t('Pool Staking')

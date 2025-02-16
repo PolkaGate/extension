@@ -13,6 +13,7 @@ import { Bezier, Data, type Icon, Image, LikeDislike, MedalStar, Paperclip2, Peo
 import React, { useMemo } from 'react';
 
 import { ExtensionPopup, GradientButton, GradientDivider } from '../../../components';
+import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
@@ -57,19 +58,21 @@ const reasonIcon = (reason: string): React.ReactNode => {
       return <LikeDislike color='#AA83DC' size='26' variant='Bulk' />;
 
     case 'solo staking':
-    case 'pool staking':
       return <SnowFlake size='24' />;
+
+    case 'pool staking':
+      return <Ice size='24' />;
 
     case 'referenda':
     case 'governance':
-      return <MedalStar size='24' variant='Bold' />;
+      return <MedalStar color='#AA83DC' size='24' variant='Bold' />;
 
     default:
       return null;
   }
 };
 
-function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: BN, decimal: number, noDivider: boolean, price: number, token: string, reason: string }) {
+function Item({ amount, decimal, noDivider, price, reason, token }: { amount: BN, decimal: number, noDivider: boolean, price: number, token: string, reason: string }) {
   const totalBalance = useMemo(() => calcPrice(price, amount, decimal), [amount, decimal, price]);
 
   return (
@@ -133,45 +136,43 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
       }}
       title={title}
     >
-      <>
-        <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', m: '24px 0 34px', p: '8px' }}>
-          {reasonsToShow.map(([reason, amount], index) => {
-            const noDivider = reasonsToShow.length === index + 1;
+      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', mb: '15px', maxHeight: '360px', overflow: 'scroll', p: '8px' }}>
+        {reasonsToShow.map(([reason, amount], index) => {
+          const noDivider = reasonsToShow.length === index + 1;
 
-            return (
-              <Item
-                amount={amount}
-                decimal={decimal ?? 0}
-                key={index}
-                noDivider={noDivider}
-                price={price}
-                reason={reason}
-                token={token ?? ''}
-              />
-            );
-          })}
-          {stillLoading &&
-            <>
-              {reasonsToShow.length > 0 && <GradientDivider style={{ my: '4px' }} />}
-              <AssetLoading itemsCount={1} noDrawer />
-            </>
-          }
-          {noReasons &&
-            <Typography color='text.secondary' component='p' p='12px' variant='B-2' width='100%'>
-              {t('No reason found!')}
-            </Typography>
-          }
-        </Container>
-        <GradientButton
-          contentPlacement='center'
-          onClick={handleClose}
-          style={{
-            height: '44px',
-            width: '100%'
-          }}
-          text={t('Close')}
-        />
-      </>
+          return (
+            <Item
+              amount={amount}
+              decimal={decimal ?? 0}
+              key={index}
+              noDivider={noDivider}
+              price={price}
+              reason={reason}
+              token={token ?? ''}
+            />
+          );
+        })}
+        {stillLoading &&
+          <>
+            {reasonsToShow.length > 0 && <GradientDivider style={{ my: '4px' }} />}
+            <AssetLoading itemsCount={1} noDrawer />
+          </>
+        }
+        {noReasons &&
+          <Typography color='text.secondary' component='p' p='12px' variant='B-2' width='100%'>
+            {t('No reason found!')}
+          </Typography>
+        }
+      </Container>
+      <GradientButton
+        contentPlacement='center'
+        onClick={handleClose}
+        style={{
+          height: '44px',
+          width: '100%'
+        }}
+        text={t('Close')}
+      />
     </ExtensionPopup>
   );
 }
