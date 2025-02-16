@@ -39,7 +39,7 @@ export default function useYouHave (): YouHaveType | undefined | null {
   const account = useSelectedAccount();
 
   const youHave = useMemo(() => {
-    if (!accountsAssets?.balances || !account?.address) {
+    if (!accountsAssets?.balances || !account?.address || !accountsAssets?.balances?.[account.address]) {
       return null;
     }
 
@@ -53,7 +53,7 @@ export default function useYouHave (): YouHaveType | undefined | null {
     const balances = accountsAssets.balances;
     const date = Math.min(accountsAssets.timeStamp, pricesInCurrencies.date);
 
-    Object.keys(balances?.[account.address]).forEach((genesisHash) => {
+    Object.keys(balances[account.address]).forEach((genesisHash) => {
       balances?.[account?.address]?.[genesisHash].forEach((asset) => {
         const tokenValue = pricesInCurrencies.prices[asset.priceId]?.value ?? 0;
         const tokenPriceChange = pricesInCurrencies.prices[asset.priceId]?.change ?? 0;
