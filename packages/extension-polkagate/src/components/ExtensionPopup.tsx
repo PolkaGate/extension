@@ -8,7 +8,7 @@ import type { TransitionProps } from '@mui/material/transitions';
 import type { OverridableStringUnion } from '@mui/types';
 import type { Icon } from 'iconsax-react';
 
-import { Box, Container, Dialog, Grid, Slide, type SxProps, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
+import { Box, Container, Dialog, Grid, Slide, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
 import React from 'react';
 
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
@@ -32,13 +32,14 @@ export interface Props {
   withoutTopBorder?: boolean;
   withGradientBorder?: boolean;
   withoutBackground?: boolean;
+  style?: SxProps<Theme>;
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, openMenu, pt, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
+function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
   return (
     <Dialog
       PaperProps={{
@@ -61,11 +62,11 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
       fullScreen
       open={openMenu}
     >
-      <Container disableGutters sx={{ height: '100%', width: '100%' }}>
+      <Container disableGutters sx={{ height: '100%', width: '100%', ...style }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
+        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
           <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p='10px'>
             {TitleIcon
