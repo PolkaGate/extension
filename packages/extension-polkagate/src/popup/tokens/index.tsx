@@ -33,9 +33,10 @@ interface ColumnAmountsProps {
   cryptoAmount: BN;
   token: string;
   decimal: number;
+  color?: string;
 }
 
-export const ColumnAmounts = memo(function ColumnAmounts ({ cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) {
+export const ColumnAmounts = memo(function ColumnAmounts ({ color, cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) {
   const theme = useTheme();
 
   return (
@@ -49,6 +50,7 @@ export const ColumnAmounts = memo(function ColumnAmounts ({ cryptoAmount, decima
         fontWeight={600}
         height={18}
         num={fiatAmount}
+        textColor={color}
         width='fit-content'
         withSmallDecimal
       />
@@ -56,7 +58,7 @@ export const ColumnAmounts = memo(function ColumnAmounts ({ cryptoAmount, decima
         decimalPoint={2}
         decimals={[decimal]}
         style={{
-          color: '#BEAAD8',
+          color: color || '#BEAAD8',
           fontFamily: 'Inter',
           fontSize: '12px',
           fontWeight: 500,

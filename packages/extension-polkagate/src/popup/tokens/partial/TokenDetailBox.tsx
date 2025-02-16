@@ -18,14 +18,15 @@ import { ColumnAmounts } from '..';
 
 interface TokenDetailBoxProp {
   Icon: Icon;
-  title: string;
-  description?: React.ReactNode;
   amount: BN | undefined;
   decimal: number | undefined;
-  token: string | undefined;
-  priceId: string | undefined;
+  description?: React.ReactNode;
   onClick?: () => void;
+  priceId: string | undefined;
+  title: string;
+  token: string | undefined;
 }
+const DISABLED_COLOR = '#674394'; // should be added to theme
 
 const TokenDetailBoxContainer = styled(Grid)(({ clickable }: { clickable: boolean }) => ({
   ':hover': clickable
@@ -50,20 +51,22 @@ function TokenDetailBox ({ Icon, amount, decimal, description, onClick, priceId,
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
   const totalBalance = useMemo(() => calcPrice(priceOf(priceId ?? '0'), amount ?? BN_ZERO, decimal ?? 0), [amount, decimal, priceId, priceOf]);
+  const clickable = !!onClick;
 
   return (
     <>
-      <TokenDetailBoxContainer clickable={!!onClick} onClick={onClick}>
+      <TokenDetailBoxContainer clickable={clickable} onClick={onClick}>
         <Grid container direction='column' gap='8px' item>
-          <Icon color='#AA83DC' size='21' variant='Bulk' />
+          <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size='21' variant='Bulk' />
           <Grid alignItems='center' container item sx={{ columnGap: '6px' }}>
-            <Typography color='text.secondary' variant='B-1'>
+            <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} variant='B-1'>
               {title}
             </Typography>
-            {description && <InfoCircle color='#AA83DC' ref={toolTipRef} size='19' variant='Bold' />}
+            {description && <InfoCircle color={clickable ? '#AA83DC' : DISABLED_COLOR} ref={toolTipRef} size='19' variant='Bold' />}
           </Grid>
         </Grid>
         <ColumnAmounts
+          color={clickable ? undefined : DISABLED_COLOR}
           cryptoAmount={amount ?? BN_ZERO}
           decimal={decimal ?? 0}
           fiatAmount={totalBalance}
