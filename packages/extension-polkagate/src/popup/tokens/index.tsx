@@ -287,7 +287,7 @@ function Tokens (): React.ReactElement {
   return (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader />
+        <UserDashboardHeader homeType='default' />
         <BackWithLabel
           content={<BackButton logoInfo={logoInfo} token={token} />}
           onClick={backHome}
