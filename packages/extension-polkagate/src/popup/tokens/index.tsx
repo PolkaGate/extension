@@ -20,7 +20,7 @@ import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
 import { UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
-import { GOVERNANCE_CHAINS } from '../../util/constants';
+import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
@@ -153,7 +153,7 @@ function Tokens (): React.ReactElement {
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
   const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
 
-  const isMigrationEnabled = useMemo(() => !!api?.tx?.['nominationPools']?.['migrateDelegation'], [api]);
+  const isMigrationEnabled = useMemo(() => MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash), [genesisHash]);
   const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '0'), token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
   const { lockedReasonLoading, reservedReasonLoading } = useMemo(() => {
@@ -188,15 +188,15 @@ function Tokens (): React.ReactElement {
     const items: Record<string, BN | undefined> = {};
 
     const addStakingItems = (shouldAdd: boolean) => {
-      if (!api) {
+      if (!shouldAdd) {
         return;
       }
 
-      if (shouldAdd && token?.soloTotal && hasAmount(token?.soloTotal)) {
+      if (token?.soloTotal && hasAmount(token?.soloTotal)) {
         items['Solo Staking'] = token.soloTotal;
       }
 
-      if (shouldAdd && token?.pooledBalance && hasAmount(token?.pooledBalance)) {
+      if (token?.pooledBalance && hasAmount(token?.pooledBalance)) {
         items['Pool Staking'] = token.pooledBalance;
       }
     };
@@ -204,14 +204,14 @@ function Tokens (): React.ReactElement {
     if (type === 'locked') {
       addStakingItems(!isMigrationEnabled);
 
-      if (unlockableAmount && !unlockableAmount.isZero() && !items['Governance']) {
+      if (hasAmount(unlockableAmount) && !items['Governance']) {
         items['Governance'] = unlockableAmount;
       }
     } else {
       if (reservedReason) {
         Object.entries(reservedReason)
           .forEach(([reason, amount]) => {
-            if (amount && !amount.isZero()) {
+            if (amount && hasAmount(amount)) {
               items[reason] = amount;
             }
           });
@@ -228,7 +228,7 @@ function Tokens (): React.ReactElement {
       },
       type: 'OPEN_MENU'
     });
-  }, [api, hasAmount, isMigrationEnabled, reservedReason, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
+  }, [hasAmount, isMigrationEnabled, reservedReason, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
 
   useEffect(() => {
     if (lockedReservedState.data === undefined || lockedReservedState.type === undefined) {
@@ -246,10 +246,12 @@ function Tokens (): React.ReactElement {
 
       if (reservedReasonLoading) {
         items['loading'] = undefined;
-      } else if (!reservedReasonLoading) {
+      } else {
         delete items['loading'];
       }
-    } else if (lockedReservedState.type === 'locked') {
+    }
+
+    if (lockedReservedState.type === 'locked') {
       if (delegatedBalance && !delegatedBalance.isZero() && !items['delegate']) {
         items['delegate'] = delegatedBalance;
       }

@@ -53,7 +53,6 @@ export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdf
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
 export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
 
-
 /** relay chains info */
 export const RELAY_CHAINS_NAMES = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
 
@@ -67,6 +66,10 @@ export const RELAY_CHAINS_GENESISHASH = [
   KUSAMA_GENESIS_HASH,
   WESTEND_GENESIS_HASH,
   PASEO_GENESIS_HASH
+];
+
+export const MIGRATED_NOMINATION_POOLS_CHAINS = [
+  WESTEND_GENESIS_HASH
 ];
 
 export const ASSET_HUBS = [

@@ -1,7 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
+import { BN_ZERO } from '@polkadot/util';
+
+import { MIGRATED_NOMINATION_POOLS_CHAINS, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
 import { getPriceIdByChainName } from '../../utils';
 import { balancify, closeWebsockets } from '../utils';
 import { getBalances } from './getBalances.js';
@@ -22,9 +24,11 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
       return;
     }
 
+    const genesisHash = api.genesisHash.toString();
+    const isMigrationEnabled = MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash);
+
     balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
-      const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(pooledBalance);
-      const genesisHash = api.genesisHash.toString();
+      const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(isMigrationEnabled ? BN_ZERO : pooledBalance);
 
       const priceId = TEST_NETS.includes(genesisHash)
         ? undefined
