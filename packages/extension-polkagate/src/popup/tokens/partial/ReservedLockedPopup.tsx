@@ -136,7 +136,7 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
       }}
       title={title}
     >
-      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', mb: '15px', maxHeight: '360px', overflow: 'scroll', p: '8px' }}>
+      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', maxHeight: '360px', my: '15px', overflow: 'scroll', p: '8px' }}>
         {reasonsToShow.map(([reason, amount], index) => {
           const noDivider = reasonsToShow.length === index + 1;
 
