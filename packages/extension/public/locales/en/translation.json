@@ -1555,5 +1555,8 @@
   "New Password": "",
   "Confirm Password": "",
   "No transaction history is available yet": "",
-  "No reason found!": ""
+  "No reason found!": "",
+  "Your account(s) will be encrypted with your password and saved as a JSON file in your browser’s downloads. You can later import them into the extension using the same password.": "",
+  "Your Password": "",
+  "Account export is completed!": ""
 }

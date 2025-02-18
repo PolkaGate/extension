@@ -18,7 +18,16 @@ interface Props {
   open: boolean;
 }
 
-function RenameAccount({ open, setPopup }: Props): React.ReactElement {
+/**
+ * A component for renaming an account. It allows the user to input a new name
+ * for their account and applies the change on confirmation.
+ *
+ * @param {boolean} open - Whether the popup is open or not.
+ * @param {React.Dispatch<React.SetStateAction<ExtensionPopups>>} setPopup - A function to set the state of the popup (close it or open other popups).
+ *
+ * @returns {React.ReactElement} The rendered RenameAccount component.
+ */
+function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -60,6 +69,7 @@ function RenameAccount({ open, setPopup }: Props): React.ReactElement {
           Icon={User}
           focused
           iconSize={18}
+          onEnterPress={onRename}
           onTextChange={onNameChange}
           placeholder={t('Enter your name')}
           style={{ margin: '20px 0 140px' }}

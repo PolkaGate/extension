@@ -21,6 +21,16 @@ const progressAnimation = keyframes`
 
 const SNACK_BAR_VISIBILITY_DURATION = 2000;
 
+/**
+ * A custom Snackbar component that displays a message with a gradient background
+ * and a progress bar indicating its visibility duration.
+ *
+ * @component
+ * @param {string} text - The message to display in the Snackbar.
+ * @param {boolean} open - Controls the visibility of the Snackbar.
+ * @param {() => void} onClose - Callback function to close the Snackbar.
+ * @returns {JSX.Element} The rendered Snackbar component.
+ */
 const MySnackbar = ({ onClose, open, text }: Props) => {
   const theme = useTheme();
 
@@ -50,8 +60,8 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
           boxShadow: 3,
           color: '#fff',
           height: '52px',
+          overflow: 'hidden',
           position: 'relative',
-          px: 2,
           py: 1.5,
           textAlign: 'center',
           width: '330px'
@@ -65,17 +75,14 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
             backgroundColor: '#674394',
             bottom: '1px',
             height: '3px',
-            left: '4px',
             position: 'absolute',
-            width: '97%'
+            width: '100%'
           }}
         >
           <Box
             sx={{
               animation: `${progressAnimation} 2s linear`,
               backgroundColor: '#EAEBF1',
-              borderBottomLeftRadius: '20%',
-              borderBottomRightRadius: '20%',
               height: '100%',
               width: '100%'
             }}

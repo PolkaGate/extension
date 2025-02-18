@@ -15,6 +15,7 @@ interface Props {
   disabled?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
+  startIconSize?: number;
   startIconNode?: React.ReactNode;
   EndIcon?: Icon;
   endIconNode?: React.ReactNode;
@@ -23,7 +24,23 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, onClick, startIconNode, style, text }: Props): React.ReactElement<Props> {
+/**
+ * A customizable button with optional gradient background, icons, and hover effects.
+ *
+ * @param {React.MouseEventHandler<HTMLButtonElement>} onClick - The click handler for the button.
+ * @param {Icon} [StartIcon] - Optional icon to display at the start of the button.
+ * @param {number} [startIconSize=20] - Optional size for the start icon.
+ * @param {React.ReactNode} [startIconNode] - Optional node to display at the start of the button.
+ * @param {Icon} [EndIcon] - Optional icon to display at the end of the button.
+ * @param {React.ReactNode} [endIconNode] - Optional node to display at the end of the button.
+ * @param {string} text - The text to display on the button.
+ * @param {'start' | 'center' | 'end'} [contentPlacement='center'] - The placement of the text relative to the icons.
+ * @param {React.CSSProperties} [style] - Optional style overrides for the button.
+ * @param {boolean} [disabled=false] - Whether the button is disabled.
+ *
+ * @returns {React.ReactElement} The rendered gradient button.
+ */
+export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, onClick, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -80,7 +97,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
 
   return (
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
-      {StartIcon && <StartIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
+      {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
       {startIconNode && startIconNode}
       <Typography sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10 }} variant='B-2'>
         {text}

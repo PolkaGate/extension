@@ -26,6 +26,7 @@ function AccountSettings (): React.ReactElement {
   const onBack = useCallback(() => onAction('/settings'), [onAction]);
   const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
   const onForget = useCallback(() => setPopup(ExtensionPopups.FORGET), []);
+  const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -92,7 +93,7 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={noop}
+          onClick={onExport}
           style={{
             alignItems: 'center',
             height: '64px',

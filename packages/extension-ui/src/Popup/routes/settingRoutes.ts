@@ -7,8 +7,18 @@ import AccountSettings from '@polkadot//extension-polkagate/src/popup/settings/a
 import ExtensionSettings from '@polkadot//extension-polkagate/src/popup/settings/extensionSettings';
 import Settings from '@polkadot/extension-polkagate/src/popup/settings';
 import About from '@polkadot/extension-polkagate/src/popup/settings/About';
+import Export from '@polkadot/extension-polkagate/src/popup/settings/accountSettings/Export';
 import Endpoints from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/Endpoints';
 
+/**
+ * Configuration for the settings routes of the PolkaGate extension popup.
+ * Each route includes a path, the associated component, and a trigger action.
+ *
+ * @type {RouteConfig[]}
+ * @property {React.ComponentType} Component - The React component to be rendered for the route.
+ * @property {string} path - The URL path for the route.
+ * @property {string} trigger - The action or event that triggers the route.
+ */
 export const SETTINGS_ROUTES: RouteConfig[] = [
   {
     Component: Settings,
@@ -34,5 +44,10 @@ export const SETTINGS_ROUTES: RouteConfig[] = [
     Component: Endpoints,
     path: '/endpoints/:genesisHash',
     trigger: '/endpoints'
+  },
+  {
+    Component: Export,
+    path: '/settings-account-export',
+    trigger: '/account-settings'
   }
 ];
