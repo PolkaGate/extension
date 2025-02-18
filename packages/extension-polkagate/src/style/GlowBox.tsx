@@ -53,7 +53,7 @@ function GlowBox ({ children, style }: { children: React.ReactNode, style?: SxPr
     <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
       {children}
       <GlowBoxContainer disableGutters>
-        <GradientBorder />
+        <GradientBorder style={{ width: '311px' }} type='pinkish' />
         <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', left: 0, m: 'auto', position: 'absolute', top: 0, width: '2px' }} />
         <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', m: 'auto', position: 'absolute', right: 0, top: 0, width: '2px' }} />
         <GlowBall />

@@ -3,9 +3,16 @@
 
 import { Box, styled } from '@mui/material';
 
-const GradientBorder = styled(Box)(({ style }) => ({
-  background: 'linear-gradient(178deg, transparent 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, transparent 72.53%)',
+interface GradientBorderProps {
+  type?: 'pinkish' | 'pastel';
+}
+
+const GradientBorder = styled(Box)<GradientBorderProps>(({ style, type }) => ({
+  background: type === 'pinkish'
+    ? 'linear-gradient(90deg, #1D0939 0%, #E74FCF 50.06%, rgba(29, 9, 57, 0) 100%)'
+    : 'linear-gradient(178deg, transparent 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, transparent 72.53%)',
   height: '2px',
+  justifySelf: 'center',
   left: 0,
   position: 'absolute',
   right: 0,
