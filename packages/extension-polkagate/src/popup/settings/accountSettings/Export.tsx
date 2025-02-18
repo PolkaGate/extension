@@ -107,7 +107,7 @@ function AccountSettings (): React.ReactElement {
                   label={t('Account')}
                   name={account?.name}
                   style={{
-                    bgcolor: '#2D1E4A',
+                    bgcolor: '#1B133C',
                     border: '1px solid #BEAAD833',
                     borderRadius: '12px',
                     height: '44px'
