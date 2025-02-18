@@ -84,7 +84,7 @@ function AccountSettings (): React.ReactElement {
         onClick={onBack}
         text={t('Export Accounts')}
       />
-      <Grid container item sx={{ borderRadius: '14px', mt: '15px', mx: '15px', overflow: 'hidden', width: 'auto'}}>
+      <Grid container item sx={{ borderRadius: '14px', mt: '15px', mx: '15px', overflow: 'hidden', width: 'auto' }}>
         <GradientBox2 style={{ border: '4px solid #1B133C', borderRadius: '14px', boxShadow: 'none', overflow: 'none' }} withGradientTopBorder={false}>
           <Stack columnGap='15px' direction='column' sx={{ p: '15px', pt: 0 }}>
             <Box component='img' src={user as string} sx={{ alignSelf: 'center', width: '76px' }} />
@@ -92,7 +92,7 @@ function AccountSettings (): React.ReactElement {
               {t('Your account(s) will be encrypted with your password and saved as a JSON file in your browser’s downloads. You can later import them into the extension using the same password.')}
             </Typography>
             <Grid container item sx={{ position: 'relative', my: '10px' }}>
-              <Stack columnGap='8px' direction='row' justifyContent='end' pt='7px' sx={{ alignItems: 'center', position: 'absolute', right: 0, top: '9px' }}>
+              <Stack columnGap='8px' direction='row' justifyContent='end' sx={{ alignItems: 'center', position: 'absolute', right: 0, top: '14px' }}>
                 <Typography color='#AA83DC' variant='B-4'>
                   {t('Export All Accounts')}
                 </Typography>
@@ -105,6 +105,7 @@ function AccountSettings (): React.ReactElement {
                 <Address2
                   address={account?.address}
                   label={t('Account')}
+                  labelMarginTop='15px'
                   name={account?.name}
                   style={{
                     bgcolor: '#1B133C',

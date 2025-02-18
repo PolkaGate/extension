@@ -91,7 +91,7 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
   return (
     <Container disableGutters sx={style}>
       {title &&
-        <Typography height='20px' textAlign='left' variant='B-1' width='100%'>
+        <Typography display= 'block' height='20px' textAlign='left' variant='B-1' width='100%'>
           {title}
         </Typography>
       }

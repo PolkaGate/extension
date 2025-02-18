@@ -64,6 +64,7 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
           <Address2
             address={account?.address}
             name={account?.name}
+            style={{ mt: '15px' }}
           />}
         <MyTextField
           Icon={User}

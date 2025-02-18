@@ -91,13 +91,13 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
         description={t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
         title={t('WARNING')}
       />
-      <Stack direction='column' sx={{ position: 'relative', zIndex: 1, px: '5px' }}>
+      <Stack direction='column' sx={{ position: 'relative', zIndex: 1 }}>
         {account &&
           <Address2
             address={account?.address}
             name={account?.name}
             showAddress
-            style={{ mt: '10px' }}
+            style={{ mt: '5px', borderRadius: '14px' }}
           />}
         {account && account.isExternal
           ? <GlowCheckbox
@@ -112,7 +112,8 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
             hasError={isPasswordWrong}
             onEnterPress={onRemove}
             onPassChange={onPassChange}
-            style={{ marginBottom: '65px', marginTop: '15px' }}
+            style={{ marginBottom: '23px', marginTop: '33px' }}
+            title={t('Your Password')}
           />
         }
         <DecisionButtons

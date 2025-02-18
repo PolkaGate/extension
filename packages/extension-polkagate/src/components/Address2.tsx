@@ -15,6 +15,7 @@ import { ShortAddress } from '.';
 interface Props {
   address: string;
   label?: string;
+  labelMarginTop?: string;
   name?: string;
   style?: SxProps;
   variant?: Variant;
@@ -34,13 +35,13 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2 ({ address, label, name, showAddress, style = {}, variant }: Props): React.ReactElement {
+function Address2 ({ address, label, labelMarginTop, name, showAddress, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
-    <Stack alignItems='center' direction='column' sx={{ rowGap: '10px', mt: '15px', width: '100%' }}>
+    <Stack alignItems='center' direction='column' sx={{ rowGap: '10px', width: '100%' }}>
       {label &&
-        <Typography color='text.primary' textAlign='left' variant='B-1' width='100%'>
+        <Typography color='text.primary' mt={labelMarginTop} textAlign='left' variant='B-1' width='100%'>
           {label}
         </Typography>}
       <Stack alignItems='center' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
