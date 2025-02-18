@@ -39,7 +39,7 @@ export const darkTheme: ThemeOptions = {
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
-    label: { main: '#63364D' },
+    label: { main: '#674394' },
     error: { main: '#FF4FB9' },
     background: { default: '#05091C', paper: '#000000' },
     backgroundFL: { primary: '#000000', secondary: '#171717' },

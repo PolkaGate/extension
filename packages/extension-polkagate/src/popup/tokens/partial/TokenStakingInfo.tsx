@@ -6,7 +6,7 @@
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
@@ -30,6 +30,8 @@ enum STAKING_TYPE {
 
 function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
 
@@ -81,25 +83,32 @@ function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   }, [address, notStaked, onAction, state]);
 
   return (
-    <Container disableGutters onClick={goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>
-      <Grid alignItems='center' container item onClick={toggleState} sx={{ columnGap: '4px', cursor: isDoubleStaked ? 'pointer' : 'default', width: 'fit-content' }}>
-        {state === STAKING_TYPE.POOL
-          ? <Ice size='20' />
-          : <SnowFlake size='20' />
-        }
-        <Typography color='text.secondary' variant='B-1'>
+    <Container disableGutters onClick={goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, alignItems: 'center', background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>
+      <Stack>
+        <Grid alignItems='center' container item onClick={toggleState} sx={{ columnGap: '4px', cursor: isDoubleStaked ? 'pointer' : 'default', width: 'fit-content' }}>
           {state === STAKING_TYPE.POOL
-            ? t('Pool Staking')
-            : t('Solo Staking')
+            ? <Ice size='20' />
+            : <SnowFlake size='20' />
           }
-        </Typography>
-        {isDoubleStaked &&
-          <>
-            <UnfoldMoreIcon sx={{ color: state === STAKING_TYPE.POOL ? '#EAEBF1' : '#AA83DC', fontSize: '17px' }} />
-            <ToggleDots active={state === STAKING_TYPE.POOL} />
-          </>
+          <Typography color='text.secondary' variant='B-1'>
+            {state === STAKING_TYPE.POOL
+              ? t('Pool Staking')
+              : t('Solo Staking')
+            }
+          </Typography>
+          {isDoubleStaked &&
+            <>
+              <UnfoldMoreIcon sx={{ color: state === STAKING_TYPE.POOL ? '#EAEBF1' : '#AA83DC', fontSize: '17px' }} />
+              <ToggleDots active={state === STAKING_TYPE.POOL} />
+            </>
+          }
+        </Grid>
+        {state === STAKING_TYPE.POOL &&
+          <Typography color={theme.palette.label.main} variant='B-5'>
+            {tokenDetail?.poolName ?? 'Unknown'}
+          </Typography>
         }
-      </Grid>
+      </Stack>
       <Grid alignItems='center' container item sx={{ rowGap: '4px', width: 'fit-content' }}>
         <ColumnAmounts
           cryptoAmount={stakedAmount}

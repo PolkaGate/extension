@@ -82,6 +82,7 @@ export interface FetchedBalance {
   date?: number,
   decimal: number,
   genesisHash: string,
+  poolName?: string,
   priceId: string,
   price?: number,
   token: string,

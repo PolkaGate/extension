@@ -32,10 +32,10 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
       balances.frozenBalance = systemBalance.frozen;
 
       let soloTotal = BN_ZERO;
-      let pooledBalance = BN_ZERO;
+      let pooled;
 
       if (api.query['nominationPools']) {
-        pooledBalance = await getPooledBalance(api, address);
+        pooled = await getPooledBalance(api, address);
       }
 
       if (api.query['staking']?.['ledger']) {
@@ -48,7 +48,13 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
         }
       }
 
-      return { address, balances, pooledBalance, soloTotal };
+      return {
+        address,
+        balances,
+        poolName: pooled?.poolName,
+        pooledBalance: pooled?.pooledBalance ?? BN_ZERO,
+        soloTotal
+      };
     });
 
     return { api, balanceInfo: await Promise.all(requests), connectionsToBeClosed: connections };
