@@ -17,6 +17,7 @@ import { GradientDivider } from '../style';
 
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark'}) => ({
   backdropFilter: 'blur(20px)',
+  background: mode === 'light' ? '#FFFFFF' : 'transparent',
   borderRadius: '16px',
   boxShadow: mode === 'light'
     ? '0px 0px 24px 8px #9A9EFF59 inset'
