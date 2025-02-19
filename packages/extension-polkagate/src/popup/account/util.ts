@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -9,6 +9,8 @@
 import type { BalancesInfo } from '../../util/types';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+
+import { MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 
 function isEmptyObject (obj: object): boolean {
   return Object.keys(obj).length === 0;
@@ -22,8 +24,11 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
   switch (type.toLocaleLowerCase()) {
     case ('total'):
     case ('total balance'):
+      // eslint-disable-next-line no-case-declarations
+      const isPoolsMigrated = MIGRATED_NOMINATION_POOLS_CHAINS.includes(balances.genesisHash);
+
       return balances?.freeBalance && balances.reservedBalance
-        ? new BN(balances.freeBalance).add(new BN(balances.reservedBalance)).add(balances?.pooledBalance ? new BN(balances.pooledBalance) : BN_ZERO)
+        ? new BN(balances.freeBalance).add(new BN(balances.reservedBalance)).add((balances?.pooledBalance && !isPoolsMigrated) ? new BN(balances.pooledBalance) : BN_ZERO)
         : new BN(balances?.totalBalance || 0);
     case ('pooled balance'):
     case ('pool stake'):
