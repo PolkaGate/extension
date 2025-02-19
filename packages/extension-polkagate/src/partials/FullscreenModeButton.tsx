@@ -8,7 +8,7 @@ import { Maximize4 } from 'iconsax-react';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Tooltip } from '../components';
-import { useTranslation } from '../hooks';
+import { useIsDark, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
 interface Props {
@@ -17,6 +17,7 @@ interface Props {
 
 function FullscreenModeButton ({ url = '/' }: Props) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const buttonContainer = useRef(null);
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -37,7 +38,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
       transition: 'all 250ms ease-out',
       zIndex: 1
     },
-    background: '#BFA1FF26',
+    background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
     borderRadius: '10px',
     height: '30px',
     inset: 0,

@@ -6,14 +6,17 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
+import { useIsDark } from '../../../hooks/index';
 import { discord, docs, email, github, web, x, youtube } from '../icons';
 import SocialIcon from './SocialIcon';
 
 export default function Socials ({ short }: { short?: boolean }): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <>
       <Typography
-        color='rgba(190, 170, 216, 1)'
+        color= { isDark ? 'rgba(190, 170, 216, 1)' : '#291443'}
         mb='8px'
         mt='10px'
         sx={{ display: 'block', textAlign: short ? 'left' : 'center' }}

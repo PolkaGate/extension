@@ -6,7 +6,7 @@
 import type { Icon } from 'iconsax-react';
 import type { Pages } from '../popup/home/type';
 
-import { Container, Grid, styled } from '@mui/material';
+import { Container, Grid, styled, useTheme } from '@mui/material';
 import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
@@ -15,10 +15,12 @@ import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
 import { GradientDivider } from '../style';
 
-const Background = styled('div')(() => ({
+const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark'}) => ({
   backdropFilter: 'blur(20px)',
   borderRadius: '16px',
-  boxShadow: '0px 0px 25px 20px #4E2B7280 inset',
+  boxShadow: mode === 'light'
+    ? '0px 0px 24px 8px #9A9EFF59 inset'
+    : '0px 0px 24px 8px #4E2B7280 inset',
   inset: 0,
   position: 'absolute',
   zIndex: -1
@@ -47,6 +49,8 @@ interface MenuItemProps {
 }
 
 function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+  const theme = useTheme();
+
   const [hovered, setHovered] = useState<boolean>(false);
   const refContainer = useRef<HTMLDivElement>(null);
 
@@ -61,7 +65,7 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
   return (
     <>
       <Grid container item onClick={onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
-        <ButtonIcon color={hovered || isSelected ? '#FF4FB9' : '#AA83DC'} size='24' variant='Bulk' />
+        <ButtonIcon color={hovered || isSelected ? theme.palette.menuIcon.hover : theme.palette.menuIcon.active} size='24' variant='Bulk' />
         <SelectedItemBackground hovered={hovered || isSelected} />
       </Grid>
       {withBorder &&
@@ -85,6 +89,8 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
 
 function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const history = useHistory();
 
@@ -138,7 +144,7 @@ function HomeMenu (): React.ReactElement {
         <MenuItem ButtonIcon={MedalStar} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
         <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
         <MenuItem ButtonIcon={Clock} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
-        <Background />
+        <MenuBackground mode ={theme.palette.mode} />
       </Grid>
     </Container>
   );

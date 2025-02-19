@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, styled, type SxProps, type Theme } from '@mui/material';
+import { Container, styled, type SxProps, type Theme, useTheme } from '@mui/material';
 import React from 'react';
 
 const GlowBall = styled('div')({
@@ -19,28 +19,30 @@ const GlowBall = styled('div')({
   width: '32px'
 });
 
-const VelvetBoxContainer = styled(Container)(() => ({
-  background: '#1B133C',
-  borderRadius: '18px',
-  overflow: 'hidden',
-  padding: '4px',
-  position: 'relative',
-  width: '100%'
-}));
-
 interface VelvetBoxProp {
   children: React.ReactNode;
   style?: SxProps<Theme>;
 }
 
-function VelvetBox ({ children, style }: VelvetBoxProp) {
+function VelvetBox({ children, style }: VelvetBoxProp) {
+  const theme = useTheme();
+
   return (
-    <VelvetBoxContainer disableGutters sx={style}>
+    <Container
+      disableGutters sx={{
+        background: theme.palette.mode === 'dark' ? '#1B133C' : '#F5F4FF',
+        borderRadius: '18px',
+        overflow: 'hidden',
+        padding: '4px',
+        position: 'relative',
+        width: '100%',
+        ...style
+      }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
         {children}
       </div>
       <GlowBall />
-    </VelvetBoxContainer>
+    </Container>
   );
 }
 

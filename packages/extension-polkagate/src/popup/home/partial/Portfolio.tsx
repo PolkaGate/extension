@@ -18,6 +18,9 @@ import DailyChange from './DailyChange';
 function Portfolio (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  
+  const eyeColor = theme.palette.mode === 'dark' ?'#BEAAD8':'#745D8B'
+
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
   const pricesInCurrency = usePrices();
@@ -49,8 +52,8 @@ function Portfolio (): React.ReactElement {
             {t('Account Portfolio')}
           </Typography>
           {isHideNumbers
-            ? <EyeSlash color='#BEAAD8' onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
-            : <Eye color='#BEAAD8' onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />}
+            ? <EyeSlash color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
+            : <Eye color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />}
         </Grid>
         <Currency />
         <Grid container item>

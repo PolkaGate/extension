@@ -5,11 +5,15 @@ import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Refresh2 } from 'iconsax-react';
 import React from 'react';
 
+import { useIsDark } from '../../../../hooks/index';
+
 function onReload () {
   chrome.runtime.reload();
 }
 
 export default function Reload ({ style }: { style: SxProps<Theme> }): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Grid
       alignItems='center'
@@ -21,7 +25,7 @@ export default function Reload ({ style }: { style: SxProps<Theme> }): React.Rea
       sx={{ ...style }}
     >
       <Refresh2
-        color='#AA83DC'
+        color={ isDark ? '#AA83DC' : '#745D8B'}
         size={18}
         variant='Bold'
       />

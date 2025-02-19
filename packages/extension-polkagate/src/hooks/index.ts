@@ -63,6 +63,7 @@ export { default as useHasProxyTooltipText } from './useHasProxyTooltipText';
 export { default as useIdentity } from './useIdentity';
 export { default as useInfo } from './useInfo';
 export { default as useIsAutoEndpoint } from './useIsAutoEndpoint';
+export { default as useIsDark } from './useIsDark';
 export { default as useIsExposed } from './useIsExposed';
 export { default as useIsExtensionPopup } from './useIsExtensionPopup';
 export { default as useIsHideNumbers } from './useIsHideNumbers';

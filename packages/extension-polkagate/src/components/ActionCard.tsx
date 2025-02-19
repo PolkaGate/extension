@@ -8,6 +8,7 @@ import { ArrowRight2, type Icon as IconType } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { logoTransparent } from '../assets/logos';
+import { useIsDark } from '../hooks';
 
 interface Props {
   Icon?: IconType;
@@ -22,17 +23,18 @@ interface Props {
   title: string;
 }
 
-function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
+function ActionCard({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = useIsDark();
 
   const [hovered, setHovered] = useState<boolean>(false);
 
   const toggleHover = useCallback(() => setHovered((isHovered) => !isHovered), []);
 
-  const ActionCardStyle = {
-    bgcolor: '#05091C',
+  const actionCardStyle = {
+    bgcolor: isDark ? '#05091C' : '#FFFF',
     border: '4px solid',
-    borderColor: '#1B133C',
+    borderColor: isDark ? '#1B133C' : '#F5F4FF',
     borderRadius: '14px',
     columnGap: '10px',
     cursor: 'pointer',
@@ -61,7 +63,11 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
   };
 
   const IconStyle: React.CSSProperties = {
-    background: iconWithBackground ? 'linear-gradient(180deg, rgba(103, 67, 148, 0.5) 0%, rgba(75, 42, 117, 0.5) 50%, rgba(23, 23, 57, 0.5) 100%)' : '',
+    background: iconWithBackground
+      ? isDark
+        ? 'linear-gradient(180deg, rgba(103, 67, 148, 0.5) 0%, rgba(75, 42, 117, 0.5) 50%, rgba(23, 23, 57, 0.5) 100%)'
+        : 'linear-gradient(180deg, rgba(228, 169, 255, 0.5) 0%, rgba(199, 129, 255, 0.5) 50%, rgba(191, 186, 255, 0.5) 100%)'
+      : '',
     borderRadius: '12px',
     height: 'fit-content',
     padding: '5px',
@@ -76,9 +82,9 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
       onClick={onClick}
       onMouseEnter={toggleHover}
       onMouseLeave={toggleHover}
-      sx={ActionCardStyle}
+      sx={actionCardStyle}
     >
-      {Icon && <Icon color={iconColor} size={iconSize} style={IconStyle} variant='Bulk' />}
+      {Icon && <Icon color={isDark ? iconColor : '#291443'} size={iconSize} style={IconStyle} variant='Bulk' />}
       {logoIcon &&
         <Box
           component='img'

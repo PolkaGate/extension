@@ -12,7 +12,7 @@ import { setStorage } from '../../../../components/Loading';
 import { useTranslation } from '../../../../components/translate';
 import { useAutoLock } from '../../../../hooks';
 import Field from '../components/Field';
-import PSelect from '../components/Select';
+import MySelect from '../components/Select';
 import MySwitch from '../components/Switch';
 
 const autoLockOptions = [
@@ -84,7 +84,7 @@ export default function AutoLockTimer (): React.ReactElement {
           onChange={onDelayValueChange}
           value={inputValue ?? autoLock?.delay?.value ?? 30}
         />
-        <PSelect
+        <MySelect
           onChange={onDelayTypeChange}
           options={autoLockOptions}
           value={delayType || autoLock?.delay?.type}

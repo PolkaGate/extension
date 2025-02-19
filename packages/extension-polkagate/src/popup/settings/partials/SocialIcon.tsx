@@ -6,6 +6,8 @@
 import { Box, Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { useIsDark } from '../../../hooks/index';
+
 interface Props {
   icon: string;
   link: string;
@@ -13,10 +15,11 @@ interface Props {
 
 function SocialIcon ({ icon, link }: Props): React.ReactElement {
   const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
+  const isDark = useIsDark();
 
   return (
     <Grid
-      bgcolor='#2D1E4A'
+      bgcolor={isDark ? '#2D1E4A' : '#FFFFFF'}
       onClick={goToLink}
       sx={{
         '&:hover': {

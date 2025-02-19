@@ -5,7 +5,7 @@
 
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useContext, useMemo } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
@@ -28,15 +28,17 @@ interface AssetDetailType {
 type Summary = AssetDetailType[] | null | undefined;
 
 function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
+  const theme = useTheme();
+
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
-      <Grid alignItems='center' container item sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
+      <Grid alignItems='center' container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
         <AssetLogo assetSize='18px' baseTokenSize='16px' genesisHash={assetsDetail.genesisHash} logo={assetsDetail?.logoInfo?.logoSquare} logoRoundness='6px' subLogo={undefined} />
         <Typography color='text.secondary' variant='B-2'>
           {assetsDetail.chainName}
         </Typography>
       </Grid>
-      <Grid container item sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', columnGap: '4px', p: '4px', width: 'fit-content' }}>
+      <Grid container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '4px', width: 'fit-content' }}>
         <FormatPrice
           commify
           fontFamily='Inter'
@@ -44,7 +46,7 @@ function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
           fontWeight={500}
           num={assetsDetail.chainTotalBalance}
           skeletonHeight={14}
-          textColor='#AA83DC'
+          textColor={theme.palette.secondary.light}
           width='fit-content'
         />
       </Grid>
@@ -53,9 +55,11 @@ function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
 }
 
 function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
+  const theme = useTheme();
+
   const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
-
+  const onHoverColor = theme.palette.mode === 'dark' ? '#1B133C' : '#f4f7ff';
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const logoInfo = getLogo2(asset.genesisHash, asset.token);
@@ -66,7 +70,7 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   }, [asset.assetId, asset.genesisHash, onAction]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, borderRadius: '12px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <TokenPriceInfo
@@ -85,6 +89,8 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
 }
 
 function ChainsAssetsBox () {
+  const theme = useTheme();
+
   const account = useSelectedAccount();
   const pricesInCurrency = usePrices();
   const accountAssets = useAccountAssets(account?.address);
@@ -164,7 +170,7 @@ function ChainsAssetsBox () {
   return (
     <>
       {summary?.map((assetsDetail, index) => (
-        <Grid container item key={index} sx={{ background: '#05091C', borderRadius: '14px', p: '10px', rowGap: '6px' }}>
+        <Grid container item key={index} sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
           <AssetsHeader
             assetsDetail={assetsDetail}
           />

@@ -12,7 +12,7 @@ interface Props {
 
 const textStyle = { color: '#AA83DC', fontFamily: 'Inter', fontSize: '14px', fontWeight: 600 };
 
-export default function PSelect ({ onChange, options, value }: Props) {
+export default function MySelect ({ onChange, options, value }: Props) {
   return (
     <Select
       MenuProps={{
@@ -53,11 +53,19 @@ export default function PSelect ({ onChange, options, value }: Props) {
           color: '#AA83DC'
         },
 
+        '&.Mui-focused .MuiSelect-icon': {
+          color: '#FF4FB9'
+        },
+
         '& .MuiInputBase-input': {
           ...textStyle,
           letterSpacing: '-0.6px',
           padding: 0,
           textAlign: 'center'
+        },
+
+        '&.Mui-focused .MuiInputBase-input': {
+          color: '#FFFFFF'
         }
       }}
       value={String(value)}
@@ -67,6 +75,7 @@ export default function PSelect ({ onChange, options, value }: Props) {
           key={value}
           sx={{
             ...textStyle,
+            color: 'text.primary',
             minHeight: '40px',
             py: 0,
 

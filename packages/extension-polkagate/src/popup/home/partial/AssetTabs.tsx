@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { UnfoldMore as UnfoldMoreIcon } from '@mui/icons-material';
-import { Container, Tab, Tabs, Typography } from '@mui/material';
+import { Container, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { Triangle } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -13,13 +13,17 @@ import { useTranslation } from '../../../hooks';
 import { TAB } from './AssetsBox';
 
 interface TabProps {
-  isActive?: boolean;
+  isSelected?: boolean;
   tab?: TAB;
   setTab?: React.Dispatch<React.SetStateAction<TAB | undefined>>;
 }
 
 function ChainTokensTab ({ setTab, tab }: TabProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  const nonSelectedSquareColor = theme.palette.mode === 'dark' ? '#67439480' : '#cfd5ec';
+
 
   const [showChains, setShowChains] = useState<boolean | undefined>(undefined);
   const [textOpacity, setTextOpacity] = useState(1); // State to handle text opacity
@@ -61,13 +65,13 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
       ? isActiveTab
         ? '#FF4FB9'
         : '#AA83DC'
-      : '#67439480',
+      : nonSelectedSquareColor,
     secondaryColor: !showChains
       ? isActiveTab
         ? '#FF4FB9'
         : '#AA83DC'
-      : '#67439480'
-  }), [isActiveTab, showChains]);
+      : nonSelectedSquareColor
+  }), [isActiveTab, nonSelectedSquareColor, showChains]);
 
   return (
     <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '82px' }}>
@@ -79,21 +83,22 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
           transition: 'all 250ms ease-out'
         }}
       />
-      <Typography color='#EAEBF1' sx={{ opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
+      <Typography color={isActiveTab ? 'text.primary' : 'secondary.main'} sx={{ opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
         {displayedText}
       </Typography>
-      <UnfoldMoreIcon sx={{ color: isActiveTab ? '#EAEBF1' : '#AA83DC', fontSize: '15px' }} />
+      <UnfoldMoreIcon sx={{ color: isActiveTab ? 'text.primary' : 'secondary.main', fontSize: '15px' }} />
     </Container>
   );
 }
 
-function NFTTab ({ isActive = false }: TabProps) {
+function NFTTab ({ isSelected = false }: TabProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', width: 'fit-content' }}>
-      <Triangle color='#AA83DC' size='16' variant='Bulk' />
-      <Typography color={isActive ? '#EAEBF1' : '#AA83DC'} textTransform='capitalize' variant='B-2'>
+      <Triangle color={isSelected ? theme.palette.menuIcon.selected : theme.palette.menuIcon.active} size='16' variant='Bulk' />
+      <Typography color={isSelected ? 'text.primary' : 'secondary.main'} textTransform='capitalize' variant='B-2'>
         {t('NFTs')}
       </Typography>
     </Container>
@@ -151,7 +156,7 @@ function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
         <Tab
           label={
             <NFTTab
-              isActive={tab === TAB.NFTS}
+              isSelected={tab === TAB.NFTS}
             />
           }
           sx={{ m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' }}

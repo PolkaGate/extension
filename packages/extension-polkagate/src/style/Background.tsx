@@ -44,7 +44,7 @@ const backgroundImageStyle: SxProps<Theme> = {
 };
 
 const FadeOut = styled('div')(() => ({
-  background: 'linear-gradient(180deg, transparent 13.79%, #05091C 100%)',
+  background: 'linear-gradient(180deg, transparent 13.79%, background.default 100%)',
   height: '220px',
   inset: 0,
   position: 'absolute',

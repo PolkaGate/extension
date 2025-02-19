@@ -16,9 +16,10 @@ import NftManager from '../../../class/nftManager';
 import { ShowBalance } from '../../../components';
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { fetchItemMetadata } from '../../../fullscreen/nft/utils/util';
-import { useApiWithChain2, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useApiWithChain2, useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
 import { getAssetHubByChainName } from '../../../hooks/useReferendum';
 import { windowOpen } from '../../../messaging';
+import { toTitleCase } from '../../../util';
 import { amountToMachine } from '../../../util/utils';
 
 const MAX_NFT_TO_SHOW = 2; // we're gonna display up to 2 nfts if they were available!
@@ -78,11 +79,17 @@ interface NftItemProps {
 
 function NFTItem ({ apis, item }: NftItemProps) {
   const theme = useTheme();
+  const isDark = useIsDark();
   const api = apis[item.chainName];
 
+  const bgcolor = isDark ? '#1B133C' : '#FFF';
+  const bgcolor2 = isDark ? '#05091C' : '#EFEEF7';
+  const itemIdColor = isDark ? '#EAEBF1' : '#291443';
+  const itemNameColor = isDark ? '#BEAAD8' : '#745D8B';
+
   return (
-    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '18px', p: '4px', width: '152px' }}>
-      <Grid container direction='column' item sx={{ bgcolor: '#05091C', borderRadius: '14px' }}>
+    <Grid container item sx={{ bgcolor, borderRadius: '18px', p: '4px', width: '152px' }}>
+      <Grid container direction='column' item sx={{ bgcolor: bgcolor2, borderRadius: '14px' }}>
         <Avatar
           draggable={false}
           src={item.image ?? ''}
@@ -100,11 +107,11 @@ function NFTItem ({ apis, item }: NftItemProps) {
         />
         <Grid container direction='column' item sx={{ p: '6px 12px' }}>
           <Grid container item width='fit-content'>
-            <span style={{ color: '#BEAAD880', ...theme.typography['B-2'] }}>#</span>
-            <span style={{ color: '#EAEBF1', ...theme.typography['B-2'] }}>{item.itemId}</span>
+            <span style={{ color: isDark ? '#BEAAD880' : '#745D8B', ...theme.typography['B-2'] }}>#</span>
+            <span style={{ color: itemIdColor, ...theme.typography['B-2'] }}>{item.itemId}</span>
           </Grid>
-          <Typography color='#BEAAD8' sx={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
-            {item.name}
+          <Typography color= {itemNameColor} sx={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
+            {toTitleCase(item.name)}
           </Typography>
         </Grid>
       </Grid>
@@ -116,9 +123,10 @@ function NFTItem ({ apis, item }: NftItemProps) {
   );
 }
 
-function NFTBox () {
+function NFTBox() {
   const { t } = useTranslation();
   const account = useSelectedAccount();
+  const isDark = useIsDark();
 
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
 
@@ -185,7 +193,7 @@ function NFTBox () {
     <>
       {nfts
         ? <>
-          <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', justifyContent: 'space-evenly', py: '10px', width: '100%' }}>
+          <Container disableGutters sx={{ bgcolor: isDark ? '#05091C' : '#F5F4FF', borderRadius: '14px', display: 'flex', justifyContent: 'space-evenly', py: '10px', width: '100%' }}>
             {itemsToShow?.map((item, index) => (
               <NFTItem
                 apis={apis}
@@ -195,7 +203,7 @@ function NFTBox () {
             ))}
           </Container>
           <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
-            <Typography color='#BEAAD8' variant='B-2'>
+            <Typography color= {isDark ? '#BEAAD8' : '#745D8B'} variant='B-2'>
               {t('See all')}
             </Typography>
             <ArrowRight2 color='#BEAAD880' size='14' />

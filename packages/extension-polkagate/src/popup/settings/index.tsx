@@ -8,7 +8,7 @@ import { Category, User } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionCard, ActionContext } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useIsDark, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import ActionRow from './partials/ActionRow';
@@ -23,6 +23,7 @@ enum SETTING_PAGES {
 
 function Settings (): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const onAction = useContext(ActionContext);
 
   const onClick = useCallback((input: SETTING_PAGES) => {
@@ -33,7 +34,7 @@ function Settings (): React.ReactElement {
     <Container disableGutters sx={{ position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
       <Container>
-        <Grid container item sx={{ border: '4px solid', borderColor: '#1B133C', borderRadius: '14px', mt: '10px', position: 'relative' }}>
+        <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#F5F4FF', borderRadius: '14px', mt: '10px', p: '4px', position: 'relative' }}>
           <Introduction />
           <ActionRow />
         </Grid>

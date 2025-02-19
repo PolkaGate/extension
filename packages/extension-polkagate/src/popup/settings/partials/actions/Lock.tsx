@@ -10,11 +10,12 @@ import React, { useCallback } from 'react';
 import { updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 
 import { useExtensionLockContext } from '../../../../context/ExtensionLockContext';
-import { useAutoLockPeriod, useIsLoginEnabled, useTranslation } from '../../../../hooks';
+import { useAutoLockPeriod, useIsDark, useIsLoginEnabled, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
 export default function Lock ({ style }: { style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const autoLockPeriod = useAutoLockPeriod();
 
   const isLoginEnabled = useIsLoginEnabled();
@@ -36,7 +37,7 @@ export default function Lock ({ style }: { style: SxProps<Theme> }): React.React
       alignItems='center' container item justifyContent='center' justifyItems='center' onClick={onClick}
       sx={{ ...style }}
     >
-      <Unlock color={isLoginEnabled ? '#AA83DC' : 'grey'} size={18} variant='Bulk' />
+      <Unlock color={isLoginEnabled ? isDark ? '#AA83DC' : '#745D8B' : 'grey'} size={18} variant='Bulk' />
       <Typography color={isLoginEnabled ? 'text.primary' : 'grey'} pl='3px' pt='3px' variant='B-4'>
         {t('Lock')}
       </Typography>

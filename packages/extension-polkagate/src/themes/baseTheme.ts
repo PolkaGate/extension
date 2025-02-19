@@ -3,8 +3,31 @@
 
 /* eslint-disable header/header */
 
-import type { ThemeOptions } from '@mui/material';
+import type { ThemeOptions, TypeAction, TypeText } from '@mui/material';
 import type { CSSProperties } from 'react';
+
+declare module '@mui/material/styles' {
+  interface Palette {
+    aye: Palette['primary'];
+    menuIcon: TypeAction;
+    nay: Palette['primary'];
+    label: Palette['primary'];
+    approval: Palette['primary'];
+    support: Palette['primary'];
+    backgroundFL: TypeText;
+    gradient: TypeText;
+  }
+  interface PaletteOptions {
+    approval?: PaletteOptions['primary'];
+    aye?: PaletteOptions['primary'];
+    nay?: PaletteOptions['primary'];
+    label?: PaletteOptions['primary'];
+    support?: PaletteOptions['primary'];
+    backgroundFL?: Partial<TypeText>;
+    menuIcon?: Partial<TypeAction>;
+    gradient?: Partial<TypeText>;
+  }
+}
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {

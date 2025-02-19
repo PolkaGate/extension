@@ -6,7 +6,7 @@
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
-import { Badge, type BadgeProps, Collapse, Container, Divider, Grid, styled, Typography, useTheme } from '@mui/material';
+import { Badge, Collapse, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { CloseCircle } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
 
@@ -32,24 +32,15 @@ interface AssetDetailType {
 }
 type Summary = AssetDetailType[] | null | undefined;
 
-const StyledBadge = styled(Badge)<BadgeProps>(() => ({
-  '& .MuiBadge-badge': {
-    background: '#05091C',
-    color: '#AA83DC',
-    fontSize: '13px',
-    height: '16px',
-    lineHeight: '18.2px',
-    right: 5,
-    top: 10,
-    width: '19px'
-  }
-}));
-
 export const Drawer = ({ length }: { length: number }) => {
+  const theme = useTheme();
+  const colorD1 = theme.palette.mode === 'dark' ? '#24234DCC' : '#CFD5F0';
+  const colorD2 = theme.palette.mode === 'dark' ? '#26255773' : '#DFE4FA';
+
   return (
     <Container disableGutters sx={{ display: 'flex', height: length === 0 ? 0 : length > 1 ? '18px' : '9px', justifyContent: 'center', overflow: 'hidden', position: 'relative', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '100%' }}>
-      <div style={{ background: '#24234DCC', borderRadius: '14px', height: length ? '50px' : 0, position: 'absolute', top: '-41px', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '300px' }} />
-      <div style={{ background: '#26255773', borderRadius: '14px', bottom: 0, height: length > 1 ? '50px' : 0, position: 'absolute', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '275px' }} />
+      <div style={{ background: colorD1, borderRadius: '14px', height: length ? '50px' : 0, position: 'absolute', top: '-41px', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '300px', zIndex: 1 }} />
+      <div style={{ background: colorD2, borderRadius: '14px', bottom: 0, height: length > 1 ? '50px' : 0, position: 'absolute', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '275px' }} />
     </Container>
   );
 };
@@ -90,9 +81,11 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
 
 export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
   const theme = useTheme();
+  const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
+  const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';
 
   return (
-    <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: '#BEAAD8', ...theme.typography['S-2'] }, rowGap: '6px', width: 'fit-content' }}>
+    <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: priceColor, ...theme.typography['S-2'] }, rowGap: '6px', width: 'fit-content' }}>
       <FormatPrice
         commify
         decimalColor={theme.palette.text.secondary}
@@ -107,7 +100,7 @@ export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, 
         decimalPoint={2}
         decimals={[decimal]}
         style={{
-          color: '#BEAAD8',
+          color: balanceColor,
           fontSize: '12px',
           fontWeight: 500,
           lineHeight: '10px'
@@ -120,6 +113,9 @@ export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, 
 }
 
 function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
+  const theme = useTheme();
+  const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
+
   const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
 
@@ -138,13 +134,13 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   }, [tokenDetail.assetId, tokenDetail.genesisHash, onAction]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: '#2D1E4A' }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: bgcolor }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-        <Grid item sx={{ border: '3px solid', borderColor: '#2D1E4A', borderRadius: '8px' }}>
+        <Grid item sx={{ border: '3px solid', borderColor: bgcolor, borderRadius: '8px' }}>
           <AssetLogo assetSize='26px' baseTokenSize='18px' genesisHash={tokenDetail.genesisHash} logo={logoInfo?.logoSquare} logoRoundness='8px' subLogo={logoInfo?.subLogo} subLogoPosition='-3px -8px auto auto' />
         </Grid>
         <Grid container direction='column' item sx={{ width: 'fit-content' }}>
-          <Typography color='text.secondary' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
+          <Typography color='text.secondary' sx={{ bgcolor, borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
             {tokenDetail.token}
           </Typography>
           <Typography color='text.secondary' variant='S-2'>
@@ -163,19 +159,41 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
 }
 
 function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
+  const theme = useTheme();
+
+  const isDark = theme.palette.mode === 'dark';
+  const bgColor = isDark ? '#05091C' : '#EDF1FF';
+  const badgeBgColor = isDark ? '#05091C' : '#F5F4FF';
+  const closeColor = isDark ? '#674394' : '#CCD2EA';
+  const dividerColor = isDark ? '#2D1E4A' : '#CCD2EA66';
+  const tokenBoxColor = isDark ? '#1B133C' : '#FFFFFF';
+
   const [expand, setExpand] = useState<boolean>(false);
 
   const toggleExpand = useCallback(() => setExpand((isExpanded) => !isExpanded), []);
 
   return (
     <div>
-      <Grid container item onClick={toggleExpand} sx={{ background: '#05091C', borderRadius: '14px', cursor: 'pointer', p: '12px 10px' }}>
+      <Grid container item onClick={toggleExpand} sx={{ background: bgColor, borderRadius: '14px', cursor: 'pointer', p: '12px 10px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex' }}>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ transition: 'all 250ms ease-out' }} xs>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-              <StyledBadge badgeContent={tokenDetail.assets.length}>
+              <Badge
+                badgeContent={tokenDetail.assets.length} sx={{
+                  '& .MuiBadge-badge': {
+                    background: badgeBgColor,
+                    color: 'primary.main',
+                    fontSize: '13px',
+                    height: '16px',
+                    lineHeight: '18.2px',
+                    right: 5,
+                    top: 10,
+                    width: '19px'
+                  }
+                }}
+              >
                 <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={tokenDetail.genesisHash} logo={tokenDetail.logoInfo?.logo ?? tokenDetail.logoInfo?.subLogo} subLogo={undefined} />
-              </StyledBadge>
+              </Badge>
               <TokenPriceInfo
                 priceId={tokenDetail.priceId}
                 token={tokenDetail.token}
@@ -188,10 +206,10 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
               totalBalancePrice={tokenDetail.assetsTotalBalancePrice}
             />
           </Grid>
-          <CloseCircle color='#674394' size='32' style={{ marginLeft: '8px', transition: 'all 250ms ease-out', transitionDelay: expand ? '200ms' : 'unset', width: expand ? '42px' : 0 }} variant='Bold' />
+          <CloseCircle color={closeColor} size='32' style={{ marginLeft: '8px', transition: 'all 250ms ease-out', transitionDelay: expand ? '200ms' : 'unset', width: expand ? '42px' : 0 }} variant='Bold' />
         </Container>
         <Collapse in={expand} sx={{ width: '100%' }}>
-          <Grid container item sx={{ background: '#1B133C', borderRadius: '12px', mt: '10px', p: '4px 2px', rowGap: '4px' }}>
+          <Grid container item sx={{ background: tokenBoxColor, borderRadius: '12px', mt: '10px', p: '4px 2px', rowGap: '4px' }}>
             {tokenDetail.assets.map((token, index) => {
               const showDivider = tokenDetail.assets.length !== index + 1;
 
@@ -201,7 +219,7 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
                     key={index}
                     tokenDetail={token}
                   />
-                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', width: '100%' }} />}
+                  {showDivider && <Divider sx={{ bgcolor: dividerColor, height: '1px', width: '100%' }} />}
                 </>
               );
             })}
