@@ -1558,5 +1558,8 @@
   "No reason found!": "",
   "Your account(s) will be encrypted with your password and saved as a JSON file in your browser’s downloads. You can later import them into the extension using the same password.": "",
   "Your Password": "",
-  "Account export is completed!": ""
+  "Account export is completed!": "",
+  "change log": "",
+  "Wow, it’s great!": "",
+  "Loading": ""
 }

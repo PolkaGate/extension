@@ -21,7 +21,7 @@ import Reset from '../passwordManagement/Reset';
 import Welcome from '../welcome';
 import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
-import WhatsNew from './WhatsNew';
+import ChangeLog from './ChangeLog';
 
 function AccountPortfolio (): React.ReactElement {
   return (
@@ -73,10 +73,12 @@ export default function Home (): React.ReactElement {
 
   return (
     <>
-      <WhatsNew
-        setShowAlert={setShowAlert}
-        show={show}
-      />
+      {show &&
+        <ChangeLog
+          newVersion
+          openMenu={show}
+          setShowAlert={setShowAlert}
+        />}
       {hierarchy.length === 0
         ? loginInfo?.status === 'forgot'
           ? <Reset />

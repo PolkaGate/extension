@@ -3,5 +3,6 @@
 
 // @ts-nocheck
 
+export { default as celebration } from './Celebration.gif';
 export { default as handWave } from './handWave.gif';
 export { default as Lock } from './Lock.gif';
