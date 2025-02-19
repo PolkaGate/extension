@@ -9,11 +9,11 @@ import React, { memo, useMemo } from 'react';
 
 import { FormatPrice } from '../../../components';
 import { PORTFOLIO_CHANGE_DECIMAL } from '../../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
-import { useIsHideNumbers, useYouHave2 } from '../../../hooks';
+import { useIsDark, useIsHideNumbers, useYouHave2 } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
-const RenderSkeleton = memo(function RenderSkeleton () {
+const RenderSkeleton = memo(function RenderSkeleton() {
   return (
     <Skeleton
       animation='wave'
@@ -35,6 +35,7 @@ interface DailyChangeProps {
 
 function DailyChange ({ change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
+  const isDark = useIsDark();
   const youHave = useYouHave2();
   const { isHideNumbers } = useIsHideNumbers();
 
@@ -58,10 +59,10 @@ function DailyChange ({ change = null, iconSize = 15, showHours = true, showPerc
   const containerStyle: SxProps<Theme> = {
     alignItems: 'center',
     bgcolor: changed && changed < 0
-      ? '#FF165C26'
+      ? isDark ? '#FF165C26' : '#FF165C33'
       : changed && changed > 0
-        ? '#82FFA526'
-        : '#AA83DC26',
+        ? isDark ? '#82FFA526' : '#00E29E33'
+        : isDark ? '#AA83DC26' : '#8F97B826',
     borderRadius: '9px',
     columnGap: '3px',
     display: 'flex',
@@ -70,7 +71,13 @@ function DailyChange ({ change = null, iconSize = 15, showHours = true, showPerc
     width: 'fit-content'
   };
 
-  const color = useMemo(() => !changed ? '#AA83DC' : changed > 0 ? '#82FFA5' : '#FF165C', [changed]);
+  const color = useMemo(() =>
+    !changed
+      ? '#AA83DC'
+      : changed > 0
+        ? isDark ? '#82FFA5' : '#00CA8D'
+        : '#FF165C'
+  , [changed, isDark]);
 
   if (changed === undefined) {
     return <RenderSkeleton />;

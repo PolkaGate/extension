@@ -6,8 +6,8 @@
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { SafeBox } from '../../../assets/icons';
-import { useAccountAssets, useSelectedAccount, useTranslation } from '../../../hooks';
+import { safeBox, safeBoxLight } from '../../../assets/icons';
+import { useAccountAssets, useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
@@ -23,12 +23,13 @@ export enum TAB {
 
 const AssetNull = () => {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'grid', justifyItems: 'center', py: '33px', width: '100%' }}>
       <Box
         component='img'
-        src={SafeBox as string}
+        src={(isDark ? safeBox : safeBoxLight) as string}
         sx={{ width: '135px' }}
       />
       <Typography pt='10px' variant='B-2'>

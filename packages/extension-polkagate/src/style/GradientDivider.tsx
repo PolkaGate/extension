@@ -5,6 +5,7 @@
 
 import { Divider, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
+import { useIsDark } from '../hooks';
 
 interface GradientDividerProps {
   isSelectionLine?: boolean; // Add flag to differentiate selection line
@@ -41,6 +42,8 @@ interface GradientDividerProps {
  * @returns {React.ReactElement} The rendered gradient divider.
  */
 export default function GradientDivider ({ isSelectionLine = false, orientation = 'horizontal', style }: GradientDividerProps): React.ReactElement {
+  const isDark = useIsDark();
+
   const DividerStyle = isSelectionLine
     ? {
       background: 'linear-gradient(263.83deg, rgba(255, 79, 185, 0) 9.75%, #FF4FB9 52.71%, rgba(255, 79, 185, 0) 95.13%)',
@@ -51,7 +54,9 @@ export default function GradientDivider ({ isSelectionLine = false, orientation 
     : {
       background: orientation === 'horizontal'
         ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
-        : 'linear-gradient(102deg, rgba(16, 16, 25, 0.1) 0%, rgba(238, 71, 151, 0.5) 50.06%, rgba(16, 16, 25, 0) 100%)',
+        : isDark
+          ? 'linear-gradient(102deg, rgba(16, 16, 25, 0.1) 0%, rgba(238, 71, 151, 0.5) 50.06%, rgba(16, 16, 25, 0) 100%)'
+          : 'linear-gradient(90deg, rgba(217, 204, 242, 0) 0%, #FFFFFF 50.06%, rgba(217, 204, 242, 0) 100%)',
       border: 'none',
       height: orientation === 'vertical' ? '100%' : '1px',
       width: orientation === 'vertical' ? '1px' : '100%'

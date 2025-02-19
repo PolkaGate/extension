@@ -18,8 +18,8 @@ import DailyChange from './DailyChange';
 function Portfolio (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  
-  const eyeColor = theme.palette.mode === 'dark' ?'#BEAAD8':'#745D8B'
+
+  const eyeColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#745D8B';
 
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);

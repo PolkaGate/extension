@@ -14,7 +14,7 @@ import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
-import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
+import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import DailyChange from './DailyChange';
@@ -47,6 +47,7 @@ export const Drawer = ({ length }: { length: number }) => {
 
 export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
   const pricesInCurrency = usePrices();
+  const isDark = useIsDark();
 
   return (
     <Grid container direction='column' item sx={{ width: 'fit-content' }}>
@@ -62,7 +63,7 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
           ignoreHide
           num={pricesInCurrency?.prices[priceId ?? '']?.value ?? 0}
           skeletonHeight={14}
-          textColor='#AA83DC'
+          textColor={isDark ? '#AA83DC' : '#8299BD'}
           width='fit-content'
         />
         {priceId && pricesInCurrency?.prices[priceId]?.change &&

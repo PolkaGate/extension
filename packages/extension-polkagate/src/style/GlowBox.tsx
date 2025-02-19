@@ -7,6 +7,7 @@ import { Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import { GradientBorder, GradientDivider } from '.';
+import { useIsDark } from '../hooks';
 
 const GlowBoxContainer = styled(Container)(() => ({
   borderRadius: '24px',
@@ -49,13 +50,15 @@ const Fade = styled('div')({
 });
 
 function GlowBox ({ children, style }: { children: React.ReactNode, style?: SxProps<Theme> }): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
       {children}
       <GlowBoxContainer disableGutters>
         <GradientBorder style={{ width: '311px' }} type='pinkish' />
-        <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', left: 0, m: 'auto', position: 'absolute', top: 0, width: '2px' }} />
-        <GradientDivider orientation='vertical' style={{ bottom: 0, height: '65%', m: 'auto', position: 'absolute', right: 0, top: 0, width: '2px' }} />
+        <GradientDivider orientation='vertical' style={{ bottom: 0, height: isDark ? '65%' : '110%', left: 0, m: 'auto', position: 'absolute', top: 0, width: '2px' }} />
+        <GradientDivider orientation='vertical' style={{ bottom: 0, height: isDark ? '65%' : '110%', m: 'auto', position: 'absolute', right: 0, top: 0, width: '2px' }} />
         <GlowBall />
         <Fade />
         <FadeOut />
