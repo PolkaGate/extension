@@ -7,7 +7,7 @@ import { Container, IconButton, InputAdornment, styled, TextField, Typography, u
 import { Check, Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { useTranslation } from '../hooks';
+import { useIsDark, useTranslation } from '../hooks';
 
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
@@ -30,7 +30,7 @@ const StyledTextField = styled(TextField, {
       }
     },
     '&:hover': {
-      backgroundColor: '#2D1E4A',
+      backgroundColor: theme.palette.mode === 'dark' ? '#2D1E4A' : '#e5e7ed',
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
@@ -38,7 +38,7 @@ const StyledTextField = styled(TextField, {
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    backgroundColor: '#1B133C',
+    backgroundColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EFF1F9',
     borderColor: '#BEAAD833',
     borderRadius: '12px',
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
@@ -47,6 +47,7 @@ const StyledTextField = styled(TextField, {
     transition: 'all 150ms ease-out',
     width: '100%'
   },
+
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
   },
@@ -70,6 +71,7 @@ interface Props {
 export default function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = useIsDark();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [focusing, setFocused] = useState<boolean>(false);
@@ -91,7 +93,7 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
   return (
     <Container disableGutters sx={style}>
       {title &&
-        <Typography display= 'block' height='20px' textAlign='left' variant='B-1' width='100%'>
+        <Typography display='block' height='20px' textAlign='left' variant='B-1' width='100%'>
           {title}
         </Typography>
       }
@@ -103,11 +105,11 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
                 aria-label='toggle password visibility'
                 edge='end'
                 onClick={handleClickShowPassword}
-                sx={{ bgcolor: '#2D1E4A', borderRadius: '8px' }}
+                sx={{ bgcolor: isDark ? '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
               >
                 {showPassword
-                  ? <EyeSlash color='#AA83DC' size='20' variant='Bulk' />
-                  : <Eye color='#AA83DC' size='20' variant='Bulk' />
+                  ? <EyeSlash color={isDark ? '#AA83DC' : '#8F97B8'} size='20' variant='Bulk' />
+                  : <Eye color={isDark ? '#AA83DC' : '#8F97B8'} size='20' variant='Bulk' />
                 }
               </IconButton>
             </InputAdornment>
@@ -115,7 +117,7 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
           startAdornment: (
             <InputAdornment position='start'>
               <Check
-                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : '#AA83DC'}
+                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : isDark ? '#AA83DC' : '#8299BD'}
                 size='22'
                 variant={focusing ? 'Bold' : 'Bulk'}
               />
@@ -134,7 +136,7 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
         type={showPassword ? 'text' : 'password'}
       />
       {hasError &&
-        <Typography color='#FF4FB9' variant='B-1' sx={{ display: 'flex', height: '6px' }}>
+        <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
           {t('Wrong password.')}
         </Typography>}
     </Container>

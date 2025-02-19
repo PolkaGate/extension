@@ -16,7 +16,7 @@ interface Props {
   style?: CSSProperties;
 }
 
-export default function Version({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
+export default function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const version = useManifest()?.version;

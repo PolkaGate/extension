@@ -51,7 +51,6 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
       {cancelButton
         ? <ActionButton
           contentPlacement='center'
-          disabled={disabled}
           onClick={onSecondaryClick}
           style={{ height: '44px', width: secondaryWidth }}
           text={secondaryBtnText}

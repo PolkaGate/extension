@@ -7,17 +7,20 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, Container, Grid, Link, Typography } from '@mui/material';
 import React from 'react';
 
-import { logoTransparent } from '../../assets/logos';
+import { logoBlackBirdTransparent, logoTransparent } from '../../assets/logos';
+import { useIsDark } from '../../hooks';
 import { EXTENSION_NAME } from '../../util/constants';
 
 function Header (): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', p: '5px 15px', position: 'relative', zIndex: 1 }}>
         <Grid alignItems='center' container item width='fit-content'>
           <Box
             component='img'
-            src={logoTransparent as string}
+            src={(isDark ? logoTransparent : logoBlackBirdTransparent) as string}
             sx={{ width: 43 }}
           />
           <Typography color='text.primary' fontFamily='Eras' fontSize='20px' fontWeight={400}>
@@ -29,7 +32,7 @@ function Header (): React.ReactElement {
           sx={{
             '&:hover': { bgcolor: '#674394', transition: 'all 250ms ease-out' },
             alignItems: 'center',
-            bgcolor: '#BFA1FF26',
+            bgcolor: isDark ? '#BFA1FF26' : '#FFFFFF8C',
             borderRadius: '10px',
             cursor: 'pointer',
             height: '30px',
@@ -40,7 +43,7 @@ function Header (): React.ReactElement {
           }}
           target='_blank'
         >
-          <QuestionMarkIcon sx={{ color: '#AA83DC', fontSize: '20px', stroke: '#AA83DC', strokeWidth: '1px' }} />
+          <QuestionMarkIcon sx={{ color: isDark ? '#AA83DC' : '#745D8B', fontSize: '20px', stroke: isDark ? '#AA83DC' : '#745D8B', strokeWidth: '1px' }} />
         </Link>
       </Container>
     </>

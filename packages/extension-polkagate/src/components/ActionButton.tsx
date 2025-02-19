@@ -8,6 +8,8 @@ import type { Icon } from 'iconsax-react';
 import { Button, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { useIsDark } from '../hooks';
+
 interface Props {
   disabled?: boolean;
   isBusy?: boolean;
@@ -22,6 +24,7 @@ interface Props {
 
 export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const isDark = useIsDark();
 
   const [hovered, setHovered] = useState(false);
 
@@ -35,10 +38,10 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
 
   const GeneralButtonStyle = {
     '&:hover': {
-      background: '#674394',
+      background: isDark ? '#674394' : '#EFF1F9',
       transition: 'all 250ms ease-out'
     },
-    background: '#2D1E4A',
+    background: isDark ? '#2D1E4A' : '#FFFFFF',
     borderRadius: `${style?.borderRadius ?? '12px'}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
@@ -59,15 +62,19 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>{text}</span>;
+      return <span style={{ color: isDark ? '#BEAAD8' : '#745D8B', ...ButtonFontStyle }}>
+        {text}
+      </span>;
     } else {
       return (
         <>
-          <span style={{ color: theme.palette.text.secondary, ...ButtonFontStyle }}>{text.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>{text.secondPart}</span>
+          <span style={{ color: theme.palette.text.secondary, ...ButtonFontStyle }}>{text.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>
+            {text.secondPart}
+          </span>
         </>
       );
     }
-  }, [ButtonFontStyle, text, theme.palette.text.primary, theme.palette.text.secondary]);
+  }, [ButtonFontStyle, isDark, text, theme.palette.text.primary, theme.palette.text.secondary]);
 
   return (
     <Button
