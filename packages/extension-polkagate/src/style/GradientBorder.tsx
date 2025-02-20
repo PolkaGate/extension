@@ -8,7 +8,7 @@ import { useIsDark } from '../hooks';
 
 interface GradientBorderProps {
   type?: 'pinkish' | 'pastel';
-  style: SxProps
+  style?: SxProps
 }
 
 function GradientBorder ({ style, type }: GradientBorderProps): React.ReactElement {
