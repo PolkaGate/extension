@@ -8,11 +8,12 @@ import { Radar2 } from 'iconsax-react';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Tooltip } from '../../../components';
-import { useSelectedAccount, useTranslation } from '../../../hooks';
+import { useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
 
 function AccountVisibilityToggler (): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const account = useSelectedAccount();
   const ref = useRef(null);
 
@@ -29,12 +30,13 @@ function AccountVisibilityToggler (): React.ReactElement {
       bgcolor: '#674394'
     },
     alignItems: 'center',
-    bgcolor: account?.isHidden ? 'transparent' : '#AA83DC26',
+    bgcolor: account?.isHidden ? 'transparent' : isDark ? '#AA83DC26': '#FFFFFF',
     border: '1px solid',
     borderColor: account?.isHidden ? '#AA83DC26' : 'transparent',
     borderRadius: '16px',
     cursor: 'pointer',
     justifyContent: 'center',
+    marginTop: '-5px',
     p: '7px',
     position: 'relative',
     transition: 'all 250ms ease-out',
@@ -44,7 +46,7 @@ function AccountVisibilityToggler (): React.ReactElement {
   return (
     <>
       <Grid container item onClick={toggleVisibility} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={ref} sx={containerStyle}>
-        <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : '#AA83DC'} size='24' />
+        <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} size='24' />
         <Divider sx={{ bgcolor: '#FF4FB9', height: '1.5px', opacity: account?.isHidden ? 1 : 0, position: 'absolute', rotate: '-45deg', transition: 'all 150ms ease-out', width: '28px' }} />
       </Grid>
       <Tooltip

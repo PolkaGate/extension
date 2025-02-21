@@ -8,7 +8,7 @@ import { Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
 import { FormatPrice } from '../../../components';
-import { useAccountAssets, useIsHideNumbers, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useAccountAssets, useIsDark, useIsHideNumbers, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { GlowBox } from '../../../style';
 import AccountVisibilityToggler from './AccountVisibilityToggler';
@@ -18,8 +18,9 @@ import DailyChange from './DailyChange';
 function Portfolio (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = useIsDark();
 
-  const eyeColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#745D8B';
+  const eyeColor = isDark ? '#BEAAD8' : '#745D8B';
 
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
@@ -46,9 +47,9 @@ function Portfolio (): React.ReactElement {
 
   return (
     <GlowBox>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px 0' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px 5px' }}>
         <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
-          <Typography color='text.secondary' variant='B-2'>
+          <Typography color= {isDark ? 'text.secondary' : '#291443'} variant='B-2'>
             {t('Account Portfolio')}
           </Typography>
           {isHideNumbers
