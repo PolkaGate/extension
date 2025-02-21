@@ -7,12 +7,23 @@ import { Box, Container, Grid, Skeleton } from '@mui/material';
 import React from 'react';
 
 import { logoWhiteTransparent } from '../../../assets/logos';
+import { useIsDark } from '../../../hooks/index';
 import { Drawer } from './TokensAssetsBox';
 
+function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
+  return (<Skeleton
+    animation='wave'
+    height={12}
+    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
+  />);
+}
+
 function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <div>
-      <Grid container item sx={{ background: '#05091C', borderRadius: '14px', p: '10px' }}>
+      <Grid container item sx={{ background: isDark ? '#05091C' : '#EDF1FF', borderRadius: '14px', p: '10px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex' }}>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ transition: 'all 250ms ease-out' }} xs>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
@@ -20,44 +31,39 @@ function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
                 component='img'
                 src={logoWhiteTransparent as string}
                 sx={{
-                  bgcolor: '#292247',
+                  bgcolor: isDark ? '#292247' : '#CFD5F0',
                   borderRadius: '999px',
-                  filter: 'brightness(0.4)',
+                  filter: isDark ? 'brightness(0.4)' : 'brightness(0.9)',
                   height: '36px',
                   p: '4px',
                   width: '36px'
                 }}
               />
               <Grid container direction='column' item sx={{ rowGap: '8px', width: 'fit-content' }}>
-                <Skeleton
-                  animation='wave'
-                  height={12}
-                  sx={{ bgcolor: '#946CC826', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '30px' }}
+                <MySkeleton
+                  bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+                  width={30}
                 />
                 <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
-                  <Skeleton
-                    animation='wave'
-                    height={12}
-                    sx={{ bgcolor: '#946CC840', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '45px' }}
+                  <MySkeleton
+                    bgcolor={isDark ? '#946CC840' : '#99A1C440'}
+                    width={45}
                   />
-                  <Skeleton
-                    animation='wave'
-                    height={12}
-                    sx={{ bgcolor: '#BEAAD826', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '25px' }}
+                  <MySkeleton
+                    bgcolor={isDark ? '#BEAAD826' : '#99A1C440'}
+                    width={25}
                   />
                 </Grid>
               </Grid>
             </Grid>
             <Grid alignItems='flex-end' container direction='column' item sx={{ rowGap: '6px', width: 'fit-content' }}>
-              <Skeleton
-                animation='wave'
-                height={12}
-                sx={{ bgcolor: '#B094D340', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '70px' }}
+              <MySkeleton
+                bgcolor={isDark ? '#B094D340' : '#99A1C440'}
+                width={70}
               />
-              <Skeleton
-                animation='wave'
-                height={12}
-                sx={{ bgcolor: '#946CC826', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '50px' }}
+              <MySkeleton
+                bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+                width={50}
               />
             </Grid>
           </Grid>
