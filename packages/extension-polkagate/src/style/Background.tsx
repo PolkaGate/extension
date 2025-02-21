@@ -6,7 +6,8 @@
 import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
-import { BackgroundLogo } from '../assets/logos';
+import { backgroundLogoDarkMode, backgroundLogoLightMode } from '../assets/logos';
+import { useIsDark } from '../hooks';
 
 const BallStyle: React.CSSProperties = {
   borderRadius: '50%',
@@ -33,14 +34,14 @@ const BlueBall = styled('div')(() => ({
 }));
 
 const backgroundImageStyle: SxProps<Theme> = {
-  filter: 'blur(8px)',
-  height: '300px',
+  backdropFilter: 'blur(20px)',
+  height: '452.63px',
+  left: '26px',
   mixBlendMode: 'color-dodge',
   position: 'absolute',
-  px: '15px',
-  rotate: '15deg',
-  top: '-30px',
-  width: '375px'
+  rotate: '0deg',
+  top: '-129px',
+  width: '344.77px'
 };
 
 const FadeOut = styled('div')(() => ({
@@ -67,6 +68,8 @@ interface Props {
 }
 
 function Background ({ id, style }: Props): React.ReactNode {
+  const isDark = useIsDark();
+
   return (
     <Box id={id} sx={{ height: '220px', inset: 0, position: 'absolute', ...style }}>
       <Container disableGutters sx={{ height: '220px', overflow: 'hidden', position: 'relative', width: '100%' }}>
@@ -75,7 +78,7 @@ function Background ({ id, style }: Props): React.ReactNode {
         <Smoother />
         <Box
           component='img'
-          src={BackgroundLogo as string}
+          src={ (isDark ? backgroundLogoDarkMode : backgroundLogoLightMode) as string}
           sx={backgroundImageStyle}
         />
       </Container>

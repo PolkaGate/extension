@@ -3,6 +3,8 @@
 
 //@ts-nocheck
 export { default as BackgroundLogo } from './BackgroundLogo.png';
+export { default as backgroundLogoDarkMode } from './backgroundLogoDarkMode.svg';
+export { default as backgroundLogoLightMode } from './backgroundLogoLightMode.svg';
 export { default as logoBlack } from './logoBlack.svg';
 export { default as logoBlackBirdTransparent } from './logoBlackBirdTransparent.svg';
 export { default as logoMotionDark } from './logoMotionDark.gif';
