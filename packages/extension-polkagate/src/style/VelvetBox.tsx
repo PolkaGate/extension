@@ -24,7 +24,7 @@ interface VelvetBoxProp {
   style?: SxProps<Theme>;
 }
 
-function VelvetBox({ children, style }: VelvetBoxProp) {
+function VelvetBox ({ children, style }: VelvetBoxProp) {
   const theme = useTheme();
 
   return (

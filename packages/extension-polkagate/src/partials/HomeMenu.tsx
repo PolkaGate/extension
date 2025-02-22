@@ -14,8 +14,9 @@ import { useHistory, useLocation } from 'react-router';
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
 import { GradientDivider } from '../style';
+import { useIsDark } from '../hooks';
 
-const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark'}) => ({
+const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
   background: mode === 'light' ? '#FFFFFF' : 'transparent',
   borderRadius: '16px',
@@ -91,6 +92,7 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
 function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = useIsDark();
 
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const history = useHistory();
@@ -136,16 +138,28 @@ function HomeMenu (): React.ReactElement {
   );
 
   return (
-    <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)' }}>
-      {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
-      <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
+    <Container
+      disableGutters
+      sx={{
+        background: isDark
+          ? 'linear-gradient(to bottom, rgb(5 9 28 / 10%) 10%, rgb(5 9 28 / 45%) 25%, rgba(5, 9, 28, 0.6) 60%, rgba(5, 9, 28, 1) 100%)'
+          : 'linear-gradient(  to bottom,  rgba(169, 177, 207, 0.05) 10%,  rgba(169, 177, 207, 0.45) 25%,  rgba(169, 177, 207, 0.6) 60%,  rgba(169, 177, 207, 1) 100%);',
+        bottom: '0px',
+        height: '106px',
+        position: 'fixed',
+        zIndex: 2
+      }}>
+      {leftPosition &&
+        <GradientDivider isSelectionLine style={selectionLineStyle} />
+      }
+      <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'fixed', mx: '15px', bottom: '11px', width: 'calc(100% - 30px)' }}>
         <MenuItem ButtonIcon={Logout} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
         <MenuItem ButtonIcon={ScanBarcode} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
         <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'staking'} onClick={handleMenuClick('staking')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
         <MenuItem ButtonIcon={MedalStar} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
         <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
         <MenuItem ButtonIcon={Clock} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
-        <MenuBackground mode ={theme.palette.mode} />
+        <MenuBackground mode={theme.palette.mode} />
       </Grid>
     </Container>
   );

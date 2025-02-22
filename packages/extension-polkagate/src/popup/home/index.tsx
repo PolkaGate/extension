@@ -23,19 +23,7 @@ import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
 import ChangeLog from './ChangeLog';
 
-function AccountPortfolio (): React.ReactElement {
-  return (
-    <>
-      <Portfolio />
-      <Grid container item sx={{ maxHeight: '342px', overflow: 'scroll' }}>
-        <AssetsBox />
-        <Version />
-      </Grid>
-    </>
-  );
-}
-
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
 
@@ -85,7 +73,11 @@ export default function Home (): React.ReactElement {
           : <Welcome />
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
           <UserDashboardHeader />
-          <AccountPortfolio />
+          <Portfolio />
+          <Grid container item sx={{ overflow: 'scroll', zIndex: 1, maxHeight: '355px' }}>
+            <AssetsBox />
+            <Version />
+          </Grid>
           <HomeMenu />
         </Grid>
       }

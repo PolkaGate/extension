@@ -71,7 +71,7 @@ function AssetsBox (): React.ReactElement {
 
     if ([TAB.CHAINS, TAB.TOKENS].includes(tab)) {
       return (
-        <Grid container item sx={{ borderRadius: '14px', display: 'grid', maxHeight: '290px', overflowY: 'scroll', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', transition: 'all 250ms ease-out', zIndex: 1 }}>
+        <Grid container item sx={{ borderRadius: '14px', display: 'grid', maxHeight: '320px', overflowY: 'scroll', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', transition: 'all 250ms ease-out', zIndex: 1 }}>
           {tab === TAB.CHAINS && <ChainsAssetsBox />}
           {tab === TAB.TOKENS && <TokensAssetsBox />}
         </Grid>
