@@ -76,7 +76,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
 
   useEffect(() => {
     formatted && api?.derive.balances?.all(formatted).then((b) => {
-      setBalances(b as BalancesInfo);
+      setBalances(b as unknown as BalancesInfo);
     });
   }, [api, formatted]);
 

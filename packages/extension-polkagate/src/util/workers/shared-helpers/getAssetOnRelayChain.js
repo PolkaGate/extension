@@ -27,7 +27,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
     const genesisHash = api.genesisHash.toString();
     const isMigrationEnabled = MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash);
 
-    balanceInfo.forEach(({ address, balances, pooledBalance, poolName, soloTotal }) => {
+    balanceInfo.forEach(({ address, balances, poolName, pooledBalance, soloTotal }) => {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(isMigrationEnabled ? BN_ZERO : pooledBalance);
 
       const priceId = TEST_NETS.includes(genesisHash)

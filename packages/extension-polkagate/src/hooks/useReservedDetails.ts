@@ -13,17 +13,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { PROXY_CHAINS } from '../util/constants';
+import { MIGRATED_NOMINATION_POOLS_CHAINS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
-import { useInfo } from '.';
+import { useAccountAssets, useInfo } from '.';
 
-type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage';
+type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'pooledBalance';
 export type Reserved = { [key in Item]?: Balance };
 
 export default function useReservedDetails (address: string | undefined): Reserved {
   const { api, formatted, genesisHash } = useInfo(address);
   const activeRecoveries = useActiveRecoveries(api);
+  const accountAssets = useAccountAssets(address);
+
   const [reserved, setReserved] = useState<Reserved>({});
+
+  const maybePooledBalance = useMemo(() =>
+    accountAssets?.find((balance) => balance.genesisHash === genesisHash)?.pooledBalance
+  , [accountAssets, genesisHash]);
 
   const activeLost = useMemo(() =>
     activeRecoveries && formatted
@@ -274,10 +280,21 @@ export default function useReservedDetails (address: string | undefined): Reserv
           }
         }).catch(console.error);
       }
+
+      /** handle pooleBalance as reserved  */
+      if (maybePooledBalance && MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash)) {
+        if (!maybePooledBalance.isZero()) {
+          setReserved((prev) => {
+            prev.pooledBalance = toBalance(maybePooledBalance);
+
+            return prev;
+          });
+        }
+      }
     } catch (e) {
-      console.error('Fatal error while fetching reserved details:', e)
+      console.error('Fatal error while fetching reserved details:', e);
     }
-  }, [activeLost?.deposit, api, formatted, genesisHash, toBalance]);
+  }, [activeLost?.deposit, api, formatted, genesisHash, maybePooledBalance, toBalance]);
 
   useEffect(() => {
     setReserved({});

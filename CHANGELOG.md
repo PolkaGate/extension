@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.35.1](https://github.com/polkagate/extension/compare/v0.35.0...v0.35.1) (2025-02-22)
+
+
+### Bug Fixes
+
+* undefined asset id in send page ([#1704](https://github.com/polkagate/extension/issues/1704)) ([dca28a0](https://github.com/polkagate/extension/commit/dca28a046309a5cde5bf14c823208dc8d057d378)), closes [#1703](https://github.com/polkagate/extension/issues/1703)
+
+# [0.35.0](https://github.com/polkagate/extension/compare/v0.34.0...v0.35.0) (2025-02-22)
+
+
+### Features
+
+* add support for pool migration ([#1702](https://github.com/polkagate/extension/issues/1702)) ([55c57b8](https://github.com/polkagate/extension/commit/55c57b81e8d97e9df3ff533d0479938c8542cff4))
+
 # [0.34.0](https://github.com/polkagate/extension/compare/v0.33.3...v0.34.0) (2024-12-06)
 
 
