@@ -12,7 +12,8 @@ export const news: News[] = [
   {
     version: '0.34.1',
     notes: [
-      'Added support for pool migration, allowing users to vote on governance using their staked funds in pools on Kusama.'
+      'Added support for pool migration, allowing users to vote on governance using their staked funds in pools on Kusama.',
+      'PolkaGate is getting a complete new look, so stay tuned for the upcoming update!'
     ]
   },
   {
