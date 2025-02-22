@@ -4,7 +4,6 @@
 // @ts-nocheck
 import { BN_ZERO } from '@polkadot/util';
 
-
 export function balancify (balances) {
   const base = {
     availableBalance: String(balances.availableBalance),
