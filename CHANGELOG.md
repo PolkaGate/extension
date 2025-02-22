@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.35.1](https://github.com/polkagate/extension/compare/v0.35.0...v0.35.1) (2025-02-22)
+
+
+### Bug Fixes
+
+* undefined asset id in send page ([#1704](https://github.com/polkagate/extension/issues/1704)) ([dca28a0](https://github.com/polkagate/extension/commit/dca28a046309a5cde5bf14c823208dc8d057d378)), closes [#1703](https://github.com/polkagate/extension/issues/1703)
+
 # [0.35.0](https://github.com/polkagate/extension/compare/v0.34.0...v0.35.0) (2025-02-22)
 
 
