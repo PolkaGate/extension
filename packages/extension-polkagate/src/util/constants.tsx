@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProxyTypes } from './types';
@@ -53,7 +53,6 @@ export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdf
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
 export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
 
-
 /** relay chains info */
 export const RELAY_CHAINS_NAMES = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
 
@@ -61,6 +60,8 @@ export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e2031
 export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe';
 export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
 export const PASEO_GENESIS_HASH = '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f';
+
+export const MIGRATED_NOMINATION_POOLS_CHAINS = [WESTEND_GENESIS_HASH, KUSAMA_GENESIS_HASH];
 
 export const RELAY_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,

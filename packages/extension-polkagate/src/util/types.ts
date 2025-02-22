@@ -1,5 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
 import type React from 'react';
@@ -683,6 +685,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   decimal: number;
   genesisHash: string;
   pooledBalance?: BN;
+  votingBalance: Balance;
   frozenBalance: BN;
   soloTotal?: BN;
   token: string;

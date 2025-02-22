@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
@@ -9,6 +9,13 @@ export interface News {
 }
 
 export const news: News[] = [
+  {
+    version: '0.34.1',
+    notes: [
+      'Added support for pool migration, allowing users to vote on governance using their staked funds in pools on Kusama.',
+      'PolkaGate is getting a complete new look, so stay tuned for the upcoming update!'
+    ]
+  },
   {
     version: '0.34.0',
     notes: [
