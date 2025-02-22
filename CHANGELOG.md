@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.35.0](https://github.com/polkagate/extension/compare/v0.34.0...v0.35.0) (2025-02-22)
+
+
+### Features
+
+* add support for pool migration ([#1702](https://github.com/polkagate/extension/issues/1702)) ([55c57b8](https://github.com/polkagate/extension/commit/55c57b81e8d97e9df3ff533d0479938c8542cff4))
+
 # [0.34.0](https://github.com/polkagate/extension/compare/v0.33.3...v0.34.0) (2024-12-06)
 
 
