@@ -24,7 +24,7 @@ export { default as pastCrowdloanBlack } from './pastCrowdloanBlack.svg';
 export { default as pastCrowdloanRed } from './pastCrowdloanRed.svg';
 export { default as pastCrowdloanWhite } from './pastCrowdloanWhite.svg';
 export { default as riot } from './riot.svg';
-export { default as safeBox } from './safeBox.svg';
+export { default as safeBox } from './SafeBox.svg';
 export { default as safeBoxLight } from './safeBoxLight.svg';
 export { default as soloSettingBlack } from './soloSettingBlack.svg';
 export { default as soloSettingWhite } from './soloSettingWhite.svg';
