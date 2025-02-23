@@ -104,7 +104,7 @@ function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
           }
         </Grid>
         {state === STAKING_TYPE.POOL &&
-          <Typography color={theme.palette.label.main} variant='B-5'>
+          <Typography color={theme.palette.label.primary} variant='B-5'>
             {tokenDetail?.poolName ?? 'Unknown'}
           </Typography>
         }

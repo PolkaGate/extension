@@ -3,35 +3,39 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { useIsDark } from '../../../hooks/index';
-import { discord, docs, email, github, web, x, youtube } from '../icons';
+import { useIsDark } from '../../../hooks';
+import { Discord, Docs, Email, Github, Web, XIcon, YoutubeIcon } from '../icons';
 import SocialIcon from './SocialIcon';
 
 export default function Socials ({ short }: { short?: boolean }): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
+
+  const bgColor = short && !isDark ? '#CCD2EA' : undefined;
 
   return (
     <>
       <Typography
-        color= { isDark ? 'rgba(190, 170, 216, 1)' : '#291443'}
+        color= 'label.secondary'
         mb='8px'
         mt='10px'
         sx={{ display: 'block', textAlign: short ? 'left' : 'center' }}
-        variant='H-4'>
+        variant='H-4'
+      >
         STAY TUNED
       </Typography>
       <Grid columnGap='8px' container justifyContent={short ? 'flex-start' : 'center'}>
-        <SocialIcon icon={youtube as string} link='https://www.youtube.com/@polkagate' />
-        <SocialIcon icon={x as string} link='https://x.com/polkagate' />
-        <SocialIcon icon={discord as string} link='https://discord.gg/gsUrreJh' />
-        <SocialIcon icon={github as string} link='https://github.com/PolkaGate/' />
+        <SocialIcon Icon={<YoutubeIcon color= {theme.palette.icon.secondary} width= '18px' />} bgColor= { bgColor } link='https://www.youtube.com/@polkagate' />
+        <SocialIcon Icon={<XIcon color= {theme.palette.icon.secondary} width= '18px' />} bgColor= { bgColor } link='https://x.com/polkagate' />
+        <SocialIcon Icon={<Discord color= {theme.palette.icon.secondary} width= '18px' />} bgColor= { bgColor } link='https://discord.gg/gsUrreJh' />
+        <SocialIcon Icon={<Github color= {theme.palette.icon.secondary} width= '18px' />} bgColor= { bgColor } link='https://github.com/PolkaGate/' />
         {!short && <>
-          <SocialIcon icon={email as string} link='mailto:support@polkagate.xyz' />
-          <SocialIcon icon={docs as string} link='https://docs.polkagate.xyz/' />
-          <SocialIcon icon={web as string} link='https://polkagate.xyz/' />
+          <SocialIcon Icon={<Email color= {theme.palette.icon.secondary} width= '18px' />} link='mailto:support@polkagate.xyz' />
+          <SocialIcon Icon={<Docs color= {theme.palette.icon.secondary} width= '18px' />} link='https://docs.polkagate.xyz/' />
+          <SocialIcon Icon={<Web color= {theme.palette.icon.secondary} width= '18px' />} link='https://polkagate.xyz/' />
         </>
         }
       </Grid>

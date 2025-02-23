@@ -3,19 +3,16 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, type SxProps, Typography } from '@mui/material';
 import React from 'react';
 
 import { logoTransparent } from '../../../assets/logos';
-import { useIsDark } from '../../../hooks/index';
 import { Version2 } from '../../../partials';
 import { EXTENSION_NAME } from '../../../util/constants';
 
-function Introduction (): React.ReactElement {
-  const isDark = useIsDark();
-
+function Introduction ({ style = {} }: { style?: SxProps }): React.ReactElement {
   return (
-    <Grid alignItems='center' columnGap='5px' container item sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', borderRadius: '14px', height: '46px', px: '10px' }}>
+    <Grid alignItems='center' columnGap='5px' container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '56px', px: '10px', ...style }}>
       <Box
         component='img'
         src={logoTransparent as string}

@@ -3,29 +3,33 @@
 
 /* eslint-disable header/header */
 
-import type { ThemeOptions, TypeAction, TypeText } from '@mui/material';
+import type { ThemeOptions, TypeAction, TypeBackground, TypeText } from '@mui/material';
 import type { CSSProperties } from 'react';
 
 declare module '@mui/material/styles' {
   interface Palette {
+    approval: Palette['primary'];
     aye: Palette['primary'];
+    backgroundFL: TypeText;
+    border: Partial<TypeBackground>;
+    gradient: TypeText;
+    icon: Partial<TypeText>;
+    label: Partial<TypeText>;
     menuIcon: TypeAction;
     nay: Palette['primary'];
-    label: Palette['primary'];
-    approval: Palette['primary'];
     support: Palette['primary'];
-    backgroundFL: TypeText;
-    gradient: TypeText;
   }
   interface PaletteOptions {
     approval?: PaletteOptions['primary'];
     aye?: PaletteOptions['primary'];
-    nay?: PaletteOptions['primary'];
-    label?: PaletteOptions['primary'];
-    support?: PaletteOptions['primary'];
     backgroundFL?: Partial<TypeText>;
-    menuIcon?: Partial<TypeAction>;
+    border?: Partial<TypeBackground>;
+    icon?: Partial<TypeText>;
     gradient?: Partial<TypeText>;
+    label?: Partial<TypeText>;
+    menuIcon?: Partial<TypeAction>;
+    nay?: PaletteOptions['primary'];
+    support?: PaletteOptions['primary'];
   }
 }
 

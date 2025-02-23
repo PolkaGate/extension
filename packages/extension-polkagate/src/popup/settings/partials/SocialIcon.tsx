@@ -3,23 +3,24 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Box, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { useIsDark } from '../../../hooks/index';
 
 interface Props {
-  icon: string;
+  Icon: React.JSX.Element;
+  bgColor?: string;
   link: string;
 }
 
-function SocialIcon ({ icon, link }: Props): React.ReactElement {
+function SocialIcon ({ Icon, bgColor, link }: Props): React.ReactElement {
   const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
   const isDark = useIsDark();
 
   return (
     <Grid
-      bgcolor={isDark ? '#2D1E4A' : '#FFFFFF'}
+      bgcolor={bgColor || (isDark ? '#2D1E4A' : '#FFFFFF')}
       onClick={goToLink}
       sx={{
         '&:hover': {
@@ -34,11 +35,7 @@ function SocialIcon ({ icon, link }: Props): React.ReactElement {
         width: 32
       }}
     >
-      <Box
-        component='img'
-        src={icon}
-        sx={{ width: '18px' }}
-      />
+      {Icon }
     </Grid>
 
   );

@@ -10,11 +10,13 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext, ScrollingTextBox } from '../../../components';
+import useIsDark from '../../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../svg';
 import SelectAccount from './SelectAccount';
 
 function AccountSelection (): React.ReactElement {
   const theme = useTheme();
+  const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
 
   const [selectedAccount, setSelectedAccount] = useState<AccountJson | undefined>();
@@ -38,7 +40,7 @@ function AccountSelection (): React.ReactElement {
         sx={{
           ':hover': { background: '#674394' },
           alignItems: 'center',
-          background: '#BFA1FF26',
+          background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
           borderRadius: '10px',
           columnGap: '5px',
           cursor: 'pointer',
@@ -49,7 +51,7 @@ function AccountSelection (): React.ReactElement {
           width: 'fit-content'
         }}
       >
-        <Grid container item justifyContent='space-around' sx={{ background: '#2D1E4A', borderRadius: '9px', height: '26px', width: '26px' }}>
+        <Grid container item justifyContent='space-around' sx={{ background: isDark ? '#2D1E4A' : '#CCD2EA', borderRadius: '9px', height: '26px', width: '26px' }}>
           <Stack columnGap='2px' direction='row'>
             <Box component='img' src={identiconPink as string} sx={{ width: '9.75px' }} />
             <Box component='img' src={identiconBlue as string} sx={{ width: '9.75px' }} />
@@ -58,6 +60,7 @@ function AccountSelection (): React.ReactElement {
             alignContent='center' container item justifyContent='center' sx={{
               background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
               borderRadius: '1024px',
+              color: isDark ? '#EAEBF1' : '#FFFFFF',
               fontFamily: 'Inter',
               fontSize: '12px',
               fontWeight: 700,
@@ -78,7 +81,7 @@ function AccountSelection (): React.ReactElement {
           }}
           width={65}
         />
-        <ArrowDown2 color='#AA83DC' size='18' variant='Bold' />
+        <ArrowDown2 color={ isDark ? '#AA83DC' : '#8F97B8'} size='18' variant='Bold' />
       </Container>
       <SelectAccount
         openMenu={openMenu}

@@ -36,7 +36,7 @@ export default function RateUsButton (): React.ReactElement {
         variant='Bulk'
       />
       <Typography
-        color='text.primary'
+        color='#EAEBF1'
         pl='5px'
         variant='B-2'
       >

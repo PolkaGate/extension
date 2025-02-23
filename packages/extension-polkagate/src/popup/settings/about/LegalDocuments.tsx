@@ -27,7 +27,7 @@ export default function LegalDocuments (): React.ReactElement {
   return (
     <Stack direction='column'>
       <Typography
-        color='rgba(190, 170, 216, 1)'
+        color='label.secondary'
         mb='8px'
         mt='10px'
         sx={{ display: 'block', textAlign: 'left' }}

@@ -64,7 +64,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
           width: '30px'
         }}
       >
-        <Maximize4 color={hovered ? '#EAEBF1' : '#AA83DC'} size='21' style={{ zIndex: 5 }} variant='Linear' />
+        <Maximize4 color={hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
         <Grid sx={gradientBackgroundStyle} />
       </Box>
       <Tooltip content={t('Fullscreen')} targetRef={buttonContainer} />

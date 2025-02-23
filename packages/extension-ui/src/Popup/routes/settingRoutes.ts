@@ -6,7 +6,7 @@ import type { RouteConfig } from './RouteDefinitions';
 import AccountSettings from '@polkadot//extension-polkagate/src/popup/settings/accountSettings';
 import ExtensionSettings from '@polkadot//extension-polkagate/src/popup/settings/extensionSettings';
 import Settings from '@polkadot/extension-polkagate/src/popup/settings';
-import About from '@polkadot/extension-polkagate/src/popup/settings/About';
+import About from '@polkadot/extension-polkagate/src/popup/settings/about';
 import Export from '@polkadot/extension-polkagate/src/popup/settings/accountSettings/Export';
 import Endpoints from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/Endpoints';
 

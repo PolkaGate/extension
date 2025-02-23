@@ -18,7 +18,7 @@ export default function ActionRow (): React.ReactElement {
     '&:hover': {
       bgcolor: isDark ? '#2D1E4A' : '#CCD2EA80'
     },
-    bgcolor: isDark ? '#05091C' : '#FFFFFF',
+    bgcolor: 'background.paper',
     borderRadius: '16px',
     cursor: 'pointer',
     height: '39px',

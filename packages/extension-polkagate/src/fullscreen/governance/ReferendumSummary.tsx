@@ -86,12 +86,12 @@ function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props)
     <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : noop} sx={{ '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', position: 'relative' }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
-          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
+          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.primary', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
             {t('Mine')}
           </Grid>
         }
         {amIVoted &&
-          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', textAlign: 'center', width: '85px' }}>
+          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.primary', fontSize: '12px', height: '20px', textAlign: 'center', width: '85px' }}>
             {t('Voted')}
           </Grid>
         }

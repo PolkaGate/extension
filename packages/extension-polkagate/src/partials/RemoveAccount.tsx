@@ -21,7 +21,7 @@ interface Props {
   open: boolean;
 }
 
-function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
+function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -31,7 +31,6 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
   const [isPasswordWrong, setPasswordError] = useState<boolean>();
   const [isBusy, setIsBusy] = useState<boolean>();
 
-  console.log(acknowledged)
   const toggleAcknowledge = useCallback((state: boolean) => {
     setAcknowledge(state);
   }, []);

@@ -4,13 +4,17 @@
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { atSign } from '../icons';
+import { useIsDark } from '../../../hooks';
+import AtSignIcon from '../icons/AtSign';
 
-export default function ContactUs (): React.ReactElement {
+export default function ContactUs(): React.ReactElement {
+  const isDark = useIsDark();
+  const color = isDark ? 'rgba(190, 170, 216, 1)' : '#745D8B';
+
   return (
     <Stack direction='column'>
       <Typography
-        color='rgba(190, 170, 216, 1)'
+        color='label.secondary'
         mb='8px'
         mt='10px'
         sx={{ display: 'block', textAlign: 'left' }}
@@ -19,18 +23,15 @@ export default function ContactUs (): React.ReactElement {
         CONTACT US
       </Typography>
       <Grid
-        columnGap='8px'
+        alignItems= 'center'
+        columnGap='5px'
         container
         justifyContent={'flex-start'}
         pt='7px'
       >
-        <Box
-          component='img'
-          src={atSign as string}
-          sx={{ width: '14px' }}
-        />
+        <AtSignIcon color={color} width='14px' />
         <Typography
-          color='rgba(190, 170, 216, 1)'
+          color={color}
           sx={{ textAlign: 'left' }}
           variant='B-1'
         >
