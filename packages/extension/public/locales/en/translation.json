@@ -1561,5 +1561,7 @@
   "Account export is completed!": "",
   "change log": "",
   "Wow, it’s great!": "",
-  "Loading": ""
+  "Loading": "",
+  "{{chainName}}'s address copied!": "",
+  "Back to Account": ""
 }
