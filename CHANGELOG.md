@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.35.2](https://github.com/polkagate/extension/compare/v0.35.1...v0.35.2) (2025-02-23)
+
+
+### Bug Fixes
+
+* balance name issues ([#1705](https://github.com/polkagate/extension/issues/1705)) ([b6a5a71](https://github.com/polkagate/extension/commit/b6a5a71a83ca0f2f3e4dfafc2a6e0118413deb02))
+
 ## [0.35.1](https://github.com/polkagate/extension/compare/v0.35.0...v0.35.1) (2025-02-22)
 
 
