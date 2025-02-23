@@ -14,7 +14,7 @@ import { isPasswordCorrect } from '../../passwordManagement';
 import WarningBox from '../partials/WarningBox';
 import MySnackbar from './components/MySnackbar';
 
-export default function ManagePassword(): React.ReactElement {
+export default function ManagePassword (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 
@@ -71,7 +71,7 @@ export default function ManagePassword(): React.ReactElement {
         description={t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
         title={t('REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE')}
       />
-      <Stack columnGap='15px' direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', p: '15px' }}>
+      <Stack columnGap='15px' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', p: '15px' }}>
         {hasAlreadySetPassword &&
           <PasswordInput
             focused

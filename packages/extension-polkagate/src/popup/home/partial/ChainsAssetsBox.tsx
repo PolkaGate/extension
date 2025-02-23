@@ -6,6 +6,7 @@
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
 import React, { memo, useCallback, useContext, useMemo } from 'react';
 
 import { selectableNetworks } from '@polkadot/networks';
@@ -88,6 +89,19 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   );
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 } // Delay between items
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+};
+
 function ChainsAssetsBox () {
   const theme = useTheme();
 
@@ -168,28 +182,29 @@ function ChainsAssetsBox () {
   }, [assets, priceOf]);
 
   return (
-    <>
+    <motion.div
+      animate='visible'
+      initial='hidden'
+      variants={containerVariants}
+    >
       {summary?.map((assetsDetail, index) => (
-        <Grid container item key={index} sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
-          <AssetsHeader
-            assetsDetail={assetsDetail}
-          />
-          {assetsDetail.assets.map((asset, index) => {
-            const showDivider = assetsDetail.assets.length !== index + 1;
+        <motion.div key={index} variants={itemVariants}>
+          <Grid container item sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
+            <AssetsHeader assetsDetail={assetsDetail} />
+            {assetsDetail.assets.map((asset, index) => {
+              const showDivider = assetsDetail.assets.length !== index + 1;
 
-            return (
-              <>
-                <AssetsDetail
-                  asset={asset}
-                  key={index}
-                />
-                {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', ml: '-10px', width: '325px' }} />}
-              </>
-            );
-          })}
-        </Grid>
+              return (
+                <motion.div key={index} variants={itemVariants} style ={{ width : 'inherit'}}>
+                  <AssetsDetail asset={asset} />
+                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', ml: '-10px', width: '325px' }} />}
+                </motion.div>
+              );
+            })}
+          </Grid>
+        </motion.div>
       ))}
-    </>
+    </motion.div>
   );
 }
 

@@ -90,7 +90,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
   );
 }
 
-function HomeMenu(): React.ReactElement {
+function HomeMenu ({ height = '69px' }: { height?: string}): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -155,7 +155,7 @@ function HomeMenu(): React.ReactElement {
             ? 'linear-gradient(0deg, #05091C 0%, #05091C 60%, transparent 100%)'
             : 'linear-gradient(  to bottom,  rgba(169, 177, 207, 0.05) 10%,  rgba(169, 177, 207, 0.45) 25%,  rgba(169, 177, 207, 0.6) 60%,  rgba(169, 177, 207, 1) 100%);',
           bottom: '0px',
-          height: '106px',
+          height: height ,
           position: 'fixed',
           zIndex: 2
         }}

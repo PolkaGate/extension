@@ -13,7 +13,7 @@ import Language from './partials/Language';
 
 function Main (): React.ReactElement {
   return (
-    <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'block', p: '10px' }}>
+    <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', p: '10px' }}>
       <EnableTestNet />
       <EnableCamera />
       <AutoLockTimer />

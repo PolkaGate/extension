@@ -42,7 +42,7 @@ export default function EnableTestNet (): React.ReactElement {
 
   return (
     <Stack direction='column'>
-      <Typography color='rgba(190, 170, 216, 1)' my='5px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
+      <Typography color='label.secondary' my='5px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
         TETSTNETS
       </Typography>
       <Grid alignItems='center' columnGap='8px' container justifyContent='flex-start' pt='7px'>

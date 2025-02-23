@@ -74,11 +74,11 @@ export default function Home (): React.ReactElement {
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
           <UserDashboardHeader />
           <Portfolio />
-          <Grid container item sx={{ overflow: 'scroll', zIndex: 1, maxHeight: '355px' }}>
+          <Grid container item sx={{ maxHeight: '400px', overflow: 'scroll', zIndex: 1 }}>
             <AssetsBox />
-            <Version />
+            <Version style ={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
           </Grid>
-          <HomeMenu />
+          <HomeMenu height='106px' />
         </Grid>
       }
     </>

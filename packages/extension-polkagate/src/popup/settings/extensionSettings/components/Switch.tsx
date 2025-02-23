@@ -10,32 +10,44 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import * as React from 'react';
 
+import useIsDark from '../../../../hooks/useIsDark';
+
 interface Props extends SwitchProps {
   columnGap?: string;
   label?: string;
 }
 
-const MySwitch = styled(({ checked, columnGap, label, onChange, ...props }: Props) => (
-  <Stack columnGap={columnGap} component='label' direction='row'>
-    <Switch
-      checked={checked}
-      disableRipple
-      focusVisibleClassName='.Mui-focusVisible'
-      onChange={onChange}
-      {...props}
-    />
-    <Typography variant='B-1'>
-      {label}
-    </Typography>
-  </Stack>
-)
-)<SwitchProps>(({ checked, theme }) => ({
+const MySwitch = ({ checked, columnGap, label, onChange, ...props }: Props) => {
+  const isDark = useIsDark();
+
+  return (
+    <Stack columnGap={columnGap} component='label' direction='row'>
+      <StyledSwitch
+        checked={checked}
+        disableRipple
+        focusVisibleClassName='.Mui-focusVisible'
+        isDark={isDark}
+        onChange={onChange}
+        {...props}
+      />
+      <Typography variant='B-1'>
+        {label}
+      </Typography>
+    </Stack>
+  );
+};
+
+const StyledSwitch = styled(Switch)<{ isDark: boolean }>(({ checked, isDark, theme }) => ({
   background: checked
-    ? 'linear-gradient(#2D1E4A, #2D1E4A) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
-    : '#2D1E4A',
+    ? isDark
+      ? 'linear-gradient(#2D1E4A, #2D1E4A) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
+      : '#CCD2EA'
+    : isDark
+      ? '#2D1E4A'
+      : '#FFFFFF',
   backgroundClip: checked ? 'padding-box, border-box' : 'unset',
   backgroundOrigin: 'border-box',
-  border: `2px solid ${checked ? 'transparent' : '#6743944D'}`,
+  border: `2px solid ${checked ? isDark ? 'transparent' : '#3988FF' : isDark ? '#6743944D' : '#CCD2EA'}`,
   borderRadius: '109.71px',
   cursor: 'pointer',
   height: '24px',
@@ -47,7 +59,9 @@ const MySwitch = styled(({ checked, columnGap, label, onChange, ...props }: Prop
   },
 
   '&:hover .MuiSwitch-thumb': {
-    background: checked ? '#EAEBF1' : '#BEAAD8'
+    background: checked
+      ? isDark ? '#EAEBF1' : '#3988FF'
+      : isDark ? '#BEAAD8' : '#CCD2EA'
   },
 
   '& .MuiSwitch-root': {
@@ -65,12 +79,12 @@ const MySwitch = styled(({ checked, columnGap, label, onChange, ...props }: Prop
     }),
 
     '&.Mui-checked': {
-      background: '#EAEBF1',
+      background: isDark ? '#EAEBF1' : '#3988FF',
       padding: 2,
       transform: 'translateX(14px)',
 
       '& .MuiSwitch-thumb': {
-        background: '#EAEBF1'
+        background: isDark ? '#EAEBF1' : '#3988FF'
       },
 
       '& + .MuiSwitch-track': {
@@ -105,7 +119,7 @@ const MySwitch = styled(({ checked, columnGap, label, onChange, ...props }: Prop
   },
 
   '& .MuiSwitch-thumb': {
-    background: '#674394',
+    background: isDark ? '#674394' : '#CCD2EA',
     boxSizing: 'border-box',
     height: 10.29,
     transition: theme.transitions.create(['background-color', 'transform'], {
@@ -115,11 +129,9 @@ const MySwitch = styled(({ checked, columnGap, label, onChange, ...props }: Prop
     width: 10.29
   },
   '& .MuiSwitch-track': {
+    backgroundColor: isDark ? '#39393D' : '#FFFFFF',
     transition: theme.transitions.create(['background-color'], {
       duration: 500
-    }),
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#39393D'
     })
   }
 }));

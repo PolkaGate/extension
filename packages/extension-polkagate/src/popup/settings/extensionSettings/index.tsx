@@ -9,7 +9,7 @@ import React, { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router';
 
 import { ActionContext, BackWithLabel } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsDark, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import TopMenuItem from './components/TopMenuItem';
@@ -20,6 +20,7 @@ import ManagePassword from './ManagePassword';
 function ExtensionSettings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const isDark = useIsDark();
 
   const onAction = useContext(ActionContext);
 
@@ -50,8 +51,8 @@ function ExtensionSettings (): React.ReactElement {
             path='password'
           />
         </Stack>
-        <Grid container item sx={{ border: '4px solid #1b143c', borderRadius: '14px', my: '15px' }}>
-          <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '14px', height: '373px', overflow: 'scroll' }}>
+        <Grid container item sx={{ bgColor: isDark ? '#1b143c' : '#F5F4FF', borderRadius: '14px', p: '4px', my: '15px' }}>
+          <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '373px', overflow: 'scroll' }}>
             {pathname === '/settings-extension/' && <Main />}
             {pathname === '/settings-extension/chains' && <Chains />}
             {pathname === '/settings-extension/password' && <ManagePassword />}

@@ -6,16 +6,19 @@
 import { Box, Grid, type SxProps, Typography } from '@mui/material';
 import React from 'react';
 
-import { logoTransparent } from '../../../assets/logos';
+import { logoTransparent, logoWhite } from '../../../assets/logos';
+import useIsDark from '../../../hooks/useIsDark';
 import { Version2 } from '../../../partials';
 import { EXTENSION_NAME } from '../../../util/constants';
 
 function Introduction ({ style = {} }: { style?: SxProps }): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Grid alignItems='center' columnGap='5px' container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '56px', px: '10px', ...style }}>
       <Box
         component='img'
-        src={logoTransparent as string}
+        src={(isDark ? logoTransparent : logoWhite) as string}
         sx={{ width: 36 }}
       />
       <Grid alignItems='baseline' columnGap='5px' container item width='fit-content'>

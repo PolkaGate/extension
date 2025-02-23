@@ -4,19 +4,23 @@
 import { TextField } from '@mui/material';
 import * as React from 'react';
 
+import useIsDark from '../../../../hooks/useIsDark';
+
 interface Props {
   value?: unknown,
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> | undefined
 }
 
 export default function Field ({ onChange, value }: Props) {
+  const isDark = useIsDark();
+
   return (
     <TextField
       inputProps={{ style: { paddingLeft: '15px', textAlign: 'left' } }}
       onChange={onChange}
       sx={{
         '& .MuiOutlinedInput-root': {
-          background: '#1B133C',
+          background: isDark ? '#1B133C' : '#EFF1F9',
           border: '1px solid #BEAAD833',
           borderRadius: '12px',
           height: '44px',
@@ -25,10 +29,10 @@ export default function Field ({ onChange, value }: Props) {
           width: '80px',
 
           '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#BEAAD833'
+            borderColor: isDark ? '#BEAAD833' : '#EFF1F9'
           },
           '&:hover': {
-            background: '#2D1E4A'
+            background: isDark ? '#2D1E4A' : '#D9E0F5'
           },
           '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: '#AA83DC' // Change border color on hover
@@ -38,7 +42,7 @@ export default function Field ({ onChange, value }: Props) {
           }
         },
         '& .MuiInputBase-input': {
-          color: '#BEAAD8',
+          color: isDark ? '#BEAAD8' : '#291443',
           fontFamily: 'Inter',
           fontSize: '14px',
           fontWeight: 600,

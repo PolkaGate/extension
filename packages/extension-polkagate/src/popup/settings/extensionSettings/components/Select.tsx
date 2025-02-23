@@ -4,21 +4,24 @@
 import { MenuItem, Select, type SelectChangeEvent } from '@mui/material';
 import * as React from 'react';
 
+import useIsDark from '../../../../hooks/useIsDark';
+
 interface Props {
   options: { text: string, value: string | number }[];
   value: string | undefined;
   onChange: (event: SelectChangeEvent) => any;
 }
 
-const textStyle = { color: '#AA83DC', fontFamily: 'Inter', fontSize: '14px', fontWeight: 600 };
-
 export default function MySelect ({ onChange, options, value }: Props) {
+  const isDark = useIsDark();
+  const textStyle = { color: isDark ? '#AA83DC' : '#291443', fontFamily: 'Inter', fontSize: '14px', fontWeight: 600 };
+
   return (
     <Select
       MenuProps={{
         PaperProps: {
           sx: {
-            backgroundColor: '#05091C',
+            backgroundColor: isDark ? '#05091C' : '#D9E0F5',
             border: '2px solid #1B133C',
             borderRadius: '8px'
           }
@@ -26,7 +29,7 @@ export default function MySelect ({ onChange, options, value }: Props) {
       }}
       onChange={onChange}
       sx={{
-        background: '#1B133C',
+        background: isDark ? '#1B133C' : '#EFF1F9',
         border: '1px solid #BEAAD833',
         borderRadius: '12px',
         height: '44px',
@@ -35,7 +38,7 @@ export default function MySelect ({ onChange, options, value }: Props) {
         width: '80px',
 
         '&:hover': {
-          background: '#2D1E4A'
+          background: isDark ? '#2D1E4A' : '#D9E0F5'
         },
 
         '& .MuiOutlinedInput-notchedOutline': {
@@ -50,7 +53,7 @@ export default function MySelect ({ onChange, options, value }: Props) {
         },
 
         '& .MuiSelect-icon': {
-          color: '#AA83DC'
+          color: isDark ? '#AA83DC' : '#745D8B'
         },
 
         '&.Mui-focused .MuiSelect-icon': {
@@ -65,7 +68,7 @@ export default function MySelect ({ onChange, options, value }: Props) {
         },
 
         '&.Mui-focused .MuiInputBase-input': {
-          color: '#FFFFFF'
+          color: isDark ? '#FFFFFF' : '#BEAAD833'
         }
       }}
       value={String(value)}

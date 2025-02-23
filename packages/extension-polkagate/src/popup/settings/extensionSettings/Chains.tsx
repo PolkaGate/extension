@@ -128,7 +128,7 @@ export default function Chains (): React.ReactElement {
 
   return (
     <Grid container item>
-      <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'block', p: '10px' }}>
+      <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', p: '10px' }}>
         <Grid container item>
           <SearchField
             onInputChange={onSearch}

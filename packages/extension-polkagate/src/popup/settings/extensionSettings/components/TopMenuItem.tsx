@@ -12,6 +12,7 @@ import { useLocation } from 'react-router';
 import { noop } from '@polkadot/util';
 
 import { ActionContext } from '../../../../components/contexts';
+import useIsDark from '../../../../hooks/useIsDark';
 
 interface Props {
   Icon: Icon
@@ -22,6 +23,7 @@ interface Props {
 function TopMenuItem ({ Icon, label, path }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { pathname } = useLocation();
+  const isDark = useIsDark();
 
   const isSelected = pathname === `/settings-extension/${path}`;
   const onClick = useCallback(() => onAction(`/settings-extension/${path}`), [onAction, path]);
@@ -29,8 +31,8 @@ function TopMenuItem ({ Icon, label, path }: Props): React.ReactElement {
   return (
     <Stack direction='column' onClick={onClick} sx={{ cursor: 'pointer' }}>
       <Stack columnGap='4px' direction='row'>
-        <Icon color={isSelected ? '#EAEBF1' : '#AA83DC'} onClick={noop} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-        <Typography color={isSelected ? '#EAEBF1' : '#AA83DC'} variant='B-2'>
+        <Icon color={isDark ? (isSelected ? '#EAEBF1' : '#AA83DC') : (isSelected ? '#FF4FB9' : '#8F97B8')} onClick={noop} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
+        <Typography color={isDark ? (isSelected ? '#EAEBF1' : '#AA83DC') : (isSelected ? '#291443' : '#8F97B8')} variant='B-2'>
           {label}
         </Typography>
       </Stack>

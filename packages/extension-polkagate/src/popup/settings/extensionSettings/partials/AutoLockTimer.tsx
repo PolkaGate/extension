@@ -70,7 +70,7 @@ export default function AutoLockTimer (): React.ReactElement {
 
   return (
     <Stack direction='column'>
-      <Typography color='rgba(190, 170, 216, 1)' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
+      <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
         AUTO-LOCK TIMER
       </Typography>
       <Grid alignItems='center' columnGap='8px' container justifyContent='flex-start' pt='7px'>

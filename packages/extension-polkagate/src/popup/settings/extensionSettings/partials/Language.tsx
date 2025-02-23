@@ -9,6 +9,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { SettingsContext } from '../../../../components/contexts';
 import { useTranslation } from '../../../../components/translate';
+import useIsDark from '../../../../hooks/useIsDark';
 import SelectLanguage from '../../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../../util/constants';
 import getLanguageOptions from '../../../../util/getLanguageOptions';
@@ -16,6 +17,8 @@ import getLanguageOptions from '../../../../util/getLanguageOptions';
 export default function Language (): React.ReactElement {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
+
+  const isDark = useIsDark();
 
   const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const language = useMemo(() => {
@@ -31,16 +34,16 @@ export default function Language (): React.ReactElement {
   return (
     <>
       <Stack direction='column'>
-        <Typography color='rgba(190, 170, 216, 1)' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
+        <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
           {t('LANGUAGE')}
         </Typography>
         <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center', mt: '5px' }}>
-          <Translate color='#AA83DC' onClick={onClick} size='18' variant='Bulk' style={{ cursor: 'pointer' }} />
+          <Translate color={ isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' variant='Bulk' style={{ cursor: 'pointer' }} />
           <Stack columnGap='5px' direction='row' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer' }}>
-            <Typography color='#EAEBF1' variant='B-1'>
+            <Typography variant='B-1'>
               {language}
             </Typography>
-            <ArrowDown2 color='#EAEBF1' size='14px' style={{ marginTop: '5px' }} variant='Bold' />
+            <ArrowDown2 color={ isDark ? '#EAEBF1' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
           </Stack>
         </Stack>
       </Stack>

@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { useIsDark } from '../../../hooks';
 import AtSignIcon from '../icons/AtSign';
 
-export default function ContactUs(): React.ReactElement {
+export default function ContactUs (): React.ReactElement {
   const isDark = useIsDark();
   const color = isDark ? 'rgba(190, 170, 216, 1)' : '#745D8B';
 
