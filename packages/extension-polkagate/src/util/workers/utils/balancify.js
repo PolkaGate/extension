@@ -4,7 +4,6 @@
 // @ts-nocheck
 import { BN_ZERO } from '@polkadot/util';
 
-
 export function balancify (balances) {
   const base = {
     availableBalance: String(balances.availableBalance),
@@ -17,7 +16,7 @@ export function balancify (balances) {
     vestingLocked: String(balances.vestingLocked),
     vestingTotal: String(balances.vestingTotal),
     // votingBalance: String(balances.votingBalance)
-    votingBalance: String(balances.free.add(balances?.reserved || BN_ZERO)) // after pool migration the voting balance returned fro api is not correct
+    votingBalance: String(balances.freeBalance.add(balances?.reservedBalance || BN_ZERO)) // after pool migration the voting balance returned fro api is not correct
   };
 
   if (balances.soloTotal) {
