@@ -126,6 +126,7 @@ export { default as useTimeToUnlock } from './useTimeToUnlock';
 export { default as useTimeToUnlock2 } from './useTimeToUnlock2';
 export { default as useToken } from './useToken';
 export { default as useTokenPrice } from './useTokenPrice';
+export { default as useTokenPriceBySymbol } from './useTokenPriceBySymbol';
 export { default as useTokens } from './useTokens';
 export { default as useTrack } from './useTrack';
 export { default as useTracks } from './useTracks';
