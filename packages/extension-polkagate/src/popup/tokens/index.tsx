@@ -18,7 +18,7 @@ import { ActionContext, AssetLogo, BackWithLabel, FormatBalance2, FormatPrice } 
 import { useAccountAssets, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
 import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
-import { UserDashboardHeader } from '../../partials';
+import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
@@ -296,7 +296,7 @@ function Tokens (): React.ReactElement {
         <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: '495px', overflowY: 'scroll', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
-              <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} />
+              <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
             </Grid>
             <Typography color='text.secondary' variant='B-2'>
               {token?.token}
@@ -374,6 +374,7 @@ function Tokens (): React.ReactElement {
           />
         </Container>
       </Grid>
+      <HomeMenu />
       <ReservedLockedPopup
         TitleIcon={lockedReservedState.data?.titleIcon}
         decimal={token?.decimal}

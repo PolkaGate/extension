@@ -9,6 +9,7 @@ export { default as ConnectedDapp } from './ConnectedDapp';
 export { default as FullScreenChainSwitch } from './FullScreenChainSwitch';
 export { default as FullscreenModeButton } from './FullscreenModeButton';
 export { default as HeaderBrand } from './HeaderBrand';
+export { default as HomeMenu } from './HomeMenu';
 export { default as LogoDropAnimation } from './LogoDropAnimation';
 export { default as Name } from './Name';
 export { default as Passwords } from './Passwords';
