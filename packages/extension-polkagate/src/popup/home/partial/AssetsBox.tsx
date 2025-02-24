@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { safeBox, safeBoxLight } from '../../../assets/icons';
@@ -39,6 +40,14 @@ const AssetNull = () => {
   );
 };
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.3 } // Delay between items
+  }
+};
+
 function AssetsBox (): React.ReactElement {
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
@@ -71,10 +80,16 @@ function AssetsBox (): React.ReactElement {
 
     if ([TAB.CHAINS, TAB.TOKENS].includes(tab)) {
       return (
-        <Grid container item sx={{ borderRadius: '14px', display: 'grid', maxHeight: '345px', overflowY: 'scroll', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', transition: 'all 500ms ease-out', zIndex: 1 }}>
-          {tab === TAB.CHAINS && <ChainsAssetsBox />}
-          {tab === TAB.TOKENS && <TokensAssetsBox />}
-        </Grid>
+        <motion.div
+          animate='visible'
+          initial='hidden'
+          variants={containerVariants}
+        >
+          <Grid container item sx={{ borderRadius: '14px', display: 'grid', maxHeight: '345px', overflowY: 'scroll', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', transition: 'all 500ms ease-out', zIndex: 1 }}>
+            {tab === TAB.CHAINS && <ChainsAssetsBox />}
+            {tab === TAB.TOKENS && <TokensAssetsBox />}
+          </Grid>
+        </motion.div>
       );
     }
 

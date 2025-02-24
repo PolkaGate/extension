@@ -7,6 +7,7 @@ import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import { Badge, Collapse, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
 import { CloseCircle } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
 
@@ -18,7 +19,6 @@ import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useSelected
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import DailyChange from './DailyChange';
-import { motion } from 'framer-motion';
 
 type Assets = Record<string, FetchedBalance[]> | null | undefined;
 interface AssetDetailType {
@@ -55,7 +55,7 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
       <Typography color='text.primary' textAlign='left' variant='B-2'>
         {token}
       </Typography>
-      <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content', lineHeight: '10px' }}>
+      <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
         <FormatPrice
           commify
           fontFamily='Inter'
@@ -233,20 +233,12 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
   );
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 } // Delay each TokenBox by 150ms
-  }
-};
-
 const itemVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+  visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox() {
+function TokensAssetsBox () {
   const account = useSelectedAccount();
   const pricesInCurrency = usePrices();
   const accountAssets = useAccountAssets(account?.address);
@@ -339,13 +331,13 @@ function TokensAssetsBox() {
   }, [tokens, priceOf]);
 
   return (
-    <motion.div animate='visible' initial='hidden' variants={containerVariants}>
+    <>
       {summary?.map((tokenDetail, index) => (
         <motion.div key={index} variants={itemVariants}>
           <TokenBox tokenDetail={tokenDetail} />
         </motion.div>
       ))}
-    </motion.div>
+    </>
   );
 }
 
