@@ -47,7 +47,9 @@ function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [num
 }
 
 function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number): React.ReactNode {
-  return <>{`${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span> {unit}</span>{label}</>;
+  const maybeTilde = postfix && parseFloat(postfix) > parseFloat(postfix.slice(0, decimalPoint)) ? '~' : '';
+
+  return <>{`${maybeTilde}${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span> {unit}</span>{label}</>;
 }
 
 function splitFormat (value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
@@ -88,7 +90,7 @@ function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimal
         : ''
       }
       <span>
-        { isHideNumbers
+        {isHideNumbers
           ? <Dots
             color={style?.color}
             postText={tokens[0]}
