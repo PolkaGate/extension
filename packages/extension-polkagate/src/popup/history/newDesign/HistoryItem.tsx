@@ -200,7 +200,7 @@ function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
                 <ActionSubAction
                   historyItem={historyItem}
                 />
-                <Grid container direction='column' item width='fit-content'>
+                <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
                   <FormatBalance2
                     decimalPoint={2}
                     decimals={[historyItem.decimal ?? 0]}
