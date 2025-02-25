@@ -164,7 +164,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
           const filteredItems = items.filter(
             ({ token: historyItemToken }) => historyItemToken === token
           )
-            .map((item) => ({ ...item, decimal }));
+            .map((item) => ({ ...item, chain: { genesisHash }, decimal }));
 
           return [date, filteredItems];
         })
@@ -173,7 +173,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
 
     // Check if result is an empty object
     return Object.keys(result).length === 0 ? null : result;
-  }, [decimal, grouped, token]);
+  }, [decimal, genesisHash, grouped, token]);
 
   const openPopup = useCallback(() => setOpenMenu(true), []);
 

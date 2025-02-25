@@ -89,17 +89,9 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   );
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2 } // Delay between items
-  }
-};
-
 const itemVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+  visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
 function ChainsAssetsBox () {
@@ -182,11 +174,7 @@ function ChainsAssetsBox () {
   }, [assets, priceOf]);
 
   return (
-    <motion.div
-      animate='visible'
-      initial='hidden'
-      variants={containerVariants}
-    >
+    <>
       {summary?.map((assetsDetail, index) => (
         <motion.div key={index} variants={itemVariants}>
           <Grid container item sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
@@ -195,7 +183,7 @@ function ChainsAssetsBox () {
               const showDivider = assetsDetail.assets.length !== index + 1;
 
               return (
-                <motion.div key={index} variants={itemVariants} style ={{ width : 'inherit'}}>
+                <motion.div key={index} style={{ width: 'inherit' }} variants={itemVariants}>
                   <AssetsDetail asset={asset} />
                   {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', ml: '-10px', width: '325px' }} />}
                 </motion.div>
@@ -204,7 +192,7 @@ function ChainsAssetsBox () {
           </Grid>
         </motion.div>
       ))}
-    </motion.div>
+    </>
   );
 }
 

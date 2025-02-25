@@ -78,12 +78,8 @@ export default function useTransactionHistory (address: AccountId | string | und
   receivingGovernance.current = governanceTx;
 
   const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
-    if (!tabHistory) {
+    if (!tabHistory?.length) {
       return undefined;
-    }
-
-    if (tabHistory.length === 0) {
-      return null;
     }
 
     const temp = {} as Record<string, TransactionDetail[]>;
