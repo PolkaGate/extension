@@ -8,13 +8,13 @@ import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import type { BalancesInfo } from '../../util/types';
 
 import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { Grid, Stack, useTheme } from '@mui/material';
+import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { BN } from '@polkadot/util';
 
-import { AccountContext, ActionContext, Warning } from '../../components';
+import { AccountContext, ActionContext } from '../../components';
 import { useAccountAssets, useBalances, useCurrency, useFullscreen, useInfo, usePrices, useTokenPrice, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
 import HistoryModal from '../../popup/history/modal/HistoryModal';
@@ -53,7 +53,6 @@ export interface UnlockInformationType {
 export default function AccountDetails (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
   const { address, paramAssetId } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const currency = useCurrency();
@@ -107,9 +106,6 @@ export default function AccountDetails (): React.ReactElement {
   }, [assetId, balances, chainName, selectedAsset]);
 
   const transferableBalance = useMemo(() => getValue('transferable', balancesToShow as BalancesInfo), [balancesToShow]);
-  const isDualStaking = useMemo(() =>
-    balancesToShow?.soloTotal && balancesToShow?.pooledBalance && !balancesToShow.soloTotal.isZero() && !balancesToShow.pooledBalance.isZero()
-  , [balancesToShow?.pooledBalance, balancesToShow?.soloTotal]);
 
   useEffect(() => {
     // reset assetId on chain switch
@@ -195,17 +191,6 @@ export default function AccountDetails (): React.ReactElement {
               />
               {genesisHash &&
                 <>
-                  {isDualStaking &&
-                    <Grid container sx={{ '> div': { pl: '3px' } }}>
-                      <Warning
-                        iconDanger
-                        marginTop={0}
-                        theme={theme}
-                      >
-                        {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
-                      </Warning>
-                    </Grid>
-                  }
                   {isOnAssetHub &&
                     <AssetSelect
                       address={address}

@@ -10,7 +10,7 @@ export interface News {
 
 export const news: News[] = [
   {
-    version: '0.35.1',
+    version: '0.35.2',
     notes: [
       'Pool Migration Support: Enable users to vote on governance using their staked funds in pools on Kusama.',
       'Send Page Fix: Resolve issue where the asset ID was undefined when balances were not yet fetched.',
