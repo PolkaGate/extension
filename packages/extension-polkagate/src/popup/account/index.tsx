@@ -23,7 +23,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { stakingClose } from '../../assets/icons';
-import { ActionContext, Assets, Chain, GenesisHashOptionsContext, HorizontalMenuItem, Identity, Motion, Warning } from '../../components';
+import { ActionContext, Assets, Chain, GenesisHashOptionsContext, HorizontalMenuItem, Identity, Motion } from '../../components';
 import { useBalances, useInfo, useMyAccountIdentity, useTranslation } from '../../hooks';
 import { tieAccount, windowOpen } from '../../messaging';
 import { HeaderBrand, RemoteNodeSelectorWithSignals } from '../../partials';
@@ -55,10 +55,6 @@ export default function AccountDetails (): React.ReactElement {
 
   const showReservedChevron = useMemo(() => balances && !balances?.reservedBalance.isZero() && isOnRelayChain(genesisHash), [balances, genesisHash]);
   const supportStaking = useMemo(() => STAKING_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const isDualStaking = useMemo(() =>
-    balances?.soloTotal && balances?.pooledBalance && !balances.soloTotal.isZero() && !balances.pooledBalance.isZero()
-  , [balances?.pooledBalance, balances?.soloTotal]);
-
   const gotToHome = useCallback(() => {
     if (showStakingOptions) {
       return setShowStakingOptions(false);
@@ -212,18 +208,6 @@ export default function AccountDetails (): React.ReactElement {
                 }
               </>
               : <>
-                {isDualStaking &&
-                  <Grid container sx={{ '> div': { pl: '3px' }, borderBottom: 1, borderColor: 'secondary.light', mb: '5px', pb: '5px' }}>
-                    <Warning
-                      iconDanger
-                      marginRight={1}
-                      marginTop={0}
-                      theme={theme}
-                    >
-                      {t('Nomination Pools are evolving! Unstake your solo staked funds soon to benefit from automatic pool migration, which allows participation in both a pool and governance, and avoid manual changes.')}
-                    </Warning>
-                  </Grid>
-                }
                 <LabelBalancePrice address={address} balances={balances} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balances} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
                 {supportStaking &&
