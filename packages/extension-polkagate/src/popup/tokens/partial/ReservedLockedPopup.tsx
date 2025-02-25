@@ -18,7 +18,7 @@ import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import AssetLoading from '../../home/partial/AssetLoading';
-import { ColumnAmounts } from '..';
+import { ColumnAmounts } from './ColumnAmounts';
 
 const reasonIcon = (reason: string): React.ReactNode => {
   switch (reason.toLowerCase()) {
@@ -111,7 +111,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
+export default function ReservedLockedPopup({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
   const { t } = useTranslation();
 
   const stillLoading = Object.entries(items).some(([_, amount]) => amount === undefined);

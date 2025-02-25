@@ -9,14 +9,14 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, noop } from '@polkadot/util';
 
 import { ActionContext, ToggleDots } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
-import { ColumnAmounts } from '..';
+import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenStakingInfoProp {
   tokenDetail: FetchedBalance | undefined;
@@ -28,7 +28,7 @@ enum STAKING_TYPE {
   POOL
 }
 
-function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
+function TokenStakingInfo({ address, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -83,7 +83,7 @@ function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   }, [address, notStaked, onAction, state]);
 
   return (
-    <Container disableGutters onClick={goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, alignItems: 'center', background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>
+    <Container disableGutters onClick={isDoubleStaked ? noop : goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, alignItems: 'center', background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>
       <Stack>
         <Grid alignItems='center' container item onClick={toggleState} sx={{ columnGap: '4px', cursor: isDoubleStaked ? 'pointer' : 'default', width: 'fit-content' }}>
           {state === STAKING_TYPE.POOL

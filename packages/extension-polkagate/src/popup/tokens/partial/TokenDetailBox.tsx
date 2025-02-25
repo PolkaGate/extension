@@ -14,7 +14,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { Tooltip } from '../../../components';
 import { usePrices } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
-import { ColumnAmounts } from '..';
+import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenDetailBoxProp {
   Icon: Icon;

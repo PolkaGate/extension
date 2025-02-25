@@ -28,49 +28,6 @@ import TokenDetailBox from './partial/TokenDetailBox';
 import TokenHistory from './partial/TokenHistory';
 import TokenStakingInfo from './partial/TokenStakingInfo';
 
-interface ColumnAmountsProps {
-  fiatAmount: number;
-  cryptoAmount: BN;
-  token: string;
-  decimal: number;
-  color?: string;
-}
-
-export const ColumnAmounts = memo(function ColumnAmounts ({ color, cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) {
-  const theme = useTheme();
-
-  return (
-    <Grid container direction='column' item width='fit-content'>
-      <FormatPrice
-        commify
-        decimalColor={theme.palette.text.secondary}
-        dotStyle='normal'
-        fontFamily='Inter'
-        fontSize='14px'
-        fontWeight={600}
-        height={18}
-        num={fiatAmount}
-        textColor={color}
-        width='fit-content'
-        withSmallDecimal
-      />
-      <FormatBalance2
-        decimalPoint={2}
-        decimals={[decimal]}
-        style={{
-          color: color || '#BEAAD8',
-          fontFamily: 'Inter',
-          fontSize: '12px',
-          fontWeight: 500,
-          width: 'max-content'
-        }}
-        tokens={[token]}
-        value={cryptoAmount}
-      />
-    </Grid>
-  );
-});
-
 const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; logoInfo: LogoInfo | undefined }) => (
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
     <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
@@ -364,7 +321,10 @@ function Tokens (): React.ReactElement {
               title={t('Reserved')}
               token={token?.token}
             />
-            <TokenStakingInfo address={account?.address} tokenDetail={token} />
+            <TokenStakingInfo
+              address={account?.address}
+              tokenDetail={token}
+            />
           </Grid>
           <TokenHistory
             address={account?.address}
