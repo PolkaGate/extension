@@ -20,6 +20,7 @@ import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
+import { toTitleCase } from '../../util';
 import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 import DailyChange from '../home/partial/DailyChange';
@@ -32,7 +33,7 @@ const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; lo
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
     <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
     <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-      {token?.chainName}
+      {token?.chainName ? toTitleCase(token.chainName) : ''}
     </Typography>
   </Grid>
 );
