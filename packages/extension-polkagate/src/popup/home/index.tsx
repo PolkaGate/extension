@@ -5,14 +5,14 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import semver from 'semver';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../../components';
+import { AccountContext, FadeOnScroll } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
 import { useManifest, useMerkleScience } from '../../hooks';
 import { UserDashboardHeader, Version2 as Version } from '../../partials';
@@ -26,6 +26,8 @@ import ChangeLog from './ChangeLog';
 export default function Home (): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
+
+  const refContainer = useRef<HTMLDivElement>(null);
 
   useMerkleScience(undefined, undefined, true); // to download the data file
 
@@ -74,11 +76,12 @@ export default function Home (): React.ReactElement {
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
           <UserDashboardHeader />
           <Portfolio />
-          <Grid container item sx={{ maxHeight: '400px', overflow: 'scroll', zIndex: 1 }}>
+          <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflow: 'scroll' }}>
             <AssetsBox />
             <Version style ={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
+            <FadeOnScroll containerRef={refContainer} />
           </Grid>
-          <HomeMenu height='106px' />
+          <HomeMenu />
         </Grid>
       }
     </>

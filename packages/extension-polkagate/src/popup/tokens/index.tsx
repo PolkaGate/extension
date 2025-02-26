@@ -9,12 +9,12 @@ import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, Trade } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useParams } from 'react-router';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AssetLogo, BackWithLabel, FormatBalance2, FormatPrice } from '../../components';
+import { ActionContext, AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice } from '../../components';
 import { useAccountAssets, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
 import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
@@ -95,6 +95,7 @@ function Tokens (): React.ReactElement {
   const reservedReason = useReservedDetails2(formatted, genesisHash);
   const { api } = useChainInfo(genesisHash);
   const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(account?.address, genesisHash, undefined); // TODO: timeToUnlock!
+  const refContainer = useRef<HTMLDivElement>(null);
 
   const [lockedReservedState, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
@@ -251,7 +252,7 @@ function Tokens (): React.ReactElement {
           onClick={backHome}
           style={{ pb: 0 }}
         />
-        <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: '495px', overflowY: 'scroll', pt: '15px' }}>
+        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '506px', overflowY: 'scroll', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
@@ -333,6 +334,7 @@ function Tokens (): React.ReactElement {
             genesisHash={genesisHash}
             token={token?.token}
           />
+          <FadeOnScroll containerRef={refContainer} />
         </Container>
       </Grid>
       <HomeMenu />
