@@ -25,11 +25,16 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
     port.postMessage(JSON.stringify({ functionName: 'getAssetOnRelayChain', metadata }));
 
     const requests = addresses.map(async (address) => {
-      const balances = await api.derive.balances.all(address);
+      const allBalances = await api.derive.balances.all(address);
       const systemBalance = await api.query['system']['account'](address);
+      const existentialDeposit = api.consts['balances']['existentialDeposit'];
 
-      // @ts-ignore
-      balances.frozenBalance = systemBalance.frozen;
+      const balances = {
+        ...allBalances,
+        ED: existentialDeposit,
+        // @ts-ignore
+        frozenBalance: systemBalance.data.frozen
+      };
 
       let soloTotal = BN_ZERO;
       let pooled;

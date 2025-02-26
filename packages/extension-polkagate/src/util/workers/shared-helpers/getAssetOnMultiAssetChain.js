@@ -26,6 +26,7 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
 
   const maybeTheAssetOfAddresses = addresses.map((address) => api.query['tokens']['accounts'].entries(address));
   const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
+  const existentialDeposit = api.consts['balances']['existentialDeposit'];
 
   balanceOfAssetsOfAddresses.flat().forEach((entry) => {
     if (!entry.length) {
@@ -44,6 +45,10 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     });
 
     const balance = entry[1];
+
+    // @ts-ignore
+    balance.ED = existentialDeposit;
+
     // @ts-ignore
     const totalBalance = balance.free.add(balance.reserved);
 

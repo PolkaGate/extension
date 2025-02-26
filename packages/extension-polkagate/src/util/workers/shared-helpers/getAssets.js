@@ -15,6 +15,7 @@ export async function getAssets (addresses, api, assets, chainName, results) {
       // @ts-ignore
       const maybeTheAssetOfAddresses = addresses.map((address) => api.query[section].account(assetId, address));
       const assetMetaData = api.query[section].metadata(assetId);
+      const existentialDeposit = api.consts.balances.existentialDeposit;
 
       const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
       const metadata = response[0];
@@ -36,6 +37,7 @@ export async function getAssets (addresses, api, assets, chainName, results) {
         const item = {
           assetId: asset.id,
           balanceDetails: {
+            ED: existentialDeposit,
             availableBalance: isFrozen ? 0 : _balance,
             lockedBalance: isFrozen ? _balance : 0,
             reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve
