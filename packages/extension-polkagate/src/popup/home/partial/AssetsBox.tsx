@@ -70,7 +70,7 @@ function AssetsBox (): React.ReactElement {
       return <NFTBox />;
     }
 
-    if (isLoading || !tab) {
+    if (isLoading || !tab || !account) {
       return <AssetLoading />;
     }
 
@@ -85,7 +85,7 @@ function AssetsBox (): React.ReactElement {
           initial='hidden'
           variants={containerVariants}
         >
-          <Grid container item sx={{ borderRadius: '14px', display: 'grid', maxHeight: '345px', overflowY: 'scroll', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', transition: 'all 500ms ease-out', zIndex: 1 }}>
+          <Grid container item sx={{ borderRadius: '14px', display: 'grid', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', zIndex: 1 }}>
             {tab === TAB.CHAINS && <ChainsAssetsBox />}
             {tab === TAB.TOKENS && <TokensAssetsBox />}
           </Grid>
@@ -93,8 +93,8 @@ function AssetsBox (): React.ReactElement {
       );
     }
 
-    return null;
-  }, [isLoading, nothingToShow, tab]);
+    return <AssetLoading />;
+  }, [account, isLoading, nothingToShow, tab]);
 
   return (
     <>

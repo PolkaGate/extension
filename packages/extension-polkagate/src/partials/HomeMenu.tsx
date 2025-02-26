@@ -15,7 +15,6 @@ import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
-import { useIsDark } from '../hooks';
 
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
@@ -51,7 +50,7 @@ interface MenuItemProps {
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -90,10 +89,9 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
   );
 }
 
-function HomeMenu ({ height = '69px' }: { height?: string}): React.ReactElement {
+function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isDark = useIsDark();
 
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const history = useHistory();
@@ -148,20 +146,9 @@ function HomeMenu ({ height = '69px' }: { height?: string}): React.ReactElement 
 
   return (
     <>
-      <Container
-        disableGutters
-        sx={{
-          background: isDark
-            ? 'linear-gradient(0deg, #05091C 0%, #05091C 60%, transparent 100%)'
-            : 'linear-gradient(  to bottom,  rgba(169, 177, 207, 0.05) 10%,  rgba(169, 177, 207, 0.45) 25%,  rgba(169, 177, 207, 0.6) 60%,  rgba(169, 177, 207, 1) 100%);',
-          bottom: '0px',
-          height: height ,
-          position: 'fixed',
-          zIndex: 2
-        }}
-      >
+      <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)', zIndex: 1 }}>
         {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
-        <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'fixed', mx: '15px', bottom: '11px', width: 'calc(100% - 30px)' }}>
+        <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
           <MenuItem ButtonIcon={Logout} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ScanBarcode} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
           <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'staking'} onClick={handleMenuClick('staking')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
