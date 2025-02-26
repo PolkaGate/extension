@@ -40,6 +40,7 @@ export { default as DecisionButtons } from './DecisionButtons';
 export { default as DisplayInfo } from './DisplayInfo';
 export { default as Dots } from './Dots';
 export { default as ExtensionPopup } from './ExtensionPopup';
+export { default as FadeOnScroll } from './FadeOnScroll';
 export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';
 export { default as FormatPrice } from './FormatPrice';
