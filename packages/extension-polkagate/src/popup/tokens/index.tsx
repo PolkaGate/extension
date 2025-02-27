@@ -6,13 +6,14 @@
 import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+import type { BalancesInfo } from '../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useParams } from 'react-router';
 
-import { BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice } from '../../components';
 import { useAccountAssets, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
@@ -23,6 +24,7 @@ import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
 import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import { getValue } from '../account/util';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
 import TokenDetailBox from './partial/TokenDetailBox';
@@ -108,18 +110,9 @@ function Tokens (): React.ReactElement {
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
   , [accountAssets, genesisHash, paramAssetId]);
 
-  const transferable = useMemo(() => {
-    const frozenBalance = token?.frozenBalance || BN_ZERO; // for backward compatibility of PolkaGate extension
-    const noFrozenReserved = frozenBalance.isZero() && token?.reservedBalance?.isZero();
-
-    const frozenReserveDiff = frozenBalance.sub(token?.reservedBalance || BN_ZERO);
-    const maybeED = noFrozenReserved ? BN_ZERO : (token?.ED || BN_ZERO);
-    const untouchable = bnMax(maybeED, frozenReserveDiff);
-
-    return (token?.freeBalance || BN_ZERO).sub(untouchable);
-  }, [token?.ED, token?.freeBalance, token?.frozenBalance, token?.reservedBalance]);
-
-  console.log('token:', token);
+  const transferable = useMemo(() => getValue('transferable', token as unknown as BalancesInfo), [token]);
+  const lockedBalance = useMemo(() => getValue('locked balance', token as unknown as BalancesInfo), [token]);
+  const reservedBalance = useMemo(() => getValue('reserved', token as unknown as BalancesInfo), [token]);
 
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
@@ -319,19 +312,19 @@ function Tokens (): React.ReactElement {
             />
             <TokenDetailBox
               Icon={Lock1}
-              amount={token?.lockedBalance}
+              amount={lockedBalance}
               decimal={token?.decimal}
               description={lockedTooltip}
-              onClick={hasAmount(token?.lockedBalance) ? displayPopup('locked') : undefined}
+              onClick={hasAmount(lockedBalance) ? displayPopup('locked') : undefined}
               priceId={token?.priceId}
               title={t('Locked')}
               token={token?.token}
             />
             <TokenDetailBox
               Icon={Coin}
-              amount={token?.reservedBalance}
+              amount={reservedBalance}
               decimal={token?.decimal}
-              onClick={hasAmount(token?.reservedBalance) ? displayPopup('reserved') : undefined}
+              onClick={hasAmount(reservedBalance) ? displayPopup('reserved') : undefined}
               priceId={token?.priceId}
               title={t('Reserved')}
               token={token?.token}
