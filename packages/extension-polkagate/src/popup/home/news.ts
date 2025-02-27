@@ -10,6 +10,13 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.36.0',
+    notes: [
+      'Pool Migration Support: Enable users to vote on governance using their staked funds in pools on Kusama and Polkadot.',
+      'UI Redesign Incoming: PolkaGate is getting a brand-new look—stay tuned for the upcoming update!'
+    ]
+  },
+  {
     version: '0.35.2',
     notes: [
       'Pool Migration Support: Enable users to vote on governance using their staked funds in pools on Kusama.',
