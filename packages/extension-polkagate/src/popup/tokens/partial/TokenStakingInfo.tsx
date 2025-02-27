@@ -16,6 +16,7 @@ import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
+import { STAKING_CHAINS } from '../../../util/constants';
 import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenStakingInfoProp {
@@ -28,7 +29,7 @@ enum STAKING_TYPE {
   POOL
 }
 
-function TokenStakingInfo({ address, tokenDetail }: TokenStakingInfoProp) {
+function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -81,6 +82,10 @@ function TokenStakingInfo({ address, tokenDetail }: TokenStakingInfoProp) {
 
     onAction(path);
   }, [address, notStaked, onAction, state]);
+
+  if (!STAKING_CHAINS.includes(tokenDetail?.genesisHash ?? '')) {
+    return null;
+  }
 
   return (
     <Container disableGutters onClick={isDoubleStaked ? noop : goToStaking} sx={{ ':hover': notStaked ? {} : { background: '#2D1E4A' }, alignItems: 'center', background: '#2D1E4A4D', borderRadius: '14px', cursor: notStaked ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', p: '12px', rowGap: '8px', transition: 'all 250ms ease-out' }}>

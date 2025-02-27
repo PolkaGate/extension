@@ -44,6 +44,10 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     });
 
     const balance = entry[1];
+
+    // @ts-ignore
+    balance.ED = foundAsset?.extras?.existentialDeposit ?? 0;
+
     // @ts-ignore
     const totalBalance = balance.free.add(balance.reserved);
 

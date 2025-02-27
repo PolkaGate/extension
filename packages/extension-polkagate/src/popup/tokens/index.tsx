@@ -6,6 +6,7 @@
 import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+import type { BalancesInfo } from '../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, Trade } from 'iconsax-react';
@@ -23,6 +24,7 @@ import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
 import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import { getValue } from '../account/util';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
 import TokenDetailBox from './partial/TokenDetailBox';
@@ -107,6 +109,10 @@ function Tokens (): React.ReactElement {
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
   , [accountAssets, genesisHash, paramAssetId]);
+
+  const transferable = useMemo(() => getValue('transferable', token as unknown as BalancesInfo), [token]);
+  const lockedBalance = useMemo(() => getValue('locked balance', token as unknown as BalancesInfo), [token]);
+  const reservedBalance = useMemo(() => getValue('reserved', token as unknown as BalancesInfo), [token]);
 
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
@@ -232,7 +238,7 @@ function Tokens (): React.ReactElement {
       payload: items,
       type: 'UPDATE_ITEMS'
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delegatedBalance, lockedReasonLoading, JSON.stringify(lockedReservedState.data?.items), lockedReservedState.type, reservedReason, reservedReasonLoading, totalLocked]);
 
   const closeMenu = useCallback(() => {
@@ -252,7 +258,7 @@ function Tokens (): React.ReactElement {
           onClick={backHome}
           style={{ pb: 0 }}
         />
-        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '506px', overflowY: 'scroll', pb: '60px', pt: '15px' }}>
+        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'scroll', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
@@ -297,28 +303,28 @@ function Tokens (): React.ReactElement {
           <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px', pb: '10px' }}>
             <TokenDetailBox
               Icon={Trade}
-              amount={token?.availableBalance}
+              amount={transferable}
               decimal={token?.decimal}
-              onClick={hasAmount(token?.availableBalance) ? toSendFund : undefined}
+              onClick={hasAmount(transferable) ? toSendFund : undefined}
               priceId={token?.priceId}
               title={t('Transferable')}
               token={token?.token}
             />
             <TokenDetailBox
               Icon={Lock1}
-              amount={token?.lockedBalance}
+              amount={lockedBalance}
               decimal={token?.decimal}
               description={lockedTooltip}
-              onClick={hasAmount(token?.lockedBalance) ? displayPopup('locked') : undefined}
+              onClick={hasAmount(lockedBalance) ? displayPopup('locked') : undefined}
               priceId={token?.priceId}
               title={t('Locked')}
               token={token?.token}
             />
             <TokenDetailBox
               Icon={Coin}
-              amount={token?.reservedBalance}
+              amount={reservedBalance}
               decimal={token?.decimal}
-              onClick={hasAmount(token?.reservedBalance) ? displayPopup('reserved') : undefined}
+              onClick={hasAmount(reservedBalance) ? displayPopup('reserved') : undefined}
               priceId={token?.priceId}
               title={t('Reserved')}
               token={token?.token}

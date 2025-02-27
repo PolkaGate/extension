@@ -31,6 +31,7 @@ type AssetsBalancesPerAddress = Record<string, AssetsBalancesPerChain>;
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
 
 interface BalancesDetails {
+  ED: BN,
   availableBalance: BN,
   soloTotal?: BN,
   pooledBalance?: BN,
@@ -39,6 +40,7 @@ interface BalancesDetails {
   vestedClaimable?: BN,
   vestingTotal?: BN,
   freeBalance: BN,
+  frozenBalance: BN,
   frozenFee?: BN,
   frozenMisc?: BN,
   reservedBalance: BN,
@@ -93,6 +95,8 @@ export interface FetchedBalance {
   vestedClaimable?: BN,
   vestingTotal?: BN,
   freeBalance?: BN,
+  frozenBalance: BN,
+  ED: BN,
   frozenFee?: BN,
   frozenMisc?: BN,
   reservedBalance?: BN,

@@ -6,9 +6,10 @@ import { BN_ZERO } from '@polkadot/util';
 
 export function balancify (balances) {
   const base = {
+    ED: String(balances.ED),
     availableBalance: String(balances.availableBalance),
     freeBalance: String(balances.freeBalance),
-    frozenBalance: String(balances.frozen),
+    frozenBalance: String(balances.frozenBalance),
     lockedBalance: String(balances.lockedBalance),
     reservedBalance: String(balances.reservedBalance),
     vestedBalance: String(balances.vestedBalance),
@@ -31,6 +32,7 @@ export function balancify (balances) {
 
 export function balancifyAsset (balances) {
   return JSON.stringify({
+    ED: String(balances.ED),
     availableBalance: String(balances.free),
     freeBalance: String(balances.free),
     frozenBalance: String(balances.frozen),
