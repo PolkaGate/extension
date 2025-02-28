@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.36.0](https://github.com/polkagate/extension/compare/v0.35.2...v0.36.0) (2025-02-28)
+
+
+### Features
+
+* polkadot pool migration ([#1710](https://github.com/polkagate/extension/issues/1710)) ([1cbeb7f](https://github.com/polkagate/extension/commit/1cbeb7f034c4345a4ff2858e29da6918067dda4f))
+
 ## [0.35.2](https://github.com/polkagate/extension/compare/v0.35.1...v0.35.2) (2025-02-23)
 
 
