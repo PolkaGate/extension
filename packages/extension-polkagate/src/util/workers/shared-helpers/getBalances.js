@@ -57,6 +57,7 @@ export async function getBalances(chainName, addresses, userAddedEndpoints, port
         address,
         balances,
         poolName: pooled?.poolName,
+        poolReward: pooled?.poolReward ?? BN_ZERO,
         pooledBalance: pooled?.pooledBalance ?? BN_ZERO,
         soloTotal
       };

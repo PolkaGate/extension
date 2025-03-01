@@ -25,6 +25,7 @@ export function balancify (balances) {
 
   if (balances.pooledBalance) {
     base.pooledBalance = String(balances.pooledBalance);
+    base.poolReward = String(balances.poolReward);
   }
 
   return JSON.stringify(base);

@@ -55,7 +55,7 @@ function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const isDoubleStaked = stakings?.hasPoolStake && stakings.hasSoloStake;
-  const stakedAmount = (state === STAKING_TYPE.POOL ? tokenDetail?.pooledBalance : tokenDetail?.soloTotal) ?? BN_ZERO;
+  const stakedAmount = (state === STAKING_TYPE.POOL ? tokenDetail?.pooledBalance?.add(tokenDetail?.poolReward ?? BN_ZERO) : tokenDetail?.soloTotal) ?? BN_ZERO;
   const totalBalance = useMemo(() => calcPrice(priceOf(tokenDetail?.priceId ?? '0'), stakedAmount, tokenDetail?.decimal ?? 0), [priceOf, stakedAmount, tokenDetail?.decimal, tokenDetail?.priceId]);
   const notStaked = useMemo(() => stakings && !stakings.hasPoolStake && !stakings.hasSoloStake, [stakings]);
 
