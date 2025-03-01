@@ -193,7 +193,7 @@ function Tokens (): React.ReactElement {
       },
       type: 'OPEN_MENU'
     });
-  }, [hasAmount, isMigrationEnabled, reservedReason, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
+  }, [hasAmount, isMigrationEnabled, reservedReason, token?.poolReward, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
 
   useEffect(() => {
     if (lockedReservedState.data === undefined || lockedReservedState.type === undefined) {
