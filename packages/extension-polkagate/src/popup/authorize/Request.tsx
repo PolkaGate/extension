@@ -18,7 +18,7 @@ interface Props {
   hasBanner: boolean;
 }
 
-export default function Request ({ authRequest, hasBanner }: Props): React.ReactElement<Props> {
+export default function Request({ authRequest, hasBanner }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

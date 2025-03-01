@@ -10,7 +10,7 @@ import { selectableNetworks } from '@polkadot/networks';
 import { getSubstrateAddress } from '../util/utils';
 import useChain from './useChain';
 
-export default function useToken (address: AccountId | string | undefined): string | undefined {
+export default function useToken(address: AccountId | string | undefined): string | undefined {
   /** address can be a formatted address hence needs to find its substrate format first */
   const sAddr = getSubstrateAddress(address);
   const chain = useChain(sAddr);

@@ -42,7 +42,7 @@ export const CONDITION_MAP = {
   REMOVE_ALL: 2
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();

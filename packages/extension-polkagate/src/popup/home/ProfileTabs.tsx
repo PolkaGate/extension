@@ -20,7 +20,7 @@ interface Props {
 const ITEM_WIDTH = 130;
 const OFFSET = 10;
 
-function ProfileTabs ({ orderedAccounts }: Props): React.ReactElement {
+function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
 

@@ -14,14 +14,14 @@ export default class EndpointManager {
   private endpoints: SavedEndpoints = {};
   private listeners = new Set<Listener>();
 
-  constructor () {
+  constructor() {
     // Load endpoints from storage and set up storage change listener
     this.loadFromStorage();
     chrome.storage.onChanged.addListener(this.handleStorageChange);
   }
 
   // Load endpoints from chrome storage
-  private loadFromStorage () {
+  private loadFromStorage() {
     chrome.storage.local.get('endpoints', (result: { endpoints?: SavedEndpoints }) => {
       if (result.endpoints) {
         this.endpoints = result.endpoints;
@@ -31,7 +31,7 @@ export default class EndpointManager {
   }
 
   // Save endpoints to chrome storage
-  private saveToStorage () {
+  private saveToStorage() {
     try {
       chrome.storage.local.set({ endpoints: this.endpoints }).catch(console.error);
     } catch (error) {
@@ -48,7 +48,7 @@ export default class EndpointManager {
   };
 
   // Notify all listeners about endpoint changes
-  private notifyListeners () {
+  private notifyListeners() {
     Object.entries(this.endpoints).forEach(([address, endpointInfo]) => {
       Object.entries(endpointInfo).forEach(([genesisHash, endpoint]) => {
         this.listeners.forEach((listener) => listener(address, genesisHash, endpoint));
@@ -57,17 +57,17 @@ export default class EndpointManager {
   }
 
   // Get a specific endpoint
-  get (address: string, genesisHash: string): EndpointType | undefined {
+  get(address: string, genesisHash: string): EndpointType | undefined {
     return this.endpoints[address]?.[genesisHash];
   }
 
   // Get all endpoints
-  getEndpoints (): SavedEndpoints | undefined {
+  getEndpoints(): SavedEndpoints | undefined {
     return this.endpoints;
   }
 
   // Set a specific endpoint
-  set (address: string, genesisHash: string, endpoint: EndpointType) {
+  set(address: string, genesisHash: string, endpoint: EndpointType) {
     if (!this.endpoints[address]) {
       this.endpoints[address] = {};
     }
@@ -78,17 +78,17 @@ export default class EndpointManager {
   }
 
   // Check if an endpoint should be in auto mode
-  shouldBeOnAutoMode (endpoint: EndpointType) {
+  shouldBeOnAutoMode(endpoint: EndpointType) {
     return endpoint.isAuto && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
   }
 
   // Subscribe a listener to endpoint changes
-  subscribe (listener: Listener) {
+  subscribe(listener: Listener) {
     this.listeners.add(listener);
   }
 
   // Unsubscribe a listener from endpoint changes
-  unsubscribe (listener: Listener) {
+  unsubscribe(listener: Listener) {
     this.listeners.delete(listener);
   }
 }

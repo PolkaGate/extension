@@ -22,7 +22,7 @@ interface AddressDetailsProps {
   accountInfo: DeriveAccountInfo | undefined | null
 }
 
-function AccountIconsFs ({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
+function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
 
   const onAction = useContext(ActionContext);

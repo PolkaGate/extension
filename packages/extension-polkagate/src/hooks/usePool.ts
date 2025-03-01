@@ -13,7 +13,7 @@ import { AUTO_MODE } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 import { useInfo } from '.';
 
-export default function usePool (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
+export default function usePool(address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
   const { decimal: currentDecimal, endpoint, formatted, token: currentToken } = useInfo(address);
   const isFetching = useContext(FetchingContext);
 

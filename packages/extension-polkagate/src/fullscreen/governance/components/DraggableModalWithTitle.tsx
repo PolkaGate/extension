@@ -21,7 +21,7 @@ interface Props {
   icon?: string | IconDefinition;
 }
 
-export function DraggableModalWithTitle ({ children, icon, maxHeight = 740, minHeight = 615, onClose, open, title, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModalWithTitle({ children, icon, maxHeight = 740, minHeight = 615, onClose, open, title, width = 500 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);

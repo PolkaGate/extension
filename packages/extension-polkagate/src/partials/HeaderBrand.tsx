@@ -82,7 +82,7 @@ const LeftIcon = ({ onBackClick, showBackArrow, showBrand }: {
   );
 };
 
-const CenterItem = ({ showBrand, text, withSteps }: { showBrand?: boolean, text?: React.ReactNode, withSteps?: Step | null}) => (
+const CenterItem = ({ showBrand, text, withSteps }: { showBrand?: boolean, text?: React.ReactNode, withSteps?: Step | null }) => (
   <Grid display='inline-flex' item>
     <Typography color='text.primary' fontFamily={showBrand ? 'Eras' : 'inherit'} fontWeight={400} sx={{ fontSize: showBrand ? '29px' : '18px', lineHeight: showBrand ? 'inherit' : 1.9 }}>
       {text}
@@ -97,53 +97,53 @@ const CenterItem = ({ showBrand, text, withSteps }: { showBrand?: boolean, text?
   </Grid>
 );
 
-const RightItem = ({ _handleMenuClick, _onClose, fullScreenURL, isRefreshing, onClose, onRefresh, showAccountMenu, showBrand, showClose, showCloseX, showFullScreen, showMenu }: { _onClose: () => void, showCloseX?: boolean, isRefreshing?: boolean, showBrand?: boolean, _handleMenuClick: () => void, fullScreenURL?: string, showFullScreen?: boolean, showAccountMenu?: boolean, onRefresh?: () => void, showClose?: boolean, showMenu?: boolean, onClose?: () => void}) => {
+const RightItem = ({ _handleMenuClick, _onClose, fullScreenURL, isRefreshing, onClose, onRefresh, showAccountMenu, showBrand, showClose, showCloseX, showFullScreen, showMenu }: { _onClose: () => void, showCloseX?: boolean, isRefreshing?: boolean, showBrand?: boolean, _handleMenuClick: () => void, fullScreenURL?: string, showFullScreen?: boolean, showAccountMenu?: boolean, onRefresh?: () => void, showClose?: boolean, showMenu?: boolean, onClose?: () => void }) => {
   const theme = useTheme();
 
   return (
     <Grid item textAlign='right' xs={showFullScreen && showAccountMenu ? 2.7 : 1.4}>
       {!onRefresh && !showClose &&
-      <Grid container direction='row' item width='fit-content'>
-        {showFullScreen && fullScreenURL &&
-          <FullScreenIcon url={fullScreenURL} />
-        }
-        <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
-          {showMenu &&
-            <MenuIcon
-              sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
-            />
+        <Grid container direction='row' item width='fit-content'>
+          {showFullScreen && fullScreenURL &&
+            <FullScreenIcon url={fullScreenURL} />
           }
-          {showAccountMenu &&
-            <MoreVertIcon
-              sx={{ color: 'secondary.light', fontSize: '33px' }}
-            />
-          }
-        </IconButton>
-      </Grid>
+          <IconButton aria-label='menu' color='inherit' edge='start' onClick={_handleMenuClick} size='small' sx={{ p: 0, visibility: showMenu || showAccountMenu ? 'visible' : 'hidden' }}>
+            {showMenu &&
+              <MenuIcon
+                sx={{ color: showBrand ? theme.palette.mode === 'dark' ? 'text.primary' : 'secondary.light' : 'secondary.light', fontSize: 39 }}
+              />
+            }
+            {showAccountMenu &&
+              <MoreVertIcon
+                sx={{ color: 'secondary.light', fontSize: '33px' }}
+              />
+            }
+          </IconButton>
+        </Grid>
       }
       {!!onRefresh &&
-      <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
-        <FontAwesomeIcon
-          color={theme.palette.secondary.light}
-          icon={faRefresh}
-          size='lg'
-          spin={isRefreshing}
-        />
-      </IconButton>
+        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onRefresh} size='small' sx={{ p: 0 }}>
+          <FontAwesomeIcon
+            color={theme.palette.secondary.light}
+            icon={faRefresh}
+            size='lg'
+            spin={isRefreshing}
+          />
+        </IconButton>
       }
       {showClose &&
-      <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
-        {showCloseX
-          ? <CloseIcon sx={{ fontSize: 40 }} />
-          : <VaadinIcon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ color: `${theme.palette.secondary.light}`, height: '22px', width: '22px' }} />
-        }
-      </IconButton>
+        <IconButton aria-label='menu' color='inherit' edge='start' onClick={onClose || _onClose} size='small' sx={{ p: 0 }}>
+          {showCloseX
+            ? <CloseIcon sx={{ fontSize: 40 }} />
+            : <VaadinIcon icon={`vaadin:home${theme.palette.mode === 'light' ? '-o' : ''}`} style={{ color: `${theme.palette.secondary.light}`, height: '22px', width: '22px' }} />
+          }
+        </IconButton>
       }
     </Grid>
   );
 };
 
-function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
+function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = '/', isRefreshing, noBorder = false, onBackClick, onClose, onRefresh, paddingBottom = 11, shortBorder, showAccountMenu, showBackArrow, showBrand, showClose, showCloseX, showFullScreen = false, showMenu, style, text, withSteps = null }: Props): React.ReactElement<Props> {
   const onAction = useContext(ActionContext);
   const setIconRef = useRef(null);
   const setMenuRef = useRef(null);
@@ -187,11 +187,11 @@ function HeaderBrand ({ _centerItem, address, backgroundDefault, fullScreenURL =
             showBrand={showBrand}
           />
           {_centerItem ??
-           <CenterItem
-             showBrand={showBrand}
-             text={text}
-             withSteps={withSteps}
-           />
+            <CenterItem
+              showBrand={showBrand}
+              text={text}
+              withSteps={withSteps}
+            />
           }
           <RightItem
             _handleMenuClick={_handleMenuClick}

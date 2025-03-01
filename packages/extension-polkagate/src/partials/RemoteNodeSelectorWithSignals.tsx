@@ -251,7 +251,7 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, onCl
   }, [onExtension]);
 
   return (
-    <Grid component = 'button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: isDark && !onExtension ? 2 : 1, borderColor: onExtension ? theme.palette.secondary.light : 'divider', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
+    <Grid component='button' container item onClick={onClick} sx={{ bgcolor: bgcolorOnAccountDetail, border: isDark && !onExtension ? 2 : 1, borderColor: onExtension ? theme.palette.secondary.light : 'divider', borderRadius: '5px', cursor: 'pointer', height: `${iconSize + 7}px`, position: 'relative', width: `${iconSize + 7}px`, zIndex: 10 }}>
       {isLightClient
         ? <LightClientEndpointIcon sx={{ bottom: '2px', color: SIGNAL_COLORS.orange, fontSize: `${iconSize}px`, left: '2px', position: 'absolute' }} />
         : <NodeStatusIcon
@@ -265,7 +265,7 @@ const ListIndicator = ({ currentDelay, defaultColor, endpointUrl, iconSize, onCl
   );
 };
 
-function RemoteNodeSelectorWithSignals ({ address, iconSize = 35 }: Props): React.ReactElement {
+function RemoteNodeSelectorWithSignals({ address, iconSize = 35 }: Props): React.ReactElement {
   const theme = useTheme();
 
   const { endpoint } = useEndpoint(address);

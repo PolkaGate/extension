@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { POLKADOT_GENESIS_HASH } from '../util/constants';
 import { getJsonFileFromRepo } from '../util/getMS';
 
-export default function useMerkleScience (address: string | AccountId | null | undefined, chain: Chain | null | undefined, initialize?: boolean): MsData | undefined {
+export default function useMerkleScience(address: string | AccountId | null | undefined, chain: Chain | null | undefined, initialize?: boolean): MsData | undefined {
   const [data, setData] = useState<MsData>();
 
   useEffect(() => {

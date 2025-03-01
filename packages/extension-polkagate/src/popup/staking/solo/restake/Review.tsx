@@ -44,7 +44,7 @@ interface Props {
   rebonded: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
 }
 
-export default function Review ({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, estimatedFee, formatted, rebonded, setShow, show, total }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
   const name = useAccountDisplay(address);

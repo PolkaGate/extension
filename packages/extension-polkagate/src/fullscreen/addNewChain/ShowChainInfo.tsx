@@ -41,7 +41,7 @@ interface SelectedChainInfo {
 
 const TOKEN_PRICE_KEY = 'tokenPrice';
 
-export default function ShowChainInfo ({ metadata, price, style }: Props): React.ReactElement {
+export default function ShowChainInfo({ metadata, price, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

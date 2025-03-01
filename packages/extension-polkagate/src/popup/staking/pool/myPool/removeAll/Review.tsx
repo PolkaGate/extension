@@ -38,7 +38,7 @@ interface Props {
   mode: 'UnbondAll' | 'RemoveAll';
 }
 
-export default function Review ({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
+export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -129,7 +129,7 @@ export default function Review ({ address, api, chain, formatted, mode, pool, po
           const dummyParams = [1, 1];
 
           poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted)
-          // @ts-ignore
+            // @ts-ignore
             .then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee || BN_ZERO) as Balance)))
             .catch(console.error);
         }

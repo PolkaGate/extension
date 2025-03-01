@@ -37,7 +37,7 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function Review ({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function Review({ address, delegateInformation, estimatedFee, selectedProxy, setModalHeight, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, genesisHash, token } = useInfo(address);
   const ref = useRef(null);

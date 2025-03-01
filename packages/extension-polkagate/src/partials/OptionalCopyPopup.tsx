@@ -19,7 +19,7 @@ interface Props {
   setAnchorEl: (value: React.SetStateAction<HTMLButtonElement | null>) => void;
 }
 
-function OptionalCopyPopup ({ address, setAnchorEl }: Props): React.ReactElement {
+function OptionalCopyPopup({ address, setAnchorEl }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chain, chainName } = useInfo(address);
   const options = useContext(GenesisHashOptionsContext);

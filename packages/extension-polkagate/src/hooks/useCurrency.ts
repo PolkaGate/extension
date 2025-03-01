@@ -14,7 +14,7 @@ import { USD_CURRENCY } from '../util/currencyList';
  * get the selected currency
  * @returns CurrencyItemType
  */
-export default function useCurrency (): CurrencyItemType | undefined {
+export default function useCurrency(): CurrencyItemType | undefined {
   const { currency, setCurrency } = useContext(CurrencyContext);
 
   useEffect(() => {

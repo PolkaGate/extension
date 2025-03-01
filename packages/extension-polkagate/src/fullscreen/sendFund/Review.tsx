@@ -28,7 +28,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
 }
 
-export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -80,7 +80,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
           <DisplayValue dividerHeight='1px' title={t('Amount')}>
             <Grid alignItems='center' container item sx={{ height: '42px' }}>
               <ShowBalance
-                balance={inputs?.amount && balances?.decimal ? amountToMachine(inputs.amount, balances?.decimal) : undefined }
+                balance={inputs?.amount && balances?.decimal ? amountToMachine(inputs.amount, balances?.decimal) : undefined}
                 decimal={balances?.decimal}
                 decimalPoint={4}
                 token={balances?.token}

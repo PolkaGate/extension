@@ -6,7 +6,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { decodeMultiLocation } from '../../utils';
 
 //@ts-ignore
-export async function getAssets (addresses, api, assets, chainName, results) {
+export async function getAssets(addresses, api, assets, chainName, results) {
   try {
     for (const asset of assets) {
       const isForeignAssets = asset.isForeign;

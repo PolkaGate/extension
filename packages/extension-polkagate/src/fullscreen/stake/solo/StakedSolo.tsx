@@ -32,7 +32,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo ({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

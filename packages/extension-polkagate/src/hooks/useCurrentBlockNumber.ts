@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { useApi } from '.';
 
-export default function useCurrentBlockNumber (address: AccountId | string | undefined): number | undefined {
+export default function useCurrentBlockNumber(address: AccountId | string | undefined): number | undefined {
   const api = useApi(address);
 
   const [blockNumber, setCurrentBlockNumber] = useState<number | undefined>();

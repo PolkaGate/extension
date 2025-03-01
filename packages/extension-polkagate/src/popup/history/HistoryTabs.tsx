@@ -22,7 +22,7 @@ interface HistoryTabsProps {
   setTabIndex: React.Dispatch<React.SetStateAction<TAB_MAP>>;
 }
 
-export default function HistoryTabs ({ address, setTabIndex, tabIndex }: HistoryTabsProps): React.ReactElement {
+export default function HistoryTabs({ address, setTabIndex, tabIndex }: HistoryTabsProps): React.ReactElement {
   const { t } = useTranslation();
   const { chain } = useInfo(address);
   const isExtensionMode = useIsExtensionPopup();
@@ -68,46 +68,46 @@ export default function HistoryTabs ({ address, setTabIndex, tabIndex }: History
           value={TAB_MAP.TRANSFERS}
         />
         {STAKING_CHAINS.includes(chain?.genesisHash ?? '') &&
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
+          <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={5} />
         }
         {STAKING_CHAINS.includes(chain?.genesisHash ?? '') &&
-            <Tab
-              label={t('Staking')}
-              sx={{
-                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
-                  color: 'secondary.light',
-                  fontWeight: 500
-                },
-                color: 'text.primary',
-                fontSize: isExtensionMode ? '16px' : '18px',
-                fontWeight: 400,
-                minWidth: isExtensionMode ? '70px' : '108px',
-                p: isExtensionMode ? '12px' : undefined,
-                textTransform: 'capitalize'
-              }}
-              value={TAB_MAP.STAKING}
-            />
+          <Tab
+            label={t('Staking')}
+            sx={{
+              ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                color: 'secondary.light',
+                fontWeight: 500
+              },
+              color: 'text.primary',
+              fontSize: isExtensionMode ? '16px' : '18px',
+              fontWeight: 400,
+              minWidth: isExtensionMode ? '70px' : '108px',
+              p: isExtensionMode ? '12px' : undefined,
+              textTransform: 'capitalize'
+            }}
+            value={TAB_MAP.STAKING}
+          />
         }
         {GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '') &&
-            <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={6} />
+          <Tab disabled icon={<Divider orientation='vertical' sx={{ backgroundColor: 'divider', height: '19px', mx: '5px', my: 'auto' }} />} label='' sx={{ minWidth: '1px', p: '0', width: '1px' }} value={6} />
         }
         {GOVERNANCE_CHAINS.includes(chain?.genesisHash ?? '') &&
-            <Tab
-              label={t('Governance')}
-              sx={{
-                ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
-                  color: 'secondary.light',
-                  fontWeight: 500
-                },
-                color: 'text.primary',
-                fontSize: isExtensionMode ? '16px' : '18px',
-                fontWeight: 400,
-                minWidth: isExtensionMode ? '70px' : '108px',
-                p: isExtensionMode ? '12px' : undefined,
-                textTransform: 'capitalize'
-              }}
-              value={TAB_MAP.GOVERNANCE}
-            />
+          <Tab
+            label={t('Governance')}
+            sx={{
+              ':is(button.MuiButtonBase-root.MuiTab-root.Mui-selected)': {
+                color: 'secondary.light',
+                fontWeight: 500
+              },
+              color: 'text.primary',
+              fontSize: isExtensionMode ? '16px' : '18px',
+              fontWeight: 400,
+              minWidth: isExtensionMode ? '70px' : '108px',
+              p: isExtensionMode ? '12px' : undefined,
+              textTransform: 'capitalize'
+            }}
+            value={TAB_MAP.GOVERNANCE}
+          />
         }
       </Tabs>
     </Box>

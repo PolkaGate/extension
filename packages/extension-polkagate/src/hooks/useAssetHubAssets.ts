@@ -15,7 +15,7 @@ import { useInfo } from '.';
 /**
  * @description To get all available assets on asset hubs for an address based on its chain
  */
-export default function useAssetHubAssets (address: AccountId | string | undefined): DropdownOption[] | undefined | null {
+export default function useAssetHubAssets(address: AccountId | string | undefined): DropdownOption[] | undefined | null {
   const { api, genesisHash: accountGenesisHash } = useInfo(address);
   const [assets, setAssets] = useState<DropdownOption[] | null>();
 

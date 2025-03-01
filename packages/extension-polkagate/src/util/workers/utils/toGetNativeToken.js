@@ -8,7 +8,7 @@ import { getPriceIdByChainName } from '../../utils';
 // eslint-disable-next-line import/extensions
 import { balancify } from '.';
 
-export async function toGetNativeToken (addresses, api, chainName) {
+export async function toGetNativeToken(addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));

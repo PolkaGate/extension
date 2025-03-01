@@ -14,7 +14,7 @@ interface Props {
   iconWidth?: number;
 }
 
-function OptionalCopyButton ({ address, iconWidth = 20 }: Props): React.ReactElement {
+function OptionalCopyButton({ address, iconWidth = 20 }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

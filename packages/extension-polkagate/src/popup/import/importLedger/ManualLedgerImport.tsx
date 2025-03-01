@@ -22,7 +22,7 @@ interface Props {
   setAddressOffset: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function ManualLedgerImport ({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: Props): React.ReactElement {
+export default function ManualLedgerImport({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _onSetAccountIndex = useCallback((_value: number | string) => {

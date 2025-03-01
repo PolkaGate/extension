@@ -9,7 +9,7 @@ import { AUTO_MODE } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 import { useInfo } from '.';
 
-export default function useMyPools (address: string): MyPoolInfo[] | null | undefined {
+export default function useMyPools(address: string): MyPoolInfo[] | null | undefined {
   const [myPools, setMyPools] = useState<MyPoolInfo[] | undefined | null>();
   const { endpoint, formatted } = useInfo(address);
 

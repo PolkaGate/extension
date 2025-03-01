@@ -30,7 +30,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -47,7 +47,7 @@ function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, formatted } = useInfo(address);

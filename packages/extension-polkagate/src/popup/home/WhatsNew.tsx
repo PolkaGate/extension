@@ -19,7 +19,7 @@ interface Props {
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function WhatsNew ({ setShowAlert, show }: Props): React.ReactElement<Props> {
+export default function WhatsNew({ setShowAlert, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -104,25 +104,25 @@ export default function WhatsNew ({ setShowAlert, show }: Props): React.ReactEle
         </Grid>
         <Grid container item justifyContent='center' sx={{ height: '440px', overflow: 'scroll' }}>
           {localNews.map(({ notes, version }) =>
-            (<Grid alignContent='flex-start' container item key={version} sx={{ backgroundColor: 'background.paper', borderColor: 'secondary.light', borderTop: 1, p: '10px' }}>
-              <Grid container item justifyContent='center'>
-                <Typography fontSize='14px'>
-                  {t('Version {{version}}', { replace: { version } })}
-                </Typography>
-              </Grid>
-              <UL
-                notes={notes}
-              />
-              <PButton
-                _ml={0}
-                _mt='10px'
-                // eslint-disable-next-line react/jsx-no-bind
-                _onClick={() => onDismiss(version)}
-                _width={100}
-                text={t('Dismiss')}
-              />
+          (<Grid alignContent='flex-start' container item key={version} sx={{ backgroundColor: 'background.paper', borderColor: 'secondary.light', borderTop: 1, p: '10px' }}>
+            <Grid container item justifyContent='center'>
+              <Typography fontSize='14px'>
+                {t('Version {{version}}', { replace: { version } })}
+              </Typography>
             </Grid>
-            ))}
+            <UL
+              notes={notes}
+            />
+            <PButton
+              _ml={0}
+              _mt='10px'
+              // eslint-disable-next-line react/jsx-no-bind
+              _onClick={() => onDismiss(version)}
+              _width={100}
+              text={t('Dismiss')}
+            />
+          </Grid>
+          ))}
           {!!localNews?.length && localNews.length > 1 &&
             <PButton
               _ml={0}

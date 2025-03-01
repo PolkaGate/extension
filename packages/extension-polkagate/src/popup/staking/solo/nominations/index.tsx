@@ -33,7 +33,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -66,7 +66,7 @@ export default function Index (): React.ReactElement {
         return nominatedValidatorsIds.includes(id)
       }
       )
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv?.exposure?.others?.find(({ who }: { who: any }) => who?.toString() === stakingAccount?.accountId?.toString())), [selectedValidatorsInfo, stakingAccount?.accountId]);
 

@@ -54,7 +54,7 @@ export const TaskButton = ({ children, disabled, extra, hasChildren, icon, isSub
       {extra}
       <Grid container item justifyContent='flex-end'>
         {!noBorderButton &&
-         <Divider sx={{ bgcolor: 'divider', height: '2px', width: '81%' }} />
+          <Divider sx={{ bgcolor: 'divider', height: '2px', width: '81%' }} />
         }
       </Grid>
       {children}
@@ -141,7 +141,7 @@ export default function HomeMenu(): React.ReactElement {
         <TaskButton
           hasChildren
           icon={
-            <VaadinIcon icon='vaadin:cog' spin ={showSetting} style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
+            <VaadinIcon icon='vaadin:cog' spin={showSetting} style={{ height: '25px', color: `${theme.palette.text.primary}`, width: '25px' }} />
           }
           noBorderButton
           onClick={onSettingClick}

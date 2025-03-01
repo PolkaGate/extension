@@ -19,7 +19,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ExportAllModal ({ open, setDisplayPopup }: Props): React.ReactElement {
+export default function ExportAllModal({ open, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
@@ -61,7 +61,7 @@ export default function ExportAllModal ({ open, setDisplayPopup }: Props): React
         <SimpleModalTitle
           icon='vaadin:download'
           onClose={onClose}
-          title= {t('Export All Accounts')}
+          title={t('Export All Accounts')}
         />
         <Typography fontSize='16px' m='25px auto' textAlign='left' width='88%'>
           {t('All your accounts will be encrypted with a password and stored in a JSON file inside your browser’s download history.')}

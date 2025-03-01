@@ -22,7 +22,7 @@ interface Props {
   track: Track | undefined;
 }
 
-export default function Support ({ address, referendum, track }: Props): React.ReactElement<Props> {
+export default function Support({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const decimal = useDecimal(address);

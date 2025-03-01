@@ -17,7 +17,7 @@ interface Props {
   asModal?: boolean;
 }
 
-function Privacy ({ asModal, setShow, show = false }: Props): React.ReactElement {
+function Privacy({ asModal, setShow, show = false }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {

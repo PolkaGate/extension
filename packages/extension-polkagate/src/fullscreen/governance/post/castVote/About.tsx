@@ -14,7 +14,7 @@ interface Props {
   nextStep: number;
 }
 
-export default function About ({ nextStep, setStep }: Props): React.ReactElement {
+export default function About({ nextStep, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [dontDisplay, setDisplayText] = useState<boolean>(false);
 

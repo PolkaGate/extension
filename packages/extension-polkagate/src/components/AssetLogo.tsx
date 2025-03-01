@@ -27,7 +27,7 @@ function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash,
 
   return (
     <>
-      { subLogo && logo
+      {subLogo && logo
         ? <AssetDualLogo
           asset={logo}
           assetSize={assetSize}

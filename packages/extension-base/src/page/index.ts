@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, RequestTypes, ResponseTypes, SubscriptionMessageTypes, TransportRequestMessage, TransportResponseMessage } from '../background/types';
@@ -32,7 +32,7 @@ export function sendMessage<TMessageType extends MessageTypesWithNullRequest>(me
 export function sendMessage<TMessageType extends MessageTypesWithNoSubscriptions>(message: TMessageType, request: RequestTypes[TMessageType]): Promise<ResponseTypes[TMessageType]>;
 export function sendMessage<TMessageType extends MessageTypesWithSubscriptions>(message: TMessageType, request: RequestTypes[TMessageType], subscriber: (data: SubscriptionMessageTypes[TMessageType]) => void): Promise<ResponseTypes[TMessageType]>;
 
-export function sendMessage<TMessageType extends MessageTypes> (message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
+export function sendMessage<TMessageType extends MessageTypes>(message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
   return new Promise((resolve, reject): void => {
     const id = getId();
 
@@ -50,20 +50,20 @@ export function sendMessage<TMessageType extends MessageTypes> (message: TMessag
 }
 
 // the enable function, called by the dapp to allow access
-export async function enable (origin: string): Promise<Injected> {
+export async function enable(origin: string): Promise<Injected> {
   await sendMessage('pub(authorize.tab)', { origin });
 
   return new Injected(sendMessage);
 }
 
 // redirect users if this page is considered as phishing, otherwise return false
-export async function redirectIfPhishing (): Promise<boolean> {
+export async function redirectIfPhishing(): Promise<boolean> {
   const res = await sendMessage('pub(phishing.redirectIfDenied)');
 
   return res;
 }
 
-export function handleResponse<TMessageType extends MessageTypes> (data: TransportResponseMessage<TMessageType> & { subscription?: string }): void {
+export function handleResponse<TMessageType extends MessageTypes>(data: TransportResponseMessage<TMessageType> & { subscription?: string }): void {
   const handler = handlers[data.id];
 
   if (!handler) {

@@ -11,7 +11,7 @@ import { AUTO_MODE } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
 import { useCurrentEraIndex, useInfo } from '.';
 
-export default function usePoolConsts (address: string | undefined, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
+export default function usePoolConsts(address: string | undefined, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const { chain, endpoint, token } = useInfo(address);
   const eraIndex = useCurrentEraIndex(address);
 

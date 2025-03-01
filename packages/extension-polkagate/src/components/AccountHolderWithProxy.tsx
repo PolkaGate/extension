@@ -19,10 +19,10 @@ interface Props {
   selectedProxyAddress?: string;
   title?: string;
   chain?: Chain | null | undefined;
-  direction?: 'row' | 'column' ;
+  direction?: 'row' | 'column';
 }
 
-function AccountHolderWithProxy ({ address, chain, direction = 'column', selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
+function AccountHolderWithProxy({ address, chain, direction = 'column', selectedProxyAddress, showDivider = false, style, title }: Props): React.ReactElement {
   const _chain = useChain(address);
 
   return (

@@ -211,7 +211,7 @@ const CollapseData = ({ children, open, show, title }: CollapseProps) => {
   );
 };
 
-export default function PoolMoreInfo ({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
+export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo, showPoolInfo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 

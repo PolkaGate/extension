@@ -12,7 +12,7 @@ import React, { useCallback, useEffect } from 'react';
 const MAX_SIZE = '1080px';
 const MAX_FRAME_SIZE = '910px';
 
-export default function FullScreenNFT ({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
+export default function FullScreenNFT({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
   const theme = useTheme();
 
   // Listen to fullscreen change events to track exit from fullscreen mode

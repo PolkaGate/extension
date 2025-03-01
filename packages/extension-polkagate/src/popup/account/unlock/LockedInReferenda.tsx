@@ -26,7 +26,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function LockedInReferenda ({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
+export default function LockedInReferenda({ address, refresh, setRefresh }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -79,7 +79,7 @@ export default function LockedInReferenda ({ address, refresh, setRefresh }: Pro
           <Grid alignItems='center' container item justifyContent='flex-end' sx={{ cursor: unlockableAmount && !unlockableAmount.isZero() ? 'pointer' : undefined, ml: '8px', width: '26px' }}>
             <FontAwesomeIcon
               color={isDisable ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
-              icon={ unlockableAmount && !unlockableAmount.isZero() ? faUnlockAlt : faLock}
+              icon={unlockableAmount && !unlockableAmount.isZero() ? faUnlockAlt : faLock}
               onClick={unlockableAmount && !unlockableAmount.isZero() ? onUnlock : noop}
               shake={shake}
               style={{ height: '25px' }}

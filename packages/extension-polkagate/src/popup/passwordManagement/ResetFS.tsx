@@ -15,7 +15,7 @@ import { PButton, VaadinIcon } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 
-function ResetFS (): React.ReactElement {
+function ResetFS(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();

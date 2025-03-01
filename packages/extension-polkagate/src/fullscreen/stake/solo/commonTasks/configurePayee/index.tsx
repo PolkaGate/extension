@@ -81,7 +81,7 @@ export const ModalTitle = ({ closeProxy, icon, onCancel, setStep, step, text }: 
   );
 };
 
-export default function ConfigurePayee ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function ConfigurePayee({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);

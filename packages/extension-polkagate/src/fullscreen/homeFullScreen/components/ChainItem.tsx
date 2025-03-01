@@ -16,7 +16,7 @@ interface Props {
   disabled: boolean | undefined;
 }
 
-function ChainItem ({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
+function ChainItem({ chain, disabled, isSelected, onclick }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (

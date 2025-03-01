@@ -9,7 +9,7 @@ interface Props {
   color?: string;
 }
 
-export default function RemoveAuth ({ color }: Props): React.ReactElement {
+export default function RemoveAuth({ color }: Props): React.ReactElement {
   return (
     <FontAwesomeIcon
       icon={faTrash}

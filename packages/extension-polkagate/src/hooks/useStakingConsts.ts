@@ -10,7 +10,7 @@ import { BN } from '@polkadot/util';
 import { AUTO_MODE } from '../util/constants';
 import { useCurrentEraIndex, useInfo } from '.';
 
-export default function useStakingConsts (address: string | undefined, stateConsts?: StakingConsts): StakingConsts | null | undefined {
+export default function useStakingConsts(address: string | undefined, stateConsts?: StakingConsts): StakingConsts | null | undefined {
   const { chainName, endpoint, token } = useInfo(address);
   const eraIndex = useCurrentEraIndex(address);
 

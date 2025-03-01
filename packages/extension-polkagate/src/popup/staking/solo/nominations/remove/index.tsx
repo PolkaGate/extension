@@ -36,7 +36,7 @@ interface Props {
   show: boolean;
 }
 
-export default function RemoveValidators ({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
+export default function RemoveValidators({ address, api, chain, formatted, setShow, show, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);

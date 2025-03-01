@@ -25,7 +25,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function LostAccountRecoveryInfo ({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
+export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

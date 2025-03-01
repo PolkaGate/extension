@@ -28,7 +28,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ReservedReasons ({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function ReservedReasons({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const { chain, decimal, formatted } = useInfo(address);
   const accountName = useAccountName(address);
@@ -99,8 +99,8 @@ export default function ReservedReasons ({ address, assetId, identity, setShow, 
                         <FormatPrice
                           amount={value}
                           decimals={decimal}
-                          fontSize= '16px'
-                          fontWeight= {300}
+                          fontSize='16px'
+                          fontWeight={300}
                           price={price}
                         />
                       </Grid>

@@ -76,7 +76,7 @@ const EditAdvance = ({ accountLocks, checked, currentBlock, setChecked, showAdva
   );
 };
 
-export default function DelegateVote ({ accountLocks, address, api, balances, delegateInformation, lockedAmount, setDelegateInformation, setStatus, setStep, tracks }: Props): React.ReactElement {
+export default function DelegateVote({ accountLocks, address, api, balances, delegateInformation, lockedAmount, setDelegateInformation, setStatus, setStep, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const [showAdvance, setShowAdvance] = useState<boolean>(false);
   const currentBlock = useCurrentBlockNumber(address);

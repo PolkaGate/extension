@@ -28,7 +28,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>
 }
 
-export default function EasyMode ({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function EasyMode({ address, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName, decimal, formatted } = useInfo(address);

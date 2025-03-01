@@ -25,7 +25,7 @@ interface Props {
   }[] | undefined;
 }
 
-function ChartTotal ({ assets }: Props): React.ReactElement {
+function ChartTotal({ assets }: Props): React.ReactElement {
   const chartRef = useRef(null);
   const theme = useTheme();
 

@@ -33,7 +33,7 @@ export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceC
  *  returns all user portfolio balance in selected currency
  * @returns null: means not balance found, undefined: when still work in progress, and number indicating user balance in selected currency
  */
-export default function useYouHave (): YouHaveType | undefined | null {
+export default function useYouHave(): YouHaveType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
 

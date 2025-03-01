@@ -24,7 +24,7 @@ interface Props {
   newPassword: string;
 }
 
-function Modify ({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
+function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIsPasswordError, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtensionMode = useIsExtensionPopup();

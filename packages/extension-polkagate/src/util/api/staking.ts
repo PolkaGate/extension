@@ -8,7 +8,7 @@ import type { Proxy, TxResult } from '../types';
 
 import { signAndSend } from './';
 
-export async function createPool (
+export async function createPool(
   api: ApiPromise,
   depositor: string | null,
   signer: KeyringPair,

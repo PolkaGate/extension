@@ -16,7 +16,7 @@ interface Props {
   alert: AlertType;
 }
 
-function Alert ({ alert }: Props): React.ReactElement {
+function Alert({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { removeAlert } = useAlerts();
 

@@ -25,7 +25,7 @@ interface Props {
   prefix?: number;
 }
 
-function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }: Props): React.ReactElement<Props> {
+function AccountIcons({ address, identiconTheme, isSubId, judgements, prefix }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const onAction = useContext(ActionContext);
 

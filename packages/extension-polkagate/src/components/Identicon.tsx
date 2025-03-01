@@ -23,7 +23,7 @@ interface Props {
   value?: AccountId | string | null;
 }
 
-function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
   const { accountIconTheme } = useContext(AccountIconThemeContext);
 
   return (
@@ -34,7 +34,7 @@ function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, 
           onCopy={onCopy}
           prefix={prefix}
           size={size}
-          theme={ accountIconTheme || iconTheme}
+          theme={accountIconTheme || iconTheme}
           value={value}
         />
       </div>

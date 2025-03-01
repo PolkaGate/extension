@@ -34,7 +34,7 @@ interface Props {
   handleTxResult: (txResult: TxResult) => void
 }
 
-export default function SignWithLedger ({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
+export default function SignWithLedger({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

@@ -18,7 +18,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function ExportAccountModal ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function ExportAccountModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isBusy, setIsBusy] = useState<boolean>(false);

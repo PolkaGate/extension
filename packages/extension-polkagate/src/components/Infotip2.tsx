@@ -19,7 +19,7 @@ interface Props {
   fontSize?: string;
 }
 
-function Infotip2 ({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
+function Infotip2({ children, fontSize = '14px', placement = 'top', showInfoMark = false, showQuestionMark = false, showWarningMark, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

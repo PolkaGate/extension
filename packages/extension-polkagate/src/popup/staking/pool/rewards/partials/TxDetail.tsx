@@ -15,7 +15,7 @@ interface Props {
   label: string;
 }
 
-export default function TxDetail ({ label, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ label, txInfo }: Props): React.ReactElement {
   const token = txInfo.api?.registry.chainTokens[0];
 
   return (

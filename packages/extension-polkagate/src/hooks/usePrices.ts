@@ -15,7 +15,7 @@ import { useCurrency } from '.';
  * */
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;
 
-export function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
+export function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
   return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
 
@@ -24,7 +24,7 @@ export function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
  * get all selected chains assets' prices and save in local storage
  * @returns null: means not savedPrice found, happens when the first account is created
  */
-export default function usePrices (): Prices | undefined | null {
+export default function usePrices(): Prices | undefined | null {
   const currency = useCurrency();
 
   const [savedPrice, setSavedPrice] = useState<Prices | null>();

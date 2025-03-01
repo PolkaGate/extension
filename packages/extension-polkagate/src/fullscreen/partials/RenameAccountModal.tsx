@@ -18,7 +18,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function RenameModal ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function RenameModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address);
 

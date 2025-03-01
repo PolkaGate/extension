@@ -106,7 +106,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   );
 };
 
-function AccountInformationForHome ({ accountAssets, address, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForHome({ accountAssets, address, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const nftManager = useMemo(() => new NftManager(), []);
 
   const { t } = useTranslation();

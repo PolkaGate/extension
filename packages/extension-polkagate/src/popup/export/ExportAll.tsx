@@ -12,7 +12,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccounts } from '../../messaging';
 import { HeaderBrand, Passwords } from '../../partials';
 
-export default function ExportAll (): React.ReactElement {
+export default function ExportAll(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);

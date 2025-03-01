@@ -17,7 +17,7 @@ interface Props {
   right?: string;
 }
 
-function AccountLabel ({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
+function AccountLabel({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();

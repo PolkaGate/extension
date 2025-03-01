@@ -15,7 +15,7 @@ interface Props {
   address: string;
 }
 
-export default function Info ({ address }: Props): React.ReactElement {
+export default function Info({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const info = useStakingConsts(address);
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);

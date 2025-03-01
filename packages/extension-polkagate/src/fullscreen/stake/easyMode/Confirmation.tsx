@@ -44,7 +44,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
   );
 };
 
-export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -19,7 +19,7 @@ import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import { calcBlockTime } from '../fullscreen/governance/utils/util';
 import { useInfo, useTranslation } from '.';
 
-export default function useConvictionOptions (address: string | AccountId | undefined, blockTime: BN | undefined): DropdownOption[] | undefined {
+export default function useConvictionOptions(address: string | AccountId | undefined, blockTime: BN | undefined): DropdownOption[] | undefined {
   const { t } = useTranslation();
   const { api, genesisHash } = useInfo(address);
 

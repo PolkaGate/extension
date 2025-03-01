@@ -10,7 +10,7 @@ import { AlertContext } from '../components';
 
 export const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
 
-export default function useAlerts () {
+export default function useAlerts() {
   const { alerts, setAlerts } = useContext(AlertContext);
 
   const random = useMemo(() => new Chance(), []);

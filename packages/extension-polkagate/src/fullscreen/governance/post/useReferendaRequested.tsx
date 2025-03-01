@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { useCurrency, useInfo, useTokenPrice } from '../../../hooks';
 
-interface ReferendaRequested{
+interface ReferendaRequested {
   rAssetInCurrency: number,
   rCurrencySign: string,
   rDecimal: number,
@@ -21,7 +21,7 @@ const DEFAULT_OUTPUT = {
   rToken: undefined
 };
 
-export default function useReferendaRequested (address: string | undefined, referendum: Referendum | undefined): ReferendaRequested | typeof DEFAULT_OUTPUT {
+export default function useReferendaRequested(address: string | undefined, referendum: Referendum | undefined): ReferendaRequested | typeof DEFAULT_OUTPUT {
   const { chainName, decimal, token } = useInfo(address);
   const currency = useCurrency();
 

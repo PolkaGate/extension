@@ -9,7 +9,7 @@ import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/
 import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
 
-export async function signAndSend (
+export async function signAndSend(
   api: ApiPromise,
   submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
   _signer: KeyringPair,
@@ -88,7 +88,7 @@ export async function signAndSend (
   });
 }
 
-export async function send (
+export async function send(
   from: string | AccountId,
   api: ApiPromise,
   ptx: SubmittableExtrinsic<'promise', ISubmittableResult>,

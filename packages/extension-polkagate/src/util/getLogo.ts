@@ -12,7 +12,7 @@ import { sanitizeChainName } from './utils';
 
 const endpoints = createWsEndpoints();
 
-export default function getLogo (info: string | undefined | Chain, token?: string): string | undefined {
+export default function getLogo(info: string | undefined | Chain, token?: string): string | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {

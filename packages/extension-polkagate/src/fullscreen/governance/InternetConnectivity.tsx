@@ -6,7 +6,7 @@
 import WifiOffIcon from '@mui/icons-material/WifiOff';
 import React, { useEffect, useState } from 'react';
 
-async function checkInternetAccess () {
+async function checkInternetAccess() {
   try {
     const response = await fetch('https://www.google.com', {
       cache: 'no-store', // Ensure it doesn't get cached
@@ -27,7 +27,7 @@ async function checkInternetAccess () {
 
 const CHECK_INTERNET_CONNECTIVITY_PERIOD = 5000; // ms
 
-function InternetConnectivity (): React.ReactElement {
+function InternetConnectivity(): React.ReactElement {
   const [isOnline, setIsOnline] = useState<boolean>();
 
   useEffect(() => {
@@ -49,17 +49,17 @@ function InternetConnectivity (): React.ReactElement {
     <>
       {
         isOnline === false &&
-            <WifiOffIcon
-              sx={{
-                '@keyframes blink-animation': {
-                  to: {
-                    visibility: 'hidden'
-                  }
-                },
-                animation: 'blink-animation 1s steps(5, start) infinite',
-                color: '#FF002B'
-              }}
-            />
+        <WifiOffIcon
+          sx={{
+            '@keyframes blink-animation': {
+              to: {
+                visibility: 'hidden'
+              }
+            },
+            animation: 'blink-animation 1s steps(5, start) infinite',
+            color: '#FF002B'
+          }}
+        />
       }
     </>
   );

@@ -29,7 +29,7 @@ import getLogo from '../../../../util/getLogo';
 import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import TxDetail from './TxDetail';
 
-export default function TuneUp (): React.ReactElement {
+export default function TuneUp(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, chain, chainName, formatted } = useInfo(address);
@@ -182,7 +182,7 @@ export default function TuneUp (): React.ReactElement {
             <Typography fontSize='14px' fontWeight={300}>
               {t('Changing your account\'s position to be a better one.')}
             </Typography>
-            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper } />
+            <LabelValue label={t('Current bag upper')} value={rebagInfo?.currentUpper} />
             <LabelValue label={t('My staked amount')} mt='5px' value={rebagInfo?.currentWeight} />
             {!putInFrontInfo?.shouldPutInFront
               ? <Grid item mt='10px' textAlign='center' xs={12}>

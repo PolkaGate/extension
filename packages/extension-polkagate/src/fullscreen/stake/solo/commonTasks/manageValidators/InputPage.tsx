@@ -26,7 +26,7 @@ interface Props {
   inputs: StakingInputs | undefined;
 }
 
-function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -43,7 +43,7 @@ function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -56,7 +56,7 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingAccount]);
+    , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {

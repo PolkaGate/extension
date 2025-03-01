@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useApi } from '.';
 
 /** This hook is going to be used for users account existing in the extension */
-export default function useCurrentEraIndex (address: AccountId | string | undefined): number | undefined {
+export default function useCurrentEraIndex(address: AccountId | string | undefined): number | undefined {
   const [index, setIndex] = useState<number>();
   const api = useApi(address);
 

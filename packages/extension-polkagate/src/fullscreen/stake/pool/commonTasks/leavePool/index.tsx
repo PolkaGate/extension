@@ -31,7 +31,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function LeavePool ({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function LeavePool({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const stakingConsts = useStakingConsts(address);
   const { api, decimal, formatted, token } = useInfo(address);

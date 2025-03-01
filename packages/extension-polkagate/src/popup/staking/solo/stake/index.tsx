@@ -32,7 +32,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -98,7 +98,7 @@ export default function Index (): React.ReactElement {
       ? [amountAsBN, settings.payee]
       : [settings.stashId, amountAsBN, settings.payee]
     : [amountAsBN]
-  , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
+    , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
 
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:

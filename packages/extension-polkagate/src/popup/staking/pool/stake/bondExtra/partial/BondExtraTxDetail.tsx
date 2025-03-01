@@ -16,7 +16,7 @@ interface Props {
   pool: MyPoolInfo;
 }
 
-export default function CreatePoolTxDetail ({ pool, txInfo }: Props): React.ReactElement {
+export default function CreatePoolTxDetail({ pool, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = txInfo.api?.registry.chainTokens[0];
 

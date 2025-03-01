@@ -15,7 +15,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
 import { HeaderBrand } from '../../partials';
 
-export default function Export (): React.ReactElement {
+export default function Export(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const theme = useTheme();

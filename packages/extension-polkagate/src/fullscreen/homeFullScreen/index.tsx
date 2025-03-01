@@ -18,7 +18,7 @@ import ProfileTabsFullScreen from './partials/ProfileTabsFullScreen';
 import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
 import WatchList from './partials/WatchList';
 
-function HomePageFullScreen (): React.ReactElement {
+function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
 

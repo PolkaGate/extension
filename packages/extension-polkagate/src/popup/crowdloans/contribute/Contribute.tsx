@@ -39,7 +39,7 @@ interface Props {
   myContribution?: string | Balance;
 }
 
-export default function Contribute ({ api, chain, crowdloan, crowdloansId, currentBlockNumber, formatted, minContribution, myContribution, setShowContribute, showContribute = false }: Props): React.ReactElement {
+export default function Contribute({ api, chain, crowdloan, crowdloansId, currentBlockNumber, formatted, minContribution, myContribution, setShowContribute, showContribute = false }: Props): React.ReactElement {
   const { t } = useTranslation();
   const balances = useBalances(String(formatted));
   const decimal = useDecimal(formatted);

@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 
-export default function ObserveResize (element: Element, maxSize: number, onResize: () => void): void {
+export default function ObserveResize(element: Element, maxSize: number, onResize: () => void): void {
   useEffect(() => {
     if (!element) {
       return;

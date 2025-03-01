@@ -25,7 +25,7 @@ const SIZE = {
   }
 };
 
-export default function ItemAvatar ({ image, onFullscreen, size = 'small' }: ItemAvatarProp): React.ReactElement {
+export default function ItemAvatar({ image, onFullscreen, size = 'small' }: ItemAvatarProp): React.ReactElement {
   const theme = useTheme();
   const [showLoading, setShowLoading] = useState<boolean>(true);
 

@@ -14,7 +14,7 @@ interface Props {
   fontWeight?: number;
 }
 
-export default function DisplayInfo ({ caption, fontSize = '16px', fontWeight = 400, showDivider = true, value }: Props) {
+export default function DisplayInfo({ caption, fontSize = '16px', fontWeight = 400, showDivider = true, value }: Props) {
   return (
     <Grid alignItems='center' container direction='column' fontSize={fontSize} fontWeight={fontWeight} justifyContent='center'>
       <Grid container item width='fit-content'>
@@ -26,9 +26,9 @@ export default function DisplayInfo ({ caption, fontSize = '16px', fontWeight = 
         </Typography>
       </Grid>
       {showDivider &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
-          </Grid>}
+        <Grid alignItems='center' container item justifyContent='center'>
+          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mx: '6px', width: '240px' }} />
+        </Grid>}
     </Grid>
   );
 }

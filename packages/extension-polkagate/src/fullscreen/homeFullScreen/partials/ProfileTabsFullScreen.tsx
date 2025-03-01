@@ -19,7 +19,7 @@ interface Props {
 
 export const HIDDEN_PERCENT = '50%';
 
-function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement {
+function ProfileTabsFullScreen({ orderedAccounts }: Props): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
 
   const [selectedProfile, setSelectedProfile] = useState<string>();

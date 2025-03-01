@@ -46,7 +46,7 @@ export const STEPS = {
 
 export type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function StakingOptions (): React.ReactElement {
+export default function StakingOptions(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

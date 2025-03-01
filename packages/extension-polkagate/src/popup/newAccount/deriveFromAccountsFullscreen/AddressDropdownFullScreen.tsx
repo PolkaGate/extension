@@ -20,7 +20,7 @@ interface Props {
   withoutChainLogo?: boolean;
 }
 
-export default function AddressDropdownFullScreen ({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, style, withoutChainLogo }: Props): React.ReactElement<Props> {
+export default function AddressDropdownFullScreen({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName, style, withoutChainLogo }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef<HTMLDivElement>(null);

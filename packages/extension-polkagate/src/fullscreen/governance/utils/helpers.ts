@@ -157,7 +157,7 @@ export interface FilteredVotes {
 
 export const isFinished = (referendum: Referendum | undefined) => referendum?.status ? FINISHED_REFERENDUM_STATUSES.includes(referendum.status) : undefined;
 
-export async function getReferendumStatistics (chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
+export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
   // console.log('Getting ref stat from sb ... ');
 
   return new Promise((resolve) => {
@@ -184,7 +184,7 @@ export async function getReferendumStatistics (chainName: string, type: 'referen
   });
 }
 
-export async function getReferendumVotesFromSubscan (chainName: string, referendumIndex: number | undefined): Promise<string | null> {
+export async function getReferendumVotesFromSubscan(chainName: string, referendumIndex: number | undefined): Promise<string | null> {
   if (!referendumIndex) {
     console.log('referendumIndex is undefined while getting Referendum Votes from Sb ');
 
@@ -217,7 +217,7 @@ export async function getReferendumVotesFromSubscan (chainName: string, referend
   });
 }
 
-export async function getLatestReferendums (chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
+export async function getLatestReferendums(chainName: string, listingLimit = 30): Promise<LatestReferenda[] | null> {
   // console.log(`Getting Latest referendum on ${chainName} from PA ...`);
 
   const requestOptions = {
@@ -246,7 +246,7 @@ export async function getLatestReferendums (chainName: string, listingLimit = 30
     });
 }
 
-export async function getAllVotesFromPA (chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
+export async function getAllVotesFromPA(chainName: string, refIndex: number, listingLimit = 100, isFellowship: boolean | undefined): Promise<AllVotesType | null> {
   // console.log(`Getting All Votes on ${chainName} for refIndex: ${refIndex} from PA ...`);
 
   const requestOptions = {
@@ -273,7 +273,7 @@ export async function getAllVotesFromPA (chainName: string, refIndex: number, li
     });
 }
 
-export async function getTrackOrFellowshipReferendumsPA (chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
+export async function getTrackOrFellowshipReferendumsPA(chainName: string, page = 1, track?: number): Promise<LatestReferenda[] | null> {
   console.log(`Getting refs on ${chainName} track:${track} from PA`);
 
   const requestOptions = {
@@ -302,7 +302,7 @@ export async function getTrackOrFellowshipReferendumsPA (chainName: string, page
     });
 }
 
-export async function getReferendumPA (chainName: string, type: TopMenu, postId: number): Promise<ReferendumPA | null> {
+export async function getReferendumPA(chainName: string, type: TopMenu, postId: number): Promise<ReferendumPA | null> {
   // console.log(`Getting ref #${postId} info with type:${type} on chain:${chainName}  from PA ...`);
 
   const requestOptions = {
@@ -333,7 +333,7 @@ export async function getReferendumPA (chainName: string, type: TopMenu, postId:
     });
 }
 
-export async function getReferendumSb (chainName: string, type: TopMenu, postId: number): Promise<ReferendumSb | null> {
+export async function getReferendumSb(chainName: string, type: TopMenu, postId: number): Promise<ReferendumSb | null> {
   // console.log(`Getting ref #${postId} info from sb ...`);
 
   // Convert postId to uint
@@ -394,7 +394,7 @@ interface RefListSb {
   }[];
 }
 
-export async function getReferendumsListSb (chainName: string, type: 'referenda' | 'fellowship', listingLimit = 30): Promise<RefListSb | null> {
+export async function getReferendumsListSb(chainName: string, type: 'referenda' | 'fellowship', listingLimit = 30): Promise<RefListSb | null> {
   console.log('Getting ref list from sb ...');
 
   return new Promise((resolve) => {
@@ -430,7 +430,7 @@ export async function getReferendumsListSb (chainName: string, type: 'referenda'
  * @param refId The ID of the referendum.
  * @returns A promise that resolves to an array of formatted comments or null if an error occurs.
  */
-export async function getReferendumCommentsSS (chainName: string, refId: string | number): Promise<CommentType[] | null> {
+export async function getReferendumCommentsSS(chainName: string, refId: string | number): Promise<CommentType[] | null> {
   // console.log(`Getting comments of ref ${refId} from SS ...`);
 
   try {

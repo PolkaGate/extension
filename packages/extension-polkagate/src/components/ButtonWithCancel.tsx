@@ -20,7 +20,7 @@ interface Props {
   _isBusy?: boolean;
 }
 
-export default function ButtonWithCancel ({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
+export default function ButtonWithCancel({ _isBusy, _mt, _onClick, _onClickCancel, cancelText, disabled = false, text }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

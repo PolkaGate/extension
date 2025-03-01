@@ -27,7 +27,7 @@ interface Props {
   minWidth?: string;
 }
 
-function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
+function Currency({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef<DOMRect>();
 
@@ -73,7 +73,7 @@ function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', he
         }}
       >
         <Infotip2 text={currencyToShow?.currency}>
-          <Typography color={textColor} fontSize={ fontSize } fontWeight={500}>
+          <Typography color={textColor} fontSize={fontSize} fontWeight={500}>
             {currencyToShow?.sign || '$'}
           </Typography>
         </Infotip2>

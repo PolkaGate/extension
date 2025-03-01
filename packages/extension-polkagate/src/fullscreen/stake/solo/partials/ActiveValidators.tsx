@@ -22,7 +22,7 @@ interface Props {
 
 }
 
-export default function ActiveValidators ({ address, isValidator }: Props): React.ReactElement {
+export default function ActiveValidators({ address, isValidator }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, token } = useInfo(address);

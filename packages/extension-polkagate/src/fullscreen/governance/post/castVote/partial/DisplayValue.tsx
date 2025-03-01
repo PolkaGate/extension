@@ -14,7 +14,7 @@ interface Props {
   childrenFontSize?: string;
 }
 
-export default function DisplayValue ({ children, childrenFontSize = '28px', dividerHeight = '2px', title, topDivider = true }: Props): React.ReactElement<Props> {
+export default function DisplayValue({ children, childrenFontSize = '28px', dividerHeight = '2px', title, topDivider = true }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container direction='column' justifyContent='center'>
       <Grid item>

@@ -19,7 +19,7 @@ interface Props {
   show: boolean;
 }
 
-function ImportAccSubMenuFullScreen ({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenuFullScreen({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

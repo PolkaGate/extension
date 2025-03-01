@@ -38,7 +38,7 @@ interface TopMenuComponentProps {
   color: string;
 }
 
-const TopMenuComponent = React.memo(function TopMenuComponent ({ bgcolor, color, item, onTopMenuMenuMouseEnter, onTopMenuMenuMouseLeave }: TopMenuComponentProps): React.ReactElement<{ item: TopMenu }> {
+const TopMenuComponent = React.memo(function TopMenuComponent({ bgcolor, color, item, onTopMenuMenuMouseEnter, onTopMenuMenuMouseLeave }: TopMenuComponentProps): React.ReactElement<{ item: TopMenu }> {
   return (
     <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} onMouseLeave={() => onTopMenuMenuMouseLeave()}
       sx={{
@@ -62,7 +62,7 @@ const TopMenuComponent = React.memo(function TopMenuComponent ({ bgcolor, color,
   );
 });
 
-export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
+export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();

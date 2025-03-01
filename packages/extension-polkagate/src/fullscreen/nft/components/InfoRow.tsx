@@ -13,7 +13,7 @@ import { Identity, ShortAddress, ShowBalance } from '../../../components';
 import useTranslation from '../../../hooks/useTranslation';
 import { amountToMachine } from '../../../util/utils';
 
-function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThumbnail, link, linkName, price, text, title }: DetailProp): React.ReactElement {
+function InfoRow({ accountId, api, chain, divider = true, inline = true, isThumbnail, link, linkName, price, text, title }: DetailProp): React.ReactElement {
   const { t } = useTranslation();
   const decimal = api?.registry.chainDecimals[0];
   const token = api?.registry.chainTokens[0];

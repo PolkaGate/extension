@@ -31,7 +31,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function Others ({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function Others({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const accountName = useAccountName(address);

@@ -64,7 +64,7 @@ export const LabelValue = ({ asShortAddress, label, labelStyle = { fontSize: '16
   );
 };
 
-export function TrackStats ({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
+export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const { api, decimal, token } = useInfo(address);

@@ -12,7 +12,7 @@ interface HideNumbersProps {
 
 const HIDE_NUMBERS = 'hide_numbers';
 
-export default function useIsHideNumbers (): HideNumbersProps {
+export default function useIsHideNumbers(): HideNumbersProps {
   const [hideNumbers, setHideNumbers] = useState<boolean>();
 
   const toggleHideNumbers = useCallback(() => {

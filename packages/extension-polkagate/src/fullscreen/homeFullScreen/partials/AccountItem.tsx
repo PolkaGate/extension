@@ -26,7 +26,7 @@ interface Props {
   id?: number;
 }
 
-function AccountItem ({ account, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem({ account, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(account.address);
   const accountAssets = useAccountAssets(account.address);

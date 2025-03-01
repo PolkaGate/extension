@@ -33,7 +33,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function AddWatchOnlyFullScreen (): React.ReactElement {
+export default function AddWatchOnlyFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

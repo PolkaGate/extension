@@ -65,7 +65,7 @@ const remainingTime = (seconds: number) => {
 
 export type Mode = 'UnbondAll' | 'RemoveAll';
 
-export default function RemoveAll ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function RemoveAll({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 

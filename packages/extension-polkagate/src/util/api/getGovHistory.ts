@@ -101,7 +101,7 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout
 /**
  * Enhanced POST request with retry logic for rate limiting
  */
-async function postReq<T> (
+async function postReq<T>(
   api: string,
   data: Record<string, unknown> = {},
   option?: Record<string, unknown>,
@@ -129,7 +129,7 @@ async function postReq<T> (
  * @param batchSize Size of each batch
  * @param processor Function to process each batch
  */
-async function processBatch<T> (array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
+async function processBatch<T>(array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
   const results: T[] = [];
 
   for (let i = 0; i < array.length; i += batchSize) {
@@ -150,7 +150,7 @@ async function processBatch<T> (array: T[], batchSize: number, processor: (items
 /**
  * Process a batch of extrinsics
  */
-async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string, prefix: number) {
+async function processExtrinsicsBatch(extrinsics: Extrinsics[], network: string, prefix: number) {
   return Promise.all(
     extrinsics.map(async (extrinsic) => {
       try {
@@ -190,7 +190,7 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
  * @param prefix - chain prefix
  * @returns Promise resolving to ExtrinsicsRequest
  */
-export async function getGovHistory (chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+export async function getGovHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
   if (!chainName || prefix === undefined) {
     return Promise.resolve(nullObject);
   }
@@ -224,7 +224,7 @@ export async function getGovHistory (chainName: string, address: string, pageNum
   };
 }
 
-function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
+function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
   const id = (txDetail.data.params[1]?.value as AccountId).Id as string | undefined;
   const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
 

@@ -39,7 +39,7 @@ export const HEADER_COMPONENT_STYLE = {
   width: 'fit-content'
 };
 
-function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
+function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useContext(GenesisHashOptionsContext);
   const onAction = useContext(ActionContext);

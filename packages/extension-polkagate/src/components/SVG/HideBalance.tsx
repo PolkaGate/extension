@@ -25,7 +25,7 @@ interface IconProps {
 const ClosedEye = ({ color, size = 20 }: IconProps) => (
   <svg
     fill='none'
-    height= {`${size}px`}
+    height={`${size}px`}
     viewBox='0 -5 24 24'
     width={`${size}px`}
     xmlns='http://www.w3.org/2000/svg'
@@ -74,7 +74,7 @@ const HideBalance = ({ darkColor, hide = false, lightColor, noBorder = true, onC
   const color = theme.palette.mode === 'dark' ? darkColor || theme.palette.text.primary : lightColor || theme.palette.text.secondary;
 
   return (
-    <Infotip2 text={t(hide ? 'Show numbers' : 'Hide numbers')} placement = { isExtensionMode ? 'left' : 'bottom'}>
+    <Infotip2 text={t(hide ? 'Show numbers' : 'Hide numbers')} placement={isExtensionMode ? 'left' : 'bottom'}>
       <Grid
         alignItems='center'
         aria-label={hide ? 'Show balance' : 'Hide balance'}
@@ -86,7 +86,7 @@ const HideBalance = ({ darkColor, hide = false, lightColor, noBorder = true, onC
         sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border }}
         type='button'
       >
-        { hide
+        {hide
           ? <ClosedEye
             color={color}
             size={size}

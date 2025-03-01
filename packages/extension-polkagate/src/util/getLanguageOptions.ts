@@ -3,7 +3,7 @@
 
 import type { DropdownOption } from './types';
 
-export default function getLanguageOptions (): DropdownOption[] {
+export default function getLanguageOptions(): DropdownOption[] {
   return [
     // default/native
     {

@@ -20,7 +20,7 @@ interface Props {
   showTooltip?: boolean;
 }
 
-function VoteChart ({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
+function VoteChart({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
   const chartRef = useRef(null);
 
   Chart.register(...registerables);

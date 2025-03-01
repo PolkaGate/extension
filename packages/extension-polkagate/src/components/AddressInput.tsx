@@ -36,7 +36,7 @@ interface Props {
   addWithQr?: boolean;
 }
 
-export default function AddressInput ({ addWithQr = false, address, allAddresses = [], chain = undefined, disabled = false, helperText = '', label, placeHolder = '', setAddress, showIdenticon = true, style }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, allAddresses = [], chain = undefined, disabled = false, helperText = '', label, placeHolder = '', setAddress, showIdenticon = true, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isPopperOpen, setTogglePopper] = useState<boolean>(false);
   const [focus, setFocus] = useState<boolean>(false);

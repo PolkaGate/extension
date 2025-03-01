@@ -39,7 +39,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function Review ({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function Review({ address, api, chain, depositedValue, newDepositValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);

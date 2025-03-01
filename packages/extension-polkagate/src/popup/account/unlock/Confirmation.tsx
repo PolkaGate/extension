@@ -24,7 +24,7 @@ interface Props {
   onSecondaryBtnClick?: () => void;
 }
 
-export default function Confirmation ({ address, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, onPrimaryBtnClick, onSecondaryBtnClick, primaryBtnText, secondaryBtnText, showConfirmation, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 

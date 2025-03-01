@@ -35,7 +35,7 @@ import LabelBalancePrice from './LabelBalancePrice';
 import Others from './Others';
 import ReservedReasons from './ReservedReasons';
 
-export default function AccountDetails (): React.ReactElement {
+export default function AccountDetails(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const history = useHistory();
@@ -118,7 +118,7 @@ export default function AccountDetails (): React.ReactElement {
       : showStakingOptions
         ? theme.palette.secondary.main
         : theme.palette.text.primary
-  , [supportStaking, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
+    , [supportStaking, showStakingOptions, theme.palette.action.disabledBackground, theme.palette.secondary.main, theme.palette.text.primary]);
 
   const goToOthers = useCallback(() => {
     setShowOthers(true);
@@ -211,13 +211,13 @@ export default function AccountDetails (): React.ReactElement {
                 <LabelBalancePrice address={address} balances={balances} label={'Total'} title={t('Total')} />
                 <LabelBalancePrice address={address} balances={balances} label={'Transferable'} onClick={goToSend} title={t('Transferable')} />
                 {supportStaking &&
-                 <>
-                   {balances?.soloTotal && !balances?.soloTotal?.isZero() &&
+                  <>
+                    {balances?.soloTotal && !balances?.soloTotal?.isZero() &&
                       <LabelBalancePrice address={address} balances={balances} label={'Solo Stake'} onClick={goToSoloStaking} title={t('Solo Stake')} />}
-                   {balances?.pooledBalance && !balances?.pooledBalance?.isZero() &&
+                    {balances?.pooledBalance && !balances?.pooledBalance?.isZero() &&
                       <LabelBalancePrice address={address} balances={balances} label={'Pool Stake'} onClick={goToPoolStaking} title={t('Pool Stake')} />
-                   }
-                 </>
+                    }
+                  </>
                 }
                 {GOVERNANCE_CHAINS.includes(genesisHash)
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />

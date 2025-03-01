@@ -9,7 +9,7 @@ import { useInfo } from '.';
  * @description this hook checks if the address is a validator or not
  */
 
-export default function useIsValidator (address: string | undefined): boolean | null | undefined {
+export default function useIsValidator(address: string | undefined): boolean | null | undefined {
   const { api, formatted } = useInfo(address);
 
   const [isValidator, setIsValidator] = useState<boolean | null>();

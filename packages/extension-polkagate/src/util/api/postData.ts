@@ -3,7 +3,7 @@
 // @ts-nocheck
 /* eslint-disable header/header */
 
-export default async function postData (url: string, data = {}) {
+export default async function postData(url: string, data = {}) {
   // console.log('calling post data, url:', url);
 
   // Default options are marked with *

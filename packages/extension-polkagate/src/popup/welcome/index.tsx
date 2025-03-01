@@ -20,7 +20,7 @@ export enum Popups {
   ADD_ACCOUNT
 }
 
-function Welcome (): React.ReactElement {
+function Welcome(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

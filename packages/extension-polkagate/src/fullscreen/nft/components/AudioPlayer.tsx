@@ -9,7 +9,7 @@ import { PauseCircle as PauseCircleIcon, PlayCircle as PlayCircleIcon } from '@m
 import { Grid, IconButton, Slider, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.ReactElement {
+export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.ReactElement {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);

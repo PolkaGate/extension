@@ -30,7 +30,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LegacyApps ({ setMode }: Props): React.ReactElement {
+export default function LegacyApps({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -99,7 +99,7 @@ export default function LegacyApps ({ setMode }: Props): React.ReactElement {
           logo={
             <VaadinIcon icon='vaadin:form' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
           }
-          text= {t('Ledger Legacy')}
+          text={t('Ledger Legacy')}
         />
         <Typography fontSize='16px' fontWeight={400} pt='15px' textAlign='left' width='100%'>
           <b>1</b>. {t('Connect your ledger device to the computer.')}<br />

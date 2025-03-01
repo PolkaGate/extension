@@ -11,7 +11,7 @@ import chains from '../util/chains';
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function useGenesisHashOptions (showAnyChain = true): DropdownOption[] {
+export default function useGenesisHashOptions(showAnyChain = true): DropdownOption[] {
   const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
   const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
 

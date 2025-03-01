@@ -27,7 +27,7 @@ interface Props {
   showDivider?: boolean;
 }
 
-function AccountBrief ({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
+function AccountBrief({ address, identity, showDivider = true, showName = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

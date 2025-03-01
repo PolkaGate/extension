@@ -33,10 +33,10 @@ const Price = ({ balanceToShow, isPriceOutdated, price }: PriceJSXType) => (
     amount={getValue('total', balanceToShow)}
     decimals={balanceToShow?.decimal}
     fontSize='21px'
-    fontWeight= { 400 }
+    fontWeight={400}
     price={price}
     skeletonHeight={22}
-    textColor={ isPriceOutdated ? 'primary.light' : 'text.primary'}
+    textColor={isPriceOutdated ? 'primary.light' : 'text.primary'}
     width='80px'
   />
 );
@@ -148,7 +148,7 @@ interface AddressDetailsProps {
   setAssetIdOnAssetHub: React.Dispatch<React.SetStateAction<number | string | undefined>>;
 }
 
-function AccountInformationForDetails ({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForDetails({ accountAssets, address, label, price, pricesInCurrency, selectedAsset, setAssetIdOnAssetHub, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const theme = useTheme();
   const { account, chain, genesisHash, token } = useInfo(address);
 

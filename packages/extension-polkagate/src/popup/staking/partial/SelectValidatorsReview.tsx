@@ -40,10 +40,10 @@ interface Props {
   staked: BN;
 }
 
-export default function Review ({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
+export default function Review({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const { chain, decimal, formatted, token} = useInfo(address);
+  const { chain, decimal, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
   const onAction = useContext(ActionContext);

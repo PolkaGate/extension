@@ -17,7 +17,7 @@ interface Props {
   newSettings: SoloSettings
 }
 
-export default function TxDetail ({ newSettings, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ newSettings, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const controllerName = useAccountName(newSettings?.controllerId);
   const maybePayeeAddress = useMemo(() => getPayee(newSettings), [newSettings]);

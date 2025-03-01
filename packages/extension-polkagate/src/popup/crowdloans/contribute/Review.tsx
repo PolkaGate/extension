@@ -43,7 +43,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Review ({ api, contributionAmount, crowdloanToContribute, crowdloansId, currentBlockNumber, decimal, estimatedFee, formatted, myContribution, setShowReview, showReview, token }: Props): React.ReactElement {
+export default function Review({ api, contributionAmount, crowdloanToContribute, crowdloansId, currentBlockNumber, decimal, estimatedFee, formatted, myContribution, setShowReview, showReview, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const address = getSubstrateAddress(formatted);

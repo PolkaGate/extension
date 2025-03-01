@@ -18,7 +18,7 @@ interface Props {
   type?: 'circle' | 'cubes' | 'grid' | 'wordpress';
 }
 
-function Progress ({ direction = 'column', fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, titlePaddingTop = 20, titlePaddingLeft = 0, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress({ direction = 'column', fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, titlePaddingTop = 20, titlePaddingLeft = 0, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

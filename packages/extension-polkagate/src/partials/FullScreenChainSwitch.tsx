@@ -27,7 +27,7 @@ interface NetworkListProps {
   setSelectedChainName: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-const NetworkList = React.memo(function NetworkList ({ address, chains, selectedChainName, setAnchorEl, setSelectedChainName }: NetworkListProps) {
+const NetworkList = React.memo(function NetworkList({ address, chains, selectedChainName, setAnchorEl, setSelectedChainName }: NetworkListProps) {
   const theme = useTheme();
   const options = useContext(GenesisHashOptionsContext);
 
@@ -37,7 +37,7 @@ const NetworkList = React.memo(function NetworkList ({ address, chains, selected
     !chains.length
       ? options.filter(({ text }) => text !== 'Allow use on any chain')
       : options.filter((o) => chains.includes(o.value as string))
-  , [chains, options]);
+    , [chains, options]);
 
   const sanitizedLowercase = useCallback((text: string) => sanitizeChainName(text)?.toLowerCase(), []);
 
@@ -95,7 +95,7 @@ const NetworkList = React.memo(function NetworkList ({ address, chains, selected
   );
 });
 
-function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
+function FullScreenChainSwitch({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
@@ -129,20 +129,20 @@ function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<
     <Grid container item>
       <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: isDarkMode ? 2 : 1, borderColor: 'divider', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
         {selectedChainName &&
-         <Box
-           sx={{
-             bgcolor: 'transparent',
-             borderRadius: '50%',
-             filter: CHAINS_WITH_BLACK_LOGO.includes(selectedChainName ?? '') ? 'invert(1)' : '',
-             height: '34px',
-             m: 'auto',
-             transform: flip ? 'rotateY(180deg)' : 'rotateY(0deg)',
-             transition: 'transform 1s',
-             width: '34px'
-           }}
-         >
-           <ChainLogo chainName={selectedChainName} genesisHash={genesisHash} size={34} />
-         </Box>}
+          <Box
+            sx={{
+              bgcolor: 'transparent',
+              borderRadius: '50%',
+              filter: CHAINS_WITH_BLACK_LOGO.includes(selectedChainName ?? '') ? 'invert(1)' : '',
+              height: '34px',
+              m: 'auto',
+              transform: flip ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              transition: 'transform 1s',
+              width: '34px'
+            }}
+          >
+            <ChainLogo chainName={selectedChainName} genesisHash={genesisHash} size={34} />
+          </Box>}
       </Grid>
       <Popover
         PaperProps={{

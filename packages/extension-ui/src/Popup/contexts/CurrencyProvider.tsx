@@ -16,7 +16,7 @@ interface CurrencyProviderProps {
   children: React.ReactNode;
 }
 
-export default function CurrencyProvider ({ children }: CurrencyProviderProps) {
+export default function CurrencyProvider({ children }: CurrencyProviderProps) {
   const priceIds = usePriceIds();
 
   const [currency, setCurrency] = useState<CurrencyItemType>();

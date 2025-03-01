@@ -68,7 +68,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function Index ({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -170,7 +170,7 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   }, [notVoted, step]);
 
   return (
-    <DraggableModalWithTitle icon={faVoteYea} onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop} open={open} title= {title}>
+    <DraggableModalWithTitle icon={faVoteYea} onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop} open={open} title={title}>
       <>
         {step === STEPS.ABOUT &&
           <About

@@ -19,7 +19,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-export default function ProfileInput ({ disabled = false, helperText = '', label, placeHolder = '', profileName, setProfileName, style }: Props): React.ReactElement<Props> {
+export default function ProfileInput({ disabled = false, helperText = '', label, placeHolder = '', profileName, setProfileName, style }: Props): React.ReactElement<Props> {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { userDefinedProfiles } = useProfiles();
@@ -57,11 +57,11 @@ export default function ProfileInput ({ disabled = false, helperText = '', label
 
   const openPopper = useCallback(() =>
     userDefinedProfiles.length > 0 && !enteredProfile && !isPopperOpen && setTogglePopper(true)
-  , [userDefinedProfiles.length, enteredProfile, isPopperOpen]);
+    , [userDefinedProfiles.length, enteredProfile, isPopperOpen]);
 
   const closePopper = useCallback(() =>
     setTogglePopper(false)
-  , []);
+    , []);
 
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' ref={containerRef} sx={{ position: 'relative', ...style }}>
@@ -102,7 +102,7 @@ export default function ProfileInput ({ disabled = false, helperText = '', label
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           // eslint-disable-next-line react/jsx-no-bind
-          renderOption={(_props, { index, profile }: {index: number, profile: string}) => {
+          renderOption={(_props, { index, profile }: { index: number, profile: string }) => {
             return (
               // eslint-disable-next-line react/jsx-no-bind
               <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={() => handleProfile(profile)} sx={{ '&:not(:last-child)': { borderBottom: '1px solid', borderBottomColor: 'secondary.light', mb: '5px' }, cursor: 'pointer', p: '5px' }}>

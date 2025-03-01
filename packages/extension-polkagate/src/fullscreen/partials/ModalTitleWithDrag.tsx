@@ -23,7 +23,7 @@ interface Props {
   isDragging: boolean;
 }
 
-export default function ModalTitleWithDrag ({ icon, isDragging, onClose, onMouseDown, onMouseMove, onMouseUp, title }: Props): React.ReactElement {
+export default function ModalTitleWithDrag({ icon, isDragging, onClose, onMouseDown, onMouseMove, onMouseUp, title }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 

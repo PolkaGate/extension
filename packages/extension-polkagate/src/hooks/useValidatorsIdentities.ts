@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
 import { AUTO_MODE } from '../util/constants';
 
-export default function useValidatorsIdentities (address: string | undefined, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
+export default function useValidatorsIdentities(address: string | undefined, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
   const { chainName } = useInfo(address);
   const { endpoint } = usePeopleChain(address);
 

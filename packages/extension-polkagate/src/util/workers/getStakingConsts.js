@@ -1,14 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
- /* eslint-disable header/header */
+/* eslint-disable header/header */
 
 // @ts-nocheck
 
 import { MAX_NOMINATIONS } from '../constants';
 import getApi from '../getApi.ts';
 
-async function getStakingConsts (endpoint) {
+async function getStakingConsts(endpoint) {
   try {
     const api = await getApi(endpoint);
     const at = await api.rpc.chain.getFinalizedHead();

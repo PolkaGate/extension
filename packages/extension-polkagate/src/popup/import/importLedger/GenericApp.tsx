@@ -72,7 +72,7 @@ const AdvanceModeBtn = ({ disabled, isAdvancedMode, label, onClick }: AdvancedMo
   </Grid>
 );
 
-export default function GenericApp ({ setMode }: Props): React.ReactElement {
+export default function GenericApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ref = useRef(null);
@@ -92,7 +92,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
     isAdvancedMode
       ? !address
       : !Object.entries(addressList).find(([_, { selected }]) => selected)
-  , [address, addressList, isAdvancedMode]);
+    , [address, addressList, isAdvancedMode]);
 
   useEffect(() => {
     if (!address) {
@@ -122,7 +122,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
 
   const numberOfSelectedAccounts = useMemo(() =>
     Object.entries(addressList).filter(([_, options]) => options.selected).length
-  , [addressList]);
+    , [addressList]);
 
   useEffect(() => {
     if (savedAccountCount && savedAccountCount === numberOfSelectedAccounts) {
@@ -207,7 +207,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
           logo={
             <VaadinIcon icon='vaadin:file-tree' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
           }
-          text= {t('Ledger Polkadot Generic')}
+          text={t('Ledger Polkadot Generic')}
         />
         <Typography fontSize='16px' fontWeight={400} pt='15px' textAlign='left' width='100%'>
           <b>1</b>. {t('Connect your ledger device to the computer.')}<br />

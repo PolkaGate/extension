@@ -29,7 +29,8 @@ const GenesisHashOptionsContext = React.createContext<DropdownOption[]>([]);
 const AccountIconThemeContext = React.createContext<AccountIconThemeContextType>({ accountIconTheme: undefined, setAccountIconTheme: noop });
 const WorkerContext = React.createContext<MessagePort | undefined>(undefined);
 
-export { AccountContext,
+export {
+  AccountContext,
   AccountIconThemeContext,
   AccountsAssetsContext,
   ActionContext,
@@ -46,4 +47,5 @@ export { AccountContext,
   SigningReqContext,
   ToastContext,
   UserAddedChainContext,
-  WorkerContext };
+  WorkerContext
+};

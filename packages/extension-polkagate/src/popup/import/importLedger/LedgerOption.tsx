@@ -25,7 +25,7 @@ interface OptionProps {
   rotations?: SxProps<Theme>;
 }
 
-export default function LedgerOption ({ helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, subTitle, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function LedgerOption({ helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, subTitle, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

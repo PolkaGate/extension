@@ -22,7 +22,7 @@ interface Props {
   isValidator: boolean | null | undefined
 }
 
-export default function CommonTasks ({ address, isValidator, setRefresh, staked }: Props): React.ReactElement {
+export default function CommonTasks({ address, isValidator, setRefresh, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
@@ -77,7 +77,7 @@ export default function CommonTasks ({ address, isValidator, setRefresh, staked 
             text={t('Configure Reward Destination')}
           />
           <TaskButton
-            disabled={isDisabled || isValidator === true }
+            disabled={isDisabled || isValidator === true}
             icon={
               <FontAwesomeIcon
                 bounce={!!stakedButNoValidators && !isValidator}

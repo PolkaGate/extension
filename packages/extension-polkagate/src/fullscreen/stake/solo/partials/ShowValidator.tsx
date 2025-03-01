@@ -43,7 +43,7 @@ const Div = () => (
   </Grid>
 );
 
-function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
+function ShowValidator({ accountInfo, allInOneRow = true, api, chain, check, decimal, handleCheck, isActive, isOversubscribed, showCheckbox, stakingConsts, token, v }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const isElected = isHexToBn(v.exposure.total.toString()).gt(BN_ZERO);

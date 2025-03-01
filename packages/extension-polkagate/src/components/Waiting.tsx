@@ -10,7 +10,7 @@ interface Props {
   mb?: number;
 }
 
-function Waiting ({ height, mb = 2, skeletonHeight = 25 }: Props): React.ReactElement<Props> {
+function Waiting({ height, mb = 2, skeletonHeight = 25 }: Props): React.ReactElement<Props> {
   const _height = height || window.innerHeight - 100;
   const length = _height / skeletonHeight;
   const percents = ['5%', '50%', '30%', '10%'];

@@ -45,7 +45,7 @@ interface MenuItemProps {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ToolbarMenuItem = React.memo(function ToolbarMenuItem ({ address, borderWidth = '2px', clickable = true, decidingCounts, fontWeight, icon, item, setMenuOpen, setSelectedSubMenu, top = false, width = '18%' }: MenuItemProps): React.ReactElement {
+export const ToolbarMenuItem = React.memo(function ToolbarMenuItem({ address, borderWidth = '2px', clickable = true, decidingCounts, fontWeight, icon, item, setMenuOpen, setSelectedSubMenu, top = false, width = '18%' }: MenuItemProps): React.ReactElement {
   const theme = useTheme();
   const history = useHistory();
 
@@ -91,7 +91,7 @@ export const ToolbarMenuItem = React.memo(function ToolbarMenuItem ({ address, b
   );
 });
 
-export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const onMouseLeave = useCallback(() => {
     setMenuOpen(false);

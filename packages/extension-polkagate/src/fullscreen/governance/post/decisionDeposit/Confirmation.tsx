@@ -20,7 +20,7 @@ interface Props {
   refIndex: number;
 }
 
-export default function Confirmation ({ handleClose, refIndex, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ handleClose, refIndex, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');

@@ -30,7 +30,7 @@ interface Props {
 
 const MODAL_HEIGHT = 650;
 
-export default function ShowValidators ({ address, api, chain, selectedValidators, setShowSelectedValidators, showSelectedValidators, staked }: Props): React.ReactElement<Props> {
+export default function ShowValidators({ address, api, chain, selectedValidators, setShowSelectedValidators, showSelectedValidators, staked }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
   const isExtensionPopup = useIsExtensionPopup();

@@ -13,7 +13,7 @@ interface Profiles {
   defaultProfiles: string[];
 }
 
-export default function useProfiles (account?: AccountJson): Profiles {
+export default function useProfiles(account?: AccountJson): Profiles {
   const { accounts } = useContext(AccountContext);
 
   return useMemo(() => {

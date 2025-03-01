@@ -27,11 +27,11 @@ interface State extends StateBase {
   warning: string | null;
 }
 
-function getNetwork (genesisHash: string): Network | undefined {
+function getNetwork(genesisHash: string): Network | undefined {
   return ledgerChains.find(({ genesisHash: [hash] }) => hash === genesisHash);
 }
 
-function getState (): StateBase {
+function getState(): StateBase {
   const isLedgerCapable = !!(window as unknown as { USB?: unknown }).USB;
 
   return {
@@ -40,7 +40,7 @@ function getState (): StateBase {
   };
 }
 
-function retrieveLedger (genesis: string): Ledger {
+function retrieveLedger(genesis: string): Ledger {
   let ledger: Ledger | null = null;
 
   const { isLedgerCapable } = getState();
@@ -56,7 +56,7 @@ function retrieveLedger (genesis: string): Ledger {
   return ledger;
 }
 
-export function useLedger (genesis?: string | null, accountIndex = 0, addressOffset = 0): State {
+export function useLedger(genesis?: string | null, accountIndex = 0, addressOffset = 0): State {
   const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);

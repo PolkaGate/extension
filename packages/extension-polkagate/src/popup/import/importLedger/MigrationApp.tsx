@@ -46,7 +46,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
     newChain?.genesisHash
       ? ledgerChains.find(({ genesisHash }) => genesisHash.includes(newChain.genesisHash as HexString))?.slip44 ?? null
       : null
-  , [newChain]);
+    , [newChain]);
 
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
@@ -105,7 +105,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
           logo={
             <VaadinIcon icon='vaadin:automation' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
           }
-          text= {t('Ledger Account Migration')}
+          text={t('Ledger Account Migration')}
         />
         <Typography fontSize='16px' fontWeight={400} pt='15px' textAlign='left' width='100%'>
           <b>1</b>. {t('Connect your ledger device to the computer.')}<br />

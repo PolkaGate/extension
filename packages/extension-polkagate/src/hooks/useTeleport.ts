@@ -31,7 +31,7 @@ const DEFAULT_STATE: Teleport = {
 
 const endpoints = createWsEndpoints((k, v) => v?.toString() || k).filter((v): v is ExtLinkOption => !!v.teleport);
 
-function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOption) => boolean): ExtLinkOption[] {
+function extractRelayDestinations(relayGenesis: string, filter: (l: ExtLinkOption) => boolean): ExtLinkOption[] {
   return endpoints
     .filter((l) =>
       (
@@ -60,7 +60,7 @@ function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOpti
     );
 }
 
-export default function useTeleport (address: string | undefined): Teleport {
+export default function useTeleport(address: string | undefined): Teleport {
   const { api, chain, endpoint: endpointUrl } = useInfo(address);
 
   const [state, setState] = useState<Teleport>(() => ({ ...DEFAULT_STATE }));

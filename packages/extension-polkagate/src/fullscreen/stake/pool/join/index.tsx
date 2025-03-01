@@ -26,7 +26,7 @@ interface Props {
   inputs: StakingInputs | undefined;
 }
 
-export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function JoinPool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);

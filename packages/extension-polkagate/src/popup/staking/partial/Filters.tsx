@@ -38,7 +38,7 @@ interface Props {
   onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];
 }
 
-export default function Filters ({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

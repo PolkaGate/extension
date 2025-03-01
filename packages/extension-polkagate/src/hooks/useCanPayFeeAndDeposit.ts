@@ -38,7 +38,7 @@ export default function useCanPayFeeAndDeposit(
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
   const [canPayStatement, setCanPayStatement] = useState<number>();
 
-  const getStatement = useCallback((canPayFee:boolean | undefined, canPayDeposit:boolean | undefined, canPayWholeAmount:boolean | undefined, useProxy:boolean | undefined, hasDeposit:boolean | undefined) => {
+  const getStatement = useCallback((canPayFee: boolean | undefined, canPayDeposit: boolean | undefined, canPayWholeAmount: boolean | undefined, useProxy: boolean | undefined, hasDeposit: boolean | undefined) => {
     if (useProxy) {
       if (hasDeposit) {
         if (canPayFee && canPayDeposit) return CanPayStatements.CAN_PAY;

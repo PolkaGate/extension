@@ -21,7 +21,7 @@ const THEME_OPTIONS = [
   { text: 'Cube', value: 'ethereum' }
 ];
 
-function SelectIdenticonTheme ({ style = {} }: Props) {
+function SelectIdenticonTheme({ style = {} }: Props) {
   const { accountIconTheme, setAccountIconTheme } = useContext(AccountIconThemeContext);
 
   const onChangeTheme = useCallback((iconTheme: string | number) => {

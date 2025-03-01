@@ -8,7 +8,7 @@ import { BN } from '@polkadot/util';
 
 import { useApi, useToken } from '.';
 
-export default function useMinToReceiveRewardsInSolo (address: string): BN | undefined {
+export default function useMinToReceiveRewardsInSolo(address: string): BN | undefined {
   const api = useApi(address);
   const token = useToken(address);
   const tokenFromApi = api?.registry.chainTokens[0];

@@ -24,7 +24,7 @@ interface Props {
   setBgImage: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export default function AiBackgroundImage ({ bgImage, setBgImage }: Props): React.ReactElement {
+export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const imgRef = useRef({ dark: 0, light: 0 });

@@ -11,7 +11,7 @@ import { useAlerts, useInfo, useTranslation } from '.';
  * notify users on chain switch
  * @returns nothing
  */
-export default function useNotifyOnChainChange (address: string | undefined): undefined {
+export default function useNotifyOnChainChange(address: string | undefined): undefined {
   const { accountName, chainName } = useInfo(address);
   const { t } = useTranslation();
   const { notify } = useAlerts();

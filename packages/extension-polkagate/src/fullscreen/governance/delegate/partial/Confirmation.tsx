@@ -25,7 +25,7 @@ interface Props {
   status: 'Delegate' | 'Remove' | 'Modify';
 }
 
-export default function Confirmation ({ address, allCategoriesLength, delegateInformation, handleClose, removedTracksLength, status, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, allCategoriesLength, delegateInformation, handleClose, removedTracksLength, status, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const token = useToken(address);
 

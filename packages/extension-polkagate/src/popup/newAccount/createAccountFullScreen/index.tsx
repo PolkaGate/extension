@@ -46,7 +46,7 @@ const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: nu
   );
 };
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -115,7 +115,7 @@ function CreateAccount (): React.ReactElement {
             logo={
               <VaadinIcon icon='vaadin:plus-circle' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
             }
-            text= {t('Create a new account')}
+            text={t('Create a new account')}
           />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}

@@ -18,7 +18,7 @@ interface Props {
   requests: AuthorizeRequest[];
 }
 
-export default function AuthExtensionMode ({ onNextAuth, onPreviousAuth, requestIndex, requests }: Props): React.ReactElement {
+export default function AuthExtensionMode({ onNextAuth, onPreviousAuth, requestIndex, requests }: Props): React.ReactElement {
   return (
     <Grid container>
       <HeaderBrand

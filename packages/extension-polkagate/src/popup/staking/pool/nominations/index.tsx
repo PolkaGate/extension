@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { SxProps} from '@mui/material';
+import type { SxProps } from '@mui/material';
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
@@ -35,7 +35,7 @@ interface State {
   pool: MyPoolInfo | undefined;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -61,13 +61,13 @@ export default function Index (): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
 
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
-  const staked = useMemo(() => new BN(pool?.stashIdAccount?.stakingLedger?.active as unknown as BN|undefined ?? 0), [pool?.stashIdAccount?.stakingLedger?.active]);
+  const staked = useMemo(() => new BN(pool?.stashIdAccount?.stakingLedger?.active as unknown as BN | undefined ?? 0), [pool?.stashIdAccount?.stakingLedger?.active]);
 
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 

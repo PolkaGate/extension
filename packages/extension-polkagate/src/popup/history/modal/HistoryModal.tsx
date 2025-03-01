@@ -23,7 +23,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function HistoryModal ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function HistoryModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { chainName, decimal, formatted, token } = useInfo(address);
@@ -42,13 +42,13 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
         <SimpleModalTitle
           icon={showDetail ? faReceipt : faHistory}
           onClose={backToAccount}
-          title= {showDetail ? t('Transaction Detail') : t('History')}
+          title={showDetail ? t('Transaction Detail') : t('History')}
         />
         {!showDetail &&
           <>
             <HistoryTabs
-              address ={address}
-              setTabIndex ={setTabIndex}
+              address={address}
+              setTabIndex={setTabIndex}
               tabIndex={tabIndex}
             />
             <Grid container id='scrollArea' item sx={{ gap: '5px', height: '70%', maxHeight: 650 - 145, overflowY: 'auto' }}>
@@ -77,7 +77,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                 </Grid>
               }
               {(grouped === undefined || ((transfersTx.isFetching || governanceTx.isFetching) && tabHistory?.length === 0)) &&
-               <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
+                <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
               }
               {grouped &&
                 <Grid container justifyContent='center'>

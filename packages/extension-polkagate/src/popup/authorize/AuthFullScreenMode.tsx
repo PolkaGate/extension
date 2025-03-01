@@ -24,7 +24,7 @@ interface Props {
   requests: AuthorizeRequest[];
 }
 
-function AuthFullScreenMode ({ onNextAuth, onPreviousAuth, requestIndex, requests }: Props): React.ReactElement {
+function AuthFullScreenMode({ onNextAuth, onPreviousAuth, requestIndex, requests }: Props): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();

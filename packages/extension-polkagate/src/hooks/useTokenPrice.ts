@@ -29,7 +29,7 @@ const assetsChains = createAssets();
  * @param assetChainName : chain name to fetch asset id price from
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (address: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
+export default function useTokenPrice(address: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
   const { chainName: addressChainName, decimal, genesisHash, token } = useInfo(address);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();
@@ -44,7 +44,7 @@ export default function useTokenPrice (address: string | undefined, assetId?: nu
       : isAssetHub
         ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB
         : undefined
-  , [assetId, isAssetHub]);
+    , [assetId, isAssetHub]);
 
   return useMemo(() => {
     if (!_chainName || !pricesInCurrencies || !token || !decimal) {

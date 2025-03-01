@@ -21,7 +21,7 @@ interface Props {
 
 }
 
-export default function FellowshipMenu ({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+export default function FellowshipMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const onMouseLeave = useCallback(() => {

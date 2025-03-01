@@ -34,36 +34,36 @@ const displayUsernames = (usernames: string[]) => {
   return displayArray;
 };
 
-const Reactions = ({ comment }: {comment: CommentType | Reply;}) => {
+const Reactions = ({ comment }: { comment: CommentType | Reply; }) => {
   const theme = useTheme();
 
   const backers =
-      'comment_reactions' in comment && comment.comment_reactions['👍'].count
-        ? displayUsernames(comment.comment_reactions['👍'].usernames ?? [])
-        : 'reply_reactions' in comment && comment.reply_reactions['👍'].count
-          ? displayUsernames(comment.reply_reactions['👍'].usernames ?? [])
-          : '';
+    'comment_reactions' in comment && comment.comment_reactions['👍'].count
+      ? displayUsernames(comment.comment_reactions['👍'].usernames ?? [])
+      : 'reply_reactions' in comment && comment.reply_reactions['👍'].count
+        ? displayUsernames(comment.reply_reactions['👍'].usernames ?? [])
+        : '';
 
   const backersCount =
-      'comment_reactions' in comment
-        ? `(${comment.comment_reactions['👍'].count})`
-        : 'reply_reactions' in comment
-          ? `(${comment.reply_reactions['👍'].count})`
-          : 0;
+    'comment_reactions' in comment
+      ? `(${comment.comment_reactions['👍'].count})`
+      : 'reply_reactions' in comment
+        ? `(${comment.reply_reactions['👍'].count})`
+        : 0;
 
   const opposers =
-      'comment_reactions' in comment && comment.comment_reactions['👎'].count
-        ? displayUsernames(comment.comment_reactions['👎'].usernames ?? [])
-        : 'reply_reactions' in comment && comment.reply_reactions['👎'].count
-          ? displayUsernames(comment.reply_reactions['👎'].usernames ?? [])
-          : '';
+    'comment_reactions' in comment && comment.comment_reactions['👎'].count
+      ? displayUsernames(comment.comment_reactions['👎'].usernames ?? [])
+      : 'reply_reactions' in comment && comment.reply_reactions['👎'].count
+        ? displayUsernames(comment.reply_reactions['👎'].usernames ?? [])
+        : '';
 
   const opposersCount =
-      'comment_reactions' in comment
-        ? `(${comment.comment_reactions['👎'].count})`
-        : 'reply_reactions' in comment
-          ? `(${comment.reply_reactions['👎'].count})`
-          : 0;
+    'comment_reactions' in comment
+      ? `(${comment.comment_reactions['👎'].count})`
+      : 'reply_reactions' in comment
+        ? `(${comment.reply_reactions['👎'].count})`
+        : 0;
 
   return (
     <Grid container item sx={{ pl: '25px' }}>
@@ -91,17 +91,17 @@ const Reactions = ({ comment }: {comment: CommentType | Reply;}) => {
   );
 };
 
-const VoteType = ({ comment }: {comment: CommentType | Reply;}) => {
+const VoteType = ({ comment }: { comment: CommentType | Reply; }) => {
   const { t } = useTranslation();
 
   const noVote = !('votes' in comment) || comment?.votes?.length === 0;
   const vote = 'votes' in comment && comment?.votes?.[0]?.decision;
   const voteColor =
-      vote === 'yes'
-        ? 'success.main'
-        : vote === 'no'
-          ? 'warning.main'
-          : '#f89118';
+    vote === 'yes'
+      ? 'success.main'
+      : vote === 'no'
+        ? 'warning.main'
+        : '#f89118';
 
   if (noVote) {
     return <></>;
@@ -113,10 +113,10 @@ const VoteType = ({ comment }: {comment: CommentType | Reply;}) => {
         <ThumbUpIcon fontSize='small' />
       }
       {vote === 'no' &&
-         <ThumbDownIcon fontSize='small' />
+        <ThumbDownIcon fontSize='small' />
       }
       {vote === 'abstain' &&
-         <CallSplitIcon />
+        <CallSplitIcon />
       }
       <Typography fontSize='14px' fontWeight={500} sx={{ marginLeft: '5px' }}>
         {vote === 'yes' && t('Voted Aye')}
@@ -127,7 +127,7 @@ const VoteType = ({ comment }: {comment: CommentType | Reply;}) => {
   );
 };
 
-const EditedTag = ({ comment }: {comment: CommentType | Reply;}) => {
+const EditedTag = ({ comment }: { comment: CommentType | Reply; }) => {
   const { t } = useTranslation();
   const isEdited = comment.created_at && comment.updated_at && new Date(comment.created_at).getTime() !== new Date(comment.updated_at).getTime();
 
@@ -144,7 +144,7 @@ const EditedTag = ({ comment }: {comment: CommentType | Reply;}) => {
   }
 };
 
-export default function Comment ({ address, comment, noSource }: CommentProps): React.ReactElement {
+export default function Comment({ address, comment, noSource }: CommentProps): React.ReactElement {
   const theme = useTheme();
   const { api, chain } = useInfo(address);
 
@@ -193,7 +193,7 @@ export default function Comment ({ address, comment, noSource }: CommentProps): 
       </Grid>
       {hasReactions &&
         <Reactions
-          comment ={comment}
+          comment={comment}
         />
       }
     </Grid>

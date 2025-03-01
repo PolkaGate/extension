@@ -26,7 +26,7 @@ interface AssetPriceChangeProps {
   pricesInCurrencies: Prices | null | undefined;
 }
 
-const AssetPriceChange = React.memo(function AssetPriceChange ({ asset, currency, pricesInCurrencies }: AssetPriceChangeProps) {
+const AssetPriceChange = React.memo(function AssetPriceChange({ asset, currency, pricesInCurrencies }: AssetPriceChangeProps) {
   const logoInfo = useMemo(() => asset && getLogo2(asset.genesisHash, asset.token), [asset]);
   const change = pricesInCurrencies ? pricesInCurrencies.prices[asset.priceId]?.change : undefined;
 
@@ -60,7 +60,7 @@ const AssetPriceChange = React.memo(function AssetPriceChange ({ asset, currency
   );
 });
 
-function WatchList ({ groupedAssets }: Props): React.ReactElement {
+function WatchList({ groupedAssets }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();

@@ -27,7 +27,7 @@ import { countDecimalPlaces, formatDecimal } from '../../util/utils';
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave (): React.ReactElement {
+export default function YouHave(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();

@@ -9,7 +9,7 @@ import { createWsEndpoints } from '@polkagate/apps-config';
  * @param {{ [s: string]: any; } | ArrayLike<any> | undefined} [userAddedEndpoints]
  */
 
-export function getChainEndpoints (chainName, userAddedEndpoints) {
+export function getChainEndpoints(chainName, userAddedEndpoints) {
   const allEndpoints = createWsEndpoints();
 
   let endpoints = allEndpoints

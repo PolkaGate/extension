@@ -15,7 +15,7 @@ interface Props {
   currency: CurrencyItemType;
 }
 
-function CurrencyItem ({ currency, onclick }: Props): React.ReactElement {
+function CurrencyItem({ currency, onclick }: Props): React.ReactElement {
   const theme = useTheme();
 
   const flagSVG = useMemo(() => {
@@ -52,7 +52,7 @@ function CurrencyItem ({ currency, onclick }: Props): React.ReactElement {
             src={flagSVG}
             sx={{ height: '17px' }}
           />
-          <Typography fontSize='16px' fontWeight={400} px ='5px'>
+          <Typography fontSize='16px' fontWeight={400} px='5px'>
             {currency.country}
           </Typography>
         </Grid>

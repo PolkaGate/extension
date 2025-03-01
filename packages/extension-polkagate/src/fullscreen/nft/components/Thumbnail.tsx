@@ -18,7 +18,7 @@ import InfoRow from './InfoRow';
 import ItemAvatar from './ItemAvatar';
 import ItemSkeleton from './ItemSkeleton';
 
-export default function Thumbnail ({ api, itemInformation }: ThumbnailProps): React.ReactElement {
+export default function Thumbnail({ api, itemInformation }: ThumbnailProps): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

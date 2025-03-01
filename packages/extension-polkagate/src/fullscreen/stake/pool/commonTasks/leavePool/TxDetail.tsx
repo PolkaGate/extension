@@ -17,7 +17,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function TxDetail ({ pool, token, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ pool, token, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

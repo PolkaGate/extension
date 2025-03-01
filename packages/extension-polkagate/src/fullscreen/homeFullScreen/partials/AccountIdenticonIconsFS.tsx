@@ -14,7 +14,7 @@ interface Props {
   address: string | undefined;
 }
 
-function AccountIdenticonIconsFS ({ address }: Props): React.ReactElement {
+function AccountIdenticonIconsFS({ address }: Props): React.ReactElement {
   const { chain, formatted, genesisHash } = useInfo(address);
 
   const accountInfo = useIdentity(genesisHash, formatted);

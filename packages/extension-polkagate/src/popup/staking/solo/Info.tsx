@@ -22,7 +22,7 @@ interface Props {
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Info ({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const minimumActiveStake = useMinToReceiveRewardsInSolo(address);
   const token = useToken(address);

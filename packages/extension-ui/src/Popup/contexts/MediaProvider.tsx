@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useContext, useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ interface MediaProviderProps {
 }
 
 // Request permission for video, based on access we can hide/show import
-async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
+async function requestMediaAccess(cameraOn: boolean): Promise<boolean> {
   if (!cameraOn) {
     return false;
   }
@@ -26,7 +26,7 @@ async function requestMediaAccess (cameraOn: boolean): Promise<boolean> {
   return false;
 }
 
-export default function MediaProvider ({ children }: MediaProviderProps) {
+export default function MediaProvider({ children }: MediaProviderProps) {
   const settings = useContext(SettingsContext);
   const [cameraOn, setCameraOn] = useState(settings.camera === 'on');
   const [mediaAllowed, setMediaAllowed] = useState(false);

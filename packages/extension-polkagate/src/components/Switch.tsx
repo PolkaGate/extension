@@ -24,7 +24,7 @@ interface Props {
 export const CHECKED_COLOR = '#46890C';
 export const UNCHECKED_COLOR = '#838383';
 
-function Switch ({ checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
+function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' className={className} container item width='fit-content'>
       <Typography display='inline' fontSize={fontSize} fontWeight={fontWeight}>

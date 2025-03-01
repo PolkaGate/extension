@@ -24,7 +24,7 @@ interface AddressInfo {
   token: string | undefined;
 }
 
-export default function useInfo (address: AccountId | string | undefined): AddressInfo {
+export default function useInfo(address: AccountId | string | undefined): AddressInfo {
   const account = useAccount(address);
   const api = useApi(address);
   const chain = useChain(address);

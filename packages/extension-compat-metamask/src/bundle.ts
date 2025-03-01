@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-compat-metamask authors & contributors
+// Copyright 2019-2025 @polkadot/extension-compat-metamask authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
@@ -32,14 +32,14 @@ interface Web3Window extends InjectedWindow {
   ethereum: unknown;
 }
 
-function isMetaMaskProvider (prov: unknown): EthereumProvider {
+function isMetaMaskProvider(prov: unknown): EthereumProvider {
   assert(prov && (prov as EthereumProvider).isMetaMask, 'Injected provider is not MetaMask');
 
   return (prov as EthereumProvider);
 }
 
 // transform the Web3 accounts into a simple address/name array
-function transformAccounts (accounts: string[]): InjectedAccount[] {
+function transformAccounts(accounts: string[]): InjectedAccount[] {
   return accounts.map((address, i) => ({
     address,
     name: `MetaMask Address #${i}`,
@@ -48,7 +48,7 @@ function transformAccounts (accounts: string[]): InjectedAccount[] {
 }
 
 // add a compat interface of metaMaskSource to window.injectedWeb3
-function injectMetaMaskWeb3 (win: Web3Window): void {
+function injectMetaMaskWeb3(win: Web3Window): void {
   // decorate the compat interface
   win.injectedWeb3['Web3Source'] = {
     enable: async (): Promise<Injected> => {
@@ -88,7 +88,7 @@ function injectMetaMaskWeb3 (win: Web3Window): void {
   };
 }
 
-export default function initMetaMask (): Promise<boolean> {
+export default function initMetaMask(): Promise<boolean> {
   return new Promise((resolve): void => {
     const win = window as Window & Web3Window;
 

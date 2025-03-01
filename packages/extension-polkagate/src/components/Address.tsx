@@ -50,7 +50,7 @@ interface Recoded {
 }
 
 // find an account in our list
-function findSubstrateAccount (accounts: AccountJson[], publicKey: Uint8Array): AccountJson | null {
+function findSubstrateAccount(accounts: AccountJson[], publicKey: Uint8Array): AccountJson | null {
   const pkStr = publicKey.toString();
 
   return accounts.find(({ address }): boolean =>
@@ -59,14 +59,14 @@ function findSubstrateAccount (accounts: AccountJson[], publicKey: Uint8Array): 
 }
 
 // find an account in our list
-function findAccountByAddress (accounts: AccountJson[], _address: string): AccountJson | null {
+function findAccountByAddress(accounts: AccountJson[], _address: string): AccountJson | null {
   return accounts.find(({ address }): boolean =>
     address === _address
   ) || null;
 }
 
 // recodes an supplied address using the prefix/genesisHash, include the actual saved account & chain
-function recodeAddress (address: string, accounts: AccountWithChildren[], chain: Chain | null, settings: SettingsStruct): Recoded {
+function recodeAddress(address: string, accounts: AccountWithChildren[], chain: Chain | null, settings: SettingsStruct): Recoded {
   // decode and create a shortcut for the encoded address
   const publicKey = decodeAddress(address);
 
@@ -88,7 +88,7 @@ function recodeAddress (address: string, accounts: AccountWithChildren[], chain:
 
 const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAULT_TYPE };
 
-function Address ({ address, backgroundColor, className = '', genesisHash, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%', check, showCheckbox, handleCheck }: Props): React.ReactElement<Props> {
+function Address({ address, backgroundColor, className = '', genesisHash, margin = '20px auto', name, showCopy = true, style, type: givenType, width = '92%', check, showCheckbox, handleCheck }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const { accounts } = useContext(AccountContext);

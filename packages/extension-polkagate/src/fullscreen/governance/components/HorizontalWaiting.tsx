@@ -5,7 +5,7 @@
 import { Wordpress } from 'better-react-spinkit';
 import React from 'react';
 
-function HorizontalWaiting ({ color }: { color: string }): React.ReactElement {
+function HorizontalWaiting({ color }: { color: string }): React.ReactElement {
   return (
     <div>
       <Wordpress

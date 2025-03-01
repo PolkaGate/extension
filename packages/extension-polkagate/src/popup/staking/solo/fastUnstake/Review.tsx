@@ -39,7 +39,7 @@ interface Props {
   available: BN;
 }
 
-export default function FastUnstakeReview ({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
+export default function FastUnstakeReview({ address, amount, api, available, chain, formatted, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(String(address));

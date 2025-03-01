@@ -11,7 +11,7 @@ interface Props {
   show: boolean;
 }
 
-export default function SlidePopUp ({ children, show }: Props): React.ReactElement<Props> {
+export default function SlidePopUp({ children, show }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const ref = React.useRef(null);
 

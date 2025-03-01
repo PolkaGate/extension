@@ -100,7 +100,7 @@ export const TaskButton = ({ disabled, dividerWidth = '66%', icon, loading, mr =
             }
           </Grid>
           {!noBorderButton &&
-           <Divider sx={{ bgcolor: 'divider', height: '2px', justifySelf: 'flex-end', m: '5px 15px', width: dividerWidth }} />
+            <Divider sx={{ bgcolor: 'divider', height: '2px', justifySelf: 'flex-end', m: '5px 15px', width: dividerWidth }} />
           }
         </>
       }
@@ -108,7 +108,7 @@ export const TaskButton = ({ disabled, dividerWidth = '66%', icon, loading, mr =
   );
 };
 
-export default function CommonTasks ({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
+export default function CommonTasks({ address, assetId, balance, genesisHash, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const api = useApi(address);
@@ -130,8 +130,8 @@ export default function CommonTasks ({ address, assetId, balance, genesisHash, s
     hasSoloStake ||
     (api && !api.tx?.['nominationPools']?.['migrateDelegation']) ||
     (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
-  ,
-  [api, balance?.pooledBalance, hasSoloStake]);
+    ,
+    [api, balance?.pooledBalance, hasSoloStake]);
 
   const goToSend = useCallback(() => {
     address && genesisHash &&

@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { sanitizeChainName } from '../util/utils';
 import { useInfo, usePrices } from '.';
 
-export default function useNativeTokenPrice (address: string): number | undefined | null {
+export default function useNativeTokenPrice(address: string): number | undefined | null {
   const pricesInCurrency = usePrices();
   const { chainName } = useInfo(address);
 

@@ -19,7 +19,7 @@ const INLINE_PADDING = '40px';
 const BLOCK_PADDING = '20px';
 const MIN_LIST_HEIGHT = `calc(${THUMBNAIL_HEIGHT} + ${INLINE_PADDING})`;
 
-function NftList ({ apis, nfts }: ItemsListProps): React.ReactElement {
+function NftList({ apis, nfts }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (

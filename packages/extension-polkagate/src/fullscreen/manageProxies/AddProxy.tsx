@@ -26,7 +26,7 @@ interface Props {
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
 }
 
-export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
+export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);

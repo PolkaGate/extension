@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { getStorage, watchStorage } from '../components/Loading';
 
-export default function useSelectedProfile (): string | undefined | null {
+export default function useSelectedProfile(): string | undefined | null {
   const [selectedProfile, setSelectedProfile] = useState<string | null>();
 
   useEffect(() => {

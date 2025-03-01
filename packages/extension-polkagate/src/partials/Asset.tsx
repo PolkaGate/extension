@@ -31,7 +31,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-function Asset ({ address, api, balance, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
+function Asset({ address, api, balance, balanceLabel, balanceType, balances, fee, style = { pt: '10px' } }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const chain = useChain(address);

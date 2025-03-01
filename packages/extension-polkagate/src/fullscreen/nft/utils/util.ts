@@ -48,7 +48,7 @@ export const fetchWithRetry = async (url: string, attempt = 0): Promise<Response
   }
 };
 
-export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = false): Promise<T | null> => {
+export const fetchData = async<T>(contentUrl: string | undefined, isMetadata = false): Promise<T | null > => {
   if (!contentUrl) {
     return null;
   }

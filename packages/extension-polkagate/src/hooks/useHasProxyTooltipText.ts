@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 import { useInfo, useProxies, useTranslation } from '.';
 
-export default function useHasProxyTooltipText (address: string | undefined): { hasProxy: boolean | undefined; proxyTooltipTxt: string; } {
+export default function useHasProxyTooltipText(address: string | undefined): { hasProxy: boolean | undefined; proxyTooltipTxt: string; } {
   const { t } = useTranslation();
 
   const { api, chain, formatted } = useInfo(address);

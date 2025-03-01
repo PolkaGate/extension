@@ -31,7 +31,7 @@ interface Props {
   redeemable: Balance | undefined
 }
 
-export default function WithdrawRedeemable ({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeemable({ address, redeemable, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
   const availableToSoloStake = useAvailableToSoloStake(address);

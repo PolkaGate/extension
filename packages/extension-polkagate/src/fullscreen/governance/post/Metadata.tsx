@@ -23,7 +23,7 @@ import { LabelValue } from '../TrackStats';
 import { pascalCaseToTitleCase } from '../utils/util';
 import useReferendaRequested from './useReferendaRequested';
 
-export function hexAddressToFormatted (hexString: string, chain: Chain | null | undefined): string | undefined {
+export function hexAddressToFormatted(hexString: string, chain: Chain | null | undefined): string | undefined {
   try {
     if (!chain || !hexString) {
       return undefined;
@@ -69,7 +69,7 @@ interface Props {
   referendum: Referendum | undefined;
 }
 
-export default function Metadata ({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
+export default function Metadata({ address, decisionDepositPayer, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, chainName, decimal, token } = useInfo(address);

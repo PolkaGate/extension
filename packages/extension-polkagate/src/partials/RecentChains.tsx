@@ -108,7 +108,7 @@ interface Props {
   chainName: string | undefined;
 }
 
-function RecentChains ({ address, chainName }: Props): React.ReactElement<Props> {
+function RecentChains({ address, chainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
   const genesisHashes = useContext(GenesisHashOptionsContext);

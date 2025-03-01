@@ -10,7 +10,7 @@ type InitializationListener = () => void;
 
 // Error class for NFT-specific errors
 class NftManagerError extends Error {
-  constructor (message: string) {
+  constructor(message: string) {
     super(message);
     this.name = 'NftManagerError';
   }
@@ -25,19 +25,19 @@ export default class NftManager {
   private isInitialized = false;
   private initializationPromise: Promise<void>;
 
-  constructor () {
+  constructor() {
     // Load nft items from storage and set up storage change listener
     this.initializationPromise = this.loadFromStorage();
     chrome.storage.onChanged.addListener(this.handleStorageChange);
   }
 
   // Wait for initialization to complete
-  public async waitForInitialization (): Promise<void> {
+  public async waitForInitialization(): Promise<void> {
     return this.initializationPromise;
   }
 
   // Notify all listeners about initialization
-  private notifyInitializationListeners (): void {
+  private notifyInitializationListeners(): void {
     this.initializationListeners.forEach((listener) => {
       try {
         listener();
@@ -49,7 +49,7 @@ export default class NftManager {
   }
 
   // Load nft items from chrome storage
-  private async loadFromStorage (): Promise<void> {
+  private async loadFromStorage(): Promise<void> {
     try {
       const result = await chrome.storage.local.get(this.STORAGE_KEY);
 
@@ -94,7 +94,7 @@ export default class NftManager {
   };
 
   // Notify all listeners about nfts items changes
-  private notifyListeners (): void {
+  private notifyListeners(): void {
     if (!this.isInitialized) {
       return;
     }
@@ -111,7 +111,7 @@ export default class NftManager {
   }
 
   // Get nft items for a specific
-  get (address: string): ItemInformation[] | null | undefined {
+  get(address: string): ItemInformation[] | null | undefined {
     if (!address) {
       throw new NftManagerError('Address is required');
     }
@@ -122,12 +122,12 @@ export default class NftManager {
   }
 
   // Get all nft items
-  getAll (): NftItemsType | null | undefined {
+  getAll(): NftItemsType | null | undefined {
     return this.nfts;
   }
 
   // Set on-chain nft item for a specific address
-  setOnChainItemsInfo (data: NftItemsType) {
+  setOnChainItemsInfo(data: NftItemsType) {
     if (!data) {
       throw new NftManagerError('NFT items information are required to set on-chain information');
     }
@@ -155,12 +155,12 @@ export default class NftManager {
     }
   }
 
-  private getItemKey (item: ItemOnChainInfo): string {
+  private getItemKey(item: ItemOnChainInfo): string {
     return `${item.chainName}-${item.collectionId}-${item.itemId}-${item.isNft}`;
   }
 
   // Set nft item detail for a specific address and item
-  setItemDetail (address: string, nftItemInfo: ItemInformation, nftItemDetail: ItemMetadata | null) {
+  setItemDetail(address: string, nftItemInfo: ItemInformation, nftItemDetail: ItemMetadata | null) {
     if (!address || !nftItemInfo || nftItemDetail === undefined) {
       throw new NftManagerError('Address, NFT item info, and detail are required');
     }
@@ -187,17 +187,17 @@ export default class NftManager {
   }
 
   // Subscribe a listener to endpoint changes
-  subscribe (listener: Listener) {
+  subscribe(listener: Listener) {
     this.listeners.add(listener);
   }
 
   // Unsubscribe a listener from endpoint changes
-  unsubscribe (listener: Listener) {
+  unsubscribe(listener: Listener) {
     this.listeners.delete(listener);
   }
 
   // Cleanup method to remove listeners and clear data
-  public destroy (): void {
+  public destroy(): void {
     chrome.storage.onChanged.removeListener(this.handleStorageChange);
     this.listeners.clear();
     this.nfts = {};

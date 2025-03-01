@@ -17,7 +17,7 @@ interface Props {
   isSettingSubMenu?: boolean;
 }
 
-export default function FullScreenIcon ({ isSettingSubMenu, url }: Props): React.ReactElement {
+export default function FullScreenIcon({ isSettingSubMenu, url }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -13,7 +13,7 @@ import { sanitizeChainName } from '../util/utils';
 
 const allEndpoints = createWsEndpoints();
 
-export default function useApiWithChain (chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
+export default function useApiWithChain(chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
   const apisContext = useContext(APIContext);
   const [_api, setApi] = useState<ApiPromise | undefined>();
 

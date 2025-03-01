@@ -29,7 +29,7 @@ enum STEPS {
   UNSUPPORTED
 }
 
-function NFT (): React.ReactElement {
+function NFT(): React.ReactElement {
   useFullscreen();
   const nftManager = React.useMemo(() => new NftManager(), []);
 

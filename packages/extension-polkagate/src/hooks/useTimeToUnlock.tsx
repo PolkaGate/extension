@@ -13,7 +13,7 @@ import blockToDate from '../popup/crowdloans/partials/blockToDate';
 import { type Lock } from './useAccountLocks';
 import { useCurrentBlockNumber, useInfo, useTranslation } from '.';
 
-export default function useTimeToUnlock (address: string | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
+export default function useTimeToUnlock(address: string | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
   const { t } = useTranslation();
   const { api, chain, formatted } = useInfo(address);
   const currentBlock = useCurrentBlockNumber(address);

@@ -31,12 +31,12 @@ import { TrackStats } from './TrackStats';
 
 export type Fellowship = [string, number];
 
-export default function Governance (): React.ReactElement {
+export default function Governance(): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
   const { t } = useTranslation();
   const manifest = useManifest();
-  const { state } = useLocation() as unknown as {state: {selectedSubMenu?: string}};
+  const { state } = useLocation() as unknown as { state: { selectedSubMenu?: string } };
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship' }>();
 
   const { api, chain, chainName } = useInfo(address);
@@ -197,7 +197,7 @@ export default function Governance (): React.ReactElement {
       return;
     }
 
-    async function fetchRef (key: string) {
+    async function fetchRef(key: string) {
       if (!chainName) {
         return;
       }

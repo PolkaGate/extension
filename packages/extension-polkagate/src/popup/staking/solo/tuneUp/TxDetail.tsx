@@ -13,7 +13,7 @@ interface Props {
   txInfo: TxInfo;
 }
 
-export default function TxDetail ({ txInfo }: Props): React.ReactElement {
+export default function TxDetail({ txInfo }: Props): React.ReactElement {
   return (
     <AccountWithProxyInConfirmation
       txInfo={txInfo}

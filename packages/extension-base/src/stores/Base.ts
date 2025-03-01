@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-base authors & contributors
+// Copyright 2019-2025 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 type StoreValue = Record<string, unknown>;
@@ -11,14 +11,14 @@ const lastError = (type: string): void => {
   }
 };
 
-export default abstract class BaseStore <T> {
+export default abstract class BaseStore<T> {
   #prefix: string;
 
-  constructor (prefix: string | null) {
+  constructor(prefix: string | null) {
     this.#prefix = prefix ? `${prefix}:` : '';
   }
 
-  public all (update: (key: string, value: T) => void): void {
+  public all(update: (key: string, value: T) => void): void {
     this.allMap((map): void => {
       Object.entries(map).forEach(([key, value]): void => {
         update(key, value);
@@ -26,7 +26,7 @@ export default abstract class BaseStore <T> {
     });
   }
 
-  public allMap (update: (value: Record<string, T>) => void): void {
+  public allMap(update: (value: Record<string, T>) => void): void {
     chrome.storage.local.get(null, (result: StoreValue): void => {
       lastError('all');
 
@@ -45,7 +45,7 @@ export default abstract class BaseStore <T> {
     });
   }
 
-  public get (_key: string, update: (value: T) => void): void {
+  public get(_key: string, update: (value: T) => void): void {
     const key = `${this.#prefix}${_key}`;
 
     chrome.storage.local.get([key], (result: StoreValue): void => {
@@ -55,7 +55,7 @@ export default abstract class BaseStore <T> {
     });
   }
 
-  public remove (_key: string, update?: () => void): void {
+  public remove(_key: string, update?: () => void): void {
     const key = `${this.#prefix}${_key}`;
 
     chrome.storage.local.remove(key, (): void => {
@@ -65,7 +65,7 @@ export default abstract class BaseStore <T> {
     });
   }
 
-  public set (_key: string, value: T, update?: () => void): void {
+  public set(_key: string, value: T, update?: () => void): void {
     const key = `${this.#prefix}${_key}`;
 
     chrome.storage.local.set({ [key]: value }, (): void => {

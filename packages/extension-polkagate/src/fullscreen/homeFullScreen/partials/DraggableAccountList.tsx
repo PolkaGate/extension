@@ -23,7 +23,7 @@ export const saveNewOrder = (newOrder: AccountsOrder[]) => {
   chrome.storage.local.set({ addressOrder }).catch(console.error);
 };
 
-function DraggableAccountList ({ initialAccountList }: Props) {
+function DraggableAccountList({ initialAccountList }: Props) {
   const [accountsOrder, setAccountsOrder] = useState<AccountsOrder[]>(initialAccountList);
   const [quickActionOpen, setQuickActionOpen] = useState<string | boolean>();
 

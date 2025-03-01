@@ -17,7 +17,7 @@ interface ValidatorEraInfo {
   total: BN;
 }
 
-export default function useValidatorApy (api: ApiPromise | undefined, validatorAddress: string, isElected?: boolean): string | undefined | null {
+export default function useValidatorApy(api: ApiPromise | undefined, validatorAddress: string, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
   const blockInterval = calcInterval(api);
   const blockIntervalInSec = blockInterval.toNumber() / 1000;

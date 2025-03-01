@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useInfo, useTranslation } from '.';
 
-export default function useIsRecoverableTooltipText (address: string | undefined): { isRecoverable: boolean | undefined; recoverableToolTipTxt: string; } {
+export default function useIsRecoverableTooltipText(address: string | undefined): { isRecoverable: boolean | undefined; recoverableToolTipTxt: string; } {
   const { t } = useTranslation();
 
   const { api, chain, formatted } = useInfo(address);
@@ -32,7 +32,7 @@ export default function useIsRecoverableTooltipText (address: string | undefined
 
   const recoverableToolTipTxt = useMemo(() => {
     if (!chain) {
-      return  t('Account is in Any Chain mode');
+      return t('Account is in Any Chain mode');
       ;
     }
 

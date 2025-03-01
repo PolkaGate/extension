@@ -72,7 +72,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
             <FormatPrice
               amount={balance}
               decimals={decimal}
-              fontSize= '16px'
+              fontSize='16px'
               price={tokenPrice}
             />
           </Grid>
@@ -83,7 +83,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
   );
 };
 
-export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElement<Props> {
+export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
   const secondBreakpoint = !useMediaQuery('(min-width:700px)');

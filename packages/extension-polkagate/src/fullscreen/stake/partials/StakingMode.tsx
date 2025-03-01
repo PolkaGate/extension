@@ -37,7 +37,7 @@ interface OptionProps {
   rotations?: RotationStyle;
 }
 
-export default function StakingMode ({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingMode({ api, balance, balanceText, helperText, logo, noToolTip, onClick, rotations, showQuestionMark, style, text, tipPlace, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

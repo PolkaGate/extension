@@ -15,7 +15,7 @@ import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants
 import { decodeMultiLocation } from '../util/utils';
 import { useInfo } from '.';
 
-export default function useBalancesOnAssethub (address: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalancesOnAssethub(address: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName, formatted } = useInfo(address);
 
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
@@ -36,7 +36,7 @@ export default function useBalancesOnAssethub (address: string | undefined, asse
       const [accountAsset, assetInfo, metadata] = await Promise.all([
         api.query[section]['account'](_assetId, formatted) as unknown as Option<PalletAssetsAssetAccount>,
         api.query[section]['asset'](_assetId) as unknown as Option<PalletAssetsAssetDetails>,
-        api.query[section]['metadata'](_assetId) as unknown as {deposit: u128, name: Bytes, symbol: Bytes, decimals: u8, isFrozen: bool}
+        api.query[section]['metadata'](_assetId) as unknown as { deposit: u128, name: Bytes, symbol: Bytes, decimals: u8, isFrozen: bool }
 
       ]);
 

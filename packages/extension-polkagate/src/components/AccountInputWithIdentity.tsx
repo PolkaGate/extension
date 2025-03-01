@@ -25,7 +25,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export default function AccountInputWithIdentity ({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);

@@ -9,13 +9,13 @@ import { useEffect, useState } from 'react';
 import { getValue } from '../popup/account/util';
 import { useBalances } from '.';
 
-export default function useCanPayFee (formatted: string | undefined, estimatedFee: Balance | BN | undefined): boolean | undefined {
+export default function useCanPayFee(formatted: string | undefined, estimatedFee: Balance | BN | undefined): boolean | undefined {
   const balances = useBalances(formatted);
   const [canPayFee, setCanPayFee] = useState<boolean | undefined>();
 
   useEffect(() =>
     balances && estimatedFee && setCanPayFee(getValue('available', balances)?.gt(estimatedFee))
-  , [balances, estimatedFee]);
+    , [balances, estimatedFee]);
 
   return canPayFee;
 }

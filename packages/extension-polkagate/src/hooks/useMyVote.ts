@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getAddressVote } from '../fullscreen/governance/post/myVote/util';
 import { useInfo } from '.';
 
-export default function useMyVote (
+export default function useMyVote(
   address: string | undefined,
   refIndex: number | string | undefined,
   trackId: number | string | undefined,

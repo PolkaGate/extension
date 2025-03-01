@@ -43,7 +43,7 @@ interface Props {
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SelectValidators ({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
+export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, decimal, token } = useInfo(address);
@@ -188,7 +188,7 @@ export default function SelectValidators ({ address, api, newSelectedValidators,
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-  , [newSelectedValidators]);
+    , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;

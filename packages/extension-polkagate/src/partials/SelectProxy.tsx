@@ -27,7 +27,7 @@ interface Props {
   proxies: ProxyItem[] | undefined;
 }
 
-export default function SelectProxy ({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
+export default function SelectProxy({ genesisHash, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash, true);
   const [proxiesToSelect, setProxiesToSelect] = useState<ProxyItem[] | undefined>();

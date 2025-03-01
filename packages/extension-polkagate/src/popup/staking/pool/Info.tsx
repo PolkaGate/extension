@@ -23,7 +23,7 @@ interface Props {
 
 }
 
-export default function Info ({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
+export default function Info({ address, info, setShowInfo, showInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
 

@@ -6,7 +6,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 /**
  * @param {{ value: string; }[]} endpoints
  */
-export async function fastestEndpoint (endpoints) {
+export async function fastestEndpoint(endpoints) {
   let connection;
 
   const connections = endpoints.map(({ value }) => {

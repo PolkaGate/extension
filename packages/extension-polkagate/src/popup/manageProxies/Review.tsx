@@ -33,7 +33,7 @@ interface Props {
   depositToPay: BN | undefined;
 }
 
-export default function Review ({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const account = useAccount(address);

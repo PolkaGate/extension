@@ -9,7 +9,7 @@ import { BN, bnMax } from '@polkadot/util';
 
 import getApi from '../getApi.ts';
 
-async function getPoolStackingConsts (endpoint) {
+async function getPoolStackingConsts(endpoint) {
   try {
     const api = await getApi(endpoint);
     const at = await api.rpc.chain.getFinalizedHead();

@@ -20,7 +20,7 @@ const DEFAULT_ENDPOINT = {
   timestamp: undefined
 };
 
-export default function useEndpoint (address: AccountId | string | undefined, _endpoint?: string): EndpointType {
+export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): EndpointType {
   const genesisHash = useGenesisHash(address);
   const [endpoint, setEndpoint] = useState<EndpointType>(DEFAULT_ENDPOINT);
 

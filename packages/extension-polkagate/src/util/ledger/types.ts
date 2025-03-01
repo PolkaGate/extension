@@ -6,13 +6,13 @@ import type { AccountOptions, LedgerAddress, LedgerSignature, LedgerVersion } fr
 export type LedgerTypes = 'hid' | 'webusb';
 
 export abstract class Ledger {
-  abstract getAddress (confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress>;
+  abstract getAddress(confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress>;
 
-  abstract getVersion (): Promise<LedgerVersion>;
+  abstract getVersion(): Promise<LedgerVersion>;
 
-  abstract signTransaction (message: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature>;
-  abstract signMessage (message: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature>;
-  abstract disconnect (): Promise<void>;
+  abstract signTransaction(message: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature>;
+  abstract signMessage(message: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature>;
+  abstract disconnect(): Promise<void>;
 }
 
 export type LedgerErrorStatus = 'warning' | 'error';

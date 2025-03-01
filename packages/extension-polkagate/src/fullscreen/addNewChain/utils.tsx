@@ -8,13 +8,13 @@ import { useContext, useMemo } from 'react';
 
 import { UserAddedChainContext } from '../../components';
 
-export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> | undefined {
+export function useUserAddedEndpoints(): Record<HexString, UserAddedEndpoint> | undefined {
   const userEndpoints = useContext(UserAddedChainContext);
 
   return userEndpoints;
 }
 
-export function useUserAddedEndpoint (genesis: string | null | undefined): DropdownOption []| undefined {
+export function useUserAddedEndpoint(genesis: string | null | undefined): DropdownOption[] | undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {
@@ -28,7 +28,7 @@ export function useUserAddedEndpoint (genesis: string | null | undefined): Dropd
   }, [endpoints, genesis]);
 }
 
-export function useUserAddedChainColor (_genesisHash: string | undefined | null): string | undefined {
+export function useUserAddedChainColor(_genesisHash: string | undefined | null): string | undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {
@@ -40,7 +40,7 @@ export function useUserAddedChainColor (_genesisHash: string | undefined | null)
   }, [_genesisHash, endpoints]);
 }
 
-export function useUserAddedPriceId (_genesisHash: string | undefined): string | undefined {
+export function useUserAddedPriceId(_genesisHash: string | undefined): string | undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {

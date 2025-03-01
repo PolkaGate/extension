@@ -49,7 +49,7 @@ const EyeButton = ({ isHidden, toggleVisibility }: EyeProps) => {
   );
 };
 
-const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, menuOnClick: () => void}) => {
+const NoChainAlert = ({ chain, menuOnClick }: { chain: Chain | null | undefined, menuOnClick: () => void }) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -68,7 +68,7 @@ const NoChainAlert = ({ chain, menuOnClick }: {chain: Chain | null | undefined, 
   );
 };
 
-const Price = React.memo(function Price ({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPriceOutdated: boolean, price: number | undefined, priceChainName: string | undefined, balanceToShow: BalancesInfo | undefined}) {
+const Price = React.memo(function Price({ balanceToShow, isPriceOutdated, price, priceChainName }: { isPriceOutdated: boolean, price: number | undefined, priceChainName: string | undefined, balanceToShow: BalancesInfo | undefined }) {
   return (
     <>
       {priceChainName === undefined || !balanceToShow || balanceToShow?.chainName?.toLowerCase() !== priceChainName
@@ -76,17 +76,17 @@ const Price = React.memo(function Price ({ balanceToShow, isPriceOutdated, price
         : <FormatPrice
           amount={getValue('total', balanceToShow)}
           decimals={balanceToShow.decimal}
-          fontSize= '18px'
-          fontWeight= { 300}
+          fontSize='18px'
+          fontWeight={300}
           price={price}
-          textColor= {isPriceOutdated ? 'primary.light' : 'text.primary'}
+          textColor={isPriceOutdated ? 'primary.light' : 'text.primary'}
         />
       }
     </>
   );
 });
 
-const Balance = React.memo(function Balance ({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined}) {
+const Balance = React.memo(function Balance({ balanceToShow, isBalanceOutdated }: { balanceToShow: BalancesInfo | undefined, isBalanceOutdated: boolean | undefined }) {
   return (
     <>
       {balanceToShow?.decimal
@@ -104,7 +104,7 @@ const Balance = React.memo(function Balance ({ balanceToShow, isBalanceOutdated 
   );
 });
 
-const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: boolean | undefined}) => {
+const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: boolean | undefined }) => {
   const theme = useTheme();
 
   const balances = useBalances(address);
@@ -155,7 +155,7 @@ const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: bo
   );
 };
 
-function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
+function AccountDetail({ address, chain, goToAccount, hideNumbers, identity, isHidden, menuOnClick, name, toggleVisibility }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chainName = useChainName(address);
 
@@ -163,7 +163,7 @@ function AccountDetail ({ address, chain, goToAccount, hideNumbers, identity, is
     <Grid container direction='column' sx={{ width: '70%' }}>
       <Grid container direction='row' item sx={{ lineHeight: '20px' }}>
         <Grid item maxWidth='70%' onClick={goToAccount} sx={{ cursor: 'pointer' }}>
-          <Typography fontSize='18px' fontWeight={400} mt ='7px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+          <Typography fontSize='18px' fontWeight={400} mt='7px' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
             {identity?.display || name || t('Unknown')}
           </Typography>
         </Grid>

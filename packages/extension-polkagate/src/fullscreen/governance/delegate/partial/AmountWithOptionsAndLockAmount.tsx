@@ -101,30 +101,30 @@ const VotingInformation = ({ accountLocks, balances, currentBlock, decimal, lock
         </Grid>
       </Grid>
       {lockedAmount && !lockedAmount?.isZero() &&
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
-          <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
-            {t('Already Locked Amount')}
-          </Infotip2>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px', width: '75%' }}>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 400 }}>
+            <Infotip2 showQuestionMark text={t('The maximum number of tokens that are already locked in the ecosystem')}>
+              {t('Already Locked Amount')}
+            </Infotip2>
+          </Grid>
+          <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
+            <Infotip2
+              showInfoMark
+              text={accountLocks && currentBlock
+                ? <AlreadyLockedTooltipText accountLocks={accountLocks} currentBlock={currentBlock} decimal={decimal} token={token} />
+                : t('Fetching ...')
+              }
+            >
+              <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
+            </Infotip2>
+          </Grid>
         </Grid>
-        <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-          <Infotip2
-            showInfoMark
-            text={accountLocks && currentBlock
-              ? <AlreadyLockedTooltipText accountLocks={accountLocks} currentBlock={currentBlock} decimal={decimal} token={token} />
-              : t('Fetching ...')
-            }
-          >
-            <ShowBalance balance={lockedAmount} decimal={decimal} decimalPoint={2} token={token} />
-          </Infotip2>
-        </Grid>
-      </Grid>
       }
     </Grid>
   );
 };
 
-export default function AmountWithOptionsAndLockAmount ({ accountLocks, amount, balances, currentBlock, decimal, lockedAmount, onLockedAmount, onMaxAmount, onValueChange, token }: Props): React.ReactElement {
+export default function AmountWithOptionsAndLockAmount({ accountLocks, amount, balances, currentBlock, decimal, lockedAmount, onLockedAmount, onMaxAmount, onValueChange, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

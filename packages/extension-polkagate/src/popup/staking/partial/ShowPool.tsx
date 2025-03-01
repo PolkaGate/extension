@@ -31,7 +31,7 @@ interface Props {
   showInfo?: boolean;
 }
 
-export default function ShowPool ({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
+export default function ShowPool({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);

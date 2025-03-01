@@ -35,7 +35,7 @@ const VerticalBar = () => (
   </Grid>
 );
 
-function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props): React.ReactElement<Props> {
+function ReferendumSummary({ key, myVotedReferendaIndexes, refSummary }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const history = useHistory();
 

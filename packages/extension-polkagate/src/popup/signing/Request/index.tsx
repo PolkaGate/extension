@@ -44,11 +44,11 @@ export const CMD_SIGN_MESSAGE = 3;
 // keep it global, we can and will re-use this across requests
 const registry = new TypeRegistry();
 
-function isRawPayload (payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
+function isRawPayload(payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
   return !!(payload as SignerPayloadRaw).data;
 }
 
-export default function Request ({ account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, error, isFirst, request, setError, signId, url }: Props): React.ReactElement<Props> | null {
+export default function Request({ account: { accountIndex, addressOffset, isExternal, isHardware }, buttonText, error, isFirst, request, setError, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(request.payload?.address);

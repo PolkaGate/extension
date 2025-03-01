@@ -25,7 +25,7 @@ interface Props {
   setDetailInfo: React.Dispatch<React.SetStateAction<TransactionDetail | undefined>>;
 }
 
-export default function HistoryItemModal ({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryItemModal({ anotherDay, date, decimal, formatted, info, setDetailInfo, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -55,9 +55,9 @@ export default function HistoryItemModal ({ anotherDay, date, decimal, formatted
   return (
     <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }}>
       {anotherDay &&
-      <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
-        {date}
-      </Grid>
+        <Grid item sx={{ fontSize: '14px', fontWeight: 400 }}>
+          {date}
+        </Grid>
       }
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '0px 0px 3px 2px rgba(0, 0, 0, 0.1)', mx: '3px', width: 'calc(100% - 6px)' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>

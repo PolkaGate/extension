@@ -24,7 +24,7 @@ export interface DecidingCount {
  * @param address - The account address to fetch counts for
  * @returns DecidingCount object containing referenda and fellowship counts
  */
-export default function useDecidingCount (address: string | undefined): DecidingCount | undefined {
+export default function useDecidingCount(address: string | undefined): DecidingCount | undefined {
   const { api, chain } = useInfo(address);
   const { fellowshipTracks, tracks } = useTracks(address);
   const [counts, setCounts] = useState<DecidingCount | undefined>(undefined);
@@ -39,7 +39,7 @@ export default function useDecidingCount (address: string | undefined): Deciding
       return;
     }
 
-    async function fetchDecidingCounts () {
+    async function fetchDecidingCounts() {
       if ((!trackIds && !fellowshipTrackIds) || !api) {
         return;
       }
@@ -63,7 +63,7 @@ export default function useDecidingCount (address: string | undefined): Deciding
 /**
  * Helper function to fetch and process counts from the API
  */
-async function fetchCounts (
+async function fetchCounts(
   api: ApiPromise,
   trackIds: TrackId[] | undefined,
   fellowshipTrackIds: TrackId[] | undefined,

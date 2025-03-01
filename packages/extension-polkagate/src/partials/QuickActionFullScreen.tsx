@@ -38,7 +38,7 @@ interface QuickActionButtonType {
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
 
-const QuickActionButton = React.memo(function QuickActionButton ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) {
+const QuickActionButton = React.memo(function QuickActionButton({ disabled, divider, icon, onClick, title }: QuickActionButtonType) {
   const theme = useTheme();
 
   return (
@@ -62,7 +62,7 @@ const QuickActionButton = React.memo(function QuickActionButton ({ disabled, div
   );
 });
 
-function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+function QuickActionFullScreen({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

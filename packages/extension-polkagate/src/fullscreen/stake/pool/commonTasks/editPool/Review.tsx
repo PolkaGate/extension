@@ -37,7 +37,7 @@ interface Props {
   step: number;
 }
 
-export default function Review ({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, changes, formatted, pool, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
 

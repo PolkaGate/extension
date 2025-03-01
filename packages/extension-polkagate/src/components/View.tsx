@@ -61,7 +61,7 @@ function View ({ children }: Props): React.ReactElement<Props> {
   );
 }
 
-const BodyTheme = createGlobalStyle<{theme: Theme}>`
+const BodyTheme = createGlobalStyle<{ theme: Theme }>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
   }

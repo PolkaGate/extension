@@ -19,7 +19,7 @@ export const PROFILE_TAGS = {
 /**
  * @description returns the list of accounts which has a profile tag, if profile is undefined it returns 'All' accounts
  */
-export default function useProfileAccounts (initialAccountList: AccountsOrder[] | undefined, profile?: string) {
+export default function useProfileAccounts(initialAccountList: AccountsOrder[] | undefined, profile?: string) {
   const { t } = useTranslation();
 
   const [_profile, setProfile] = useState<string>();

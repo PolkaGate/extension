@@ -24,7 +24,7 @@ interface Props {
   proxyItems: ProxyItem[];
 }
 
-export default function Confirmation ({ address, depositAmount, handleClose, proxyItems, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ address, depositAmount, handleClose, proxyItems, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainName = useChainName(address);

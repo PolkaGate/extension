@@ -12,7 +12,7 @@ import { useTranslation } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import { windowOpen } from '../messaging';
 
-export default function AddNewAccountButton (): React.ReactElement {
+export default function AddNewAccountButton(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();

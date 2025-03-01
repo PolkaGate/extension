@@ -35,7 +35,7 @@ export const getAssetHubByChainName = (chainName?: string) => {
   return undefined;
 };
 
-export default function useReferendum (address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
+export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
   const assetHubApi = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
@@ -127,7 +127,7 @@ export default function useReferendum (address: AccountId | string | undefined, 
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.who.toString() : undefined
             : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const submissionAmountOC = useMemo(() => onchainRefInfo?.isOngoing
     ? onchainRefInfo.asOngoing.submissionDeposit.amount.toString()
@@ -140,7 +140,7 @@ export default function useReferendum (address: AccountId | string | undefined, 
           : onchainRefInfo?.isTimedOut
             ? onchainRefInfo.asTimedOut[1].isSome ? onchainRefInfo.asTimedOut[1].value.amount.toString() : undefined
             : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const timeLineOC = useMemo(() => onchainRefInfo?.isOngoing
     ? [
@@ -149,7 +149,7 @@ export default function useReferendum (address: AccountId | string | undefined, 
       onchainRefInfo.asOngoing.deciding.isSome && onchainRefInfo.asOngoing.deciding.value.confirming.isSome && onchainRefInfo.asOngoing.deciding.value.confirming ? onchainRefInfo.asOngoing.deciding.value.confirming.value.toNumber() : undefined
     ]
     : undefined
-  , [onchainRefInfo]);
+    , [onchainRefInfo]);
 
   const convertBlockNumberToDate = useCallback(async (blockNumber: u32 | number): Promise<number | undefined> => {
     if (!api) {

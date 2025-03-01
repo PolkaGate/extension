@@ -127,7 +127,7 @@ export interface ReferendumPA {
 export interface Timeline {
   block: number;
   status: string;
-  time?: number ;
+  time?: number;
   timestamp?: number | Date;
   prophecy?: boolean;
   index?: number;

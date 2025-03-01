@@ -9,7 +9,7 @@ import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 import { AccountContext } from '../components';
 import { saveNewOrder } from '../fullscreen/homeFullScreen/partials/DraggableAccountList';
 
-export default function useAccountsOrder (isFullScreenMode?: boolean): AccountsOrder[] | undefined {
+export default function useAccountsOrder(isFullScreenMode?: boolean): AccountsOrder[] | undefined {
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
 
   const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();

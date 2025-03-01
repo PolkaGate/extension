@@ -28,7 +28,7 @@ interface OutputType {
   unlockableAmount: BN | undefined;
 }
 
-export default function useLockedInReferenda (address: string | undefined, refreshNeeded: boolean | undefined): OutputType {
+export default function useLockedInReferenda(address: string | undefined, refreshNeeded: boolean | undefined): OutputType {
   const delegatedBalance = useHasDelegated(address, refreshNeeded);
   const referendaLocks = useAccountLocks(address, 'referenda', 'convictionVoting', false, refreshNeeded);
   const currentBlock = useCurrentBlockNumber(address);
@@ -39,7 +39,7 @@ export default function useLockedInReferenda (address: string | undefined, refre
 
   const hasDescription = useMemo(() =>
     Boolean((unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock)
-  , [delegatedBalance, timeToUnlock, unlockableAmount]);
+    , [delegatedBalance, timeToUnlock, unlockableAmount]);
 
   return {
     classToUnlock,

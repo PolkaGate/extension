@@ -16,7 +16,7 @@ interface Props {
   iconStyle?: React.CSSProperties | undefined
 }
 
-export default function Checkbox2 ({ checked = false, disabled, iconStyle, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
+export default function Checkbox2({ checked = false, disabled, iconStyle, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
   return (
     <FormControlLabel
       control={

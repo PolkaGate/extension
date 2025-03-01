@@ -20,7 +20,7 @@ interface Props extends RouteComponentProps<{ address: string, isExternal: strin
   className?: string;
 }
 
-function ForgetAccount ({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
+function ForgetAccount({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

@@ -46,7 +46,7 @@ const ShowNameAddress = ({ nameAddress, title }: { title: string, nameAddress: N
   );
 };
 
-export default function Detail ({ chainName, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
+export default function Detail({ chainName, decimal, info, setShowDetail, showDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const options = { day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', second: 'numeric', weekday: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 

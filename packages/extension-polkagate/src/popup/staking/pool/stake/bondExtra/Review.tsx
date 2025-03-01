@@ -39,7 +39,7 @@ interface Props {
   pool: MyPoolInfo;
 }
 
-export default function Review ({ address, api, bondAmount, estimatedFee, pool, setShowReview, showReview }: Props): React.ReactElement {
+export default function Review({ address, api, bondAmount, estimatedFee, pool, setShowReview, showReview }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chain = useChain(address);
   const onAction = useContext(ActionContext);

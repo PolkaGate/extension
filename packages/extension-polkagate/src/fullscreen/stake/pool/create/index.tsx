@@ -24,7 +24,7 @@ interface Props {
   inputs: StakingInputs | undefined;
 }
 
-export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();

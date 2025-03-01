@@ -155,7 +155,7 @@ interface Props {
   externalChainNamesToShow?: (string | undefined)[] | undefined;
 }
 
-function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
+function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const { chainName: currentChainNameFromAccount, genesisHash } = useInfo(address);
@@ -248,7 +248,7 @@ function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: P
     chainNamesToShow && (chainNamesToShow.length > 1
       ? setShowOtherChains(!showOtherChains)
       : selectNetwork(chainNamesToShow[0]))
-  , [chainNamesToShow, selectNetwork, showOtherChains]);
+    , [chainNamesToShow, selectNetwork, showOtherChains]);
 
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
 

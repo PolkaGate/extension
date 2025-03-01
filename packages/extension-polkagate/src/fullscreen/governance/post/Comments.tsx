@@ -19,7 +19,7 @@ interface CommentsProps {
   referendum: Referendum | undefined;
 }
 
-export default function Comments ({ address, referendum }: CommentsProps): React.ReactElement {
+export default function Comments({ address, referendum }: CommentsProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const ChainName = useChainName(address);

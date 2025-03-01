@@ -15,7 +15,7 @@ const assetsChains = createAssets();
  * @description To fetch assets priceIds for fetching their prices
  * @returns a list of priceIds like 'acala', 'polkadot, ...
  */
-export default function usePriceIds (): string[] | undefined | null {
+export default function usePriceIds(): string[] | undefined | null {
   const selectedChains = useSelectedChains();
   const [userAddedPriceIds, setUserAddedPriceIds] = useState<string[]>([]);
 

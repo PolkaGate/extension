@@ -29,7 +29,7 @@ interface IdentityProps {
   web: string | undefined;
 }
 
-export default function ShowIdentity ({ accountIdentity, style }: Props): React.ReactElement {
+export default function ShowIdentity({ accountIdentity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

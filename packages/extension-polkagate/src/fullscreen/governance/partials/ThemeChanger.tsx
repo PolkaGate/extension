@@ -50,7 +50,7 @@ const sunSlide = {
     }`
 };
 
-function ThemeChanger ({ color, left = '7px', noBorder }: Props): React.ReactElement {
+function ThemeChanger({ color, left = '7px', noBorder }: Props): React.ReactElement {
   const theme = useTheme();
   const colorMode = useContext(ColorContext);
 

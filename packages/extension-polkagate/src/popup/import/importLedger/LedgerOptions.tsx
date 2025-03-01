@@ -20,7 +20,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
+export default function LedgerOptions({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -40,7 +40,7 @@ export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
           logo={
             <VaadinIcon icon='vaadin:wallet' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
           }
-          text= {t('Attach ledger device')}
+          text={t('Attach ledger device')}
         />
         <Typography fontSize='14px' py='20px' width='100%'>
           {t('Choose the type of Ledger connection. The Polkadot Generic app is new and recommended. However, if you already have assets on a Ledger device for chains other than Polkadot and its asset hub, you can use the Ledger Legacy apps. In this case, you will need to migrate your assets to the Polkadot Generic app using the Migration app, provided that your desired chain has upgraded its runtime and is compatible with the Polkadot Generic app. To find out if your chain is upgraded, check: ')}

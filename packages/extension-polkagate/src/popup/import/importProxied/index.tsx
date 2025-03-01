@@ -22,7 +22,7 @@ import getLogo from '../../../util/getLogo';
 import AddressDropdown from '../../newAccount/deriveAccount/AddressDropdown';
 import ProxiedTable from './ProxiedTable';
 
-function ImportProxied (): React.ReactElement {
+function ImportProxied(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
@@ -36,7 +36,7 @@ function ImportProxied (): React.ReactElement {
     accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [accounts]);
+    , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -114,27 +114,27 @@ function ImportProxied (): React.ReactElement {
         />
       </Label>
       {selectedAddress &&
-      <SelectChain
-        address={selectedAddress}
-        fullWidthDropdown
-        icon={getLogo(chain ?? undefined)}
-        label={t('Select the chain')}
-        onChange={onChangeGenesis}
-        options={selectableChains}
-        style={{ m: '15px auto', width: '92%' }}
-      />
+        <SelectChain
+          address={selectedAddress}
+          fullWidthDropdown
+          icon={getLogo(chain ?? undefined)}
+          label={t('Select the chain')}
+          onChange={onChangeGenesis}
+          options={selectableChains}
+          style={{ m: '15px auto', width: '92%' }}
+        />
       }
       {selectedAddress && chain &&
-      <ProxiedTable
-        api={api}
-        chain={chain}
-        label={t('Proxied account(s)')}
-        maxHeight='140px'
-        proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
-        selectedProxied={selectedProxied}
-        setSelectedProxied={setSelectedProxied}
-        style={{ m: '0 auto', width: '92%' }}
-      />
+        <ProxiedTable
+          api={api}
+          chain={chain}
+          label={t('Proxied account(s)')}
+          maxHeight='140px'
+          proxiedAccounts={proxiedAccounts?.proxy === formatted ? proxiedAccounts?.proxied : undefined}
+          selectedProxied={selectedProxied}
+          setSelectedProxied={setSelectedProxied}
+          style={{ m: '0 auto', width: '92%' }}
+        />
       }
       <PButton
         _isBusy={isBusy}

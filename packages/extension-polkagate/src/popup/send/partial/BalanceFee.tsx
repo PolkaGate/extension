@@ -31,7 +31,7 @@ interface Props {
 
 }
 
-export default function BalanceFee ({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
+export default function BalanceFee({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
   const value = balance ?? (type ? getValue(type, balances) : undefined);
   const token = useToken(address);
   const decimal = useDecimal(address);

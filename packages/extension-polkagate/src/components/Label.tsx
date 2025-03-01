@@ -15,7 +15,7 @@ interface Props {
   helperText?: string;
 }
 
-function Label ({ children, helperText = '', label, style }: Props): React.ReactElement<Props> {
+function Label({ children, helperText = '', label, style }: Props): React.ReactElement<Props> {
   const ref = useRef(null);
   const [tpLocation, setTpLocation] = useState<string | undefined>();
 

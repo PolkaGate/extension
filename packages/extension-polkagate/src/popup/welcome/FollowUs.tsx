@@ -34,7 +34,7 @@ const Icon = ({ bounce = false, icon, link }: { link: string, icon: IconDefiniti
   );
 };
 
-function FollowUs ({ width }: { width: string }): React.ReactElement {
+function FollowUs({ width }: { width: string }): React.ReactElement {
   const { t } = useTranslation();
   const ICON_COUNTS = 4;
   const DEFAULT_BOUNCING = Array(ICON_COUNTS).fill(false) as boolean[];

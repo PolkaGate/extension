@@ -18,7 +18,7 @@ interface Props {
   icon?: string | IconDefinition;
 }
 
-export default function SimpleModalTitle ({ icon, onClose, title }: Props): React.ReactElement {
+export default function SimpleModalTitle({ icon, onClose, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const isIconVaadin = typeof icon === 'string' && icon?.startsWith('vaadin');
@@ -41,7 +41,7 @@ export default function SimpleModalTitle ({ icon, onClose, title }: Props): Reac
                 : <></>
             }
           </>}
-        <Typography display='contents' fontSize='22px' fontWeight={700} pl= '10px'>
+        <Typography display='contents' fontSize='22px' fontWeight={700} pl='10px'>
           {title}
         </Typography>
       </Grid>

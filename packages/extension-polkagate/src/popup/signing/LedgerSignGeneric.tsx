@@ -30,7 +30,7 @@ interface Props {
   showError?: boolean;
 }
 
-function LedgerSignGeneric ({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { account, api } = useInfo(address);

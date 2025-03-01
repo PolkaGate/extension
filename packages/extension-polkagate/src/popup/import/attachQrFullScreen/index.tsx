@@ -22,7 +22,7 @@ import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
 import { Name } from '../../../partials';
 
-export default function AttachQrFullScreen (): React.ReactElement {
+export default function AttachQrFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -127,7 +127,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
             logo={
               <VaadinIcon icon='vaadin:qrcode' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
             }
-            text= {t('Attach QR-signer')}
+            text={t('Attach QR-signer')}
           />
           {!account &&
             <Grid alignItems='center' container justifyContent='center'>

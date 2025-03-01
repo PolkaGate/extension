@@ -18,7 +18,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util/utils';
 
-export default function useProxies (api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
+export default function useProxies(api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
   const [proxies, setProxies] = useState<Proxy[] | undefined>();
   const [proxiesWithAvailability, setProxiesWithAvailability] = useState<Proxy[] | undefined>();
   const { accounts } = useContext(AccountContext);

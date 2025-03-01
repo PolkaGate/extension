@@ -15,7 +15,7 @@ import { FetchingContext } from '../components';
 import getPoolAccounts from '../util/getPoolAccounts';
 import { useInfo } from '.';
 
-export default function usePoolBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
+export default function usePoolBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
   const { api, chain, chainName, formatted } = useInfo(address);
   const isFetching = useContext(FetchingContext);
 

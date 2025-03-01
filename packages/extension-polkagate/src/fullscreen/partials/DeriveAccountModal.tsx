@@ -32,7 +32,7 @@ interface ConfirmState {
   parentPassword: string;
 }
 
-function DeriveModal ({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
+function DeriveModal({ parentAddress, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

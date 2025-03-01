@@ -24,7 +24,7 @@ interface Props {
   show: boolean;
 }
 
-export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactElement {
+export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);

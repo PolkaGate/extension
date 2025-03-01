@@ -12,7 +12,7 @@ import { sanitizeChainName } from './utils';
  * @param _genesisHash
  * @returns sanitized chain name
  */
-export default function getChainName (_genesisHash: string | undefined, genesisOptions?: DropdownOption[]): string | undefined {
+export default function getChainName(_genesisHash: string | undefined, genesisOptions?: DropdownOption[]): string | undefined {
   if (!_genesisHash) {
     console.info('genesisHash should not be undefined');
 

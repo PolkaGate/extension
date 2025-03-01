@@ -39,7 +39,7 @@ interface State {
   poolConsts?: PoolStakingConsts;
 }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();

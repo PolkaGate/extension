@@ -17,7 +17,7 @@ const timeout = async (ms: number) => {
   return ms;
 };
 
-const fetchApiTime = async (api: ApiPromise, endpoint:string) => {
+const fetchApiTime = async (api: ApiPromise, endpoint: string) => {
   const startTime = Date.now();
 
   try {
@@ -35,7 +35,7 @@ const fetchApiTime = async (api: ApiPromise, endpoint:string) => {
   return endTime - startTime;
 };
 
-async function CalculateNodeDelay (endpoint: string | undefined) {
+async function CalculateNodeDelay(endpoint: string | undefined) {
   if (!endpoint?.startsWith('wss')) {
     return;
   }

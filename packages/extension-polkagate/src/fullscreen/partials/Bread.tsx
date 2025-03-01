@@ -12,7 +12,7 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { capitalizeFirstLetter } from '../governance/utils/util';
 
-export default function Bread (): React.ReactElement {
+export default function Bread(): React.ReactElement {
   const { address } = useParams<{ address: string, paramAssetId?: string }>();
   const { t } = useTranslation();
 

@@ -71,7 +71,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
       </Link>
       <Link href='https://discord.gg/kf8msNm3' pl='5px' rel='noreferrer' sx={{ '&:hover': { '>svg': { color: '#5865F2' } }, '>svg': { color: '#' } }} target='_blank'>
         <FontAwesomeIcon
-          color= {GRAY_COLOR}
+          color={GRAY_COLOR}
           icon={faDiscord}
           style={{
             height: iconSize === 15 ? '14px' : '17px',
@@ -121,7 +121,7 @@ export const SocialLinks = ({ iconSize = 15 }: { iconSize?: number }) => {
   );
 };
 
-function VersionSocial ({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
+function VersionSocial({ fontSize, iconSize = 15 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const manifest = useManifest();
   const isExtensionMode = useIsExtensionPopup();

@@ -9,7 +9,7 @@ import { useInfo } from '.';
 
 interface TracksType { fellowshipTracks: Track[] | undefined, tracks: Track[] | undefined }
 
-export default function useTracks (address: string | undefined): TracksType {
+export default function useTracks(address: string | undefined): TracksType {
   const { api, chain } = useInfo(address);
 
   const tracks: TracksType = useMemo(() => {

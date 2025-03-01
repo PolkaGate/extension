@@ -37,7 +37,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 7
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

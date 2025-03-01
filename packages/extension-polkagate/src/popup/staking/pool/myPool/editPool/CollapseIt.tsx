@@ -15,7 +15,7 @@ interface Props {
   fullWidth?: boolean;
 }
 
-export default function CollapseIt ({ children, fullWidth, open, show, title }: Props): React.ReactElement {
+export default function CollapseIt({ children, fullWidth, open, show, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const handleClick = useCallback(() => open(title), [open, title]);

@@ -27,7 +27,7 @@ interface Props {
 // match any single slash
 const singleSlashRegex = /([^/]|^)\/([^/]|$)/;
 
-export default function SelectParent ({ className, isLocked, onDerivationConfirmed, parentAddress, parentGenesis, parentName }: Props): React.ReactElement<Props> {
+export default function SelectParent({ className, isLocked, onDerivationConfirmed, parentAddress, parentGenesis, parentName }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const [isBusy, setIsBusy] = useState(false);
@@ -117,7 +117,7 @@ export default function SelectParent ({ className, isLocked, onDerivationConfirm
       }
     }
   },
-  [suriPath, defaultPath, parentAddress, parentPassword, onDerivationConfirmed, t]
+    [suriPath, defaultPath, parentAddress, parentPassword, onDerivationConfirmed, t]
   );
 
   useEffect(() => {

@@ -25,7 +25,7 @@ interface OptionProps {
   logo?: unknown;
 }
 
-export default function StakingSubOption ({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingSubOption({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

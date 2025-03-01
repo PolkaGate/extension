@@ -31,7 +31,7 @@ interface Props {
   pool: MyPoolInfo;
 }
 
-export default function BondExtra ({ address, api, balances, formatted, pool }: Props): React.ReactElement {
+export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chain, decimal, token } = useInfo(address);
   const history = useHistory();

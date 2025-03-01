@@ -3,7 +3,7 @@
 
 // @ts-nocheck
 
-export function closeWebsockets (connections) {
+export function closeWebsockets(connections) {
   connections.forEach(
     ({ wsProvider }) =>
       wsProvider

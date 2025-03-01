@@ -33,7 +33,7 @@ interface AssetsToShow extends FetchedBalance {
   color: string
 }
 
-export default function TotalChart ({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
+export default function TotalChart({ accountAssets, pricesInCurrency }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const chartRef = useRef(null);

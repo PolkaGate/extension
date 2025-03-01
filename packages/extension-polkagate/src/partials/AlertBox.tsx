@@ -11,7 +11,7 @@ import React from 'react';
 import { useAlerts, useTransactionState } from '../hooks';
 import Alert from './Alert';
 
-function AlertBox (): React.ReactElement {
+function AlertBox(): React.ReactElement {
   const { alerts } = useAlerts();
 
   useTransactionState();

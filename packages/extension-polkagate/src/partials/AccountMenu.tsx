@@ -25,13 +25,13 @@ interface Props {
   address: string;
 }
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>;}, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' ref={ref} {...props} />;
 });
 
 const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '3px' }} />;
 
-function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useContext(GenesisHashOptionsContext);
@@ -53,7 +53,7 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
 
   const closeMenu = useCallback(() =>
     setShowMenu((isMenuOpen) => !isMenuOpen)
-  , [setShowMenu]);
+    , [setShowMenu]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;

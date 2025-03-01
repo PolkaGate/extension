@@ -51,7 +51,7 @@ export interface VoteInformation {
 
 const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
 
-function getAlreadyLockedValue (allBalances: DeriveBalancesAll | undefined): BN | undefined {
+function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN | undefined {
   const sortedLocks = allBalances?.lockedBreakdown
     // first sort by amount, so greatest value first
     .sort((a, b) =>
@@ -86,7 +86,7 @@ const getLockedUntil = (endBlock: BN, currentBlock: number) => {
   return remainingTime(endBlock.toNumber() - currentBlock);
 };
 
-export default function Cast ({ address, notVoted, previousVote, refIndex, setStep, setVoteInformation, step, trackId }: Props): React.ReactElement {
+export default function Cast({ address, notVoted, previousVote, refIndex, setStep, setVoteInformation, step, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, formatted, token } = useInfo(address);

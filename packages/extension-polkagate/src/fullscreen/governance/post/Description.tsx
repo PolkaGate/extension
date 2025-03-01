@@ -31,7 +31,7 @@ interface Props {
 
 const DEFAULT_CONTENT = 'This referendum does not have a description provided by the creator. Please research and learn about the proposal before casting your vote.';
 
-export default function ReferendumDescription ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
+export default function ReferendumDescription({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const style = useStyles();
@@ -141,7 +141,7 @@ export default function ReferendumDescription ({ address, currentTreasuryApprova
                           decimalPoint={2}
                           num={rAssetInCurrency || 0}
                           sign={rCurrencySign}
-                          textColor={ theme.palette.mode === 'light' ? 'text.disabled' : undefined}
+                          textColor={theme.palette.mode === 'light' ? 'text.disabled' : undefined}
                         />
                       </Grid>
                     </Grid>

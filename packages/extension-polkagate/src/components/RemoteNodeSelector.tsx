@@ -15,7 +15,7 @@ interface Props {
 
 const endpointManager = new EndpointManager();
 
-export default function RemoteNodeSelector ({ address, genesisHash }: Props): React.ReactElement {
+export default function RemoteNodeSelector({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { account, endpoint } = useInfo(address);
   const endpointOptions = useEndpoints(genesisHash || account?.genesisHash);

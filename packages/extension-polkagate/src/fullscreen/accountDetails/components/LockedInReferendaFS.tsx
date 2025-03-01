@@ -23,7 +23,7 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedInReferendaFS ({ address, price, refreshNeeded, setDisplayPopup, setUnlockInformation }: DisplayBalanceProps): React.ReactElement {
+export default function LockedInReferendaFS({ address, price, refreshNeeded, setDisplayPopup, setUnlockInformation }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -65,8 +65,8 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
             <FormatPrice
               amount={totalLocked}
               decimals={decimal}
-              fontSize= '20px'
-              fontWeight={ 400}
+              fontSize='20px'
+              fontWeight={400}
               price={price}
               skeletonHeight={20}
             />
@@ -88,7 +88,7 @@ export default function LockedInReferendaFS ({ address, price, refreshNeeded, se
           >
             <FontAwesomeIcon
               color={isDisable ? theme.palette.action.disabledBackground : theme.palette.secondary.light}
-              icon={ unlockableAmount && !unlockableAmount.isZero() ? faUnlockAlt : faLock}
+              icon={unlockableAmount && !unlockableAmount.isZero() ? faUnlockAlt : faLock}
               shake={shake}
               style={{ height: '25px' }}
             />

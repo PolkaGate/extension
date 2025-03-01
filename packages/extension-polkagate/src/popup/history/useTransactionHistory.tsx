@@ -38,14 +38,14 @@ const INITIAL_STATE = {
   transactions: []
 };
 
-export interface TransactionHistoryOutput{
+export interface TransactionHistoryOutput {
   grouped: Record<string, TransactionDetail[]> | null | undefined;
   tabHistory: TransactionDetail[] | null;
   transfersTx: object & RecordTabStatus;
   governanceTx: object & RecordTabStatusGov;
 }
 
-export default function useTransactionHistory (address: string | undefined, tabIndex: TAB_MAP): TransactionHistoryOutput {
+export default function useTransactionHistory(address: string | undefined, tabIndex: TAB_MAP): TransactionHistoryOutput {
   const { chain, chainName, decimal, formatted } = useInfo(address);
 
   const [fetchedTransferHistoriesFromSubscan, setFetchedTransferHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
@@ -53,11 +53,11 @@ export default function useTransactionHistory (address: string | undefined, tabI
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
-  function stateReducer (state: object, action: RecordTabStatus) {
+  function stateReducer(state: object, action: RecordTabStatus) {
     return Object.assign({}, state, action);
   }
 
-  function stateReducerGov (state: object, action: RecordTabStatusGov) {
+  function stateReducerGov(state: object, action: RecordTabStatusGov) {
     return Object.assign({}, state, action);
   }
 

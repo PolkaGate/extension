@@ -11,7 +11,7 @@ import { BN } from '@polkadot/util';
 import { AUTO_MODE } from '../util/constants';
 import { useInfo, useStashId } from '.';
 
-export default function useNominator (address: string): NominatorInfo | undefined {
+export default function useNominator(address: string): NominatorInfo | undefined {
   const { endpoint, formatted } = useInfo(address);
   const stashId = useStashId(formatted);
 

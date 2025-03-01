@@ -11,7 +11,7 @@ import type { Proxy, TxResult } from '../types';
 
 import { signAndSend } from './signAndSend';
 
-export default async function broadcast (
+export default async function broadcast(
   api: ApiPromise,
   extrinsic: ((...args: any[]) => SubmittableExtrinsic<'promise'>),
   params: unknown[],

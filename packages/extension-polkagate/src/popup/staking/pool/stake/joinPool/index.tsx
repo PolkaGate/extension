@@ -28,7 +28,7 @@ interface State {
   poolStakingConsts: PoolStakingConsts;
 }
 
-export default function JoinPool (): React.ReactElement {
+export default function JoinPool(): React.ReactElement {
   const { t } = useTranslation();
 
   const { address } = useParams<{ address: string }>();

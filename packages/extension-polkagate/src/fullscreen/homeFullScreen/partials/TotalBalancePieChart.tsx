@@ -61,7 +61,7 @@ export const changeSign = (change: number | undefined) => !change
   ? ''
   : change > 0 ? '+ ' : '- ';
 
-export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
+export function adjustColor(token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
@@ -115,7 +115,7 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
   );
 };
 
-function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart({ setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();

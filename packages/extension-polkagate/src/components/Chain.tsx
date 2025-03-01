@@ -23,7 +23,7 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
   let options = useContext(GenesisHashOptionsContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -33,7 +33,7 @@ function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, lab
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {

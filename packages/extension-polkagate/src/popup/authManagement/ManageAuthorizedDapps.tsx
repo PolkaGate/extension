@@ -21,7 +21,7 @@ interface Props {
   backToAccountFS?: () => void | undefined;
 }
 
-export default function ManageAuthorizedDapps ({ backToAccountFS, setDappInfo }: Props): React.ReactElement {
+export default function ManageAuthorizedDapps({ backToAccountFS, setDappInfo }: Props): React.ReactElement {
   const isExtensionMode = useIsExtensionPopup();
   const { t } = useTranslation();
   const theme = useTheme();

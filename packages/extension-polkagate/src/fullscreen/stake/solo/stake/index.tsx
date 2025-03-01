@@ -45,7 +45,7 @@ const Warn = ({ text }: { text: string }) => {
   );
 };
 
-export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
@@ -89,8 +89,8 @@ export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props
   const buttonDisable = useMemo(() => !!alert || !amount, [alert, amount]);
   const isBusy = useMemo(() =>
     (!inputs?.estimatedFee || !inputs?.extraInfo?.['amount']) && isNextClicked
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [inputs?.extraInfo?.['amount'], inputs?.estimatedFee, isNextClicked]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [inputs?.extraInfo?.['amount'], inputs?.estimatedFee, isNextClicked]);
 
   useEffect(() => {
     if (!amountAsBN || !amount) {

@@ -31,11 +31,11 @@ interface Props {
 
 const MAX_LENGTH_FOR_TX_TO_SHOW = 60; // characters
 
-function displayDecodeVersion (message: string, chain: Chain, specVersion: BN): string {
+function displayDecodeVersion(message: string, chain: Chain, specVersion: BN): string {
   return `${message}: chain=${chain.name}, specVersion=${chain.specVersion.toString()} (request specVersion=${specVersion.toString()})`;
 }
 
-function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
+function decodeMethod(data: string, chain: Chain, specVersion: BN): Decoded {
   let args: AnyJson | null = null;
   let method: Call | null = null;
 
@@ -57,7 +57,7 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
   return { args, method };
 }
 
-function renderMethod (data: string, { args, method }: Decoded, t: TFunction): React.ReactNode {
+function renderMethod(data: string, { args, method }: Decoded, t: TFunction): React.ReactNode {
   if (!args || !method) {
     return (
       <Grid alignItems='center' container item sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light', minHeight: '36px', px: '8px' }}>
@@ -97,7 +97,7 @@ function renderMethod (data: string, { args, method }: Decoded, t: TFunction): R
   );
 }
 
-function mortalityAsString (era: ExtrinsicEra, hexBlockNumber: string, t: TFunction): string {
+function mortalityAsString(era: ExtrinsicEra, hexBlockNumber: string, t: TFunction): string {
   if (era.isImmortalEra) {
     return t('immortal');
   }
@@ -110,7 +110,7 @@ function mortalityAsString (era: ExtrinsicEra, hexBlockNumber: string, t: TFunct
   return RemainingDateByBlock(remainingBlocks).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h11' });
 }
 
-function Extrinsic ({ payload: { era, nonce, tip }, request: { blockNumber, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
+function Extrinsic({ payload: { era, nonce, tip }, request: { blockNumber, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useMetadata(genesisHash);
   const specVersion = useRef(bnToBn(hexSpec)).current;

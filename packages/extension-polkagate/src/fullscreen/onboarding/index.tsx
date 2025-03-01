@@ -22,7 +22,7 @@ import IconBox from './IconBox';
 
 export const ICON_BOX_WIDTH = '300px';
 
-function Onboarding (): React.ReactElement {
+function Onboarding(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();

@@ -190,7 +190,7 @@ enum STATUS {
   SHOW_REMOVE
 }
 
-function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<Props> {
+function ProfileMenu({ address, closeParentMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 

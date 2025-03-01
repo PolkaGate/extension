@@ -176,7 +176,7 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
   );
 };
 
-function FullScreenAccountMenu ({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
+function FullScreenAccountMenu({ address, baseButton, setDisplayPopup }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);

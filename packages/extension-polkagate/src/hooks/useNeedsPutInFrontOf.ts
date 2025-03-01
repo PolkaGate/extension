@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AUTO_MODE } from '../util/constants';
 import { useEndpoint, useStashId } from '.';
 
-export default function useNeedsPutInFrontOf (address: string): PutInFrontInfo | undefined {
+export default function useNeedsPutInFrontOf(address: string): PutInFrontInfo | undefined {
   const { endpoint } = useEndpoint(address);
   const stashId = useStashId(address);
 

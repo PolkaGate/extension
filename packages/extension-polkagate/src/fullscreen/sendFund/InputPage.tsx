@@ -94,7 +94,7 @@ export const Title = ({ height, icon, logo, ml, onBackClick, padding = '30px 0px
 
 const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
-export default function InputPage ({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, assetId, balances, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, formatted } = useInfo(address);
@@ -111,7 +111,7 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
     : isForeignAsset
       ? decodeMultiLocation(assetId as HexString)
       : parseInt(assetId)
-, [assetId, isForeignAsset, isNativeToken, noAssetId]);
+    , [assetId, isForeignAsset, isNativeToken, noAssetId]);
 
   const [amount, setAmount] = useState<string>(inputs?.amount || '0');
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -155,9 +155,9 @@ export default function InputPage ({ address, assetId, balances, inputs, setInpu
   const destinationGenesisHashes = useMemo((): DropdownOption[] => {
     const currentChainOption = chain ? [{ text: chain.name, value: chain.genesisHash as string }] : [];
     const maybeTeleportDestinations =
-     isNativeToken
-       ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
-       : [];
+      isNativeToken
+        ? teleportState?.destinations?.map(({ genesisHash, info, paraId }) => ({ text: toTitleCase(info) as string, value: (paraId || String(genesisHash)) as string }))
+        : [];
 
     return currentChainOption.concat(maybeTeleportDestinations);
   }, [isNativeToken, chain, teleportState?.destinations]);

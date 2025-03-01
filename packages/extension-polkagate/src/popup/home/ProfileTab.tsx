@@ -25,7 +25,7 @@ interface Props {
 const COLLAPSED_SIZE = '20px';
 const HIDDEN_PERCENT = '50%';
 
-function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
+function ProfileTab({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

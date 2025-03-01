@@ -39,7 +39,7 @@ interface UsePools {
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools (address: string): UsePools {
+export default function usePools(address: string): UsePools {
   const api = useApi(address);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();

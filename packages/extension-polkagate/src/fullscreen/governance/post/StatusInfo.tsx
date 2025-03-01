@@ -26,7 +26,7 @@ interface Props {
   refIndex: number | undefined;
 }
 
-export default function StatusInfo ({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
+export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();

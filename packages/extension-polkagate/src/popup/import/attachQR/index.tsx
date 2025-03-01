@@ -26,7 +26,7 @@ export interface ScanType {
   name?: string | undefined;
 }
 
-export default function AttachQR (): React.ReactElement {
+export default function AttachQR(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

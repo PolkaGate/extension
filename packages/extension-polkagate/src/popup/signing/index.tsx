@@ -12,7 +12,7 @@ import { cancelSignRequest } from '../../messaging';
 import Request from './Request';
 import TransactionIndex from './TransactionIndex';
 
-export default function Signing (): React.ReactElement {
+export default function Signing(): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(SigningReqContext);
   const [requestIndex, setRequestIndex] = useState(0);

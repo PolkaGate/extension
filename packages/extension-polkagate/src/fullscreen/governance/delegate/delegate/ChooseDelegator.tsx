@@ -20,7 +20,7 @@ interface Props {
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
 }
 
-export default function ChooseDelegator ({ setDelegateInformation, setStep }: Props): React.ReactElement {
+export default function ChooseDelegator({ setDelegateInformation, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

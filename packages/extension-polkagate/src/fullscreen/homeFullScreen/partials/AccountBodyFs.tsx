@@ -32,7 +32,7 @@ interface Props {
   gridSize?: number;
 }
 
-function AccountBodyFs ({ address, goToDetails = noop, gridSize }: Props): React.ReactElement {
+function AccountBodyFs({ address, goToDetails = noop, gridSize }: Props): React.ReactElement {
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
 
   const accountInfo = useIdentity(genesisHash, formatted);

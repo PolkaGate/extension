@@ -18,7 +18,7 @@ interface Props {
   setAssetId: React.Dispatch<React.SetStateAction<number | string | undefined>>
 }
 
-function AssetSelect ({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function AssetSelect({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
   const assets = useAssetHubAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);

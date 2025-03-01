@@ -18,7 +18,7 @@ interface Props {
   selectedGenesis: string | undefined;
 }
 
-export default function AddressDropdown ({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ allAddresses, onSelect, selectedAddress, selectedGenesis, selectedName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [isDropdownVisible, setDropdownVisible] = useState(false);

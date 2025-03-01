@@ -10,7 +10,7 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { Proxy, TxInfo } from '../../../../util/types';
-import type { AlreadyDelegateInformation, DelegateInformation} from '..';
+import type { AlreadyDelegateInformation, DelegateInformation } from '..';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -38,7 +38,7 @@ interface Props {
   selectedProxy: Proxy | undefined;
 }
 
-export default function RemoveDelegate ({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function RemoveDelegate({ address, classicDelegateInformation, formatted, mixedDelegateInformation, selectedProxy, setModalHeight, setSelectedTracksLength, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const { api, chain, decimal, genesisHash, token } = useInfo(address);

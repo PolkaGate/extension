@@ -30,7 +30,7 @@ import Bread from '../partials/Bread';
 import { Title } from '../sendFund/InputPage';
 import ShowChainInfo from './ShowChainInfo';
 
-function getRandomColor () {
+function getRandomColor() {
   // Generate a random number between 0 and 16777215 (0xFFFFFF)
   const randomNumber = Math.floor(Math.random() * 16777215);
   // Convert the number to a hexadecimal string and pad with leading zeros if necessary
@@ -39,7 +39,7 @@ function getRandomColor () {
   return randomColor;
 }
 
-export default function AddNewChain (): React.ReactElement {
+export default function AddNewChain(): React.ReactElement {
   useFullscreen();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -223,7 +223,7 @@ export default function AddNewChain (): React.ReactElement {
             marginTop={0}
             theme={theme}
           >
-            { isError ? t('Invalid endpoint format!') : t('The chain already exists, no need to add it again!')}
+            {isError ? t('Invalid endpoint format!') : t('The chain already exists, no need to add it again!')}
           </Warning>
         }
         {!isLoading && !metadata &&

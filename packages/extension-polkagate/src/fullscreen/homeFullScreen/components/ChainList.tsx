@@ -23,7 +23,7 @@ interface Props {
   anchorEl: HTMLButtonElement | null;
 }
 
-function ChainList ({ anchorEl }: Props): React.ReactElement {
+function ChainList({ anchorEl }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);

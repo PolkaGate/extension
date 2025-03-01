@@ -24,7 +24,7 @@ interface Props {
   withHoverEffect?: boolean;
 }
 
-export default function MenuItem ({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const hoverEffectStyles: SxProps<Theme> = {

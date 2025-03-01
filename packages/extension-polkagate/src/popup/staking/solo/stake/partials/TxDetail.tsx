@@ -16,7 +16,7 @@ interface Props {
   settings?: SoloSettings
 }
 
-export default function TxDetail ({ settings, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ settings, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const controllerName = useAccountName(settings?.controllerId);
   const token = txInfo.api?.registry.chainTokens[0];

@@ -21,7 +21,7 @@ import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { addressToChain, getSubstrateAddress } from '../../../util/utils';
 
-export default function AddAddressOnly (): React.ReactElement {
+export default function AddAddressOnly(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

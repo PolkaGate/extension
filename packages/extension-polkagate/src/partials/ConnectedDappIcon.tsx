@@ -16,7 +16,7 @@ interface Tab {
   favIconUrl?: string;
 }
 
-export default function ConnectedDappIcon (): React.ReactElement {
+export default function ConnectedDappIcon(): React.ReactElement {
   const onAction = useContext(ActionContext);
 
   const [checking, setChecking] = useState<boolean>(false);

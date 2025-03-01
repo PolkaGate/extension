@@ -44,7 +44,7 @@ interface Props {
   unlockableAmount: BN | undefined;
 }
 
-export default function Review ({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
+export default function Review({ address, api, classToUnlock, setDisplayPopup, setRefresh, show, totalLocked, unlockableAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

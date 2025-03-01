@@ -15,7 +15,7 @@ import ChainList from '../components/ChainList';
 
 export interface CurrencyItemType { code: string; country: string; currency: string; sign: string; }
 
-export default function FavoriteChains (): React.ReactElement {
+export default function FavoriteChains(): React.ReactElement {
   const theme = useTheme();
   const selectedChains = useSelectedChains();
   const isTestNetEnabled = useIsTestnetEnabled();

@@ -25,7 +25,7 @@ const Div = () => (
   </Grid>
 );
 
-export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName, formatted, token } = useInfo(txInfo.from.address);
 

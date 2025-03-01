@@ -17,14 +17,14 @@ interface Props {
   label?: string;
 }
 
-export default function AccountWithProxyInConfirmation ({ label, txInfo }: Props): React.ReactElement {
+export default function AccountWithProxyInConfirmation({ label, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
     <>
       <Grid alignItems='end' container justifyContent='center' sx={{ m: 'auto', pt: '5px', width: '90%' }}>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-          { label || t('Account')}:
+          {label || t('Account')}:
         </Typography>
         <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
           {txInfo.from.name}

@@ -28,7 +28,7 @@ interface Props {
   onClick?: () => void
 }
 
-export default function LabelBalancePrice ({ address, balances, label, onClick, showLabel = true, title }: Props): React.ReactElement<Props> {
+export default function LabelBalancePrice({ address, balances, label, onClick, showLabel = true, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const value = getValue(label, balances);
@@ -59,8 +59,8 @@ export default function LabelBalancePrice ({ address, balances, label, onClick, 
               <FormatPrice
                 amount={value}
                 decimals={balances?.decimal}
-                fontSize= {label === 'Total' ? '18px' : '16px'}
-                fontWeight= {label === 'Total' ? 400 : 300}
+                fontSize={label === 'Total' ? '18px' : '16px'}
+                fontWeight={label === 'Total' ? 400 : 300}
                 price={price}
               />
             </Grid>

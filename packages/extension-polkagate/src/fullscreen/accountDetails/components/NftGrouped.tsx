@@ -21,7 +21,7 @@ interface NftGroupedProps {
   accountNft: ItemInformation[] | null | undefined;
 }
 
-function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactElement {
+function NftGrouped({ accountNft, address }: NftGroupedProps): React.ReactElement {
   const theme = useTheme();
 
   const [isLoading, setIsLoading] = React.useState(true);

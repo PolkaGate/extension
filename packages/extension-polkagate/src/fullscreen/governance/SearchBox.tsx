@@ -44,7 +44,7 @@ const DEFAULT_FILTER = {
   status: REFERENDA_STATUS[0]
 };
 
-export default function SearchBox ({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);

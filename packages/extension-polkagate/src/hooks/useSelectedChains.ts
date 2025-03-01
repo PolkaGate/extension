@@ -10,7 +10,7 @@ import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
  * @description get the selected chains
  * @returns a list of selected chains genesis hashes
  */
-export default function useSelectedChains (): string[] | undefined {
+export default function useSelectedChains(): string[] | undefined {
   const [selected, setSelected] = useState<string[] | undefined>();
   const defaultSelectedGenesisHashes = useMemo(() => DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string), []);
 

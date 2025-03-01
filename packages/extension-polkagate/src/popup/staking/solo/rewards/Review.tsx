@@ -36,7 +36,7 @@ interface Props {
   selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);

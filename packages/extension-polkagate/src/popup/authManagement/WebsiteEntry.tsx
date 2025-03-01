@@ -22,7 +22,7 @@ interface Props {
   maxHeight: number;
 }
 
-export default function WebsiteEntry ({ authList, filter, maxHeight, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
+export default function WebsiteEntry({ authList, filter, maxHeight, setDappInfo, setToRemove, toRemove }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

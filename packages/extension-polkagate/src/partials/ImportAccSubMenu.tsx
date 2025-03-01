@@ -18,7 +18,7 @@ interface Props {
   show: boolean;
 }
 
-function ImportAccSubMenu ({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
+function ImportAccSubMenu({ show, toggleSettingSubMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

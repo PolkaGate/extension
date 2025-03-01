@@ -41,7 +41,7 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
 
 const allEndpoints = createWsEndpoints();
 
-export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
+export default function usePeopleChain(address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);

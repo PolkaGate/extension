@@ -12,7 +12,7 @@ interface WebsiteState {
   website: string;
 }
 
-export default function PhishingDetected (): React.ReactElement {
+export default function PhishingDetected(): React.ReactElement {
   const { t } = useTranslation();
   const { website } = useParams<WebsiteState>();
   const decodedWebsite = decodeURIComponent(website);

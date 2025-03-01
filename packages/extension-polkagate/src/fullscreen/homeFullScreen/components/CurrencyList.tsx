@@ -20,7 +20,7 @@ interface Props {
   setCurrencyToShow: React.Dispatch<React.SetStateAction<CurrencyItemType | undefined>>;
 }
 
-function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
+function CurrencyList({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { setCurrency } = useContext(CurrencyContext);

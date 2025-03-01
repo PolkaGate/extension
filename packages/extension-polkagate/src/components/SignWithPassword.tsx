@@ -40,7 +40,7 @@ interface Props {
   api: ApiPromise | undefined;
 }
 
-export default function SignWithPassword ({ address, api, disabled, from, goToSelectProxy, handleTxResult, isPasswordError, onSecondaryClick, prevState, primaryBtn, primaryBtnText, proxies, ptx, secondaryBtnText, selectedProxy, selectedProxyName, senderName, setIsPasswordError, setStep, steps }: Props): React.ReactElement<Props> {
+export default function SignWithPassword({ address, api, disabled, from, goToSelectProxy, handleTxResult, isPasswordError, onSecondaryClick, prevState, primaryBtn, primaryBtnText, proxies, ptx, secondaryBtnText, selectedProxy, selectedProxyName, senderName, setIsPasswordError, setStep, steps }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain, formatted } = useInfo(address);
 

@@ -18,7 +18,7 @@ const allEndpoints = createWsEndpoints();
  * @description
  * find endpoints based on chainName and also omit light client which my be add later
  */
-export function useEndpoints (genesisHash: string | null | undefined): DropdownOption[] {
+export function useEndpoints(genesisHash: string | null | undefined): DropdownOption[] {
   const genesisOptions = useContext(GenesisHashOptionsContext);
 
   const userAddedEndpoint = useUserAddedEndpoint(genesisHash);

@@ -19,7 +19,7 @@ interface Output {
   accordionStyle: CSSProperties;
 }
 
-export default function useStyles (firstBreakpoint?: boolean, secondBreakpoint?: boolean): Output {
+export default function useStyles(firstBreakpoint?: boolean, secondBreakpoint?: boolean): Output {
   const theme = useTheme();
 
   return ({

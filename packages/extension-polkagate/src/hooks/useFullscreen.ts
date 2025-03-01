@@ -3,7 +3,7 @@
 
 import { useLayoutEffect } from 'react';
 
-export default function useFullscreen (): void {
+export default function useFullscreen(): void {
   useLayoutEffect(() => {
     /** to change app width to full screen */
     const root = document.getElementById('root');

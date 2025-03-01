@@ -23,7 +23,7 @@ interface Props {
   inHeading?: boolean;
 }
 
-export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ api, chainGenesis, inHeading, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = theme.palette.mode === 'dark';

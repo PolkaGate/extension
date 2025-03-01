@@ -14,7 +14,7 @@ interface Props {
   show: boolean;
 }
 
-function NewAccountSubMenu ({ show }: Props): React.ReactElement<Props> {
+function NewAccountSubMenu({ show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

@@ -10,7 +10,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { AccountContext } from '../components/contexts';
 import { useChain } from './';
 
-export default function useFormatted (address?: AccountId | string, formatted?: AccountId | string): string | undefined {
+export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): string | undefined {
   const { accounts } = useContext(AccountContext);
   const chain = useChain(address);
 

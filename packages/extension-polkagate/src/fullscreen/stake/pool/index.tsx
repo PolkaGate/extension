@@ -44,7 +44,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 6
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();

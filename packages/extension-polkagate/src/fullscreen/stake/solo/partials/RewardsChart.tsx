@@ -44,7 +44,7 @@ interface Props {
   rewardDestinationAddress: string | undefined;
 }
 
-export default function RewardsChart ({ address, rewardDestinationAddress }: Props): React.ReactElement {
+export default function RewardsChart({ address, rewardDestinationAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, chainName, decimal, token } = useInfo(address);

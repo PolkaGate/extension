@@ -8,7 +8,7 @@ import { useContext, useMemo } from 'react';
 import { AccountsAssetsContext } from '../components';
 import { useGenesisHash } from '.';
 
-export default function useAccountAssetsOptions (address: string | undefined): DropdownOption[] | undefined | null {
+export default function useAccountAssetsOptions(address: string | undefined): DropdownOption[] | undefined | null {
   const genesisHash = useGenesisHash(address);
 
   const { accountsAssets } = useContext(AccountsAssetsContext);

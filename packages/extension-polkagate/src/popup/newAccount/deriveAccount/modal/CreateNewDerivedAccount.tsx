@@ -21,7 +21,7 @@ interface Props {
   isBusy: boolean;
 }
 
-export default function CreateNewDerivedAccount ({ address, derivedAccountName, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, password }: Props): React.ReactElement<Props> {
+export default function CreateNewDerivedAccount({ address, derivedAccountName, isBusy, onBackClick, onCreate, onNameChange, onPasswordChange, password }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const nullF = useCallback(() => null, []);

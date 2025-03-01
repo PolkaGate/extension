@@ -42,7 +42,7 @@ export type ExpandedRewards = [
   value: BN
 ]
 
-export default function Pending ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function Pending({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -279,7 +279,7 @@ export default function Pending ({ address, setRefresh, setShow, show }: Props):
                       </Typography>
                     </Grid>
                     : <> {expandedRewards?.map((info, index) => {
-                      const [eraIndex, validator,, value] = info;
+                      const [eraIndex, validator, , value] = info;
 
                       return (
                         <Grid container item key={index}>

@@ -78,7 +78,7 @@ const MaybeLaterButton = styled(Button)(({ theme }: { theme: Theme }) => ({
   textTransform: 'none'
 }));
 
-export default function SupportUs () {
+export default function SupportUs() {
   const { t } = useTranslation();
   const theme = useTheme();
 

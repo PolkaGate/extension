@@ -20,7 +20,7 @@ export enum MODE {
   MIGRATION
 }
 
-export default function ImportLedger (): React.ReactElement {
+export default function ImportLedger(): React.ReactElement {
   useFullscreen();
 
   const [mode, setMode] = useState<MODE>(MODE.INDEX);

@@ -8,7 +8,7 @@ import React from 'react';
 
 import { useTranslation } from '../../hooks';
 
-function NeedHelp (): React.ReactElement {
+function NeedHelp(): React.ReactElement {
   const { t } = useTranslation();
 
   return (

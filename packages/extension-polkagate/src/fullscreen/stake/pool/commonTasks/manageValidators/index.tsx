@@ -27,7 +27,7 @@ import { STEPS } from '../../stake';
 import InputPage from './InputPage';
 import Review from './Review';
 
-export default function ManageValidators (): React.ReactElement {
+export default function ManageValidators(): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();

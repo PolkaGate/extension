@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-export default function useManifest (): chrome.runtime.Manifest | undefined {
+export default function useManifest(): chrome.runtime.Manifest | undefined {
   const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
 
   const fetchManifest = async () => {

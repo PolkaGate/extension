@@ -16,7 +16,7 @@ interface Props {
   validatorsCount: number;
 }
 
-export default function TxDetail ({ txInfo, validatorsCount }: Props): React.ReactElement {
+export default function TxDetail({ txInfo, validatorsCount }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

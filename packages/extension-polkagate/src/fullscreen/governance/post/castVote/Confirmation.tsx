@@ -23,7 +23,7 @@ interface Props {
   alterType: 'modify' | 'remove' | undefined;
 }
 
-export default function Confirmation ({ address, alterType, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
+export default function Confirmation({ address, alterType, handleClose, txInfo, voteInformation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useInfo(address);
 

@@ -17,7 +17,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function TxDetail ({ changes, txInfo }: Props): React.ReactElement {
+export default function TxDetail({ changes, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const changedRoles = useMemo(() => {

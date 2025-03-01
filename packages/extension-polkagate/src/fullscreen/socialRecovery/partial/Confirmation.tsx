@@ -43,7 +43,7 @@ interface AccountWithTitleProps {
   accountInformation: DeriveAccountInfo | undefined;
 }
 
-export default function Confirmation ({ WithdrawDetails, activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
+export default function Confirmation({ WithdrawDetails, activeLost, decimal, depositValue, handleClose, lostAccountAddress, mode, recoveryConfig, txInfo, vouchRecoveryInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const token = useToken(txInfo.from.address);
@@ -72,16 +72,16 @@ export default function Confirmation ({ WithdrawDetails, activeLost, decimal, de
 
   const MakeRecoverableDetail = () => (
     <>
-      {(mode === 'SetRecovery' || mode === 'ModifyRecovery') && 
-      recoveryConfig?.friends.addresses.map((friend, index) => (
-        <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-          <AccountWithTitle
-            accountInformation={recoveryConfig.friends.infos?.at(index)}
-            address={friend}
-            title={t(`Trusted friend ${index + 1}`)}
-          />
-        </Grid>
-      ))}
+      {(mode === 'SetRecovery' || mode === 'ModifyRecovery') &&
+        recoveryConfig?.friends.addresses.map((friend, index) => (
+          <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
+            <AccountWithTitle
+              accountInformation={recoveryConfig.friends.infos?.at(index)}
+              address={friend}
+              title={t(`Trusted friend ${index + 1}`)}
+            />
+          </Grid>
+        ))}
       <Grid alignItems='center' container item justifyContent='center' pt='8px'>
         <Divider sx={{ bgcolor: 'secondary.main', height: '2px', width: '240px' }} />
       </Grid>

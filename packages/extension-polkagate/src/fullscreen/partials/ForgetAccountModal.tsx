@@ -23,7 +23,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function ForgetAccountModal ({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
+export default function ForgetAccountModal({ account, setDisplayPopup }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

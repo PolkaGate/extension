@@ -15,7 +15,7 @@ import { windowOpen } from '../../messaging';
 import { Version } from '../../partials';
 import Header from './Header';
 
-function Reset (): React.ReactElement {
+function Reset(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

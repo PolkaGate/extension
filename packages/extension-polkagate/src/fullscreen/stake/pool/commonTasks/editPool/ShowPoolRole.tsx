@@ -18,7 +18,7 @@ interface Props {
   chain: Chain | null | undefined;
 }
 
-export default function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivider }: Props) {
+export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivider }: Props) {
   const { t } = useTranslation();
 
   return (

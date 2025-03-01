@@ -18,7 +18,7 @@ interface Props {
   onClick: () => void;
 }
 
-function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
+function IconBox({ icon, label, onClick }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);

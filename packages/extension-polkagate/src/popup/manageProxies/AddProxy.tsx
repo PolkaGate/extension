@@ -143,7 +143,7 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
       </Grid>
       {realAddress && !(myselfAsProxy || alreadyExisting) &&
         <ShowIdentity
-          accountIdentity={proxyAccountIdentity !==undefined && proxyAccountIdentity?.identity || null}
+          accountIdentity={proxyAccountIdentity !== undefined && proxyAccountIdentity?.identity || null}
           style={{ m: 'auto', width: '92%' }}
         />
       }

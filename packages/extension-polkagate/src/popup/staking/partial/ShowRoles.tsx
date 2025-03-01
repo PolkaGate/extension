@@ -27,7 +27,7 @@ interface Props {
   style?: SxProps<Theme> | undefined;
 }
 
-export default function ShowRoles ({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
+export default function ShowRoles({ api, chain, label, mode, pool, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const chainName = sanitizeChainName(chain?.name);
 

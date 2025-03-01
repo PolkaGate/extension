@@ -18,7 +18,7 @@ interface Props {
   url: string;
 }
 
-export default function Request ({ metaId, request, url }: Props): React.ReactElement<Props> {
+export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 

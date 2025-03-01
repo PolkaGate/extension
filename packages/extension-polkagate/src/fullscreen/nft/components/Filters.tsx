@@ -46,7 +46,7 @@ const sortReducer = (state: SortState, action: SortAction): SortState => {
   };
 };
 
-function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
+function Filters({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const prices = usePrices();

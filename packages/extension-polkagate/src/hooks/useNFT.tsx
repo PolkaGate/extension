@@ -19,7 +19,7 @@ export interface NftItemsWorker {
 const nftManager = new NftManager();
 const NFT_FUNCTION_NAME = 'getNFTs';
 
-export default function useNFT (accountsFromContext: AccountJson[] | null) {
+export default function useNFT(accountsFromContext: AccountJson[] | null) {
   const { t } = useTranslation();
   const { notify } = useAlerts();
   const worker = useWorker();

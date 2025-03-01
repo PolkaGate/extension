@@ -11,7 +11,7 @@ import { useIsHideNumbers } from '../../../hooks';
 import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
 
-function HeaderComponents (): React.ReactElement {
+function HeaderComponents(): React.ReactElement {
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   const spacings = '5px';

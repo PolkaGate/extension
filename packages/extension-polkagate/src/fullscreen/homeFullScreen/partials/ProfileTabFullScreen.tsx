@@ -25,7 +25,7 @@ interface Props {
   index: number;
 }
 
-function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+function ProfileTabFullScreen({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { alerts, notify } = useAlerts();

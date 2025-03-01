@@ -27,7 +27,7 @@ interface Props {
   labelAlignment?: 'left' | 'center' | 'right';
 }
 
-export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
+export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

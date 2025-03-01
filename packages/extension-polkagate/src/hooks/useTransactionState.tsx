@@ -6,7 +6,7 @@ import { useCallback, useEffect } from 'react';
 import useTranslation from './useTranslation';
 import { useAlerts } from '.';
 
-export default function useTransactionState () {
+export default function useTransactionState() {
   const { t } = useTranslation();
   const { notify } = useAlerts();
 

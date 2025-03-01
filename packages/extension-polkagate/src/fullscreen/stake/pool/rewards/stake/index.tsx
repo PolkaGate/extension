@@ -31,7 +31,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function StakeRewards ({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeRewards({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 

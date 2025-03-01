@@ -15,7 +15,7 @@ import HistoryItem from './partials/HistoryItem';
 import HistoryTabs, { TAB_MAP } from './HistoryTabs';
 import useTransactionHistory from './useTransactionHistory';
 
-export default function TransactionHistory (): React.ReactElement {
+export default function TransactionHistory(): React.ReactElement {
   const { t } = useTranslation();
   const history = useHistory();
   const { state } = useLocation<{ tabIndex: number; pathname?: string }>();
@@ -40,8 +40,8 @@ export default function TransactionHistory (): React.ReactElement {
         text={t('Transaction History')}
       />
       <HistoryTabs
-        address ={address}
-        setTabIndex ={setTabIndex}
+        address={address}
+        setTabIndex={setTabIndex}
         tabIndex={tabIndex}
       />
       <Grid container id='scrollArea' item sx={{ gap: '5px', height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }}>
@@ -69,7 +69,7 @@ export default function TransactionHistory (): React.ReactElement {
           </Grid>
         }
         {(grouped === undefined || ((transfersTx.isFetching || governanceTx.isFetching) && tabHistory?.length === 0)) &&
-        <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
+          <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
         }
         <div id='observerObj' style={{ height: '1px' }} />
         {grouped &&

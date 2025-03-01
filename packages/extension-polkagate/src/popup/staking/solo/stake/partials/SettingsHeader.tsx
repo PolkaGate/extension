@@ -8,7 +8,7 @@ import React from 'react';
 
 import { useTranslation } from '../../../../../hooks';
 
-export default function SettingsHeader (): React.ReactElement {
+export default function SettingsHeader(): React.ReactElement {
   const { t } = useTranslation();
 
   return (

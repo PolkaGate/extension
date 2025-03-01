@@ -21,7 +21,7 @@ interface Props {
   postId?: string | undefined;
 }
 
-export default function Bread ({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
+export default function Bread({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
   const history = useHistory();
   const { t } = useTranslation();
 

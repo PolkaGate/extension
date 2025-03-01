@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 import { useChain, useTranslation } from '.';
 
-export default function useHasIdentityTooltipText (address: string | undefined, hasID: boolean | undefined): string {
+export default function useHasIdentityTooltipText(address: string | undefined, hasID: boolean | undefined): string {
   const { t } = useTranslation();
 
   const chain = useChain(address);

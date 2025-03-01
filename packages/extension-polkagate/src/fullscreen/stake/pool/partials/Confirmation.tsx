@@ -22,7 +22,7 @@ interface Props {
 
 const unAvailableSpace = 120;
 
-export default function Confirmation ({ children, handleClose, popupHeight, txInfo }: Props): React.ReactElement {
+export default function Confirmation({ children, handleClose, popupHeight, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const chainName = txInfo.chain.name.replace(' Relay Chain', '');

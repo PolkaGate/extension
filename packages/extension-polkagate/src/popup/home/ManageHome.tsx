@@ -7,7 +7,7 @@ import HomePageFullScreen from '../../fullscreen/homeFullScreen';
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import Home from '.';
 
-function ManageHome (): React.ReactElement {
+function ManageHome(): React.ReactElement {
   const onExtension = useIsExtensionPopup();
   const [home, setHome] = useState<React.ReactElement>(<></>);
 

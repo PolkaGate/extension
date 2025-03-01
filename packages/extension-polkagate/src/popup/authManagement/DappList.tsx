@@ -23,7 +23,7 @@ interface Props {
   maxHeight: number;
 }
 
-export default function DappList ({ filter, maxHeight, refresh, setDappInfo, setRefresh, setToRemove, toRemove }: Props): React.ReactElement {
+export default function DappList({ filter, maxHeight, refresh, setDappInfo, setRefresh, setToRemove, toRemove }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [authList, setAuthList] = useState<AuthUrls | null>(null);

@@ -32,7 +32,7 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState ({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, chain } = useInfo(address);

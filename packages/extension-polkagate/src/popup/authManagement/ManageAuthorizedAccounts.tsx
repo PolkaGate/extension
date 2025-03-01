@@ -19,7 +19,7 @@ interface Props {
   onBackClick: () => void;
 }
 
-export default function ManageAuthorizedAccounts ({ info, onBackClick }: Props): React.ReactElement<Props> {
+export default function ManageAuthorizedAccounts({ info, onBackClick }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
   const { accounts } = useContext(AccountContext);

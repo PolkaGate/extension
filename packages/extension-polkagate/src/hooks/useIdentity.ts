@@ -16,7 +16,7 @@ interface SubIdentity {
   display: string
 }
 
-export default function useIdentity (genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
+export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
   const { peopleChain } = usePeopleChain(undefined, genesisHash);
