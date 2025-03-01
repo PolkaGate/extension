@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -24,7 +24,7 @@ interface Props {
   withHoverEffect?: boolean;
 }
 
-export default function MenuItem ({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
+export default function MenuItem({ children, disabled = false, fontSize, icon, iconComponent, onClick, pl = '0', py = '8px', showChevron, showSubMenu = false, text, withHoverEffect }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const hoverEffectStyles: SxProps<Theme> = {

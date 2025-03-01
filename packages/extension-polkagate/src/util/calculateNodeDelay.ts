@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -17,7 +17,7 @@ const timeout = async (ms: number) => {
   return ms;
 };
 
-const fetchApiTime = async (api: ApiPromise, endpoint:string) => {
+const fetchApiTime = async (api: ApiPromise, endpoint: string) => {
   const startTime = Date.now();
 
   try {
@@ -35,7 +35,7 @@ const fetchApiTime = async (api: ApiPromise, endpoint:string) => {
   return endTime - startTime;
 };
 
-async function CalculateNodeDelay (endpoint: string | undefined) {
+async function CalculateNodeDelay(endpoint: string | undefined) {
   if (!endpoint?.startsWith('wss')) {
     return;
   }

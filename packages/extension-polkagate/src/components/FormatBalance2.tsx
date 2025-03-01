@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 /* eslint-disable header/header */
@@ -36,7 +36,7 @@ const K_LENGTH = 3 + 1;
 
 type LabelPost = string | React.ReactNode
 
-function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [number, string] {
+function getFormat(decimals: number[], tokens: string[], formatIndex = 0): [number, string] {
   return [
     formatIndex < decimals.length
       ? decimals[formatIndex]
@@ -47,18 +47,18 @@ function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [num
   ];
 }
 
-function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number): React.ReactNode {
+function createElement(prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number): React.ReactNode {
   return <>{`${prefix}${isShort ? '' : '.'}`}{!isShort && <span className='ui--FormatBalance-postfix'>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span className='ui--FormatBalance-unit'> {unit}</span>{label}</>;
 }
 
-function splitFormat (value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
+function splitFormat(value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
   const [prefix, postfixFull] = value.split('.');
   const [postfix, unit] = postfixFull.split(' ');
 
   return createElement(prefix, postfix, unit, label, isShort, decimalPoint);
 }
 
-function applyFormat (decimalPoint: number, value: Compact<any> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost): React.ReactNode {
+function applyFormat(decimalPoint: number, value: Compact<any> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost): React.ReactNode {
   const [prefix, postfix] = formatBalance(value, { decimals, forceUnit: '-', withSi: false }).split('.');
   const isShort = _isShort || (withSi && prefix.length >= K_LENGTH);
   const unitPost = withCurrency ? token : '';
@@ -74,7 +74,7 @@ function applyFormat (decimalPoint: number, value: Compact<any> | BN | string, [
   return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint);
 }
 
-function FormatBalance ({ children, className = '', decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
+function FormatBalance({ children, className = '', decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const formatInfo = useMemo(

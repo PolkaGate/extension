@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MessageTypes, TransportRequestMessage } from '../types';
@@ -14,7 +14,7 @@ const state = new State();
 const extension = new Extension(state);
 const tabs = new Tabs(state);
 
-export default function handler<TMessageType extends MessageTypes> ({ id, message, request }: TransportRequestMessage<TMessageType>, port: chrome.runtime.Port, extensionPortName = PORT_EXTENSION): void {
+export default function handler<TMessageType extends MessageTypes>({ id, message, request }: TransportRequestMessage<TMessageType>, port: chrome.runtime.Port, extensionPortName = PORT_EXTENSION): void {
   const isExtension = port.name === extensionPortName;
   const sender = port.sender;
   const from = isExtension

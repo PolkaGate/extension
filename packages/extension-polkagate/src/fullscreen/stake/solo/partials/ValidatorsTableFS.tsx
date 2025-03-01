@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -33,10 +33,10 @@ interface Props {
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
   address: string;
-  nominatedValidatorsIds?: string[]| AccountId[] | null | undefined;
+  nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTableFS ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTableFS({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef();
   const { api, chain, decimal, token } = useInfo(address);

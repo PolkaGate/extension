@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -38,7 +38,7 @@ export default function useCanPayFeeAndDeposit(
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();
   const [canPayStatement, setCanPayStatement] = useState<number>();
 
-  const getStatement = useCallback((canPayFee:boolean | undefined, canPayDeposit:boolean | undefined, canPayWholeAmount:boolean | undefined, useProxy:boolean | undefined, hasDeposit:boolean | undefined) => {
+  const getStatement = useCallback((canPayFee: boolean | undefined, canPayDeposit: boolean | undefined, canPayWholeAmount: boolean | undefined, useProxy: boolean | undefined, hasDeposit: boolean | undefined) => {
     if (useProxy) {
       if (hasDeposit) {
         if (canPayFee && canPayDeposit) return CanPayStatements.CAN_PAY;

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -62,7 +62,7 @@ interface Props {
 
 const dateTimeFormat = { day: 'numeric', hour: '2-digit', hourCycle: 'h23', minute: '2-digit', month: 'short' } as Intl.DateTimeFormatOptions;
 
-export default function Review ({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
+export default function Review({ activeLost, address, allActiveRecoveries, api, chain, depositValue, lostAccountAddress, mode, recoveryConfig, recoveryInfo, setMode, setRefresh, setStep, specific, step, vouchRecoveryInfo, withdrawInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, formatted } = useInfo(address);

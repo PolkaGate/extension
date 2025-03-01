@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -60,7 +60,7 @@ const BalanceRow = ({ api, asset, pricesInCurrencies }: BalanceRowProps) => {
         amount={total}
         decimals={asset.decimal}
         fontSize='13px'
-        fontWeight={ 400}
+        fontWeight={400}
         price={pricesInCurrencies?.prices?.[asset.priceId]?.value ?? 0}
       />
     </Grid>
@@ -114,7 +114,7 @@ const AssetsBoxes = ({ api, asset, hideNumbers, mode, onclick, pricesInCurrencie
   );
 };
 
-function AOC ({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
+function AOC({ accountAssets, address, hideNumbers, mode = 'Detail', onclick, selectedAsset }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 

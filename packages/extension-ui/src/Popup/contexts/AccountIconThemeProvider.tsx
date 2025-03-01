@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -9,7 +9,7 @@ import { AccountIconThemeContext } from '@polkadot/extension-polkagate/src/compo
 import { getStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { DEFAULT_ACCOUNT_ICON_THEME } from '@polkadot/extension-polkagate/src/util/constants';
 
-export default function AccountIconThemeProvider ({ children }: { children: React.ReactNode }) {
+export default function AccountIconThemeProvider({ children }: { children: React.ReactNode }) {
   const [accountIconTheme, setAccountIconTheme] = useState<IconTheme>(DEFAULT_ACCOUNT_ICON_THEME);
 
   useEffect(() => {

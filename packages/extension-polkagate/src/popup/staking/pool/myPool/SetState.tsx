@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -32,7 +32,7 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState ({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, chain } = useInfo(address);

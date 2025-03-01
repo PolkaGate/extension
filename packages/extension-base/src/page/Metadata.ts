@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedMetadata, InjectedMetadataKnown, MetadataDef } from '@polkadot/extension-inject/types';
@@ -8,15 +8,15 @@ import type { SendRequest } from './types';
 let sendRequest: SendRequest;
 
 export default class Metadata implements InjectedMetadata {
-  constructor (_sendRequest: SendRequest) {
+  constructor(_sendRequest: SendRequest) {
     sendRequest = _sendRequest;
   }
 
-  public get (): Promise<InjectedMetadataKnown[]> {
+  public get(): Promise<InjectedMetadataKnown[]> {
     return sendRequest('pub(metadata.list)');
   }
 
-  public provide (definition: MetadataDef): Promise<boolean> {
+  public provide(definition: MetadataDef): Promise<boolean> {
     return sendRequest('pub(metadata.provide)', definition);
   }
 }

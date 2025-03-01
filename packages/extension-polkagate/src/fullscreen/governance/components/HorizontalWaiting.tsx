@@ -1,11 +1,11 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-ignore
 import { Wordpress } from 'better-react-spinkit';
 import React from 'react';
 
-function HorizontalWaiting ({ color }: { color: string }): React.ReactElement {
+function HorizontalWaiting({ color }: { color: string }): React.ReactElement {
   return (
     <div>
       <Wordpress

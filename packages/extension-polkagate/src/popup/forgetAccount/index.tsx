@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -20,7 +20,7 @@ interface Props extends RouteComponentProps<{ address: string, isExternal: strin
   className?: string;
 }
 
-function ForgetAccount ({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
+function ForgetAccount({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -15,7 +15,7 @@ import { BN_ZERO, bnMax } from '@polkadot/util';
 
 import { useBalances, useStakingAccount, useUnstakingAmount } from '.';
 
-export default function useAvailableToSoloStake (address: AccountId | string | undefined, refresh?: boolean): BN | undefined {
+export default function useAvailableToSoloStake(address: AccountId | string | undefined, refresh?: boolean): BN | undefined {
   const stakingAccount = useStakingAccount(address, undefined, refresh);
   const balances = useBalances(address as string, refresh);
   const { unlockingAmount } = useUnstakingAmount(address);

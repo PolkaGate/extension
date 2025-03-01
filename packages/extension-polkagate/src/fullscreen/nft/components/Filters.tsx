@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -46,7 +46,7 @@ const sortReducer = (state: SortState, action: SortAction): SortState => {
   };
 };
 
-function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
+function Filters({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const prices = usePrices();

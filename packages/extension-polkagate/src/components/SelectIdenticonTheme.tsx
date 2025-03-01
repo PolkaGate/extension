@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme } from '@polkadot/react-identicon/types';
@@ -21,7 +21,7 @@ const THEME_OPTIONS = [
   { text: 'Cube', value: 'ethereum' }
 ];
 
-function SelectIdenticonTheme ({ style = {} }: Props) {
+function SelectIdenticonTheme({ style = {} }: Props) {
   const { accountIconTheme, setAccountIconTheme } = useContext(AccountIconThemeContext);
 
   const onChangeTheme = useCallback((iconTheme: string | number) => {

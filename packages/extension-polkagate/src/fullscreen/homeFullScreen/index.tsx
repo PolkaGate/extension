@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -18,7 +18,7 @@ import ProfileTabsFullScreen from './partials/ProfileTabsFullScreen';
 import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
 import WatchList from './partials/WatchList';
 
-function HomePageFullScreen (): React.ReactElement {
+function HomePageFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
 

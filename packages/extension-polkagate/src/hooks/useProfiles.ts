@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -13,7 +13,7 @@ interface Profiles {
   defaultProfiles: string[];
 }
 
-export default function useProfiles (account?: AccountJson): Profiles {
+export default function useProfiles(account?: AccountJson): Profiles {
   const { accounts } = useContext(AccountContext);
 
   return useMemo(() => {

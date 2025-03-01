@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -26,7 +26,7 @@ interface Props {
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function HistoryDetailModal ({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryDetailModal({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const options = { day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', second: 'numeric', weekday: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;

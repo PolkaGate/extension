@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -43,7 +43,7 @@ export interface ChangesProps {
   } | undefined
 }
 
-export default function ManageEditPool ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function ManageEditPool({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
@@ -16,7 +16,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export function AnimatedCheckIcon ({ fontSize, initial = true, isVisible = true }: { initial?: boolean; isVisible?: boolean, fontSize: string }) {
+export function AnimatedCheckIcon({ fontSize, initial = true, isVisible = true }: { initial?: boolean; isVisible?: boolean, fontSize: string }) {
   const theme = useTheme();
 
   const iconStyles = {
@@ -68,7 +68,7 @@ export function AnimatedCheckIcon ({ fontSize, initial = true, isVisible = true 
 }
 
 // @ts-ignore
-export default function FailSuccessIcon ({ showLabel = true, style = { fontSize: '54px', mt: '20px' }, success }: Props) {
+export default function FailSuccessIcon({ showLabel = true, style = { fontSize: '54px', mt: '20px' }, success }: Props) {
   const { t } = useTranslation();
 
   return (

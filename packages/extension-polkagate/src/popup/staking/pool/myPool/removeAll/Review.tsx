@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -38,7 +38,7 @@ interface Props {
   mode: 'UnbondAll' | 'RemoveAll';
 }
 
-export default function Review ({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
+export default function Review({ address, api, chain, formatted, mode, pool, poolMembers, setRefresh, setShow, setShowMyPool, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);
@@ -129,7 +129,7 @@ export default function Review ({ address, api, chain, formatted, mode, pool, po
           const dummyParams = [1, 1];
 
           poolWithdrawUnbonded(...dummyParams).paymentInfo(formatted)
-          // @ts-ignore
+            // @ts-ignore
             .then((j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee || BN_ZERO) as Balance)))
             .catch(console.error);
         }

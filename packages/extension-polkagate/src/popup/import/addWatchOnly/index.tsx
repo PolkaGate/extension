@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -21,7 +21,7 @@ import { HeaderBrand, Name } from '../../../partials';
 import getLogo from '../../../util/getLogo';
 import { addressToChain, getSubstrateAddress } from '../../../util/utils';
 
-export default function AddAddressOnly (): React.ReactElement {
+export default function AddAddressOnly(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

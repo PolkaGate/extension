@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { createAssets } from '@polkagate/apps-config/assets';
@@ -15,7 +15,7 @@ const assetsChains = createAssets();
  * @description To fetch assets priceIds for fetching their prices
  * @returns a list of priceIds like 'acala', 'polkadot, ...
  */
-export default function usePriceIds (): string[] | undefined | null {
+export default function usePriceIds(): string[] | undefined | null {
   const selectedChains = useSelectedChains();
   const [userAddedPriceIds, setUserAddedPriceIds] = useState<string[]>([]);
 

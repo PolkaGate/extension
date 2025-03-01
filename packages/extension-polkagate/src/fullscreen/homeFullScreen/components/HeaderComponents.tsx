@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -11,7 +11,7 @@ import { useIsHideNumbers } from '../../../hooks';
 import Currency from '../partials/Currency';
 import FavoriteChains from '../partials/FavoriteChains';
 
-function HeaderComponents (): React.ReactElement {
+function HeaderComponents(): React.ReactElement {
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   const spacings = '5px';

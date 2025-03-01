@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import '@polkadot/extension-mocks/chrome';
@@ -27,7 +27,7 @@ describe('Extension', () => {
   const suri = 'seed sock milk update focus rotate barely fade car face mechanic mercy';
   const password = 'passw0rd';
 
-  async function createExtension (): Promise<Extension> {
+  async function createExtension(): Promise<Extension> {
     await cryptoWaitReady();
 
     keyring.loadAll({ store: new AccountsStore() });

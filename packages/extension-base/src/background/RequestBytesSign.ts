@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeyringPair } from '@polkadot/keyring/types';
@@ -13,11 +13,11 @@ import { u8aToHex } from '@polkadot/util';
 export default class RequestBytesSign implements RequestSign {
   public readonly payload: SignerPayloadRaw;
 
-  constructor (payload: SignerPayloadRaw) {
+  constructor(payload: SignerPayloadRaw) {
     this.payload = payload;
   }
 
-  sign (_registry: TypeRegistry, pair: KeyringPair): { signature: HexString } {
+  sign(_registry: TypeRegistry, pair: KeyringPair): { signature: HexString } {
     return {
       signature: u8aToHex(
         pair.sign(

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -35,7 +35,7 @@ export interface Props {
   hideNumbers: boolean | undefined;
 }
 
-function AccountPreview ({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
+function AccountPreview({ address, hideNumbers, isHidden, name, quickActionOpen, setQuickActionOpen, toggleActions, type }: Props): React.ReactElement<Props> {
   const onExtension = useIsExtensionPopup();
   const { chain, formatted } = useInfo(address);
   const onAction = useContext(ActionContext);

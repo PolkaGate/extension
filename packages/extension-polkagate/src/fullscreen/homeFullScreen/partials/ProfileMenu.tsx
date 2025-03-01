@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -190,7 +190,7 @@ enum STATUS {
   SHOW_REMOVE
 }
 
-function ProfileMenu ({ address, closeParentMenu }: Props): React.ReactElement<Props> {
+function ProfileMenu({ address, closeParentMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
 

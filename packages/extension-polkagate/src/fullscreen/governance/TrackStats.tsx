@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -64,7 +64,7 @@ export const LabelValue = ({ asShortAddress, label, labelStyle = { fontSize: '16
   );
 };
 
-export function TrackStats ({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
+export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const { api, decimal, token } = useInfo(address);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -13,7 +13,7 @@ import { Identity, ShortAddress, ShowBalance } from '../../../components';
 import useTranslation from '../../../hooks/useTranslation';
 import { amountToMachine } from '../../../util/utils';
 
-function InfoRow ({ accountId, api, chain, divider = true, inline = true, isThumbnail, link, linkName, price, text, title }: DetailProp): React.ReactElement {
+function InfoRow({ accountId, api, chain, divider = true, inline = true, isThumbnail, link, linkName, price, text, title }: DetailProp): React.ReactElement {
   const { t } = useTranslation();
   const decimal = api?.registry.chainDecimals[0];
   const token = api?.registry.chainTokens[0];

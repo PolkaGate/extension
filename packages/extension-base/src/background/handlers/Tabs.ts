@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedAccount, InjectedMetadataKnown, MetadataDef, ProviderMeta } from '@polkadot/extension-inject/types';
@@ -29,7 +29,7 @@ interface AccountSub {
   url: string;
 }
 
-function transformAccounts (accounts: SubjectInfo, anyType = false): InjectedAccount[] {
+function transformAccounts(accounts: SubjectInfo, anyType = false): InjectedAccount[] {
   return Object
     .values(accounts)
     .filter(({ json: { meta: { isHidden } } }) => !isHidden)
@@ -50,22 +50,22 @@ export default class Tabs {
 
   readonly #state: State;
 
-  constructor (state: State) {
+  constructor(state: State) {
     this.#state = state;
   }
 
-  private needReAuthorize (url: string): boolean {
+  private needReAuthorize(url: string): boolean {
     const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), true);
     const auth = this.#state.authUrls[this.#state.stripUrl(url)];
 
     return !auth?.authorizedTime || transformedAccounts.some(({ addedTime, whenCreated }) => (addedTime && addedTime > auth.authorizedTime) || (whenCreated && whenCreated > auth.authorizedTime));
   }
 
-  private authorize (url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {
+  private authorize(url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {
     return this.#state.authorizeUrl(url, request, this.needReAuthorize(url));
   }
 
-  private filterForAuthorizedAccounts (accounts: InjectedAccount[], url: string): InjectedAccount[] {
+  private filterForAuthorizedAccounts(accounts: InjectedAccount[], url: string): InjectedAccount[] {
     const auth = this.#state.authUrls[this.#state.stripUrl(url)];
 
     if (!auth) {
@@ -77,7 +77,7 @@ export default class Tabs {
     return accessAccounts;
   }
 
-  private accountsListAuthorized (url: string, { anyType }: RequestAccountList): InjectedAccount[] {
+  private accountsListAuthorized(url: string, { anyType }: RequestAccountList): InjectedAccount[] {
     const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), anyType);
     const authorizedAccounts = this.filterForAuthorizedAccounts(transformedAccounts, url);
 
@@ -89,7 +89,7 @@ export default class Tabs {
     return authorizedAccounts;
   }
 
-  private accountsSubscribeAuthorized (url: string, id: string, port: chrome.runtime.Port): string {
+  private accountsSubscribeAuthorized(url: string, id: string, port: chrome.runtime.Port): string {
     const cb = createSubscription<'pub(accounts.subscribe)'>(id, port);
 
     const strippedUrl = this.#state.stripUrl(url);
@@ -118,7 +118,7 @@ export default class Tabs {
     return id;
   }
 
-  private accountsUnsubscribe (url: string, { id }: RequestAccountUnsubscribe): boolean {
+  private accountsUnsubscribe(url: string, { id }: RequestAccountUnsubscribe): boolean {
     const sub = this.#accountSubs[id];
 
     if (!sub || sub.url !== url) {
@@ -133,7 +133,7 @@ export default class Tabs {
     return true;
   }
 
-  private getSigningPair (address: string): KeyringPair {
+  private getSigningPair(address: string): KeyringPair {
     const pair = keyring.getPair(address);
 
     assert(pair, 'Unable to find keypair');
@@ -141,45 +141,45 @@ export default class Tabs {
     return pair;
   }
 
-  private bytesSign (url: string, request: SignerPayloadRaw): Promise<ResponseSigning> {
+  private bytesSign(url: string, request: SignerPayloadRaw): Promise<ResponseSigning> {
     const address = request.address;
     const pair = this.getSigningPair(address);
 
     return this.#state.sign(url, new RequestBytesSign(request), { address, ...pair.meta });
   }
 
-  private extrinsicSign (url: string, request: SignerPayloadJSON): Promise<ResponseSigning> {
+  private extrinsicSign(url: string, request: SignerPayloadJSON): Promise<ResponseSigning> {
     const address = request.address;
     const pair = this.getSigningPair(address);
 
     return this.#state.sign(url, new RequestExtrinsicSign(request), { address, ...pair.meta });
   }
 
-  private metadataProvide (url: string, request: MetadataDef): Promise<boolean> {
+  private metadataProvide(url: string, request: MetadataDef): Promise<boolean> {
     return this.#state.injectMetadata(url, request);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private metadataList (_url: string): InjectedMetadataKnown[] {
+  private metadataList(_url: string): InjectedMetadataKnown[] {
     return this.#state.knownMetadata.map(({ genesisHash, specVersion }) => ({
       genesisHash,
       specVersion
     }));
   }
 
-  private rpcListProviders (): Promise<ResponseRpcListProviders> {
+  private rpcListProviders(): Promise<ResponseRpcListProviders> {
     return this.#state.rpcListProviders();
   }
 
-  private rpcSend (request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse<unknown>> {
+  private rpcSend(request: RequestRpcSend, port: chrome.runtime.Port): Promise<JsonRpcResponse<unknown>> {
     return this.#state.rpcSend(request, port);
   }
 
-  private rpcStartProvider (key: string, port: chrome.runtime.Port): Promise<ProviderMeta> {
+  private rpcStartProvider(key: string, port: chrome.runtime.Port): Promise<ProviderMeta> {
     return this.#state.rpcStartProvider(key, port);
   }
 
-  private async rpcSubscribe (request: RequestRpcSubscribe, id: string, port: chrome.runtime.Port): Promise<boolean> {
+  private async rpcSubscribe(request: RequestRpcSubscribe, id: string, port: chrome.runtime.Port): Promise<boolean> {
     const innerCb = createSubscription<'pub(rpc.subscribe)'>(id, port);
     const cb = (_error: Error | null, data: SubscriptionMessageTypes['pub(rpc.subscribe)']): void => innerCb(data);
     const subscriptionId = await this.#state.rpcSubscribe(request, cb, port);
@@ -192,7 +192,7 @@ export default class Tabs {
     return true;
   }
 
-  private rpcSubscribeConnected (request: null, id: string, port: chrome.runtime.Port): Promise<boolean> {
+  private rpcSubscribeConnected(request: null, id: string, port: chrome.runtime.Port): Promise<boolean> {
     const innerCb = createSubscription<'pub(rpc.subscribeConnected)'>(id, port);
     const cb = (_error: Error | null, data: SubscriptionMessageTypes['pub(rpc.subscribeConnected)']): void => innerCb(data);
 
@@ -205,11 +205,11 @@ export default class Tabs {
     return Promise.resolve(true);
   }
 
-  private async rpcUnsubscribe (request: RequestRpcUnsubscribe, port: chrome.runtime.Port): Promise<boolean> {
+  private async rpcUnsubscribe(request: RequestRpcUnsubscribe, port: chrome.runtime.Port): Promise<boolean> {
     return this.#state.rpcUnsubscribe(request, port);
   }
 
-  private redirectPhishingLanding (phishingWebsite: string): void {
+  private redirectPhishingLanding(phishingWebsite: string): void {
     const nonFragment = phishingWebsite.split('#')[0];
     const encodedWebsite = encodeURIComponent(nonFragment);
     const url = `${chrome.runtime.getURL('index.html')}#${PHISHING_PAGE_REDIRECT}/${encodedWebsite}`;
@@ -224,7 +224,7 @@ export default class Tabs {
     });
   }
 
-  private async redirectIfPhishing (url: string): Promise<boolean> {
+  private async redirectIfPhishing(url: string): Promise<boolean> {
     const isInDenyList = await checkIfDenied(url);
 
     if (isInDenyList) {
@@ -236,7 +236,7 @@ export default class Tabs {
     return false;
   }
 
-  public async handle<TMessageType extends MessageTypes> (id: string, type: TMessageType, request: RequestTypes[TMessageType], url: string, port: chrome.runtime.Port): Promise<ResponseTypes[keyof ResponseTypes]> {
+  public async handle<TMessageType extends MessageTypes>(id: string, type: TMessageType, request: RequestTypes[TMessageType], url: string, port: chrome.runtime.Port): Promise<ResponseTypes[keyof ResponseTypes]> {
     if (type === 'pub(phishing.redirectIfDenied)') {
       return this.redirectIfPhishing(url);
     }

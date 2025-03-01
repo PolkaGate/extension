@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -46,7 +46,7 @@ interface Props {
   address?: string;
 }
 
-export default function ClaimedRewardsChart ({ address }: Props): React.ReactElement {
+export default function ClaimedRewardsChart({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, token } = useInfo(address);
@@ -442,12 +442,12 @@ export default function ClaimedRewardsChart ({ address }: Props): React.ReactEle
           </Grid>
         }
         {claimedRewardsInfo === undefined && !descSortedRewards &&
-        <Progress
-          pt='20px'
-          size={125}
-          title={t('Loading rewards...')}
-          type='cubes'
-        />
+          <Progress
+            pt='20px'
+            size={125}
+            title={t('Loading rewards...')}
+            type='cubes'
+          />
         }
         {claimedRewardsInfo === null &&
           <Grid container item justifyContent='center'>

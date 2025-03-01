@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -34,7 +34,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Filters ({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
+export default function Filters({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtensionPopup = useIsExtensionPopup();
@@ -268,7 +268,7 @@ export default function Filters ({ apply, decimal, filters, pools, setApply, set
         ? <SlidePopUp show={show}>
           {page}
         </SlidePopUp>
-        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show} px = {0}>
+        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show} px={0}>
           {page}
         </DraggableModal>
       }

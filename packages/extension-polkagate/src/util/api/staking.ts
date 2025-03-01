@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -8,7 +8,7 @@ import type { Proxy, TxResult } from '../types';
 
 import { signAndSend } from './';
 
-export async function createPool (
+export async function createPool(
   api: ApiPromise,
   depositor: string | null,
   signer: KeyringPair,

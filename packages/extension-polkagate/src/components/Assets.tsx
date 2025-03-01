@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -20,7 +20,7 @@ interface Props {
 
 }
 
-function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function Assets({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address as string);
   const chain = useChain(address);
   const assetHubOptions = useAssetHubAssets(address as string); // TODO: should we show zero or spam assets?!
@@ -29,13 +29,13 @@ function Assets ({ address, assetId, label, onChange, setAssetId, style }: Props
     assetHubOptions
       ? (tokens || []).concat(assetHubOptions || [])
       : multiChainAssetsOptions || tokens || []
-  , [assetHubOptions, multiChainAssetsOptions, tokens]);
+    , [assetHubOptions, multiChainAssetsOptions, tokens]);
 
   const [isLoading, setLoading] = useState<boolean>();
 
   useEffect(() => {
     setAssetId(undefined); // this will set the asset to the native asset on chain switch
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain]);
 
   useEffect(() => {

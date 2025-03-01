@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -33,7 +33,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportRawSeed (): React.ReactElement {
+export default function ImportRawSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -156,7 +156,7 @@ export default function ImportRawSeed (): React.ReactElement {
             logo={
               <VaadinIcon icon='vaadin:book-dollar' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
             }
-            text= {t('Import from raw seed')}
+            text={t('Import from raw seed')}
           />
           <Typography fontSize='16px' fontWeight={400} width='100%'>
             {t('Enter your account\'s raw seed to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}

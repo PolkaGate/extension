@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RequestSignatures, TransportRequestMessage } from '@polkadot/extension-base/background/types';
@@ -10,7 +10,7 @@ import { injectExtension } from '@polkadot/extension-inject';
 
 import { packageInfo } from './packageInfo';
 
-function inject () {
+function inject() {
   injectExtension(enable, {
     name: 'polkagate', // added by polkagate
     version: packageInfo.version

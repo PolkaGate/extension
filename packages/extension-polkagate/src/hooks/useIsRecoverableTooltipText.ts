@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option } from '@polkadot/types';
@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useInfo, useTranslation } from '.';
 
-export default function useIsRecoverableTooltipText (address: string | undefined): { isRecoverable: boolean | undefined; recoverableToolTipTxt: string; } {
+export default function useIsRecoverableTooltipText(address: string | undefined): { isRecoverable: boolean | undefined; recoverableToolTipTxt: string; } {
   const { t } = useTranslation();
 
   const { api, chain, formatted } = useInfo(address);
@@ -32,7 +32,7 @@ export default function useIsRecoverableTooltipText (address: string | undefined
 
   const recoverableToolTipTxt = useMemo(() => {
     if (!chain) {
-      return  t('Account is in Any Chain mode');
+      return t('Account is in Any Chain mode');
       ;
     }
 

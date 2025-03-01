@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -41,7 +41,7 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
 
 const allEndpoints = createWsEndpoints();
 
-export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
+export default function usePeopleChain(address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -32,7 +32,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function SetState ({ address, api, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
+export default function SetState({ address, api, formatted, onClose, pool, setRefresh, state }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
@@ -47,7 +47,7 @@ export default function SetState ({ address, api, formatted, onClose, pool, setR
       : state === 'Open'
         ? t('The pool state will be changed to Open, and any member will be able to join the pool.')
         : t('No one can join and all members can be removed without permissions. Once in destroying state, it cannot be reverted to another state.')
-  , [state, t]);
+    , [state, t]);
 
   const extraInfo = useMemo(() => ({
     action: 'Pool Staking',

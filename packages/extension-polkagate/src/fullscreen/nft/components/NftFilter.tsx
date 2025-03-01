@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -19,7 +19,7 @@ interface Props {
   sort: SortState;
 }
 
-const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, filters, sort }: Props) {
+const Filters = React.memo(function Filters({ dispatchFilter, dispatchSort, filters, sort }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -100,7 +100,7 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
   );
 });
 
-function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
+function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);

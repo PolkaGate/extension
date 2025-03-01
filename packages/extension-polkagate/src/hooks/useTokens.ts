@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -9,7 +9,7 @@ import { selectableNetworks } from '@polkadot/networks';
 import { getSubstrateAddress } from '../util/utils';
 import useAccount from './useAccount';
 
-export default function useTokens (address: AccountId | string | undefined): DropdownOption[] | undefined {
+export default function useTokens(address: AccountId | string | undefined): DropdownOption[] | undefined {
   /** address can be a formatted address hence needs to find its substrate format first */
   const sAddr = getSubstrateAddress(address);
   const account = useAccount(sAddr);

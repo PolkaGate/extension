@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransferRequest } from '../types';
@@ -15,7 +15,7 @@ const nullObject = {
   message: 'Success'
 } as unknown as TransferRequest;
 
-export function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
+export function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
   if (!chainName) {
     return Promise.resolve(nullObject);
   }
@@ -43,6 +43,6 @@ export function getTxTransfers (chainName: string, address: string, pageNum: num
   });
 }
 
-function postReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
+function postReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
   return request.post(api, { data, ...option });
 }

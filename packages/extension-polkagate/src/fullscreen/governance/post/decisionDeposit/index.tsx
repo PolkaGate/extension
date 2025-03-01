@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -42,7 +42,7 @@ const STEPS = {
   SIGN_QR: 200
 };
 
-export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const theme = useTheme();
@@ -52,7 +52,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-  , [proxies]);
+    , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();

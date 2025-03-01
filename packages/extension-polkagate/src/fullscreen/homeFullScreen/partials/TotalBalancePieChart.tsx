@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -61,7 +61,7 @@ export const changeSign = (change: number | undefined) => !change
   ? ''
   : change > 0 ? '+ ' : '- ';
 
-export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
+export function adjustColor(token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
@@ -115,7 +115,7 @@ const DisplayAssetRow = ({ asset, hideNumbers }: { asset: AssetsWithUiAndPrice, 
   );
 };
 
-function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement {
+function TotalBalancePieChart({ setGroupedAssets }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useCurrency();
@@ -220,7 +220,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
         <Typography sx={{ fontSize: '18px', fontVariant: 'small-caps', fontWeight: 400 }}>
           {t('Total balance')}
         </Typography>
-        <Grid alignItems='center' container item justifyContent = 'space-between' sx={{ m: '13px 0 5px 0' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' sx={{ m: '13px 0 5px 0' }}>
           {!youHave || isHideNumbers
             ? <Box
               component='img'
@@ -233,7 +233,7 @@ function TotalBalancePieChart ({ setGroupedAssets }: Props): React.ReactElement 
                 fontSize='28px'
                 fontWeight={600}
                 num={youHave?.portfolio}
-                textColor= { isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
+                textColor={isPriceOutdated(youHave) ? 'primary.light' : 'text.primary'}
                 withCountUp
                 withSmallDecimal
               />

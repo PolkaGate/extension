@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -18,7 +18,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util/utils';
 
-export default function useProxies (api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
+export default function useProxies(api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
   const [proxies, setProxies] = useState<Proxy[] | undefined>();
   const [proxiesWithAvailability, setProxiesWithAvailability] = useState<Proxy[] | undefined>();
   const { accounts } = useContext(AccountContext);

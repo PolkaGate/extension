@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -13,7 +13,7 @@ import { sanitizeChainName } from '../util/utils';
 
 const allEndpoints = createWsEndpoints();
 
-export default function useApiWithChain (chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
+export default function useApiWithChain(chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
   const apisContext = useContext(APIContext);
   const [_api, setApi] = useState<ApiPromise | undefined>();
 

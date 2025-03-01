@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -23,7 +23,7 @@ interface Props {
   disabledItems?: string[] | number[];
 }
 
-function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
+function Chain({ address, allowAnyChainOption, defaultValue, disabledItems, label, onChange, style }: Props) {
   let options = useContext(GenesisHashOptionsContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -33,7 +33,7 @@ function Chain ({ address, allowAnyChainOption, defaultValue, disabledItems, lab
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {

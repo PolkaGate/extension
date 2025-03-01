@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthorizeRequest } from '@polkadot/extension-base/background/types';
@@ -18,7 +18,7 @@ interface Props {
   requests: AuthorizeRequest[];
 }
 
-export default function AuthExtensionMode ({ onNextAuth, onPreviousAuth, requestIndex, requests }: Props): React.ReactElement {
+export default function AuthExtensionMode({ onNextAuth, onPreviousAuth, requestIndex, requests }: Props): React.ReactElement {
   return (
     <Grid container>
       <HeaderBrand

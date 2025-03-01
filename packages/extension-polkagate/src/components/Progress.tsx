@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, useTheme } from '@mui/material';
@@ -18,7 +18,7 @@ interface Props {
   type?: 'circle' | 'cubes' | 'grid' | 'wordpress';
 }
 
-function Progress ({ direction = 'column', fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, titlePaddingTop = 20, titlePaddingLeft = 0, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress({ direction = 'column', fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, titlePaddingTop = 20, titlePaddingLeft = 0, type = 'circle' }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   return (

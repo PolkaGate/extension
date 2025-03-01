@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Injected } from '@polkadot/extension-inject/types';
@@ -18,7 +18,7 @@ export default class implements Injected {
 
   public readonly signer: Signer;
 
-  constructor (sendRequest: SendRequest) {
+  constructor(sendRequest: SendRequest) {
     this.accounts = new Accounts(sendRequest);
     this.metadata = new Metadata(sendRequest);
     this.provider = new PostMessageProvider(sendRequest);

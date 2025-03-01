@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -24,7 +24,7 @@ interface Props extends AccountWithChildren {
   setHasActiveRecovery: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
-function AccountsTree ({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
+function AccountsTree({ hideNumbers, parentName, quickActionOpen, setHasActiveRecovery, setQuickActionOpen, suri, ...account }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

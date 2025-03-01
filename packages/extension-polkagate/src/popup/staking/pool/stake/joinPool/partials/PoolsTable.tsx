@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -36,7 +36,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable ({ address, api, filteredPools, maxHeight = window.innerHeight / 2.4, numberOfFetchedPools, pools, poolsToShow, selected, setFilteredPools, setSearchedPools, setSelected, style, totalNumberOfPools }: Props): React.ReactElement {
+export default function PoolsTable({ address, api, filteredPools, maxHeight = window.innerHeight / 2.4, numberOfFetchedPools, pools, poolsToShow, selected, setFilteredPools, setSearchedPools, setSelected, style, totalNumberOfPools }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const chain = useChain(address);

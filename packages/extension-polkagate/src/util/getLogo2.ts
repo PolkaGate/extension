@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '../../../extension-chains/src/types';
@@ -18,7 +18,7 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+export default function getLogo2(info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {

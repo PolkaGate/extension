@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, useTheme } from '@mui/material';
@@ -12,7 +12,7 @@ interface WebsiteState {
   website: string;
 }
 
-export default function PhishingDetected (): React.ReactElement {
+export default function PhishingDetected(): React.ReactElement {
   const { t } = useTranslation();
   const { website } = useParams<WebsiteState>();
   const decodedWebsite = decodeURIComponent(website);

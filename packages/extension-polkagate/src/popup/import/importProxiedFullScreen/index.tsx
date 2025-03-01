@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -25,7 +25,7 @@ import getLogo from '../../../util/getLogo';
 import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullscreen/AddressDropdownFullScreen';
 import ProxiedTable from '../importProxied/ProxiedTable';
 
-function ImportProxiedFS (): React.ReactElement {
+function ImportProxiedFS(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -40,7 +40,7 @@ function ImportProxiedFS (): React.ReactElement {
     accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-  , [accounts]);
+    , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);

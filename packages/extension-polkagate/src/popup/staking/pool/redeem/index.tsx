@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -38,7 +38,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function RedeemableWithdrawReview ({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
+export default function RedeemableWithdrawReview({ address, amount, api, available, chain, formatted, setRefresh, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);

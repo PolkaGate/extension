@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -34,7 +34,7 @@ interface Props {
   handleTxResult: (txResult: TxResult) => void
 }
 
-export default function SignWithLedger ({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
+export default function SignWithLedger({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -27,7 +27,7 @@ import { countDecimalPlaces, fixFloatingPoint } from '../../util/utils';
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave (): React.ReactElement {
+export default function YouHave(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
@@ -148,7 +148,7 @@ export default function YouHave (): React.ReactElement {
               </Stack>
             </>
           }
-          <Infotip2 placement = 'bottom' text={t('Menu options')}>
+          <Infotip2 placement='bottom' text={t('Menu options')}>
             <IconButton
               onClick={onMenuClick}
               sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}

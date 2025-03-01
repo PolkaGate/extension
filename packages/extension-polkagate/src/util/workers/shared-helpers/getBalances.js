@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN_ZERO } from '@polkadot/util';
@@ -14,7 +14,7 @@ import { getPooledBalance } from './getPooledBalance.js';
  * @param {MessagePort } port
  * @returns
  */
-export async function getBalances (chainName, addresses, userAddedEndpoints, port) {
+export async function getBalances(chainName, addresses, userAddedEndpoints, port) {
   const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(chainEndpoints);
 

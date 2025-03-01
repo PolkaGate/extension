@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Checkbox, FormControlLabel, type SxProps, type Theme } from '@mui/material';
@@ -16,7 +16,7 @@ interface Props {
   iconStyle?: React.CSSProperties | undefined
 }
 
-export default function Checkbox2 ({ checked = false, disabled, iconStyle, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
+export default function Checkbox2({ checked = false, disabled, iconStyle, label, labelStyle = { fontSize: '14px', fontWeight: 300 }, onChange, style }: Props): React.ReactElement<Props> {
   return (
     <FormControlLabel
       control={

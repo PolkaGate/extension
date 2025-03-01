@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -26,7 +26,7 @@ interface Props {
   id?: number;
 }
 
-function AccountItem ({ account, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
+function AccountItem({ account, id, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement {
   const theme = useTheme();
   const chain = useChain(account.address);
   const accountAssets = useAccountAssets(account.address);

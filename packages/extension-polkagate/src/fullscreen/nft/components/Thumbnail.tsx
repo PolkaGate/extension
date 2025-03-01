@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -18,7 +18,7 @@ import InfoRow from './InfoRow';
 import ItemAvatar from './ItemAvatar';
 import ItemSkeleton from './ItemSkeleton';
 
-export default function Thumbnail ({ api, itemInformation }: ThumbnailProps): React.ReactElement {
+export default function Thumbnail({ api, itemInformation }: ThumbnailProps): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

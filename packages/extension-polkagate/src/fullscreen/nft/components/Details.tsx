@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -36,7 +36,7 @@ export const WithLoading = ({ children, loaded }: { loaded: boolean, children: R
 );
 
 const Item = React.memo(
-  function Item ({ animation_url, animationContentType, image, imageContentType, setShowFullscreenDisabled }: DetailItemProps) {
+  function Item({ animation_url, animationContentType, image, imageContentType, setShowFullscreenDisabled }: DetailItemProps) {
     const [loaded, setLoaded] = useState<boolean>(false);
 
     const isHtmlContent = animation_url && animationContentType === 'text/html';
@@ -103,7 +103,7 @@ const Item = React.memo(
   }
 );
 
-export default function Details ({ api, itemInformation, setShowDetail, show }: DetailsProp): React.ReactElement {
+export default function Details({ api, itemInformation, setShowDetail, show }: DetailsProp): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -236,17 +236,17 @@ export default function Details ({ api, itemInformation, setShowDetail, show }: 
                 </Grid>
               }
               {!itemInformation.isCollection && itemInformation.collectionName &&
-                  <InfoRow
-                    divider={!!itemInformation.description}
-                    text={itemInformation.collectionName}
-                    title={t('Collection name')}
-                  />
+                <InfoRow
+                  divider={!!itemInformation.description}
+                  text={itemInformation.collectionName}
+                  title={t('Collection name')}
+                />
               }
               {itemInformation.collectionId !== undefined &&
-                  <InfoRow
-                    text={itemInformation.collectionId}
-                    title={t('Collection ID')}
-                  />
+                <InfoRow
+                  text={itemInformation.collectionId}
+                  title={t('Collection ID')}
+                />
               }
               {itemInformation.items !== undefined &&
                 <InfoRow

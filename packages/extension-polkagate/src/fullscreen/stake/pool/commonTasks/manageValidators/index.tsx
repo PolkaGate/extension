@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 
@@ -27,7 +27,7 @@ import { STEPS } from '../../stake';
 import InputPage from './InputPage';
 import Review from './Review';
 
-export default function ManageValidators (): React.ReactElement {
+export default function ManageValidators(): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();

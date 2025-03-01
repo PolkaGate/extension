@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -32,7 +32,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo ({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -29,7 +29,7 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -50,7 +50,7 @@ export default function RestoreJson (): React.ReactElement {
 
   const areAllSelected = useMemo(() =>
     selectedAccountsInfo.length === accountsInfo.length
-  , [selectedAccountsInfo.length, accountsInfo.length]);
+    , [selectedAccountsInfo.length, accountsInfo.length]);
 
   const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, address: string) => {
     const selectedAccount = accountsInfo.find((account) => account.address === address);

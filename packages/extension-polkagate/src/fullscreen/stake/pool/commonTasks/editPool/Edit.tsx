@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -30,7 +30,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
+export default function Edit({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);

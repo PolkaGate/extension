@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -18,7 +18,7 @@ interface Props {
 
 export const DEFAULT_CONVICTION = 1;
 
-export default function Convictions ({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
+export default function Convictions({ address, children, conviction, setConviction, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -45,7 +45,7 @@ export default function Convictions ({ address, children, conviction, setConvict
 
   const marks = useMemo(() =>
     convictionOptions?.map(({ value }) => ({ label: `${value} X`, value: value as number }))
-  , [convictionOptions]);
+    , [convictionOptions]);
 
   const valuetext = useCallback((value: number) => {
     return `${value} X`;

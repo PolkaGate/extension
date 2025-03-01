@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -29,7 +29,7 @@ interface State {
 class ErrorBoundary extends React.Component<Props> {
   private isExtensionPopup: boolean;
 
-  constructor (props: Props) {
+  constructor(props: Props) {
     super(props);
 
     // Initialize extension detection in constructor
@@ -49,11 +49,11 @@ class ErrorBoundary extends React.Component<Props> {
 
   public override state: State = { error: null };
 
-  public static getDerivedStateFromError (error: Error): Partial<State> {
+  public static getDerivedStateFromError(error: Error): Partial<State> {
     return { error };
   }
 
-  public override componentDidUpdate (prevProps: Props) {
+  public override componentDidUpdate(prevProps: Props) {
     const { error } = this.state;
     const { trigger } = this.props;
 
@@ -67,7 +67,7 @@ class ErrorBoundary extends React.Component<Props> {
     window.location.hash = '/';
   };
 
-  public override render (): React.ReactNode {
+  public override render(): React.ReactNode {
     const { children, t } = this.props;
     const { error } = this.state;
 

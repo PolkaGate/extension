@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-base authors & contributors
+// Copyright 2019-2025 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedProvider, ProviderList, ProviderMeta } from '@polkadot/extension-inject/types';
@@ -43,20 +43,20 @@ export default class PostMessageProvider implements InjectedProvider {
    * @param {function}  sendRequest  The function to be called to send requests to the node
    * @param {function}  subscriptionNotificationHandler  Channel for receiving subscription messages
    */
-  public constructor (_sendRequest: SendRequest) {
+  public constructor(_sendRequest: SendRequest) {
     this.#eventemitter = new EventEmitter();
 
     sendRequest = _sendRequest;
   }
 
-  public get isClonable (): boolean {
+  public get isClonable(): boolean {
     return !!true;
   }
 
   /**
    * @description Returns a clone of the object
    */
-  public clone (): PostMessageProvider {
+  public clone(): PostMessageProvider {
     return new PostMessageProvider(sendRequest);
   }
 
@@ -64,7 +64,7 @@ export default class PostMessageProvider implements InjectedProvider {
    * @description Manually disconnect from the connection, clearing autoconnect logic
    */
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async connect (): Promise<void> {
+  public async connect(): Promise<void> {
     // FIXME This should see if the extension's state's provider can disconnect
     console.error('PostMessageProvider.disconnect() is not implemented.');
   }
@@ -73,7 +73,7 @@ export default class PostMessageProvider implements InjectedProvider {
    * @description Manually disconnect from the connection, clearing autoconnect logic
    */
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async disconnect (): Promise<void> {
+  public async disconnect(): Promise<void> {
     // FIXME This should see if the extension's state's provider can disconnect
     console.error('PostMessageProvider.disconnect() is not implemented.');
   }
@@ -81,7 +81,7 @@ export default class PostMessageProvider implements InjectedProvider {
   /**
    * @summary `true` when this provider supports subscriptions
    */
-  public get hasSubscriptions (): boolean {
+  public get hasSubscriptions(): boolean {
     // FIXME This should see if the extension's state's provider has subscriptions
     return true;
   }
@@ -90,11 +90,11 @@ export default class PostMessageProvider implements InjectedProvider {
    * @summary Whether the node is connected or not.
    * @return {boolean} true if connected
    */
-  public get isConnected (): boolean {
+  public get isConnected(): boolean {
     return this.#isConnected;
   }
 
-  public listProviders (): Promise<ProviderList> {
+  public listProviders(): Promise<ProviderList> {
     return sendRequest('pub(rpc.listProviders)', undefined);
   }
 
@@ -104,7 +104,7 @@ export default class PostMessageProvider implements InjectedProvider {
    * @param  {ProviderInterfaceEmitCb}  sub  Callback
    * @return unsubscribe function
    */
-  public on (type: ProviderInterfaceEmitted, sub: ProviderInterfaceEmitCb): () => void {
+  public on(type: ProviderInterfaceEmitted, sub: ProviderInterfaceEmitCb): () => void {
     this.#eventemitter.on(type, sub);
 
     return (): void => {
@@ -113,7 +113,7 @@ export default class PostMessageProvider implements InjectedProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async send (method: string, params: unknown[], _?: boolean, subscription?: SubscriptionHandler): Promise<any> {
+  public async send(method: string, params: unknown[], _?: boolean, subscription?: SubscriptionHandler): Promise<any> {
     if (subscription) {
       const { callback, type } = subscription;
 
@@ -132,7 +132,7 @@ export default class PostMessageProvider implements InjectedProvider {
   /**
    * @summary Spawn a provider on the extension background.
    */
-  public async startProvider (key: string): Promise<ProviderMeta> {
+  public async startProvider(key: string): Promise<ProviderMeta> {
     // Disconnect from the previous provider
     this.#isConnected = false;
     this.#eventemitter.emit('disconnected');
@@ -155,14 +155,14 @@ export default class PostMessageProvider implements InjectedProvider {
     return meta;
   }
 
-  public subscribe (type: string, method: string, params: unknown[], callback: AnyFunction): Promise<number> {
+  public subscribe(type: string, method: string, params: unknown[], callback: AnyFunction): Promise<number> {
     return this.send(method, params, false, { callback, type }) as Promise<number>;
   }
 
   /**
    * @summary Allows unsubscribing to subscriptions made with [[subscribe]].
    */
-  public async unsubscribe (type: string, method: string, id: number): Promise<boolean> {
+  public async unsubscribe(type: string, method: string, id: number): Promise<boolean> {
     const subscription = `${type}::${id}`;
 
     // FIXME This now could happen with re-subscriptions. The issue is that with a re-sub

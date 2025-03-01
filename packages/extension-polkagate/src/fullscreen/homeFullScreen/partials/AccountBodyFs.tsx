@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -32,7 +32,7 @@ interface Props {
   gridSize?: number;
 }
 
-function AccountBodyFs ({ address, goToDetails = noop, gridSize }: Props): React.ReactElement {
+function AccountBodyFs({ address, goToDetails = noop, gridSize }: Props): React.ReactElement {
   const { account, api, chain, formatted, genesisHash } = useInfo(address);
 
   const accountInfo = useIdentity(genesisHash, formatted);

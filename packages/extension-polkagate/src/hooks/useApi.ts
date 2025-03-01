@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -45,7 +45,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 const endpointManager = new EndpointManager();
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
-export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
+export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
   const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);

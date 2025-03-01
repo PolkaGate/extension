@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -37,7 +37,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 7
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

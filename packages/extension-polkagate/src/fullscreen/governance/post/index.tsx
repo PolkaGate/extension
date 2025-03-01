@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -33,7 +33,7 @@ interface LocationState {
   selectedSubMenu: string;
 }
 
-export default function ReferendumPost (): React.ReactElement {
+export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: TopMenu | undefined, postId?: string | undefined }>();
   const [refresh, setRefresh] = useState<boolean>(false);

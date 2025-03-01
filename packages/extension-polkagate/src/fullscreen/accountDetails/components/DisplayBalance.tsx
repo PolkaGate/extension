@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -23,7 +23,7 @@ interface Props {
   openCollapse?: boolean;
 }
 
-export default function DisplayBalance ({ amount, decimal, disabled, onClick, openCollapse, price, title, token }: Props): React.ReactElement {
+export default function DisplayBalance({ amount, decimal, disabled, onClick, openCollapse, price, title, token }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -45,8 +45,8 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, op
         <FormatPrice
           amount={amount}
           decimals={decimal}
-          fontSize= '20px'
-          fontWeight= {400}
+          fontSize='20px'
+          fontWeight={400}
           price={price}
           skeletonHeight={20}
         />

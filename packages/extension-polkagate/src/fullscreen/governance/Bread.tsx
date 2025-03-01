@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -21,7 +21,7 @@ interface Props {
   postId?: string | undefined;
 }
 
-export default function Bread ({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
+export default function Bread({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
   const history = useHistory();
   const { t } = useTranslation();
 

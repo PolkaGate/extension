@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/Currency';
@@ -16,7 +16,7 @@ interface CurrencyProviderProps {
   children: React.ReactNode;
 }
 
-export default function CurrencyProvider ({ children }: CurrencyProviderProps) {
+export default function CurrencyProvider({ children }: CurrencyProviderProps) {
   const priceIds = usePriceIds();
 
   const [currency, setCurrency] = useState<CurrencyItemType>();

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -28,7 +28,7 @@ export interface Props {
   withCurrency?: boolean;
 }
 
-export default function ShowBalance ({ api, balance, decimal = undefined, decimalPoint, height = 20, skeletonWidth = 90, token = undefined, withCurrency = true }: Props): React.ReactElement<Props> {
+export default function ShowBalance({ api, balance, decimal = undefined, decimalPoint, height = 20, skeletonWidth = 90, token = undefined, withCurrency = true }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container justifyContent='center' width='fit-content'>
       {

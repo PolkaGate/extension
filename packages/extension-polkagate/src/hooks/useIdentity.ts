@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -16,7 +16,7 @@ interface SubIdentity {
   display: string
 }
 
-export default function useIdentity (genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
+export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
   const { peopleChain } = usePeopleChain(undefined, genesisHash);

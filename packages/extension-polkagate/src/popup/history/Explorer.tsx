@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -15,7 +15,7 @@ interface Props {
   formatted?: string;
 }
 
-function getLink (chainName: string, explorer: 'subscan' | 'polkaholic' | 'statscan', type: 'account' | 'extrinsic', data: string): string {
+function getLink(chainName: string, explorer: 'subscan' | 'polkaholic' | 'statscan', type: 'account' | 'extrinsic', data: string): string {
   if (type === 'extrinsic') {
     const maybeTheFirstPartOfChain = chainName?.split(' ')?.[0];
     const chainNameWithoutSpace = chainName?.replace(/\s/g, '');
@@ -39,7 +39,7 @@ function getLink (chainName: string, explorer: 'subscan' | 'polkaholic' | 'stats
   return '';
 }
 
-export default function Explorer ({ chainName, formatted, txHash }: Props): React.ReactElement {
+export default function Explorer({ chainName, formatted, txHash }: Props): React.ReactElement {
   const theme = useTheme();
   const [explorer, setExplorer] = useState<{ name: string, link: string }>();
 

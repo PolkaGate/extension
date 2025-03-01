@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -12,7 +12,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { useInfo, useTracks } from '.';
 
-export default function useHasDelegated (address: string | undefined, refresh?: boolean): BN | null | undefined {
+export default function useHasDelegated(address: string | undefined, refresh?: boolean): BN | null | undefined {
   const { api, chain, formatted } = useInfo(address);
   const { tracks } = useTracks(address);
 

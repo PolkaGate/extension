@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -20,7 +20,7 @@ export enum MODE {
   MIGRATION
 }
 
-export default function ImportLedger (): React.ReactElement {
+export default function ImportLedger(): React.ReactElement {
   useFullscreen();
 
   const [mode, setMode] = useState<MODE>(MODE.INDEX);

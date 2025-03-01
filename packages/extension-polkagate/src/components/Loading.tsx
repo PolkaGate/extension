@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -120,7 +120,7 @@ const FlyingLogo = ({ theme }: { theme: Theme }) => (
   />
 );
 
-export default function Loading ({ children }: Props): React.ReactElement<Props> {
+export default function Loading({ children }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const manifest = useManifest();
 
@@ -204,7 +204,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   useEffect(() => {
     if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {
-    // The extension has been locked by the user through the settings menu.
+      // The extension has been locked by the user through the settings menu.
       setStep(STEPS.SHOW_LOGIN);
     }
   }, [isExtensionLocked, step]);

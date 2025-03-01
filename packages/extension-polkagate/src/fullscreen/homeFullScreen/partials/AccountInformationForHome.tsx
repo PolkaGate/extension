@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -106,7 +106,7 @@ const AccountTotal = ({ hideNumbers, totalBalance }: { hideNumbers: boolean | un
   );
 };
 
-function AccountInformationForHome ({ accountAssets, address, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
+function AccountInformationForHome({ accountAssets, address, isChild, selectedAsset, setSelectedAsset }: AddressDetailsProps): React.ReactElement {
   const nftManager = useMemo(() => new NftManager(), []);
 
   const { t } = useTranslation();

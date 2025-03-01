@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
@@ -29,7 +29,8 @@ const GenesisHashOptionsContext = React.createContext<DropdownOption[]>([]);
 const AccountIconThemeContext = React.createContext<AccountIconThemeContextType>({ accountIconTheme: undefined, setAccountIconTheme: noop });
 const WorkerContext = React.createContext<MessagePort | undefined>(undefined);
 
-export { AccountContext,
+export {
+  AccountContext,
   AccountIconThemeContext,
   AccountsAssetsContext,
   ActionContext,
@@ -46,4 +47,5 @@ export { AccountContext,
   SigningReqContext,
   ToastContext,
   UserAddedChainContext,
-  WorkerContext };
+  WorkerContext
+};

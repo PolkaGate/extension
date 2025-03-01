@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PaletteMode, Theme } from '@mui/material';
@@ -17,7 +17,7 @@ interface Props {
   className?: string;
 }
 
-function View ({ children, className }: Props): React.ReactElement<Props> {
+function View({ children, className }: Props): React.ReactElement<Props> {
   const [mode, setMode] = useState<PaletteMode>(chooseTheme());
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function View ({ children, className }: Props): React.ReactElement<Props> {
   );
 }
 
-const BodyTheme = createGlobalStyle<{theme: Theme}>`
+const BodyTheme = createGlobalStyle<{ theme: Theme }>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
   }

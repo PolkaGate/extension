@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
@@ -8,7 +8,7 @@ import { BN } from '@polkadot/util';
 
 import { useApi, useToken } from '.';
 
-export default function useMinToReceiveRewardsInSolo (address: string): BN | undefined {
+export default function useMinToReceiveRewardsInSolo(address: string): BN | undefined {
   const api = useApi(address);
   const token = useToken(address);
   const tokenFromApi = api?.registry.chainTokens[0];

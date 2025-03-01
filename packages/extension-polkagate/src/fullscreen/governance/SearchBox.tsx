@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -44,7 +44,7 @@ const DEFAULT_FILTER = {
   status: REFERENDA_STATUS[0]
 };
 
-export default function SearchBox ({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);

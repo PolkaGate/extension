@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SignerPayloadJSON } from '@polkadot/types/types';
@@ -12,7 +12,7 @@ import { cancelSignRequest } from '../../messaging';
 import Request from './Request';
 import TransactionIndex from './TransactionIndex';
 
-export default function Signing (): React.ReactElement {
+export default function Signing(): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(SigningReqContext);
   const [requestIndex, setRequestIndex] = useState(0);

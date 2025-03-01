@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option } from '@polkadot/types';
@@ -32,7 +32,7 @@ export interface Prefs {
  * This hooks return a list of all available validators (current and waiting) on the chain, which the address is already tied with.
  */
 
-export default function useValidators (address: string | undefined, validators?: AllValidators): AllValidators | null | undefined {
+export default function useValidators(address: string | undefined, validators?: AllValidators): AllValidators | null | undefined {
   const { api, chain, chainName, endpoint } = useInfo(address);
   const currentEraIndex = useCurrentEraIndex(address); // TODO: Should we use active era index?
 

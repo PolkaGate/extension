@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -18,7 +18,7 @@ interface Props {
   onClick: () => void;
 }
 
-function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
+function IconBox({ icon, label, onClick }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);

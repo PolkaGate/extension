@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -72,7 +72,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
             <FormatPrice
               amount={balance}
               decimals={decimal}
-              fontSize= '16px'
+              fontSize='16px'
               price={tokenPrice}
             />
           </Grid>
@@ -83,7 +83,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
   );
 };
 
-export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElement<Props> {
+export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
   const secondBreakpoint = !useMediaQuery('(min-width:700px)');

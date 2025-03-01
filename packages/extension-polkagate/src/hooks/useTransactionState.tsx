@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect } from 'react';
@@ -6,7 +6,7 @@ import { useCallback, useEffect } from 'react';
 import useTranslation from './useTranslation';
 import { useAlerts } from '.';
 
-export default function useTransactionState () {
+export default function useTransactionState() {
   const { t } = useTranslation();
   const { notify } = useAlerts();
 

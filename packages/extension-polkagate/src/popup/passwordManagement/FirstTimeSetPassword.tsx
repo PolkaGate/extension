@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -20,7 +20,7 @@ interface Props {
   setHashedPassword: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-function FirstTimeSetPassword ({ hashedPassword, onPassChange, setHashedPassword, setStep }: Props): React.ReactElement {
+function FirstTimeSetPassword({ hashedPassword, onPassChange, setHashedPassword, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 

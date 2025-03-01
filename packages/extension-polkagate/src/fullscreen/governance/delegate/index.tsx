@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -75,7 +75,7 @@ export const STEPS = {
 
 export type DelegationStatus = 'Delegate' | 'Remove' | 'Modify';
 
-export function Delegate ({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
+export function Delegate({ address, open, setOpen, showDelegationNote }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, formatted } = useInfo(address);
   const tracksList = useTracks(address);
@@ -289,7 +289,7 @@ export function Delegate ({ address, open, setOpen, showDelegationNote }: Props)
       icon={step === STEPS.PROXY ? faUserAstronaut : 'vaadin:money-withdraw'}
       onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop}
       open={open}
-      title= {title}
+      title={title}
     >
       <>
         {step === STEPS.ABOUT &&

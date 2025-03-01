@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -11,7 +11,7 @@ import React from 'react';
 
 import { Identity } from '../../../../components';
 
-export default function TAccountsDisplay ({ address, api, chain, selectedTrustedAddress }: { chain: Chain | null | undefined, address: string, api: ApiPromise | undefined, selectedTrustedAddress: string | undefined }): React.ReactElement {
+export default function TAccountsDisplay({ address, api, chain, selectedTrustedAddress }: { chain: Chain | null | undefined, address: string, api: ApiPromise | undefined, selectedTrustedAddress: string | undefined }): React.ReactElement {
   return (
     <Grid container justifyContent='space-between' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.main' }}>
       <Grid container maxWidth='380px' pl='8px' width='fit-content'>

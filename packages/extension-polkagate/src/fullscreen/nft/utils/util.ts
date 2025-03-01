@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -48,7 +48,7 @@ export const fetchWithRetry = async (url: string, attempt = 0): Promise<Response
   }
 };
 
-export const fetchData = async <T>(contentUrl: string | undefined, isMetadata = false): Promise<T | null> => {
+export const fetchData = async<T>(contentUrl: string | undefined, isMetadata = false): Promise<T | null > => {
   if (!contentUrl) {
     return null;
   }

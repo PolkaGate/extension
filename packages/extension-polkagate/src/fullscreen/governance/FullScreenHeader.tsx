@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -39,7 +39,7 @@ export const HEADER_COMPONENT_STYLE = {
   width: 'fit-content'
 };
 
-function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
+function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useContext(GenesisHashOptionsContext);
   const onAction = useContext(ActionContext);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -17,7 +17,7 @@ interface Props {
   right?: string;
 }
 
-function AccountLabel ({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
+function AccountLabel({ account, ml, parentName, right }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();

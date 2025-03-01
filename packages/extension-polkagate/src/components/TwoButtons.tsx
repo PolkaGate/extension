@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -27,7 +27,7 @@ interface Props {
 }
 // TODO: can replace ButtonWithCancel later
 
-export default function TwoButtons ({ disabled = false, isBusy = false, ml = '6%', mt, onPrimaryClick, onSecondaryClick, primaryBtnStartIcon, primaryBtnText, secondaryBtnStartIcon, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
+export default function TwoButtons({ disabled = false, isBusy = false, ml = '6%', mt, onPrimaryClick, onSecondaryClick, primaryBtnStartIcon, primaryBtnText, secondaryBtnStartIcon, secondaryBtnText, variant = 'outlined', width = '88%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

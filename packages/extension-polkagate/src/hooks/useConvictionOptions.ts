@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable header/header */
 
@@ -19,7 +19,7 @@ import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import { calcBlockTime } from '../fullscreen/governance/utils/util';
 import { useInfo, useTranslation } from '.';
 
-export default function useConvictionOptions (address: string | AccountId | undefined, blockTime: BN | undefined): DropdownOption[] | undefined {
+export default function useConvictionOptions(address: string | AccountId | undefined, blockTime: BN | undefined): DropdownOption[] | undefined {
   const { t } = useTranslation();
   const { api, genesisHash } = useInfo(address);
 

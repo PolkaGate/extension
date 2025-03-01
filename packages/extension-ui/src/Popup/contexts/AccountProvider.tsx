@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountsContext } from '@polkadot/extension-base/background/types';
@@ -11,7 +11,7 @@ import { getStorage, type LoginInfo, updateStorage } from '@polkadot/extension-p
 import { subscribeAccounts } from '@polkadot/extension-polkagate/src/messaging';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 
-function initAccountContext (accounts: AccountJson[]): AccountsContext {
+function initAccountContext(accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -22,7 +22,7 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function AccountProvider ({ children }: { children: React.ReactNode }) {
+export default function AccountProvider({ children }: { children: React.ReactNode }) {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const [loginInfo, setLoginInfo] = useState<LoginInfo>();

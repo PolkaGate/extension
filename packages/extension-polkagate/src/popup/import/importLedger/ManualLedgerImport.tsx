@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -22,7 +22,7 @@ interface Props {
   setAddressOffset: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function ManualLedgerImport ({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: Props): React.ReactElement {
+export default function ManualLedgerImport({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _onSetAccountIndex = useCallback((_value: number | string) => {

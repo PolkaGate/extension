@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import { useInfo } from '.';
  * @description this hook checks if the address is a validator or not
  */
 
-export default function useIsValidator (address: string | undefined): boolean | null | undefined {
+export default function useIsValidator(address: string | undefined): boolean | null | undefined {
   const { api, formatted } = useInfo(address);
 
   const [isValidator, setIsValidator] = useState<boolean | null>();

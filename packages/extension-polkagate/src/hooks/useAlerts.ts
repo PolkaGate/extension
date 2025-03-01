@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Severity } from '../util/types';
@@ -10,7 +10,7 @@ import { AlertContext } from '../components';
 
 export const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
 
-export default function useAlerts () {
+export default function useAlerts() {
   const { alerts, setAlerts } = useContext(AlertContext);
 
   const random = useMemo(() => new Chance(), []);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -21,7 +21,7 @@ interface NftGroupedProps {
   accountNft: ItemInformation[] | null | undefined;
 }
 
-function NftGrouped ({ accountNft, address }: NftGroupedProps): React.ReactElement {
+function NftGrouped({ accountNft, address }: NftGroupedProps): React.ReactElement {
   const theme = useTheme();
 
   const [isLoading, setIsLoading] = React.useState(true);

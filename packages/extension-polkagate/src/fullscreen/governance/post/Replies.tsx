@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -12,7 +12,7 @@ import React from 'react';
 import { useTranslation } from '../../../hooks';
 import CommentView from './Comment';
 
-export default function Replies ({ address, replies }: { address: string | undefined, replies: Reply[] }): React.ReactElement {
+export default function Replies({ address, replies }: { address: string | undefined, replies: Reply[] }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(false);

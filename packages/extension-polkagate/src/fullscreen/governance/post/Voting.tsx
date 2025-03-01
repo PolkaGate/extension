@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -30,7 +30,7 @@ export const submittedBlock = (referendum: Referendum | undefined) => {
   return referendum?.submissionBlockOC || submittedBlockPA || referendum?.timelineSb?.find(({ status }) => status === 'Submitted')?.block;
 };
 
-export default function Voting ({ address, referendum, track }: Props): React.ReactElement<Props> {
+export default function Voting({ address, referendum, track }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const decimal = useDecimal(address);
@@ -72,7 +72,7 @@ export default function Voting ({ address, referendum, track }: Props): React.Re
       ? Number(referendum.naysAmount) / totalVoteAmount * 100
       : 0
     : 0
-  , [referendum, totalVoteAmount]);
+    , [referendum, totalVoteAmount]);
 
   const handleOpenAllVotes = useCallback(() => {
     setOpenAllVotes(true);

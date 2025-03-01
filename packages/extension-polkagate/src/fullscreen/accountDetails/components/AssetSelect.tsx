@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -18,7 +18,7 @@ interface Props {
   setAssetId: React.Dispatch<React.SetStateAction<number | string | undefined>>
 }
 
-function AssetSelect ({ address, assetId, label, onChange, setAssetId, style }: Props) {
+function AssetSelect({ address, assetId, label, onChange, setAssetId, style }: Props) {
   const tokens = useTokens(address);
   const assets = useAssetHubAssets(address);
   const options = useMemo(() => (tokens || []).concat(assets || []), [assets, tokens]);

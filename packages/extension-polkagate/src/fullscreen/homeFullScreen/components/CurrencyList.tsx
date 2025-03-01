@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -20,7 +20,7 @@ interface Props {
   setCurrencyToShow: React.Dispatch<React.SetStateAction<CurrencyItemType | undefined>>;
 }
 
-function CurrencyList ({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
+function CurrencyList({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { setCurrency } = useContext(CurrencyContext);

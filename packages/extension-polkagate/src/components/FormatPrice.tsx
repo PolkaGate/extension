@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -32,7 +32,7 @@ interface Props {
   withSmallDecimal?: boolean;
 }
 
-export function nFormatter (num: number, decimalPoint: number) {
+export function nFormatter(num: number, decimalPoint: number) {
   const lookup = [
     { symbol: '', value: 1 },
     { symbol: 'k', value: 1e3 },
@@ -68,7 +68,7 @@ const DecimalPart = ({ value, withCountUp }: { value: string | number, withCount
     : <>{`.${getDecimal(value)}`}</>
 );
 
-function FormatPrice ({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+function FormatPrice({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
   const theme = useTheme();
 
