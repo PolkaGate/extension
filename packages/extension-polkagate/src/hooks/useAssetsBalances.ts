@@ -98,7 +98,7 @@ export interface FetchedBalance {
   vestingTotal?: BN,
   freeBalance?: BN,
   frozenBalance: BN,
-  poolReward: BN,
+  poolReward?: BN,
   ED: BN,
   frozenFee?: BN,
   frozenMisc?: BN,
