@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { ActionCard, ActionContext, BackWithLabel } from '../../../components';
+import { ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -35,7 +35,7 @@ function AccountSettings (): React.ReactElement {
         onClick={onBack}
         text={t('Account Settings')}
       />
-      <Grid container item sx={{ px: '15px' }}>
+      <Motion variant='slide' style={{ padding: ' 0 15px' }}>
         <ActionCard
           Icon={Notification}
           iconColor='#FF4FB9'
@@ -114,7 +114,7 @@ function AccountSettings (): React.ReactElement {
           }}
           title={t('Remove Account')}
         />
-      </Grid>
+      </Motion>
       <HomeMenu />
       <RenameAccount
         open={popup === ExtensionPopups.RENAME}

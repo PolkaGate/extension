@@ -51,7 +51,7 @@ function AccountSettings (): React.ReactElement {
 
   const onAction = useContext(ActionContext);
 
-  const onBack = useCallback(() => onAction('/settings'), [onAction]);
+  const onBack = useCallback(() => onAction('/settings-account'), [onAction]);
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
   }, []);

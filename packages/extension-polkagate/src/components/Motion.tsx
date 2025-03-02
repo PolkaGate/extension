@@ -41,7 +41,7 @@ export default function Motion ({ children, style, variant = 'fade' }: Props) {
       animate='animate'
       exit='exit'
       initial='initial'
-      style={style}
+      style={{ width: '100%', ...style }}
       variants={variants[variant]}
     >
       {children}

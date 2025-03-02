@@ -8,7 +8,7 @@ import { Check, I3Dcube, Trade } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router';
 
-import { ActionContext, BackWithLabel } from '../../../components';
+import { ActionContext, BackWithLabel, Motion } from '../../../components';
 import { useIsDark, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -51,13 +51,15 @@ function ExtensionSettings (): React.ReactElement {
             path='password'
           />
         </Stack>
-        <Grid container item sx={{ bgColor: isDark ? '#1b143c' : '#F5F4FF', borderRadius: '14px', p: '4px', my: '15px' }}>
-          <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '373px', overflow: 'scroll' }}>
-            {pathname === '/settings-extension/' && <Main />}
-            {pathname === '/settings-extension/chains' && <Chains />}
-            {pathname === '/settings-extension/password' && <ManagePassword />}
+        <Motion variant='slide'>
+          <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#F5F4FF', borderRadius: '14px', p: '4px', my: '15px' }}>
+            <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '373px', overflow: 'scroll' }}>
+              {pathname === '/settings-extension/' && <Main />}
+              {pathname === '/settings-extension/chains' && <Chains />}
+              {pathname === '/settings-extension/password' && <ManagePassword />}
+            </Grid>
           </Grid>
-        </Grid>
+        </Motion>
       </Grid>
       <HomeMenu />
     </Container>

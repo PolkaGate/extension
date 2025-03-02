@@ -33,7 +33,7 @@ function Settings (): React.ReactElement {
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
-      <Motion variant='slide'>
+      <Motion style={{ padding: '0 10px' }} variant='slide'>
         <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#F5F4FF', borderRadius: '14px', mt: '10px', p: '4px', position: 'relative' }}>
           <Introduction />
           <ActionRow />
