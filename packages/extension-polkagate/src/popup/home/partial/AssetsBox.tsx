@@ -61,7 +61,7 @@ function AssetsBox (): React.ReactElement {
     if (tab) {
       window.localStorage.setItem('HomeTab', tab);
     } else {
-      setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.CHAINS);
+      setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.TOKENS);
     }
   }, [tab]);
 

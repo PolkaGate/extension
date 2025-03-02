@@ -62,7 +62,7 @@ export default function Home (): React.ReactElement {
   }, []);
 
   return (
-    <Motion >
+    <Motion>
       {show &&
         <ChangeLog
           newVersion
