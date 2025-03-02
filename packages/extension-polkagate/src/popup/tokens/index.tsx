@@ -15,7 +15,7 @@ import { useParams } from 'react-router';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice } from '../../components';
+import { ActionContext, AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';
 import { useAccountAssets, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
 import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
@@ -250,7 +250,7 @@ function Tokens (): React.ReactElement {
   }, [onAction]);
 
   return (
-    <>
+    <Motion>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
@@ -293,10 +293,10 @@ function Tokens (): React.ReactElement {
                 value={token?.totalBalance}
               />
               {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
-                <DailyChange
-                  change={change}
-                  textVariant='B-1'
-                />
+                  <DailyChange
+                    change={change}
+                    textVariant='B-1'
+                  />
               }
             </Grid>
           </GlowBox>
@@ -354,7 +354,7 @@ function Tokens (): React.ReactElement {
         title={lockedReservedState.type ?? ''}
         token={token?.token}
       />
-    </>
+    </Motion>
   );
 }
 

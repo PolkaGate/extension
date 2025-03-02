@@ -1,23 +1,48 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { motion, MotionStyle } from 'framer-motion';
+import type { MotionStyle } from 'framer-motion';
+
+import { motion } from 'framer-motion';
 import * as React from 'react';
 
 interface Props {
-  style?: MotionStyle | undefined;
+  style?: MotionStyle;
   children: React.ReactNode;
+  variant?: 'fade' | 'slide' | 'zoom' | 'flip';
 }
 
-export default function Motion({ children, style }: Props) {
+const variants = {
+  fade: {
+    animate: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.2 } },
+    initial: { opacity: 0 }
+  },
+  slide: {
+    animate: { x: 0, opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+    exit: { x: '-100%', opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } },
+    initial: { x: '100%', opacity: 0 }
+  },
+  zoom: {
+    animate: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2 } },
+    initial: { opacity: 0, scale: 0.9 }
+  },
+  flip: {
+    animate: { rotateY: 0, opacity: 1, transition: { duration: 0.5 } },
+    exit: { rotateY: -90, opacity: 0, transition: { duration: 0.5 } },
+    initial: { rotateY: 90, opacity: 0 }
+  }
+};
+
+export default function Motion ({ children, style, variant = 'flip' }: Props) {
   return (
     <motion.div
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0 }}
+      animate='animate'
+      exit='exit'
+      initial='initial'
       style={style}
-      transition={{ duration: 0.5 }}
+      variants={variants[variant]}
     >
       {children}
     </motion.div>

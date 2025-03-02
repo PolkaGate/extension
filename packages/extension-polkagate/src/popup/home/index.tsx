@@ -12,7 +12,7 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { AccountContext, FadeOnScroll } from '../../components';
+import { AccountContext, FadeOnScroll, Motion } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
 import { useManifest, useMerkleScience } from '../../hooks';
 import { UserDashboardHeader, Version2 as Version } from '../../partials';
@@ -62,7 +62,7 @@ export default function Home (): React.ReactElement {
   }, []);
 
   return (
-    <>
+    <Motion variant='fade'>
       {show &&
         <ChangeLog
           newVersion
@@ -84,6 +84,6 @@ export default function Home (): React.ReactElement {
           <HomeMenu />
         </Grid>
       }
-    </>
+    </Motion>
   );
 }
