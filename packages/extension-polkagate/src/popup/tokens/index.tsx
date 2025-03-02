@@ -250,7 +250,7 @@ function Tokens (): React.ReactElement {
   }, [onAction]);
 
   return (
-    <Motion>
+    <Motion variant='flip'>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel

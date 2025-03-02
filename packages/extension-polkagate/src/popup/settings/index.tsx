@@ -7,7 +7,7 @@ import { Container, Grid } from '@mui/material';
 import { Category, User } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
-import { ActionCard, ActionContext } from '../../components';
+import { ActionCard, ActionContext, Motion } from '../../components';
 import { useIsDark, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
@@ -33,7 +33,7 @@ function Settings (): React.ReactElement {
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
-      <Container>
+      <Motion variant='slide'>
         <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#F5F4FF', borderRadius: '14px', mt: '10px', p: '4px', position: 'relative' }}>
           <Introduction />
           <ActionRow />
@@ -72,7 +72,7 @@ function Settings (): React.ReactElement {
           title={t('About PolkaGate')}
         />
         <Socials />
-      </Container>
+      </Motion>
       <HomeMenu />
     </Container>
   );

@@ -9,10 +9,12 @@ import type { Pages } from '../popup/home/type';
 import { Container, Grid, styled, useTheme } from '@mui/material';
 import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
+import { useSelectedAccount } from '../hooks';
+import { windowOpen } from '../messaging';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
 
@@ -92,6 +94,8 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
 function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const account = useSelectedAccount();
+  const { assetId } = useParams<{ address: string, assetId: string }>();
 
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const history = useHistory();
@@ -122,8 +126,20 @@ function HomeMenu (): React.ReactElement {
   }, [page, state?.previousUrl]);
 
   const handleMenuClick = useCallback((input: Pages) => () => {
+    if (input === 'send') {
+      account && windowOpen(`/send/${account.address}/${assetId ?? 0}`).catch(console.error);
+
+      return;
+    }
+
     if (input === 'receive') {
       setOpenReceive(true);
+
+      return;
+    }
+
+    if (input === 'governance') {
+      account && windowOpen(`/governance/${account.address}/referenda`).catch(console.error);
 
       return;
     }
@@ -132,7 +148,7 @@ function HomeMenu (): React.ReactElement {
       pathname: `/${input}`,
       state: { previousUrl: page }
     });
-  }, [history, page]);
+  }, [account, history, page]);
 
   const selectionLineStyle = useMemo(
     () => ({

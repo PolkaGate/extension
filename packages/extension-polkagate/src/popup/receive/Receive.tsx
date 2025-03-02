@@ -14,7 +14,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { selectableNetworks } from '@polkadot/networks';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { NeonButton, SearchField } from '../../components';
+import { Motion, NeonButton, SearchField } from '../../components';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
@@ -72,7 +72,7 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
   const handleSnackbarClose = useCallback(() => setShowSnackbar(false), []);
 
   return (
-    <>
+    <Motion style ={{ width: '100%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
           <Avatar src={getLogo(chainName)} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
@@ -89,7 +89,7 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
         open={showSnackbar}
         text={t("{{chainName}}'s address copied!", { replace: { chainName } })}
       />
-    </>
+    </Motion>
   );
 }
 

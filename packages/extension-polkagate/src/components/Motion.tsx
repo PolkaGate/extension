@@ -21,7 +21,7 @@ const variants = {
   slide: {
     animate: { x: 0, opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
     exit: { x: '-100%', opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } },
-    initial: { x: '100%', opacity: 0 }
+    initial: { x: '20%', opacity: 0 }
   },
   zoom: {
     animate: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
@@ -35,7 +35,7 @@ const variants = {
   }
 };
 
-export default function Motion ({ children, style, variant = 'flip' }: Props) {
+export default function Motion ({ children, style, variant = 'fade' }: Props) {
   return (
     <motion.div
       animate='animate'
