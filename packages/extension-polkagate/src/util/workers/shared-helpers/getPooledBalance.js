@@ -48,6 +48,7 @@ export async function getPooledBalance(api, address) {
 
   return {
     poolName,
-    pooledBalance: active.add(rewards).add(unlockingValue)
+    poolReward: rewards,
+    pooledBalance: active.add(unlockingValue)
   };
 }

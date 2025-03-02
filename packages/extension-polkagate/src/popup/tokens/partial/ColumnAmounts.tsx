@@ -16,13 +16,16 @@ interface ColumnAmountsProps {
   token: string;
   decimal: number;
   color?: string;
+  placement?: 'left' | 'right';
 }
 
-export const ColumnAmounts = memo(function ColumnAmounts({ color, cryptoAmount, decimal, fiatAmount, token }: ColumnAmountsProps) {
+export const ColumnAmounts = memo(function ColumnAmounts({ color, cryptoAmount, decimal, fiatAmount, placement = 'left', token }: ColumnAmountsProps) {
   const theme = useTheme();
 
+  const contentPlacement = placement === 'left' ? 'flex-start' : 'flex-end';
+
   return (
-    <Grid container direction='column' item width='fit-content'>
+    <Grid alignItems={contentPlacement} container direction='column' item width='fit-content'>
       <FormatPrice
         commify
         decimalColor={theme.palette.text.secondary}

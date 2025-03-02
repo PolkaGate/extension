@@ -112,7 +112,7 @@ function Tokens (): React.ReactElement {
 
   const transferable = useMemo(() => getValue('transferable', token as unknown as BalancesInfo), [token]);
   const lockedBalance = useMemo(() => getValue('locked balance', token as unknown as BalancesInfo), [token]);
-  const reservedBalance = useMemo(() => getValue('reserved', token as unknown as BalancesInfo), [token]);
+  const reservedBalance = useMemo(() => getValue('reserved', token as unknown as BalancesInfo)?.add(token?.poolReward ?? BN_ZERO), [token]);
 
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
@@ -162,7 +162,7 @@ function Tokens (): React.ReactElement {
       }
 
       if (token?.pooledBalance && hasAmount(token?.pooledBalance)) {
-        items['Pool Staking'] = token.pooledBalance;
+        items['Pool Staking'] = token.pooledBalance.add(token.poolReward ?? BN_ZERO);
       }
     };
 
@@ -193,7 +193,7 @@ function Tokens (): React.ReactElement {
       },
       type: 'OPEN_MENU'
     });
-  }, [hasAmount, isMigrationEnabled, reservedReason, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
+  }, [hasAmount, isMigrationEnabled, reservedReason, token?.poolReward, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
 
   useEffect(() => {
     if (lockedReservedState.data === undefined || lockedReservedState.type === undefined) {

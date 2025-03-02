@@ -72,7 +72,7 @@ const reasonIcon = (reason: string): React.ReactNode => {
   }
 };
 
-function Item({ amount, decimal, noDivider, price, reason, token }: { amount: BN, decimal: number, noDivider: boolean, price: number, token: string, reason: string }) {
+function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: BN, decimal: number, noDivider: boolean, price: number, token: string, reason: string }) {
   const totalBalance = useMemo(() => calcPrice(price, amount, decimal), [amount, decimal, price]);
 
   return (
@@ -90,6 +90,7 @@ function Item({ amount, decimal, noDivider, price, reason, token }: { amount: BN
               cryptoAmount={amount}
               decimal={decimal}
               fiatAmount={totalBalance}
+              placement='right'
               token={token}
             />
           </Grid>
@@ -111,7 +112,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function ReservedLockedPopup({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
+export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
   const { t } = useTranslation();
 
   const stillLoading = Object.entries(items).some(([_, amount]) => amount === undefined);
