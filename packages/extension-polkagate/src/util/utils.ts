@@ -599,3 +599,54 @@ export const addressToChain = (address: string) => {
     genesisHash: chain?.genesisHash
   };
 };
+
+/**
+ * Formats a timestamp into the pattern: "Tue, Aug 6, 2024, 7:48:00 PM"
+ *
+ * @param {number|string|Date} timestamp - The timestamp to format. Can be:
+ *   - number: milliseconds since epoch (e.g., 1723026480000)
+ *   - string: a date string parsable by the Date constructor (e.g., "2024-08-06T19:48:00")
+ *   - Date: a JavaScript Date object
+ *
+ * @returns {string} The formatted date string in the format "Weekday, Month Day, Year, Hour:Minute:Second AM/PM"
+ *
+ * @example
+ * // Returns something like "Tue, Aug 6, 2024, 7:48:00 PM"
+ * formatTimestamp(1723026480000);
+ *
+ * @example
+ * // Also works with Date objects or date strings
+ * formatTimestamp(new Date());
+ * formatTimestamp("2024-08-06T19:48:00");
+ */
+export function formatTimestamp (timestamp: number|string|Date): string {
+  // Create a new Date object from the timestamp
+  const date = new Date(timestamp);
+
+  // Array of weekday abbreviations
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  // Array of month abbreviations
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // Get date components
+  const weekday = weekdays[date.getDay()];
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  // Get time components
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert to 12-hour format
+  hours = hours % 12;
+  hours = hours || 12; // the hour '0' should be '12'
+
+  // Construct the formatted string
+  const formattedDate = `${weekday}, ${month} ${day}, ${year}, ${hours}:${minutes}:${seconds} ${ampm}`;
+
+  return formattedDate;
+}
