@@ -137,28 +137,30 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
   const { decimalPart, integerPart } = formatDecimalWithCommas(total as number, _decimalPoint, commify);
 
   const mayCurrencySign = sign || currency?.sign || '';
-  const formattedTotal = <>
-    {mayCurrencySign}
-    <span>
-      {integerPart.split(',').map((part, idx, arr) => (
-        <>
-          <span key={`number-${idx}`} style={{ color: textColor }}>
-            {part}
-          </span>
-          {idx < arr.length - 1 && (
-            <span key={`comma-${idx}`} style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
-              ,
+  const formattedTotal = useMemo(() => (
+    <>
+      {mayCurrencySign}
+      <span>
+        {integerPart.split(',').map((part, idx, arr) => (
+          <>
+            <span key={`number-${idx}`} style={{ color: textColor }}>
+              {part}
             </span>
-          )}
-        </>
-      ))}
-      {decimalPart && (
-        <span style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
-          {'.'}{decimalPart}
-        </span>
-      )}
-    </span>
-  </>;
+            {idx < arr.length - 1 && (
+              <span key={`comma-${idx}`} style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
+              ,
+              </span>
+            )}
+          </>
+        ))}
+        {decimalPart && (
+          <span style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
+            {'.'}{decimalPart}
+          </span>
+        )}
+      </span>
+    </>
+  ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
 
   return (
     <Grid item mt={mt} sx={{ height }} textAlign={textAlign}>
