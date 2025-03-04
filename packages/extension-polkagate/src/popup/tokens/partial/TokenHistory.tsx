@@ -139,7 +139,7 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
 }
 
 interface Props {
-  genesisHash: string;
+  genesisHash: string | undefined;
   address: string | undefined;
   decimal: number | undefined;
   token: string | undefined;
@@ -189,6 +189,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
       </Grid>
       <HistoryBox
         historyItems={historyItemsToShow}
+        notReady={!genesisHash}
         style={{ m: '10px 12px 15px', width: 'calc(100% - 24px)' }}
       />
       <FilterHistory

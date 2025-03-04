@@ -34,9 +34,12 @@ function EmptyHistoryBox () {
 interface Props {
   historyItems: Record<string, TransactionDetail[]> | null | undefined;
   style?: SxProps<Theme>;
+  notReady?: boolean;
 }
 
-function HistoryBox ({ historyItems, style }: Props) {
+function HistoryBox ({ historyItems, notReady = false, style }: Props) {
+  const { t } = useTranslation();
+
   const formatDate = useCallback((inputDate: string) => {
     // Handle invalid dates
     const date = new Date(inputDate);
@@ -75,7 +78,7 @@ function HistoryBox ({ historyItems, style }: Props) {
   return (
     <VelvetBox style={style}>
       <Container disableGutters sx={{ display: 'grid', rowGap: '4px' }}>
-        {historyItems && Object.entries(historyItems).map(([date, items], index) => (
+        {!notReady && historyItems && Object.entries(historyItems).map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}
             historyItems={items}
@@ -84,11 +87,16 @@ function HistoryBox ({ historyItems, style }: Props) {
         ))
         }
         <div id='observerObj' style={{ height: '1px' }} />
-        {historyItems === null &&
+        {!notReady && historyItems === null &&
           <EmptyHistoryBox />
         }
-        {historyItems === undefined &&
+        {!notReady && historyItems === undefined &&
           <AssetLoading itemsCount={2} noDrawer />
+        }
+        {notReady &&
+          <Typography color='text.secondary' my='30px' variant='B-2'>
+            {t('Select a chain to view the transaction history on')}
+          </Typography>
         }
       </Container>
     </VelvetBox>

@@ -148,7 +148,7 @@ function HomeMenu (): React.ReactElement {
       pathname: `/${input}`,
       state: { previousUrl: page }
     });
-  }, [account, history, page]);
+  }, [account, assetId, history, page]);
 
   const selectionLineStyle = useMemo(
     () => ({
