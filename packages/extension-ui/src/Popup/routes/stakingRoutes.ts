@@ -6,6 +6,8 @@ import type { RouteConfig } from './RouteDefinitions';
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
 import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
+import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
+import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
 import PoolNominations from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations';
@@ -23,7 +25,16 @@ import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp'
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
 
 export const STAKING_ROUTES: RouteConfig[] = [
-  // Pool Staking
+  {
+    Component: StakingIndex,
+    path: '/stakingIndex/',
+    trigger: 'pool-create'
+  },
+  {
+    Component: EarningOptions,
+    path: '/stakingIndex-options',
+    trigger: 'pool-create'
+  },
   {
     Component: CreatePool,
     path: '/pool/create/:address',

@@ -1563,5 +1563,17 @@
   "Wow, it’s great!": "",
   "Loading": "",
   "{{chainName}}'s address copied!": "",
-  "Back to Account": ""
+  "Back to Account": "",
+  "up to": "",
+  "per year": "",
+  "Testnet": "",
+  "Your Staking Positions": "",
+  "Explore staking options": "",
+  "Start staking": "",
+  "Earn up to": "",
+  "on your": "",
+  "tokens per year": "",
+  "and start earning rewards actively within {{eraLength}}": "",
+  "No rewards will be earned during that period": "",
+  "Rewards require manual claiming if you have staked in pools.": ""
 }

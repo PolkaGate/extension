@@ -49,6 +49,8 @@ export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain
 
 export interface StakingConsts {
   bondingDuration: number; // eras
+  decimal: number;
+  eraDuration: number;
   eraIndex: number;
   existentialDeposit: BN;
   maxNominations: number;
@@ -427,6 +429,7 @@ export interface PoolStakingConsts {
   minJoinBond: BN;
   minNominatorBond: BN;
   token: string;
+  eraLength: BN,
 }
 
 export interface PoolInfo {
@@ -719,7 +722,7 @@ export interface UserAddedEndpoint {
   priceId: string;
 }
 
-export type UserAddedChains= Record<string, UserAddedEndpoint>
+export type UserAddedChains = Record<string, UserAddedEndpoint>
 
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
@@ -830,7 +833,7 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
-export type Severity= 'error' | 'warning' | 'info' | 'success'
+export type Severity = 'error' | 'warning' | 'info' | 'success'
 
 export interface AlertType {
   id: string;
@@ -887,3 +890,39 @@ export interface FastestConnectionType {
 export type RecentChainsType = Record<string, string[]>;
 
 export type NftItemsType = Record<string, ItemInformation[]>;
+
+export interface FetchedBalance {
+  assetId: number | string,
+  availableBalance: BN,
+  balanceDetails?: any,
+  totalBalance: BN,
+  chainName: string,
+  date?: number,
+  decimal: number,
+  genesisHash: string,
+  poolName?: string,
+  priceId: string,
+  price?: number,
+  token: string,
+  soloTotal?: BN,
+  pooledBalance?: BN,
+  lockedBalance?: BN,
+  vestingLocked?: BN,
+  vestedClaimable?: BN,
+  vestingTotal?: BN,
+  freeBalance?: BN,
+  frozenBalance: BN,
+  poolReward?: BN,
+  ED: BN,
+  frozenFee?: BN,
+  frozenMisc?: BN,
+  reservedBalance?: BN,
+  votingBalance?: BN
+}
+
+export interface PositionInfo extends FetchedBalance, Chain {
+  chainName: string;
+  genesisHash: string;
+  rate?: number;
+  // You can add additional properties here if needed
+}

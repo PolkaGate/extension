@@ -13,7 +13,10 @@ import { noop } from '@polkadot/util';
 
 import { useIsDark } from '../hooks';
 
-interface Props {
+/**
+ * Props for the GradientButton component.
+ */
+export interface Props {
   disabled?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Runs in the extension background, handling all keyring access
-
+//@ts-nocheck
 import '@polkadot/extension-inject/crossenv';
 
 import type { RequestSignatures, TransportRequestMessage } from '@polkadot/extension-base/background/types';

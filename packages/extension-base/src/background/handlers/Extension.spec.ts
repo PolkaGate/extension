@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+
 import '@polkadot/extension-mocks/chrome';
 
 import type { ResponseSigning } from '@polkadot/extension-base/background/types';

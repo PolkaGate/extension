@@ -13,7 +13,10 @@ const hashes: MetadataDefBase[] = selectableNetworks
     chain: network.displayName,
     genesisHash: network.genesisHash[0],
     icon: network.icon,
-    ss58Format: network.prefix
+    name: network.displayName,
+    ss58Format: network.prefix,
+    tokenDecimal: network.decimals[0],
+    tokenSymbol: network.symbols[0]
   }));
 
 export default hashes;
