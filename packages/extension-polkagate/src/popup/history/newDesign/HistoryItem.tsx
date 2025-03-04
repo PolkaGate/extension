@@ -6,7 +6,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { CloseCircle, Login, Logout, Money, Polkadot, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
+import { CloseCircle, Dislike, Like1, LikeDislike, Login, Logout, Money, Polkadot, Sagittarius, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
@@ -22,7 +22,7 @@ interface HistoryItemProps {
   historyItems: TransactionDetail[];
 }
 
-type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward';
+type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward' | 'aye' | 'nay' | 'abstain' | 'delegate';
 
 const HistoryIcon = ({ action }: { action: string }) => {
   const normalizedAction = action.toLowerCase() as ActionType;
@@ -30,6 +30,10 @@ const HistoryIcon = ({ action }: { action: string }) => {
   const DEFAULT_ICON = <Polkadot color='#AA83DC' size='26' />;
 
   const actionIcons: Record<ActionType, React.JSX.Element> = {
+    abstain: <LikeDislike color='#AA83DC' size='26' variant='Bold' />,
+    aye: <Like1 color='#AA83DC' size='22' variant='Bold' />,
+    delegate: <Sagittarius color='#AA83DC' size='26' variant='Bulk' />,
+    nay: <Dislike color='#AA83DC' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
     receive: <Login color='#82FFA5' size='22' variant='Bold' />,
     reward: <Money color='#82FFA5' size='22' />,
@@ -44,6 +48,10 @@ const historyIconBgColor = (action: string) => {
   const normalizedAction = action.toLowerCase() as ActionType;
 
   const actionColors: Record<ActionType, string> = {
+    abstain: '#6743944D',
+    aye: '#6743944D',
+    delegate: '#6743944D',
+    nay: '#6743944D',
     'pool staking': '#6743944D',
     receive: '#82FFA540',
     reward: '#82FFA540',
@@ -55,6 +63,18 @@ const historyIconBgColor = (action: string) => {
 };
 
 const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
+
+const getVoteType = (voteType: number | null | undefined) => {
+  if (voteType === null) {
+    return 'abstain';
+  } else if (voteType === 128) {
+    return 'aye';
+  } else if (voteType === 129) {
+    return 'nay';
+  }
+
+  return undefined;
+};
 
 const TimeOfTheDay = ({ date }: { date: number }) => {
   const formatTimestamp = useCallback((timestamp: number) => {
@@ -120,12 +140,10 @@ const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem:
   }
 });
 
-const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem }: { historyItem: TransactionDetail }) {
+const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
-
-  const short = window.location.hash.includes('token');
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(historyItem.amount, historyItem.decimal ?? 0) ?? BN_ZERO, historyItem.decimal ?? 0), [historyItem.amount, historyItem.decimal, price.price]);
 
@@ -180,47 +198,56 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem }: 
 function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
   const theme = useTheme();
 
-  return (
-    <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', display: 'grid', p: '10px' }}>
-      <Typography color='text.secondary' sx={{ background: '#C6AECC26', borderRadius: '10px', mb: '4px', p: '2px 4px', width: 'fit-content' }} variant='B-2'>
-        {historyDate}
-      </Typography>
-      {historyItems.map((historyItem, index) => {
-        const action = isReward(historyItem) ? 'reward' : historyItem.action;
-        const iconBgColor = historyIconBgColor(action);
-        const noDivider = historyItems.length === index + 1;
+  const short = window.location.hash.includes('token');
 
-        return (
-          <>
-            <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
-              <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
-                <HistoryIcon action={action} />
-              </Grid>
-              <Grid container item justifyContent='space-between' xs>
-                <ActionSubAction
-                  historyItem={historyItem}
-                />
-                <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
-                  <FormatBalance2
-                    decimalPoint={2}
-                    decimals={[historyItem.decimal ?? 0]}
-                    style={{
-                      color: theme.palette.text.primary,
-                      ...theme.typography['B-2'],
-                      width: 'max-content'
-                    }}
-                    tokens={[historyItem.token ?? '']}
-                    value={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+  return (
+    <>
+      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', display: 'grid', p: '10px' }}>
+        <Typography color='text.secondary' sx={{ background: '#C6AECC26', borderRadius: '10px', mb: '4px', p: '2px 4px', width: 'fit-content' }} variant='B-2'>
+          {historyDate}
+        </Typography>
+        {historyItems.map((historyItem, index) => {
+          const action = isReward(historyItem)
+            ? 'reward'
+            : getVoteType(historyItem.voteType) ?? historyItem.action;
+          const iconBgColor = historyIconBgColor(action);
+          const noDivider = historyItems.length === index + 1;
+
+          return (
+            <>
+              <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
+                  <HistoryIcon action={action} />
+                </Grid>
+                <Grid container item justifyContent='space-between' xs>
+                  <ActionSubAction
+                    historyItem={historyItem}
                   />
-                  <HistoryStatusAmount historyItem={historyItem} />
+                  <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
+                    <FormatBalance2
+                      decimalPoint={2}
+                      decimals={[historyItem.decimal ?? 0]}
+                      style={{
+                        color: theme.palette.text.primary,
+                        ...theme.typography['B-2'],
+                        width: 'max-content'
+                      }}
+                      tokens={[historyItem.token ?? '']}
+                      value={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+                    />
+                    <HistoryStatusAmount historyItem={historyItem} short={short} />
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-            {!noDivider && <GradientDivider style={{ my: '4px' }} />}
-          </>
-        );
-      })}
-    </Container>
+              {!noDivider && <GradientDivider style={{ my: '4px' }} />}
+            </>
+          );
+        })}
+      </Container>
+      {short &&
+        <></>
+      }
+    </>
   );
 }
 
