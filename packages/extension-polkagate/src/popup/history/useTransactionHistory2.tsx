@@ -45,14 +45,14 @@ export interface TransactionHistoryOutput{
   governanceTx: object & RecordTabStatusGov;
 }
 
-interface FilterOptions {
+export interface FilterOptions {
   transfers?: boolean;
   governance?: boolean;
   staking?: boolean;
 }
 
 export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
-  const { chain, chainName, decimal } = useChainInfo(genesisHash);
+  const { chain, chainName, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
 
   const [fetchedTransferHistoriesFromSubscan, setFetchedTransferHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
@@ -119,13 +119,14 @@ export default function useTransactionHistory (address: AccountId | string | und
         refId: govTx.refId,
         subAction: govTx.call_module_function,
         success: govTx.success,
+        token,
         txHash: govTx.extrinsic_hash,
         voteType: govTx.voteType
       });
     });
 
     setFetchedGovernanceHistoriesFromSubscan(govHistoryFromSubscan);
-  }, [decimal, formatted, governanceTx.transactions, transfersTx]);
+  }, [decimal, formatted, governanceTx.transactions, token, transfersTx]);
 
   useEffect(() => {
     if (!transfersTx?.transactions?.length) {

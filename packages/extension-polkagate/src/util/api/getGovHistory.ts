@@ -90,7 +90,7 @@ const MODULE = 'convictionvoting';
 const RETRY_DELAY = 1100; // 1.1 second delay
 const MAX_RETRIES = 7;
 const BATCH_SIZE = 3;
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 5;
 
 /**
  * Sleep function to create delays between retries

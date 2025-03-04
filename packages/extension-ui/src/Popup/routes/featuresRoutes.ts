@@ -15,7 +15,7 @@ import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
 import AuthList from '@polkadot/extension-polkagate/src/popup/authManagement';
 import CrowdLoans from '@polkadot/extension-polkagate/src/popup/crowdloans';
-import History from '@polkadot/extension-polkagate/src/popup/history';
+import History from '@polkadot/extension-polkagate/src/popup/history/newDesign';
 import ManageProxies from '@polkadot/extension-polkagate/src/popup/manageProxies';
 
 export const FEATURE_ROUTES: RouteConfig[] = [
@@ -51,7 +51,7 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   },
   {
     Component: History,
-    path: '/history/:address',
+    path: '/history',
     trigger: 'history'
   },
   {

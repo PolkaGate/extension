@@ -24,7 +24,6 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
 
   const nonSelectedSquareColor = theme.palette.mode === 'dark' ? '#67439480' : '#cfd5ec';
 
-
   const [showChains, setShowChains] = useState<boolean | undefined>(undefined);
   const [textOpacity, setTextOpacity] = useState(1); // State to handle text opacity
   const [displayedText, setDisplayedText] = useState<string | undefined>(undefined); // State for displayed text
