@@ -1,6 +1,5 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -18,7 +17,7 @@ import { PButton } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { CMD_MORTAL, CMD_SIGN_MESSAGE } from './Request';
 
-interface Props {
+export interface Props {
   address: string;
   children?: React.ReactNode;
   className?: string;
@@ -29,7 +28,7 @@ interface Props {
   buttonLeft?: string;
 }
 
-function Qr({ address, buttonLeft, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr ({ address, buttonLeft, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isScanning, setIsScanning] = useState(false);
 
