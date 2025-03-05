@@ -7,7 +7,7 @@ import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CloseCircle, Dislike, Like1, LikeDislike, Login, Logout, Money, Polkadot, Sagittarius, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
@@ -16,6 +16,7 @@ import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import GradientDivider from '../../../style/GradientDivider';
 import { amountToMachine } from '../../../util/utils';
+import HistoryDetail from './HistoryDetail';
 
 interface HistoryItemProps {
   historyDate: string;
@@ -31,9 +32,9 @@ const HistoryIcon = ({ action }: { action: string }) => {
 
   const actionIcons: Record<ActionType, React.JSX.Element> = {
     abstain: <LikeDislike color='#AA83DC' size='26' variant='Bold' />,
-    aye: <Like1 color='#AA83DC' size='22' variant='Bold' />,
+    aye: <Like1 color='#82FFA5' size='22' variant='Bold' />,
     delegate: <Sagittarius color='#AA83DC' size='26' variant='Bulk' />,
-    nay: <Dislike color='#AA83DC' size='22' variant='Bold' />,
+    nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
     receive: <Login color='#82FFA5' size='22' variant='Bold' />,
     reward: <Money color='#82FFA5' size='22' />,
@@ -62,12 +63,12 @@ const historyIconBgColor = (action: string) => {
   return actionColors[normalizedAction] || '#6743944D';
 };
 
-const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
+export const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
 
-const getVoteType = (voteType: number | null | undefined) => {
+export const getVoteType = (voteType: number | null | undefined) => {
   if (voteType === null) {
     return 'abstain';
-  } else if (voteType === 128) {
+  } else if (voteType === 128 || voteType === 134) {
     return 'aye';
   } else if (voteType === 129) {
     return 'nay';
@@ -198,7 +199,13 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, sh
 function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
   const theme = useTheme();
 
+  const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();
+
   const short = window.location.hash.includes('token');
+
+  const openDetail = useCallback((item: TransactionDetail) => () => {
+    setHistoryItemDetail(item);
+  }, []);
 
   return (
     <>
@@ -215,7 +222,7 @@ function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
 
           return (
             <>
-              <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+              <Grid alignItems='center' container item justifyContent='space-between' onClick={openDetail(historyItem)} key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
                   <HistoryIcon action={action} />
                 </Grid>
@@ -244,9 +251,10 @@ function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
           );
         })}
       </Container>
-      {short &&
-        <></>
-      }
+      <HistoryDetail
+        historyItem={historyItemDetail}
+        setOpenMenu={setHistoryItemDetail}
+      />
     </>
   );
 }
