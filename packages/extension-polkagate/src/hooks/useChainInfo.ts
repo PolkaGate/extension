@@ -18,7 +18,7 @@ interface ChainInfo {
 }
 
 export default function useChainInfo (genesisHash: string | null | undefined): ChainInfo {
-  const chain = useMetadata(genesisHash);
+  const chain = useMetadata(genesisHash, true);
   const api = useApi2(genesisHash);
   const chainInfo = selectableNetworks.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash[0] === genesisHash);
 
