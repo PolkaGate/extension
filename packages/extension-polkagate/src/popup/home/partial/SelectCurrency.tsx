@@ -5,15 +5,14 @@
 
 import type { CurrencyItemType } from '../../../fullscreen/homeFullScreen/partials/Currency';
 
-import CheckIcon from '@mui/icons-material/Check';
-import { Box, Fade, Grid, styled, Typography } from '@mui/material';
+import { Box, Grid, styled, Typography } from '@mui/material';
 import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';
 import { chainsPolkadotCircleSVG } from '@polkagate/apps-config/ui/logos/chains';
 import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { CurrencyContext, ExtensionPopup, GradientButton, GradientDivider, SearchField } from '../../../components';
+import { CurrencyContext, ExtensionPopup, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import { CRYPTO_AS_CURRENCY, CURRENCY_LIST } from '../../../util/currencyList';
@@ -114,9 +113,9 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
                 {currency.country} - {currency.sign}
               </Typography>
             </Grid>
-            <Fade in={selectedCurrency === currency} timeout={300}>
-              <CheckIcon sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', fontSize: '20px', p: '3px' }} />
-            </Fade>
+            <GlowCheck
+              show={selectedCurrency === currency}
+            />
           </ListItem>
           {(!noLastDivider || index !== currencyList.length - 1) &&
             <GradientDivider style={{ my: '3px' }} />

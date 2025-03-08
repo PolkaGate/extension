@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { styled } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Fader = styled('div')(({ showFade }: { showFade: boolean }) => ({
   background: 'linear-gradient(0deg, #05091C 0%, #05091C 60%, transparent 100%)',
@@ -22,6 +22,9 @@ function FadeOnScroll ({ containerRef }: { containerRef: React.RefObject<HTMLEle
   const [isScrollable, setIsScrollable] = useState<boolean>(false);
   const [showFade, setShowFade] = useState<boolean>(false);
 
+  // Use a ResizeObserver to detect content changes
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+
   useEffect(() => {
     const checkScroll = () => {
       const container = containerRef.current;
@@ -38,14 +41,37 @@ function FadeOnScroll ({ containerRef }: { containerRef: React.RefObject<HTMLEle
     const container = containerRef.current;
 
     if (container) {
+      // Initial check
       checkScroll();
 
+      // Set up event listener for scrolling
       container.addEventListener('scroll', checkScroll);
+
+      // Set up ResizeObserver to detect content changes
+      resizeObserverRef.current = new ResizeObserver(() => {
+        checkScroll();
+      });
+
+      // Observe both the container and its children
+      resizeObserverRef.current.observe(container);
+
+      // Optional: observe children changes with MutationObserver
+      const mutationObserver = new MutationObserver(checkScroll);
+
+      mutationObserver.observe(container, {
+        characterData: true,
+        childList: true,
+        subtree: true
+      });
+
+      return () => {
+        container.removeEventListener('scroll', checkScroll);
+        resizeObserverRef.current?.disconnect();
+        mutationObserver.disconnect();
+      };
     }
 
-    return () => {
-      container?.removeEventListener('scroll', checkScroll);
-    };
+    return undefined;
   }, [containerRef]);
 
   if (!isScrollable) {

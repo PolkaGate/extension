@@ -1575,5 +1575,8 @@
   "tokens per year": "",
   "and start earning rewards actively within {{eraLength}}": "",
   "No rewards will be earned during that period": "",
-  "Rewards require manual claiming if you have staked in pools.": ""
+  "Rewards require manual claiming if you have staked in pools.": "",
+  "Select a chain to view the transaction history on": "",
+  "View on Explorer": "",
+  "Rewards require manual claiming if you have staked in pools": ""
 }

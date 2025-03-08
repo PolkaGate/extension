@@ -60,11 +60,13 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     bgcolor: 'transparent',
     border: 'unset',
     cursor: disabled ? 'default' : 'pointer',
+    height: '44px',
     justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     opacity: disabled ? 0.3 : 1,
     paddingInline: '24px',
     position: 'relative',
     transition: 'all 250ms ease-out',
+    width: '345px',
     ...style
   } as SxProps<Theme>;
 

@@ -15,7 +15,7 @@ const nullObject = {
   message: 'Success'
 } as unknown as TransferRequest;
 
-export function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
+export function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
   if (!chainName) {
     return Promise.resolve(nullObject);
   }
@@ -36,13 +36,11 @@ export function getTxTransfers(chainName: string, address: string, pageNum: numb
 
   return postReq(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
     address,
-    // from_block: 8658091,
-    // to_block: 8684569,
     page: pageNum,
     row: pageSize
   });
 }
 
-function postReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
+function postReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
   return request.post(api, { data, ...option });
 }

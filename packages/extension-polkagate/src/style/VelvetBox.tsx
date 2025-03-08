@@ -38,7 +38,7 @@ function VelvetBox ({ children, style }: VelvetBoxProp) {
         width: '100%',
         ...style
       }}>
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', width: '100%', zIndex: 1 }}>
         {children}
       </div>
       <GlowBall />

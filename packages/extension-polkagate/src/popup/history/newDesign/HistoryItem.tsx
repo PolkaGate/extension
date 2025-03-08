@@ -6,23 +6,26 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { CloseCircle, Login, Logout, Money, Polkadot, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
-import React, { memo, useCallback, useMemo } from 'react';
+import { CloseCircle, Dislike, Like1, LikeDislike, Login, Logout, Money, Polkadot, Sagittarius, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
 import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
+import { isAye } from '../../../fullscreen/governance/post/myVote/util';
 import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import GradientDivider from '../../../style/GradientDivider';
 import { amountToMachine } from '../../../util/utils';
+import HistoryDetail from './HistoryDetail';
 
 interface HistoryItemProps {
   historyDate: string;
   historyItems: TransactionDetail[];
+  short: boolean;
 }
 
-type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward';
+type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward' | 'aye' | 'nay' | 'abstain' | 'delegate';
 
 const HistoryIcon = ({ action }: { action: string }) => {
   const normalizedAction = action.toLowerCase() as ActionType;
@@ -30,6 +33,10 @@ const HistoryIcon = ({ action }: { action: string }) => {
   const DEFAULT_ICON = <Polkadot color='#AA83DC' size='26' />;
 
   const actionIcons: Record<ActionType, React.JSX.Element> = {
+    abstain: <LikeDislike color='#AA83DC' size='26' variant='Bold' />,
+    aye: <Like1 color='#82FFA5' size='22' variant='Bold' />,
+    delegate: <Sagittarius color='#AA83DC' size='26' variant='Bulk' />,
+    nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
     receive: <Login color='#82FFA5' size='22' variant='Bold' />,
     reward: <Money color='#82FFA5' size='22' />,
@@ -44,6 +51,10 @@ const historyIconBgColor = (action: string) => {
   const normalizedAction = action.toLowerCase() as ActionType;
 
   const actionColors: Record<ActionType, string> = {
+    abstain: '#6743944D',
+    aye: '#6743944D',
+    delegate: '#6743944D',
+    nay: '#6743944D',
     'pool staking': '#6743944D',
     receive: '#82FFA540',
     reward: '#82FFA540',
@@ -54,7 +65,21 @@ const historyIconBgColor = (action: string) => {
   return actionColors[normalizedAction] || '#6743944D';
 };
 
-const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
+export const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
+
+export const getVoteType = (voteType: number | null | undefined) => {
+  if (voteType === undefined) {
+    return undefined;
+  } else if (voteType === null) {
+    return 'abstain';
+  } else if (isAye(voteType as unknown as string)) {
+    return 'aye';
+  } else if (!isAye(voteType as unknown as string)) {
+    return 'nay';
+  }
+
+  return undefined;
+};
 
 const TimeOfTheDay = ({ date }: { date: number }) => {
   const formatTimestamp = useCallback((timestamp: number) => {
@@ -120,12 +145,10 @@ const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem:
   }
 });
 
-const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem }: { historyItem: TransactionDetail }) {
+const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
-
-  const short = window.location.hash.includes('token');
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(historyItem.amount, historyItem.decimal ?? 0) ?? BN_ZERO, historyItem.decimal ?? 0), [historyItem.amount, historyItem.decimal, price.price]);
 
@@ -177,50 +200,64 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem }: 
   );
 });
 
-function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
+function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
   const theme = useTheme();
 
-  return (
-    <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', display: 'grid', p: '10px' }}>
-      <Typography color='text.secondary' sx={{ background: '#C6AECC26', borderRadius: '10px', mb: '4px', p: '2px 4px', width: 'fit-content' }} variant='B-2'>
-        {historyDate}
-      </Typography>
-      {historyItems.map((historyItem, index) => {
-        const action = isReward(historyItem) ? 'reward' : historyItem.action;
-        const iconBgColor = historyIconBgColor(action);
-        const noDivider = historyItems.length === index + 1;
+  const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();
 
-        return (
-          <>
-            <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
-              <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
-                <HistoryIcon action={action} />
-              </Grid>
-              <Grid container item justifyContent='space-between' xs>
-                <ActionSubAction
-                  historyItem={historyItem}
-                />
-                <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
-                  <FormatBalance2
-                    decimalPoint={2}
-                    decimals={[historyItem.decimal ?? 0]}
-                    style={{
-                      color: theme.palette.text.primary,
-                      ...theme.typography['B-2'],
-                      width: 'max-content'
-                    }}
-                    tokens={[historyItem.token ?? '']}
-                    value={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+  const openDetail = useCallback((item: TransactionDetail) => () => {
+    setHistoryItemDetail(item);
+  }, []);
+
+  return (
+    <>
+      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', display: 'grid', p: '10px' }}>
+        <Typography color='text.secondary' sx={{ background: '#C6AECC26', borderRadius: '10px', mb: '4px', p: '2px 4px', width: 'fit-content' }} variant='B-2'>
+          {historyDate}
+        </Typography>
+        {historyItems.map((historyItem, index) => {
+          const action = isReward(historyItem)
+            ? 'reward'
+            : getVoteType(historyItem.voteType) ?? historyItem.action;
+          const iconBgColor = historyIconBgColor(action);
+          const noDivider = historyItems.length === index + 1;
+
+          return (
+            <>
+              <Grid alignItems='center' container item justifyContent='space-between' onClick={openDetail(historyItem)} key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
+                  <HistoryIcon action={action} />
+                </Grid>
+                <Grid container item justifyContent='space-between' xs>
+                  <ActionSubAction
+                    historyItem={historyItem}
                   />
-                  <HistoryStatusAmount historyItem={historyItem} />
+                  <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
+                    <FormatBalance2
+                      decimalPoint={2}
+                      decimals={[historyItem.decimal ?? 0]}
+                      style={{
+                        color: theme.palette.text.primary,
+                        ...theme.typography['B-2'],
+                        width: 'max-content'
+                      }}
+                      tokens={[historyItem.token ?? '']}
+                      value={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+                    />
+                    <HistoryStatusAmount historyItem={historyItem} short={short} />
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-            {!noDivider && <GradientDivider style={{ my: '4px' }} />}
-          </>
-        );
-      })}
-    </Container>
+              {!noDivider && <GradientDivider style={{ my: '4px' }} />}
+            </>
+          );
+        })}
+      </Container>
+      <HistoryDetail
+        historyItem={historyItemDetail}
+        setOpenMenu={setHistoryItemDetail}
+      />
+    </>
   );
 }
 

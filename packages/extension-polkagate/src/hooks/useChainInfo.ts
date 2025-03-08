@@ -35,7 +35,7 @@ interface ChainInfo {
  * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
  */
 export default function useChainInfo (genesisHash: string | null | undefined): ChainInfo {
-  const chain = useMetadata(genesisHash);
+  const chain = useMetadata(genesisHash, true);
   const api = useApi2(genesisHash);
   const chainInfo = selectableNetworks.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash[0] === genesisHash);
 

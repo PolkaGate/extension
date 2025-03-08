@@ -35,6 +35,7 @@ declare module '@mui/material/styles' {
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
+    'H-1': CSSProperties;
     'H-2': CSSProperties;
     'H-3': CSSProperties;
     'H-4': CSSProperties;
@@ -48,6 +49,7 @@ declare module '@mui/material/styles' {
   }
 
   interface TypographyVariantsOptions {
+    'H-1': CSSProperties;
     'H-2': CSSProperties;
     'H-3': CSSProperties;
     'H-4': CSSProperties;
@@ -63,6 +65,7 @@ declare module '@mui/material/styles' {
 
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
+    'H-1': true;
     'H-2': true;
     'H-3': true;
     'H-4': true;
@@ -116,6 +119,14 @@ export const baseTheme: ThemeOptions = {
       fontWeight: 500,
       letterSpacing: '-0.19px',
       // lineHeight: '18px',
+      textAlign: 'center'
+    },
+    'H-1': {
+      fontFamily: 'OdibeeSans',
+      fontSize: '40px',
+      fontWeight: 400,
+      letterSpacing: '-0.19px',
+      // lineHeight: '32px',
       textAlign: 'center'
     },
     'H-2': {
