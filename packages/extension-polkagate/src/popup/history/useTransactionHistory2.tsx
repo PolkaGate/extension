@@ -362,7 +362,7 @@ export default function useTransactionHistory (address: AccountId | string | und
 
   // Combine and filter transaction histories
   useEffect(() => {
-    if (!localHistories && !fetchedTransferHistories.length && !fetchedGovernanceHistories.length) {
+    if (!localHistories?.length && !fetchedTransferHistories.length && !fetchedGovernanceHistories.length) {
       return;
     }
 
@@ -397,7 +397,8 @@ export default function useTransactionHistory (address: AccountId | string | und
 
     log(`Final history count: ${combinedHistory.length}`);
     setTabHistory(combinedHistory);
-  }, [fetchedGovernanceHistories, fetchedTransferHistories, filterOptions, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers, localHistories]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchedGovernanceHistories, fetchedTransferHistories, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers, localHistories]);
 
   // Load local history from storage
   useEffect(() => {

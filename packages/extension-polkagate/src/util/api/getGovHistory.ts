@@ -225,7 +225,7 @@ export async function getGovHistory (chainName: string, address: string, pageNum
 }
 
 function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
-  const id = (txDetail.data.params[1]?.value as AccountId).Id as string | undefined;
+  const id = (txDetail.data.params[1]?.value as AccountId)?.Id as string | undefined;
   const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
 
   const voteBalance = ((txDetail.data.params[1]?.value as VotesType)?.Standard?.balance ?? (txDetail.data.params[1]?.value as VotesType)?.SplitAbstain?.abstain) as string | undefined;

@@ -40,6 +40,8 @@ interface Props {
 function HistoryBox ({ historyItems, notReady = false, style }: Props) {
   const { t } = useTranslation();
 
+  const short = window.location.hash.includes('token');
+
   const formatDate = useCallback((inputDate: string) => {
     // Handle invalid dates
     const date = new Date(inputDate);
@@ -83,6 +85,7 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
             historyDate={formatDate(date)}
             historyItems={items}
             key={index}
+            short={short}
           />
         ))
         }
@@ -91,7 +94,7 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
           <EmptyHistoryBox />
         }
         {!notReady && historyItems === undefined &&
-          <AssetLoading itemsCount={2} noDrawer />
+          <AssetLoading itemsCount={short ? 2 : 5} noDrawer />
         }
         {notReady &&
           <Typography color='text.secondary' my='30px' variant='B-2'>

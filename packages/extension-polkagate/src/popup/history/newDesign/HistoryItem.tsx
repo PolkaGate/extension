@@ -22,6 +22,7 @@ import HistoryDetail from './HistoryDetail';
 interface HistoryItemProps {
   historyDate: string;
   historyItems: TransactionDetail[];
+  short: boolean;
 }
 
 type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward' | 'aye' | 'nay' | 'abstain' | 'delegate';
@@ -199,12 +200,10 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, sh
   );
 });
 
-function HistoryItem ({ historyDate, historyItems }: HistoryItemProps) {
+function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
   const theme = useTheme();
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();
-
-  const short = window.location.hash.includes('token');
 
   const openDetail = useCallback((item: TransactionDetail) => () => {
     setHistoryItemDetail(item);
