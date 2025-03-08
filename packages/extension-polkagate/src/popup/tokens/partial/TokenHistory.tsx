@@ -151,7 +151,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [filter, dispatchFilter] = useReducer(filterReducer, INITIAL_STATE);
 
-  const { grouped, tabHistory } = useTransactionHistory2(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
+  const { grouped } = useTransactionHistory2(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {

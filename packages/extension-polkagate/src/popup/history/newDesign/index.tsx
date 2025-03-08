@@ -153,8 +153,6 @@ function History (): React.ReactElement {
   }, []);
   const onBack = useCallback(() => onAction('/'), [onAction]);
 
-  console.log('grouped:', grouped);
-
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
       <UserDashboardHeader />
