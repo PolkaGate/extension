@@ -12,6 +12,7 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
+import { isAye } from '../../../fullscreen/governance/post/myVote/util';
 import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import GradientDivider from '../../../style/GradientDivider';
@@ -70,9 +71,9 @@ export const getVoteType = (voteType: number | null | undefined) => {
     return undefined;
   } else if (voteType === null) {
     return 'abstain';
-  } else if ([128, 134, 130, 131, 0].includes(voteType)) {
+  } else if (isAye(voteType as unknown as string)) {
     return 'aye';
-  } else if (voteType === 129) {
+  } else if (!isAye(voteType as unknown as string)) {
     return 'nay';
   }
 
