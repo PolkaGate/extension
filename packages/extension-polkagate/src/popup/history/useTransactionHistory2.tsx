@@ -13,13 +13,12 @@ import { useChainInfo, useFormatted3 } from '../../hooks';
 import { getGovHistory } from '../../util/api/getGovHistory';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { GOVERNANCE_CHAINS, STAKING_ACTIONS } from '../../util/constants';
-import { getHistoryFromStorage } from '../../util/utils';
 
 // Constants
 const SINGLE_PAGE_SIZE = 50;
-const MAX_PAGE = 4;
+const MAX_PAGE = 10;
 const MAX_LOCAL_HISTORY_ITEMS = 20; // Maximum number of items to store locally
-const DEBUG = false; // Toggle for enabling/disabling logs
+const DEBUG = true; // Toggle for enabling/disabling logs
 
 // Helper for consistent logging format
 const log = (message: string, data?: unknown) => {
@@ -27,6 +26,78 @@ const log = (message: string, data?: unknown) => {
     console.log(`[TxHistory] ${message}`, data !== undefined ? data : '');
   }
 };
+
+// Saves transaction history to Chrome's local storage for a specific address and chain
+async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
+  if (!address || !genesisHash || !transactions?.length) {
+    log('Missing required parameters for saving history');
+
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    try {
+      log(`Saving ${transactions.length} transactions for ${address} on chain ${genesisHash}`);
+
+      // First, get the current history object
+      chrome.storage.local.get('history', (res: Record<string, unknown>) => {
+        // Initialize with empty object if not exists
+        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.history ?? {});
+
+        // Ensure the address entry exists
+        if (!allHistories[address]) {
+          allHistories[address] = {};
+        }
+
+        // Update the history for this specific address and chain
+        allHistories[address][genesisHash] = transactions;
+
+        // Save the updated history object back to storage
+        chrome.storage.local.set({ history: allHistories }, () => {
+          if (chrome.runtime.lastError) {
+            const error = chrome.runtime.lastError;
+
+            console.error('Error saving history to chrome storage:', error);
+            reject(error);
+          } else {
+            log('History saved successfully to chrome storage');
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error in saveHistoryToStorage:', error);
+      reject(error);
+    }
+  });
+}
+
+// Retrieves transaction history from Chrome's local storage for a specific address and chain
+export async function getHistoryFromStorage (address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
+  if (!address || !genesisHash) {
+    log('Missing required parameters for loading history');
+
+    return Promise.resolve(undefined);
+  }
+
+  return new Promise((resolve) => {
+    chrome.storage.local.get('history', (res: Record<string, unknown>) => {
+      try {
+        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.['history'] ?? {});
+
+        // Navigate the nested structure: address -> genesisHash -> transactions
+        const addressHistories: Record<string, TransactionDetail[]> = allHistories[address] || {};
+        const chainHistory: TransactionDetail[] = addressHistories[genesisHash];
+
+        log(`Retrieved ${chainHistory?.length || 0} transactions for ${address} on chain ${genesisHash}`);
+        resolve(chainHistory);
+      } catch (error) {
+        console.error('Error retrieving history from storage:', error);
+        resolve(undefined);
+      }
+    });
+  });
+}
 
 interface RecordTabStatus {
   pageNum: number;
@@ -330,9 +401,9 @@ export default function useTransactionHistory (address: AccountId | string | und
 
   // Load local history from storage
   useEffect(() => {
-    if (formatted) {
-      log(`Loading history from storage for ${formatted}`);
-      getHistoryFromStorage(String(formatted))
+    if (address && genesisHash) {
+      log(`Loading history from storage for ${String(address)} on chain ${genesisHash}`);
+      getHistoryFromStorage(String(address), String(genesisHash))
         .then((history) => {
           log(`Loaded ${history?.length || 0} transactions from storage`);
           setLocalHistories(history || []);
@@ -341,7 +412,26 @@ export default function useTransactionHistory (address: AccountId | string | und
           console.error('Error loading history from storage:', error);
         });
     }
-  }, [formatted]);
+  }, [address, genesisHash]);
+
+  // Save the latest 20 transactions to local storage
+  useEffect(() => {
+    if (address && genesisHash && tabHistory && tabHistory.length > 0) {
+      log(`Saving latest ${Math.min(MAX_LOCAL_HISTORY_ITEMS, tabHistory.length)} transactions to local storage`);
+
+      // Take the 20 most recent transactions
+      const latestTransactions = tabHistory.slice(0, MAX_LOCAL_HISTORY_ITEMS);
+
+      // Save to local storage with chain information
+      saveHistoryToStorage(String(address), String(genesisHash), latestTransactions)
+        .then(() => {
+          log('Successfully saved latest transactions to local storage');
+        })
+        .catch((error) => {
+          console.error('Error saving history to storage:', error);
+        });
+    }
+  }, [address, genesisHash, tabHistory]);
 
   // Group transactions by date
   const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
@@ -371,7 +461,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     });
 
     return groupedTx;
-  }, [tabHistory, isLoading, transfersTx.hasMore, governanceTx.hasMore]);
+  }, [tabHistory, transfersTx.hasMore, governanceTx.hasMore]);
 
   // Fetch governance extrinsics
   const getGovExtrinsics = useCallback(async (currentState: RecordTabStatusGov): Promise<void> => {
@@ -384,7 +474,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       return;
     }
 
-    if (GOVERNANCE_CHAINS.includes(chainName ?? '') === false) {
+    if (GOVERNANCE_CHAINS.includes(genesisHash ?? '') === false) {
       setGovernanceTx({
         hasMore: false,
         isFetching: false,
@@ -422,7 +512,7 @@ export default function useTransactionHistory (address: AccountId | string | und
         isFetching: false
       });
     }
-  }, [chainName, formatted, chain?.ss58Format, setGovernanceTx]);
+  }, [genesisHash, setGovernanceTx, chainName, formatted, chain?.ss58Format]);
 
   // Fetch transfer transactions
   const getTransfers = useCallback(async (currentState: RecordTabStatus): Promise<void> => {
