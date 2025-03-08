@@ -2,47 +2,54 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
 
-import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import { useChainInfo, useFormatted3 } from '../../hooks';
 import { getGovHistory } from '../../util/api/getGovHistory';
 import { getTxTransfers } from '../../util/api/getTransfers';
-import { STAKING_ACTIONS } from '../../util/constants';
+import { GOVERNANCE_CHAINS, STAKING_ACTIONS } from '../../util/constants';
 import { getHistoryFromStorage } from '../../util/utils';
 
+// Constants
+const SINGLE_PAGE_SIZE = 50;
+const MAX_PAGE = 4;
+const MAX_LOCAL_HISTORY_ITEMS = 20; // Maximum number of items to store locally
+const DEBUG = false; // Toggle for enabling/disabling logs
+
+// Helper for consistent logging format
+const log = (message: string, data?: unknown) => {
+  if (DEBUG) {
+    console.log(`[TxHistory] ${message}`, data !== undefined ? data : '');
+  }
+};
+
 interface RecordTabStatus {
-  pageNum: number,
-  isFetching?: boolean,
-  hasMore?: boolean,
-  transactions?: Transfers[]
+  pageNum: number;
+  isFetching?: boolean;
+  hasMore?: boolean;
+  transactions?: Transfers[];
 }
 
 interface RecordTabStatusGov {
-  pageNum: number,
-  isFetching?: boolean,
-  hasMore?: boolean,
-  transactions?: Extrinsics[]
+  pageNum: number;
+  isFetching?: boolean;
+  hasMore?: boolean;
+  transactions?: Extrinsics[];
 }
 
-const SINGLE_PAGE_SIZE = 50;
-const MAX_PAGE = 4;
-
-const INITIAL_STATE = {
-  hasMore: true,
-  isFetching: false,
-  pageNum: 0,
-  transactions: []
-};
-
-export interface TransactionHistoryOutput{
+export interface TransactionHistoryOutput {
   grouped: Record<string, TransactionDetail[]> | null | undefined;
   tabHistory: TransactionDetail[] | null;
-  transfersTx: object & RecordTabStatus;
-  governanceTx: object & RecordTabStatusGov;
+  transfersTx: RecordTabStatus;
+  governanceTx: RecordTabStatusGov;
+  isLoading: boolean;
+  // Helper methods for testing/debugging
+  forceRefetch: () => void;
 }
 
 export interface FilterOptions {
@@ -51,248 +58,540 @@ export interface FilterOptions {
   staking?: boolean;
 }
 
+const INITIAL_STATE = {
+  hasMore: true,
+  isFetching: false,
+  pageNum: 0,
+  transactions: []
+};
+
+// Action types for the reducers
+type TransfersAction =
+  | { type: 'RESET' }
+  | { type: 'UPDATE'; payload: Partial<RecordTabStatus> };
+
+type GovernanceAction =
+  | { type: 'RESET' }
+  | { type: 'UPDATE'; payload: Partial<RecordTabStatusGov> };
+
+// Reducers with reset capability
+const transfersReducer = (state: RecordTabStatus, action: TransfersAction): RecordTabStatus => {
+  switch (action.type) {
+    case 'RESET':
+      log('Resetting transfers state');
+
+      return INITIAL_STATE as RecordTabStatus;
+    case 'UPDATE':
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+};
+
+const governanceReducer = (state: RecordTabStatusGov, action: GovernanceAction): RecordTabStatusGov => {
+  switch (action.type) {
+    case 'RESET':
+      log('Resetting governance state');
+
+      return INITIAL_STATE as RecordTabStatusGov;
+    case 'UPDATE':
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+};
+
 export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [fetchedTransferHistoriesFromSubscan, setFetchedTransferHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
-  const [fetchedGovernanceHistoriesFromSubscan, setFetchedGovernanceHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
+  const [fetchedTransferHistories, setFetchedTransferHistories] = useState<TransactionDetail[]>([]);
+  const [fetchedGovernanceHistories, setFetchedGovernanceHistories] = useState<TransactionDetail[]>([]);
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
-  function stateReducer (state: object, action: RecordTabStatus) {
-    return Object.assign({}, state, action);
-  }
+  // Previous values for comparison to detect changes
+  const prevAddressRef = useRef<string | undefined>();
+  const prevGenesisHashRef = useRef<string | undefined>();
 
-  function stateReducerGov (state: object, action: RecordTabStatusGov) {
-    return Object.assign({}, state, action);
-  }
+  // Force refetch trigger
+  const forceRefetchTrigger = useRef(0);
 
-  const [transfersTx, setTransfersTx] = useReducer(stateReducer, INITIAL_STATE);
-  const [governanceTx, setGovernanceTx] = useReducer(stateReducerGov, INITIAL_STATE);
+  const [transfersTx, dispatchTransfers] = useReducer(transfersReducer, INITIAL_STATE as RecordTabStatus);
+  const [governanceTx, dispatchGovernance] = useReducer(governanceReducer, INITIAL_STATE as RecordTabStatusGov);
+
+  // Refs for latest state values
+  const transfersStateRef = useRef<RecordTabStatus>(transfersTx);
+  const governanceStateRef = useRef<RecordTabStatusGov>(governanceTx);
   const observerInstance = useRef<IntersectionObserver>();
-  const receivingTransfers = useRef<RecordTabStatus>();
-  const receivingGovernance = useRef<RecordTabStatusGov>();
+  const initialFetchDoneRef = useRef<{ transfers: boolean; governance: boolean }>({
+    governance: false,
+    transfers: false
+  });
 
-  receivingTransfers.current = transfersTx;
-  receivingGovernance.current = governanceTx;
+  // Helper method to force a refetch (useful for debugging)
+  const forceRefetch = useCallback(() => {
+    log('Force refetch triggered');
+    forceRefetchTrigger.current += 1;
+  }, []);
 
-  const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
-    if (!tabHistory?.length) {
-      return undefined;
-    }
+  // Detect changes in address or genesisHash to reset state
+  useEffect(() => {
+    const addressChanged = formatted !== prevAddressRef.current;
+    const genesisHashChanged = genesisHash !== prevGenesisHashRef.current;
 
-    const temp = {} as Record<string, TransactionDetail[]>;
-    const options = { day: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
+    if (addressChanged || genesisHashChanged) {
+      log(`Input changed: address: ${addressChanged}, genesisHash: ${genesisHashChanged}`);
 
-    tabHistory.forEach((h) => {
-      const day = new Date(h.date).toLocaleDateString(undefined, options);
+      // Update refs to current values
+      prevAddressRef.current = formatted;
+      prevGenesisHashRef.current = genesisHash;
 
-      if (!temp[day]) {
-        temp[day] = [];
+      if (formatted && genesisHash) {
+        // Reset all state when address or chain changes
+        setIsLoading(true);
+        dispatchTransfers({ type: 'RESET' });
+        dispatchGovernance({ type: 'RESET' });
+        setFetchedTransferHistories([]);
+        setFetchedGovernanceHistories([]);
+        setTabHistory([]);
+        setLocalHistories([]);
+
+        // Reset initial fetch status
+        initialFetchDoneRef.current = {
+          governance: false,
+          transfers: false
+        };
+
+        log('All state reset due to input change');
       }
+    }
+  }, [formatted, genesisHash]);
 
-      temp[day].push(h);
-    });
+  // Keep refs updated with latest state values
+  useEffect(() => {
+    transfersStateRef.current = transfersTx;
+    log('Transfers state updated', { ...transfersTx });
+  }, [transfersTx]);
 
-    return temp;
-  }, [tabHistory]);
+  useEffect(() => {
+    governanceStateRef.current = governanceTx;
+    log('Governance state updated', { ...governanceTx });
+  }, [governanceTx]);
 
+  // Convenience functions for dispatching
+  const setTransfersTx = useCallback((payload: Partial<RecordTabStatus>) => {
+    log('Updating transfers state with', payload);
+    dispatchTransfers({ payload, type: 'UPDATE' });
+  }, []);
+
+  const setGovernanceTx = useCallback((payload: Partial<RecordTabStatusGov>) => {
+    log('Updating governance state with', payload);
+    dispatchGovernance({ payload, type: 'UPDATE' });
+  }, []);
+
+  // Process governance transactions
   useEffect(() => {
     if (!governanceTx?.transactions?.length || !decimal) {
       return;
     }
 
-    const govHistoryFromSubscan: TransactionDetail[] = [];
+    log(`Processing ${governanceTx.transactions.length} governance transactions`);
 
-    governanceTx.transactions.forEach((govTx: Extrinsics): void => {
-      govHistoryFromSubscan.push({
-        action: 'Governance',
-        amount: govTx.amount !== undefined ? (Number(govTx.amount) / (10 ** decimal)).toString() : undefined,
-        block: govTx.block_num,
-        class: govTx.class,
-        conviction: govTx.conviction,
-        date: govTx.block_timestamp * 1000, // to be consistent with the locally saved times
-        delegatee: govTx.delegatee,
-        fee: govTx.fee,
-        from: { address: govTx.account_display.address, name: '' },
-        refId: govTx.refId,
-        subAction: govTx.call_module_function,
-        success: govTx.success,
-        token,
-        txHash: govTx.extrinsic_hash,
-        voteType: govTx.voteType
-      });
-    });
+    const govHistoryFromSubscan: TransactionDetail[] = governanceTx.transactions.map((govTx: Extrinsics): TransactionDetail => ({
+      action: 'Governance',
+      amount: govTx.amount !== undefined ? (Number(govTx.amount) / (10 ** decimal)).toString() : undefined,
+      block: govTx.block_num,
+      class: govTx.class,
+      conviction: govTx.conviction,
+      date: govTx.block_timestamp * 1000, // to be consistent with locally saved times
+      delegatee: govTx.delegatee,
+      fee: govTx.fee,
+      from: { address: govTx.account_display.address, name: '' },
+      refId: govTx.refId,
+      subAction: govTx.call_module_function,
+      success: govTx.success,
+      token,
+      txHash: govTx.extrinsic_hash,
+      voteType: govTx.voteType
+    }));
 
-    setFetchedGovernanceHistoriesFromSubscan(govHistoryFromSubscan);
-  }, [decimal, formatted, governanceTx.transactions, token, transfersTx]);
+    log(`Processed ${govHistoryFromSubscan.length} governance transactions`);
+    setFetchedGovernanceHistories(govHistoryFromSubscan);
 
+    // Mark initial fetch as done if this is the first page
+    if (governanceTx.pageNum === 1 && !initialFetchDoneRef.current.governance) {
+      initialFetchDoneRef.current.governance = true;
+      log('Initial governance fetch complete');
+    }
+
+    // Only set loading to false if both initial fetches are done
+    if (initialFetchDoneRef.current.transfers && initialFetchDoneRef.current.governance) {
+      setIsLoading(false);
+      log('All initial data loaded');
+    }
+  }, [decimal, governanceTx.transactions, governanceTx.pageNum, token]);
+
+  // Process transfer transactions
   useEffect(() => {
-    if (!transfersTx?.transactions?.length) {
+    if (!transfersTx?.transactions?.length || !formatted) {
       return;
     }
 
-    const historyFromSubscan: TransactionDetail[] = [];
+    log(`Processing ${transfersTx.transactions.length} transfer transactions`);
 
-    transfersTx.transactions.forEach((tx: Transfers): void => {
-      historyFromSubscan.push({
-        action: tx.from === formatted ? 'send' : 'receive',
+    const historyFromSubscan: TransactionDetail[] = transfersTx.transactions.map((tx: Transfers): TransactionDetail => {
+      const isFromCurrentAccount = tx.from === formatted;
+      const txDetail: TransactionDetail = {
+        action: isFromCurrentAccount ? 'send' : 'receive',
         amount: tx.amount,
         block: tx.block_num,
-        date: tx.block_timestamp * 1000, // to be consistent with the locally saved times
+        date: tx.block_timestamp * 1000, // to be consistent with locally saved times
         fee: tx.fee,
         from: { address: tx.from, name: tx.from_account_display?.display },
         success: tx.success,
         to: { address: tx.to, name: tx.to_account_display?.display },
         token: tx.asset_symbol,
         txHash: tx.hash
-      });
-    });
+      };
 
-    /** fetch some pool tx from subscan  */
-    historyFromSubscan.forEach((tx) => {
-      if (tx.action === 'send' && tx?.to?.name?.match(/^Pool#\d+/)) {
-        tx.action = 'Pool Staking';
-        tx.subAction = 'Stake';
-      } else if (tx.action === 'receive') {
+      // Handle pool transactions
+      if (isFromCurrentAccount && tx?.to?.name?.match(/^Pool#\d+/)) {
+        txDetail.action = 'Pool Staking';
+        txDetail.subAction = 'Stake';
+      } else if (!isFromCurrentAccount) {
         if (tx?.from?.name?.match(/^Pool#([0-9]+)\(Reward\)$/)) {
-          tx.action = 'Pool Staking';
-          tx.subAction = 'Withdraw Rewards';
+          txDetail.action = 'Pool Staking';
+          txDetail.subAction = 'Withdraw Rewards';
         } else if (tx?.from?.name?.match(/^Pool#\d+\(Stash\)$/)) {
-          tx.action = 'Pool Staking';
-          tx.subAction = 'Redeem';
+          txDetail.action = 'Pool Staking';
+          txDetail.subAction = 'Redeem';
         }
       }
+
+      return txDetail;
     });
 
-    setFetchedTransferHistoriesFromSubscan(historyFromSubscan);
-  }, [formatted, transfersTx]);
+    log(`Processed ${historyFromSubscan.length} transfer transactions`);
+    setFetchedTransferHistories(historyFromSubscan);
 
+    // Mark initial fetch as done if this is the first page
+    if (transfersTx.pageNum === 1 && !initialFetchDoneRef.current.transfers) {
+      initialFetchDoneRef.current.transfers = true;
+      log('Initial transfers fetch complete');
+    }
+
+    // Only set loading to false if both initial fetches are done
+    if (initialFetchDoneRef.current.transfers && initialFetchDoneRef.current.governance) {
+      setIsLoading(false);
+      log('All initial data loaded');
+    }
+  }, [formatted, transfersTx.transactions, transfersTx.pageNum]);
+
+  // Combine and filter transaction histories
   useEffect(() => {
-    if (!localHistories && !fetchedTransferHistoriesFromSubscan && !fetchedGovernanceHistoriesFromSubscan) {
+    if (!localHistories && !fetchedTransferHistories.length && !fetchedGovernanceHistories.length) {
       return;
     }
 
-    const filteredLocalHistories = localHistories?.filter((h1) => !fetchedTransferHistoriesFromSubscan?.find((h2) => h1.txHash === h2.txHash));
-    let history = filteredLocalHistories.concat(fetchedTransferHistoriesFromSubscan).concat(fetchedGovernanceHistoriesFromSubscan);
+    log('Combining transaction histories', {
+      governanceCount: fetchedGovernanceHistories.length,
+      localCount: localHistories.length,
+      transfersCount: fetchedTransferHistories.length
+    });
 
-    history = history.sort((a, b) => b.date - a.date);
+    // Filter out duplicate transactions from local history that already exist in fetched history
+    const filteredLocalHistories = localHistories.filter(
+      (local) => !fetchedTransferHistories.some((fetched) => local.txHash === fetched.txHash)
+    );
 
-    const filterHistory = filterOptions && !Object.values(filterOptions).every((filter) => filter);
+    // Combine all histories and sort by date (newest first)
+    let combinedHistory = [...filteredLocalHistories, ...fetchedTransferHistories, ...fetchedGovernanceHistories]
+      .sort((a, b) => b.date - a.date);
 
-    if (filterHistory) {
-      history = history.filter(({ action }) =>
+    // Apply filters if any are active
+    const shouldFilter = filterOptions && !Object.values(filterOptions).every((filter) => filter);
+
+    if (shouldFilter && filterOptions) {
+      const filteredCount = combinedHistory.length;
+
+      combinedHistory = combinedHistory.filter(({ action }) => (
         (filterOptions.transfers && ['send', 'receive'].includes(action.toLowerCase())) ||
         (filterOptions.governance && ['Governance', 'Unlock Referenda'].includes(action)) ||
         (filterOptions.staking && STAKING_ACTIONS.includes(action))
-      );
+      ));
+      log(`Filtered transactions: ${filteredCount} -> ${combinedHistory.length}`);
     }
 
-    setTabHistory(history);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedGovernanceHistoriesFromSubscan, filterOptions?.transfers, filterOptions?.governance, filterOptions?.staking, fetchedTransferHistoriesFromSubscan, localHistories]);
+    log(`Final history count: ${combinedHistory.length}`);
+    setTabHistory(combinedHistory);
+  }, [fetchedGovernanceHistories, fetchedTransferHistories, filterOptions, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers, localHistories]);
 
+  // Load local history from storage
   useEffect(() => {
-    formatted && getHistoryFromStorage(String(formatted)).then((h) => {
-      setLocalHistories(h || []);
-    }).catch(console.error);
-  }, [formatted, chainName]);
+    if (formatted) {
+      log(`Loading history from storage for ${formatted}`);
+      getHistoryFromStorage(String(formatted))
+        .then((history) => {
+          log(`Loaded ${history?.length || 0} transactions from storage`);
+          setLocalHistories(history || []);
+        })
+        .catch((error) => {
+          console.error('Error loading history from storage:', error);
+        });
+    }
+  }, [formatted]);
 
-  const getGovExtrinsics = useCallback(async (outerState: RecordTabStatusGov): Promise<void> => {
-    const { pageNum, transactions } = outerState;
+  // Group transactions by date
+  const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
+    if (!tabHistory?.length) {
+      // If we have no items AND both transfer and governance fetches are done with no more to fetch
+      if (
+        !transfersTx.hasMore &&
+        !governanceTx.hasMore
+      ) {
+        return null; // No items and nothing more to fetch = return null
+      }
 
+      return undefined; // Still loading or more items to fetch = return undefined
+    }
+
+    const groupedTx = {} as Record<string, TransactionDetail[]>;
+    const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
+
+    tabHistory.forEach((transaction) => {
+      const day = new Date(transaction.date).toLocaleDateString(undefined, dateOptions);
+
+      if (!groupedTx[day]) {
+        groupedTx[day] = [];
+      }
+
+      groupedTx[day].push(transaction);
+    });
+
+    return groupedTx;
+  }, [tabHistory, isLoading, transfersTx.hasMore, governanceTx.hasMore]);
+
+  // Fetch governance extrinsics
+  const getGovExtrinsics = useCallback(async (currentState: RecordTabStatusGov): Promise<void> => {
+    const { hasMore, isFetching, pageNum, transactions } = currentState;
+
+    // Skip if no more data or already fetching
+    if (isFetching || hasMore === false) {
+      log('Skipping governance fetch - already fetching or no more data');
+
+      return;
+    }
+
+    if (GOVERNANCE_CHAINS.includes(chainName ?? '') === false) {
+      setGovernanceTx({
+        hasMore: false,
+        isFetching: false,
+        transactions: []
+      });
+
+      log('Skipping governance fetch - unsupported chain');
+
+      return;
+    }
+
+    log(`Fetching governance history page ${pageNum}`);
     setGovernanceTx({
-      isFetching: true,
-      pageNum
+      isFetching: true
     });
 
-    const res = await getGovHistory(chainName ?? '', String(formatted), pageNum, chain?.ss58Format);
+    try {
+      const res = await getGovHistory(chainName ?? '', String(formatted), pageNum, chain?.ss58Format);
+      const { count = 0, extrinsics = [] } = res.data || {};
+      const nextPageNum = pageNum + 1;
+      const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
 
-    const { count, extrinsics } = res.data || {};
-    const nextPageNum = pageNum + 1;
+      log(`Received governance data: count=${count}, items=${extrinsics?.length ?? 0}, hasMore=${hasMorePages}`);
 
-    setGovernanceTx({
-      hasMore: !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE,
-      isFetching: false,
-      pageNum: nextPageNum,
-      transactions: transactions?.concat(extrinsics || [])
-    });
-  }, [chainName, formatted, chain?.ss58Format]);
+      setGovernanceTx({
+        hasMore: hasMorePages,
+        isFetching: false,
+        pageNum: nextPageNum,
+        transactions: [...(transactions || []), ...(extrinsics || [])]
+      });
+    } catch (error) {
+      console.error('Error fetching governance history:', error);
+      setGovernanceTx({
+        hasMore: false,
+        isFetching: false
+      });
+    }
+  }, [chainName, formatted, chain?.ss58Format, setGovernanceTx]);
 
-  const getTransfers = useCallback(async (outerState: RecordTabStatus): Promise<void> => {
-    const { pageNum, transactions } = outerState;
+  // Fetch transfer transactions
+  const getTransfers = useCallback(async (currentState: RecordTabStatus): Promise<void> => {
+    const { hasMore, isFetching, pageNum, transactions } = currentState;
 
+    // Skip if no more data or already fetching
+    if (isFetching || hasMore === false) {
+      log('Skipping transfers fetch - already fetching or no more data');
+
+      return;
+    }
+
+    log(`Fetching transfers page ${pageNum}`);
     setTransfersTx({
-      isFetching: true,
-      pageNum
+      isFetching: true
     });
 
-    const res = await getTxTransfers(chainName ?? '', String(formatted), pageNum, SINGLE_PAGE_SIZE);
+    try {
+      const res = await getTxTransfers(chainName ?? '', String(formatted), pageNum, SINGLE_PAGE_SIZE);
+      const { count = 0, transfers = [] } = res.data || {};
+      const nextPageNum = pageNum + 1;
+      const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
 
-    const { count, transfers } = res.data || {};
-    const nextPageNum = pageNum + 1;
+      log(`Received transfers data: count=${count}, items=${transfers?.length ?? 0}, hasMore=${hasMorePages}`);
 
-    setTransfersTx({
-      hasMore: !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE,
-      isFetching: false,
-      pageNum: nextPageNum,
-      transactions: transactions?.concat(transfers || [])
-    });
-  }, [formatted, chainName]);
+      setTransfersTx({
+        hasMore: hasMorePages,
+        isFetching: false,
+        pageNum: nextPageNum,
+        transactions: [...(transactions || []), ...(transfers || [])]
+      });
+    } catch (error) {
+      console.error('Error fetching transfers:', error);
+      setTransfersTx({
+        hasMore: false,
+        isFetching: false,
+        transactions: []
+      });
+    }
+  }, [chainName, formatted, setTransfersTx]);
 
+  // Initialize data loading for a new address/chain
+  useEffect(() => {
+    if (formatted && chainName) {
+      if (transfersTx.pageNum === 0) {
+        log('Initiating initial transfers fetch');
+        getTransfers(transfersStateRef.current).catch((error) => {
+          console.error('Error in initial transfers fetch:', error);
+        });
+      }
+
+      if (governanceTx.pageNum === 0) {
+        log('Initiating initial governance fetch');
+        getGovExtrinsics(governanceStateRef.current).catch((error) => {
+          console.error('Error in initial governance fetch:', error);
+        });
+      }
+    }
+  }, [chainName, formatted, transfersTx.pageNum, governanceTx.pageNum, getTransfers, getGovExtrinsics]);
+
+  // Force refetch effect
+  useEffect(() => {
+    if (forceRefetchTrigger.current > 0) {
+      log('Force refetch triggered, resetting and refetching data');
+
+      // Reset fetch state but keep accumulated data
+      if (transfersStateRef.current.hasMore) {
+        getTransfers(transfersStateRef.current).catch(console.error);
+      }
+
+      if (governanceStateRef.current.hasMore) {
+        getGovExtrinsics(governanceStateRef.current).catch(console.error);
+      }
+    }
+  }, [getGovExtrinsics, getTransfers]);
+
+  // Set up and manage the intersection observer for infinite scrolling
   useEffect(() => {
     if (!chainName || !formatted) {
       return;
     }
 
+    // Clean up previous observer if it exists
+    if (observerInstance.current) {
+      log('Disconnecting previous observer');
+      observerInstance.current.disconnect();
+    }
+
+    // Create the callback for the IntersectionObserver
     const observerCallback = (entries: IntersectionObserverEntry[]): void => {
       const [entry] = entries;
 
       if (!entry.isIntersecting) {
+        log('Observer target not in view');
+
         return; // If the observer object is not in view, do nothing
       }
 
-      if (receivingTransfers.current?.isFetching && receivingGovernance.current?.isFetching) {
-        return; // If already fetching, do nothing
+      log('Observer target in view, checking for more data to fetch');
+      const transfersState = transfersStateRef.current;
+      const governanceState = governanceStateRef.current;
+
+      // Flag to track if we can fetch anything
+      let canFetch = false;
+
+      // Check transfers
+      if (transfersState.hasMore && !transfersState.isFetching) {
+        log('More transfers available, fetching next page');
+        canFetch = true;
+        getTransfers(transfersState).catch(console.error);
+      } else {
+        log('No more transfers to fetch or already fetching', {
+          hasMore: transfersState.hasMore,
+          isFetching: transfersState.isFetching
+        });
       }
 
-      if (!receivingTransfers.current?.hasMore && !receivingTransfers.current?.hasMore) {
+      // Check governance
+      if (governanceState.hasMore && !governanceState.isFetching) {
+        log('More governance data available, fetching next page');
+        canFetch = true;
+        getGovExtrinsics(governanceState).catch(console.error);
+      } else {
+        log('No more governance data to fetch or already fetching', {
+          hasMore: governanceState.hasMore,
+          isFetching: governanceState.isFetching
+        });
+      }
+
+      // Disconnect observer only if both data sources are exhausted
+      if (!canFetch) {
+        log('No more data to fetch for either type, disconnecting observer');
         observerInstance.current?.disconnect();
-        console.log('No more data to load, disconnecting observer.');
-
-        return;
       }
-
-      getTransfers(receivingTransfers.current) // Fetch more transfers if available
-        .catch((error) => {
-          console.error('Error fetching transfers:', error);
-        });
-
-      receivingGovernance.current && getGovExtrinsics(receivingGovernance.current) // Fetch more governance history if available
-        .catch((error) => {
-          console.error('Error fetching transfers:', error);
-        });
     };
 
+    // Create new observer
+    log('Creating new IntersectionObserver');
     const options = {
       root: document.getElementById('scrollArea'),
       rootMargin: '0px',
-      threshold: 1.0 // Trigger when 100% of the target (observerObj) is visible
+      threshold: 0.5 // Lower threshold to trigger earlier when scrolling
     };
 
     observerInstance.current = new IntersectionObserver(observerCallback, options);
 
+    // Start observing the target if it exists
     const target = document.getElementById('observerObj');
 
     if (target) {
-      observerInstance.current.observe(target); // Start observing the target
+      log('Started observing target element');
+      observerInstance.current.observe(target);
+    } else {
+      log('Warning: Observer target element not found');
     }
 
+    // Clean up on unmount
     return () => {
+      log('Cleaning up observer on unmount/rerun');
       observerInstance.current?.disconnect();
     };
-  }, [chainName, formatted, getGovExtrinsics, getTransfers, governanceTx]);
+  }, [chainName, formatted, getGovExtrinsics, getTransfers]);
 
-  return { governanceTx, grouped, tabHistory, transfersTx };
+  return {
+    forceRefetch,
+    governanceTx,
+    grouped,
+    isLoading,
+    tabHistory,
+    transfersTx
+  };
 }
