@@ -99,7 +99,7 @@ function AssetsBox (): React.ReactElement {
   return (
     <>
       <AssetTabs setTab={setTab} tab={tab} />
-      <VelvetBox style={{ minHeight: '100px', mx: '15px' }}>
+      <VelvetBox style={{ minHeight: '70px', mx: '15px' }}>
         {renderContent()}
       </VelvetBox>
     </>

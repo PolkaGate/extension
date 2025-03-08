@@ -95,7 +95,7 @@ function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useSelectedAccount();
-  const { assetId } = useParams<{ address: string, assetId: string }>();
+  const { assetId } = useParams<{ assetId: string }>();
 
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const history = useHistory();
@@ -167,7 +167,7 @@ function HomeMenu (): React.ReactElement {
         <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
           <MenuItem ButtonIcon={Logout} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ScanBarcode} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
-          <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'staking'} onClick={handleMenuClick('staking')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
+          <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'stakingIndex'} onClick={handleMenuClick('stakingIndex')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
           <MenuItem ButtonIcon={MedalStar} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
           <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
           <MenuItem ButtonIcon={Clock} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />

@@ -5,4 +5,6 @@
 
 export { default as celebration } from './Celebration.gif';
 export { default as handWave } from './handWave.gif';
+export { default as info } from './info.gif';
 export { default as Lock } from './Lock.gif';
+export { default as money } from './money.gif';

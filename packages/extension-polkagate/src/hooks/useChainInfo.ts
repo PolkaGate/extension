@@ -9,6 +9,16 @@ import { selectableNetworks } from '@polkadot/networks';
 import { sanitizeChainName } from '../util/utils';
 import { useApi2, useMetadata } from '.';
 
+/**
+ * Interface representing the information about a blockchain.
+ *
+ * @interface ChainInfo
+ * @property {ApiPromise | undefined} api - The API instance for interacting with the blockchain. May be undefined.
+ * @property {Chain | null | undefined} chain - The blockchain information (e.g., metadata, chain properties). Can be null or undefined.
+ * @property {string | undefined} chainName - The name of the blockchain. Can be undefined.
+ * @property {number | undefined} decimal - The number of decimals for the blockchain's token. Can be undefined.
+ * @property {string | undefined} token - The symbol for the blockchain's token. Can be undefined.
+ */
 interface ChainInfo {
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
@@ -17,6 +27,13 @@ interface ChainInfo {
   token: string | undefined;
 }
 
+/**
+ * Custom hook to retrieve blockchain information for a given genesis hash.
+ *
+ * @function useChainInfo
+ * @param {string | null | undefined} genesisHash - The genesis hash of the blockchain. Can be null or undefined.
+ * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
+ */
 export default function useChainInfo (genesisHash: string | null | undefined): ChainInfo {
   const chain = useMetadata(genesisHash, true);
   const api = useApi2(genesisHash);
