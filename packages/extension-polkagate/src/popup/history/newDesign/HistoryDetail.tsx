@@ -20,7 +20,7 @@ import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
 import { CHAINS_ON_POLKAHOLIC, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
-import { amountToHuman, amountToMachine, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../../util/utils';
+import { amountToMachine, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../../util/utils';
 import { getLink } from '../Explorer';
 import { getVoteType, isReward } from './HistoryItem';
 

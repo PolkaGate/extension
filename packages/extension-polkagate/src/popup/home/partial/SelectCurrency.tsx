@@ -5,8 +5,7 @@
 
 import type { CurrencyItemType } from '../../../fullscreen/homeFullScreen/partials/Currency';
 
-import CheckIcon from '@mui/icons-material/Check';
-import { Box, Fade, Grid, styled, Typography } from '@mui/material';
+import { Box, Grid, styled, Typography } from '@mui/material';
 import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';
 import { chainsPolkadotCircleSVG } from '@polkagate/apps-config/ui/logos/chains';
 import * as flags from 'country-flag-icons/string/3x2';
