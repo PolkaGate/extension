@@ -66,9 +66,11 @@ const historyIconBgColor = (action: string) => {
 export const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
 
 export const getVoteType = (voteType: number | null | undefined) => {
-  if (voteType === null) {
+  if (voteType === undefined) {
+    return undefined;
+  } else if (voteType === null) {
     return 'abstain';
-  } else if (voteType === 128 || voteType === 134) {
+  } else if ([128, 134, 130, 131, 0].includes(voteType)) {
     return 'aye';
   } else if (voteType === 129) {
     return 'nay';

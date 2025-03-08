@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { FadeOnScroll, FormatPrice, GradientButton } from '../../../components';
+import { FadeOnScroll, FormatBalance2, FormatPrice, GradientButton } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useSelectedAccount, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave2';
@@ -20,11 +20,11 @@ import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
 import { CHAINS_ON_POLKAHOLIC, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
-import { amountToMachine, formatTimestamp, toShortAddress } from '../../../util/utils';
+import { amountToHuman, amountToMachine, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../../util/utils';
 import { getLink } from '../Explorer';
 import { getVoteType, isReward } from './HistoryItem';
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
@@ -40,18 +40,20 @@ interface HistoryDetailProps {
 const isReceived = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() !== 'send';
 const isSend = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() === 'send';
 
-function HistoryStatus ({ success }: { success: boolean }) {
+function HistoryStatus ({ action, success }: { action: string, success: boolean }) {
   const { t } = useTranslation();
 
   return (
     <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
-      <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', width: 'fit-content' }}>
+      <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
         {success
-          ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-3px' }} variant='Bold' />
-          : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-3px' }} variant='Bold' />
+          ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
         }
       </Grid>
-      <Typography color='#AA83DC' pt='8px' variant='B-2'>
+      <Typography color='#AA83DC' pt='8px' textTransform='capitalize' variant='B-2'>
+        {action}
+        {' - '}
         {success
           ? t('Completed')
           : t('Failed')
@@ -68,6 +70,17 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
 
   const [integerPart, decimalPart] = amount.split('.');
 
+  const decimalToShow = useMemo(() => {
+    if (decimalPart) {
+      const countDecimal = countDecimalPlaces(Number('0.' + decimalPart));
+      const toCut = countDecimal > 4 ? 4 : countDecimal;
+
+      return `.${decimalPart.slice(0, toCut)}`;
+    } else {
+      return '.00';
+    }
+  }, [decimalPart]);
+
   return (
     <Stack sx={{ alignItems: 'center' }}>
       <Stack alignItems='flex-end' direction='row' py='4px'>
@@ -75,7 +88,7 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
           {sign}{integerPart}
         </Typography>
         <Typography color='text.secondary' variant='H-3'>
-          {`.${decimalPart ?? '00'}`}
+          {decimalToShow}
         </Typography>
         <Typography color='text.secondary' pl='3px' variant='H-3'>
           {token}
@@ -89,7 +102,7 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
         ignoreHide
         num={totalBalancePrice ?? 0}
         skeletonHeight={14}
-        textColor={'#BEAAD8'}
+        textColor='#BEAAD8'
         width='fit-content'
       />
     </Stack>
@@ -101,7 +114,10 @@ function DetailHeader ({ historyItem }: Props) {
 
   return (
     <GlowBox style={{ m: 0, pb: '15px', width: '100%' }}>
-      <HistoryStatus success={historyItem.success} />
+      <HistoryStatus
+        action={historyItem.subAction ?? historyItem.action}
+        success={historyItem.success}
+      />
       <HistoryAmount
         amount={historyItem.amount ?? '0'}
         decimal={historyItem.decimal ?? 0}
@@ -141,11 +157,12 @@ function DetailCard ({ historyItem }: Props) {
         {items.map((item, index) => {
           const [key, value] = Object.entries(item)[0];
           const withDivider = items.length > index + 1;
-          const isAddress = ['to', 'from'].includes(key);
+          const isAddress = ['to', 'from', 'delegatee'].includes(key);
           const isHash = key === 'hash';
           const isDate = key === 'date';
           const isBlock = key === 'block';
           const isVoteType = key === 'voteType';
+          const isFee = key === 'fee';
 
           const color = isAddress || isHash ? 'text.secondary' : isDate ? 'text.primary' : '#AA83DC';
 
@@ -165,7 +182,21 @@ function DetailCard ({ historyItem }: Props) {
                         ? formatTimestamp(value)
                         : isVoteType
                           ? getVoteType(value as number)
-                          : value
+                          : isFee
+                            ? <FormatBalance2
+                              decimalPoint={4}
+                              decimals={[historyItem?.decimal ?? 0]}
+                              style={{
+                                color: '#AA83DC',
+                                fontFamily: 'Inter',
+                                fontSize: '13px',
+                                fontWeight: 500,
+                                width: 'max-content'
+                              }}
+                              tokens={[historyItem?.token ?? '']}
+                              value={value as string}
+                            />
+                            : value
                   }
                 </Typography>
               </Container>
