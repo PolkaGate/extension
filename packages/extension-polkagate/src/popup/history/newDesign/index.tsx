@@ -91,7 +91,7 @@ function History (): React.ReactElement {
   const [tab, setTab] = useState<TAB>(TAB.ALL);
   const [selectedChain, setSelectedChain] = useState<number | string>(DEFAULT_SELECTED_OPTION.value);
 
-  const { decimal, token } = useChainInfo(selectedChain as string);
+  const { decimal, token } = useChainInfo(selectedChain as string, true);
 
   const historyFilter: FilterOptions = useMemo(() => {
     const defaultFilters = {
@@ -123,7 +123,7 @@ function History (): React.ReactElement {
           const filteredItems = items.filter(
             ({ token: historyItemToken }) => historyItemToken === token
           )
-            .map((item) => ({ ...item, chain: { genesisHash: selectedChain as string | undefined }, decimal }));
+            .map((item) => ({ ...item, decimal }));
 
           return [date, filteredItems];
         })
@@ -132,7 +132,7 @@ function History (): React.ReactElement {
 
     // Check if result is an empty object
     return Object.keys(result).length === 0 ? null : result;
-  }, [decimal, grouped, selectedChain, token]);
+  }, [decimal, grouped, token]);
 
   const tabsToFilter = useMemo(() => {
     const unsupportedTabs = [];
