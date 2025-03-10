@@ -10,9 +10,8 @@ import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types'
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import { useChainInfo, useFormatted3 } from '../../hooks';
-import { getGovHistory } from '../../util/api/getGovHistory';
 import { getTxTransfers } from '../../util/api/getTransfers';
-import { GOVERNANCE_CHAINS, STAKING_ACTIONS } from '../../util/constants';
+import { getTXsHistory } from '../../util/api/getTXsHistory';
 
 // Constants
 const SINGLE_PAGE_SIZE = 50;
@@ -26,6 +25,8 @@ const log = (message: string, data?: unknown) => {
     console.log(`[TxHistory] ${message}`, data !== undefined ? data : '');
   }
 };
+
+const formatString = (input: string) => input.replaceAll('_', ' ');
 
 // Saves transaction history to Chrome's local storage for a specific address and chain
 async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
@@ -115,12 +116,8 @@ interface RecordTabStatusGov {
 
 export interface TransactionHistoryOutput {
   grouped: Record<string, TransactionDetail[]> | null | undefined;
-  tabHistory: TransactionDetail[] | null;
-  transfersTx: RecordTabStatus;
-  governanceTx: RecordTabStatusGov;
+  allHistories: TransactionDetail[] | null;
   isLoading: boolean;
-  // Helper methods for testing/debugging
-  forceRefetch: () => void;
 }
 
 export interface FilterOptions {
@@ -137,16 +134,16 @@ const INITIAL_STATE = {
 };
 
 // Action types for the reducers
-type TransfersAction =
+type ReceivedAction =
   | { type: 'RESET' }
   | { type: 'UPDATE'; payload: Partial<RecordTabStatus> };
 
-type GovernanceAction =
+type ExtrinsicsAction =
   | { type: 'RESET' }
   | { type: 'UPDATE'; payload: Partial<RecordTabStatusGov> };
 
 // Reducers with reset capability
-const transfersReducer = (state: RecordTabStatus, action: TransfersAction): RecordTabStatus => {
+const receivedReducer = (state: RecordTabStatus, action: ReceivedAction): RecordTabStatus => {
   switch (action.type) {
     case 'RESET':
       log('Resetting transfers state');
@@ -159,10 +156,10 @@ const transfersReducer = (state: RecordTabStatus, action: TransfersAction): Reco
   }
 };
 
-const governanceReducer = (state: RecordTabStatusGov, action: GovernanceAction): RecordTabStatusGov => {
+const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsAction): RecordTabStatusGov => {
   switch (action.type) {
     case 'RESET':
-      log('Resetting governance state');
+      log('Resetting extrinsics state');
 
       return INITIAL_STATE as RecordTabStatusGov;
     case 'UPDATE':
@@ -173,39 +170,30 @@ const governanceReducer = (state: RecordTabStatusGov, action: GovernanceAction):
 };
 
 export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
-  const { chain, chainName, decimal, token } = useChainInfo(genesisHash);
+  const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const formatted = useFormatted3(address, genesisHash);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [fetchedTransferHistories, setFetchedTransferHistories] = useState<TransactionDetail[]>([]);
-  const [fetchedGovernanceHistories, setFetchedGovernanceHistories] = useState<TransactionDetail[]>([]);
-  const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
+  const [fetchedReceivedHistories, setFetchedReceivedHistories] = useState<TransactionDetail[]>([]);
+  const [fetchedExtrinsicsHistories, setFetchedExtrinsicsHistories] = useState<TransactionDetail[]>([]);
+  const [allHistories, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
   // Previous values for comparison to detect changes
   const prevAddressRef = useRef<string | undefined>();
   const prevGenesisHashRef = useRef<string | undefined>();
 
-  // Force refetch trigger
-  const forceRefetchTrigger = useRef(0);
-
-  const [transfersTx, dispatchTransfers] = useReducer(transfersReducer, INITIAL_STATE as RecordTabStatus);
-  const [governanceTx, dispatchGovernance] = useReducer(governanceReducer, INITIAL_STATE as RecordTabStatusGov);
+  const [receivedTx, dispatchReceived] = useReducer(receivedReducer, INITIAL_STATE as RecordTabStatus);
+  const [extrinsicsTx, dispatchExtrinsics] = useReducer(extrinsicsReducer, INITIAL_STATE as RecordTabStatusGov);
 
   // Refs for latest state values
-  const transfersStateRef = useRef<RecordTabStatus>(transfersTx);
-  const governanceStateRef = useRef<RecordTabStatusGov>(governanceTx);
+  const receivedStateRef = useRef<RecordTabStatus>(receivedTx);
+  const extrinsicsStateRef = useRef<RecordTabStatusGov>(extrinsicsTx);
   const observerInstance = useRef<IntersectionObserver>();
-  const initialFetchDoneRef = useRef<{ transfers: boolean; governance: boolean }>({
-    governance: false,
-    transfers: false
+  const initialFetchDoneRef = useRef<{ received: boolean; extrinsics: boolean }>({
+    extrinsics: false,
+    received: false
   });
-
-  // Helper method to force a refetch (useful for debugging)
-  const forceRefetch = useCallback(() => {
-    log('Force refetch triggered');
-    forceRefetchTrigger.current += 1;
-  }, []);
 
   // Detect changes in address or genesisHash to reset state
   useEffect(() => {
@@ -222,17 +210,17 @@ export default function useTransactionHistory (address: AccountId | string | und
       if (formatted && genesisHash) {
         // Reset all state when address or chain changes
         setIsLoading(true);
-        dispatchTransfers({ type: 'RESET' });
-        dispatchGovernance({ type: 'RESET' });
-        setFetchedTransferHistories([]);
-        setFetchedGovernanceHistories([]);
+        dispatchReceived({ type: 'RESET' });
+        dispatchExtrinsics({ type: 'RESET' });
+        setFetchedReceivedHistories([]);
+        setFetchedExtrinsicsHistories([]);
         setTabHistory([]);
         setLocalHistories([]);
 
         // Reset initial fetch status
         initialFetchDoneRef.current = {
-          governance: false,
-          transfers: false
+          extrinsics: false,
+          received: false
         };
 
         log('All state reset due to input change');
@@ -242,143 +230,150 @@ export default function useTransactionHistory (address: AccountId | string | und
 
   // Keep refs updated with latest state values
   useEffect(() => {
-    transfersStateRef.current = transfersTx;
-    log('Transfers state updated', { ...transfersTx });
-  }, [transfersTx]);
+    receivedStateRef.current = receivedTx;
+    log('Transfers state updated', { ...receivedTx });
+  }, [receivedTx]);
 
   useEffect(() => {
-    governanceStateRef.current = governanceTx;
-    log('Governance state updated', { ...governanceTx });
-  }, [governanceTx]);
+    extrinsicsStateRef.current = extrinsicsTx;
+    log('Extrinsics state updated', { ...extrinsicsTx });
+  }, [extrinsicsTx]);
 
   // Convenience functions for dispatching
   const setTransfersTx = useCallback((payload: Partial<RecordTabStatus>) => {
-    log('Updating transfers state with', payload);
-    dispatchTransfers({ payload, type: 'UPDATE' });
+    log('Updating received state with', payload);
+    dispatchReceived({ payload, type: 'UPDATE' });
   }, []);
 
-  const setGovernanceTx = useCallback((payload: Partial<RecordTabStatusGov>) => {
-    log('Updating governance state with', payload);
-    dispatchGovernance({ payload, type: 'UPDATE' });
+  const setExtrinsicsTx = useCallback((payload: Partial<RecordTabStatusGov>) => {
+    log('Updating extrinsics state with', payload);
+    dispatchExtrinsics({ payload, type: 'UPDATE' });
   }, []);
 
-  // Process governance transactions
+  // Process extrinsics
   useEffect(() => {
-    if (!governanceTx?.transactions?.length || !decimal) {
+    if (!extrinsicsTx?.transactions?.length || !decimal) {
       return;
     }
 
-    log(`Processing ${governanceTx.transactions.length} governance transactions`);
+    log(`Processing ${extrinsicsTx.transactions.length} extrinsics`);
 
-    const govHistoryFromSubscan: TransactionDetail[] = governanceTx.transactions.map((govTx: Extrinsics): TransactionDetail => ({
-      action: 'Governance',
-      amount: govTx.amount !== undefined ? (Number(govTx.amount) / (10 ** decimal)).toString() : undefined,
-      block: govTx.block_num,
-      class: govTx.class,
-      conviction: govTx.conviction,
-      date: govTx.block_timestamp * 1000, // to be consistent with locally saved times
-      delegatee: govTx.delegatee,
-      fee: govTx.fee,
-      from: { address: govTx.account_display.address, name: '' },
-      refId: govTx.refId,
-      subAction: govTx.call_module_function,
-      success: govTx.success,
-      token,
-      txHash: govTx.extrinsic_hash,
-      voteType: govTx.voteType
-    }));
+    const extrinsicsHistoryFromSubscan: TransactionDetail[] = extrinsicsTx.transactions.map((extrinsic: Extrinsics): TransactionDetail => {
+      const action = extrinsic.call_module === 'nominationpools'
+        ? 'pool staking'
+        : extrinsic.call_module === 'convictionvoting'
+          ? 'governance'
+          : extrinsic.call_module === 'staking'
+            ? 'solo staking'
+            : extrinsic.call_module;
+      const subAction = action === 'balances' ? 'send' : formatString(extrinsic.call_module_function);
 
-    log(`Processed ${govHistoryFromSubscan.length} governance transactions`);
-    setFetchedGovernanceHistories(govHistoryFromSubscan);
+      return {
+        action,
+        amount: extrinsic.amount !== undefined ? (Number(extrinsic.amount) / (10 ** decimal)).toString() : undefined,
+        block: extrinsic.block_num,
+        calls: extrinsic.calls,
+        chain,
+        class: extrinsic.class,
+        conviction: extrinsic.conviction,
+        date: extrinsic.block_timestamp * 1000, // to be consistent with locally saved times
+        delegatee: extrinsic.delegatee,
+        fee: extrinsic.fee,
+        from: { address: extrinsic.account_display.address, name: '' },
+        nominators: extrinsic.nominators,
+        poolId: extrinsic.poolId,
+        refId: extrinsic.refId,
+        subAction,
+        success: extrinsic.success,
+        to: extrinsic.to ? { address: extrinsic.to, name: extrinsic.to_account_display?.display ?? '' } : undefined,
+        token,
+        txHash: extrinsic.extrinsic_hash,
+        voteType: extrinsic.voteType
+      };
+    });
+
+    log(`Processed ${extrinsicsHistoryFromSubscan.length} extrinsics`);
+    setFetchedExtrinsicsHistories(extrinsicsHistoryFromSubscan);
 
     // Mark initial fetch as done if this is the first page
-    if (governanceTx.pageNum === 1 && !initialFetchDoneRef.current.governance) {
-      initialFetchDoneRef.current.governance = true;
-      log('Initial governance fetch complete');
+    if (extrinsicsTx.pageNum === 1 && !initialFetchDoneRef.current.extrinsics) {
+      initialFetchDoneRef.current.extrinsics = true;
+      log('Initial extrinsics fetch complete');
     }
 
     // Only set loading to false if both initial fetches are done
-    if (initialFetchDoneRef.current.transfers && initialFetchDoneRef.current.governance) {
+    if (initialFetchDoneRef.current.received && initialFetchDoneRef.current.extrinsics) {
       setIsLoading(false);
       log('All initial data loaded');
     }
-  }, [decimal, governanceTx.transactions, governanceTx.pageNum, token]);
+  }, [decimal, extrinsicsTx.transactions, extrinsicsTx.pageNum, token, chain]);
 
   // Process transfer transactions
   useEffect(() => {
-    if (!transfersTx?.transactions?.length || !formatted) {
+    if (!receivedTx?.transactions?.length || !formatted) {
       return;
     }
 
-    log(`Processing ${transfersTx.transactions.length} transfer transactions`);
+    log(`Processing ${receivedTx.transactions.length} transfer transactions`);
 
-    const historyFromSubscan: TransactionDetail[] = transfersTx.transactions.map((tx: Transfers): TransactionDetail => {
-      const isFromCurrentAccount = tx.from === formatted;
+    const historyFromSubscan: TransactionDetail[] = receivedTx.transactions.map((tx: Transfers): TransactionDetail => {
       const txDetail: TransactionDetail = {
-        action: isFromCurrentAccount ? 'send' : 'receive',
+        action: 'balances',
         amount: tx.amount,
         block: tx.block_num,
         date: tx.block_timestamp * 1000, // to be consistent with locally saved times
         fee: tx.fee,
         from: { address: tx.from, name: tx.from_account_display?.display },
+        subAction: 'receive',
         success: tx.success,
         to: { address: tx.to, name: tx.to_account_display?.display },
         token: tx.asset_symbol,
         txHash: tx.hash
       };
 
-      // Handle pool transactions
-      if (isFromCurrentAccount && tx?.to?.name?.match(/^Pool#\d+/)) {
-        txDetail.action = 'Pool Staking';
-        txDetail.subAction = 'Stake';
-      } else if (!isFromCurrentAccount) {
-        if (tx?.from?.name?.match(/^Pool#([0-9]+)\(Reward\)$/)) {
-          txDetail.action = 'Pool Staking';
-          txDetail.subAction = 'Withdraw Rewards';
-        } else if (tx?.from?.name?.match(/^Pool#\d+\(Stash\)$/)) {
-          txDetail.action = 'Pool Staking';
-          txDetail.subAction = 'Redeem';
-        }
+      if (txDetail.from.name?.toLowerCase().includes('reward')) {
+        txDetail.action = 'pool staking';
+        txDetail.subAction = 'reward';
       }
 
       return txDetail;
     });
 
     log(`Processed ${historyFromSubscan.length} transfer transactions`);
-    setFetchedTransferHistories(historyFromSubscan);
+    setFetchedReceivedHistories(historyFromSubscan);
 
     // Mark initial fetch as done if this is the first page
-    if (transfersTx.pageNum === 1 && !initialFetchDoneRef.current.transfers) {
-      initialFetchDoneRef.current.transfers = true;
-      log('Initial transfers fetch complete');
+    if (receivedTx.pageNum === 1 && !initialFetchDoneRef.current.received) {
+      initialFetchDoneRef.current.received = true;
+      log('Initial received fetch complete');
     }
 
     // Only set loading to false if both initial fetches are done
-    if (initialFetchDoneRef.current.transfers && initialFetchDoneRef.current.governance) {
+    if (initialFetchDoneRef.current.received && initialFetchDoneRef.current.extrinsics) {
       setIsLoading(false);
       log('All initial data loaded');
     }
-  }, [formatted, transfersTx.transactions, transfersTx.pageNum]);
+  }, [formatted, receivedTx.transactions, receivedTx.pageNum]);
 
   // Combine and filter transaction histories
   useEffect(() => {
-    if (!localHistories?.length && !fetchedTransferHistories.length && !fetchedGovernanceHistories.length) {
+    if (!localHistories?.length && !fetchedReceivedHistories.length && !fetchedExtrinsicsHistories.length) {
       return;
     }
 
     log('Combining transaction histories', {
-      governanceCount: fetchedGovernanceHistories.length,
+      extrinsicsCount: fetchedExtrinsicsHistories.length,
       localCount: localHistories.length,
-      transfersCount: fetchedTransferHistories.length
+      receivedCount: fetchedReceivedHistories.length
     });
 
     // Filter out duplicate transactions from local history that already exist in fetched history
     const filteredLocalHistories = localHistories.filter(
-      (local) => !fetchedTransferHistories.some((fetched) => local.txHash === fetched.txHash)
+      (local) => !fetchedReceivedHistories.some((fetched) => local.txHash === fetched.txHash)
     );
 
     // Combine all histories and sort by date (newest first)
-    let combinedHistory = [...filteredLocalHistories, ...fetchedTransferHistories, ...fetchedGovernanceHistories]
+    let combinedHistory = [...filteredLocalHistories, ...fetchedReceivedHistories, ...fetchedExtrinsicsHistories]
       .sort((a, b) => b.date - a.date);
 
     // Apply filters if any are active
@@ -388,9 +383,9 @@ export default function useTransactionHistory (address: AccountId | string | und
       const filteredCount = combinedHistory.length;
 
       combinedHistory = combinedHistory.filter(({ action }) => (
-        (filterOptions.transfers && ['send', 'receive'].includes(action.toLowerCase())) ||
-        (filterOptions.governance && ['Governance', 'Unlock Referenda'].includes(action)) ||
-        (filterOptions.staking && STAKING_ACTIONS.includes(action))
+        (filterOptions.transfers && ['balances'].includes(action.toLowerCase())) ||
+        (filterOptions.governance && ['governance'].includes(action)) ||
+        (filterOptions.staking && ['solo staking', 'pool staking'].includes(action))
       ));
       log(`Filtered transactions: ${filteredCount} -> ${combinedHistory.length}`);
     }
@@ -398,7 +393,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     log(`Final history count: ${combinedHistory.length}`);
     setTabHistory(combinedHistory);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedGovernanceHistories, fetchedTransferHistories, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers, localHistories]);
+  }, [fetchedExtrinsicsHistories, fetchedReceivedHistories, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers, localHistories]);
 
   // Load local history from storage
   useEffect(() => {
@@ -415,13 +410,13 @@ export default function useTransactionHistory (address: AccountId | string | und
     }
   }, [address, genesisHash]);
 
-  // Save the latest 20 transactions to local storage
+  // Save the latest MAX_LOCAL_HISTORY_ITEMS transactions to local storage
   useEffect(() => {
-    if (address && genesisHash && tabHistory && tabHistory.length > 0) {
-      log(`Saving latest ${Math.min(MAX_LOCAL_HISTORY_ITEMS, tabHistory.length)} transactions to local storage`);
+    if (address && genesisHash && allHistories && allHistories.length > 0) {
+      log(`Saving latest ${Math.min(MAX_LOCAL_HISTORY_ITEMS, allHistories.length)} transactions to local storage`);
 
-      // Take the 20 most recent transactions
-      const latestTransactions = tabHistory.slice(0, MAX_LOCAL_HISTORY_ITEMS);
+      // Take the MAX_LOCAL_HISTORY_ITEMS most recent transactions
+      const latestTransactions = allHistories.slice(0, MAX_LOCAL_HISTORY_ITEMS);
 
       // Save to local storage with chain information
       saveHistoryToStorage(String(address), String(genesisHash), latestTransactions)
@@ -432,16 +427,13 @@ export default function useTransactionHistory (address: AccountId | string | und
           console.error('Error saving history to storage:', error);
         });
     }
-  }, [address, genesisHash, tabHistory]);
+  }, [address, genesisHash, allHistories]);
 
   // Group transactions by date
   const grouped = useMemo((): Record<string, TransactionDetail[]> | null | undefined => {
-    if (!tabHistory?.length) {
-      // If we have no items AND both transfer and governance fetches are done with no more to fetch
-      if (
-        !transfersTx.hasMore &&
-        !governanceTx.hasMore
-      ) {
+    if (!allHistories?.length) {
+      // If we have no items AND both transfer and extrinsics fetches are done with no more to fetch
+      if (!receivedTx.hasMore && !extrinsicsTx.hasMore) {
         return null; // No items and nothing more to fetch = return null
       }
 
@@ -451,7 +443,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     const groupedTx = {} as Record<string, TransactionDetail[]>;
     const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
-    tabHistory.forEach((transaction) => {
+    allHistories.forEach((transaction) => {
       const day = new Date(transaction.date).toLocaleDateString(undefined, dateOptions);
 
       if (!groupedTx[day]) {
@@ -462,58 +454,46 @@ export default function useTransactionHistory (address: AccountId | string | und
     });
 
     return groupedTx;
-  }, [tabHistory, transfersTx.hasMore, governanceTx.hasMore]);
+  }, [allHistories, receivedTx.hasMore, extrinsicsTx.hasMore]);
 
-  // Fetch governance extrinsics
-  const getGovExtrinsics = useCallback(async (currentState: RecordTabStatusGov): Promise<void> => {
+  // Fetch extrinsics
+  const getExtrinsics = useCallback(async (currentState: RecordTabStatusGov): Promise<void> => {
     const { hasMore, isFetching, pageNum, transactions } = currentState;
 
     // Skip if no more data or already fetching
     if (isFetching || hasMore === false) {
-      log('Skipping governance fetch - already fetching or no more data');
+      log('Skipping extrinsics fetch - already fetching or no more data');
 
       return;
     }
 
-    if (GOVERNANCE_CHAINS.includes(genesisHash ?? '') === false) {
-      setGovernanceTx({
-        hasMore: false,
-        isFetching: false,
-        transactions: []
-      });
-
-      log('Skipping governance fetch - unsupported chain');
-
-      return;
-    }
-
-    log(`Fetching governance history page ${pageNum}`);
-    setGovernanceTx({
+    log(`Fetching extrinsics history page ${pageNum}`);
+    setExtrinsicsTx({
       isFetching: true
     });
 
     try {
-      const res = await getGovHistory(chainName ?? '', String(formatted), pageNum, chain?.ss58Format);
+      const res = await getTXsHistory(chainName ?? '', String(formatted), pageNum, chain?.ss58Format);
       const { count = 0, extrinsics = [] } = res.data || {};
       const nextPageNum = pageNum + 1;
       const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
 
-      log(`Received governance data: count=${count}, items=${extrinsics?.length ?? 0}, hasMore=${hasMorePages}`);
+      log(`Received extrinsics data: count=${count}, items=${extrinsics?.length ?? 0}, hasMore=${hasMorePages}`);
 
-      setGovernanceTx({
+      setExtrinsicsTx({
         hasMore: hasMorePages,
         isFetching: false,
         pageNum: nextPageNum,
         transactions: [...(transactions || []), ...(extrinsics || [])]
       });
     } catch (error) {
-      console.error('Error fetching governance history:', error);
-      setGovernanceTx({
+      console.error('Error fetching extrinsics history:', error);
+      setExtrinsicsTx({
         hasMore: false,
         isFetching: false
       });
     }
-  }, [genesisHash, setGovernanceTx, chainName, formatted, chain?.ss58Format]);
+  }, [setExtrinsicsTx, chainName, formatted, chain?.ss58Format]);
 
   // Fetch transfer transactions
   const getTransfers = useCallback(async (currentState: RecordTabStatus): Promise<void> => {
@@ -521,12 +501,12 @@ export default function useTransactionHistory (address: AccountId | string | und
 
     // Skip if no more data or already fetching
     if (isFetching || hasMore === false) {
-      log('Skipping transfers fetch - already fetching or no more data');
+      log('Skipping received fetch - already fetching or no more data');
 
       return;
     }
 
-    log(`Fetching transfers page ${pageNum}`);
+    log(`Fetching received page ${pageNum}`);
     setTransfersTx({
       isFetching: true
     });
@@ -558,37 +538,21 @@ export default function useTransactionHistory (address: AccountId | string | und
   // Initialize data loading for a new address/chain
   useEffect(() => {
     if (formatted && chainName) {
-      if (transfersTx.pageNum === 0) {
-        log('Initiating initial transfers fetch');
-        getTransfers(transfersStateRef.current).catch((error) => {
-          console.error('Error in initial transfers fetch:', error);
+      if (receivedTx.pageNum === 0) {
+        log('Initiating initial received fetch');
+        getTransfers(receivedStateRef.current).catch((error) => {
+          console.error('Error in initial received fetch:', error);
         });
       }
 
-      if (governanceTx.pageNum === 0) {
-        log('Initiating initial governance fetch');
-        getGovExtrinsics(governanceStateRef.current).catch((error) => {
-          console.error('Error in initial governance fetch:', error);
+      if (extrinsicsTx.pageNum === 0) {
+        log('Initiating initial extrinsics fetch');
+        getExtrinsics(extrinsicsStateRef.current).catch((error) => {
+          console.error('Error in initial extrinsics fetch:', error);
         });
       }
     }
-  }, [chainName, formatted, transfersTx.pageNum, governanceTx.pageNum, getTransfers, getGovExtrinsics]);
-
-  // Force refetch effect
-  useEffect(() => {
-    if (forceRefetchTrigger.current > 0) {
-      log('Force refetch triggered, resetting and refetching data');
-
-      // Reset fetch state but keep accumulated data
-      if (transfersStateRef.current.hasMore) {
-        getTransfers(transfersStateRef.current).catch(console.error);
-      }
-
-      if (governanceStateRef.current.hasMore) {
-        getGovExtrinsics(governanceStateRef.current).catch(console.error);
-      }
-    }
-  }, [getGovExtrinsics, getTransfers]);
+  }, [chainName, formatted, receivedTx.pageNum, extrinsicsTx.pageNum, getTransfers, getExtrinsics]);
 
   // Set up and manage the intersection observer for infinite scrolling
   useEffect(() => {
@@ -613,33 +577,33 @@ export default function useTransactionHistory (address: AccountId | string | und
       }
 
       log('Observer target in view, checking for more data to fetch');
-      const transfersState = transfersStateRef.current;
-      const governanceState = governanceStateRef.current;
+      const receivedState = receivedStateRef.current;
+      const extrinsicsState = extrinsicsStateRef.current;
 
       // Flag to track if we can fetch anything
       let canFetch = false;
 
       // Check transfers
-      if (transfersState.hasMore && !transfersState.isFetching) {
-        log('More transfers available, fetching next page');
+      if (receivedState.hasMore && !receivedState.isFetching) {
+        log('More received available, fetching next page');
         canFetch = true;
-        getTransfers(transfersState).catch(console.error);
+        getTransfers(receivedState).catch(console.error);
       } else {
-        log('No more transfers to fetch or already fetching', {
-          hasMore: transfersState.hasMore,
-          isFetching: transfersState.isFetching
+        log('No more received to fetch or already fetching', {
+          hasMore: receivedState.hasMore,
+          isFetching: receivedState.isFetching
         });
       }
 
-      // Check governance
-      if (governanceState.hasMore && !governanceState.isFetching) {
-        log('More governance data available, fetching next page');
+      // Check extrinsics
+      if (extrinsicsState.hasMore && !extrinsicsState.isFetching) {
+        log('More extrinsics available, fetching next page');
         canFetch = true;
-        getGovExtrinsics(governanceState).catch(console.error);
+        getExtrinsics(extrinsicsState).catch(console.error);
       } else {
-        log('No more governance data to fetch or already fetching', {
-          hasMore: governanceState.hasMore,
-          isFetching: governanceState.isFetching
+        log('No more extrinsics to fetch or already fetching', {
+          hasMore: extrinsicsState.hasMore,
+          isFetching: extrinsicsState.isFetching
         });
       }
 
@@ -675,14 +639,11 @@ export default function useTransactionHistory (address: AccountId | string | und
       log('Cleaning up observer on unmount/rerun');
       observerInstance.current?.disconnect();
     };
-  }, [chainName, formatted, getGovExtrinsics, getTransfers]);
+  }, [chainName, formatted, getExtrinsics, getTransfers]);
 
   return {
-    forceRefetch,
-    governanceTx,
+    allHistories,
     grouped,
-    isLoading,
-    tabHistory,
-    transfersTx
+    isLoading
   };
 }

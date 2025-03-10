@@ -6,9 +6,9 @@
 import type { TransitionProps } from '@mui/material/transitions';
 import type { TransactionDetail } from '../../../util/types';
 
-import { Avatar, Container, Dialog, Grid, Slide, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Collapse, Container, Dialog, Grid, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
@@ -40,7 +40,35 @@ interface HistoryDetailProps {
 const isReceived = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() !== 'send';
 const isSend = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() === 'send';
 
-function HistoryStatus ({ action, success }: { action: string, success: boolean }) {
+const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; }) {
+  const { t } = useTranslation();
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), []);
+
+  return (
+    <>
+      <Container disableGutters onClick={toggleCollapse} sx={{ alignItems: 'center', cursor: calls.length > 1 ? 'pointer' : 'default', display: 'flex', justifyContent: 'space-between' }}>
+        <Typography color='text.secondary' textTransform='capitalize' variant='B-1' width='fit-content'>
+          {t('Extrinsics')}
+        </Typography>
+        <Collapse collapsedSize={26} in={open} sx={{ width: 'fit-content' }}>
+          <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', rowGap: '3px' }}>
+            {calls.map((call) => (
+              <Typography color='text.secondary' key={call} sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                {call}
+              </Typography>
+            ))}
+          </Container>
+        </Collapse>
+      </Container>
+      <GradientDivider style={{ my: '7px' }} />
+    </>
+  );
+});
+
+function HistoryStatus({ action, success }: { action: string, success: boolean }) {
   const { t } = useTranslation();
 
   return (
@@ -63,7 +91,7 @@ function HistoryStatus ({ action, success }: { action: string, success: boolean 
   );
 }
 
-function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
+function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
   const price = useTokenPriceBySymbol(token, genesisHash);
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal ?? 0), [amount, decimal, price.price]);
@@ -109,7 +137,7 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
   );
 }
 
-function DetailHeader ({ historyItem }: Props) {
+function DetailHeader({ historyItem }: Props) {
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
   return (
@@ -129,7 +157,7 @@ function DetailHeader ({ historyItem }: Props) {
   );
 }
 
-function DetailCard ({ historyItem }: Props) {
+function DetailCard({ historyItem }: Props) {
   const items = useMemo(() => {
     const card: Record<string, string | number>[] = [];
 
@@ -154,6 +182,7 @@ function DetailCard ({ historyItem }: Props) {
   return (
     <VelvetBox style={{ p: '4px' }}>
       <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', p: '12px 18px', width: '100%' }}>
+        {historyItem.calls?.length && <DisplayCalls calls={historyItem.calls} />}
         {items.map((item, index) => {
           const [key, value] = Object.entries(item)[0];
           const withDivider = items.length > index + 1;
@@ -209,12 +238,12 @@ function DetailCard ({ historyItem }: Props) {
   );
 }
 
-function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
+function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedAccount = useSelectedAccount();
-  const { chainName } = useChainInfo(historyItem?.chain?.genesisHash);
+  const { chainName } = useChainInfo(historyItem?.chain?.genesisHash, true);
 
   const isWestmint = chainName?.replace(/\s/g, '') === 'WestendAssetHub';
 
