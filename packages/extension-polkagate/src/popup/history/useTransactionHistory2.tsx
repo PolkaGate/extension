@@ -337,6 +337,7 @@ export default function useTransactionHistory (address: AccountId | string | und
         action: 'balances',
         amount: tx.amount,
         block: tx.block_num,
+        chain,
         date: tx.block_timestamp * 1000, // to be consistent with locally saved times
         fee: tx.fee,
         from: { address: tx.from, name: tx.from_account_display?.display },
@@ -369,7 +370,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       setIsLoading(false);
       log('All initial data loaded');
     }
-  }, [receivedTx.transactions, receivedTx.pageNum]);
+  }, [chain, receivedTx.transactions, receivedTx.pageNum]);
 
   // Combine and filter transaction histories
   useEffect(() => {
