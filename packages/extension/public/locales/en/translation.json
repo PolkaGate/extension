@@ -1578,5 +1578,6 @@
   "Rewards require manual claiming if you have staked in pools.": "",
   "Select a chain to view the transaction history on": "",
   "View on Explorer": "",
-  "Rewards require manual claiming if you have staked in pools": ""
+  "Rewards require manual claiming if you have staked in pools": "",
+  "Extrinsics": ""
 }

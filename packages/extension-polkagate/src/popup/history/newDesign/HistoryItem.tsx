@@ -6,7 +6,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { CloseCircle, Dislike, Like1, LikeDislike, Login, Logout, Money, Polkadot, Sagittarius, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
+import { ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, Login, Logout, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
@@ -25,7 +25,9 @@ interface HistoryItemProps {
   short: boolean;
 }
 
-type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward' | 'aye' | 'nay' | 'abstain' | 'delegate';
+type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward' | 'aye' | 'nay' | 'abstain' | 'delegate' | 'utility' | 'balances' | 'governance' | 'proxy';
+const actionTypes: ActionType[] = ['send', 'receive', 'solo staking', 'pool staking', 'reward', 'aye', 'nay', 'abstain', 'delegate', 'utility', 'balances', 'governance', 'proxy'];
+const isActionType = (value: string): value is ActionType => actionTypes.includes(value as ActionType);
 
 const HistoryIcon = ({ action }: { action: string }) => {
   const normalizedAction = action.toLowerCase() as ActionType;
@@ -35,13 +37,17 @@ const HistoryIcon = ({ action }: { action: string }) => {
   const actionIcons: Record<ActionType, React.JSX.Element> = {
     abstain: <LikeDislike color='#AA83DC' size='26' variant='Bold' />,
     aye: <Like1 color='#82FFA5' size='22' variant='Bold' />,
+    balances: <ArrowSwapHorizontal color='#AA83DC' size='26' />,
     delegate: <Sagittarius color='#AA83DC' size='26' variant='Bulk' />,
+    governance: <MedalStar color='#AA83DC' size='22' />,
     nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
+    proxy: <Data color='#AA83DC' size='22' />,
     receive: <Login color='#82FFA5' size='22' variant='Bold' />,
     reward: <Money color='#82FFA5' size='22' />,
     send: <Logout color='#AA83DC' size='22' />,
-    'solo staking': <Strongbox color='#AA83DC' size='26' />
+    'solo staking': <Strongbox color='#AA83DC' size='26' />,
+    utility: <ShoppingBag color='#AA83DC' size='26' />
   };
 
   return actionIcons[normalizedAction] || DEFAULT_ICON;
@@ -53,19 +59,23 @@ const historyIconBgColor = (action: string) => {
   const actionColors: Record<ActionType, string> = {
     abstain: '#6743944D',
     aye: '#6743944D',
+    balances: '#6743944D',
     delegate: '#6743944D',
+    governance: '#6743944D',
     nay: '#6743944D',
     'pool staking': '#6743944D',
+    proxy: '#6743944D',
     receive: '#82FFA540',
     reward: '#82FFA540',
     send: 'transparent',
-    'solo staking': '#6743944D'
+    'solo staking': '#6743944D',
+    utility: '#6743944D'
   } as const;
 
   return actionColors[normalizedAction] || '#6743944D';
 };
 
-export const isReward = (historyItem: TransactionDetail) => ['withdraw rewards'].includes(historyItem.subAction?.toLowerCase() ?? '');
+export const isReward = (historyItem: TransactionDetail) => ['withdraw rewards', 'claim payout'].includes(historyItem.subAction?.toLowerCase() ?? '');
 
 export const getVoteType = (voteType: number | null | undefined) => {
   if (voteType === undefined) {
@@ -99,50 +109,44 @@ const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem:
   const theme = useTheme();
   const { t } = useTranslation();
 
-  if (historyItem.subAction) { // not a send or received TX
+  return useMemo(() => {
+    const isTransfer = historyItem.action.toLowerCase() === 'balances';
+    const isSend = historyItem.subAction?.toLowerCase() === 'send';
+
     return (
       <Grid alignItems='flex-start' container direction='column' item width='fit-content'>
         <Typography color='text.primary' textTransform='capitalize' variant='B-2'>
           {historyItem.subAction}
         </Typography>
         <Grid alignItems='center' columnGap='4px' container item width='fit-content'>
-          <Typography color='text.secondary' textTransform='capitalize' variant='B-5'>
-            {historyItem.action}
-          </Typography>
+          {isTransfer
+            ? (<>
+              <Typography color='text.secondary' variant='B-4'>
+                {isSend ? t('To') : t('From')}:
+              </Typography>
+              <ScrollingTextBox
+                scrollOnHover
+                style={{ lineHeight: '18px' }}
+                text={isSend
+                  ? (historyItem.to?.name || historyItem.to?.address) ?? ''
+                  : (historyItem.from.name || historyItem.from.address) ?? ''
+                }
+                textStyle={{
+                  color: '#AA83DC',
+                  ...theme.typography['B-4']
+                }}
+                width={75}
+              />
+            </>)
+            : (<Typography color='text.secondary' textTransform='capitalize' variant='B-5'>
+              {historyItem.action}
+            </Typography>)
+          }
           <TimeOfTheDay date={historyItem.date} />
         </Grid>
       </Grid>
     );
-  } else { // send or receive
-    const isSend = historyItem.action.toLowerCase() === 'send';
-
-    return (
-      <Grid alignItems='flex-start' container direction='column' item width='fit-content'>
-        <Typography color='text.primary' textTransform='capitalize' variant='B-2'>
-          {historyItem.action}
-        </Typography>
-        <Grid alignItems='center' columnGap='4px' container item width='fit-content'>
-          <Typography color='text.secondary' variant='B-4'>
-            {isSend ? t('To') : t('From')}:
-          </Typography>
-          <ScrollingTextBox
-            scrollOnHover
-            style={{ lineHeight: '18px' }}
-            text={isSend
-              ? (historyItem.to?.name ?? historyItem.to?.address) ?? ''
-              : (historyItem.from.name ?? historyItem.from.address) ?? ''
-            }
-            textStyle={{
-              color: '#AA83DC',
-              ...theme.typography['B-4']
-            }}
-            width={75}
-          />
-          <TimeOfTheDay date={historyItem.date} />
-        </Grid>
-      </Grid>
-    );
-  }
+  }, [historyItem.action, historyItem.date, historyItem.from.address, historyItem.from.name, historyItem.subAction, historyItem.to, t, theme.typography]);
 });
 
 const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
@@ -153,8 +157,10 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, sh
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(historyItem.amount, historyItem.decimal ?? 0) ?? BN_ZERO, historyItem.decimal ?? 0), [historyItem.amount, historyItem.decimal, price.price]);
 
   const success = historyItem.success;
-  const isReceivedOrReward = (!historyItem.subAction && historyItem.action.toLowerCase() !== 'send') || isReward(historyItem);
-  const isSend = historyItem.action.toLowerCase() === 'send';
+  const isTransfer = historyItem.action.toLowerCase() === 'balances';
+  const isSend = historyItem.subAction?.toLowerCase() === 'send';
+  const reward = isReward(historyItem);
+  const isReceivedOrReward = reward || (isTransfer && !isSend);
 
   return (
     <>
@@ -216,15 +222,20 @@ function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
           {historyDate}
         </Typography>
         {historyItems.map((historyItem, index) => {
-          const action = isReward(historyItem)
+          let action = isReward(historyItem)
             ? 'reward'
-            : getVoteType(historyItem.voteType) ?? historyItem.action;
+            : getVoteType(historyItem.voteType) ?? historyItem.subAction ?? '';
+
+          if (!isActionType(action)) {
+            action = historyItem.action;
+          }
+
           const iconBgColor = historyIconBgColor(action);
           const noDivider = historyItems.length === index + 1;
 
           return (
             <>
-              <Grid alignItems='center' container item justifyContent='space-between' onClick={openDetail(historyItem)} key={index} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+              <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={openDetail(historyItem)} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
                   <HistoryIcon action={action} />
                 </Grid>

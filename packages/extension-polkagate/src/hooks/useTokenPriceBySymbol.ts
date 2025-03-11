@@ -29,7 +29,7 @@ const assetsChains = createAssets();
  * @returns price : price of the token which the address is already switched to
  */
 export default function useTokenPriceBySymbol (tokenSymbol: string | undefined, genesisHash: string | undefined): Price {
-  const { chainName } = useChainInfo(genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();
   const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];

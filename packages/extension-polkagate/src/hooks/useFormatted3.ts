@@ -10,7 +10,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useChainInfo } from '.';
 
 export default function useFormatted (address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
-  const { chain } = useChainInfo(genesisHash);
+  const { chain } = useChainInfo(genesisHash, true);
 
   const encodedAddress = useMemo(() => {
     if (formatted) {

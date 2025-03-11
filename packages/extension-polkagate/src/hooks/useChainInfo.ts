@@ -32,11 +32,12 @@ interface ChainInfo {
  *
  * @function useChainInfo
  * @param {string | null | undefined} genesisHash - The genesis hash of the blockchain. Can be null or undefined.
+ * @param {boolean} noApi - If true, prevents triggering the API connection.
  * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
  */
-export default function useChainInfo (genesisHash: string | null | undefined): ChainInfo {
+export default function useChainInfo (genesisHash: string | null | undefined, noApi = false): ChainInfo {
   const chain = useMetadata(genesisHash, true);
-  const api = useApi2(genesisHash);
+  const api = useApi2(noApi ? undefined : genesisHash);
   const chainInfo = selectableNetworks.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash[0] === genesisHash);
 
   return {

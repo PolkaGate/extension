@@ -152,20 +152,23 @@ export interface TxResult {
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
-  action: string; // send, Solo staking, pool staking, convictionvoting ...
+  action: string; // send, solo staking, pool staking, convictionvoting, ...
   amount?: string;
   chain?: Chain;
   decimal?: number;
   date: number;
   from: NameAddress;
-  subAction?: string; // bond_extra, unbound, nominate, vote
+  subAction?: string; // bond_extra, unbound, nominate, vote, unvote, unlock, ...
   to?: NameAddress;
   token?: string;
-  throughProxy?: NameAddress;
+  throughProxy?: NameAddress; // not available in subscan (can be removed)
   refId?: number;
   voteType?: number;
   class?: number;
   conviction?: string;
+  poolId?: string;
+  nominators?: string[];
+  calls?: string[];
   delegatee?: string;
 }
 
@@ -285,6 +288,11 @@ export interface Extrinsics {
   class?: number;
   conviction?: string;
   delegatee?: string;
+  poolId?: string;
+  nominators?: string[];
+  to?: NameAddress;
+  to_account_display?: AccountDisplay;
+  calls?: string[];
 }
 
 export interface Transfers {
