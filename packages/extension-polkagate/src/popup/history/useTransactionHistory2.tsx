@@ -16,7 +16,7 @@ import { getTXsHistory } from '../../util/api/getTXsHistory';
 const SINGLE_PAGE_SIZE = 50;
 const MAX_PAGE = 10;
 const MAX_LOCAL_HISTORY_ITEMS = 20; // Maximum number of items to store locally
-const DEBUG = true; // Toggle for enabling/disabling logs
+const DEBUG = false; // Toggle for enabling/disabling logs
 
 // Helper for consistent logging format
 const log = (message: string, data?: unknown) => {
