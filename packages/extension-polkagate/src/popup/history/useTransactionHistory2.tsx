@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
-// @ts-nocheck
 
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
-import { useChainInfo, useFormatted3 } from '../../hooks';
+import { useChainInfo } from '../../hooks';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { getTXsHistory } from '../../util/api/getTXsHistory';
 
@@ -43,7 +42,7 @@ async function saveHistoryToStorage (address: string, genesisHash: string, trans
       // First, get the current history object
       chrome.storage.local.get('history', (res: Record<string, unknown>) => {
         // Initialize with empty object if not exists
-        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.history ?? {});
+        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.['history'] as Record<string, Record<string, TransactionDetail[]>> ?? {});
 
         // Ensure the address entry exists
         if (!allHistories[address]) {
@@ -171,7 +170,6 @@ const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsAction):
 
 export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
-  const formatted = useFormatted3(address, genesisHash);
   const [isLoading, setIsLoading] = useState(false);
 
   const [fetchedReceivedHistories, setFetchedReceivedHistories] = useState<TransactionDetail[]>([]);
@@ -194,20 +192,24 @@ export default function useTransactionHistory (address: AccountId | string | und
     extrinsics: false,
     received: false
   });
+  const initialFetchInitiatedRef = useRef<{ received: boolean; extrinsics: boolean }>({
+    extrinsics: false,
+    received: false
+  });
 
   // Detect changes in address or genesisHash to reset state
   useEffect(() => {
-    const addressChanged = formatted !== prevAddressRef.current;
+    const addressChanged = String(address) !== prevAddressRef.current;
     const genesisHashChanged = genesisHash !== prevGenesisHashRef.current;
 
     if (addressChanged || genesisHashChanged) {
       log(`Input changed: address: ${addressChanged}, genesisHash: ${genesisHashChanged}`);
 
       // Update refs to current values
-      prevAddressRef.current = formatted;
+      prevAddressRef.current = String(address);
       prevGenesisHashRef.current = genesisHash;
 
-      if (formatted && genesisHash) {
+      if (address && genesisHash) {
         // Reset all state when address or chain changes
         setIsLoading(true);
         dispatchReceived({ type: 'RESET' });
@@ -217,8 +219,14 @@ export default function useTransactionHistory (address: AccountId | string | und
         setTabHistory([]);
         setLocalHistories([]);
 
-        // Reset initial fetch status
+        // Reset Done fetch status
         initialFetchDoneRef.current = {
+          extrinsics: false,
+          received: false
+        };
+
+        // Reset initial fetch status
+        initialFetchInitiatedRef.current = {
           extrinsics: false,
           received: false
         };
@@ -226,7 +234,7 @@ export default function useTransactionHistory (address: AccountId | string | und
         log('All state reset due to input change');
       }
     }
-  }, [formatted, genesisHash]);
+  }, [address, genesisHash]);
 
   // Keep refs updated with latest state values
   useEffect(() => {
@@ -310,7 +318,7 @@ export default function useTransactionHistory (address: AccountId | string | und
 
   // Process transfer transactions
   useEffect(() => {
-    if (!receivedTx?.transactions?.length || !formatted) {
+    if (!receivedTx?.transactions?.length) {
       return;
     }
 
@@ -353,7 +361,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       setIsLoading(false);
       log('All initial data loaded');
     }
-  }, [formatted, receivedTx.transactions, receivedTx.pageNum]);
+  }, [receivedTx.transactions, receivedTx.pageNum]);
 
   // Combine and filter transaction histories
   useEffect(() => {
@@ -367,33 +375,37 @@ export default function useTransactionHistory (address: AccountId | string | und
       receivedCount: fetchedReceivedHistories.length
     });
 
-    // Filter out duplicate transactions from local history that already exist in fetched history
-    const filteredLocalHistories = localHistories.filter(
-      (local) => !fetchedReceivedHistories.some((fetched) => local.txHash === fetched.txHash)
-    );
+    // Create a Set to track transaction hashes we've already seen
+    const seenTxHashes = new Set();
+    const uniqueTransactions: TransactionDetail[] = [];
 
-    // Combine all histories and sort by date (newest first)
-    let combinedHistory = [...filteredLocalHistories, ...fetchedReceivedHistories, ...fetchedExtrinsicsHistories]
-      .sort((a, b) => b.date - a.date);
+    // Function to add transactions to the unique list
+    const addUniqueTransactions = (transactions: TransactionDetail[]) => {
+      transactions.forEach((tx) => {
+        if (tx.txHash && !seenTxHashes.has(tx.txHash)) {
+          seenTxHashes.add(tx.txHash);
+          uniqueTransactions.push(tx);
+        } else if (!tx.txHash) {
+        // Handle transactions without txHash (if any)
+          uniqueTransactions.push(tx);
+        }
+      });
+    };
 
-    // Apply filters if any are active
-    const shouldFilter = filterOptions && !Object.values(filterOptions).every((filter) => filter);
+    // Process all three arrays, prioritizing in order:
+    // 1. fetchedReceivedHistories (from API)
+    // 2. fetchedExtrinsicsHistories (from API)
+    // 3. localHistories (from storage)
+    addUniqueTransactions(fetchedReceivedHistories);
+    addUniqueTransactions(fetchedExtrinsicsHistories);
+    addUniqueTransactions(localHistories);
 
-    if (shouldFilter && filterOptions) {
-      const filteredCount = combinedHistory.length;
+    // Sort by date (newest first)
+    const sortedTransactions = uniqueTransactions.sort((a, b) => b.date - a.date);
 
-      combinedHistory = combinedHistory.filter(({ action }) => (
-        (filterOptions.transfers && ['balances'].includes(action.toLowerCase())) ||
-        (filterOptions.governance && ['governance'].includes(action)) ||
-        (filterOptions.staking && ['solo staking', 'pool staking'].includes(action))
-      ));
-      log(`Filtered transactions: ${filteredCount} -> ${combinedHistory.length}`);
-    }
-
-    log(`Final history count: ${combinedHistory.length}`);
-    setTabHistory(combinedHistory);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedExtrinsicsHistories, fetchedReceivedHistories, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers, localHistories]);
+    log(`Final history count: ${sortedTransactions.length} after deduplication`);
+    setTabHistory(sortedTransactions);
+  }, [fetchedExtrinsicsHistories, fetchedReceivedHistories, localHistories]);
 
   // Load local history from storage
   useEffect(() => {
@@ -443,7 +455,23 @@ export default function useTransactionHistory (address: AccountId | string | und
     const groupedTx = {} as Record<string, TransactionDetail[]>;
     const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
-    allHistories.forEach((transaction) => {
+    let filteredHistories = allHistories;
+
+    // Apply filters if any are active
+    const shouldFilter = filterOptions && !Object.values(filterOptions).every((filter) => filter);
+
+    if (shouldFilter && filterOptions) {
+      const filteredCount = allHistories.length;
+
+      filteredHistories = allHistories.filter(({ action }) => (
+        (filterOptions.transfers && ['balances'].includes(action.toLowerCase())) ||
+                (filterOptions.governance && ['governance'].includes(action)) ||
+                (filterOptions.staking && ['solo staking', 'pool staking'].includes(action))
+      ));
+      log(`Filtered transactions: ${filteredCount} -> ${filteredHistories.length}`);
+    }
+
+    filteredHistories.forEach((transaction) => {
       const day = new Date(transaction.date).toLocaleDateString(undefined, dateOptions);
 
       if (!groupedTx[day]) {
@@ -454,11 +482,19 @@ export default function useTransactionHistory (address: AccountId | string | und
     });
 
     return groupedTx;
-  }, [allHistories, receivedTx.hasMore, extrinsicsTx.hasMore]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allHistories, receivedTx.hasMore, extrinsicsTx.hasMore, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers]);
 
   // Fetch extrinsics
   const getExtrinsics = useCallback(async (currentState: RecordTabStatusGov): Promise<void> => {
     const { hasMore, isFetching, pageNum, transactions } = currentState;
+
+    // Skip if either chain or chainName does not exist
+    if (!chain || !chainName) {
+      log('Skipping extrinsics fetch - either chain or chainName does not exist');
+
+      return;
+    }
 
     // Skip if no more data or already fetching
     if (isFetching || hasMore === false) {
@@ -473,7 +509,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     });
 
     try {
-      const res = await getTXsHistory(chainName ?? '', String(formatted), pageNum, chain?.ss58Format);
+      const res = await getTXsHistory(chainName, String(address), pageNum, chain.ss58Format);
       const { count = 0, extrinsics = [] } = res.data || {};
       const nextPageNum = pageNum + 1;
       const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
@@ -493,11 +529,18 @@ export default function useTransactionHistory (address: AccountId | string | und
         isFetching: false
       });
     }
-  }, [setExtrinsicsTx, chainName, formatted, chain?.ss58Format]);
+  }, [chain, chainName, setExtrinsicsTx, address]);
 
   // Fetch transfer transactions
   const getTransfers = useCallback(async (currentState: RecordTabStatus): Promise<void> => {
     const { hasMore, isFetching, pageNum, transactions } = currentState;
+
+    // Skip if chainName does not exist
+    if (!chainName) {
+      log('Skipping received fetch - chainName does not exist');
+
+      return;
+    }
 
     // Skip if no more data or already fetching
     if (isFetching || hasMore === false) {
@@ -512,7 +555,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     });
 
     try {
-      const res = await getTxTransfers(chainName ?? '', String(formatted), pageNum, SINGLE_PAGE_SIZE);
+      const res = await getTxTransfers(chainName, String(address), pageNum, SINGLE_PAGE_SIZE);
       const { count = 0, transfers = [] } = res.data || {};
       const nextPageNum = pageNum + 1;
       const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
@@ -533,30 +576,32 @@ export default function useTransactionHistory (address: AccountId | string | und
         transactions: []
       });
     }
-  }, [chainName, formatted, setTransfersTx]);
+  }, [address, chainName, setTransfersTx]);
 
   // Initialize data loading for a new address/chain
   useEffect(() => {
-    if (formatted && chainName) {
-      if (receivedTx.pageNum === 0) {
+    if (address && chainName) {
+      if (receivedTx.pageNum === 0 && !initialFetchInitiatedRef.current.received) {
         log('Initiating initial received fetch');
+        initialFetchInitiatedRef.current.received = true;
         getTransfers(receivedStateRef.current).catch((error) => {
           console.error('Error in initial received fetch:', error);
         });
       }
 
-      if (extrinsicsTx.pageNum === 0) {
+      if (extrinsicsTx.pageNum === 0 && !initialFetchInitiatedRef.current.extrinsics && chain) {
         log('Initiating initial extrinsics fetch');
+        initialFetchInitiatedRef.current.extrinsics = true;
         getExtrinsics(extrinsicsStateRef.current).catch((error) => {
           console.error('Error in initial extrinsics fetch:', error);
         });
       }
     }
-  }, [chainName, formatted, receivedTx.pageNum, extrinsicsTx.pageNum, getTransfers, getExtrinsics]);
+  }, [address, chain, chainName, receivedTx.pageNum, extrinsicsTx.pageNum, getTransfers, getExtrinsics]);
 
   // Set up and manage the intersection observer for infinite scrolling
   useEffect(() => {
-    if (!chainName || !formatted) {
+    if (!chainName || !address) {
       return;
     }
 
@@ -584,7 +629,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       let canFetch = false;
 
       // Check transfers
-      if (receivedState.hasMore && !receivedState.isFetching) {
+      if (receivedState.hasMore && !receivedState.isFetching && !initialFetchInitiatedRef.current.received) {
         log('More received available, fetching next page');
         canFetch = true;
         getTransfers(receivedState).catch(console.error);
@@ -596,7 +641,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       }
 
       // Check extrinsics
-      if (extrinsicsState.hasMore && !extrinsicsState.isFetching) {
+      if (extrinsicsState.hasMore && !extrinsicsState.isFetching && !initialFetchInitiatedRef.current.extrinsics) {
         log('More extrinsics available, fetching next page');
         canFetch = true;
         getExtrinsics(extrinsicsState).catch(console.error);
@@ -639,7 +684,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       log('Cleaning up observer on unmount/rerun');
       observerInstance.current?.disconnect();
     };
-  }, [chainName, formatted, getExtrinsics, getTransfers]);
+  }, [address, chainName, getExtrinsics, getTransfers]);
 
   return {
     allHistories,
