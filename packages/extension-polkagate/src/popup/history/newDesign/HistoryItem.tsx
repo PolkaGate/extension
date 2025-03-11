@@ -6,7 +6,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, Login, Logout, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
+import { ArrowCircleUp2, ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, Logout, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
@@ -42,12 +42,12 @@ const HistoryIcon = ({ action }: { action: string }) => {
     governance: <MedalStar color='#AA83DC' size='22' />,
     nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
-    proxy: <Data color='#AA83DC' size='22' />,
-    receive: <Login color='#82FFA5' size='22' variant='Bold' />,
+    proxy: <Data color='#AA83DC' size='20' />,
+    receive: <ArrowCircleUp2 color='#82FFA5' size='22' variant='Bold' />,
     reward: <Money color='#82FFA5' size='22' />,
     send: <Logout color='#AA83DC' size='22' />,
     'solo staking': <Strongbox color='#AA83DC' size='26' />,
-    utility: <ShoppingBag color='#AA83DC' size='26' />
+    utility: <ShoppingBag color='#AA83DC' size='22' />
   };
 
   return actionIcons[normalizedAction] || DEFAULT_ICON;
@@ -64,12 +64,12 @@ const historyIconBgColor = (action: string) => {
     governance: '#6743944D',
     nay: '#6743944D',
     'pool staking': '#6743944D',
-    proxy: '#6743944D',
+    proxy: 'transparent',
     receive: '#82FFA540',
     reward: '#82FFA540',
     send: 'transparent',
     'solo staking': '#6743944D',
-    utility: '#6743944D'
+    utility: 'transparent'
   } as const;
 
   return actionColors[normalizedAction] || '#6743944D';
@@ -194,8 +194,8 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, sh
         </Grid>
         : <Grid alignItems='center' columnGap='4px' container item justifyContent='center' width='fit-content'>
           {success
-            ? <TickCircle color='#FF8A65' size='18' variant='Bold' />
-            : <CloseCircle color='#FF8A65' size='18' variant='Bold' />
+            ? <TickCircle color='#82FFA5' size='15' variant='Bold' />
+            : <CloseCircle color='#FF8A65' size='15' variant='Bold' />
           }
           <Typography color={success ? '#82FFA5' : '#FF4FB9'} variant='B-4'>
             {success ? t('Completed') : t('Failed')}

@@ -234,7 +234,7 @@ function DropSelect ({ defaultValue, disabled, displayContentType = 'text', onCh
                 />
               </>
             }
-            <Typography color='#AA83DC' variant='B-1'>
+            <Typography color='text.secondary' variant='B-1'>
               {selectedValueText ?? defaultValueText}
             </Typography>
           </Grid>

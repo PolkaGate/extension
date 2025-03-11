@@ -41,5 +41,7 @@ export async function getTxTransfers (chainName: string, address: string, pageNu
     row: pageSize
   });
 
+  transferRequest.for = `${address} - ${chainName}`;
+
   return transferRequest;
 }
