@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import { useMemo, useState } from 'react';
-import { objectSpread, u8aToHex } from '@polkadot/util';
-import { GenericExtrinsicPayload, Option, u32 } from "@polkadot/types";
-import type { OpaqueMetadata } from "@polkadot/types/interfaces";
+import type { GenericExtrinsicPayload, Option, u32 } from '@polkadot/types';
+import type { OpaqueMetadata } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
+
+import { useMemo, useState } from 'react';
+
+import { objectSpread, u8aToHex } from '@polkadot/util';
 import { merkleizeMetadata } from '@polkadot-api/merkleize-metadata';
 
 export interface MetadataProof {

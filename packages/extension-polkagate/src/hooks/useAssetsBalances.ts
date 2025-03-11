@@ -113,7 +113,7 @@ const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
 export const isUpToDate = (date?: number): boolean | undefined => date ? Date.now() - date < BALANCE_VALIDITY_PERIOD : undefined;
 
-function allHexToBN(balances: object | string | undefined): BalancesDetails | object {
+function allHexToBN (balances: object | string | undefined): BalancesDetails | object {
   if (!balances) {
     return {};
   }
@@ -141,7 +141,7 @@ const FUNCTIONS = ['getAssetOnRelayChain', 'getAssetOnAssetHub', 'getAssetOnMult
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances(accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
 
   const isTestnetEnabled = useIsTestnetEnabled();

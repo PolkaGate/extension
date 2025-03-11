@@ -38,6 +38,7 @@ export const getAssetHubByChainName = (chainName?: string) => {
 export default function useReferendum(address: AccountId | string | undefined, type: TopMenu | undefined, id: number | undefined, refresh?: boolean, getOnChain?: boolean, isConcluded?: boolean, withoutOnChainVoteCounts = false): Referendum | undefined {
   const chainName = useChainName(address);
   const api = useApi(address);
+
   const assetHubApi = useApiWithChain2(getAssetHubByChainName(chainName) as Chain);
 
   const [referendum, setReferendum] = useState<Referendum>();

@@ -291,7 +291,12 @@ function TokensAssetsBox () {
         totalBalancePrice: sum.totalBalancePrice + calcPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal)
       }), { totalBalanceBN: BN_ZERO, totalBalancePrice: 0 });
 
-      const network = selectableNetworks.find(({ symbols }) => symbols[0]?.toLowerCase() === token.toLowerCase());
+      const network = selectableNetworks.find(({ displayName, symbols }) => {
+        const isExcluded = /Asset Hub|People/.test(displayName);
+        const matchesToken = symbols[0]?.toLowerCase() === token.toLowerCase();
+  
+        return !isExcluded && matchesToken;
+      });
       const priceId = assets[0].priceId;
 
       const sortedAssets = assets.sort((a, b) => {
@@ -300,6 +305,7 @@ function TokensAssetsBox () {
 
         return totalPriceB - totalPriceA;
       });
+
       let genesisHash: string | undefined;
       let logoInfo: LogoInfo | undefined;
       let decimal: number | undefined;

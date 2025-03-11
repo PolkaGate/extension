@@ -4,5 +4,10 @@
 import baseConfig from '@polkadot/dev/config/eslint';
 
 export default [
-  ...baseConfig
+  ...baseConfig,
+  {
+    rules: {
+      'react/jsx-max-props-per-line': 'off'
+    }
+  }
 ];
