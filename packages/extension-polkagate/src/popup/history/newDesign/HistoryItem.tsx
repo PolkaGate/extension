@@ -42,12 +42,12 @@ const HistoryIcon = ({ action }: { action: string }) => {
     governance: <MedalStar color='#AA83DC' size='22' />,
     nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
-    proxy: <Data color='#AA83DC' size='22' />,
+    proxy: <Data color='#AA83DC' size='20' />,
     receive: <Login color='#82FFA5' size='22' variant='Bold' />,
     reward: <Money color='#82FFA5' size='22' />,
     send: <Logout color='#AA83DC' size='22' />,
     'solo staking': <Strongbox color='#AA83DC' size='26' />,
-    utility: <ShoppingBag color='#AA83DC' size='26' />
+    utility: <ShoppingBag color='#AA83DC' size='22' />
   };
 
   return actionIcons[normalizedAction] || DEFAULT_ICON;
@@ -64,12 +64,12 @@ const historyIconBgColor = (action: string) => {
     governance: '#6743944D',
     nay: '#6743944D',
     'pool staking': '#6743944D',
-    proxy: '#6743944D',
+    proxy: 'transparent',
     receive: '#82FFA540',
     reward: '#82FFA540',
     send: 'transparent',
     'solo staking': '#6743944D',
-    utility: '#6743944D'
+    utility: 'transparent'
   } as const;
 
   return actionColors[normalizedAction] || '#6743944D';
