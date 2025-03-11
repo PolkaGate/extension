@@ -54,7 +54,7 @@ const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; })
           {t('Extrinsics')}
         </Typography>
         <Collapse collapsedSize={26} in={open} sx={{ width: 'fit-content' }}>
-          <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', rowGap: '3px' }}>
+          <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'column', rowGap: '3px' }}>
             {calls.map((call) => (
               <Typography color='text.secondary' key={call} sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
                 {call}
