@@ -154,7 +154,7 @@ export interface TxResult {
 export interface TransactionDetail extends TxResult {
   action: string; // send, solo staking, pool staking, convictionvoting, ...
   amount?: string;
-  chain?: Chain;
+  chain?: Chain | null;
   decimal?: number;
   date: number;
   from: NameAddress;
@@ -290,7 +290,7 @@ export interface Extrinsics {
   delegatee?: string;
   poolId?: string;
   nominators?: string[];
-  to?: NameAddress;
+  to?: string;
   to_account_display?: AccountDisplay;
   calls?: string[];
 }
