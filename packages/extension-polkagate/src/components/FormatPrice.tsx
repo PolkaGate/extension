@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
@@ -212,7 +210,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
           : <Skeleton
             animation='wave'
             height={skeletonHeight}
-            sx={{ fontWeight: 'bold', transform: 'none', width }}
+            sx={{ borderRadius: '14px', fontWeight: 'bold', transform: 'none', width }}
             variant='text'
           />
       }

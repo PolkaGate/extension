@@ -6,24 +6,28 @@
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { TransitionProps } from '@mui/material/transitions';
 import type { OverridableStringUnion } from '@mui/types';
-import type { Icon } from 'iconsax-react';
 
 import { Box, Container, Dialog, Grid, Slide, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
+import { ArrowCircleLeft, type Icon } from 'iconsax-react';
 import React from 'react';
 
+import { useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
 
 export interface Props {
+  TitleIcon?: Icon;
   children: React.ReactNode;
   handleClose?: () => void;
-  openMenu: boolean;
-  TitleIcon?: Icon;
   iconSize?: number;
   iconColor?: string;
   iconVariant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone' | undefined;
-  title: string;
+  maxHeight?: string;
+  onBack?: () => void;
+  openMenu: boolean;
   pt?: number;
+  style?: SxProps<Theme>;
+  title: string;
   titleAlignment?: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   titleVariant?: OverridableStringUnion<Variant, TypographyPropsVariantOverrides> | undefined;
@@ -32,14 +36,15 @@ export interface Props {
   withoutTopBorder?: boolean;
   withGradientBorder?: boolean;
   withoutBackground?: boolean;
-  style?: SxProps<Theme>;
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
+function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+
   return (
     <Dialog
       PaperProps={{
@@ -68,18 +73,29 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
         </Grid>
         <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
+          {!!onBack &&
+            <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', zIndex: 2 }}>
+              <ArrowCircleLeft
+                color='#FF4FB9'
+                size='24'
+                variant='Bulk'
+              />
+              <Typography color='#EAEBF1' variant='B-1' ml='4px'>
+                {t('Back')}
+              </Typography>
+            </Grid>}
           <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p='10px'>
             {TitleIcon
               ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />
               : undefined
             }
-            <Typography color='text.primary' sx={{ ...titleStyle }} textTransform='uppercase' variant={titleVariant}>
+            <Typography color='text.primary' sx={{ ...titleStyle, zIndex: 2 }} textTransform='uppercase' variant={titleVariant}>
               {title}
             </Typography>
           </Grid>
           {!withoutTopBorder && <GradientDivider />}
           {!withoutBackground && <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />}
-          <Box sx={{ maxHeight: '440px', overflow: 'scroll', position: 'relative', width: '100%' }}>
+          <Box sx={{ maxHeight, overflow: 'scroll', position: 'relative', width: '100%' }}>
             {children}
           </Box>
         </Grid>

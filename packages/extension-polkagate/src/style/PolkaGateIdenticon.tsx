@@ -199,4 +199,4 @@ const PolkaGateIdenticon = ({ address, size = 32 }: Props) => {
   );
 };
 
-export default PolkaGateIdenticon;
+export default React.memo(PolkaGateIdenticon);

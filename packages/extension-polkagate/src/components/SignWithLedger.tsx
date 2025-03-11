@@ -13,9 +13,11 @@ import type { TxResult } from '../util/types';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { useAccount, useTranslation } from '../hooks';
-import LedgerSign from '../popup/signing/LedgerSign';
-import LedgerSignGeneric from '../popup/signing/LedgerSignGeneric';
+import LedgerSign from '../popup/signing/ledger/LedgerSign';
+import LedgerSignGeneric from '../popup/signing/ledger/LedgerSignGeneric';
 import { send } from '../util/api';
 import { PButton, Warning } from '.';
 
@@ -34,7 +36,7 @@ interface Props {
   handleTxResult: (txResult: TxResult) => void
 }
 
-export default function SignWithLedger({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
+export default function SignWithLedger ({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -79,24 +81,23 @@ export default function SignWithLedger({ address, alertText, api, from, handleTx
         <Grid item sx={{ 'button': { m: 0, width: '100%' }, mt: '80px', position: 'relative', width: '70%' }} xs={8}>
           {account?.isGeneric || account?.isMigration
             ? <LedgerSignGeneric
-              accountIndex={account?.accountIndex as number || 0}
-              address={address}
-              addressOffset={account?.addressOffset as number || 0}
-              error={error as string}
+              account={account}
+              error={error}
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onSignature={onLedgerGenericSignature}
               payload={signerPayload}
               setError={setError}
-              showError={false}
+              onCancel={noop} // TODO: should be fixed later
             />
-            : <LedgerSign
-              accountIndex={account?.accountIndex as number || 0}
-              addressOffset={account?.addressOffset as number || 0}
-              error={error as string}
-              genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
-              onSignature={onSignature}
+            : account && <LedgerSign
+              account={account}
+              error={error}
+              onCancel={noop} // TODO: should be fixed later
               payload={payload}
               setError={setError}
-              showError={false}
+              genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              onSignature={onSignature}
             />
           }
         </Grid>

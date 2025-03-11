@@ -90,3 +90,17 @@
   font-weight: 100 900;  
   font-style: italic;  
 }
+
+@font-face {
+  font-family: 'JetBrainsMono';
+  src: url('./JetBrainsMono-VariableFont_wght.ttf') format('truetype'); 
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JetBrainsMono';
+  src: url('./JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;  
+  font-style: italic;  
+}

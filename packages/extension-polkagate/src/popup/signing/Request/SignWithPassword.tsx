@@ -1,30 +1,33 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { Grid } from '@mui/material';
+import type { JSX } from 'react';
+import type { Balance } from '@polkadot/types/interfaces';
+
+import { Grid, Typography } from '@mui/material';
+import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { PASSWORD_EXPIRY_MIN } from '@polkadot/extension-base/defaults';
-
-import { ActionContext, Checkbox2 as Checkbox, PButton } from '../../../components';
+import { ActionContext, DecisionButtons, PasswordInput } from '../../../components';
+import { useCanPayFee } from '../../../hooks/index';
 import useTranslation from '../../../hooks/useTranslation';
 import { approveSignPassword, isSignLocked } from '../../../messaging';
-import Unlock from '../Unlock';
 
 interface Props {
-  buttonText: string;
   error: string | null;
-  isExternal?: boolean;
   isFirst: boolean;
   isSignable: boolean;
   setError: (value: string | null) => void;
   signId: string;
+  onCancel: () => void;
+  address: string;
+  fee?: Balance;
 }
 
-export default function SignArea({ buttonText, error, isExternal, isFirst, isSignable, setError, signId }: Props): JSX.Element {
+export default function SignArea ({ address, error, fee, isFirst, isSignable, onCancel, setError, signId }: Props): JSX.Element {
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
+  const canPayFee = useCanPayFee(address, fee);
 
   const [savePass, setSavePass] = useState(false);
   const [isLocked, setIsLocked] = useState<boolean | null>(null);
@@ -33,9 +36,10 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
 
   useEffect(() => {
     setIsLocked(null);
+    // eslint-disable-next-line no-undef
     let timeout: NodeJS.Timeout;
 
-    !isExternal && isSignLocked(signId)
+    isSignLocked(signId)
       .then(({ isLocked, remainingTime }) => {
         setIsLocked(isLocked);
         timeout = setTimeout(() => {
@@ -51,7 +55,7 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
     return () => {
       !!timeout && clearTimeout(timeout);
     };
-  }, [isExternal, signId]);
+  }, [signId]);
 
   const _onSign = useCallback(
     (): void => {
@@ -70,21 +74,28 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
     [onAction, password, savePass, setError, setIsBusy, signId]
   );
 
+  const onPassChange = useCallback(
+    (password: string): void => {
+      setPassword(password);
+      setError(null);
+    },
+    [setError, setPassword]
+  );
+
   return (
-    <Grid>
-      {isSignable && isFirst && !isExternal && (
-        <>
+    <>
+      {isSignable && isFirst && (
+        <Grid container item>
           {isLocked && (
-            <Unlock
-              error={error}
-              isBusy={isBusy}
-              onSign={_onSign}
-              password={password}
-              setError={setError}
-              setPassword={setPassword}
+            <PasswordInput
+              focused
+              hasError={!!error}
+              onEnterPress={_onSign}
+              onPassChange={onPassChange}
+              title={t('Your Password')}
             />
           )}
-          <Grid item>
+          {/* <Grid item>
             <Checkbox
               checked={savePass}
               label={isLocked
@@ -101,15 +112,27 @@ export default function SignArea({ buttonText, error, isExternal, isFirst, isSig
               onChange={() => setSavePass(!savePass)}
               style={{ ml: '10px', mt: '5px' }}
             />
-          </Grid>
-          <PButton
-            _isBusy={isBusy}
-            _onClick={_onSign}
+          </Grid> */}
+          {canPayFee === false &&
+            <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
+              <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
+              <Typography color='#EAEBF1' variant='B-4'>
+                {t('Insufficient balance to cover the transaction fee')}
+              </Typography>
+            </Grid>
+          }
+          <DecisionButtons
+            direction='vertical'
             disabled={(!!isLocked && !password) || !!error}
-            text={buttonText}
+            isBusy={isBusy}
+            onPrimaryClick={_onSign}
+            onSecondaryClick={onCancel}
+            primaryBtnText={t('Approve')}
+            secondaryBtnText={t('Cancel')}
+            style={{ bottom: '0px', position: 'absolute' }}
           />
-        </>
+        </Grid>
       )}
-    </Grid>
+    </>
   );
 }

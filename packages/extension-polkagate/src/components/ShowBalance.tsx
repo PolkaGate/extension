@@ -36,7 +36,7 @@ export default function ShowBalance({ api, balance, decimal = undefined, decimal
           ? <Skeleton
             animation='wave'
             height={height}
-            sx={{ display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
+            sx={{ borderRadius: '14px', display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
           />
           : decimal && token
             ? <FormatBalance2

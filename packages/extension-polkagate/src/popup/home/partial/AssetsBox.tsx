@@ -58,11 +58,9 @@ function AssetsBox (): React.ReactElement {
   const nothingToShow = accountAssets === null;
 
   useEffect(() => {
-    if (tab) {
-      window.localStorage.setItem('HomeTab', tab);
-    } else {
-      setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.TOKENS);
-    }
+    tab
+      ? window.localStorage.setItem('HomeTab', tab)
+      : setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.TOKENS);
   }, [tab]);
 
   const renderContent = useCallback(() => {

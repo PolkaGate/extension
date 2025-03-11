@@ -1,31 +1,30 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Icon } from 'iconsax-react';
 
-import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
+import { loader } from '../assets/gif';
 import { useIsDark } from '../hooks';
 
 /**
  * Props for the GradientButton component.
  */
 export interface Props {
+  EndIcon?: Icon;
+  contentPlacement?: 'start' | 'center' | 'end';
   disabled?: boolean;
+  endIconNode?: React.ReactNode;
+  isBusy?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
   startIconSize?: number;
   startIconNode?: React.ReactNode;
-  EndIcon?: Icon;
-  endIconNode?: React.ReactNode;
   text: string;
-  contentPlacement?: 'start' | 'center' | 'end';
   style?: React.CSSProperties;
 }
 
@@ -45,7 +44,7 @@ export interface Props {
  *
  * @returns {React.ReactElement} The rendered gradient button.
  */
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, onClick, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
+export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
 
@@ -107,9 +106,28 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
       {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
       {startIconNode && startIconNode}
-      <Typography color={isDark ? '#FFFFFF' : '#EAEBF1'} sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10 }} variant='B-2'>
-        {text}
-      </Typography>
+      {isBusy
+        ? <Box
+          component='img'
+          src={loader as string}
+          sx={{
+            animation: 'spin 1.5s linear infinite',
+            height: '42px',
+            zIndex: 2,
+            '@keyframes spin': {
+              '0%': {
+                transform: 'rotate(0deg)'
+              },
+              '100%': {
+                transform: 'rotate(360deg)'
+              }
+            }
+          }}
+        />
+        : <Typography color={isDark ? '#FFFFFF' : '#EAEBF1'} sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10 }} variant='B-2'>
+          {text}
+        </Typography>
+      }
       {EndIcon && <EndIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
       {endIconNode && endIconNode}
       <Grid sx={GradientBackground}></Grid>

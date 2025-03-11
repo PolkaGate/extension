@@ -917,6 +917,7 @@ export interface FetchedBalance {
   lockedBalance?: BN,
   vestingLocked?: BN,
   vestedClaimable?: BN,
+  vestedBalance?: BN,
   vestingTotal?: BN,
   freeBalance?: BN,
   frozenBalance: BN,

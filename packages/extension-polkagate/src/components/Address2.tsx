@@ -8,15 +8,20 @@ import type { Variant } from '@mui/material/styles/createTypography';
 import { Stack, type SxProps, Typography } from '@mui/material';
 import React, { } from 'react';
 
-import { useTranslation } from '../hooks';
+import { useAccountName, useTranslation } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
+import { toTitleCase } from '../util';
 import { ShortAddress } from '.';
 
 interface Props {
   address: string;
+  charsCount?: number;
+  identiconSize?: number;
   label?: string;
   labelMarginTop?: string;
   name?: string;
+  inTitleCase?: boolean;
+  showCopy?: boolean;
   style?: SxProps;
   variant?: Variant;
   showAddress?: boolean;
@@ -35,8 +40,9 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2 ({ address, label, labelMarginTop, name, showAddress, style = {}, variant }: Props): React.ReactElement {
+function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const accountName = useAccountName(address || '');
 
   return (
     <Stack alignItems='center' direction='column' sx={{ rowGap: '10px', width: '100%' }}>
@@ -47,17 +53,20 @@ function Address2 ({ address, label, labelMarginTop, name, showAddress, style = 
       <Stack alignItems='center' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
         <PolkaGateIdenticon
           address={address}
-          size={24}
+          size={identiconSize}
         />
         <Stack justifyContent='flex-start' sx={{ overflowX: 'scroll', width: '100%' }}>
           <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
-            {name || t('Unknown')}
+            {inTitleCase
+              ? toTitleCase(accountName || name || t('Unknown'))
+              : accountName || name || t('Unknown')
+            }
           </Typography>
           {showAddress &&
             <ShortAddress
               address={address}
-              charsCount={5}
-              showCopy
+              charsCount={charsCount}
+              showCopy={showCopy}
               style={{ color: 'text.secondary', justifyContent: 'flex-start' }}
               variant={(variant || 'B-4') as Variant}
             />}

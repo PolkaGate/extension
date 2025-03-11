@@ -10,19 +10,20 @@ import { ActionButton, GradientButton, GradientDivider, NeonButton } from '.';
 
 interface Props {
   arrow?: boolean;
+  cancelButton?: boolean;
+  direction?: 'horizontal' | 'vertical';
+  disabled?: boolean;
+  divider?: boolean;
+  flexibleWidth?: boolean;
+  isBusy?: boolean | undefined;
   onPrimaryClick: () => void;
   onSecondaryClick: () => void;
   primaryBtnText: string;
   secondaryBtnText: string;
-  disabled?: boolean;
-  cancelButton?: boolean;
   style?: SxProps<Theme>;
-  divider?: boolean;
-  flexibleWidth?: boolean;
-  direction?: 'horizontal' | 'vertical';
 }
 
-function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, style }: Props): React.ReactElement {
+function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, style }: Props): React.ReactElement {
   const theme = useTheme();
 
   const { primaryWidth, secondaryWidth } = useMemo(() => {
@@ -70,6 +71,7 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
         endIconNode={arrow
           ? <ArrowForwardIosRoundedIcon sx={{ color: 'text.primary', fontSize: '13px', stroke: `${theme.palette.text.primary}`, strokeWidth: 1.1, zIndex: 10 }} />
           : undefined}
+        isBusy={isBusy}
         onClick={onPrimaryClick}
         style={{ flex: flexibleWidth ? 1 : 'none', height: '48px', width: primaryWidth }}
         text={primaryBtnText}
