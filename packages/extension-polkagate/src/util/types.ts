@@ -242,6 +242,7 @@ export interface TransferRequest {
   };
   generated_at: number;
   message: string;
+  for: string;
 }
 
 export interface ExtrinsicsRequest {
@@ -252,6 +253,7 @@ export interface ExtrinsicsRequest {
   };
   generated_at: number;
   message: string;
+  for: string;
 }
 
 export interface TipsRequest {

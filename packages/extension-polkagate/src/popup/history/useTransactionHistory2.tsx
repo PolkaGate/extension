@@ -197,6 +197,14 @@ export default function useTransactionHistory (address: AccountId | string | und
     received: false
   });
 
+  const requested = useMemo(() => {
+    if (!address || !chainName) {
+      return undefined;
+    }
+
+    return `${String(address)} - ${chainName}`;
+  }, [address, chainName]);
+
   // Detect changes in address or genesisHash to reset state
   useEffect(() => {
     const addressChanged = String(address) !== prevAddressRef.current;
@@ -465,8 +473,8 @@ export default function useTransactionHistory (address: AccountId | string | und
 
       filteredHistories = allHistories.filter(({ action }) => (
         (filterOptions.transfers && ['balances'].includes(action.toLowerCase())) ||
-                (filterOptions.governance && ['governance'].includes(action)) ||
-                (filterOptions.staking && ['solo staking', 'pool staking'].includes(action))
+        (filterOptions.governance && ['governance'].includes(action)) ||
+        (filterOptions.staking && ['solo staking', 'pool staking'].includes(action))
       ));
       log(`Filtered transactions: ${filteredCount} -> ${filteredHistories.length}`);
     }
@@ -510,6 +518,11 @@ export default function useTransactionHistory (address: AccountId | string | und
 
     try {
       const res = await getTXsHistory(chainName, String(address), pageNum, chain.ss58Format);
+
+      if (!requested || !res || res.for !== requested) {
+        return;
+      }
+
       const { count = 0, extrinsics = [] } = res.data || {};
       const nextPageNum = pageNum + 1;
       const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
@@ -529,7 +542,7 @@ export default function useTransactionHistory (address: AccountId | string | und
         isFetching: false
       });
     }
-  }, [chain, chainName, setExtrinsicsTx, address]);
+  }, [chain, chainName, setExtrinsicsTx, address, requested]);
 
   // Fetch transfer transactions
   const getTransfers = useCallback(async (currentState: RecordTabStatus): Promise<void> => {
@@ -556,6 +569,11 @@ export default function useTransactionHistory (address: AccountId | string | und
 
     try {
       const res = await getTxTransfers(chainName, String(address), pageNum, SINGLE_PAGE_SIZE);
+
+      if (!requested || !res || res.for !== requested) {
+        return;
+      }
+
       const { count = 0, transfers = [] } = res.data || {};
       const nextPageNum = pageNum + 1;
       const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
@@ -576,7 +594,7 @@ export default function useTransactionHistory (address: AccountId | string | und
         transactions: []
       });
     }
-  }, [address, chainName, setTransfersTx]);
+  }, [address, chainName, requested, setTransfersTx]);
 
   // Initialize data loading for a new address/chain
   useEffect(() => {
