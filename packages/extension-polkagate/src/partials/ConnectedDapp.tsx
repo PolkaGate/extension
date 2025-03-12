@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
+import type { AuthorizeRequestHandlerProp } from '../popup/authorize';
 
 import { Avatar, Container, Grid, Typography } from '@mui/material';
 import { ArrowSwapHorizontal, MonitorMobbile, User } from 'iconsax-react';
@@ -11,8 +12,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { AccountContext, DecisionButtons, ExtensionPopup, GradientDivider, GradientSwitch } from '../components';
 import { sortAccounts } from '../components/AccountsTable';
-import { useTranslation } from '../hooks';
-import { getAuthList, updateAuthorization } from '../messaging';
+import { useFavIcon, useTranslation } from '../hooks';
+import { approveAuthRequest, getAuthList, ignoreAuthRequest, updateAuthorization } from '../messaging';
+import TransactionIndex from '../popup/signing/TransactionIndex';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { extractBaseUrl, noop } from '../util/utils';
 
@@ -21,11 +23,11 @@ interface Tab {
   favIconUrl?: string;
 }
 
-const DappInfo = ({ dappName, favicon }: { favicon?: string, dappName: string }) => {
+const DappInfo = ({ dappName, favicon }: { favicon?: string | null; dappName?: string; }) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '14px', display: 'flex', justifyContent: 'center', my: '15px', p: '4px', width: '90%' }}>
       <Avatar
-        src={favicon}
+        src={favicon ?? undefined}
         sx={{
           borderRadius: '10px',
           height: '32px',
@@ -44,22 +46,27 @@ const DappInfo = ({ dappName, favicon }: { favicon?: string, dappName: string })
 
 interface ConnectedAccountsProps {
   closePopup: () => void;
-  dappInfo: AuthUrlInfo;
+  dappInfo?: AuthUrlInfo;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  requestId: string | undefined;
+  hasBanner: boolean;
 }
 
-function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccountsProps) {
+function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, requestId, setRefresh }: ConnectedAccountsProps) {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
-  const allAccounts = dappInfo.authorizedAccounts;
-  const noChanges = selectedAccounts.length === allAccounts.length;
+
+  const allAddresses = useMemo(() => accounts.map(({ address }) => address), [accounts]);
+
+  const allAccounts = dappInfo?.authorizedAccounts ?? allAddresses;
+  const noChanges = (!dappInfo && !selectedAccounts.length) ?? selectedAccounts.length === allAccounts.length;
   const isAllSelected = accounts.every(({ address }) => selectedAccounts.includes(address));
 
   useEffect(() => {
-    setSelectedAccounts(allAccounts);
-  }, [allAccounts]);
+    dappInfo && setSelectedAccounts(allAccounts);
+  }, [allAccounts, dappInfo]);
 
   // Sort only on the first render, store result in a ref
   const sortedAccountsRef = useRef<AccountJson[] | null>(null);
@@ -97,22 +104,38 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
     setSelectedAccounts(isAllSelected ? [] : accountsToShow.map(({ address }) => address));
   }, [accountsToShow, isAllSelected]);
 
-  const handleButtons = useCallback((isApplying: boolean) => () => {
+  const handleButtons = useCallback((handle: 'update' | 'ignore' | 'approve' | 'disconnect') => () => {
     // If there are no authorized accounts, it means the dApp is rejected.
     // To allow access, authorized accounts must be added.
-    const accountsToAuthorize = isApplying ? selectedAccounts : [];
+    const accountsToAuthorize = ['update', 'approve'].includes(handle) ? selectedAccounts : [];
 
-    updateAuthorization(accountsToAuthorize, dappInfo.id)
-      .then(() => {
-        setRefresh(true);
-        closePopup();
-      })
-      .catch(console.error);
-  }, [selectedAccounts, dappInfo.id, setRefresh, closePopup]);
+    if (handle === 'approve') {
+      approveAuthRequest(accountsToAuthorize, requestId ?? '')
+        .then(() => {
+          setRefresh(true);
+          closePopup();
+        })
+        .catch((error: Error) => console.error(error));
+    } else if (handle === 'ignore') {
+      ignoreAuthRequest(requestId ?? '')
+        .then(() => {
+          setRefresh(true);
+          closePopup();
+        })
+        .catch((error: Error) => console.error(error));
+    } else {
+      updateAuthorization(accountsToAuthorize, dappInfo?.id ?? '')
+        .then(() => {
+          setRefresh(true);
+          closePopup();
+        })
+        .catch(console.error);
+    }
+  }, [selectedAccounts, dappInfo?.id, requestId, setRefresh, closePopup]);
 
   return (
     <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1 }}>
-      <Grid container item sx={{ height: '275px', pb: '10px' }}>
+      <Grid container item sx={{ height: 'fit-content', pb: '10px' }}>
         <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
           <Grid alignItems='center' container item justifyContent='space-between' p='10px 15px'>
             <Grid container item sx={{ columnGap: '8px', width: 'fit-content' }}>
@@ -131,7 +154,7 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: '215px', overflowY: 'scroll', p: '8px 12px', width: '100%' }}>
+          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '215px', overflowY: 'scroll', p: '8px 12px', width: '100%' }}>
             {accountsToShow.map(({ address, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 
@@ -164,24 +187,25 @@ function ConnectedAccounts ({ closePopup, dappInfo, setRefresh }: ConnectedAccou
         disabled={noChanges}
         divider
         flexibleWidth
-        onPrimaryClick={handleButtons(true)}
-        onSecondaryClick={handleButtons(false)}
+        onPrimaryClick={handleButtons(requestId ? 'approve' : 'update')}
+        onSecondaryClick={handleButtons(requestId ? 'ignore' : 'disconnect')}
         primaryBtnText={t('Apply')}
-        secondaryBtnText={t('Disconnect all')}
+        secondaryBtnText={t(requestId ? 'Ignore' : 'Disconnect all')}
       />
     </Grid>
   );
 }
 
-export default function ConnectedDapp (): React.ReactElement {
+export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean | undefined>(undefined);
-  const [favIconUrl, setFavIconUrl] = useState<string | undefined>(undefined);
   const [dapp, setDapp] = useState<AuthUrlInfo | undefined>(undefined);
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
+
+  const favIconUrl = useFavIcon(dapp?.url ?? authorizeRequestHandler?.request?.url);
 
   const checkTab = useCallback(async () => {
     setChecking(true);
@@ -189,21 +213,35 @@ export default function ConnectedDapp (): React.ReactElement {
     try {
       const { list: authList } = await getAuthList();
 
-      const [tab] = await new Promise<Tab[]>((resolve) =>
-        chrome.tabs.query({ active: true, currentWindow: true }, resolve)
-      );
+      let authDappUrl: string | undefined;
 
-      if (!tab?.url) {
+      if (authorizeRequestHandler?.request?.url) {
+        authDappUrl = authorizeRequestHandler?.request?.url;
+      } else {
+        const [tab] = await new Promise<Tab[]>((resolve) =>
+          chrome.tabs.query({ active: true, currentWindow: true }, resolve)
+        );
+
+        authDappUrl = tab.url;
+      }
+
+      if (!authDappUrl) {
         setIsConnected(false);
 
         return;
       }
 
-      const availableDapp = Object.values(authList).find(({ url }) => extractBaseUrl(tab.url) === extractBaseUrl(url));
+      const availableDapp = Object.values(authList).find(({ url }) => extractBaseUrl(authDappUrl) === extractBaseUrl(url));
 
-      setDapp(availableDapp);
+      if (!availableDapp) {
+        setOpenMenu(true);
+
+        return;
+      } else {
+        setDapp(availableDapp);
+      }
+
       setIsConnected(!!availableDapp);
-      setFavIconUrl(tab.favIconUrl);
     } catch (error) {
       console.error('Error checking tab:', error);
       setIsConnected(false);
@@ -211,7 +249,7 @@ export default function ConnectedDapp (): React.ReactElement {
       setChecking(false);
       setRefresh(false);
     }
-  }, []);
+  }, [authorizeRequestHandler?.request?.url]);
 
   useEffect(() => {
     if ((isConnected === undefined && !checking && favIconUrl === undefined) || refresh) {
@@ -224,24 +262,28 @@ export default function ConnectedDapp (): React.ReactElement {
   }, [dapp]);
 
   const closePopup = useCallback(() => {
-    setOpenMenu(false);
-  }, []);
+    authorizeRequestHandler?.request?.id && ignoreAuthRequest(authorizeRequestHandler?.request?.id)
+      .catch((error: Error) => console.error(error));
 
-  if (isConnected === undefined || !dapp) {
+    setOpenMenu(false);
+  }, [authorizeRequestHandler?.request?.id]);
+
+  if (!authorizeRequestHandler && !dapp) {
     return <></>;
   }
 
   return (
     <>
-      <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-        <ArrowSwapHorizontal color='#82FFA5' size='15' style={{ background: '#BFA1FF26' }} />
-        <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: '#82FFA533', border: '2px solid', borderColor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
-          <MonitorMobbile color='#82FFA5' size='22' variant='Bulk' />
-          <Typography color='#82FFA5' fontFamily='Inter' fontSize='14px' fontWeight={700}>
-            {dapp.authorizedAccounts.length}
-          </Typography>
-        </Grid>
-      </Container>
+      {!authorizeRequestHandler &&
+        <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
+          <ArrowSwapHorizontal color='#82FFA5' size='15' style={{ background: '#BFA1FF26' }} />
+          <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: '#82FFA533', border: '2px solid', borderColor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
+            <MonitorMobbile color='#82FFA5' size='22' variant='Bulk' />
+            <Typography color='#82FFA5' fontFamily='Inter' fontSize='14px' fontWeight={700}>
+              {dapp?.authorizedAccounts.length}
+            </Typography>
+          </Grid>
+        </Container>}
       <ExtensionPopup
         TitleIcon={MonitorMobbile}
         handleClose={closePopup}
@@ -250,16 +292,25 @@ export default function ConnectedDapp (): React.ReactElement {
         withoutTopBorder
       >
         <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
-          <Typography color='text.secondary' variant='B-4'>
+          {authorizeRequestHandler?.hasBanner &&
+            <TransactionIndex
+              index={authorizeRequestHandler?.currentIndex}
+              onNextClick={authorizeRequestHandler?.onNext}
+              onPreviousClick={authorizeRequestHandler?.onPrevious}
+              totalItems={authorizeRequestHandler.totalRequests}
+            />}
+          <Typography color='text.secondary' pt={authorizeRequestHandler?.hasBanner ? '8px' : 0} variant='B-4'>
             {t('Here you can manage the current connections to your accounts')}
           </Typography>
           <DappInfo
-            dappName={dapp.id}
+            dappName={dapp?.id ?? authorizeRequestHandler?.request?.request.origin}
             favicon={favIconUrl}
           />
           <ConnectedAccounts
             closePopup={closePopup}
             dappInfo={dapp}
+            hasBanner={Boolean(authorizeRequestHandler?.hasBanner)}
+            requestId={authorizeRequestHandler?.request?.id}
             setRefresh={setRefresh}
           />
         </Grid>
