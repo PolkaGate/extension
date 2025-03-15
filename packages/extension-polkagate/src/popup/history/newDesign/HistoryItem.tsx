@@ -43,7 +43,7 @@ const HistoryIcon = ({ action }: { action: string }) => {
     nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
     proxy: <Data color='#AA83DC' size='20' />,
-    receive: <ArrowCircleUp2 color='#82FFA5' size='22' variant='Bold' />,
+    receive: <ArrowCircleUp2 color='#82FFA5' size='22' variant='Linear' />,
     reward: <Money color='#82FFA5' size='22' />,
     send: <Logout color='#AA83DC' size='22' />,
     'solo staking': <Strongbox color='#AA83DC' size='26' />,
