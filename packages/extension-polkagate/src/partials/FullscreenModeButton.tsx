@@ -1,14 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Box, Grid } from '@mui/material';
 import { Maximize4 } from 'iconsax-react';
 import React, { useCallback, useRef, useState } from 'react';
+import { useLocation } from 'react-router';
 
 import { Tooltip } from '../components';
-import { useIsDark, useTranslation } from '../hooks';
+import { useIsDark, useSelectedAccount, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
 interface Props {
@@ -19,13 +18,15 @@ function FullscreenModeButton ({ url = '/' }: Props) {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const buttonContainer = useRef(null);
+  const { pathname } = useLocation();
+  const account = useSelectedAccount();
 
   const [hovered, setHovered] = useState<boolean>(false);
 
   const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
   const open = useCallback(() => {
-    windowOpen(url).catch(console.error);
-  }, [url]);
+    windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/0` : url).catch(console.error);
+  }, [account, pathname, url]);
 
   const gradientBackgroundStyle = {
     '&::after': {
