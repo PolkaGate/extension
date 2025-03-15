@@ -81,8 +81,6 @@ export default function useNativeAssetBalances (address: string | undefined, ref
       isFetching.fetching[String(formatted)]['balances'] = true;
       isFetching.set(isFetching.fetching);
       getBalances();
-    } else {
-      console.info(`Balance is fetching for ${formatted}, hence doesn't need to fetch it again!`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
