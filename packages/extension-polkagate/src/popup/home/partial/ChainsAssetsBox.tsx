@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -12,7 +13,7 @@ import React, { memo, useCallback, useContext, useMemo } from 'react';
 import { selectableNetworks } from '@polkadot/networks';
 
 import { ActionContext, AssetLogo, FormatPrice } from '../../../components';
-import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
+import { usePrices } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import { TokenBalanceDisplay, TokenPriceInfo } from './TokensAssetsBox';
@@ -94,13 +95,8 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function ChainsAssetsBox () {
+function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
-
-  const account = useSelectedAccount();
-  const pricesInCurrency = usePrices();
-  const accountAssets = useAccountAssets(account?.address);
-  const selectedChains = useSelectedChains();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
@@ -183,7 +179,7 @@ function ChainsAssetsBox () {
               const showDivider = assetsDetail.assets.length !== index + 1;
 
               return (
-                <motion.div key={index} style={{ width: 'inherit' }} variants={itemVariants}>
+                <motion.div key={index} style={{ display: 'grid', rowGap: '6px', width: 'inherit' }} variants={itemVariants}>
                   <AssetsDetail asset={asset} />
                   {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', ml: '-10px', width: '325px' }} />}
                 </motion.div>

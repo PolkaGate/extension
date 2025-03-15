@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { safeBox, safeBoxLight } from '../../../assets/icons';
-import { useAccountAssets, useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useSelectedChains, useTranslation } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
@@ -51,6 +51,8 @@ const containerVariants = {
 function AssetsBox (): React.ReactElement {
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
+  const selectedChains = useSelectedChains();
+  const pricesInCurrency = usePrices();
 
   const [tab, setTab] = useState<TAB>();
 
@@ -68,7 +70,7 @@ function AssetsBox (): React.ReactElement {
       return <NFTBox />;
     }
 
-    if (isLoading || !tab || !account) {
+    if (isLoading || !tab || !account || !selectedChains || !pricesInCurrency) {
       return <AssetLoading />;
     }
 
@@ -84,15 +86,26 @@ function AssetsBox (): React.ReactElement {
           variants={containerVariants}
         >
           <Grid container item sx={{ borderRadius: '14px', display: 'grid', position: 'relative', rowGap: tab === TAB.TOKENS ? '5px' : '4px', zIndex: 1 }}>
-            {tab === TAB.CHAINS && <ChainsAssetsBox />}
-            {tab === TAB.TOKENS && <TokensAssetsBox />}
+            {tab === TAB.CHAINS &&
+              <ChainsAssetsBox
+                accountAssets={accountAssets}
+                pricesInCurrency={pricesInCurrency}
+                selectedChains={selectedChains}
+              />
+            }
+            {tab === TAB.TOKENS &&
+              <TokensAssetsBox
+                accountAssets={accountAssets}
+                pricesInCurrency={pricesInCurrency}
+                selectedChains={selectedChains}
+              />}
           </Grid>
         </motion.div>
       );
     }
 
     return <AssetLoading />;
-  }, [account, isLoading, nothingToShow, tab]);
+  }, [account, accountAssets, isLoading, nothingToShow, pricesInCurrency, selectedChains, tab]);
 
   return (
     <>

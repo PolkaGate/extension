@@ -5,6 +5,7 @@
 
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { Prices } from '../../../util/types';
 
 import { Badge, Collapse, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -15,7 +16,7 @@ import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
-import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
+import { useIsDark, usePrices } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import DailyChange from './DailyChange';
@@ -238,12 +239,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox () {
-  const account = useSelectedAccount();
-  const pricesInCurrency = usePrices();
-  const accountAssets = useAccountAssets(account?.address);
-  const selectedChains = useSelectedChains();
-
+function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const tokens: Assets = useMemo(() => {
@@ -294,7 +290,7 @@ function TokensAssetsBox () {
       const network = selectableNetworks.find(({ displayName, symbols }) => {
         const isExcluded = /Asset Hub|People/.test(displayName);
         const matchesToken = symbols[0]?.toLowerCase() === token.toLowerCase();
-  
+
         return !isExcluded && matchesToken;
       });
       const priceId = assets[0].priceId;
