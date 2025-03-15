@@ -14,7 +14,7 @@ import { bnToBn } from '@polkadot/util';
 import { Address2, ChainLogo, DecisionButtons, FormatBalance2, FormatPrice } from '../../../components';
 import { useAccountAssets, useChainInfo, useEstimatedFee2, useFavIcon, useMetadata, useTokenPrice2, useTranslation } from '../../../hooks';
 import { NATIVE_TOKEN_ASSET_ID } from '../../../util/constants';
-import { amountToHuman } from '../../../util/utils';
+import { amountToHuman, getSubstrateAddress } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import { type ModeData, SIGN_POPUP_MODE } from '../types';
 import RequestContent from './requestContent';
@@ -60,15 +60,17 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const faviconUrl = useFavIcon(dapp);
   const chain = useMetadata(genesisHash);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
-  const accountAssets = useAccountAssets(address);
+
+  const substrateAddress = getSubstrateAddress(address);
+
+  const accountAssets = useAccountAssets(substrateAddress);
   const specVersion = useRef(bnToBn(hexSpec)).current;
   const { price } = useTokenPrice2(genesisHash);
 
-  console.log('accountAssets:', address, accountAssets)
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
 
   const call = api && decoded?.method ? api.tx[decoded.method.section][decoded.method.method] : undefined;
-  const fee = useEstimatedFee2(genesisHash, address, call, decoded.method ? decoded.method.args : []);
+  const fee = useEstimatedFee2(genesisHash, substrateAddress, call, decoded.method ? decoded.method.args : []);
   const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === NATIVE_TOKEN_ASSET_ID);
 
   const onNext = useCallback(() => {
@@ -144,7 +146,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         <Typography color='#AA83DC' variant='B-1'>
           {t('Estimated Fee')}
         </Typography>
-        <Stack alignItems='center' columnGap='5px' direction='row'>
+        <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
           <FormatPrice
             commify
             decimalColor='#EAEBF1'
