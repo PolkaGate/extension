@@ -78,8 +78,8 @@ export default function EarningOptions(): React.ReactElement {
     setSelectedPosition(token);
   }, []);
 
-  const backHome = useCallback(() => {
-    onAction('/');
+  const onBack = useCallback(() => {
+    onAction('/stakingIndex/');
   }, [onAction]);
 
   return (
@@ -87,7 +87,7 @@ export default function EarningOptions(): React.ReactElement {
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
-          onClick={backHome}
+          onClick={onBack}
           style={{ pb: 0 }}
           text={t('Staking Options')}
         />
