@@ -1,19 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable curly */
 
 import type { Balance } from '@polkadot/types/interfaces';
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { BN } from '@polkadot/util';
+import type { BalancesInfo, CanPayFee } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
-import type { BalancesInfo, CanPayFee } from '../util/types';
 import { useBalances } from '.';
 
 export enum CanPayStatements {
@@ -24,7 +23,7 @@ export enum CanPayStatements {
   PROXY_CAN_PAY_FEE,
 }
 
-export default function useCanPayFeeAndDeposit(
+export default function useCanPayFeeAndDeposit (
   formatted: AccountId | string | undefined,
   proxyAddress: AccountId | string | undefined,
   estimatedFee: Balance | undefined,
@@ -81,7 +80,7 @@ export default function useCanPayFeeAndDeposit(
 
         const statement = getStatement(canPayFee, canPayDeposit, false, true, true);
 
-        setCanPayFeeAndDeposit(statement === 1);
+        setCanPayFeeAndDeposit(statement === CanPayStatements.CAN_PAY);
         setCanPayStatement(statement);
 
         return;
@@ -89,20 +88,22 @@ export default function useCanPayFeeAndDeposit(
 
       const statement = getStatement(canPayFee, true, false, true, false);
 
-      setCanPayFeeAndDeposit(statement === 1);
+      setCanPayFeeAndDeposit(statement === CanPayStatements.CAN_PAY);
       setCanPayStatement(statement);
     }
 
     if (!proxyAddress) {
+      const available = getValue('available', balances);
       const wholeAmount = estimatedFee.add(deposit ?? BN_ZERO);
-      const canPayFee = !!getValue('available', balances)?.gt(estimatedFee);
-      const canPayDeposit = !!getValue('available', balances)?.gte(deposit ?? BN_ZERO);
-      const canPayWholeAmount = !!getValue('available', balances)?.gt(wholeAmount);
+
+      const canPayFee = !!available?.gt(estimatedFee);
+      const canPayDeposit = !!available?.gte(deposit ?? BN_ZERO);
+      const canPayWholeAmount = !!available?.gt(wholeAmount);
 
       const statement = getStatement(canPayFee, canPayDeposit, canPayWholeAmount, false, deposit && !deposit.isZero());
 
       setCanPayStatement(statement);
-      setCanPayFeeAndDeposit(statement === 1);
+      setCanPayFeeAndDeposit(statement === CanPayStatements.CAN_PAY);
     }
   }, [balances, deposit, estimatedFee, proxyAddress, proxyAddressBalances, getStatement]);
 
