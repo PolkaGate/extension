@@ -1,27 +1,26 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useContext, useEffect, useMemo, useState } from 'react';
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
-
 import { APIContext } from '../components';
-import { sanitizeChainName } from '../util/utils';
+import { fastestConnection, sanitizeChainName } from '../util/utils';
 
 const allEndpoints = createWsEndpoints();
 
-export default function useApiWithChain(chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
+export default function useApiWithChain (chain: Chain | null | undefined, api?: ApiPromise): ApiPromise | undefined {
   const apisContext = useContext(APIContext);
   const [_api, setApi] = useState<ApiPromise | undefined>();
 
-  const maybeEndpoint = useMemo(() => {
+  const maybeEndpoints = useMemo(() => {
     const chainName = sanitizeChainName(chain?.name);
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === chainName?.toLowerCase());
 
-    return endpoints?.length ? endpoints[0].value : undefined;
+    return endpoints?.length ? endpoints : undefined;
   }, [chain?.name]);
 
   useEffect(() => {
@@ -41,14 +40,14 @@ export default function useApiWithChain(chain: Chain | null | undefined, api?: A
       }
     }
 
-    if (!maybeEndpoint) {
+    if (!maybeEndpoints) {
       return;
     }
 
-    const wsProvider = new WsProvider(maybeEndpoint);
-
-    ApiPromise.create({ provider: wsProvider }).then((a) => setApi(a)).catch(console.error);
-  }, [api, apisContext, chain, maybeEndpoint]);
+    fastestConnection(maybeEndpoints.map(({ text, ...rest }) => ({ text: String(text), ...rest })))
+      .then(({ api }) => setApi(api))
+      .catch(console.error);
+  }, [api, apisContext, chain, maybeEndpoints]);
 
   return _api;
 }

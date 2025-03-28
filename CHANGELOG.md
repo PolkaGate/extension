@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.36.1](https://github.com/polkagate/extension/compare/v0.36.0...v0.36.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* handle 0 available balance returned by polkadot js api derive ([c851afd](https://github.com/polkagate/extension/commit/c851afdf52d3b1e6b2cae24546729e7220fddd60))
+* use multiple endpoints in useApiWithChain to get fastest connection ([87df027](https://github.com/polkagate/extension/commit/87df02774a84a0361100854e5d7927ff17a716af)), closes [#1718](https://github.com/polkagate/extension/issues/1718)
+
 # [0.36.0](https://github.com/polkagate/extension/compare/v0.35.2...v0.36.0) (2025-02-28)
 
 

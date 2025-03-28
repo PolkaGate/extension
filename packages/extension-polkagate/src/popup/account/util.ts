@@ -46,7 +46,6 @@ export const getValue = (type: string, balances: BalancesInfo | FetchedBalance |
     case ('balance'):
     case ('available'):
     case ('available balance'):
-      return balances.availableBalance;
 
     case ('transferable'):
     {
