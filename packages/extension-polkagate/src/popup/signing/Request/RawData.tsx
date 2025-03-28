@@ -27,7 +27,7 @@ interface Props {
   url: string;
 }
 
-export default function RawData ({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+export default function RawData({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -73,7 +73,7 @@ export default function RawData ({ account, error, isFirst, request, setError, s
           {dapp}
         </Typography>
       </Grid>
-      <Grid container item >
+      <Grid container item>
         <Address2
           address={address}
           charsCount={4}
@@ -95,7 +95,7 @@ export default function RawData ({ account, error, isFirst, request, setError, s
         width: '100%'
       }}
       >
-        <Grid container justifyContent='center' item sx={{ bgcolor: '#1B133C', borderRadius: '10px', height: '100%', px: '10px', py: '5px', width: '100%', maxHeight: '65px', overflowY: 'scroll', minHeight: '50px', textAlign: 'center' }}>
+        <Grid container justifyContent='center' item sx={{ bgcolor: '#1B133C', borderRadius: '10px', height: '100%', px: '10px', py: '5px', width: '100%', maxHeight: '65px', overflowY: 'scroll', overflowWrap: 'anywhere', minHeight: '50px', textAlign: 'center' }}>
           <Typography color='#EAEBF1' variant='B-1'>
             {text}
           </Typography>

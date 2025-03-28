@@ -73,7 +73,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
   }), [isActiveTab, nonSelectedSquareColor, showChains]);
 
   return (
-    <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '82px' }}>
+    <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '72px' }}>
       <CustomCommand
         color={color}
         secondaryColor={secondaryColor}

@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Box, Container, Grid, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';

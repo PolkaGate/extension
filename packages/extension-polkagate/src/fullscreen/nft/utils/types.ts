@@ -8,6 +8,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 export interface ItemOnChainInfo {
   collectionId?: string;
   chainName: string; // polkadot, kusama or westend asset hubs
+  genesisHash?: string;
   itemId?: string;
   data?: string;
   isNft: boolean;
@@ -48,7 +49,10 @@ export interface CheckboxButtonProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 }
 
-interface Attribute { label: string; value: string }
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface Attribute {
+  [key: string]: string;
+}
 
 export type ItemsDetail = Record<string, ItemMetadata | null | undefined>;
 
@@ -112,7 +116,7 @@ export interface DetailItemProps {
 }
 
 export interface AudioPlayerProps {
-  audioUrl: string | undefined;
+  audioUrl: string | undefined | null;
 }
 
 export interface FilterState {

@@ -18,9 +18,9 @@ import { useManifest } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { RedGradient } from '../../style';
 import { EXTENSION_NAME } from '../../util/constants';
-import { type News, news } from './news2';
+import { type News, news } from './news';
 
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
@@ -57,7 +57,7 @@ interface ChangeLogEntry {
 * @param {string} changelogText - Raw changelog content as a string.
 * @returns {ChangeLogEntry[]} - Parsed list of change entries with their types and descriptions.
 */
-function parseChangelog(changelogText: string): ChangeLogEntry[] {
+function parseChangelog (changelogText: string): ChangeLogEntry[] {
   const entries: ChangeLogEntry[] = []; // Stores parsed changelog entries
   const lines = changelogText.split('\n'); // Split input text into lines
 
@@ -130,7 +130,7 @@ function parseChangelog(changelogText: string): ChangeLogEntry[] {
   return entries;
 }
 
-function UL({ note }: { note: string }) {
+function UL ({ note }: { note: string }) {
   const [title, description] = note.split(':');
 
   return (
@@ -146,7 +146,7 @@ function UL({ note }: { note: string }) {
   );
 }
 
-function ChangeItem({ item }: { item: ChangeItemsType }) {
+function ChangeItem ({ item }: { item: ChangeItemsType }) {
   return (
     <Grid columnGap='8px' container item>
       <Box sx={{ bgcolor: '#FF4FB9', borderRadius: '1px', height: '8px', m: '6px', rotate: '45deg', width: '8px' }} />
@@ -165,7 +165,7 @@ function ChangeItem({ item }: { item: ChangeItemsType }) {
   );
 }
 
-function ChangeItems({ change }: { change: Changes }) {
+function ChangeItems ({ change }: { change: Changes }) {
   const icon = (change.type === 'features' ? CometStar : Gear) as string;
   const { bugFixesDescriptions, featuresDescriptions, pullRequests } = useMemo(() => {
     const filterDescriptions = (items: ChangeItemsType[]) =>
@@ -209,7 +209,7 @@ function ChangeItems({ change }: { change: Changes }) {
   );
 }
 
-function NewVersionItem({ item }: { item: ChangeLogEntry }) {
+function NewVersionItem ({ item }: { item: ChangeLogEntry }) {
   return (
     <Stack sx={{ rowGap: '15px', width: '100%' }}>
       <Grid alignItems='center' columnGap='5px' container item>
@@ -241,7 +241,7 @@ interface Props {
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props): React.ReactElement<Props> {
+export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const manifest = useManifest();

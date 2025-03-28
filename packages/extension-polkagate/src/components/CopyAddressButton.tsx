@@ -12,9 +12,10 @@ interface Props {
   address: string | null | undefined;
   showAddress?: boolean;
   size?: number;
+  padding?: number;
 }
 
-function CopyAddressButton ({ address, showAddress = false, size = 14 }: Props): React.ReactElement<Props> {
+function CopyAddressButton({ address, padding, showAddress = false, size = 14 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const shortAddress = `${address?.slice(0, 12) ?? ''}...${address?.slice(-12) ?? ''}`;
@@ -64,9 +65,7 @@ function CopyAddressButton ({ address, showAddress = false, size = 14 }: Props):
         placement='top'
         title={copied ? t<string>('Copied') : showAddress && shortAddress}
       >
-        <IconButton
-          onClick={_onCopy}
-        >
+        <IconButton onClick={_onCopy} sx={{ padding }}>
           <CopyToClipboard text={String(address)}>
             <Copy
               color='#AA83DC'

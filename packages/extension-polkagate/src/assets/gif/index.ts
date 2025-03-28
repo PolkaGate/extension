@@ -9,3 +9,4 @@ export { default as info } from './info.gif';
 export { default as loader } from './loader.png';
 export { default as Lock } from './Lock.gif';
 export { default as money } from './money.gif';
+export { default as user } from './user.gif';

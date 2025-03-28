@@ -12,9 +12,10 @@ interface Props {
   Icon: React.JSX.Element;
   bgColor?: string;
   link: string;
+  size?: number;
 }
 
-function SocialIcon ({ Icon, bgColor, link }: Props): React.ReactElement {
+function SocialIcon ({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
   const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
   const isDark = useIsDark();
 
@@ -30,12 +31,12 @@ function SocialIcon ({ Icon, bgColor, link }: Props): React.ReactElement {
         borderRadius: '50%',
         cursor: 'pointer',
         display: 'flex',
-        height: 32,
+        height: size,
         justifyContent: 'center',
-        width: 32
+        width: size
       }}
     >
-      {Icon }
+      {Icon}
     </Grid>
 
   );

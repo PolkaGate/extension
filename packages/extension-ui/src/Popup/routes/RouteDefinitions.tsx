@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import React, { useMemo } from 'react';
 import { Route, Switch } from 'react-router';
 
@@ -24,6 +22,7 @@ import RouteWrapper from '../components/RouteWrapper';
 import { ACCOUNT_ROUTES } from './accountRoutes';
 import { FEATURE_ROUTES } from './featuresRoutes';
 import { IMPORT_ROUTES } from './importRoutes';
+import { NFT_ROUTES } from './nftRoutes';
 import { SETTINGS_ROUTES } from './settingRoutes';
 import { STAKING_ROUTES } from './stakingRoutes';
 
@@ -43,7 +42,6 @@ const TOKEN_ROUTE: RouteConfig[] = [
   }
 ];
 
-// Derive Routes
 const DERIVE_ROUTES: RouteConfig[] = [
   {
     Component: Derive,
@@ -125,7 +123,8 @@ const ALL_ROUTES: RouteConfig[] = [
   ...PASSWORD_ROUTES,
   ...ROOT_ROUTES,
   ...SETTINGS_ROUTES,
-  ...TOKEN_ROUTE
+  ...TOKEN_ROUTE,
+  ...NFT_ROUTES
 ];
 
 export default function Routes () {

@@ -21,10 +21,11 @@ interface Props {
   labelMarginTop?: string;
   name?: string;
   inTitleCase?: boolean;
+  showAddress?: boolean;
   showCopy?: boolean;
+  showName?: boolean;
   style?: SxProps;
   variant?: Variant;
-  showAddress?: boolean;
 }
 
 /**
@@ -37,10 +38,11 @@ interface Props {
  * @param {SxProps} [style] - Optional style overrides for the container.
  * @param {Variant} [variant] - Optional typography variant for the address.
  * @param {boolean} [showAddress] - Whether to show the full address in shortened form.
+ * @param {boolean} [showName] - Whether to show the name of the account.
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, style = {}, variant }: Props): React.ReactElement {
+function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address || '');
 
@@ -49,19 +51,22 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
       {label &&
         <Typography color='text.primary' mt={labelMarginTop} textAlign='left' variant='B-1' width='100%'>
           {label}
-        </Typography>}
+        </Typography>
+      }
       <Stack alignItems='center' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
         <PolkaGateIdenticon
           address={address}
           size={identiconSize}
         />
         <Stack justifyContent='flex-start' sx={{ overflowX: 'scroll', width: '100%' }}>
-          <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
-            {inTitleCase
-              ? toTitleCase(accountName || name || t('Unknown'))
-              : accountName || name || t('Unknown')
-            }
-          </Typography>
+          {showName &&
+            <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
+              {inTitleCase
+                ? toTitleCase(accountName || name || t('Unknown'))
+                : accountName || name || t('Unknown')
+              }
+            </Typography>
+          }
           {showAddress &&
             <ShortAddress
               address={address}
@@ -69,7 +74,8 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
               showCopy={showCopy}
               style={{ color: 'text.secondary', justifyContent: 'flex-start' }}
               variant={(variant || 'B-4') as Variant}
-            />}
+            />
+          }
         </Stack>
       </Stack>
     </Stack>

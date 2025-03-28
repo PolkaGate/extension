@@ -1598,5 +1598,8 @@
   "Sign Message": "",
   "Request Content": "",
   "Transfer to": "",
-  "Insufficient balance to cover the transaction fee": ""
+  "Insufficient balance to cover the transaction fee": "",
+  "Not in a collection": "",
+  "Traits": "",
+  "About": ""
 }

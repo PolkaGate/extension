@@ -1,14 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import saveAs from 'file-saver';
 import { Import } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { user } from '../../../assets/img/index';
+import { user } from '../../../assets/gif/index';
 import { AccountContext, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, PasswordInput } from '../../../components';
 import { useSelectedAccount, useTranslation } from '../../../hooks';
 import { exportAccount, exportAccounts } from '../../../messaging';

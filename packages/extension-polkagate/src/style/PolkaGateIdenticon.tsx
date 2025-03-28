@@ -148,7 +148,7 @@ const PolkaGateIdenticon = ({ address, size = 32 }: Props) => {
   }, [size, params]);
 
   return (
-    <div style={{ height: `${size}px`, width: `${size}px` }}>
+    <div style={{ alignItems: 'center', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px` }}>
       <svg className='rounded-full' height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
         <defs>
           <radialGradient id={`bg-${params.hue}`}>
