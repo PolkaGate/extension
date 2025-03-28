@@ -122,7 +122,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
             style={{
               height: '44px',
               marginTop: '15px',
-              width: '345px'
+              width: '100%'
             }}
             text={t('Start staking')}
           />

@@ -40,7 +40,7 @@ export default function Version ({ showLabel = true, style = { columnGap: '5px',
         <Typography color={textColor} variant='B-1'>
           {version}
         </Typography>
-        <GradientBorder style={{ height: '1px', opacity: 0.5, position: 'static', rotate: '90deg', width: '14px' }} />
+        <GradientBorder style={{ height: '1px', opacity: 0.5, position: 'static', rotate: '90deg', width: '14px', zIndex: 'auto' }} />
         <Sparkles color={hovered ? '#AA83DC' : sparklesColor} height={12} width={12} />
         <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onClick={toggleOpenPopup} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
           {t('What’s new page')}
