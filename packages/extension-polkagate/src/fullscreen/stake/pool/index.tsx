@@ -13,6 +13,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { getValue } from '../../../popup/account/util';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenHeader from '../../governance/FullScreenHeader';
@@ -44,7 +45,7 @@ export const MODAL_IDS = {
   STAKE_EXTRA: 6
 };
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   useFullscreen();
 
   const { t } = useTranslation();
@@ -192,7 +193,7 @@ export default function Index(): React.ReactElement {
       {showId === MODAL_IDS.REDEEM &&
         <WithdrawRedeem
           address={address}
-          availableBalance={balances?.availableBalance}
+          availableBalance={getValue('transferable', balances)}
           redeemable={redeemable}
           setRefresh={setRefresh}
           setShow={setShow}

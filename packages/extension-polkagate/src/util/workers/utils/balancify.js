@@ -8,7 +8,7 @@ export function balancify (balances) {
   const base = {
     availableBalance: String(balances.availableBalance),
     freeBalance: String(balances.freeBalance),
-    frozenBalance: String(balances.frozen),
+    frozenBalance: String(balances.frozen ?? balances.frozenBalance),
     lockedBalance: String(balances.lockedBalance),
     reservedBalance: String(balances.reservedBalance),
     vestedBalance: String(balances.vestedBalance),

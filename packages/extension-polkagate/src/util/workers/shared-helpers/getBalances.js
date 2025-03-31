@@ -14,7 +14,7 @@ import { getPooledBalance } from './getPooledBalance.js';
  * @param {MessagePort } port
  * @returns
  */
-export async function getBalances(chainName, addresses, userAddedEndpoints, port) {
+export async function getBalances (chainName, addresses, userAddedEndpoints, port) {
   const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(chainEndpoints);
 
@@ -29,7 +29,7 @@ export async function getBalances(chainName, addresses, userAddedEndpoints, port
       const systemBalance = await api.query['system']['account'](address);
 
       // @ts-ignore
-      balances.frozenBalance = systemBalance.frozen;
+      balances.frozenBalance = systemBalance.data.frozen;
 
       let soloTotal = BN_ZERO;
       let pooledBalance = BN_ZERO;

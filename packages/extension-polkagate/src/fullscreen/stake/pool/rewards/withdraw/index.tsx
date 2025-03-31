@@ -33,26 +33,26 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function WithdrawRewards({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function WithdrawRewards ({ address, balances, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
+  const transferable = useMemo(() => getValue('transferable', balances), [balances]);
 
   const [step, setStep] = useState(STEPS.PROGRESS);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<StakingInputs>();
 
   useEffect(() => {
-    if (claimable && api && availableBalance) {
+    if (claimable && api && transferable) {
       const call = api.tx['nominationPools']['claimPayout'];
       const params = [] as unknown[];
 
       const extraInfo = {
         action: 'Pool Staking',
         amount: amountToHuman(claimable, decimal),
-        availableBalanceAfter: availableBalance.add(claimable),
+        availableBalanceAfter: transferable.add(claimable),
         subAction: 'Withdraw Rewards'
       };
 
@@ -62,7 +62,7 @@ export default function WithdrawRewards({ address, balances, pool, setRefresh, s
         params
       });
     }
-  }, [api, availableBalance, claimable, decimal, formatted]);
+  }, [api, transferable, claimable, decimal, formatted]);
 
   const onCancel = useCallback(() => {
     setShow(MODAL_IDS.NONE);
