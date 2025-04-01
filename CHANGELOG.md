@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.36.2](https://github.com/polkagate/extension/compare/v0.36.1...v0.36.2) (2025-04-01)
+
+
+### Bug Fixes
+
+* available balance issue raised by api derive ([#1725](https://github.com/polkagate/extension/issues/1725)) ([9269b05](https://github.com/polkagate/extension/commit/9269b05f064b455467e3731cbc9b74a5024ffa98)), closes [#1723](https://github.com/polkagate/extension/issues/1723) [#1724](https://github.com/polkagate/extension/issues/1724)
+
 ## [0.36.1](https://github.com/polkagate/extension/compare/v0.36.0...v0.36.1) (2025-03-26)
 
 
