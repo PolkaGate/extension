@@ -29,7 +29,7 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
-  const availableBalance = useBalances(address, undefined, undefined, true)?.availableBalance;
+  const freeBalance = useBalances(address, undefined, undefined, true)?.freeBalance;
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
@@ -54,12 +54,11 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
     }
 
     const isAmountOutOfRange =
-      amountAsBN.lt(poolStakingConsts.minCreateBond)
-      ||
-      amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
+      amountAsBN.lt(poolStakingConsts.minCreateBond) ||
+      amountAsBN.gt(freeBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
 
     return isAmountOutOfRange;
-  }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
+  }, [amountAsBN, freeBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {
@@ -72,15 +71,15 @@ export default function CreatePool({ inputs, setInputs, setStep }: Props): React
   }, [decimal]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedFee || !ED) {
+    if (!api || !freeBalance || !estimatedFee || !ED) {
       return;
     }
 
-    const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedFee));
+    const max = new BN(freeBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setCreateAmount(maxToHuman);
-  }, [ED, api, availableBalance, decimal, estimatedFee]);
+  }, [ED, api, freeBalance, decimal, estimatedFee]);
 
   const onMinAmount = useCallback(() => {
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));

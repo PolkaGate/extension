@@ -4,7 +4,6 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { StakingInputs } from '../../type';
 
@@ -29,10 +28,10 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<number>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
   redeemable: BN | undefined;
-  availableBalance: Balance | undefined;
+  availableBalance: BN | undefined;
 }
 
-export default function WithdrawRedeem({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
+export default function WithdrawRedeem ({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 

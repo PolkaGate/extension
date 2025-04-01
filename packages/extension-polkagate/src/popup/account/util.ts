@@ -11,6 +11,7 @@ import type { BalancesInfo } from '../../util/types';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
+import { toBN } from '../../util/utils';
 
 function isEmptyObject (obj: object): boolean {
   return Object.keys(obj).length === 0;
@@ -39,19 +40,17 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('balance'):
     case ('available'):
     case ('available balance'):
-
     case ('transferable'):
-    {
-      const frozenBalance = balances.frozenBalance || BN_ZERO; // for backward compatibility of PolkaGate extension
-      const noFrozenReserved = frozenBalance.isZero() && balances.reservedBalance.isZero();
+      const frozen = toBN(balances?.frozenBalance ?? BN_ZERO);
+      const reserved =  toBN(balances?.reservedBalance ?? BN_ZERO);
+      const free =toBN(balances?.freeBalance ?? BN_ZERO);
 
-      const frozenReserveDiff = frozenBalance.sub(balances.reservedBalance);
-      const maybeED = noFrozenReserved ? BN_ZERO : (balances.ED || BN_ZERO);
+      const noFrozenReserved = frozen.isZero() && reserved.isZero();
+      const frozenReserveDiff = frozen.sub(reserved);
+      const maybeED = noFrozenReserved ? BN_ZERO : toBN(balances.ED || BN_ZERO);
       const untouchable = bnMax(maybeED, frozenReserveDiff);
 
-      return balances.freeBalance.sub(untouchable);
-    }
-
+      return free.sub(untouchable);
     case ('reserved'):
       return balances.reservedBalance;
     case ('others'):

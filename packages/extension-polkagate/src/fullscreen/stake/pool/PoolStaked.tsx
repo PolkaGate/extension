@@ -11,7 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { BN } from '@polkadot/util';
 
@@ -37,7 +36,7 @@ interface Props {
   unlockingAmount: BN | undefined;
 }
 
-export default function PoolStaked({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
+export default function PoolStaked ({ address, balances, pool, redeemable, setShow, toBeReleased, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain } = useInfo(address);
@@ -46,7 +45,6 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && setShow(MODAL_IDS.UNSTAKE);
@@ -86,7 +84,7 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
           <StakedBar
-            availableBalance={availableBalance}
+            availableBalance={balances?.freeBalance}
             balances={balances}
             redeemable={redeemable}
             staked={staked}
@@ -129,7 +127,7 @@ export default function PoolStaked({ address, balances, pool, redeemable, setSho
               actions={[staked && !staked.isZero() ? t('stake extra') : t('stake')]}
               address={address}
               /** to disable action button until fetching has done */
-              amount={!staked || !redeemable || !unlockingAmount ? undefined : availableBalance}
+              amount={!staked || !redeemable || !unlockingAmount ? undefined : balances?.freeBalance}
               icons={[faPlus]}
               onClicks={[onStakeOrExtra]}
               title={t('Available to stake')}
