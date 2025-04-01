@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable no-case-declarations */
+
 /**
  * @description
  * this component shows an account information in detail
@@ -42,8 +44,8 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('available balance'):
     case ('transferable'):
       const frozen = toBN(balances?.frozenBalance ?? BN_ZERO);
-      const reserved =  toBN(balances?.reservedBalance ?? BN_ZERO);
-      const free =toBN(balances?.freeBalance ?? BN_ZERO);
+      const reserved = toBN(balances?.reservedBalance ?? BN_ZERO);
+      const free = toBN(balances?.freeBalance ?? BN_ZERO);
 
       const noFrozenReserved = frozen.isZero() && reserved.isZero();
       const frozenReserveDiff = frozen.sub(reserved);
