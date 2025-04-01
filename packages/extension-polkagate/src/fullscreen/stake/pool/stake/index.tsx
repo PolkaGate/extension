@@ -54,7 +54,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<StakingInputs>();
 
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
+  const freeBalance = balances?.freeBalance;
   const [amount, setAmount] = useState<string | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
@@ -64,12 +64,12 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
   const ED = api?.consts?.['balances']?.['existentialDeposit'] as unknown as BN | undefined;
 
   const max = useMemo(() => {
-    if (!availableBalance || !ED || !estimatedMaxFee) {
+    if (!freeBalance || !ED || !estimatedMaxFee) {
       return;
     }
 
-    return new BN(availableBalance).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
-  }, [ED, availableBalance, estimatedMaxFee]);
+    return new BN(freeBalance).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+  }, [ED, freeBalance, estimatedMaxFee]);
 
   useEffect(() => {
     if (amount && api && staked && amountAsBN) {
@@ -118,15 +118,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
   }, [decimal]);
 
   useEffect(() => {
-    if (!balances) {
-      return;
-    }
-
-    setAvailableBalance(balances.availableBalance);
-  }, [balances]);
-
-  useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
+    if (!api || !freeBalance || !formatted) {
       return;
     }
 
@@ -138,10 +130,10 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
       setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
 
-    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: freeBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
-  }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
+  }, [formatted, api, freeBalance, amount, decimal, amountAsBN]);
 
   const nextBtnDisabled = useMemo(() => {
     if (!amountAsBN || !max || !inputs) {
@@ -195,7 +187,7 @@ export default function StakeExtra({ address, setRefresh, setShow, show }: Props
             <Asset
               address={address}
               api={api}
-              balance={availableBalance}
+              balance={freeBalance}
               balanceLabel={t('Available balance')}
               fee={estimatedFee}
               style={{

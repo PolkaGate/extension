@@ -29,7 +29,7 @@ interface State {
   stakingAccount: AccountStakingInfo | undefined
 }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
   const { state } = useLocation<State>();
   const theme = useTheme();
@@ -49,7 +49,7 @@ export default function Index(): React.ReactElement {
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
   const balances = useMemo(() => maybeMyStashBalances || myBalances, [maybeMyStashBalances, myBalances]);
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
-  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
+  const transferableBalance = useMemo(() => getValue('transferable', balances), [balances]);
 
   const [showFastUnstakeReview, setShowReview] = useState<boolean>(false);
 
@@ -151,12 +151,12 @@ export default function Index(): React.ReactElement {
         disabled={isEligible === undefined}
         text={isEligible === undefined || isEligible ? t('Next') : t('Back')}
       />
-      {showFastUnstakeReview && formatted && api && availableBalance && chain && staked && !staked?.isZero() &&
+      {showFastUnstakeReview && formatted && api && transferableBalance && chain && staked && !staked?.isZero() &&
         <FastUnstakeReview
           address={address}
           amount={staked as unknown as BN}
           api={api}
-          available={availableBalance}
+          available={transferableBalance}
           chain={chain}
           formatted={formatted}
           setShow={setShowReview}

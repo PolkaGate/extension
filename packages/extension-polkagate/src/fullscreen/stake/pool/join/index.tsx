@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AmountWithOptions, ShowBalance, TwoButtons } from '../../../../components';
-import { useEstimatedFee, useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
+import { useBalances, useEstimatedFee, useInfo, usePoolConsts, usePools, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { MAX_AMOUNT_LENGTH, PREFERRED_POOL_NAME, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import { STEPS } from '../..';
@@ -26,10 +26,11 @@ interface Props {
   inputs: StakingInputs | undefined;
 }
 
-export default function JoinPool({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function JoinPool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
+  const freeBalance = useBalances(address)?.freeBalance;
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);
@@ -38,7 +39,6 @@ export default function JoinPool({ inputs, setInputs, setStep }: Props): React.R
   const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(address);
 
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [nextBtnDisabled, setNextBtnDisabled] = useState<boolean>(true);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>();
@@ -83,17 +83,17 @@ export default function JoinPool({ inputs, setInputs, setStep }: Props): React.R
   }, [decimal, poolStakingConsts]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedMaxFee || !decimal) {
+    if (!api || !freeBalance || !estimatedMaxFee || !decimal) {
       return;
     }
 
     const ED = api.consts['balances']['existentialDeposit'] as unknown as BN;
-    const max = new BN(availableBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+    const max = new BN(freeBalance.toString()).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setStakeAmount(maxToHuman);
     setAmountAsBN(max);
-  }, [api, availableBalance, decimal, estimatedMaxFee]);
+  }, [api, freeBalance, decimal, estimatedMaxFee]);
 
   const toReview = useCallback(() => {
     api && selectedPool && setStep(STEPS.JOIN_REVIEW);
@@ -116,20 +116,14 @@ export default function JoinPool({ inputs, setInputs, setStep }: Props): React.R
   }, [filteredPools, incrementalPools, searchedPools, selectedPool]);
 
   useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
+    if (!api || !freeBalance || !formatted) {
       return;
     }
 
-    api.tx['nominationPools']['join'](String(availableBalance), BN_ONE).paymentInfo(formatted).then((i) => {
+    api.tx['nominationPools']['join'](String(freeBalance), BN_ONE).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
-  }, [formatted, api, availableBalance, selectedPool, amountAsBN, poolStakingConsts]);
-
-  useEffect(() => {
-    api && formatted && api.derive.balances?.all(formatted).then((b) => {
-      setAvailableBalance(b.availableBalance);
-    }).catch(console.error);
-  }, [formatted, api]);
+  }, [formatted, api, freeBalance, selectedPool, amountAsBN, poolStakingConsts]);
 
   useEffect(() => {
     if (!stakeAmount || !amountAsBN || !poolStakingConsts?.minJoinBond) {
@@ -138,10 +132,10 @@ export default function JoinPool({ inputs, setInputs, setStep }: Props): React.R
       return;
     }
 
-    const amountNotInRange = amountAsBN.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
+    const amountNotInRange = amountAsBN.gt(freeBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN.gte(poolStakingConsts.minJoinBond);
 
     setNextBtnDisabled(!selectedPool || !stakeAmount || stakeAmount === '0' || amountNotInRange);
-  }, [amountAsBN, availableBalance, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
+  }, [amountAsBN, freeBalance, estimatedMaxFee, poolStakingConsts?.minJoinBond, selectedPool, stakeAmount]);
 
   useEffect(() => {
     if (!api || !selectedPool || !stakeAmount) {
@@ -191,7 +185,7 @@ export default function JoinPool({ inputs, setInputs, setStep }: Props): React.R
             {t('Available Balance')}
           </Grid>
           <Grid item sx={{ fontSize: '16px', fontWeight: 500 }}>
-            <ShowBalance balance={availableBalance} decimal={decimal} decimalPoint={2} token={token} />
+            <ShowBalance balance={freeBalance} decimal={decimal} decimalPoint={2} token={token} />
           </Grid>
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ lineHeight: '20px' }}>

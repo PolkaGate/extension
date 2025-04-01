@@ -14,7 +14,7 @@ import { getPooledBalance } from './getPooledBalance.js';
  * @param {MessagePort } port
  * @returns
  */
-export async function getBalances(chainName, addresses, userAddedEndpoints, port) {
+export async function getBalances (chainName, addresses, userAddedEndpoints, port) {
   const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(chainEndpoints);
 

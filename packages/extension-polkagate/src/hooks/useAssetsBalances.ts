@@ -33,18 +33,17 @@ export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: nu
 interface BalancesDetails {
   ED: BN,
   availableBalance: BN,
-  soloTotal?: BN,
-  pooledBalance?: BN,
-  poolReward?: BN,
-  lockedBalance?: BN,
-  vestingLocked?: BN,
-  vestedClaimable?: BN,
-  vestingTotal?: BN,
   freeBalance: BN,
   frozenBalance: BN,
   frozenFee?: BN,
   frozenMisc?: BN,
+  lockedBalance?: BN,
+  soloTotal?: BN,
+  pooledBalance?: BN,
   reservedBalance: BN,
+  vestingLocked?: BN,
+  vestedClaimable?: BN,
+  vestingTotal?: BN,
   votingBalance?: BN
 }
 

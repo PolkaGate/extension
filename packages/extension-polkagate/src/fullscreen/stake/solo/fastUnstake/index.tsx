@@ -49,9 +49,9 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
-  const availableBalance = getValue('available', myBalances);
-  const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && availableBalance
-    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(availableBalance || BN_MAX_INTEGER)
+  const transferable = getValue('transferable', myBalances);
+  const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && transferable
+    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_MAX_INTEGER)
     : undefined;
 
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
@@ -65,12 +65,12 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as BN | undefined, [stakingAccount]);
 
   useEffect(() => {
-    if (!api || !staked || !availableBalance) {
+    if (!api || !staked || !transferable) {
       return;
     }
 
     const call = api.tx['fastUnstake']['registerFastUnstake'];
-    const availableBalanceAfter = availableBalance.add(staked);
+    const availableBalanceAfter = transferable.add(staked);
 
     const params: never[] = [];
 
@@ -86,7 +86,7 @@ export default function FastUnstake({ address, setRefresh, setShow, show }: Prop
       extraInfo,
       params
     });
-  }, [api, availableBalance, decimal, myBalances, staked]);
+  }, [api, transferable, decimal, myBalances, staked]);
 
   const onNext = useCallback(() => {
     setStep(STEPS.REVIEW);
