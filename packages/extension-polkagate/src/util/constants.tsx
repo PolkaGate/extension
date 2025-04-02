@@ -22,6 +22,7 @@ export const POLKAGATE_POOL_IDS: Record<string, number> = {
 };
 
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
+export const PRIVACY_POLICY_LINK = 'https://docs.polkagate.xyz/polkagate/polkagate-extension-user-guide/legal-and-security/privacy-policy';
 
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const AUCTION_GRACE_PERIOD = 27000;// blocks

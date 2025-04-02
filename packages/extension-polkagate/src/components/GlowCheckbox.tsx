@@ -10,13 +10,14 @@ interface Props {
   checked?: boolean;
   disabled?: boolean;
   label?: string;
+  label2?: string;
   changeState: (value: boolean) => void;
   style?: SxProps<Theme> | undefined;
   labelStyle?: React.CSSProperties | undefined;
   iconStyle?: SxProps<Theme> | undefined;
 }
 
-function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {}, label, labelStyle, style }: Props): React.ReactElement<Props> {
+function GlowCheckbox({ changeState, checked = false, disabled, iconStyle = {}, label, label2, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [state, setState] = useState<boolean>(checked);
@@ -100,7 +101,9 @@ function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {},
       </Grid>
       <span style={{ ...LabelFontStyle, ...labelStyle, userSelect: 'none' }}>
         {label}
+        <span style={{ color: '#BEAAD8', paddingLeft: '5px' }}>{label2} </span>
       </span>
+
     </Container>
   );
 }

@@ -1,9 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-
 import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { ArrowRight2, type Icon } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -20,6 +19,7 @@ export interface Props {
   disabled?: boolean;
   endIconNode?: React.ReactNode;
   isBusy?: boolean;
+  showChevron?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
   startIconSize?: number;
@@ -44,7 +44,7 @@ export interface Props {
  *
  * @returns {React.ReactElement} The rendered gradient button.
  */
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
+export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
 
@@ -102,6 +102,18 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     transition: 'all 250ms ease-out'
   } as SxProps<Theme>;
 
+  const chevronStyle: React.CSSProperties = {
+    filter: 'drop-shadow(0px 0px 1px #EAEBF1)',
+    marginLeft: '-5px',
+    transition: 'all 500ms ease-out',
+    zIndex: 10
+  };
+
+  const textStyle: React.CSSProperties = {
+    transform: hovered ? 'translateX(-5px)' : '',
+    transition: 'all 500ms ease-out',
+  };
+
   return (
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
       {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
@@ -124,9 +136,12 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
             }
           }}
         />
-        : <Typography color={isDark ? '#FFFFFF' : '#EAEBF1'} sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10 }} variant='B-2'>
-          {text}
-        </Typography>
+        : <>
+          <Typography color={isDark ? '#FFFFFF' : '#EAEBF1'} sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10, ...(showChevron ? textStyle : {}) }} variant='B-2'>
+            {text}
+          </Typography>
+          {showChevron && <ArrowRight2 color={hovered ? '#EAEBF1' : 'undefined'} size='12' style={chevronStyle} variant='Linear' />}
+        </>
       }
       {EndIcon && <EndIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
       {endIconNode && endIconNode}

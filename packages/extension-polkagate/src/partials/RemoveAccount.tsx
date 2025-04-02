@@ -103,7 +103,7 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
             changeState={toggleAcknowledge}
             checked={acknowledged}
             disabled={isBusy}
-            label={t('I want fo remove this account')}
+            label={t('I want to remove this account')}
             style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
           />
           : <PasswordInput

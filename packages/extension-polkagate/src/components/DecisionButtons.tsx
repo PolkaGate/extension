@@ -20,10 +20,11 @@ interface Props {
   onSecondaryClick: () => void;
   primaryBtnText: string;
   secondaryBtnText: string;
+  showChevron?: boolean;
   style?: SxProps<Theme>;
 }
 
-function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, style }: Props): React.ReactElement {
+function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, showChevron, style }: Props): React.ReactElement {
   const theme = useTheme();
 
   const { primaryWidth, secondaryWidth } = useMemo(() => {
@@ -73,6 +74,7 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
           : undefined}
         isBusy={isBusy}
         onClick={onPrimaryClick}
+        showChevron={showChevron}
         style={{ flex: flexibleWidth ? 1 : 'none', height: '48px', width: primaryWidth }}
         text={primaryBtnText}
       />

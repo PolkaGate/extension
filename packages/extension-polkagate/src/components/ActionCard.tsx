@@ -23,7 +23,7 @@ interface Props {
   title: string;
 }
 
-function ActionCard({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
+function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
 

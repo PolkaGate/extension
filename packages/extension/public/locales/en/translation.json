@@ -1540,7 +1540,7 @@
   "Wrong password.": "",
   "Remove Account": "",
   "WARNING": "",
-  "I want fo remove this account": "",
+  "I want to remove this account": "",
   "Account successfully removed!": "",
   "Choose a new name for your account": "",
   "Enter your name": "",
@@ -1601,5 +1601,8 @@
   "Insufficient balance to cover the transaction fee": "",
   "Not in a collection": "",
   "Traits": "",
-  "About": ""
+  "About": "",
+  "as your gateway to the Polkadot ecosystem! ": "",
+  "Need Help": "",
+  " STAY TUNED": ""
 }

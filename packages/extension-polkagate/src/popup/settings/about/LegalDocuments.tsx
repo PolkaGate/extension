@@ -5,6 +5,8 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { ExportSquare } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
+import { PRIVACY_POLICY_LINK } from '../../../util/constants';
+
 interface Props {
   label: string;
   link: string;
@@ -14,8 +16,8 @@ function Item ({ label, link }: Props): React.ReactElement {
   const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
 
   return (
-    <Stack direction='row' justifyContent='start' sx={{ cursor: 'pointer' }} onClick={goToLink}>
-      <Typography color='text.primary' sx={{ textAlign: 'left', pr: '4px' }} variant='B-1'>
+    <Stack direction='row' justifyContent='start' onClick={goToLink} sx={{ cursor: 'pointer' }}>
+      <Typography color='text.primary' sx={{ pr: '4px', textAlign: 'left' }} variant='B-1'>
         {label}
       </Typography>
       <ExportSquare color='#AA83DC' size={18} variant='Bulk' />
@@ -41,11 +43,11 @@ export default function LegalDocuments (): React.ReactElement {
       >
         <Item
           label='Privacy Policy'
-          link='https://docs.polkagate.xyz/polkagate/polkagate-extension-user-guide/legal-and-security/privacy-policy'
+          link={PRIVACY_POLICY_LINK}
         />
         <Item
           label='User Agreement'
-          link='https://docs.polkagate.xyz/polkagate/polkagate-extension-user-guide/legal-and-security/privacy-policy'
+          link={PRIVACY_POLICY_LINK}
         />
       </Grid>
     </Stack>

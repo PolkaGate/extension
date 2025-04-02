@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Icon } from 'iconsax-react';
 
 import { Button, useTheme } from '@mui/material';
@@ -11,18 +9,19 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useIsDark } from '../hooks';
 
 interface Props {
+  StartIcon?: Icon;
+  contentPlacement?: 'start' | 'center' | 'end';
   disabled?: boolean;
+  iconSize?: number;
+  iconAlwaysBold?: boolean;
   isBusy?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-  StartIcon?: Icon;
-  // endIcon?: React.ReactNode;
-  contentPlacement?: 'start' | 'center' | 'end';
+  style?: React.CSSProperties;
   text: string | { firstPart?: string; secondPart?: string; };
   variant?: 'text' | 'contained' | 'outlined';
-  style?: React.CSSProperties;
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton({ StartIcon, contentPlacement = 'start', disabled, iconSize = 20, iconAlwaysBold, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
 
@@ -68,8 +67,8 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
     } else {
       return (
         <>
-          <span style={{ color: theme.palette.text.secondary, ...ButtonFontStyle }}>{text.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>
-            {text.secondPart}
+          <span style={{ color: theme.palette.text.secondary, ...ButtonFontStyle }}>{text?.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>
+            {text?.secondPart}
           </span>
         </>
       );
@@ -83,7 +82,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       onMouseEnter={toggleHover}
       onMouseLeave={toggleHover}
       startIcon={StartIcon
-        ? <StartIcon size={20} variant={hovered ? 'Bold' : 'Bulk'} />
+        ? <StartIcon size={iconSize} variant={(iconAlwaysBold ?? hovered) ? 'Bold' : 'Bulk'} />
         : undefined}
       sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style }}
       variant={variant}
