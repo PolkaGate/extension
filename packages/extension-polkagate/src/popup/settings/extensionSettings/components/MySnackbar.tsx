@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
 
 import { Box, keyframes, Slide, Snackbar, Typography, useTheme } from '@mui/material';
@@ -48,7 +47,7 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
 
   return (
     <Snackbar
-      TransitionComponent={(props) => <Slide {...props} direction='up' />} 
+      TransitionComponent={(props) => <Slide {...props} direction='up' />}
       anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
       open={open}
       sx={{ top: '90px !important' }}
@@ -67,7 +66,7 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
           width: '330px'
         }}
       >
-        <Typography color={ theme.palette.text.primary} variant='B-2'>
+        <Typography color={theme.palette.text.primary} variant='B-2'>
           {text}
         </Typography>
         <Box

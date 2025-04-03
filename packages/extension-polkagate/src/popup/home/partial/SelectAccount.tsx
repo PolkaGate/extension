@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
@@ -33,7 +32,7 @@ interface AccountItemProps {
   setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function AccountItem ({ address, index, name, selected, setOpenMenu }: AccountItemProps) {
+function AccountItem({ address, index, name, selected, setOpenMenu }: AccountItemProps) {
   const gradientBackgroundStyle: React.CSSProperties = {
     background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
     borderRadius: '18px',
@@ -122,7 +121,7 @@ function AccountItem ({ address, index, name, selected, setOpenMenu }: AccountIt
   );
 }
 
-function AccountsOptions ({ setOpenMenu }: AccountsOptionProps): React.ReactElement {
+function AccountsOptions({ setOpenMenu }: AccountsOptionProps): React.ReactElement {
   const { accounts } = useContext(AccountContext);
 
   const [searchedAccounts, setSearchedAccounts] = useState<AccountJson[]>();
@@ -174,7 +173,7 @@ function AccountsOptions ({ setOpenMenu }: AccountsOptionProps): React.ReactElem
   );
 }
 
-function SelectAccount ({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectAccount({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);

@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -35,7 +33,7 @@ interface ConfirmState {
 function Derive({ isLocked }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const { address: parentAddress } = useParams<AddressState>();
+  const { address: parentAddress } = useParams();
   const onAction = useContext(ActionContext);
 
   const [isBusy, setIsBusy] = useState(false);
@@ -55,7 +53,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
   );
 
   const onCreate = useCallback((name: string, password: string) => {
-    if (!account || !name || !password || !parentPassword) {
+    if (!account || !name || !password || !parentPassword || !parentAddress) {
       return;
     }
 

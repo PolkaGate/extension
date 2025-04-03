@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
@@ -9,7 +8,7 @@ import React from 'react';
 import { star } from '../icons';
 import RateUsButton from '../partials/RateUsButton';
 
-function RateUs (): React.ReactElement {
+function RateUs(): React.ReactElement {
   return (
     <Grid alignItems='center' columnGap='5px' container item justifyContent='space-between' sx={{ border: '4px solid', borderColor: 'border.paper', borderRadius: '14px', mt: '5px', bgcolor: 'background.paper', height: '70px', px: '10px' }}>
       <Grid alignItems='center' container item sx={{ width: 'fit-content' }}>

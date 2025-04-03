@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
@@ -47,7 +46,7 @@ export const Drawer = ({ length }: { length: number }) => {
   );
 };
 
-export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
+export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: string }) {
   const pricesInCurrency = usePrices();
   const isDark = useIsDark();
 
@@ -82,7 +81,7 @@ export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: 
   );
 }
 
-export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
+export function TokenBalanceDisplay({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
   const theme = useTheme();
   const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
   const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';
@@ -115,7 +114,7 @@ export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, 
   );
 }
 
-function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
+function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const theme = useTheme();
   const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
 
@@ -161,7 +160,7 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   );
 }
 
-function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
+function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
   const theme = useTheme();
 
   const isDark = theme.palette.mode === 'dark';
@@ -239,7 +238,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const tokens: Assets = useMemo(() => {

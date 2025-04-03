@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -15,7 +14,7 @@ interface Props {
   size?: number;
 }
 
-function SocialIcon ({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
+function SocialIcon({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
   const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
   const isDark = useIsDark();
 

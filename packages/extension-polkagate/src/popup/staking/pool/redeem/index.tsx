@@ -27,7 +27,7 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../u
 import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   show: boolean;
   formatted: string;
   api: ApiPromise;

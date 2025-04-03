@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';

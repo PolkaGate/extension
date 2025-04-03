@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { StakingInputs } from '../../../type';

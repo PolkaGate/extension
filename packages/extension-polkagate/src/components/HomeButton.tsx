@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
@@ -15,7 +14,7 @@ interface Props {
   type?: 'default' | 'active';
 }
 
-function HomeButton ({ type = 'default' }: Props) {
+function HomeButton({ type = 'default' }: Props) {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const onAction = useContext(ActionContext);

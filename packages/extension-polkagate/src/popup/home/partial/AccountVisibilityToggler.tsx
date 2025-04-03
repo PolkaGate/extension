@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import { Radar2 } from 'iconsax-react';
@@ -11,7 +10,7 @@ import { Tooltip } from '../../../components';
 import { useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
 
-function AccountVisibilityToggler (): React.ReactElement {
+function AccountVisibilityToggler(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
@@ -30,7 +29,7 @@ function AccountVisibilityToggler (): React.ReactElement {
       bgcolor: '#674394'
     },
     alignItems: 'center',
-    bgcolor: account?.isHidden ? 'transparent' : isDark ? '#AA83DC26': '#FFFFFF',
+    bgcolor: account?.isHidden ? 'transparent' : isDark ? '#AA83DC26' : '#FFFFFF',
     border: '1px solid',
     borderColor: account?.isHidden ? '#AA83DC26' : 'transparent',
     borderRadius: '16px',

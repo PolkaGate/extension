@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Collapse, Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
@@ -13,7 +12,7 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
 
 interface Props {
-  address: string;
+  address: string | undefined;
 }
 
 export default function Info({ address }: Props): React.ReactElement {

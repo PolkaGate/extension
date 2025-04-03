@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
@@ -9,7 +8,7 @@ import type { BalancesInfo, MyPoolInfo } from '../../../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -34,7 +33,7 @@ interface Props {
 export default function BondExtra({ address, api, balances, formatted, pool }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chain, decimal, token } = useInfo(address);
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const [bondAmount, setBondAmount] = useState<string | undefined>();
@@ -48,11 +47,8 @@ export default function BondExtra({ address, api, balances, formatted, pool }: P
   const amountAsBN = useMemo(() => amountToMachine(bondAmount, decimal), [bondAmount, decimal]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: `/pool/${address}`,
-      state: { api, pool }
-    });
-  }, [address, api, history, pool]);
+    navigate(`/pool/${address}`, { state: { api, pool } });
+  }, [address, api, navigate, pool]);
 
   const onMaxAmount = useCallback(() => {
     if (!api || !transferableBalance || !estimatedMaxFee) {

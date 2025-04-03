@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
 
@@ -68,7 +67,7 @@ interface Props {
   title?: string;
 }
 
-export default function MyTextField ({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -97,7 +96,7 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, onE
           startAdornment: (
             <InputAdornment position='start'>
               {Icon && <Icon
-                color={ focusing ? '#3988FF' : '#AA83DC'}
+                color={focusing ? '#3988FF' : '#AA83DC'}
                 size={iconSize}
                 variant={focusing ? 'Bold' : 'Bulk'}
               />}
@@ -112,7 +111,7 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, onE
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         theme={theme}
-        type= 'text'
+        type='text'
       />
     </Grid>
   );

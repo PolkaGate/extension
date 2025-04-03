@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransitionProps } from '@mui/material/transitions';
 import type { Network } from '@polkadot/networks/types';
@@ -22,7 +21,7 @@ import getLogo from '../../util/getLogo';
 import { sanitizeChainName } from '../../util/utils';
 import MySnackbar from '../settings/extensionSettings/components/MySnackbar';
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
@@ -57,7 +56,7 @@ interface AddressComponentProp {
   chain: Network;
 }
 
-function AddressComponent ({ address, chain }: AddressComponentProp) {
+function AddressComponent({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -72,7 +71,7 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
   const handleSnackbarClose = useCallback(() => setShowSnackbar(false), []);
 
   return (
-    <Motion style ={{ width: '100%' }}>
+    <Motion style={{ width: '100%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
           <Avatar src={getLogo(chainName)} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
@@ -97,7 +96,7 @@ interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<Network | undefined>>;
 }
 
-function SelectChain ({ setSelectedChain }: SelectChainProp) {
+function SelectChain({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
 
   const customSort = useCallback((itemA: Network, itemB: Network) => {
@@ -171,7 +170,7 @@ interface QrCodeProps {
   onBackToAccount: () => void;
 }
 
-function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
+function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
 
   const formattedAddress = useMemo(() => {
@@ -231,7 +230,7 @@ interface Props {
   setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Receive ({ openPopup, setOpenPopup }: Props) {
+export default function Receive({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<Network | undefined>();

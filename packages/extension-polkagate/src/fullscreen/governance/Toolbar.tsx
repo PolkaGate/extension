@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DecidingCount } from '../../hooks/useDecidingCount';
 import type { TopMenu } from './utils/types';
@@ -71,7 +70,7 @@ export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSele
 
   const [openDelegate, setOpenDelegate] = useState(false);
   const [showDelegationNote, setShowDelegationNote] = useState<boolean>(true);
-  const [hoveredTopMenu, setHoveredTopMenu] = useState<'referenda' | 'fellowship'>(topMenu);
+  const [hoveredTopMenu, setHoveredTopMenu] = useState<'referenda' | 'fellowship' | undefined>(topMenu);
 
   React.useEffect(() => {
     setShowDelegationNote(window.localStorage.getItem('delegate_about_disabled') !== 'true');

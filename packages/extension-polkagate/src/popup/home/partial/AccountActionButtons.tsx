@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid } from '@mui/material';
 import { Edit2, type Icon, LogoutCurve, People } from 'iconsax-react';
@@ -18,7 +17,7 @@ interface ActionButtonProps {
 }
 
 interface Props {
-  address: string;
+  address: string | undefined;
   index: number;
 }
 
@@ -44,7 +43,7 @@ const ActionButton = ({ ButtonIcon, index, name, onClick }: ActionButtonProps) =
   );
 };
 
-function AccountActionButtons ({ address, index }: Props): React.ReactElement {
+function AccountActionButtons({ address, index }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const noop = useCallback(() => {

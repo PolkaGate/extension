@@ -1,11 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
-import { type RouteComponentProps, withRouter } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import keyring from '@polkadot/ui-keyring';
 
@@ -14,13 +12,8 @@ import { useTranslation } from '../../hooks';
 import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
 import HeaderBrand from '../../partials/HeaderBrand';
 
-// const acceptedFormats = ['application/json', 'text/plain'].join(', ');
-
-interface Props extends RouteComponentProps<{ address: string, isExternal: string }> {
-  className?: string;
-}
-
-function ForgetAccount({ match: { params: { address, isExternal } } }: Props): React.ReactElement<Props> {
+function ForgetAccount (): React.ReactElement {
+  const { address, isExternal } = useParams<{ address: string; isExternal: string }>();
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -56,6 +49,10 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
   }, []);
 
   const onClickForget = useCallback((): void => {
+    if (!address) {
+      return;
+    }
+
     try {
       setIsBusy(true);
 
@@ -152,4 +149,4 @@ function ForgetAccount({ match: { params: { address, isExternal } } }: Props): R
   );
 }
 
-export default withRouter(ForgetAccount);
+export default ForgetAccount;

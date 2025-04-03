@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
@@ -14,7 +13,7 @@ import useIsDark from '../../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../svg';
 import SelectAccount from './SelectAccount';
 
-function AccountSelection (): React.ReactElement {
+function AccountSelection(): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
@@ -81,7 +80,7 @@ function AccountSelection (): React.ReactElement {
           }}
           width={65}
         />
-        <ArrowDown2 color={ isDark ? '#AA83DC' : '#8F97B8'} size='18' variant='Bold' />
+        <ArrowDown2 color={isDark ? '#AA83DC' : '#8F97B8'} size='18' variant='Bold' />
       </Container>
       <SelectAccount
         openMenu={openMenu}

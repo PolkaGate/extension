@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
@@ -25,7 +24,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Login ({ setStep }: Props): React.ReactElement {
+function Login({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isPopup = useIsExtensionPopup();
   // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
@@ -108,7 +107,7 @@ function Login ({ setStep }: Props): React.ReactElement {
               marginTop: '18px',
               width: '325px'
             }}
-            text={ t('Forgot password')}
+            text={t('Forgot password')}
           />
         </Grid>
       </GradientBox>

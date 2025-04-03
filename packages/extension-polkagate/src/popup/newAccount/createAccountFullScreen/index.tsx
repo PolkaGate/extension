@@ -4,8 +4,8 @@
 import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowLeft2, User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
@@ -45,8 +45,9 @@ const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: nu
 function Title (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const navigate = useNavigate();
 
-  const onHome = useCallback(() => openOrFocusTab('/', true), []);
+  const onHome = useCallback(() => navigate('/'), [navigate]);
 
   return (
     <Stack alignContent='start' alignItems='center' columnGap='10px' direction='row' justifyContent='start' width='100%'>
@@ -90,6 +91,7 @@ function CreateAccount (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const [seed, setSeed] = useState<null | string>(null);
   const [name, setName] = useState<string | null | undefined>();
@@ -113,8 +115,9 @@ function CreateAccount (): React.ReactElement {
     setName(cleanedName);
   }, []);
 
-  const onSetPassword = useCallback((enteredPassword: string | undefined) => {
-    setPassword(enteredPassword);
+  const onSetPassword = useCallback(async () => {
+    // Example logic to handle password setting
+    await Promise.resolve(''); // Replace with actual logic if needed
   }, []);
 
   const onCheck = useCallback(() => {
@@ -126,8 +129,8 @@ function CreateAccount (): React.ReactElement {
   }, []);
 
   const onCancel = useCallback(() => {
-    openOrFocusTab('/', true);
-  }, []);
+    navigate('/');
+  }, [navigate]);
 
   const onCreate = useCallback(() => {
     if (name && password && seed) {
@@ -136,14 +139,14 @@ function CreateAccount (): React.ReactElement {
       createAccountSuri(name, password, seed, DEFAULT_TYPE, POLKADOT_GENESIS_HASH)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
-          openOrFocusTab('/', true);
+          navigate('/');
         })
         .catch((error: Error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [name, password, seed]);
+  }, [name, navigate, password, seed]);
 
   return (
     <Framework>
@@ -181,7 +184,6 @@ function CreateAccount (): React.ReactElement {
               title={t('Choose a name for this account')}
             />
             <MatchPasswordField
-              hashPassword
               onSetPassword={onSetPassword}
               setConfirmedPassword={setPassword}
               spacing='20px'
@@ -201,6 +203,7 @@ function CreateAccount (): React.ReactElement {
             <DecisionButtons
               cancelButton
               direction='horizontal'
+              disabled={!password || !isMnemonicSaved}
               isBusy={isBusy}
               onPrimaryClick={onCreate}
               onSecondaryClick={onCancel}

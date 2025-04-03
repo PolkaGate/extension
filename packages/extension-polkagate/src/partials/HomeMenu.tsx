@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
 import type { Pages } from '../popup/home/type';
@@ -9,7 +8,7 @@ import type { Pages } from '../popup/home/type';
 import { Container, Grid, styled, useTheme } from '@mui/material';
 import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useNavigate, useLocation, useParams } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
@@ -52,7 +51,7 @@ interface MenuItemProps {
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState<boolean>(false);
@@ -91,14 +90,14 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
   );
 }
 
-function HomeMenu (): React.ReactElement {
+function HomeMenu(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useSelectedAccount();
   const { assetId } = useParams<{ assetId: string }>();
 
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [leftPosition, setLeftPosition] = useState<number | null>(null);
   const [currentMenu, setCurrentMenu] = useState<string>();
@@ -144,11 +143,8 @@ function HomeMenu (): React.ReactElement {
       return;
     }
 
-    history.push({
-      pathname: `/${input}`,
-      state: { previousUrl: page }
-    });
-  }, [account, assetId, history, page]);
+    navigate(`/${input}`, { state: { previousUrl: page } });
+  }, [account, assetId, navigate, page]);
 
   const selectionLineStyle = useMemo(
     () => ({

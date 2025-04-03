@@ -1,12 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 import { Progress } from '../../components';
 import { useInfo, useTranslation } from '../../hooks';
@@ -17,8 +15,8 @@ import useTransactionHistory from './useTransactionHistory';
 
 export default function TransactionHistory(): React.ReactElement {
   const { t } = useTranslation();
-  const history = useHistory();
-  const { state } = useLocation<{ tabIndex: number; pathname?: string }>();
+  const navigate = useNavigate();
+  const { state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const { chainName, decimal, formatted, token } = useInfo(address);
 
@@ -27,10 +25,8 @@ export default function TransactionHistory(): React.ReactElement {
   const { governanceTx, grouped, tabHistory, transfersTx } = useTransactionHistory(address, tabIndex);
 
   const onBack = useCallback(() => {
-    history.push({
-      pathname: state?.pathname ?? '/'
-    });
-  }, [history, state?.pathname]);
+    navigate(state?.pathname ?? '/');
+  }, [navigate, state?.pathname]);
 
   return (
     <>

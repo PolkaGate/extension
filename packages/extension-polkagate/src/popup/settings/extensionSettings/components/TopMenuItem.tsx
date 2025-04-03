@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
 
@@ -20,7 +19,7 @@ interface Props {
   path: string;
 }
 
-function TopMenuItem ({ Icon, label, path }: Props): React.ReactElement {
+function TopMenuItem({ Icon, label, path }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { pathname } = useLocation();
   const isDark = useIsDark();

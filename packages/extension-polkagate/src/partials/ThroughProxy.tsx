@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
@@ -12,7 +11,7 @@ import { Identity } from '../components';
 import { useApi, useTranslation } from '../hooks';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   chain: Chain | null | undefined;
   style?: SxProps<Theme> | undefined;
   showDivider?: boolean;

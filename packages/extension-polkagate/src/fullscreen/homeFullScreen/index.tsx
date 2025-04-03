@@ -1,12 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { AccountContext, ActionContext } from '../../components';
+import { AccountContext } from '../../components';
 import { useAccountsOrder, useAlerts, useFullscreen, useProfileAccounts, useTranslation } from '../../hooks';
 import { AddNewAccountButton } from '../../partials';
 import FullScreenHeader from '../governance/FullScreenHeader';
@@ -18,11 +17,11 @@ import ProfileTabsFullScreen from './partials/ProfileTabsFullScreen';
 import TotalBalancePieChart, { type AssetsWithUiAndPrice } from './partials/TotalBalancePieChart';
 import WatchList from './partials/WatchList';
 
-function HomePageFullScreen(): React.ReactElement {
+function HomePageFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const onAction = useContext(ActionContext);
   const { notify } = useAlerts();
   const initialAccountList = useAccountsOrder(true);
   const { accounts: accountsInExtension } = useContext(AccountContext);
@@ -35,9 +34,9 @@ function HomePageFullScreen(): React.ReactElement {
     if (accountsInExtension && accountsInExtension?.length === 0) {
       notify(t('No accounts found!'), 'info');
 
-      onAction('/onboarding');
+      navigate('/onboarding');
     }
-  }, [accountsInExtension, notify, onAction, t]);
+  }, [accountsInExtension, notify, navigate, t]);
 
   return (
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 import type { InitiateRecoveryConfig, SocialRecoveryModes, WithdrawInfo } from './util/types';
 

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -33,7 +32,7 @@ import IdentityTable from './partial/IdentityTable';
 import { type Mode, STEPS, type SubIdAccountsToSubmit, type SubIdsParams } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain;
   depositToPay: BN | undefined;

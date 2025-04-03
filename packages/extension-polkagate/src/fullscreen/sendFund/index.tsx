@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
@@ -12,7 +11,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
@@ -40,14 +39,14 @@ export interface Inputs {
 }
 type StepsType = typeof STEPS[keyof typeof STEPS];
 
-export default function SendFund (): React.ReactElement {
+export default function SendFund(): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
   const { address, assetId } = useParams<{ address: string, assetId: string }>();
   const chain = useChain(address);
   const ref = useRef(chain);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const balances = useBalances(address, refresh, setRefresh, undefined, assetId);
@@ -67,15 +66,13 @@ export default function SendFund (): React.ReactElement {
     }
 
     if (ref.current && ref.current !== chain) {
-      history.push({
-        pathname: `/send/${address}`
-      });
+      navigate(`/send/${address}`);
       setInputs(undefined);
       setStep(STEPS.INDEX); // to return back to index when change is changed on review of confirm page!
     }
 
     ref.current = chain;
-  }, [address, chain, history]);
+  }, [address, chain, navigate]);
 
   const closeConfirmation = useCallback(() => {
     setRefresh(true);

@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -18,7 +16,7 @@ import DotIndicator from './components/DotIndicator';
 import PRadio from './components/Radio';
 import MySwitch from './components/Switch';
 
-const BackButton = ({ genesisHash }: { genesisHash: string; }) => {
+const BackButton = ({ genesisHash }: { genesisHash: string | undefined; }) => {
   const chain = useMetadata(genesisHash, true);
   const chainName = chain?.name;
 
@@ -36,7 +34,7 @@ const endpointManager = new EndpointManager2();
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function Endpoints (): React.ReactElement {
+function Endpoints(): React.ReactElement {
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const onAction = useContext(ActionContext);
@@ -51,7 +49,7 @@ function Endpoints (): React.ReactElement {
   const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
     const newEndpoint = event.target.value;
 
-    if (!newEndpoint) {
+    if (!newEndpoint || !genesisHash) {
       return;
     }
 

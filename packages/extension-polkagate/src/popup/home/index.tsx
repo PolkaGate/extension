@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -23,7 +22,7 @@ import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
 import ChangeLog from './ChangeLog';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
 
@@ -78,7 +77,7 @@ export default function Home (): React.ReactElement {
           <Portfolio />
           <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflow: 'scroll' }}>
             <AssetsBox />
-            <Version style ={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
+            <Version style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
             <FadeOnScroll containerRef={refContainer} />
           </Grid>
           <HomeMenu />

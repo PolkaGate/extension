@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
@@ -68,7 +67,7 @@ interface Props {
   hasError?: boolean;
 }
 
-export default function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
+export default function PasswordInput({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();

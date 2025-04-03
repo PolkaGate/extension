@@ -5,14 +5,13 @@ import { Box, Container, Grid, Link, Stack, Typography } from '@mui/material';
 import { UserOctagon } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Trans } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 import { backgroundBlur } from '../../assets/img';
 import { logoTransparent, polkagateVector } from '../../assets/logos';
 import { useManifest, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
-import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import NeedHelp from './NeedHelp';
 import TopRightIcons from './TopRightIcons';
 
@@ -32,30 +31,32 @@ const ENABLED_LINK_COLOR = '#AA83DC';
 function Bread (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
-  console.log('location:', pathname);
   const status = useMemo(() => {
     switch (pathname) {
       case '/onboarding':
         return STATUS.WELCOME;
       case '/account/create':
         return STATUS.CREATE_A_NEW_WALLET;
+      case '/account/have-wallet':
+        return STATUS.ALREADY_HAVE_A_WALLET;
       default:
         return STATUS.WELCOME;
     }
   }, [pathname]);
 
   const onWelcomeClick = useCallback(() => {
-    status !== STATUS.WELCOME && openOrFocusTab('/', true);
-  }, [status]);
+    status !== STATUS.WELCOME && navigate('/onboarding');
+  }, [navigate, status]);
 
   const onHaveWalletClick = useCallback(() => {
-    status !== STATUS.ALREADY_HAVE_A_WALLET && openOrFocusTab('/', true);
-  }, [status]);
+    status !== STATUS.ALREADY_HAVE_A_WALLET && navigate('/'); // TODO
+  }, [navigate, status]);
 
   const onCreateClick = useCallback(() => {
-    status !== STATUS.CREATE_A_NEW_WALLET && openOrFocusTab('/account/create', true);
-  }, [status]);
+    status !== STATUS.CREATE_A_NEW_WALLET && navigate('/account/create');
+  }, [navigate, status]);
 
   return (
     <Grid columnGap='30px' container item sx={{ height: '50px', m: '8px 0 0 155px ' }}>

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -31,7 +30,7 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../util
 import Confirmation from './Confirmation';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise;
   classToUnlock: Lock[]
   setShow: React.Dispatch<React.SetStateAction<boolean>>;

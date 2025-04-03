@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/util/types';
 
@@ -14,7 +13,7 @@ import VelvetBox from '../../../style/VelvetBox';
 import AssetLoading from '../../home/partial/AssetLoading';
 import HistoryItem from './HistoryItem';
 
-function EmptyHistoryBox () {
+function EmptyHistoryBox() {
   const { t } = useTranslation();
 
   return (
@@ -37,7 +36,7 @@ interface Props {
   notReady?: boolean;
 }
 
-function HistoryBox ({ historyItems, notReady = false, style }: Props) {
+function HistoryBox({ historyItems, notReady = false, style }: Props) {
   const { t } = useTranslation();
 
   const short = window.location.hash.includes('token');

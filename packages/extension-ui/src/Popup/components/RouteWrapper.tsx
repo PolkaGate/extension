@@ -11,7 +11,7 @@ interface RouteWrapperProps {
   props?: Record<string, unknown>;
 }
 
-export default function RouteWrapper({ component: Component, props, trigger }: RouteWrapperProps) {
+export default function RouteWrapper ({ component: Component, props, trigger }: RouteWrapperProps) {
   return (
     <ErrorBoundary trigger={trigger}>
       <Component {...props} />

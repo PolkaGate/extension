@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 // @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description to show rewards chart

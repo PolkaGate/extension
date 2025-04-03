@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
@@ -41,10 +40,10 @@ function GradientBox2 ({ children, noGradient = false, style, withGradientTopBor
       }}
     >
       {withGradientTopBorder &&
-      <GradientBorder style={{ top: '-2px' }} />
+        <GradientBorder style={{ top: '-2px' }} />
       }
       {!noGradient &&
-      <RedGradient style={{ top: '-100px' }} />
+        <RedGradient style={{ top: '-100px' }} />
       }
       <Box position='relative' zIndex={1}>
         {children}

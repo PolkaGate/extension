@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { UnfoldMore as UnfoldMoreIcon } from '@mui/icons-material';
 import { Container, Tab, Tabs, Typography, useTheme } from '@mui/material';
@@ -18,7 +17,7 @@ interface TabProps {
   setTab?: React.Dispatch<React.SetStateAction<TAB | undefined>>;
 }
 
-function ChainTokensTab ({ setTab, tab }: TabProps) {
+function ChainTokensTab({ setTab, tab }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -90,7 +89,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
   );
 }
 
-function NFTTab ({ isSelected = false }: TabProps) {
+function NFTTab({ isSelected = false }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -109,11 +108,11 @@ interface Props {
   tab: TAB | undefined;
 }
 
-function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
+function AssetTabs({ setTab, tab }: Props): React.ReactElement {
   const tabIndex = useMemo(() => !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
     ? TAB.CHAINS
     : TAB.NFTS
-  , [tab]);
+    , [tab]);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
     const selectedTab = value === TAB.NFTS

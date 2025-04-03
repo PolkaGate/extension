@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -33,7 +32,7 @@ export enum PASSWORD_STATUS {
 
 const MIN_LENGTH = 6;
 
-function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, spacing= '18px', statusSetter, style, title1, title2 }: Props): React.ReactElement {
+function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, spacing = '18px', statusSetter, style, title1, title2 }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [password, setPassword] = useState<string>();

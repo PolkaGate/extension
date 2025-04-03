@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 /**
  * @description
  * this component opens Select Validators page
@@ -24,7 +22,7 @@ import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/consta
 import ValidatorsTableFS from './ValidatorsTableFS';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   nominatedValidatorsIds?: string[] | null | undefined;
   stashId: AccountId | string | undefined;
   stakingConsts: StakingConsts | null | undefined;
@@ -245,7 +243,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
               <FilterIcon sx={{ color: 'secondary.light' }} />
             </Grid>
             <Grid item xs={12}>
-              {validatorsToList &&
+              {validatorsToList && address &&
                 <ValidatorsTableFS
                   address={address}
                   allValidatorsIdentities={allValidatorsIdentities}

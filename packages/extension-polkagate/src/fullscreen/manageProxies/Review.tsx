@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -28,7 +27,7 @@ import Confirmation from './Confirmation';
 import { STEPS } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   proxyItems: ProxyItem[] | null | undefined;

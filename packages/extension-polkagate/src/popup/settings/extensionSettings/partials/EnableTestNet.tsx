@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
@@ -16,7 +15,7 @@ import { tieAccount } from '../../../../messaging';
 import MySwitch from '../components/Switch';
 import Warning from './Warning';
 
-export default function EnableTestNet (): React.ReactElement {
+export default function EnableTestNet(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const isTestnetEnabled = useIsTestnetEnabled();

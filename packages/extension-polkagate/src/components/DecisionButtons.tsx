@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -24,7 +23,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, showChevron, style }: Props): React.ReactElement {
+function DecisionButtons({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, showChevron, style }: Props): React.ReactElement {
   const theme = useTheme();
 
   const { primaryWidth, secondaryWidth } = useMemo(() => {

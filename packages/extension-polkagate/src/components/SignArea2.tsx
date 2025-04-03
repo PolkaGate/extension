@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
@@ -32,7 +31,7 @@ import SignWithPassword from './SignWithPassword';
 import { PButton, Progress, TwoButtons, Warning } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   maybeApi?: ApiPromise;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined | SubmittableExtrinsic<'promise', ISubmittableResult>;
   disabled?: boolean;

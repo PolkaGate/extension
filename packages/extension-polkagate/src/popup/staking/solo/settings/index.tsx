@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountStakingInfo, Payee, SoloSettings, StakingConsts } from '../../../../util/types';
@@ -19,7 +18,7 @@ import Review from './Review';
 
 interface Props {
   api: ApiPromise | undefined;
-  address: string;
+  address: string | undefined;
   showSettings: boolean
   setShowSettings: React.Dispatch<React.SetStateAction<boolean>>
   stakingConsts: StakingConsts | null | undefined;

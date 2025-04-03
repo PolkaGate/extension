@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AutoLockDelayType } from '../../../../hooks/useAutoLock';
 
@@ -21,7 +20,7 @@ const autoLockOptions = [
   { text: 'day', value: 'day' }
 ];
 
-export default function AutoLockTimer (): React.ReactElement {
+export default function AutoLockTimer(): React.ReactElement {
   const { t } = useTranslation();
   const autoLock = useAutoLock();
 

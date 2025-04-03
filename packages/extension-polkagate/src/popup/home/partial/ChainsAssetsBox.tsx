@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';
@@ -29,7 +28,7 @@ interface AssetDetailType {
 }
 type Summary = AssetDetailType[] | null | undefined;
 
-function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
+function AssetsHeader({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   const theme = useTheme();
 
   return (
@@ -56,7 +55,7 @@ function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   );
 }
 
-function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
+function AssetsDetail({ asset }: { asset: FetchedBalance }) {
   const theme = useTheme();
 
   const onAction = useContext(ActionContext);
@@ -95,7 +94,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);

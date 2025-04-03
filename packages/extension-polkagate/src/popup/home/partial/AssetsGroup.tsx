@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 import type { BalancesInfo } from '../../../util/types';
@@ -23,7 +22,7 @@ interface AssetsGroupProps {
   address: string | undefined;
 }
 
-function AssetsGroup ({ address }: AssetsGroupProps): React.ReactElement {
+function AssetsGroup({ address }: AssetsGroupProps): React.ReactElement {
   const theme = useTheme();
   const accountAssets = useAccountAssets(address);
   const pricesInCurrencies = usePrices();

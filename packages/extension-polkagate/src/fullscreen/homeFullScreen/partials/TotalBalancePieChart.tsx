@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';

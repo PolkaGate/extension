@@ -3,18 +3,18 @@
 // @ts-nocheck
 
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function useRedirectOnRefresh(path: string | undefined): void {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (window.performance) {
       if (performance.navigation.type === 1) {
-        history.push({
-          pathname: path
-        });
+        navigate(
+          path
+        );
       }
     }
-  }, [path, history]);
+  }, [path, navigate]);
 }

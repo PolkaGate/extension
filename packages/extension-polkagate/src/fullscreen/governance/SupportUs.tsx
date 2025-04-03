@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { AccessTime as AccessTimeIcon, ArrowForward as ArrowForwardIcon, Handshake as HandshakeIcon } from '@mui/icons-material';
 import { alpha, Box, Button, Dialog, DialogContent, Paper, Slide, type Theme, Typography, useTheme } from '@mui/material';

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
@@ -85,7 +84,7 @@ const lockedReservedReducer = (state: LockedReservedState, action: Action): Lock
   }
 };
 
-function Tokens (): React.ReactElement {
+function Tokens(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -108,7 +107,7 @@ function Tokens (): React.ReactElement {
 
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
-  , [accountAssets, genesisHash, paramAssetId]);
+    , [accountAssets, genesisHash, paramAssetId]);
 
   const transferable = useMemo(() => getValue('transferable', token as unknown as BalancesInfo), [token]);
   const lockedBalance = useMemo(() => getValue('locked balance', token as unknown as BalancesInfo), [token]);
@@ -118,7 +117,7 @@ function Tokens (): React.ReactElement {
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
   const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
 
-  const isMigrationEnabled = useMemo(() => MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash), [genesisHash]);
+  const isMigrationEnabled = useMemo(() => MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
   const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '0'), token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
   const { lockedReasonLoading, reservedReasonLoading } = useMemo(() => {
@@ -134,7 +133,7 @@ function Tokens (): React.ReactElement {
   }, [delegatedBalance, reservedReason, totalLocked]);
 
   const lockedTooltip = useMemo(() => {
-    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(genesisHash) || !api) {
+    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(genesisHash ?? '') || !api) {
       return undefined;
     }
 
@@ -293,10 +292,10 @@ function Tokens (): React.ReactElement {
                 value={token?.totalBalance}
               />
               {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
-                  <DailyChange
-                    change={change}
-                    textVariant='B-1'
-                  />
+                <DailyChange
+                  change={change}
+                  textVariant='B-1'
+                />
               }
             </Grid>
           </GlowBox>

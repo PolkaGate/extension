@@ -4,13 +4,12 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { AddCircle, Wallet } from 'iconsax-react';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
-import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import Framework from './Framework';
 
 export const ICON_BOX_WIDTH = '300px';
@@ -20,18 +19,13 @@ function Onboarding (): React.ReactElement {
   const theme = useTheme();
   const navigate = useNavigate();
 
-
   useFullscreen();
 
-  // useEffect(() => {
-  //   if (accounts?.length > 0) {
-  //     onAction('/');
-  //   }
-  // }, [accounts?.length, onAction]);
+  const onCreate = useCallback(() => navigate('/account/create'), [navigate]);
 
-  const onCreate = useCallback((): void => openOrFocusTab('/account/create', true), []);
-
-  const onAddAccount = useCallback((): void => { windowOpen('/account/create').catch(console.error); }, []);
+  const onAddAccount = useCallback((): void => {
+    windowOpen('/account/create').catch(console.error);
+  }, []);
 
   return (
     <Framework>
@@ -56,9 +50,9 @@ function Onboarding (): React.ReactElement {
           style={{
             borderRadius: '18px',
             height: '48px',
-            width: '100%',
-            mt: '25px',
-            pl: '100px'
+            marginTop: '25px',
+            paddingLeft: '100px',
+            width: '100%'
           }}
           text={t('Create a new account')}
         />
@@ -69,9 +63,9 @@ function Onboarding (): React.ReactElement {
           style={{
             borderRadius: '18px',
             height: '44px',
-            width: '100%',
             mt: '20px',
-            pl: '100px'
+            pl: '100px',
+            width: '100%'
           }}
           text={{
             firstPart: t('Already'),

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
@@ -20,7 +19,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function ForgotPasswordConfirmation ({ setStep }: Props): React.ReactElement<Props> {
+export default function ForgotPasswordConfirmation({ setStep }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import type { DecidingCount } from '../../hooks/useDecidingCount';
@@ -21,10 +20,10 @@ import { Separator } from './AllReferendaStats';
 import ThresholdCurves from './Curves';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   decidingCounts: DecidingCount | undefined;
   selectedSubMenu: string;
-  topMenu: 'referenda' | 'fellowship';
+  topMenu: 'referenda' | 'fellowship' | undefined;
   track: Track | undefined;
 }
 
@@ -88,9 +87,10 @@ export function TrackStats({ address, decidingCounts, selectedSubMenu, topMenu, 
               </Typography>
             </Grid>
             <Grid container item>
-              <Typography color='text.disableText' fontSize={16} fontWeight={400}>
-                {chainGovInfo[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
-              </Typography>
+              {topMenu &&
+                <Typography color='text.disableText' fontSize={16} fontWeight={400}>
+                  {chainGovInfo[topMenu.toLocaleLowerCase()].find(({ name }) => name === snakeCaseTrackName)?.text}
+                </Typography>}
             </Grid>
           </Grid>
           <Grid container item justifyContent='space-between'>

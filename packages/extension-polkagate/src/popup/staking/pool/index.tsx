@@ -1,10 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ApiPromise } from '@polkadot/api';
-import type { PoolStakingConsts, StakingConsts } from '../../../util/types';
+import type { PoolStakingConsts } from '../../../util/types';
 
 import { faHandDots, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +10,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -35,21 +33,12 @@ interface SessionIfo {
   currentEra: number;
 }
 
-interface State {
-  api?: ApiPromise;
-  stakingConsts?: StakingConsts;
-  unlockingAmount?: BN;
-  redeemable?: BN;
-  currentEraIndex?: number;
-  poolConsts?: PoolStakingConsts;
-}
-
 export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
-  const history = useHistory();
-  const { pathname, state } = useLocation<State>();
+  const navigate = useNavigate();
+  const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
   const chain = useChain(address);
@@ -156,36 +145,30 @@ export default function Index(): React.ReactElement {
   }, [address, chain?.genesisHash, onAction, onExtension]);
 
   const goToStake = useCallback(() => {
-    history.push({
-      pathname: `/pool/stake/${address}`,
-      state: { api, consts, pathname, pool, stakingConsts }
-    });
-  }, [address, api, consts, history, pool, pathname, stakingConsts]);
+    navigate(`/pool/stake/${address}`, { state: { api, consts, pathname, pool, stakingConsts } });
+  }, [address, api, consts, navigate, pool, pathname, stakingConsts]);
 
   const goToUnstake = useCallback(() => {
-    staked && !staked?.isZero() && history.push({
-      pathname: `/pool/unstake/${address}`,
+    staked && !staked?.isZero() && navigate(`/pool/unstake/${address}`, {
       state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
     });
-  }, [staked, history, address, api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount]);
+  }, [staked, navigate, address, api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount]);
 
   const goToNominations = useCallback(() => {
-    history.push({
-      pathname: `/pool/nominations/${address}`,
+    navigate(`/pool/nominations/${address}`, {
       state: { api, balances, claimable, consts, pathname, pool, redeemable, stakingConsts, unlockingAmount }
     });
-  }, [history, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
+  }, [navigate, address, api, balances, claimable, consts, pool, pathname, redeemable, unlockingAmount, stakingConsts]);
 
   const goToInfo = useCallback(() => {
     setShowInfo(true);
   }, []);
 
   const goToPool = useCallback(() => {
-    history.push({
-      pathname: `/pool/myPool/${address}`,
+    navigate(`/pool/myPool/${address}`, {
       state: { api, pool }
     });
-  }, [address, api, history, pool]);
+  }, [address, api, navigate, pool]);
 
   const goToRewardWithdraw = useCallback(() => {
     claimable && !claimable?.isZero() && setShowRewardWithdraw(true);

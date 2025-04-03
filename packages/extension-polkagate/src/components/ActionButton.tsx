@@ -3,7 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Button, useTheme } from '@mui/material';
+import { Button, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useIsDark } from '../hooks';
@@ -16,12 +16,12 @@ interface Props {
   iconAlwaysBold?: boolean;
   isBusy?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-  style?: React.CSSProperties;
-  text: string | { firstPart?: string; secondPart?: string; };
+  style?: SxProps<Theme> | undefined;
+  text?: string | { firstPart?: string; secondPart?: string; };
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton({ StartIcon, contentPlacement = 'start', disabled, iconSize = 20, iconAlwaysBold, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
 
@@ -41,7 +41,7 @@ export default function ActionButton({ StartIcon, contentPlacement = 'start', di
       transition: 'all 250ms ease-out'
     },
     background: isDark ? '#2D1E4A' : '#FFFFFF',
-    borderRadius: `${style?.borderRadius ?? '12px'}`,
+    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? '12px'}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
     padding: '6px 24px',
