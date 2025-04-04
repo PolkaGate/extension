@@ -1242,7 +1242,6 @@
   "Paying": "",
   "Paying Confirmation": "",
   "Welcome to {{extensionName}}!": "",
-  "We appreciate your choice in selecting PolkaGate as your gateway to the Polkadot ecosystem! 🌟": "",
   "At present, you do not have any accounts. To begin your journey, you can create your first account or import existing accounts to get started.": "",
   "This account is a validator!": "",
   "Social recovery": "",
@@ -1615,5 +1614,11 @@
   "Continue": "",
   "Name account": "",
   "I have saved": "",
-  "my recovery phrase safely": ""
+  "my recovery phrase safely": "",
+  "have a wallet": "",
+  "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "",
+  "Restore from File": "",
+  "account import": "",
+  "a new account": "",
+  "I have saved my recovery phrase safely": ""
 }

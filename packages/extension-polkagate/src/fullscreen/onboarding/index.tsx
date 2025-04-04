@@ -2,17 +2,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { AddCircle, Wallet } from 'iconsax-react';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import { AddCircle, Convertshape2, Wallet } from 'iconsax-react';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
-import { windowOpen } from '../../messaging';
+import { createAccountExternal } from '../../messaging';
+import { DEMO_ACCOUNT } from '../../util/constants';
 import Framework from './Framework';
 
 export const ICON_BOX_WIDTH = '300px';
+
+function OrSeparator (): React.ReactElement {
+  const { t } = useTranslation();
+
+  return (
+    <Stack alignItems='center' columnGap='20px' direction='row' sx={{ my: '20px' }}>
+      <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '144px' }} />
+      <Typography color='#BEAAD8' textTransform='uppercase' variant='H-5'>
+        {t('or')}
+      </Typography>
+      <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '144px' }} />
+    </Stack>
+  );
+}
 
 function Onboarding (): React.ReactElement {
   const { t } = useTranslation();
@@ -23,9 +39,15 @@ function Onboarding (): React.ReactElement {
 
   const onCreate = useCallback(() => navigate('/account/create'), [navigate]);
 
-  const onAddAccount = useCallback((): void => {
-    windowOpen('/account/create').catch(console.error);
-  }, []);
+  const onAddAccount = useCallback(() => navigate('/account/have-wallet'), [navigate]);
+
+  const onExploreDemo = useCallback((): void => {
+    createAccountExternal('Demo account', DEMO_ACCOUNT, POLKADOT_GENESIS)
+      .then(() => navigate('/'))
+      .catch((error: Error) => {
+        console.error(error);
+      });
+  }, [navigate]);
 
   return (
     <Framework>
@@ -41,7 +63,7 @@ function Onboarding (): React.ReactElement {
           </Typography>
         </Stack>
         <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1'>
-          {t('Currently, you do not have any accounts. To begin, you may create your first account or import existing accounts to get started.')}
+          {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
         </Typography>
         <GradientButton
           StartIcon={AddCircle}
@@ -70,6 +92,23 @@ function Onboarding (): React.ReactElement {
           text={{
             firstPart: t('Already'),
             secondPart: t('have an account')
+          }}
+          variant='contained'
+        />
+        <OrSeparator />
+        <ActionButton
+          StartIcon={Convertshape2}
+          contentPlacement='start'
+          onClick={onExploreDemo}
+          style={{
+            borderRadius: '18px',
+            height: '44px',
+            pl: '100px',
+            width: '100%'
+          }}
+          text={{
+            firstPart: t('Demo'),
+            secondPart: t('account import')
           }}
           variant='contained'
         />

@@ -1,86 +1,22 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { ArrowLeft2, User } from 'iconsax-react';
+import { Stack, Typography, useTheme } from '@mui/material';
+import { User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { ActionButton, DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
+import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
+import { OnboardTitle } from '../../../fullscreen/components/index';
 import Framework from '../../../fullscreen/onboarding/Framework';
-import { useFullscreen, useIsDark, useTranslation } from '../../../hooks';
+import { useFullscreen, useTranslation } from '../../../hooks';
 import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';
-import CopySeedButton from './components/CopySeedButton';
-import DownloadSeedButton from './components/DownloadSeedButton';
-import IllustrateSeed from './components/IllustrateSeed';
-
-const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
-  const { t } = useTranslation();
-
-  return (
-    <Grid container display='block' item sx={style}>
-      <Stack alignItems='center' columnGap='5px' direction='row'>
-        <Typography mr='5px' textAlign='left' variant='B-2'>
-          {t('Generated')}<span style={{ color: '#BEAAD8', marginLeft: '5px' }}>{t('12-word recovery phrase')} </span>
-        </Typography>
-        <DownloadSeedButton
-          style={{ width: 'fit-content' }}
-          value={seed ?? ''}
-        />
-        <CopySeedButton
-          style={{ width: 'fit-content' }}
-          value={seed ?? ''}
-        />
-      </Stack>
-      <IllustrateSeed seed={seed} style={{ marginTop: '10px' }} />
-    </Grid>
-  );
-};
-
-function Title (): React.ReactElement {
-  const { t } = useTranslation();
-  const isDark = useIsDark();
-  const navigate = useNavigate();
-
-  const onHome = useCallback(() => navigate('/'), [navigate]);
-
-  return (
-    <Stack alignContent='start' alignItems='center' columnGap='10px' direction='row' justifyContent='start' width='100%'>
-      <ActionButton
-        StartIcon={ArrowLeft2}
-        contentPlacement='start'
-        iconAlwaysBold
-        iconSize={24}
-        onClick={onHome}
-        style={{
-          '& .MuiButton-startIcon': {
-            marginLeft: '5px',
-            marginRight: '0px'
-          },
-          '&:hover': {
-            background: isDark ? '#674394' : '#EFF1F9',
-            transition: 'all 250ms ease-out'
-          },
-          background: isDark ? '#BFA1FF26' : '#FFFFFF',
-          borderRadius: '10px',
-          height: '36px',
-          minWidth: '0px',
-          padding: 0,
-          width: '36px'
-        }}
-        variant='contained'
-      />
-      <Typography alignSelf='end' textAlign='left' textTransform='uppercase' variant='H-1' width='100%'>
-        {t('Create')}<span style={{ color: '#BEAAD8', marginLeft: '5px' }}>{t('A new account')} </span>
-      </Typography>
-    </Stack>
-  );
-}
+import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
 
 enum STEP {
   SEED,
@@ -151,7 +87,11 @@ function CreateAccount (): React.ReactElement {
   return (
     <Framework>
       <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
-        <Title />
+        <OnboardTitle
+          label={t('Create a new account')}
+          labelPartInColor={t('a new account')}
+          url='/onboarding'
+        />
         {step === STEP.SEED &&
           <>
             <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1' width='480px'>
@@ -195,8 +135,8 @@ function CreateAccount (): React.ReactElement {
               changeState={onCheck}
               checked={isMnemonicSaved}
               disabled={isBusy}
-              label={t('I have saved')}
-              label2={t('my recovery phrase safely')}
+              label={t('I have saved my recovery phrase safely')}
+              labelPartInColor={t('my recovery phrase safely')}
               labelStyle={{ ...theme.typography['B-1'] }}
               style={{ justifyContent: 'start', mt: '40px' }}
             />

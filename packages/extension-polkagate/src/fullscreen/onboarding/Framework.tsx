@@ -4,11 +4,11 @@
 import { Box, Container, Grid, Link, Stack, Typography } from '@mui/material';
 import { UserOctagon } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
-import { Trans } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 
 import { backgroundBlur } from '../../assets/img';
 import { logoTransparent, polkagateVector } from '../../assets/logos';
+import { TwoToneText } from '../../components';
 import { useManifest, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
@@ -28,7 +28,7 @@ const enum STATUS {
 const DISABLED_LINK_COLOR = '#674394';
 const ENABLED_LINK_COLOR = '#AA83DC';
 
-function Bread (): React.ReactElement {
+function Bread(): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ function Bread (): React.ReactElement {
   }, [navigate, status]);
 
   const onHaveWalletClick = useCallback(() => {
-    status !== STATUS.ALREADY_HAVE_A_WALLET && navigate('/'); // TODO
+    status !== STATUS.ALREADY_HAVE_A_WALLET && navigate('/account/have-wallet');
   }, [navigate, status]);
 
   const onCreateClick = useCallback(() => {
@@ -80,7 +80,7 @@ function Bread (): React.ReactElement {
   );
 }
 
-function Framework ({ children }: Props): React.ReactElement {
+function Framework({ children }: Props): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
 
@@ -119,9 +119,10 @@ function Framework ({ children }: Props): React.ReactElement {
           <Grid container item sx={{ background: 'linear-gradient(90deg, rgba(197, 151, 255, 0.0125) 0%, rgba(91, 31, 166, 0.15) 50.06%, rgba(197, 151, 255, 0.05) 100%)', borderRadius: '24px', height: '693px', m: '5px', position: 'relative', width: '582px' }}>
             <Grid item sx={{ bottom: '100px', ml: '10%', position: 'absolute', width: '50%' }}>
               <Typography color='#FFFFFF' display='block' lineHeight='100%' textAlign='left' textTransform='uppercase' variant='H-1'>
-                <Trans>
-                  We appreciate your choice in selecting <span style={{ color: '#ECB4FF' }}>PolkaGate!</span>
-                </Trans>
+                <TwoToneText
+                  text={t('We appreciate your choice in selecting PolkaGate!')}
+                  textPartInColor={t('PolkaGate!')}
+                />
               </Typography>
               <Typography color='#BEAAD8' display='block' fontSize='14px' pt='15px' variant='B-1'>
                 {t('as your gateway to the Polkadot ecosystem! ')}

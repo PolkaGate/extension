@@ -4,6 +4,7 @@
 import type { RouteConfig } from './RouteDefinitions';
 
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
+import HaveWallet from '@polkadot/extension-polkagate/src/fullscreen/haveWallet';
 import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
 import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ExportAll from '@polkadot/extension-polkagate/src/popup/export/ExportAll';
@@ -25,6 +26,11 @@ export const ACCOUNT_ROUTES: RouteConfig[] = [
   {
     Component: CreateAccount,
     path: '/account/create',
+    trigger: 'account-creation'
+  },
+  {
+    Component: HaveWallet,
+    path: '/account/have-wallet',
     trigger: 'account-creation'
   },
   {
