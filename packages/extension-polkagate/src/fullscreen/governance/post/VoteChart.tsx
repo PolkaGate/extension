@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
 import { grey } from '@mui/material/colors';

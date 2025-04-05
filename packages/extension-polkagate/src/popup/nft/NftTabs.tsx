@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Tab, Tabs, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
@@ -16,7 +15,7 @@ interface TabProps {
   setTab?: React.Dispatch<React.SetStateAction<TAB | undefined>>;
 }
 
-function Label ({ isSelected = false, text }: TabProps) {
+function Label({ isSelected = false, text }: TabProps) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', width: 'fit-content' }}>
       <Typography color={isSelected ? 'text.primary' : 'secondary.main'} textTransform='capitalize' variant='B-2'>
@@ -31,7 +30,7 @@ interface Props {
   tab: TAB | undefined;
 }
 
-function NftTabs ({ setTab, tab }: Props): React.ReactElement {
+function NftTabs({ setTab, tab }: Props): React.ReactElement {
   const { t } = useTranslation();
   const tabIndex = useMemo(() => !tab ? TAB.DETAILS : tab, [tab]);
 

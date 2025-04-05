@@ -120,6 +120,7 @@ export { Input } from './TextInputs';
 export { default as ToggleDots } from './ToggleDots';
 export { default as Tooltip } from './Tooltip';
 export { default as TwoButtons } from './TwoButtons';
+export { default as TwoToneText } from './TwoToneText';
 export { default as VaadinIcon } from './VaadinIcon';
 export { default as ValidatedInput } from './ValidatedInput';
 export { default as Waiting } from './Waiting';

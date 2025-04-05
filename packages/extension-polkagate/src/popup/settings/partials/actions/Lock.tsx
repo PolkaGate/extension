@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Unlock } from 'iconsax-react';
@@ -13,7 +12,7 @@ import { useExtensionLockContext } from '../../../../context/ExtensionLockContex
 import { useAutoLockPeriod, useIsDark, useIsLoginEnabled, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
-export default function Lock ({ style }: { style: SxProps<Theme> }): React.ReactElement {
+export default function Lock({ style }: { style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const autoLockPeriod = useAutoLockPeriod();

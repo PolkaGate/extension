@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 
@@ -145,7 +144,7 @@ const useStyles = (displayStyle: DisplayStyle = 'asset') => {
   }), [theme.palette.text.secondary, fontFamily, decimalFontSize, fontWeight, displayStyle, integerFontSize]);
 };
 
-const RenderSkeleton = memo(function RenderSkeleton ({ displayStyle = 'asset' }: { displayStyle: DisplayStyle }) {
+const RenderSkeleton = memo(function RenderSkeleton({ displayStyle = 'asset' }: { displayStyle: DisplayStyle }) {
   return (
     <Skeleton
       animation='wave'
@@ -156,7 +155,7 @@ const RenderSkeleton = memo(function RenderSkeleton ({ displayStyle = 'asset' }:
   );
 });
 
-const RenderAmount = memo(function RenderAmount ({ displayStyle, value }: { value: string, displayStyle?: DisplayStyle }) {
+const RenderAmount = memo(function RenderAmount({ displayStyle, value }: { value: string, displayStyle?: DisplayStyle }) {
   const styles = useStyles(displayStyle);
 
   return (
@@ -174,7 +173,7 @@ const RenderAmount = memo(function RenderAmount ({ displayStyle, value }: { valu
   );
 });
 
-function CurrencyDisplay ({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_PLACES, displayStyle = 'asset', fontStyle }: Props): React.ReactElement {
+function CurrencyDisplay({ amount, decimal, decimalPartCount = DEFAULT_DECIMAL_PLACES, displayStyle = 'asset', fontStyle }: Props): React.ReactElement {
   const currency = useCurrency();
   const { isHideNumbers } = useIsHideNumbers();
   const styles = useStyles(displayStyle);

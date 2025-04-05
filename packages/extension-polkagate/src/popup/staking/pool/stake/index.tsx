@@ -1,23 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-
-/* eslint-disable react/jsx-max-props-per-line */
+import type { ApiPromise } from '@polkadot/api';
+import type { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 // @ts-ignore
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
-
-import { ApiPromise } from '@polkadot/api';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useApi, useBalances, useFormatted, usePool, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../hooks';
 import { HeaderBrand } from '../../../../partials';
 import { STAKING_CHAINS } from '../../../../util/constants';
-import type { MyPoolInfo, PoolStakingConsts } from '../../../../util/types';
 import BondExtra from './bondExtra';
 import StakeInitialChoice from './StakeInitialChoice';
 
@@ -28,7 +26,7 @@ interface State {
   pathname: string;
 }
 
-export default function Stake(): React.ReactElement {
+export default function Stake (): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const formatted = useFormatted(address);
@@ -40,14 +38,11 @@ export default function Stake(): React.ReactElement {
   const poolStakingConsts = usePoolConsts(address, state?.consts);
   const balances = useBalances(address);
   const pool = usePool(address);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: `/pool/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate( `/pool/${address}`,{      state: { ...state }    });
+  }, [address, navigate, state]);
 
   return (
     <>

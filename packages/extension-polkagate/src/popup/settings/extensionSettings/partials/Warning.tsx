@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
@@ -17,7 +16,7 @@ interface Props {
   onConfirm: () => void
 }
 
-function Warning ({ onConfirm, open, setPopup }: Props): React.ReactElement {
+function Warning({ onConfirm, open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);

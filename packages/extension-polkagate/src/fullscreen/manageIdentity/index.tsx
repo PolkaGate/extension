@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Data } from '@polkadot/types';
 import type { PalletIdentityLegacyIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';

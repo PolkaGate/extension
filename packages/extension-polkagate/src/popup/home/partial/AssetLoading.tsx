@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, Skeleton } from '@mui/material';
 import React from 'react';
@@ -10,7 +9,7 @@ import { logoWhiteTransparent } from '../../../assets/logos';
 import { useIsDark } from '../../../hooks/index';
 import { Drawer } from './TokensAssetsBox';
 
-function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
+function MySkeleton({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
   return (<Skeleton
     animation='wave'
     height={12}
@@ -18,7 +17,7 @@ function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): Re
   />);
 }
 
-function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
+function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   const isDark = useIsDark();
 
   return (
@@ -74,7 +73,7 @@ function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   );
 }
 
-function AssetLoading ({ itemsCount = 4, noDrawer = false }: { itemsCount?: number; noDrawer?: boolean; }) {
+function AssetLoading({ itemsCount = 4, noDrawer = false }: { itemsCount?: number; noDrawer?: boolean; }) {
   return (
     <div style={{ display: 'grid', position: 'relative', rowGap: '10px', zIndex: 1 }}>
       {Array.from({ length: itemsCount }).map((_, index) => (

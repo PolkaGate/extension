@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ThumbnailProps } from '../utils/types';
 
 import CollectionsIcon from '@mui/icons-material/Collections';
@@ -18,7 +16,7 @@ import InfoRow from './InfoRow';
 import ItemAvatar from './ItemAvatar';
 import ItemSkeleton from './ItemSkeleton';
 
-export default function Thumbnail({ api, itemInformation }: ThumbnailProps): React.ReactElement {
+export default function Thumbnail ({ api, itemInformation }: ThumbnailProps): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 
@@ -27,7 +25,7 @@ export default function Thumbnail({ api, itemInformation }: ThumbnailProps): Rea
   const loading = useMemo(() => Boolean(itemInformation?.data && !itemInformation.description && !itemInformation.name), [itemInformation?.data, itemInformation?.description, itemInformation?.name]);
 
   useEffect(() => {
-    itemInformation && !itemInformation?.isCollection && !itemInformation?.collectionName && fetchCollectionName(address, api, itemInformation).catch(console.error);
+    address && itemInformation && !itemInformation?.isCollection && !itemInformation?.collectionName && fetchCollectionName(address, api, itemInformation).catch(console.error);
   }, [address, api, itemInformation]);
 
   const openNftDetail = useCallback(() => setShowDetail(true), []);

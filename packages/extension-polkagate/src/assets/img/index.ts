@@ -5,3 +5,4 @@
 export { default as endpointUrlPng } from './endpoint.png';
 export { default as user } from './user.png';
 export { default as Item1 } from './welcomeItems/Item1.svg';
+export { default as backgroundBlur } from './bg.svg';

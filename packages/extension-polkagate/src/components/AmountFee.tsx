@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import type { Balance } from '@polkadot/types/interfaces';
 
@@ -14,7 +13,7 @@ import { TOTAL_STAKE_HELPER_TEXT } from '../util/constants';
 import { ChainLogo, Infotip, ShowValue } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   amount: string | React.ReactNode;
   children?: React.ReactNode;
   label: string;

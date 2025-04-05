@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowCircleLeft } from 'iconsax-react';
@@ -16,7 +15,7 @@ interface DynamicBackButtonProps {
   style?: SxProps<Theme>;
 }
 
-function BackWithLabel ({ content, onClick, style, text }: DynamicBackButtonProps) {
+function BackWithLabel({ content, onClick, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
 
   const [hovered, setHovered] = useState<boolean>(false);

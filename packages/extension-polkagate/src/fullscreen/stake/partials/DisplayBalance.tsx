@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { Balance } from '@polkadot/types/interfaces';
@@ -20,7 +19,7 @@ import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { FormatPrice, ShowBalance } from '../../../components';
 
 interface DisplayBalanceProps {
-  address: string;
+  address: string | undefined;
   amount: BN | Balance | undefined;
   title: string;
   onClicks?: (() => void)[];

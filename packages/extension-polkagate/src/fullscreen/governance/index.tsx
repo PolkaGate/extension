@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { u32 } from '@polkadot/types-codec';
 import type { LatestReferenda } from './utils/types';
@@ -424,7 +423,7 @@ export default function Governance(): React.ReactElement {
                                   ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} pt='50px'>
                                     {t('Open Governance is not supported on the {{chainName}}', { replace: { chainName } })}
                                   </Typography>
-                                  : !!referenda?.length && referendumCount[topMenu] && referenda.length < (referendumCount[topMenu] || 0)
+                                  : !!referenda?.length && topMenu && referendumCount[topMenu] && referenda.length < (referendumCount[topMenu] || 0)
                                     ? <Typography color='secondary.contrastText' fontSize='18px' fontWeight={600} onClick={getMoreReferenda}>
                                       <div id='observerObj' style={{ height: '1px' }} />
                                     </Typography>
@@ -437,7 +436,7 @@ export default function Governance(): React.ReactElement {
                               <Grid container justifyContent='center'>
                                 <HorizontalWaiting color={theme.palette.primary.main} />
                                 <Typography color='secondary.contrastText' display='block' fontSize='13px' textAlign='center' width='100%'>
-                                  {t('Loaded {{count}} out of {{referendumCount}} referenda ...', { replace: { count: referenda?.length || 0, referendumCount: referendumCount[topMenu] } })}
+                                  {t('Loaded {{count}} out of {{referendumCount}} referenda ...', { replace: { count: referenda?.length || 0, referendumCount: topMenu ? referendumCount[topMenu] : 0 } })}
                                 </Typography>
                               </Grid>
                           }

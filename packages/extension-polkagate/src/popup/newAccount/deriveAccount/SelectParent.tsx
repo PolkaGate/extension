@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -18,7 +17,7 @@ import DerivationPath from './DerivationPath';
 interface Props {
   className?: string;
   isLocked?: boolean;
-  parentAddress: string;
+  parentAddress: string | undefined;
   parentName: string | null;
   parentGenesis: string | undefined;
   onDerivationConfirmed: (derivation: { account: { address: string; suri: string }; parentPassword: string }) => void;

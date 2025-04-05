@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
@@ -21,7 +20,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-function FirstTimeSetPassword ({ setStep }: Props): React.ReactElement {
+function FirstTimeSetPassword({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 

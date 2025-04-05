@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, styled } from '@mui/material';
 import React from 'react';
@@ -55,7 +54,7 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({
   width: '32px'
 }));
 
-export default function GradientSwitch ({ checked, disabled = false, onChange }: Props): React.ReactElement {
+export default function GradientSwitch({ checked, disabled = false, onChange }: Props): React.ReactElement {
   return (
     <div style={{ zIndex: 1 }}>
       <SwitchContainer checked={checked} disabled={disabled} onClick={onChange}>

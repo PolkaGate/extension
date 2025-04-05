@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption, TransactionDetail } from '../../../util/types';
 
@@ -28,7 +27,7 @@ export enum TAB {
   GOVERNANCE = 'governance'
 }
 
-function HistoryTabs ({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
+function HistoryTabs({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const isSelected = useCallback((selectedTab: TAB | undefined) => tab === selectedTab, [tab]);
@@ -73,7 +72,7 @@ function HistoryTabs ({ setTab, tab, unSupportedTabs }: Props): React.ReactEleme
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 
-function History (): React.ReactElement {
+function History(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const options = useContext(GenesisHashOptionsContext);

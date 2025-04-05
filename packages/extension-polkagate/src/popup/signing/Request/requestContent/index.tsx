@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Call } from '@polkadot/types/interfaces';
 import type { AnyJson } from '@polkadot/types/types';
@@ -32,7 +31,7 @@ interface Props {
   decoded: Decoded;
 }
 
-function ShowTransactionSummary ({ genesisHash, info }: ShowTransactionSummaryProps): React.ReactElement<Props> {
+function ShowTransactionSummary({ genesisHash, info }: ShowTransactionSummaryProps): React.ReactElement<Props> {
   const action = `${info?.section}_${info?.method}`;
 
   switch (action) {
@@ -64,7 +63,7 @@ function ShowTransactionSummary ({ genesisHash, info }: ShowTransactionSummaryPr
   }
 }
 
-function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
+function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isBatchCall = decoded.method?.method.includes('batch');
 

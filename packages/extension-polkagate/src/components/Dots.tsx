@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Stack, Typography, useTheme } from '@mui/material';
 import React, { type CSSProperties } from 'react';
@@ -10,7 +9,7 @@ export type DotsStyle = 'big' | 'small' | 'normal';
 
 interface Props {
   color?: string;
-  decimalColor?: string ;
+  decimalColor?: string;
   preText?: string;
   postText?: string;
   postTextStyle?: CSSProperties;
@@ -53,11 +52,11 @@ const Dots = ({ color, decimalColor, postText, postTextStyle, preText, preTextFo
       <Typography px='3px' sx={{ color: color || theme.palette.text.secondary, fontFamily, fontSize: `${size2}px`, fontWeight: weight2, lineHeight: `${height2}px`, px: style === 'big' ? '5px' : 0 }}>
         .
       </Typography>
-      <DigitsInDot isDecimal={ style !== 'big'} side='right' />
+      <DigitsInDot isDecimal={style !== 'big'} side='right' />
       {postText &&
-      <Typography sx={{ ...postTextStyle }}>
-        &nbsp;{ postText }
-      </Typography>
+        <Typography sx={{ ...postTextStyle }}>
+          &nbsp;{postText}
+        </Typography>
       }
     </Stack>
   );

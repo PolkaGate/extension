@@ -13,3 +13,4 @@ export { default as logoPink } from './logoPink.svg';
 export { default as logoTransparent } from './logoTransparent.svg';
 export { default as logoWhite } from './logoWhite.svg';
 export { default as logoWhiteTransparent } from './logoWhiteTransparent.svg';
+export { default as polkagateVector } from './polkagateVector.svg';

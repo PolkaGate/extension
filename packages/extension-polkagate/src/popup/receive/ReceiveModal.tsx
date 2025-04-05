@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import QRCode from 'qrcode.react';
@@ -13,7 +12,7 @@ import SimpleModalTitle from '../../fullscreen/partials/SimpleModalTitle';
 import { useInfo, useTranslation } from '../../hooks';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 

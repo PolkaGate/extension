@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import type { AnyTuple } from '@polkadot/types/types';
@@ -25,7 +24,7 @@ import { STEPS } from '../../stake';
 import TxDetail from './TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   pool: MyPoolInfo;
   onClose: () => void;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;

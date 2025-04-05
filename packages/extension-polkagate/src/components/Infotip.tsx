@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Info as InfoIcon, QuestionMark as QuestionIcon } from '@mui/icons-material';
 import { Grid, Tooltip } from '@mui/material';

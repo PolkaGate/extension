@@ -1,16 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import type { StorageKey } from '@polkadot/types';
 import type { AnyTuple, Codec } from '@polkadot/types/types';
+import type { ExposureOverview, Others } from './useValidators';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { toBN } from '../util/utils';
-import { ExposureOverview, Others } from './useValidators';
 import { useActiveEraIndex, useInfo } from '.';
 
 export interface ExposureValue {
@@ -67,7 +68,7 @@ const isRewardsPaged = (chainName: string | undefined, era: number): boolean => 
 
 export const MAX_SUPPORTED_PAYOUT_ERAS = 7; // TODO: can increase to more if needed after enough tests
 
-export default function usePendingRewards2(address: string): UnclaimedPayouts | undefined {
+export default function usePendingRewards2(address: string | undefined): UnclaimedPayouts | undefined {
   const { api, chainName, formatted } = useInfo(address);
   const activeEra = useActiveEraIndex(address);
   const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts>();

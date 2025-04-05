@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -23,7 +22,7 @@ interface Props {
   variant?: Variant;
 }
 
-function ShortAddress ({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped = false, inParentheses = false, showCopy = false, style, variant }: Props): React.ReactElement {
+function ShortAddress({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped = false, inParentheses = false, showCopy = false, style, variant }: Props): React.ReactElement {
   const [charactersCount, setCharactersCount] = useState<number>(1);
   const pRef = useRef<HTMLDivElement>(null);
   const cRef = useRef<HTMLSpanElement>(null);

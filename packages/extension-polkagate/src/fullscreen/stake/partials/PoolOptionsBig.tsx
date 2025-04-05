@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import { faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,11 +16,11 @@ import { STEPS } from '..';
 import StakingMode from './StakingMode';
 
 interface Props {
-  address: string
+  address: string | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function PoolOptionsBig({ address, setStep }: Props): React.ReactElement {
+export default function PoolOptionsBig ({ address, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chainName } = useInfo(address);

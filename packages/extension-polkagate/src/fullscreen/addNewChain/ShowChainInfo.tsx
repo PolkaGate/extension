@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { HexString } from '@polkadot/util/types';

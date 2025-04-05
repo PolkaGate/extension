@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
@@ -22,8 +21,8 @@ import PoolMoreInfo from '../../../../popup/staking/partial/PoolMoreInfo';
 import { DEFAULT_POOL_FILTERS } from '../../../../util/constants';
 
 interface Props {
+  address: string | undefined;
   api?: ApiPromise;
-  address: string;
   pools: PoolInfo[] | null | undefined;
   style?: SxProps<Theme> | undefined;
   totalNumberOfPools: number | undefined;
@@ -38,7 +37,7 @@ interface Props {
   setSearchedPools: React.Dispatch<React.SetStateAction<PoolInfo[] | null | undefined>>;
 }
 
-export default function PoolsTable({ address, api, filteredPools, maxHeight = window.innerHeight / 2.4, minHeight, numberOfFetchedPools, pools, poolsToShow, selected, setFilteredPools, setSearchedPools, setSelected, style, totalNumberOfPools }: Props): React.ReactElement {
+export default function PoolsTable ({ address, api, filteredPools, maxHeight = window.innerHeight / 2.4, minHeight, numberOfFetchedPools, pools, poolsToShow, selected, setFilteredPools, setSearchedPools, setSelected, style, totalNumberOfPools }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const { chain, decimal, token } = useInfo(address);

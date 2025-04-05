@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
@@ -28,7 +27,7 @@ const log = (message: string, data?: unknown) => {
 const formatString = (input: string) => input.replaceAll('_', ' ');
 
 // Saves transaction history to Chrome's local storage for a specific address and chain
-async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
+async function saveHistoryToStorage(address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
   if (!address || !genesisHash || !transactions?.length) {
     log('Missing required parameters for saving history');
 
@@ -73,7 +72,7 @@ async function saveHistoryToStorage (address: string, genesisHash: string, trans
 }
 
 // Retrieves transaction history from Chrome's local storage for a specific address and chain
-export async function getHistoryFromStorage (address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage(address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
   if (!address || !genesisHash) {
     log('Missing required parameters for loading history');
 
@@ -168,7 +167,7 @@ const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsAction):
   }
 };
 
-export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory(address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -395,7 +394,7 @@ export default function useTransactionHistory (address: AccountId | string | und
           seenTxHashes.add(tx.txHash);
           uniqueTransactions.push(tx);
         } else if (!tx.txHash) {
-        // Handle transactions without txHash (if any)
+          // Handle transactions without txHash (if any)
           uniqueTransactions.push(tx);
         }
       });
@@ -491,7 +490,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     });
 
     return groupedTx;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allHistories, receivedTx.hasMore, extrinsicsTx.hasMore, filterOptions?.governance, filterOptions?.staking, filterOptions?.transfers]);
 
   // Fetch extrinsics

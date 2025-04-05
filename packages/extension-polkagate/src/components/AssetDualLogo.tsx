@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Avatar, Grid, useTheme } from '@mui/material';
 import React from 'react';
@@ -15,7 +14,7 @@ interface Props {
   logoRoundness?: string;
 }
 
-export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%' }: Props): React.ReactElement {
+export default function AssetDualLogo({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%' }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (

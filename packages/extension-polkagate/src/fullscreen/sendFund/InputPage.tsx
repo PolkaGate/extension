@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
@@ -29,7 +28,7 @@ import { toTitleCase } from '../governance/utils/util';
 import { STEPS } from '../stake/pool/stake';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   balances: BalancesInfo | undefined;
   assetId: string | undefined;
   inputs: Inputs | undefined;

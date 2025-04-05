@@ -1,10 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { HexString } from '@polkadot/util/types';
-import type { AddressState } from '../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -35,7 +32,7 @@ function DeriveFromAccounts(): React.ReactElement {
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
-  const { address: parentAddress } = useParams<AddressState>();
+  const { address: parentAddress } = useParams();
 
   const defaultPath = useMemo(() => nextDerivationPath(accounts, parentAddress), [accounts, parentAddress]);
   const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
@@ -99,7 +96,7 @@ function DeriveFromAccounts(): React.ReactElement {
       }
     }
 
-    if (!account || !name || !password || !validatedParentPassword) {
+    if (!account || !name || !password || !validatedParentPassword || !parentAddress) {
       return;
     }
 

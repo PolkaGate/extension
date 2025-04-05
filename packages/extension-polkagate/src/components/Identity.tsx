@@ -3,7 +3,6 @@
 
 //@ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';

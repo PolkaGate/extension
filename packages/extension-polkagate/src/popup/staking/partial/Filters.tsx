@@ -3,7 +3,6 @@
 
 //@ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';

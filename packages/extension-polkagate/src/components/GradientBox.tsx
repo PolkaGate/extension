@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
@@ -37,7 +36,7 @@ function GradientBox ({ children, noGradient = false, style }: Props) {
 
   return (
     <Container disableGutters sx={ContainerStyle}>
-      { isDark && <GradientBorder style={{ top: '-2px' }} /> }
+      {isDark && <GradientBorder style={{ top: '-2px' }} />}
       <ContentWrapper>
         {!noGradient && isDark && <RedGradient style={{ top: '-100px' }} />}
         <Box position='relative' zIndex={1}>

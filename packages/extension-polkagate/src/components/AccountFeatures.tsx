@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Grid, IconButton, useTheme } from '@mui/material';

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';

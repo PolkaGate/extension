@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid, Stack } from '@mui/material';
 import { Check, I3Dcube, Trade } from 'iconsax-react';
@@ -17,7 +16,7 @@ import Chains from './Chains';
 import Main from './Main';
 import ManagePassword from './ManagePassword';
 
-function ExtensionSettings (): React.ReactElement {
+function ExtensionSettings(): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isDark = useIsDark();

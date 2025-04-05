@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { CurrencyItemType } from '../../../fullscreen/homeFullScreen/partials/Currency';
 
@@ -126,7 +125,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
   );
 };
 
-const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -177,15 +176,15 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
           type='fiat'
         />
         {[...cryptos, ...fiats].length === 0 &&
-        <Typography color='text.primary' mt='15px' variant='B-2'>
-          {t('Nothing found')}!
-        </Typography>}
+          <Typography color='text.primary' mt='15px' variant='B-2'>
+            {t('Nothing found')}!
+          </Typography>}
       </Grid>
     </Grid>
   );
 });
 
-function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 

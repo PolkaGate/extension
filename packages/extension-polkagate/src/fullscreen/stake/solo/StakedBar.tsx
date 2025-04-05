@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
@@ -21,7 +20,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedBar ({ availableBalance, balances, redeemable, staked, unlockingAmount }: Props): React.ReactElement {
+export default function StakedBar({ availableBalance, balances, redeemable, staked, unlockingAmount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -33,7 +32,7 @@ export default function StakedBar ({ availableBalance, balances, redeemable, sta
   const availablePercent = useMemo(() => total && availableBalance ? Number(availableBalance) * 100 / Number(total) : undefined, [availableBalance, total]);
   const reminderPercent = useMemo(() =>
     Number((total || BN_HUNDRED).sub((availableBalance || BN_ZERO).add(staked || BN_ZERO).add(redeemable || BN_ZERO).add(unlockingAmount || BN_ZERO))) * 100 / Number(total)
-  , [availableBalance, redeemable, staked, total, unlockingAmount]);
+    , [availableBalance, redeemable, staked, total, unlockingAmount]);
 
   const Bar = ({ bgcolor, percent, tooltipText }: { bgcolor?: string, tooltipText?: string, percent?: number }) => (
     <Tooltip placement='top-end' title={tooltipText || ''}>

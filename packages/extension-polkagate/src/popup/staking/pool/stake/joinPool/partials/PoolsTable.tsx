@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
@@ -22,7 +20,7 @@ import Filters from './Filters';
 
 interface Props {
   api?: ApiPromise;
-  address: string;
+  address: string | undefined;
   pools: PoolInfo[] | null | undefined;
   style?: SxProps<Theme> | undefined;
   totalNumberOfPools: number | undefined;

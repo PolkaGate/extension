@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Icon } from 'iconsax-react';
 
@@ -19,7 +18,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
+export default function NeonButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [hovered, setHovered] = useState(false);

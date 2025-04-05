@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import React from 'react';
 
@@ -12,7 +11,7 @@ interface ToggleDotsProps {
   inActiveBallColor?: string;
 }
 
-export default function ToggleDots ({ active, activeBallColor = '#FF4FB9', inActiveBallColor = '#674394CC', size = 10 }: ToggleDotsProps) {
+export default function ToggleDots({ active, activeBallColor = '#FF4FB9', inActiveBallColor = '#674394CC', size = 10 }: ToggleDotsProps) {
   const dotStyle = {
     borderRadius: '999px',
     height: size,

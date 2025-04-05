@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { HexString } from '@polkadot/util/types';
 

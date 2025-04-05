@@ -1,18 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 //@ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolRoles, PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
-import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
+import type { PoolInfo } from '../../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -24,18 +22,12 @@ import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Review from './Review';
 import UpdateRoles from './UpdateRoles';
 
-interface State {
-  api?: ApiPromise;
-  availableBalance: Balance;
-  poolStakingConsts: PoolStakingConsts;
-}
-
-export default function CreatePool (): React.ReactElement {
+export default function CreatePool(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
-  const history = useHistory();
+  const navigate = useNavigate();
   const freeBalance = useBalances(address)?.freeBalance;
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -60,11 +52,8 @@ export default function CreatePool (): React.ReactElement {
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
 
   const backToStake = useCallback(() => {
-    history.push({
-      pathname: `/pool/stake/${address}`,
-      state: { api, consts: poolStakingConsts, pool: null }
-    });
-  }, [address, api, history, poolStakingConsts]);
+    navigate(`/pool/stake/${address}`, { state: { api, consts: poolStakingConsts, pool: null } });
+  }, [address, api, navigate, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {

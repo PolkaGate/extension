@@ -1,61 +1,40 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
+import { User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
-import { FULLSCREEN_WIDTH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { Checkbox2, InputWithLabel, TwoButtons, VaadinIcon } from '../../../components';
+import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
-import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
+import { OnboardTitle } from '../../../fullscreen/components/index';
+import Framework from '../../../fullscreen/onboarding/Framework';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';
-import CopySeedButton from './components/CopySeedButton';
-import DownloadSeedButton from './components/DownloadSeedButton';
-import Passwords2 from './components/Passwords2';
+import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
 
-const MnemonicSeedDisplay = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
-  const { t } = useTranslation();
+enum STEP {
+  SEED,
+  DETAIL
+}
 
-  return (
-    <Grid container display='block' item sx={style}>
-      <Typography fontSize='16px' fontWeight={400}>
-        {t<string>('Generated 12-word recovery phrase')}
-      </Typography>
-      <Grid container item sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', fontSize: '22px', fontWeight: 300, p: '8px 12px' }}>
-        {seed}
-      </Grid>
-      <Grid container item>
-        <DownloadSeedButton
-          style={{ width: 'fit-content' }}
-          value={seed ?? ''}
-        />
-        <CopySeedButton
-          style={{ width: 'fit-content' }}
-          value={seed ?? ''}
-        />
-      </Grid>
-    </Grid>
-  );
-};
-
-function CreateAccount(): React.ReactElement {
+function CreateAccount (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const [seed, setSeed] = useState<null | string>(null);
   const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>();
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
+  const [step, setStep] = useState(STEP.SEED);
 
   useEffect((): void => {
     createSeed(undefined)
@@ -66,101 +45,117 @@ function CreateAccount(): React.ReactElement {
   }, []);
 
   const onNameChange = useCallback((enteredName: string) => {
-    // Remove leading white spaces
     const trimmedName = enteredName.replace(/^\s+/, '');
-
-    // Remove multiple consecutive spaces in the middle or at the end
     const cleanedName = trimmedName.replace(/\s{2,}/g, ' ');
 
     setName(cleanedName);
   }, []);
 
-  const onPasswordChange = useCallback((enteredPassword: string | null) => {
-    setPassword(enteredPassword);
+  const onSetPassword = useCallback(async () => {
+    // Example logic to handle password setting
+    await Promise.resolve(''); // Replace with actual logic if needed
   }, []);
 
   const onCheck = useCallback(() => {
     setIsMnemonicSaved(!isMnemonicSaved);
   }, [isMnemonicSaved]);
 
+  const onContinue = useCallback(() => {
+    setStep(STEP.DETAIL);
+  }, []);
+
+  const onCancel = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
+
   const onCreate = useCallback(() => {
-    // this should always be the case
     if (name && password && seed) {
       setIsBusy(true);
 
       createAccountSuri(name, password, seed, DEFAULT_TYPE, POLKADOT_GENESIS_HASH)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
-          openOrFocusTab('/', true);
+          navigate('/');
         })
         .catch((error: Error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [name, password, seed]);
-
-  const onCancel = useCallback(() => window.close(), []);
+  }, [name, navigate, password, seed]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
-      />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Title
-            height='85px'
-            logo={
-              <VaadinIcon icon='vaadin:plus-circle' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            }
-            text={t('Create a new account')}
-          />
-          <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
-          </Typography>
-          <MnemonicSeedDisplay seed={seed} style={{ marginBlock: '20px' }} />
-          <InputWithLabel
-            isError={name === null || name?.length === 0}
-            isFocused
-            label={t<string>('Choose a name for this account')}
-            onChange={onNameChange}
-            value={name ?? ''}
-
-          />
-          <Passwords2
-            firstPassStyle={{ marginBlock: '10px' }}
-            label={t<string>('Password for this account (more than 5 characters)')}
-            onChange={onPasswordChange}
-            // eslint-disable-next-line react/jsx-no-bind
-            onEnter={isMnemonicSaved && password ? onCreate : () => null}
-          />
-          <Grid alignItems='center' container item pt='25px'>
-            <Checkbox2
-              checked={isMnemonicSaved}
-              iconStyle={{ transform: 'scale(1.13)' }}
-              label={t<string>('I have saved my recovery phrase safely.')}
-              labelStyle={{ fontSize: '18px', fontWeight: 300, marginLeft: '7px', userSelect: 'none' }}
-              onChange={onCheck}
+    <Framework>
+      <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
+        <OnboardTitle
+          label={t('Create a new account')}
+          labelPartInColor={t('a new account')}
+          url='/onboarding'
+        />
+        {step === STEP.SEED &&
+          <>
+            <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1' width='480px'>
+              {t('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
+            </Typography>
+            <MnemonicSeedDisplay seed={seed} style={{ marginBlock: '20px' }} />
+            <GradientButton
+              contentPlacement='center'
+              onClick={onContinue}
+              showChevron
+              style={{
+                borderRadius: '18px',
+                height: '48px',
+                marginTop: '25px',
+                width: '236px'
+              }}
+              text={t('Continue')}
             />
-          </Grid>
-          <Grid container item justifyContent='flex-end' pt='5px'>
-            <Grid container item sx={{ '> div': { width: '100%' } }} xs={7}>
-              <TwoButtons
-                disabled={!(name && password && seed && isMnemonicSaved)}
-                isBusy={isBusy}
-                mt='15px'
-                onPrimaryClick={onCreate}
-                onSecondaryClick={onCancel}
-                primaryBtnText={t<string>('Create account')}
-                secondaryBtnText={t<string>('Cancel')}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+          </>
+        }
+        {step === STEP.DETAIL &&
+          <Motion variant='slide'>
+            <MyTextField
+              Icon={User}
+              focused
+              iconSize={18}
+              onTextChange={onNameChange}
+              placeholder={t('Name account')}
+              style={{ margin: '40px 0 20px' }}
+              title={t('Choose a name for this account')}
+            />
+            <MatchPasswordField
+              onSetPassword={onSetPassword}
+              setConfirmedPassword={setPassword}
+              spacing='20px'
+              style={{ marginBottom: '20px' }}
+              title1={t('Password for this account')}
+              title2={t('Repeat the password')}
+            />
+            <GlowCheckbox
+              changeState={onCheck}
+              checked={isMnemonicSaved}
+              disabled={isBusy}
+              label={t('I have saved my recovery phrase safely')}
+              labelPartInColor={t('my recovery phrase safely')}
+              labelStyle={{ ...theme.typography['B-1'] }}
+              style={{ justifyContent: 'start', mt: '40px' }}
+            />
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
+              disabled={!password || !isMnemonicSaved}
+              isBusy={isBusy}
+              onPrimaryClick={onCreate}
+              onSecondaryClick={onCancel}
+              primaryBtnText={t('Create account')}
+              secondaryBtnText={t('Cancel')}
+              showChevron
+              style={{ flexDirection: 'row-reverse', mt: '40px' }}
+            />
+          </Motion>
+        }
+      </Stack>
+    </Framework>
   );
 }
 

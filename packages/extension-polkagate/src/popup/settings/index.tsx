@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Container, Grid } from '@mui/material';
 import { Category, User } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
@@ -71,7 +69,7 @@ function Settings (): React.ReactElement {
           }}
           title={t('About PolkaGate')}
         />
-        <Socials />
+        <Socials label={t(' STAY TUNED')} />
       </Motion>
       <HomeMenu />
     </Container>

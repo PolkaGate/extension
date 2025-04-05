@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';

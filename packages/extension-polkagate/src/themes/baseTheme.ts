@@ -39,6 +39,7 @@ declare module '@mui/material/styles' {
     'H-2': CSSProperties;
     'H-3': CSSProperties;
     'H-4': CSSProperties;
+    'H-5': CSSProperties;
     'B-1': CSSProperties;
     'B-2': CSSProperties;
     'B-3': CSSProperties;
@@ -53,6 +54,7 @@ declare module '@mui/material/styles' {
     'H-2': CSSProperties;
     'H-3': CSSProperties;
     'H-4': CSSProperties;
+    'H-5': CSSProperties;
     'B-1': CSSProperties;
     'B-2': CSSProperties;
     'B-3': CSSProperties;
@@ -69,6 +71,7 @@ declare module '@mui/material/Typography' {
     'H-2': true;
     'H-3': true;
     'H-4': true;
+    'H-5': true;
     'B-1': true;
     'B-2': true;
     'B-3': true;
@@ -148,6 +151,14 @@ export const baseTheme: ThemeOptions = {
     'H-4': {
       fontFamily: 'OdibeeSans',
       fontSize: '18px',
+      fontWeight: 400,
+      letterSpacing: '-0.19px',
+      // lineHeight: '26px',
+      textAlign: 'center'
+    },
+    'H-5': {
+      fontFamily: 'OdibeeSans',
+      fontSize: '16px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       // lineHeight: '26px',

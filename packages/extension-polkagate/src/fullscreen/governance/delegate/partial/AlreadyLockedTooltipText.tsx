@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 // @ts-nocheck
 
 import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
@@ -21,7 +20,7 @@ interface Props {
   accountLocks: Lock[] | undefined
 }
 
-export function getAlreadyLockedValue (allBalances: BalancesInfo | undefined): BN | undefined {
+export function getAlreadyLockedValue(allBalances: BalancesInfo | undefined): BN | undefined {
   const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
   const sortedLocks = allBalances?.lockedBreakdown
     // first sort by amount, so greatest value first
@@ -50,7 +49,7 @@ export function getAlreadyLockedValue (allBalances: BalancesInfo | undefined): B
   return sortedLocks?.[0] || allBalances?.lockedBalance;
 }
 
-function AlreadyLockedTooltipText ({ accountLocks, address }: Props): React.ReactElement {
+function AlreadyLockedTooltipText({ accountLocks, address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const currentBlock = useCurrentBlockNumber(address);
   const token = useToken(address);

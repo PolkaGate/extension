@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 
@@ -29,7 +28,7 @@ import TxDetail from './TxDetail';
 import type { ChangesProps } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain | undefined;
   changes?: ChangesProps;

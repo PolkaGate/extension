@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { BalancesInfo } from '../../util/types';
@@ -19,7 +17,7 @@ import { BALANCES_VALIDITY_PERIOD } from '../../util/constants';
 import { getValue } from '../account/util';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   chain: Chain | null | undefined;
   formatted: string | undefined | null;
   hideNumbers: boolean | undefined;
@@ -104,7 +102,7 @@ const Balance = React.memo(function Balance({ balanceToShow, isBalanceOutdated }
   );
 });
 
-const BalanceRow = ({ address, hideNumbers }: { address: string, hideNumbers: boolean | undefined }) => {
+const BalanceRow = ({ address, hideNumbers }: { address: string | undefined, hideNumbers: boolean | undefined }) => {
   const theme = useTheme();
 
   const balances = useBalances(address);

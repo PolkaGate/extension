@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, type Icon as IconType } from 'iconsax-react';

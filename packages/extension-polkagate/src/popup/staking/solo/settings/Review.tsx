@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 // @ts-nocheck
 
@@ -35,7 +34,7 @@ import TxDetail from './partials/TxDetail';
 import { PROXY_TYPE } from '../../../../util/constants';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   settings: SoloSettings;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;

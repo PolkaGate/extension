@@ -17,7 +17,7 @@ import useTranslation from '../../../hooks/useTranslation';
 import { CMD_MORTAL, CMD_SIGN_MESSAGE } from '../types';
 
 export interface Props {
-  address: string;
+  address: string | undefined;
   children?: React.ReactNode;
   className?: string;
   cmd: number;
@@ -27,7 +27,7 @@ export interface Props {
   buttonLeft?: string;
 }
 
-function Qr ({ address, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isScanning, setIsScanning] = useState(false);
 
@@ -92,7 +92,7 @@ function Qr ({ address, className, cmd, genesisHash, onSignature, payload }: Pro
             {
               isScanning
                 ? <QrScanSignature onScan={onSignature} style={{ height: '265px' }} />
-                : <QrDisplayPayload
+                : address && <QrDisplayPayload
                   address={address}
                   cmd={cmd}
                   genesisHash={genesisHash}

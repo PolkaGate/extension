@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { RadioProps } from '@mui/material/Radio';
 
@@ -90,7 +89,7 @@ interface Props extends RadioProps {
   value: unknown;
 }
 
-export default function PRadio ({ checked, columnGap, label, onChange, props, value }: Props) {
+export default function PRadio({ checked, columnGap, label, onChange, props, value }: Props) {
   return (
     <Stack columnGap={columnGap} direction='row' sx={{ alignItems: 'center' }}>
       <Radio

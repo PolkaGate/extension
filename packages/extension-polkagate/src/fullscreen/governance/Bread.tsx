@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TopMenu } from './utils/types';
 
 import { Breadcrumbs, Grid, Link, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '../../hooks';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
@@ -22,7 +21,7 @@ interface Props {
 }
 
 export default function Bread({ address, postId, setSelectedSubMenu, subMenu, topMenu }: Props): React.ReactElement {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const backToSubMenu = useCallback(() => {
@@ -30,11 +29,9 @@ export default function Bread({ address, postId, setSelectedSubMenu, subMenu, to
   }, [setSelectedSubMenu, subMenu]);
 
   const backToTopMenu = useCallback(() => {
-    address && topMenu && history.push({
-      pathname: `/governance/${address}/${topMenu}`
-    });
+    address && topMenu && navigate(`/governance/${address}/${topMenu}`);
     setSelectedSubMenu('All');
-  }, [address, history, setSelectedSubMenu, topMenu]);
+  }, [address, navigate, setSelectedSubMenu, topMenu]);
 
   const toHome = useCallback(() => {
     openOrFocusTab('/', true);

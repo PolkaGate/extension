@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
@@ -14,7 +13,7 @@ import SelectLanguage from '../../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../../util/constants';
 import getLanguageOptions from '../../../../util/getLanguageOptions';
 
-export default function Language (): React.ReactElement {
+export default function Language(): React.ReactElement {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
 
@@ -38,12 +37,12 @@ export default function Language (): React.ReactElement {
           {t('LANGUAGE')}
         </Typography>
         <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center', mt: '5px' }}>
-          <Translate color={ isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' variant='Bulk' style={{ cursor: 'pointer' }} />
+          <Translate color={isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' variant='Bulk' style={{ cursor: 'pointer' }} />
           <Stack columnGap='5px' direction='row' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer' }}>
             <Typography variant='B-1'>
               {language}
             </Typography>
-            <ArrowDown2 color={ isDark ? '#EAEBF1' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
+            <ArrowDown2 color={isDark ? '#EAEBF1' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
           </Stack>
         </Stack>
       </Stack>

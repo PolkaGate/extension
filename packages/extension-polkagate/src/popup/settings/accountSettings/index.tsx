@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container } from '@mui/material';
 import { Category, DocumentDownload, Edit2, Logout, Notification, People } from 'iconsax-react';
@@ -17,7 +16,7 @@ import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
 import { ExtensionPopups } from '../../../util/constants';
 
-function AccountSettings (): React.ReactElement {
+function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 

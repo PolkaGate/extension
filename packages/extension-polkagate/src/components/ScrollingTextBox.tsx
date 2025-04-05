@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, styled, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -41,7 +40,7 @@ const BoxContainer = styled(Box)(({ maximumWidth, shouldScroll }: { shouldScroll
   width: 'fit-content'
 }));
 
-function ScrollingTextBox ({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
   const textRef = useRef<HTMLDivElement>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
   const [textWidth, setTextWidth] = useState(0);

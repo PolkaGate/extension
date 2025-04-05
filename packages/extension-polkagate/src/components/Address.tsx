@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';

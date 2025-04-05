@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Variant } from '@mui/material/styles/createTypography';
 
@@ -14,7 +13,7 @@ import { toTitleCase } from '../util';
 import { ShortAddress } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   charsCount?: number;
   identiconSize?: number;
   label?: string;
@@ -42,7 +41,7 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
+function Address2({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address || '');
 
@@ -54,10 +53,11 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
         </Typography>
       }
       <Stack alignItems='center' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
-        <PolkaGateIdenticon
-          address={address}
-          size={identiconSize}
-        />
+        {address &&
+          <PolkaGateIdenticon
+            address={address}
+            size={identiconSize}
+          />}
         <Stack justifyContent='flex-start' sx={{ overflowX: 'scroll', width: '100%' }}>
           {showName &&
             <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>

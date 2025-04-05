@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../../../util/types';
 
@@ -18,7 +17,7 @@ import { windowOpen } from '../../../messaging';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
 import MySwitch from './components/Switch';
 
-export default function Chains (): React.ReactElement {
+export default function Chains(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

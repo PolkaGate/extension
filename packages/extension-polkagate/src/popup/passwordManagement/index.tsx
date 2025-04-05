@@ -3,7 +3,6 @@
 
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { LoginInfo } from '../../components/Loading';
 

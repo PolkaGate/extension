@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-no-bind */
 
 import { Grid, Typography } from '@mui/material';

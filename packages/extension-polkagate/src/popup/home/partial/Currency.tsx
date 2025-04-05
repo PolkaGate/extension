@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Share } from 'iconsax-react';
@@ -10,7 +9,7 @@ import React, { useCallback, useState } from 'react';
 import { useCurrency, useIsDark } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
 
-function Currency () {
+function Currency() {
   const currency = useCurrency();
   const isDark = useIsDark();
 
@@ -35,8 +34,8 @@ function Currency () {
   return (
     <>
       <Grid alignItems='center' container item justifyContent='center' onClick={toggleMenu} sx={containerStyle}>
-        <Share color={isDark ? '#BEAAD8' : '#745D8B' } size='18' variant='Bold' />
-        <Typography color ={isDark ? '#BEAAD8' : '#745D8B' } textTransform='uppercase' variant='B-2'>
+        <Share color={isDark ? '#BEAAD8' : '#745D8B'} size='18' variant='Bold' />
+        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textTransform='uppercase' variant='B-2'>
           {currency?.code}
         </Typography>
       </Grid>

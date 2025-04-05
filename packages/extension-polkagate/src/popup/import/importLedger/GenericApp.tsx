@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { AddRounded as AddRoundedIcon, Engineering as AdvancedModeIcon, Layers as StandardModeIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';

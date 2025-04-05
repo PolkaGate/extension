@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { faHand, faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +13,7 @@ import { STEPS } from '..';
 import StakingSubOption from './StakingSubOption';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 

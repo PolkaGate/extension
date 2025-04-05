@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Divider, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useContext } from 'react';

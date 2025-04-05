@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
@@ -22,7 +21,7 @@ import { send } from '../util/api';
 import { PButton, Warning } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   alertText: string | undefined;
   onSecondaryClick: () => void;
   signerPayload: SignerPayloadJSON | undefined;
@@ -36,7 +35,7 @@ interface Props {
   handleTxResult: (txResult: TxResult) => void
 }
 
-export default function SignWithLedger ({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
+export default function SignWithLedger({ address, alertText, api, from, handleTxResult, onSecondaryClick, onSignature, payload, ptx, setStep, signerPayload, steps }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

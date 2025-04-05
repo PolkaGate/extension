@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
@@ -15,7 +14,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function AccountName ({ accountName, style }: Props): React.ReactElement {
+function AccountName({ accountName, style }: Props): React.ReactElement {
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
   return (

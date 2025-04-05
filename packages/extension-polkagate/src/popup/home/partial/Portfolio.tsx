@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
@@ -15,7 +14,7 @@ import AccountVisibilityToggler from './AccountVisibilityToggler';
 import Currency from './Currency';
 import DailyChange from './DailyChange';
 
-function Portfolio (): React.ReactElement {
+function Portfolio(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -49,7 +48,7 @@ function Portfolio (): React.ReactElement {
     <GlowBox>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px 5px' }}>
         <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
-          <Typography color= {isDark ? 'text.secondary' : '#291443'} variant='B-2'>
+          <Typography color={isDark ? 'text.secondary' : '#291443'} variant='B-2'>
             {t('Account Portfolio')}
           </Typography>
           {isHideNumbers

@@ -1,21 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo } from 'react';
-import { Route, Switch } from 'react-router';
+import React, { lazy, useMemo } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
-import Authorize from '@polkadot/extension-polkagate/src/popup/authorize';
 import Home from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
-import Metadata from '@polkadot/extension-polkagate/src/popup/metadata';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
 import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
 import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
 import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
-import Signing from '@polkadot/extension-polkagate/src/popup/signing';
 import Token from '@polkadot/extension-polkagate/src/popup/tokens';
 
 import RouteWrapper from '../components/RouteWrapper';
@@ -25,6 +22,11 @@ import { IMPORT_ROUTES } from './importRoutes';
 import { NFT_ROUTES } from './nftRoutes';
 import { SETTINGS_ROUTES } from './settingRoutes';
 import { STAKING_ROUTES } from './stakingRoutes';
+
+// Lazy Load main some not every day/urgent routes to avoid unnecessary delays
+const Authorize = lazy(() => import('@polkadot/extension-polkagate/src/popup/authorize'));
+const Metadata = lazy(() => import('@polkadot/extension-polkagate/src/popup/metadata'));
+const Signing = lazy(() => import('@polkadot/extension-polkagate/src/popup/signing'));
 
 export interface RouteConfig {
   path: string;
@@ -127,25 +129,19 @@ const ALL_ROUTES: RouteConfig[] = [
   ...NFT_ROUTES
 ];
 
-export default function Routes () {
+export default function AppRoutes () {
   const routeComponents = useMemo(() =>
-    ALL_ROUTES.map(({ Component, exact, path, props, trigger }) => (
+    ALL_ROUTES.map(({ Component, path, props, trigger }) => (
       <Route
-        exact={exact}
+        element={<RouteWrapper component={Component} props={props} trigger={trigger} />}
         key={path}
         path={path}
-      >
-        <RouteWrapper
-          component={Component}
-          props={props}
-          trigger={trigger}
-        />
-      </Route>
+      />
     )), []);
 
   return (
-    <Switch>
+    <Routes>
       {routeComponents}
-    </Switch>
+    </Routes>
   );
 }

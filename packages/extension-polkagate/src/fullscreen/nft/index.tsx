@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from './utils/types';
 
@@ -29,7 +27,7 @@ enum STEPS {
   UNSUPPORTED
 }
 
-function NFT(): React.ReactElement {
+function NFT (): React.ReactElement {
   useFullscreen();
   const nftManager = React.useMemo(() => new NftManager(), []);
 
@@ -42,6 +40,10 @@ function NFT(): React.ReactElement {
   const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
   useEffect(() => {
+    if (!address) {
+      return;
+    }
+
     const myNfts = nftManager.get(address);
 
     setNfts(myNfts);
@@ -79,7 +81,7 @@ function NFT(): React.ReactElement {
   }, [address, reset]);
 
   useEffect(() => {
-    if (nfts) {
+    if (nfts && address) {
       setStep(STEPS.INDEX);
 
       nfts.forEach((nft) => {

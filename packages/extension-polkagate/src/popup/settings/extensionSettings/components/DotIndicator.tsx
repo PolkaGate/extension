@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -25,7 +24,7 @@ const COLORS = {
 
 const TOTAL_DOTS = 4;
 
-function DotIndicator ({ delay }: { delay: number | null | undefined }): React.ReactElement {
+function DotIndicator({ delay }: { delay: number | null | undefined }): React.ReactElement {
   const [colorCode, dotsInColor]: [colorCode: keyof typeof COLORS, dotsInColor: number] = useMemo(() => {
     if (!delay) {
       return ['DEFAULT', 0];

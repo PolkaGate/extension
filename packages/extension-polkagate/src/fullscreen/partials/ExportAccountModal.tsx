@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, useTheme } from '@mui/material';
 import { saveAs } from 'file-saver';
@@ -14,7 +13,7 @@ import { DraggableModal } from '../governance/components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
@@ -33,6 +32,10 @@ export default function ExportAccountModal({ address, setDisplayPopup }: Props):
   }, []);
 
   const _onExportButtonClick = useCallback((): void => {
+    if (!address) {
+      return;
+    }
+
     setIsBusy(true);
 
     exportAccount(address, pass)

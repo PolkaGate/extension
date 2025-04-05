@@ -1,22 +1,23 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Container, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+
+import TwoToneText from './TwoToneText';
 
 interface Props {
   checked?: boolean;
   disabled?: boolean;
   label?: string;
+  labelPartInColor?: string;
   changeState: (value: boolean) => void;
   style?: SxProps<Theme> | undefined;
   labelStyle?: React.CSSProperties | undefined;
   iconStyle?: SxProps<Theme> | undefined;
 }
 
-function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {}, label, labelStyle, style }: Props): React.ReactElement<Props> {
+function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {}, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const [state, setState] = useState<boolean>(checked);
@@ -98,9 +99,14 @@ function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {},
           <polyline points='20 6 9 17 4 12' />
         </svg>
       </Grid>
-      <span style={{ ...LabelFontStyle, ...labelStyle, userSelect: 'none' }}>
-        {label}
-      </span>
+      {label &&
+        <span style={{ ...LabelFontStyle, ...labelStyle, userSelect: 'none' }}>
+          <TwoToneText
+            text={label}
+            textPartInColor={labelPartInColor}
+          />
+        </span>
+      }
     </Container>
   );
 }

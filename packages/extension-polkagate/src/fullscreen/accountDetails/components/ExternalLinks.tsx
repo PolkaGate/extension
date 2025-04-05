@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Avatar, Grid, Link, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable header/header */
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -10,7 +9,6 @@
  * */
 
 import type { HexString } from '@polkadot/util/types';
-import type { FormattedAddressState } from '../../util/types';
 
 import { faCoins, faHistory, faPaperPlane, faPiggyBank, faVoteYea } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,7 +16,7 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons
 import { Box, Container, Divider, Grid, IconButton, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 import { isOnRelayChain } from '@polkadot/extension-polkagate/src/util/utils';
 
@@ -38,10 +36,10 @@ import ReservedReasons from './ReservedReasons';
 export default function AccountDetails(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const onAction = useContext(ActionContext);
   const { pathname } = useLocation();
-  const { address, genesisHash } = useParams<FormattedAddressState>();
+  const { address, genesisHash } = useParams();
   const { api, chain, chainName, formatted } = useInfo(address);
   const identity = useMyAccountIdentity(address);
   const genesisOptions = useContext(GenesisHashOptionsContext);
@@ -81,36 +79,25 @@ export default function AccountDetails(): React.ReactElement {
 
   const goToHistory = useCallback(() => {
     chainName && formatted &&
-      history.push({
-        pathname: `/history/${address}`,
-        state: { pathname }
-      });
-  }, [address, chainName, formatted, history, pathname]);
+      navigate(`/history/${address}`, { state: { pathname } });
+  }, [address, chainName, formatted, navigate, pathname]);
 
   const goToCrowdLoans = useCallback(() => {
-    formatted && CROWDLOANS_CHAINS.includes(genesisHash) &&
-      history.push({
-        pathname: `/crowdloans/${address}`
-      });
-  }, [address, formatted, genesisHash, history]);
+    formatted && CROWDLOANS_CHAINS.includes(genesisHash ?? '') &&
+      navigate(`/crowdloans/${address}`);
+  }, [address, formatted, genesisHash, navigate]);
 
   const goToGovernance = useCallback(() => {
-    formatted && GOVERNANCE_CHAINS.includes(genesisHash) && windowOpen(`/governance/${address}/referenda`).catch(console.error);
+    formatted && GOVERNANCE_CHAINS.includes(genesisHash ?? '') && windowOpen(`/governance/${address}/referenda`);
   }, [address, formatted, genesisHash]);
 
   const goToPoolStaking = useCallback(() => {
-    address && history.push({
-      pathname: `/pool/${address}/`,
-      state: { api, pathname }
-    });
-  }, [address, api, history, pathname]);
+    address && navigate(`/pool/${address}/`, { state: { api, pathname } });
+  }, [address, api, navigate, pathname]);
 
   const goToSoloStaking = useCallback(() => {
-    address && history.push({
-      pathname: `/solo/${address}/`,
-      state: { api, pathname }
-    });
-  }, [address, api, history, pathname]);
+    address && navigate(`/solo/${address}/`, { state: { api, pathname } });
+  }, [address, api, navigate, pathname]);
 
   const stakingIconColor = useMemo(() =>
     !supportStaking
@@ -219,7 +206,7 @@ export default function AccountDetails(): React.ReactElement {
                     }
                   </>
                 }
-                {GOVERNANCE_CHAINS.includes(genesisHash)
+                {GOVERNANCE_CHAINS.includes(genesisHash ?? '')
                   ? <LockedInReferenda address={address} refresh={refresh} setRefresh={setRefresh} />
                   : <LabelBalancePrice address={address} balances={balances} label={'Locked'} title={t('Locked')} />
                 }
@@ -247,13 +234,13 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               <FontAwesomeIcon
-                color={`${GOVERNANCE_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                color={`${GOVERNANCE_CHAINS.includes(genesisHash ?? '') ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
                 icon={faVoteYea}
                 size='lg'
               />
             }
             onClick={goToGovernance}
-            textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash)}
+            textDisabled={!GOVERNANCE_CHAINS.includes(genesisHash ?? '')}
             title={t('Governance')}
           />
           <HorizontalMenuItem
@@ -274,14 +261,14 @@ export default function AccountDetails(): React.ReactElement {
             divider
             icon={
               <FontAwesomeIcon
-                color={`${CROWDLOANS_CHAINS.includes(genesisHash) ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
+                color={`${CROWDLOANS_CHAINS.includes(genesisHash ?? '') ? theme.palette.text.primary : theme.palette.action.disabledBackground}`}
                 flip='horizontal'
                 icon={faPiggyBank}
                 size='lg'
               />
             }
             onClick={goToCrowdLoans}
-            textDisabled={!CROWDLOANS_CHAINS.includes(genesisHash)}
+            textDisabled={!CROWDLOANS_CHAINS.includes(genesisHash ?? '')}
             title={t('Crowdloan')}
           />
           <HorizontalMenuItem
@@ -296,7 +283,7 @@ export default function AccountDetails(): React.ReactElement {
           />
         </Grid>
       </Container>
-      {showOthers && balances && chain && formatted &&
+      {showOthers && balances && chain && formatted && address &&
         <Others
           address={address}
           balances={balances}
@@ -306,7 +293,7 @@ export default function AccountDetails(): React.ReactElement {
           show={showOthers}
         />
       }
-      {showReservedReasons && balances &&
+      {showReservedReasons && balances && address &&
         <ReservedReasons
           address={address}
           assetId={balances?.assetId}

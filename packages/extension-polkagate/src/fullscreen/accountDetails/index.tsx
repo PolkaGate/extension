@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Lock } from '../../hooks/useAccountLocks';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
@@ -71,7 +70,7 @@ export default function AccountDetails (): React.ReactElement {
     assetIdOnAssetHub !== undefined
       ? assetIdOnAssetHub
       : selectedAsset?.assetId
-  , [assetIdOnAssetHub, selectedAsset?.assetId]);
+    , [assetIdOnAssetHub, selectedAsset?.assetId]);
 
   const { price: currentPrice } = useTokenPrice(address, assetId);
 

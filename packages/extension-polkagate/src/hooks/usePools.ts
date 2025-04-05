@@ -1,5 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
@@ -39,7 +40,7 @@ interface UsePools {
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools(address: string): UsePools {
+export default function usePools(address: string | undefined): UsePools {
   const api = useApi(address);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();

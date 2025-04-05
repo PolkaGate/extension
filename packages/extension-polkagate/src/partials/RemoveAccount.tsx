@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Stack } from '@mui/material';
 import { LogoutCurve } from 'iconsax-react';
@@ -103,7 +102,7 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
             changeState={toggleAcknowledge}
             checked={acknowledged}
             disabled={isBusy}
-            label={t('I want fo remove this account')}
+            label={t('I want to remove this account')}
             style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
           />
           : <PasswordInput
