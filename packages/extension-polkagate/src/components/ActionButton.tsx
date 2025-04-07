@@ -10,6 +10,8 @@ import { useIsDark } from '../hooks';
 
 interface Props {
   StartIcon?: Icon;
+  iconVariant?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
+  iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   contentPlacement?: 'start' | 'center' | 'end';
   disabled?: boolean;
   iconSize?: number;
@@ -21,7 +23,7 @@ interface Props {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton({ StartIcon, contentPlacement = 'start', iconVariant, iconVariantOnHover, disabled, iconAlwaysBold, iconSize = 20, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
 
@@ -82,7 +84,14 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       onMouseEnter={toggleHover}
       onMouseLeave={toggleHover}
       startIcon={StartIcon
-        ? <StartIcon size={iconSize} variant={(iconAlwaysBold ?? hovered) ? 'Bold' : 'Bulk'} />
+        ? <StartIcon
+          size={iconSize}
+          variant={
+            (iconAlwaysBold ?? hovered)
+              ? iconVariantOnHover ?? 'Bold'
+              : iconVariant ?? 'Bulk'
+          }
+        />
         : undefined}
       sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style }}
       variant={variant}

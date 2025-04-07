@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransactionDetail } from '@polkadot/extension-polkagate/util/types';
 
 import { Box, Container, type SxProps, type Theme, Typography } from '@mui/material';

@@ -1,19 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
+import type { Icon } from 'iconsax-react';
 import type { DropdownOption } from '../util/types';
 
-import { Avatar, ClickAwayListener, Grid, Popover, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { ArrowDown2 } from 'iconsax-react';
+import { Avatar, ClickAwayListener, Grid, Popover, styled, type SxProps, type Theme, Typography } from '@mui/material';
+import { ArrowDown2, Global } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import { useIsDark } from '../hooks';
 import { GradientDivider } from '../style';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 import GlowCheck from './GlowCheck';
-
-const icon = (text: string) => getLogo(text);
 
 const DropSelectContainer = styled(Grid)(({ focused }: { focused: boolean }) => ({
   '&:hover': { background: '#2D1E4A' },
@@ -58,17 +57,33 @@ const ContentDisplayContainer = styled(Grid)(({ isSelectedItem }: { isSelectedIt
 }));
 
 interface ContentDisplayProps {
-  text: string | number;
+  Icon?: Icon;
+  onChange?: (value: number | string) => void;
   setSelectedValue: React.Dispatch<React.SetStateAction<string | number | undefined>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedValue: string | number | undefined;
-  onChange?: (value: number | string) => void;
+  text: string | number;
   value: string | number;
 }
 
-function LogoContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValue, text, value }: ContentDisplayProps) {
-  const theme = useTheme();
+function Logo ({ text }: { text: string }) {
+  const isDark = useIsDark();
+  const icon = getLogo(text);
 
+  return (
+    <Avatar
+      src={icon}
+      sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && isDark) ? 'invert(1)' : 'none', height: 18, width: 18 }}
+      variant='square'
+    >
+      {!icon &&
+        <Global color='#AA83DC' size='18' variant='Bulk' />
+      }
+    </Avatar>
+  );
+}
+
+function LogoContentDisplay ({ Icon, onChange, selectedValue, setOpen, setSelectedValue, text, value }: ContentDisplayProps) {
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -80,11 +95,12 @@ function LogoContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValu
   return (
     <ContentDisplayContainer container isSelectedItem={isSelectedItem} item onClick={handleClick} style={{ justifyContent: 'space-between' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '5px' }} xs>
-        <Avatar
-          src={icon(text as string)}
-          sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(value as string) && theme.palette.mode === 'dark') ? 'invert(1)' : 'none', height: 18, width: 18 }}
-          variant='square'
-        />
+        {Icon
+          ? <Icon color='#BEAAD8' size='18' variant='Bulk' />
+          : <Logo
+            text={text as string}
+          />
+        }
         <Typography color='text.primary' textTransform='capitalize' variant='B-2'>
           {text}
         </Typography>
@@ -124,17 +140,18 @@ function TextContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValu
 interface DropContentProps {
   contentDropWidth: number | undefined;
   containerRef: React.RefObject<HTMLDivElement>;
-  options: DropdownOption[];
+  Icon?: Icon;
   displayContentType?: 'logo' | 'text';
+  options: DropdownOption[];
+  open: boolean;
+  onChange?: (value: number | string) => void;
   setSelectedValue: React.Dispatch<React.SetStateAction<string | number | undefined>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedValue: string | number | undefined;
-  onChange?: (value: number | string) => void;
-  open: boolean;
   withDivider: boolean;
 }
 
-function DropContent ({ containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, withDivider }: DropContentProps) {
+function DropContent ({ Icon, containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, withDivider }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -175,6 +192,7 @@ function DropContent ({ containerRef, contentDropWidth, displayContentType, onCh
                   />)
                 : (
                   <LogoContentDisplay
+                    Icon={Icon}
                     key={index}
                     onChange={onChange}
                     selectedValue={selectedValue}
@@ -184,7 +202,9 @@ function DropContent ({ containerRef, contentDropWidth, displayContentType, onCh
                     value={value}
                   />)
               }
-              {withDivider && !isLastOne && <GradientDivider style={{ my: '3px' }} />}
+              {withDivider && !isLastOne &&
+                <GradientDivider style={{ my: '3px' }} />
+              }
             </>
           );
         })}
@@ -194,18 +214,18 @@ function DropContent ({ containerRef, contentDropWidth, displayContentType, onCh
 }
 
 interface Props {
-  style?: SxProps<Theme>;
   defaultValue?: string | number;
-  options: DropdownOption[];
-  value?: string | number | undefined;
-  onChange?: (value: number | string) => void;
   disabled?: boolean;
-  displayContentType?: 'logo' | 'text';
+  displayContentType?: 'icon' | 'logo' | 'text';
+  Icon?: Icon;
+  onChange?: (value: number | string) => void;
+  options: DropdownOption[];
+  style?: SxProps<Theme>;
+  value?: string | number | undefined;
   withDivider?: boolean;
 }
 
-function DropSelect ({ defaultValue, disabled, displayContentType = 'text', onChange, options, style, value, withDivider = false }: Props) {
-  const theme = useTheme();
+function DropSelect ({ Icon, defaultValue, disabled, displayContentType = 'text', onChange, options, style, value, withDivider = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -225,13 +245,12 @@ function DropSelect ({ defaultValue, disabled, displayContentType = 'text', onCh
         <DropSelectContainer container focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
           <Grid alignItems='center' container item sx={{ columnGap: '5px' }} xs>
             {displayContentType === 'logo' && selectedValueText &&
-              <>
-                <Avatar
-                  src={icon(selectedValueText)}
-                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(value as string) && theme.palette.mode === 'dark') ? 'invert(1)' : 'none', height: 18, width: 18 }}
-                  variant='square'
-                />
-              </>
+              <Logo
+                text={selectedValueText}
+              />
+            }
+            {displayContentType === 'icon' && Icon &&
+              <Icon color='#BEAAD8' size='18' variant='Bulk' />
             }
             <Typography color='text.secondary' variant='B-1'>
               {selectedValueText ?? defaultValueText}
@@ -241,6 +260,7 @@ function DropSelect ({ defaultValue, disabled, displayContentType = 'text', onCh
         </DropSelectContainer>
       </ClickAwayListener>
       <DropContent
+        Icon={Icon}
         containerRef={containerRef}
         contentDropWidth={contentDropWidth}
         displayContentType={displayContentType}

@@ -13,13 +13,16 @@ interface Props {
   url?: string;
   label: string;
   labelPartInColor?: string;
+  onBack?: () => void;
 }
 
-function OnboardTitle ({ label, labelPartInColor, url }: Props): React.ReactElement {
+function OnboardTitle({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
   const isDark = useIsDark();
   const navigate = useNavigate();
 
-  const onClick = useCallback(() => navigate(url ?? '/'), [navigate, url]);
+  const onClick = useCallback(() => {
+    onBack ? onBack() : navigate(url ?? '/');
+  }, [navigate, onBack, url]);
 
   return (
     <Stack alignContent='start' alignItems='center' columnGap='10px' direction='row' justifyContent='start' width='100%'>

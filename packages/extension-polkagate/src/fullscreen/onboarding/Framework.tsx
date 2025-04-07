@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, Link, Stack, Typography } from '@mui/material';
-import { UserOctagon } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import React from 'react';
 
 import { backgroundBlur } from '../../assets/img';
 import { logoTransparent, polkagateVector } from '../../assets/logos';
@@ -12,75 +10,16 @@ import { TwoToneText } from '../../components';
 import { useManifest, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
+import Bread from './Bread';
 import NeedHelp from './NeedHelp';
 import TopRightIcons from './TopRightIcons';
 
 interface Props {
   children?: React.ReactNode;
+  width?: string;
 }
 
-const enum STATUS {
-  WELCOME,
-  ALREADY_HAVE_A_WALLET,
-  CREATE_A_NEW_WALLET
-}
-
-const DISABLED_LINK_COLOR = '#674394';
-const ENABLED_LINK_COLOR = '#AA83DC';
-
-function Bread(): React.ReactElement {
-  const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  const status = useMemo(() => {
-    switch (pathname) {
-      case '/onboarding':
-        return STATUS.WELCOME;
-      case '/account/create':
-        return STATUS.CREATE_A_NEW_WALLET;
-      case '/account/have-wallet':
-        return STATUS.ALREADY_HAVE_A_WALLET;
-      default:
-        return STATUS.WELCOME;
-    }
-  }, [pathname]);
-
-  const onWelcomeClick = useCallback(() => {
-    status !== STATUS.WELCOME && navigate('/onboarding');
-  }, [navigate, status]);
-
-  const onHaveWalletClick = useCallback(() => {
-    status !== STATUS.ALREADY_HAVE_A_WALLET && navigate('/account/have-wallet');
-  }, [navigate, status]);
-
-  const onCreateClick = useCallback(() => {
-    status !== STATUS.CREATE_A_NEW_WALLET && navigate('/account/create');
-  }, [navigate, status]);
-
-  return (
-    <Grid columnGap='30px' container item sx={{ height: '50px', m: '8px 0 0 155px ' }}>
-      <Stack columnGap='5px' direction='row' onClick={onWelcomeClick} sx={{ cursor: status === STATUS.WELCOME ? 'default' : 'pointer' }}>
-        <UserOctagon color={status === STATUS.WELCOME ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} size='18' variant='Bold' />
-        <Typography color={status === STATUS.WELCOME ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} fontSize='14px' variant='B-1'>
-          {t('Welcome')}
-        </Typography>
-      </Stack>
-      {status !== STATUS.WELCOME &&
-        <>
-          <Typography color={status === STATUS.ALREADY_HAVE_A_WALLET ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} fontSize='14px' onClick={onHaveWalletClick} sx={{ cursor: status === STATUS.ALREADY_HAVE_A_WALLET ? 'default' : 'pointer' }} variant='B-1'>
-            {t('Already have a Wallet')}
-          </Typography>
-          <Typography color={status === STATUS.CREATE_A_NEW_WALLET ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} fontSize='14px' onClick={onCreateClick} sx={{ cursor: status === STATUS.CREATE_A_NEW_WALLET ? 'default' : 'pointer' }} variant='B-1'>
-            {t('Create a new account')}
-          </Typography>
-        </>
-      }
-    </Grid>
-  );
-}
-
-function Framework({ children }: Props): React.ReactElement {
+function Framework ({ children, width = '582px' }: Props): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
 
@@ -129,10 +68,10 @@ function Framework({ children }: Props): React.ReactElement {
               </Typography>
             </Grid>
           </Grid>
-          <Grid container item sx={{ borderRadius: '24px', height: '693px', m: '40px 0 0 100px', position: 'relative', width: '582px' }}>
+          <Grid container item sx={{ borderRadius: '24px', height: '693px', m: '40px 0 0 100px', position: 'relative', width }}>
             {children}
           </Grid>
-          <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: '30px', width: '50%' }}>
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: '7px', width: '50%' }}>
             <Socials buttonSize={24} iconSize={13.5} style={{ width: 'fit-content', pr: '50px' }} />
             <Grid columnGap='40px' container item width='fit-content'>
               <NeedHelp />

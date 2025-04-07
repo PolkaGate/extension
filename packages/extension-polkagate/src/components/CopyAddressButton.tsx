@@ -15,7 +15,7 @@ interface Props {
   padding?: number;
 }
 
-function CopyAddressButton({ address, padding, showAddress = false, size = 14 }: Props): React.ReactElement<Props> {
+function CopyAddressButton ({ address, padding, showAddress = false, size = 14 }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const shortAddress = `${address?.slice(0, 12) ?? ''}...${address?.slice(-12) ?? ''}`;

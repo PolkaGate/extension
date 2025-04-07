@@ -4,8 +4,8 @@
 import { keyframes } from '@mui/material';
 import { t } from 'i18next';
 
-import { DISABLED_NETWORKS } from '../../../util/constants';
-import ledgerChains from '../../../util/legerChains';
+import { DISABLED_NETWORKS } from '../../../../util/constants';
+import ledgerChains from '../../../../util/legerChains';
 
 export interface NetworkOption {
   text: string;
@@ -56,4 +56,4 @@ export const hideAddressAnimation = keyframes`
   }
 `;
 
-export const METADATA_DASHBOARD = 'https://dashboards.data.paritytech.io/metadata.html'
+export const METADATA_DASHBOARD = 'https://dashboards.data.paritytech.io/metadata.html';
