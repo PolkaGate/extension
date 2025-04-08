@@ -8,7 +8,15 @@ import type { ThemeOptions } from '@mui/material';
 
 import { baseTheme } from './baseTheme';
 
-export const darkTheme: ThemeOptions = {
+export interface ExtendedThemeOptions extends ThemeOptions {
+  palette: NonNullable<ThemeOptions['palette']> & {
+    text: NonNullable<ThemeOptions['palette']>['text'] & {
+      highlight: string; // New property for staking
+    };
+  };
+}
+
+export const darkTheme: ExtendedThemeOptions = {
   ...baseTheme,
 
   palette: {
@@ -26,7 +34,7 @@ export const darkTheme: ThemeOptions = {
     background: { default: '#05091C', paper: '#05091C' },
     border: { default: '#05091C', paper: '#1B133C' },
     backgroundFL: { primary: '#000000', secondary: '#171717' },
-    text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B' },
+    text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B', highlight: '#809ACB' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
     success: { main: '#1F7720', light: '#46890C', contrastText: '#2ECC71' },
     warning: { main: '#FF002B' },
@@ -60,12 +68,4 @@ export const darkTheme: ThemeOptions = {
       }
     }
   }
-  // ,
-  // typography: {
-  //   allVariants: {
-  //     fontWeight: 300,
-  //     fontFamily: 'Roboto',
-  //     letterSpacing: '-0.015em'
-  //   }
-  // }
 };
