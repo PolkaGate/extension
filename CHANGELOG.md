@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.36.3](https://github.com/polkagate/extension/compare/v0.36.2...v0.36.3) (2025-04-08)
+
+
+### Bug Fixes
+
+* update ledger dependencies ([#1732](https://github.com/polkagate/extension/issues/1732)) ([4a011fb](https://github.com/polkagate/extension/commit/4a011fb9bc65e01cb438f923b482acbaac62c60a))
+
 ## [0.36.2](https://github.com/polkagate/extension/compare/v0.36.1...v0.36.2) (2025-04-01)
 
 
