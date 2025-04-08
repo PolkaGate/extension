@@ -15,7 +15,6 @@ import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool/stak
 import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/createPool';
 import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool';
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool/unstake';
-import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo';
 import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/fastUnstake';
 import SoloNominations from '@polkadot/extension-polkagate/src/popup/staking/solo/nominations';
 import SoloRestake from '@polkadot/extension-polkagate/src/popup/staking/solo/restake';
@@ -23,11 +22,12 @@ import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rew
 import SoloStake from '@polkadot/extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
+import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
 
 export const STAKING_ROUTES: RouteConfig[] = [
   {
     Component: StakingIndex,
-    path: '/stakingIndex/',
+    path: '/stakingIndex',
     trigger: 'pool-create'
   },
   {
@@ -108,7 +108,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
   },
   {
     Component: Solo,
-    path: '/solo/:address',
+    path: '/solo/:genesisHash',
     trigger: 'solo-staking'
   },
   {
