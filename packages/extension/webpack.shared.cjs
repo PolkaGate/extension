@@ -12,6 +12,7 @@ const pkgJson = require('./package.json');
 const manifest = require('./manifest.json');
 
 const Dotenv = require('dotenv-webpack');
+
 const envPath = path.resolve(__dirname, '../../', '.env');
 
 const EXT_NAME = manifest.short_name;
