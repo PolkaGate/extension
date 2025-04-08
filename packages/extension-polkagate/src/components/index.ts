@@ -64,7 +64,7 @@ export { default as Identity2 } from './Identity2';
 export { default as Infotip } from './Infotip';
 export { default as Infotip2 } from './Infotip2';
 export { default as InputAccount } from './InputAccount';
-export { default as InputFileWithLabel } from './InputFileWithLabel';
+export { default as InputFile } from './InputFile';
 export { default as InputFilter } from './InputFilter';
 export { default as InputWithLabel } from './InputWithLabel';
 export { default as InputWithLabelAndIdenticon } from './InputWithLabelAndIdenticon';

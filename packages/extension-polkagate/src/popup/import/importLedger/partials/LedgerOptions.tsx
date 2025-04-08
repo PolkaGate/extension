@@ -7,15 +7,15 @@ import React, { useCallback, useState } from 'react';
 
 import OnboardTitle from '../../../../fullscreen/components/OnboardTitle';
 import { useTranslation } from '../../../../hooks';
+import { MODE } from '..';
 import ImportTypeButton from './LedgerOption';
 import { METADATA_DASHBOARD } from './partials';
-import { MODE } from '..';
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LedgerOptions({ setMode }: Props): React.ReactElement {
+export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [hoveredMode, setHoveredMode] = useState<number>();

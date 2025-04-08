@@ -69,9 +69,9 @@ const BodyTheme = createGlobalStyle<{ theme: Theme }>`
    background-color: ${(props) => props.theme.palette.background.default};
   }
   * {
-    scrollbar-width: none;
+    scrollbar-width: auto;
     &::-webkit-scrollbar {
-      display: none;
+      display: auto;
     }
   }
 `;

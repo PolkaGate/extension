@@ -16,7 +16,7 @@ interface Props {
   onBack?: () => void;
 }
 
-function OnboardTitle({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
+function OnboardTitle ({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
   const isDark = useIsDark();
   const navigate = useNavigate();
 

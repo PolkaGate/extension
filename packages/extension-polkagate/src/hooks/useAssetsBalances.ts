@@ -246,9 +246,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   }, [addresses]);
 
   useEffect(() => {
-    if (!FETCH_PATHS) {
-      return;
-    }
+    // if (!FETCH_PATHS) {
+    //   return;
+    // }
 
     if (!addresses) {
       console.info('useAssetsBalances: no addresses to fetch assets!');

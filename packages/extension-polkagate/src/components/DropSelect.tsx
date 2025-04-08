@@ -141,7 +141,7 @@ interface DropContentProps {
   contentDropWidth: number | undefined;
   containerRef: React.RefObject<HTMLDivElement>;
   Icon?: Icon;
-  displayContentType?: 'logo' | 'text';
+  displayContentType?: 'logo' | 'text' | 'icon';
   options: DropdownOption[];
   open: boolean;
   onChange?: (value: number | string) => void;
