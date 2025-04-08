@@ -70,6 +70,8 @@ function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
 function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () => void }): React.ReactElement<InputFileProps> {
   const isDark = useIsDark();
   const { t } = useTranslation();
+  const truncate = (str: string, max = 40): string =>
+    str.length > max ? str.slice(0, max - 1) + '…' : str;
 
   return (
     <Stack alignItems='start' direction='column' justifyContent='start' mt='10px'>
@@ -80,8 +82,8 @@ function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () =
         <Stack alignItems='center' columnGap='10px' direction='row'>
           <DocumentText color='#AA83DC' size='18' variant='Bulk' />
           <Stack alignItems='start' direction='column'>
-            <Typography color='#BEAAD8' variant='B-4'>
-              {file?.name}
+            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-4'>
+              {truncate(file?.name || '')}
             </Typography>
             <Typography color='#AA83DC' variant='B-4'>
               {formatBytes(file?.size)}
@@ -236,12 +238,12 @@ function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, o
             fontSize='16px'
             m='10px 15px'
             maxHeight='255px'
-            onMouseEnter={handleEnter}
-            onMouseLeave={handleLeave}
+            onDragEnd={handleLeave}
             onDragEnter={handleEnter}
             onDragLeave={handleLeave}
-            onDragEnd={handleLeave}
             onDrop={handleLeave}
+            onMouseEnter={handleEnter}
+            onMouseLeave={handleLeave}
             sx={{ cursor: 'pointer', width: '100%', ...style }}
           >
             <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '') })}>
