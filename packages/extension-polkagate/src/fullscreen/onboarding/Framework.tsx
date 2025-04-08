@@ -68,7 +68,7 @@ function Framework ({ children, width = '582px' }: Props): React.ReactElement {
               </Typography>
             </Grid>
           </Grid>
-          <Grid container item sx={{ borderRadius: '24px', height: '693px', m: '40px 0 0 100px', position: 'relative', width }}>
+          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '40px 0 0 100px', position: 'relative', width }}>
             {children}
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: '7px', width: '50%' }}>

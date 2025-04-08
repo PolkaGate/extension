@@ -47,7 +47,7 @@ export default function RestoreJson (): React.ReactElement {
 
   const areAllSelected = useMemo(() =>
     selectedAccountsInfo.length === accountsInfo.length
-  , [selectedAccountsInfo.length, accountsInfo.length]);
+    , [selectedAccountsInfo.length, accountsInfo.length]);
 
   const handleCheck = useCallback((_event: boolean, address: string) => {
     const selectedAccount = accountsInfo.find((account) => account.address === address);
@@ -184,14 +184,14 @@ export default function RestoreJson (): React.ReactElement {
 
   return (
     <Framework width='600px'>
-      <Stack direction='column' sx={{ position: 'relative' }}>
-        <OnboardTitle
-          label={t('Restore from file')}
-          labelPartInColor='from file'
-          url='/account/have-wallet'
-        />
+      <OnboardTitle
+        label={t('Restore from file')}
+        labelPartInColor='from file'
+        url='/account/have-wallet'
+      />
+      <Stack direction='column' sx={{ position: 'relative', width: '500px' }}>
         {stepOne &&
-          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left', width: '500px' }} variant='B-1'>
+          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
             {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
           </Typography>
         }
