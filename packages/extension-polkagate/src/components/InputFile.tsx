@@ -187,7 +187,8 @@ function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, o
   const [file, setFile] = useState<FileState | undefined>();
   const [hovered, setHovered] = useState(false);
 
-  const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
+  const handleEnter = useCallback(() => setHovered(true), []);
+  const handleLeave = useCallback(() => setHovered(false), []);
 
   const onDrop = useCallback(
     (files: File[]): void => {
@@ -235,8 +236,12 @@ function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, o
             fontSize='16px'
             m='10px 15px'
             maxHeight='255px'
-            onMouseEnter={toggleHover}
-            onMouseLeave={toggleHover}
+            onMouseEnter={handleEnter}
+            onMouseLeave={handleLeave}
+            onDragEnter={handleEnter}
+            onDragLeave={handleLeave}
+            onDragEnd={handleLeave}
+            onDrop={handleLeave}
             sx={{ cursor: 'pointer', width: '100%', ...style }}
           >
             <div {...getRootProps({ className: classes('ui--InputFile', isError ? 'error' : '') })}>
