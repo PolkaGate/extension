@@ -6,6 +6,8 @@ import type { Icon } from 'iconsax-react';
 import { Button, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { useIsDark } from '../hooks';
 
 interface Props {
@@ -17,7 +19,7 @@ interface Props {
   iconSize?: number;
   iconAlwaysBold?: boolean;
   isBusy?: boolean;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: SxProps<Theme> | undefined;
   text?: string | { firstPart?: string; secondPart?: string; };
   variant?: 'text' | 'contained' | 'outlined';
@@ -80,7 +82,7 @@ export default function ActionButton({ StartIcon, contentPlacement = 'start', ic
   return (
     <Button
       disabled={disabled || isBusy}
-      onClick={onClick}
+      onClick={onClick ?? noop}
       onMouseEnter={toggleHover}
       onMouseLeave={toggleHover}
       startIcon={StartIcon

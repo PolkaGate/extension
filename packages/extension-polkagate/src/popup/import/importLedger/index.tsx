@@ -38,7 +38,8 @@ export default function ImportLedger (): React.ReactElement {
         <MigrationApp
           setMode={setMode}
         />
-      }  {mode === MODE.LEGACY &&
+      }
+      {mode === MODE.LEGACY &&
         <LegacyApps
           setMode={setMode}
         />

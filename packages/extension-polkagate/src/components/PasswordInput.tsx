@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Container, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -42,7 +41,7 @@ const StyledTextField = styled(TextField, {
     borderRadius: '12px',
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
-    marginTop: '10px',
+    marginTop: '5px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },
@@ -61,7 +60,7 @@ const StyledTextField = styled(TextField, {
 interface Props {
   title?: string;
   onPassChange: (pass: string) => void;
-  onEnterPress?: () => void;
+  onEnterPress?: () => unknown;
   style?: React.CSSProperties;
   focused?: boolean;
   hasError?: boolean;
@@ -137,7 +136,8 @@ export default function PasswordInput({ focused = false, hasError = false, onEnt
       {hasError &&
         <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
           {t('Wrong password.')}
-        </Typography>}
+        </Typography>
+      }
     </Container>
   );
 }
