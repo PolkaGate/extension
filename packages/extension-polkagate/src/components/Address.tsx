@@ -146,7 +146,7 @@ function Address ({ address, backgroundColor, check, genesisHash, handleCheck, m
             size={36}
           />}
       </Grid>
-      <Grid container direction='row' justifyContent='space-between' item width={`calc(${showCheckbox ? 95 : 100}% - 42px)`} pl='8px'>
+      <Grid alignItems='center' container direction='row' item justifyContent='space-between' pl='8px' width={`calc(${showCheckbox ? 95 : 100}% - 42px)`}>
         <Stack direction='column' width='inherit'>
           <Typography maxWidth={`calc(${showCheckbox ? 95 : 100}% - 40px)`} overflow='hidden' textAlign='left' variant='B-2' whiteSpace='nowrap'>
             {name || accountName || t('<unknown>')}
