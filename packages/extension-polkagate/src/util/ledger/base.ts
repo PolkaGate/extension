@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
+
 import type Transport from '@ledgerhq/hw-transport';
+import type { AccountOptions } from '@polkadot/hw-ledger/types';
 
 import { Ledger, type LedgerTypes } from './types';
-
-import type { AccountOptions } from '@polkadot/hw-ledger/types';
 
 interface LedgerApp {
   transport: Transport;
@@ -18,7 +18,7 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
   readonly transport: LedgerTypes;
   readonly slip44: number;
 
-  constructor(transport: LedgerTypes, slip44: number, txMetadataChainId?: string) {
+  constructor (transport: LedgerTypes, slip44: number, txMetadataChainId?: string) {
     super();
 
     // u2f is deprecated
@@ -53,7 +53,7 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
     }
   };
 
-  disconnect(): Promise<void> {
+  disconnect (): Promise<void> {
     return this.withApp(async (app) => {
       await app.transport.close();
     });
