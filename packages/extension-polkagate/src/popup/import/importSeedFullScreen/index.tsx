@@ -1,29 +1,26 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { HexString } from '@polkadot/util/types';
 
-import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Collapse, Grid, Stack, Typography } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import { ClipboardText, More, User } from 'iconsax-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
+import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
+import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { toTitleCase } from '@polkadot/extension-polkagate/src/util/index';
 import { objectSpread } from '@polkadot/util';
 
-import { Address, GenesisHashOptionsContext, InputWithLabel, SelectChain, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
+import { ActionButton, Address, DecisionButtons, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
-import { createAccountSuri, getMetadata, validateSeed } from '../../../messaging';
+import { createAccountSuri, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
-import getLogo from '../../../util/getLogo';
-import Passwords2 from '../../newAccount/createAccountFullScreen/components/Passwords2';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 export interface AccountInfo {
@@ -32,32 +29,29 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed(): React.ReactElement {
+enum STEP {
+  SEED,
+  DETAIL
+}
+
+export default function ImportSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
-  const genesisOptions = useContext(GenesisHashOptionsContext);
+  const navigate = useNavigate();
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);
   const [error, setError] = useState<string | undefined>();
-  const [genesis, setGenesis] = useState('');
-  const [newChain, setNewChain] = useState<Chain | null>(null);
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [address, setAddress] = useState('');
   const [type, setType] = useState(DEFAULT_TYPE);
   const [path, setPath] = useState<string | null>(null);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null>();
+  const [password, setPassword] = useState<string>();
+  const [step, setStep] = useState(STEP.SEED);
 
   const chain = useMetadata(account?.genesis, true);
-
-  const showAddress = useMemo(() => !!(account?.address), [account]);
-
-  useEffect((): void => {
-    setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain
-  }, [genesisOptions]);
 
   useEffect((): void => {
     setType(
@@ -82,25 +76,18 @@ export default function ImportSeed(): React.ReactElement {
         setError(undefined);
         setAddress(validatedAccount.address);
         setAccount(
-          objectSpread<AccountInfo>({}, validatedAccount, { genesis, type })
+          objectSpread<AccountInfo>({}, validatedAccount, { POLKADOT_GENESIS, type })
         );
       })
       .catch(() => {
         setAddress('');
         setAccount(null);
         setError(path
-          ? t<string>('Invalid recovery phrase or derivation path')
-          : t<string>('Invalid recovery phrase')
+          ? t('Invalid recovery phrase or derivation path')
+          : t('Invalid recovery phrase')
         );
       });
-  }, [t, genesis, seed, path, setAccount, type]);
-
-  useEffect(() => {
-    genesis && getMetadata(genesis, true).then(setNewChain).catch((error): void => {
-      console.error(error);
-      setNewChain(null);
-    });
-  }, [genesis]);
+  }, [t, seed, path, setAccount, type]);
 
   const onCreate = useCallback(async (): Promise<void> => {
     // this should always be the case
@@ -126,138 +113,174 @@ export default function ImportSeed(): React.ReactElement {
     }).catch(console.error);
   }, []);
 
-  const onChangeNetwork = useCallback((newGenesisHash: string) => setGenesis(newGenesisHash), []);
-
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
-  }, []);
-
-  const onPassChange = useCallback((pass: string | null): void => {
-    setPassword(pass);
   }, []);
 
   const onCancel = useCallback(() => window.close(), []);
   const toggleMore = useCallback(() => setShowMore(!showMore), [showMore]);
 
+  const onContinue = useCallback(() => {
+    setStep(STEP.DETAIL);
+  }, []);
+
+  const onBack = useCallback(() => {
+    if (step === STEP.DETAIL) {
+      setStep(STEP.SEED);
+    } else {
+      setSeed(null);
+      setAccount(null);
+      setAddress('');
+      setType(DEFAULT_TYPE);
+      setPath(null);
+      setShowMore(false);
+      setName(undefined);
+      setPassword('');
+      setError(undefined);
+      navigate('/account/have-wallet');
+    }
+  }, [navigate, step]);
+
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
+    <Framework width='600px'>
+      <OnboardTitle
+        label={t('Import from recovery phrase')}
+        labelPartInColor='recovery phrase'
+        onBack={onBack}
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Title
-            height='100px'
-            logo={
-              <VaadinIcon icon='vaadin:book' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            }
-            text={t('Import from recovery phrase')}
-          />
-          <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t<string>('Enter your account\'s recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
-          </Typography>
-          <Grid container item sx={{ '> div textarea': { height: '55px' }, mt: '20px', position: 'relative' }}>
-            <TextAreaWithLabel
-              fontSize='18px'
-              height='70px'
-              isError={!!error}
-              isFocused
-              label={t<string>('Existing 12 or 24-word recovery phrase')}
-              onChange={setSeed}
-              rowsCount={2}
-              style={{ width: '100%' }}
-              value={seed || ''}
-            />
-            <IconButton
-              onClick={pasteSeed}
-              sx={{ bottom: '10px', p: 0, position: 'absolute', right: '10px' }}
-            >
-              <ContentPasteIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
-            </IconButton>
-          </Grid>
-          {!!error && !!seed &&
-            <Grid alignItems='center' container height='35px' pl='15px'>
-              <Warning
-                className='seedError'
-                isBelowInput
-                isDanger
-                theme={theme}
-              >
-                {error}
-              </Warning>
-            </Grid>
-          }
-          <Collapse in={showAddress}>
-            <Grid container item sx={{ mt: '15px' }}>
-              <Address
-                address={account?.address}
-                backgroundColor='background.main'
-                className='addr'
-                genesisHash={account?.genesis}
-                margin='0px'
-                name={name}
-                showCopy={!!account?.address}
-                style={{ width: '100%' }}
-              />
-            </Grid>
-          </Collapse>
-          <Grid container sx={{ mt: '15px' }}>
-            <InputWithLabel
-              isError={name === null || name?.length === 0}
-              label={t<string>('Choose a name for this account')}
-              onChange={onNameChange}
-              value={name ?? ''}
-            />
-          </Grid>
-          <Passwords2
-            firstPassStyle={{ marginBlock: '10px' }}
-            label={t<string>('Password for this account (more than 5 characters)')}
-            onChange={onPassChange}
-            onEnter={password && name && !error && !!seed ? onCreate : () => null}
-          />
-          <Grid alignItems='flex-end' container item justifyContent='flex-start' onClick={toggleMore}>
-            <Typography pt='20px' sx={{ color: 'secondary.light', cursor: 'pointer', textDecoration: 'underline', userSelect: 'none' }}>
-              {t('More ...')}
+      <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px' }}>
+        {step === STEP.SEED &&
+          <>
+            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+              {t('Enter your account\'s recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
             </Typography>
-            <ArrowForwardIosIcon sx={{ color: 'secondary.light', cursor: 'pointer', fontSize: 17, ml: '5px', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: showMore ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
-          </Grid>
-          <Collapse in={showMore}>
-            <Grid container item justifyContent='space-between' mb='25px' mt='10px'>
-              <Grid container item width='49%'>
-                <InputWithLabel
-                  isError={!!path && !!error}
-                  label={t<string>('Derived path (ignore if the account is not derived)')}
-                  onChange={setPath}
-                  value={path || ''}
+            <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' mt= '15px'>
+              <Typography color='#EAEBF1' sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
+                {t('Existing 12 or 24-word recovery phrase')}
+              </Typography>
+              <ActionButton
+                StartIcon={ClipboardText}
+                contentPlacement='start'
+                iconSize={14}
+                onClick={pasteSeed}
+                style={{
+                  '& .MuiButton-startIcon': {
+                    marginRight: '5px'
+                  },
+                  borderRadius: '8px',
+                  height: '32px',
+                  padding: '5px 10px'
+                }}
+                text={{
+                  firstPart: t('Paste')
+                }}
+                variant='contained'
+              />
+            </Stack>
+            <Grid alignContent='start' container direction='row' sx={{ bgcolor: '#1B133CB2', border: '1px solid transparent', borderColor: error ? '#FF4FB9' : '#BEAAD833', borderRadius: '12px', minHeight: '90px', p: '10px', width: '370px' }}>
+              {seed?.split(' ').map((item) => (
+                <Typography color='#BEAAD8' key={item} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', m: '2px', px: '5px' }} variant='B-4'>
+                  {toTitleCase(item)}
+                </Typography>
+              ))}
+            </Grid>
+            {!!error && !!seed &&
+              <Typography color='#FF4FB9' sx={{ mt: '5px', textAlign: 'left' }} variant='B-1'>
+                {error}
+              </Typography>
+            }
+            <Collapse in={!!seed}>
+              <Grid container item sx={{ height: '60px', mt: '10px' }}>
+                <Address
+                  address={account?.address}
+                  genesisHash={account?.genesis}
+                  margin='0px'
+                  name={name}
+                  showCopy={!!account?.address}
+                  style={{ filter: account?.address ? 'none' : 'blur(2px)', width: '100%' }}
                 />
               </Grid>
-              <SelectChain
-                address={address}
-                defaultValue={newChain?.genesisHash || genesisOptions[0].text}
-                icon={getLogo(newChain ?? undefined)}
-                label={t<string>('Select the chain')}
-                onChange={onChangeNetwork}
-                options={genesisOptions}
-                style={{ p: 0, width: '49%' }}
-              />
-            </Grid>
-          </Collapse>
-          <Grid container item justifyContent='flex-end' py='10px'>
-            <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
-              <TwoButtons
-                disabled={!password || !name || !address || !account}
-                isBusy={isBusy}
-                mt='1px'
-                onPrimaryClick={onCreate}
-                onSecondaryClick={onCancel}
-                primaryBtnText={t<string>('Import')}
-                secondaryBtnText={t<string>('Cancel')}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', mt: '10px', p: '4px 6px', width: 'fit-content' }}>
+                <More color='#AA83DC' size='18' style={{ rotate: '90deg' }} variant='Linear' />
+                <Typography sx={{ color: '#BEAAD8', cursor: 'pointer' }} variant='B-2'>
+                  {t('Advanced')}
+                </Typography>
+              </Stack>
+              <Collapse in={showMore}>
+                <Grid container item justifyContent='space-between' mt='10px' my='5px'>
+                  <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+                    {t('Import a specific account from the same recovery phrase using a derivation path like //0, //1, etc.')}
+                  </Typography>
+                  <MyTextField
+                    focused
+                    iconSize={18}
+                    onTextChange={setPath}
+                    placeholder='//'
+                    style={{ margin: '0' }}
+                  />
+                </Grid>
+              </Collapse>
+            </Collapse>
+            <GradientButton
+              contentPlacement='center'
+              disabled={!!error || !seed}
+              onClick={onContinue}
+              showChevron
+              style={{
+                borderRadius: '18px',
+                height: '48px',
+                marginTop: '15px',
+                width: '236px'
+              }}
+              text={t('Continue')}
+            />
+          </>
+        }
+        {step === STEP.DETAIL &&
+          <Motion variant='slide'>
+            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+              {t('Set a name and password for your account.')}
+            </Typography>
+            <Address
+              address={account?.address}
+              genesisHash={account?.genesis}
+              margin='0px'
+              name={name}
+              showCopy={!!account?.address}
+              style={{ mt: '15px', width: '100%' }}
+            />
+            <MyTextField
+              Icon={User}
+              focused
+              iconSize={18}
+              onTextChange={onNameChange}
+              placeholder={t('Name account')}
+              style={{ margin: '20px 0 20px' }}
+              title={t('Choose a name for this account')}
+            />
+            <MatchPasswordField
+              onSetPassword={(password && name && !error && !!seed) ? onCreate : undefined}
+              setConfirmedPassword={setPassword}
+              spacing='20px'
+              style={{ marginBottom: '20px' }}
+              title1={t('Password for this account')}
+              title2={t('Repeat the password')}
+            />
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
+              disabled={!password || !name || !address || !account}
+              isBusy={isBusy}
+              onPrimaryClick={onCreate}
+              onSecondaryClick={onCancel}
+              primaryBtnText={t('Import')}
+              secondaryBtnText={t('Cancel')}
+              showChevron
+              style={{ flexDirection: 'row-reverse', position: 'absolute', width: '65%' }}
+            />
+          </Motion>
+        }
+      </Stack>
+    </Framework>
   );
 }
