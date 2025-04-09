@@ -11,6 +11,7 @@ import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
 import { createAssets } from '@polkagate/apps-config/assets';
 import { Chance } from 'chance';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { BN, isObject } from '@polkadot/util';
 
@@ -142,6 +143,7 @@ const FUNCTIONS = ['getAssetOnRelayChain', 'getAssetOnAssetHub', 'getAssetOnMult
  */
 export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
 
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
@@ -150,7 +152,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   const random = useMemo(() => new Chance(), []);
 
   /** to limit calling of this heavy call on just home and account details */
-  const FETCH_PATHS = window.location.hash === '#/' || window.location.hash.startsWith('#/accountfs');
+  const FETCH_PATHS = pathname === '/' || pathname.startsWith('/accountfs');
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
