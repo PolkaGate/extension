@@ -80,7 +80,7 @@ function Bread(): React.ReactElement {
       </Stack>
       {[STATUS.ALREADY_HAVE_A_WALLET, STATUS.CREATE_A_NEW_WALLET, STATUS.OTHERS].includes(status) &&
         <Typography color={status === STATUS.ALREADY_HAVE_A_WALLET ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} fontSize='14px' onClick={onHaveWalletClick} sx={{ cursor: status === STATUS.ALREADY_HAVE_A_WALLET ? 'default' : 'pointer' }} variant='B-1'>
-          {t('Already have a Wallet')}
+          {t('Already have a wallet')}
         </Typography>
       }
       {[STATUS.CREATE_A_NEW_WALLET].includes(status) &&

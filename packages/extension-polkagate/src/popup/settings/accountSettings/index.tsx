@@ -34,7 +34,7 @@ function AccountSettings(): React.ReactElement {
         onClick={onBack}
         text={t('Account Settings')}
       />
-      <Motion variant='slide' style={{ padding: ' 0 15px' }}>
+      <Motion style={{ padding: ' 0 15px' }} variant='slide'>
         <ActionCard
           Icon={Notification}
           iconColor='#FF4FB9'
