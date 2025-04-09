@@ -3,7 +3,6 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -18,7 +17,7 @@ import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox } from '../../../style';
 import getLogo2 from '../../../util/getLogo2';
 import { toShortAddress } from '../../../util/utils';
-import StakingActionButton from './StakingActionButton';
+import StakingActionButton, { type StakingActionButtonProps } from './StakingActionButton';
 
 const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: string | undefined; }) => {
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
@@ -57,7 +56,7 @@ const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
     <Grid container item sx={{ bottom: '20px', height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
-        : <Ice size='32' />
+        : <Ice size='32' style={{ zIndex: -1 }} />
       }
     </Grid>
   );
@@ -69,12 +68,7 @@ interface Props {
   staked: BN | undefined;
   type: 'solo' | 'pool';
   style?: SxProps<Theme>;
-  buttons?: {
-    text: string;
-    Icon: Icon;
-    onClick: () => void;
-    disabled?: boolean;
-  }[];
+  buttons?: StakingActionButtonProps[];
 }
 
 export default function StakingPortfolio ({ address, buttons = [], genesisHash, staked, style, type }: Props): React.ReactElement {
@@ -100,24 +94,26 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
       </Grid>
       <Grid container item>
         {staked === undefined
-          ? <Skeleton
-            animation='wave'
-            height='24px'
-            sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
-            variant='text'
-          />
-          : <FormatPrice
-            commify
-            decimalColor={theme.palette.text.secondary}
-            dotStyle={'big'}
-            fontFamily='OdibeeSans'
-            fontSize='40px'
-            fontWeight={400}
-            height={40}
-            num={stakedInCurrency}
-            width='fit-content'
-            withSmallDecimal
-          />
+          ? (
+            <Skeleton
+              animation='wave'
+              height='24px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
+              variant='text'
+            />)
+          : (
+            <FormatPrice
+              commify
+              decimalColor={theme.palette.text.secondary}
+              dotStyle={'big'}
+              fontFamily='OdibeeSans'
+              fontSize='40px'
+              fontWeight={400}
+              height={40}
+              num={stakedInCurrency}
+              width='fit-content'
+              withSmallDecimal
+            />)
         }
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-start'>

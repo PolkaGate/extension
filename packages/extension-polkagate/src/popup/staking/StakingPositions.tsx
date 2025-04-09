@@ -1,12 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { Icon } from 'iconsax-react';
-
 import { Grid, Stack, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
@@ -33,28 +31,16 @@ interface Props {
 
 function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, price, token, type }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
   const isTestNet = TEST_NETS.includes(genesisHash);
   const value = amountToHuman(balance.muln(price), decimal);
 
+  const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`), [genesisHash, navigate, type]);
+
   return (
-    <Grid
-      alignItems='center' container item justifyContent='space-between' key={key}
-      sx={{
-        ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
-        bgcolor: '#05091C',
-        borderBottom: '1px solid #1B133C',
-        borderBottomLeftRadius: isLast ? '14px' : 0,
-        borderBottomRightRadius: isLast ? '14px' : 0,
-        borderTopLeftRadius: isFirst ? '14px' : 0,
-        borderTopRightRadius: isFirst ? '14px' : 0,
-        cursor: 'pointer',
-        lineHeight: '25px',
-        p: '10px',
-        transition: 'all 250ms ease-out'
-      }}
-    >
+    <Grid alignItems='center' container item justifyContent='space-between' key={key} onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
       <Stack alignItems='center' direction='row' justifyContent='start'>
         <ChainLogo genesisHash={genesisHash} size={36} />
         <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
@@ -182,7 +168,7 @@ export default function StakingPositions (): React.ReactElement {
           </VelvetBox>
           <Stack direction='row' justifyContent='center'>
             <ActionButton
-              StartIcon={AddCircle as Icon}
+              StartIcon={AddCircle}
               contentPlacement='center'
               onClick={onEarningOptions}
               style={{
