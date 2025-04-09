@@ -5,7 +5,7 @@ import type { HexString } from '@polkadot/util/types';
 
 import { Collapse, Grid, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import { ClipboardText, More, User } from 'iconsax-react';
+import { More, User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,14 +14,14 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { toTitleCase } from '@polkadot/extension-polkagate/src/util/index';
 import { objectSpread } from '@polkadot/util';
 
-import { ActionButton, Address, DecisionButtons, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
+import { Address, DecisionButtons, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
+import MyPhraseArea from './MyPhraseArea';
 
 export interface AccountInfo {
   address: string;
@@ -40,7 +40,7 @@ export default function ImportSeed (): React.ReactElement {
   const navigate = useNavigate();
 
   const [isBusy, setIsBusy] = useState(false);
-  const [seed, setSeed] = useState<string | null>(null);
+  const [seed, setSeed] = useState<string>('');
   const [error, setError] = useState<string | undefined>();
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [address, setAddress] = useState('');
@@ -107,12 +107,6 @@ export default function ImportSeed (): React.ReactElement {
     }
   }, [account, name, password, type]);
 
-  const pasteSeed = useCallback(() => {
-    navigator.clipboard.readText().then((clipText) => {
-      setSeed(clipText);
-    }).catch(console.error);
-  }, []);
-
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
   }, []);
@@ -128,7 +122,7 @@ export default function ImportSeed (): React.ReactElement {
     if (step === STEP.DETAIL) {
       setStep(STEP.SEED);
     } else {
-      setSeed(null);
+      setSeed('');
       setAccount(null);
       setAddress('');
       setType(DEFAULT_TYPE);
@@ -154,36 +148,12 @@ export default function ImportSeed (): React.ReactElement {
             <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
               {t('Enter your account\'s recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
             </Typography>
-            <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' mt= '15px'>
-              <Typography color='#EAEBF1' sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
-                {t('Existing 12 or 24-word recovery phrase')}
-              </Typography>
-              <ActionButton
-                StartIcon={ClipboardText}
-                contentPlacement='start'
-                iconSize={14}
-                onClick={pasteSeed}
-                style={{
-                  '& .MuiButton-startIcon': {
-                    marginRight: '5px'
-                  },
-                  borderRadius: '8px',
-                  height: '32px',
-                  padding: '5px 10px'
-                }}
-                text={{
-                  firstPart: t('Paste')
-                }}
-                variant='contained'
-              />
-            </Stack>
-            <Grid alignContent='start' container direction='row' sx={{ bgcolor: '#1B133CB2', border: '1px solid transparent', borderColor: error ? '#FF4FB9' : '#BEAAD833', borderRadius: '12px', minHeight: '90px', p: '10px', width: '370px' }}>
-              {seed?.split(' ').map((item) => (
-                <Typography color='#BEAAD8' key={item} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', m: '2px', px: '5px' }} variant='B-4'>
-                  {toTitleCase(item)}
-                </Typography>
-              ))}
-            </Grid>
+            <MyPhraseArea
+              isCorrect={!!account?.address}
+              label= {t('Existing 12 or 24-word recovery phrase')}
+              seed={seed}
+              setSeed={setSeed}
+            />
             {!!error && !!seed &&
               <Typography color='#FF4FB9' sx={{ mt: '5px', textAlign: 'left' }} variant='B-1'>
                 {error}
