@@ -13,7 +13,7 @@ import AccountVisibilityToggler from './AccountVisibilityToggler';
 import Currency from './Currency';
 import DailyChange from './DailyChange';
 
-function Portfolio(): React.ReactElement {
+function Portfolio (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -28,6 +28,14 @@ function Portfolio(): React.ReactElement {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const totalWorth = useMemo(() => {
+    if (accountAssets === undefined) {
+      return undefined;
+    }
+
+    if (accountAssets === null) {
+      return 0;
+    }
+
     if (!accountAssets?.length) {
       return undefined;
     }
