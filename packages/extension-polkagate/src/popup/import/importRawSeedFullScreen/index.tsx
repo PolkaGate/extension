@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { HexString } from '@polkadot/util/types';
-
 import { Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { User } from 'iconsax-react';
@@ -11,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
@@ -112,17 +109,17 @@ export default function ImportSeed (): React.ReactElement {
       setIsBusy(true);
       await resetOnForgotPassword();
 
-      createAccountSuri(name, password, account.suri, type, account.genesis as HexString)
+      createAccountSuri(name, password, account.suri, type, POLKADOT_GENESIS)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
-          openOrFocusTab('/', true);
+          navigate('/');
         })
         .catch((error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [account, name, password, type]);
+  }, [account, name, navigate, password, type]);
 
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
