@@ -20,6 +20,7 @@ export default function MyPhraseArea ({ isCorrect, label, seed, setSeed }: Props
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for textarea
 
   const [isEditing, setIsEditing] = useState<boolean>(true);
+  const hasError = seed.length && !isCorrect;
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSeed(e.target.value);
@@ -49,6 +50,24 @@ export default function MyPhraseArea ({ isCorrect, label, seed, setSeed }: Props
       textareaRef.current.focus(); // Ensure focus when switching to textarea mode
     }
   }, [isEditing]);
+
+  const commonStyle = {
+    backgroundColor: '#1B133CB2',
+    border: '1px solid transparent',
+    borderColor: hasError ? '#FF4FB9' : '#BEAAD833',
+    borderRadius: '12px',
+    color: '#BEAAD8',
+    fontFamily: 'Inter',
+    fontSize: '12px',
+    fontWeight: 500,
+    height: '100px',
+    letterSpacing: '-0.19px',
+    overflowWrap: 'anywhere',
+    overflowY: 'auto',
+    padding: '10px',
+    textAlign: 'left',
+    width: '100%'
+  } as React.CSSProperties;
 
   return (
     <>
@@ -83,23 +102,10 @@ export default function MyPhraseArea ({ isCorrect, label, seed, setSeed }: Props
               onChange={handleChange}
               ref={textareaRef}
               style={{
-                backgroundColor: '#1B133CB2',
-                border: '1px solid transparent',
-                borderColor: '#BEAAD833',
-                borderRadius: '12px',
-                color: '#BEAAD8',
-                fontFamily: 'Inter',
-                fontSize: '12px',
-                fontWeight: 500,
-                height: '100px',
-                letterSpacing: '-0.19px',
-                overflowY: 'auto',
-                padding: '10px',
                 resize: 'none',
-                textAlign: 'left',
                 whiteSpace: 'pre-wrap',
-                width: '100%',
-                wordBreak: 'break-word'
+                wordBreak: 'break-word',
+                ...commonStyle
               }}
               value={seed}
             />
@@ -108,24 +114,11 @@ export default function MyPhraseArea ({ isCorrect, label, seed, setSeed }: Props
             <div
               onClick={handleClick}
               style={{
-                backgroundColor: '#1B133CB2',
-                border: '1px solid transparent',
-                borderColor: '#BEAAD833',
-                borderRadius: '12px',
-                color: '#BEAAD8',
                 cursor: 'pointer',
                 display: 'inline-block',
                 flexWrap: 'wrap',
-                fontFamily: 'Inter',
-                fontSize: '12px',
-                fontWeight: 500,
                 gap: '4px',
-                height: '100px',
-                letterSpacing: '-0.19px',
-                overflowY: 'auto',
-                padding: '10px',
-                textAlign: 'left',
-                width: '100%'
+                ...commonStyle
               }}
             >
               {seed.split(/\s+/).map((item, index) => (

@@ -149,46 +149,35 @@ export default function ImportSeed (): React.ReactElement {
               {t('Enter your account\'s recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
             </Typography>
             <MyPhraseArea
-              isCorrect={!!account?.address}
-              label= {t('Existing 12 or 24-word recovery phrase')}
+              isCorrect={!!account?.address && !error}
+              label={t('Existing 12 or 24-word recovery phrase')}
               seed={seed}
               setSeed={setSeed}
             />
             {!!error && !!seed &&
-              <Typography color='#FF4FB9' sx={{ mt: '5px', textAlign: 'left' }} variant='B-1'>
+              <Typography color='#FF4FB9' sx={{ textAlign: 'left' }} variant='B-1'>
                 {error}
               </Typography>
             }
             <Collapse in={!!seed}>
-              <Grid container item sx={{ height: '60px', mt: '10px' }}>
-                <Address
-                  address={account?.address}
-                  genesisHash={account?.genesis}
-                  margin='0px'
-                  name={name}
-                  showCopy={!!account?.address}
-                  style={{ filter: account?.address ? 'none' : 'blur(2px)', width: '100%' }}
-                />
-              </Grid>
-              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', mt: '10px', p: '4px 6px', width: 'fit-content' }}>
+              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', m: '15px 0 10px 0 ', p: '4px 6px', width: 'fit-content' }}>
                 <More color='#AA83DC' size='18' style={{ rotate: '90deg' }} variant='Linear' />
                 <Typography sx={{ color: '#BEAAD8', cursor: 'pointer' }} variant='B-2'>
                   {t('Advanced')}
                 </Typography>
               </Stack>
               <Collapse in={showMore}>
-                <Grid container item justifyContent='space-between' mt='10px' my='5px'>
-                  <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
-                    {t('Import a specific account from the same recovery phrase using a derivation path like //0, //1, etc.')}
-                  </Typography>
-                  <MyTextField
-                    focused
-                    iconSize={18}
-                    onTextChange={setPath}
-                    placeholder='//'
-                    style={{ margin: '0' }}
-                  />
-                </Grid>
+                <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+                  {t('To import a specific account from your recovery phrase, use a derivation path like //0, //1, etc.')}
+                </Typography>
+                <MyTextField
+                  focused
+                  iconSize={18}
+                  onTextChange={setPath}
+                  placeholder='//'
+                  style={{ margin: '15px 0 0' }}
+                  title={t('Derivation path')}
+                />
               </Collapse>
             </Collapse>
             <GradientButton
@@ -208,17 +197,6 @@ export default function ImportSeed (): React.ReactElement {
         }
         {step === STEP.DETAIL &&
           <Motion variant='slide'>
-            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
-              {t('Set a name and password for your account.')}
-            </Typography>
-            <Address
-              address={account?.address}
-              genesisHash={account?.genesis}
-              margin='0px'
-              name={name}
-              showCopy={!!account?.address}
-              style={{ mt: '15px', width: '100%' }}
-            />
             <MyTextField
               Icon={User}
               focused
