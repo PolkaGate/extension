@@ -1648,5 +1648,9 @@
   "Polkadot Migration": "",
   "account with its index and offset": "",
   "Deselect all ({{num}}) accounts": "",
-  "Select all ({{num}}) accounts": ""
+  "Select all ({{num}}) accounts": "",
+  "Paste": "",
+  "Set a name and password for your account. If you’re an advanced user, you can also import a specific account from the same recovery phrase by entering a derivation path, such as //0, //1, etc.": "",
+  "Import a specific account from the same recovery phrase using a derivation path like //0, //1, etc.": "",
+  "Set a name and password for your account.": ""
 }
