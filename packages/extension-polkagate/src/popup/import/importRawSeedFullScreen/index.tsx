@@ -20,6 +20,7 @@ import { DecisionButtons, GradientButton, MatchPasswordField, Motion, MyTextFiel
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
+import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 import MyPhraseArea from '../importSeedFullScreen/MyPhraseArea';
 
@@ -112,14 +113,14 @@ export default function ImportSeed (): React.ReactElement {
       createAccountSuri(name, password, account.suri, type, POLKADOT_GENESIS)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
-          navigate('/');
+          switchToOrOpenTab('/', true);
         })
         .catch((error): void => {
           setIsBusy(false);
           console.error(error);
         });
     }
-  }, [account, name, navigate, password, type]);
+  }, [account, name, password, type]);
 
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
