@@ -109,7 +109,7 @@ export default function ImportSeed (): React.ReactElement {
     setName(enteredName ?? null);
   }, []);
 
-  const onCancel = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
   const toggleMore = useCallback(() => setShowMore(!showMore), [showMore]);
 
   const onContinue = useCallback(() => {

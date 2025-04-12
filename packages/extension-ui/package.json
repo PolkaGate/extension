@@ -29,7 +29,6 @@
     "@polkadot/keyring": "latest",
     "@polkadot/networks": "latest",
     "@polkadot/react-identicon": "latest",
-    "@polkadot/react-qr": "^3.6.6",
     "@polkadot/types": "latest",
     "@polkadot/types-augment": "latest",
     "@polkadot/ui-keyring": "latest",

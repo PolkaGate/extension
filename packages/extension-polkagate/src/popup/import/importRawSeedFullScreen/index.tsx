@@ -126,7 +126,7 @@ export default function ImportSeed (): React.ReactElement {
     setName(enteredName ?? null);
   }, []);
 
-  const onCancel = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
   const onContinue = useCallback(() => {
     setStep(STEP.DETAIL);
   }, []);

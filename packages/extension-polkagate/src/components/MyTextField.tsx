@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 
 import { Grid, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
@@ -10,6 +9,9 @@ import React, { useCallback, useState } from 'react';
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
 })<{ hasError?: boolean }>(({ hasError, theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
@@ -45,8 +47,8 @@ const StyledTextField = styled(TextField, {
     transition: 'all 150ms ease-out',
     width: '100%'
   },
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  '& input': {
+    autocomplete: 'off'
   },
   '& input::placeholder': {
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
@@ -103,6 +105,7 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, onE
             </InputAdornment>
           )
         }}
+        autoComplete='off'
         autoFocus={focused}
         fullWidth
         onBlur={toggle}
