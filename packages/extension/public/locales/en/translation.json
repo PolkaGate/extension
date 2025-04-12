@@ -1652,5 +1652,9 @@
   "Paste": "",
   "Set a name and password for your account. If you’re an advanced user, you can also import a specific account from the same recovery phrase by entering a derivation path, such as //0, //1, etc.": "",
   "Import a specific account from the same recovery phrase using a derivation path like //0, //1, etc.": "",
-  "Set a name and password for your account.": ""
+  "Set a name and password for your account.": "",
+  "Import an account from your QR signer, such as Polkadot Vault.": "",
+  "Hold the QR code in front of your ": "",
+  "To import a specific account from your recovery phrase, use a derivation path like //0, //1, etc.": "",
+  "Derivation path": ""
 }
