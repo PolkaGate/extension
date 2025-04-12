@@ -9,7 +9,6 @@ import { Camera, User, Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
@@ -25,22 +24,21 @@ export default function AttachQrFullScreen (): React.ReactElement {
   const { t } = useTranslation();
 
   const [account, setAccount] = useState<ScanType | null>(null);
-  const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
 
-    updateMeta(String(address), metaData).then(() => {
+    account?.content && updateMeta(account.content, metaData).then(() => {
       setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
-      openOrFocusTab('/', true);
+      switchToOrOpenTab(`/accountfs/${account.content}/0`, true);
     }).catch(console.error);
-  }, [address]);
+  }, [account]);
 
   const onImport = useCallback(() => {
     if (account?.isAddress && name) {
-      createAccountExternal(name, account.content, POLKADOT_GENESIS)
+      createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS)
         .then(() => setQrLabelAndGoToHome())
         .catch((error: Error) => console.error(error));
     }
@@ -54,7 +52,6 @@ export default function AttachQrFullScreen (): React.ReactElement {
     setAccount(qrAccount);
     setInvalidQR(false);
     setName(qrAccount?.name || null);
-    setAddress(qrAccount.content);
   }, []);
 
   const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
@@ -119,7 +116,8 @@ export default function AttachQrFullScreen (): React.ReactElement {
           </>
           : <Stack direction='column' sx={{ height: '245px', position: 'relative', zIndex: '1' }}>
             <Address
-              address={address}
+              address={account?.content}
+              genesisHash={account?.genesisHash}
               name={name}
               style={{ margin: '5px auto 10px' }}
               width='100%'
@@ -128,6 +126,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
               Icon={User}
               focused
               iconSize={18}
+              onEnterPress = {onImport}
               onTextChange={setName}
               placeholder={t('Name account')}
               style={{ margin: '5px 0 0' }}
