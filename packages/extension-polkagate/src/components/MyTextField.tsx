@@ -57,7 +57,7 @@ const StyledTextField = styled(TextField, {
 }));
 
 interface Props {
-  Icon: Icon;
+  Icon?: Icon;
   focused?: boolean;
   iconSize?: number;
   onEnterPress?: () => void;
@@ -67,7 +67,7 @@ interface Props {
   title?: string;
 }
 
-export default function MyTextField({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
