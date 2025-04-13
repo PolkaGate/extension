@@ -87,7 +87,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
             <Box
               component='img'
               src={money as string}
-              sx={{ height: '128px', width: '128px', position: 'absolute', top: '10px' }}
+              sx={{ height: '128px', position: 'absolute', top: '10px', width: '128px' }}
             />
             <Title
               selectedPosition={selectedPosition}

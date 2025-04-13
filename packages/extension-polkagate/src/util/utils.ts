@@ -290,6 +290,10 @@ export function formatMeta(meta?: Meta): string[] | null {
 }
 
 export function toShortAddress(address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+  if (!address) {
+    return '';
+  }
+
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
