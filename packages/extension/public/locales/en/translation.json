@@ -1658,5 +1658,6 @@
   "To import a specific account from your recovery phrase, use a derivation path like //0, //1, etc.": "",
   "Derivation path": "",
   "Enter your account ID": "",
-  "Add Watch-only account": ""
+  "Add Watch-only account": "",
+  "To import a specific account, use a derivation path like //0, //1, etc.": ""
 }
