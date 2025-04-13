@@ -23,7 +23,7 @@ import { amountToMachine, countDecimalPlaces, formatTimestamp, toShortAddress } 
 import { getLink } from '../Explorer';
 import { getVoteType, isReward } from './HistoryItem';
 
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
@@ -39,12 +39,12 @@ interface HistoryDetailProps {
 const isReceived = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() !== 'send';
 const isSend = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() === 'send';
 
-const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; }) {
+const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }) {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), []);
+  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), [calls.length]);
 
   return (
     <>
@@ -67,7 +67,7 @@ const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; })
   );
 });
 
-function HistoryStatus({ action, success }: { action: string, success: boolean }) {
+function HistoryStatus ({ action, success }: { action: string, success: boolean }) {
   const { t } = useTranslation();
 
   return (
@@ -90,7 +90,7 @@ function HistoryStatus({ action, success }: { action: string, success: boolean }
   );
 }
 
-function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
+function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
   const price = useTokenPriceBySymbol(token, genesisHash);
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal ?? 0), [amount, decimal, price.price]);
@@ -136,7 +136,7 @@ function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: 
   );
 }
 
-function DetailHeader({ historyItem }: Props) {
+function DetailHeader ({ historyItem }: Props) {
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
   return (
@@ -156,7 +156,7 @@ function DetailHeader({ historyItem }: Props) {
   );
 }
 
-function DetailCard({ historyItem }: Props) {
+function DetailCard ({ historyItem }: Props) {
   const items = useMemo(() => {
     const card: Record<string, string | number>[] = [];
 
@@ -237,7 +237,7 @@ function DetailCard({ historyItem }: Props) {
   );
 }
 
-function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
+function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
