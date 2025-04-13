@@ -1,20 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 
+import { SettingsContext } from '../../components';
 import CustomTooltip from '../../components/Tooltip';
 import { useTranslation } from '../../hooks';
 import PrivacyPolicy from '../../partials/PrivacyPolicy';
 import SelectLanguage from '../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../util/constants';
 
-function TopRightIcons(): React.ReactElement {
+function TopRightIcons (): React.ReactElement {
   const { t } = useTranslation();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
+  const settings = useContext(SettingsContext);
 
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const [hovered, setHovered] = useState<ExtensionPopups>(ExtensionPopups.NONE);
@@ -44,6 +45,8 @@ function TopRightIcons(): React.ReactElement {
     setHovered(popup ?? ExtensionPopups.NONE);
   }, [setHovered]);
 
+  const languageTicker = settings.i18nLang === 'default' ? 'EN' : settings.i18nLang.toUpperCase();
+
   return (
     <Grid container sx={{ maxWidth: '30%', position: 'absolute', right: '0' }}>
       <Container disableGutters sx={{ alignItems: 'center', columnGap: '10px', display: 'flex', justifyContent: 'end', p: '5px 15px', zIndex: 1 }}>
@@ -56,7 +59,7 @@ function TopRightIcons(): React.ReactElement {
           sx={{ alignItems: 'center', bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
         >
           <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ transition: 'all 250ms ease-out' }} variant='B-1'>
-            {'EN'}
+            {languageTicker}
           </Typography>
           <ArrowDown2
             size='15'

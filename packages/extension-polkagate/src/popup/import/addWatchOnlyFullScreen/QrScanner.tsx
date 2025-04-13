@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Divider, Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import { Camera } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
@@ -15,7 +15,7 @@ interface Props {
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>> | ((newAddr?: string) => void);
 }
 
-export default function QrScanner({ setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
+export default function QrScanner ({ setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => setOpenCamera(false), [setOpenCamera]);
@@ -42,10 +42,6 @@ export default function QrScanner({ setAddress, setOpenCamera }: Props): React.R
 
   const page = (
     <Grid alignItems='flex-start' container display='block' item position='relative' sx={{ height: 'parent.innerHeight' }}>
-      <Typography color='#EAEBF1' sx={{ textAlign: 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
-        {t('Account ID')}
-      </Typography>
-      <Divider sx={{ bgcolor: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '90%' }} />
       <Typography color='#EAEBF1' sx={{ textAlign: 'center', width: '100%' }} variant='B-1'>
         {t('Scan address QR code')}
       </Typography>
@@ -74,7 +70,11 @@ export default function QrScanner({ setAddress, setOpenCamera }: Props): React.R
   );
 
   return (
-    <DraggableModal onClose={onClose} open style={{ minHeight: '100px' }}>
+    <DraggableModal
+      onClose={onClose}
+      open
+      style={{ minHeight: '100px' }}
+      title={t('Account ID')}>
       {page}
     </DraggableModal>
   );

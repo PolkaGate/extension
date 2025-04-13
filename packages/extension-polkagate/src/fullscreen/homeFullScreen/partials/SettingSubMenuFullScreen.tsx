@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Collapse, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
 import settings from '@polkadot/ui-settings';
 
 import { checkBox, checkedBox } from '../../../assets/icons';
@@ -14,7 +14,6 @@ import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import { setNotification, tieAccount } from '../../../messaging';
 import ManageWebAccess from '../../../popup/authManagement';
 import { TEST_NETS } from '../../../util/constants';
-import getLanguageOptions from '../../../util/getLanguageOptions';
 import EnableTestNetsModal from './EnableTestNetsModal';
 import { TaskButton } from './HomeMenu';
 import ManageLoginPassword from './ManageLoginPassword';
@@ -23,7 +22,7 @@ interface Props {
   show: boolean;
 }
 
-export default function SettingSubMenuFullScreen({ show }: Props): React.ReactElement {
+export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
