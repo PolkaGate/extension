@@ -96,7 +96,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
         <AccountInputWithIdentity
           address={delegatorAddress}
           chain={chain}
-          helperText={t<string>('Enter the account address that you want to delegate to')}
+          // helperText={t<string>('Enter the account address that you want to delegate to')}
           ignoreAddress={String(myFormattedAddress)}
           label={t('Delegate to Account')}
           setAddress={setDelegatorAddress}

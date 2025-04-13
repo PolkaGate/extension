@@ -3,7 +3,6 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
-import AddWatchOnly from '@polkadot/extension-polkagate/src/popup/import/addWatchOnly';
 import AddWatchOnlyFullScreen from '@polkadot/extension-polkagate/src/popup/import/addWatchOnlyFullScreen';
 import AttachQR from '@polkadot/extension-polkagate/src/popup/import/attachQR';
 import AttachQrFullScreen from '@polkadot/extension-polkagate/src/popup/import/attachQrFullScreen';
@@ -11,11 +10,6 @@ import ImportProxied from '@polkadot/extension-polkagate/src/popup/import/import
 import ImportProxiedFullScreen from '@polkadot/extension-polkagate/src/popup/import/importProxiedFullScreen';
 
 export const IMPORT_ROUTES: RouteConfig[] = [
-  {
-    Component: AddWatchOnly,
-    path: '/import/add-watch-only',
-    trigger: 'import-add-watch-only'
-  },
   {
     Component: AddWatchOnlyFullScreen,
     path: '/import/add-watch-only-full-screen',

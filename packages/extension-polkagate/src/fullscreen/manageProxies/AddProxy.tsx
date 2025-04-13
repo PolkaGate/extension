@@ -132,7 +132,6 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
         chain={chain}
         label={t('Account ID')}
         setAddress={setProxyAddress}
-        showIdenticon
         style={{ my: '30px' }}
       />
       <Grid container item justifyContent='space-between'>

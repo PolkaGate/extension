@@ -180,7 +180,7 @@ export default function CreatePool(): React.ReactElement {
       <Typography fontSize='14px' fontWeight={300} sx={{ m: 'auto', width: '90%' }} textAlign='left'>
         {t<string>('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
       </Typography>
-      <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
+      <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} style={{ m: '15px auto 0', width: '92%' }} />
       <Grid ml='4%' onClick={onUpdateRoles} width='fit-content'>
         <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
           {t<string>('Update roles')}

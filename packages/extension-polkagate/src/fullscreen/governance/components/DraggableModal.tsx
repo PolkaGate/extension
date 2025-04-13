@@ -1,9 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import { Box, Modal, useTheme } from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { Box, IconButton, Modal, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
+
+import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
 
 interface Props {
   width?: number;
@@ -13,11 +15,10 @@ interface Props {
   open: boolean;
   onClose: () => void
   blurBackdrop?: boolean;
-  pt?: number
-  px?: number
+  style?: React.CSSProperties;
 }
 
-export function DraggableModal({ blurBackdrop, children, maxHeight = 740, minHeight = 615, onClose, open, pt = 2, px = 4, width = 500 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ blurBackdrop, children, maxHeight = 740, minHeight = 615, onClose, open, style = {}, width = 415 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -59,25 +60,23 @@ export function DraggableModal({ blurBackdrop, children, maxHeight = 740, minHei
     setIsDragging(false);
   }, []);
 
-  const style = {
+  const _style = {
     '&:focus': {
       outline: 'none' // Remove outline when Box is focused
     },
-    bgcolor: 'background.default',
+    bgcolor: '#1B133C',
     border: isDarkMode ? '0.5px solid' : 'none',
-    borderColor: blurBackdrop ? 'divider' : 'secondary.light',
-    borderRadius: '10px',
-    boxShadow: 24,
+    borderColor: '#FFFFFF0D',
+    borderRadius: '32px',
     cursor: isDragging ? 'grabbing' : 'grab',
     left: modalPosition.x,
     maxHeight: `${maxHeight}px`,
     minHeight: `${minHeight}px`,
-    pb: 3,
+    padding: '20px 0 20px',
     position: 'absolute',
-    pt,
-    px,
     top: modalPosition.y,
-    width: `${width}px`
+    width: `${width}px`,
+    ...style
   };
 
   return (
@@ -99,8 +98,26 @@ export function DraggableModal({ blurBackdrop, children, maxHeight = 740, minHei
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        sx={{ ...style }}
+        sx={{ ..._style,
+          backgroundImage: `url(${modalEffect})`,
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover' }}
       >
+        <IconButton
+          onClick={onClose}
+          sx={{
+            background: '#BFA1FF26',
+            borderRadius: '10px',
+            height: '36px',
+            left: '20px',
+            position: 'absolute',
+            width: '36px',
+            zIndex: 1
+          }}
+        >
+          <Close sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+        </IconButton>
         {children}
       </Box>
     </Modal>

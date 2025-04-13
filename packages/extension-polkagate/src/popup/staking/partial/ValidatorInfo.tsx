@@ -241,7 +241,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
 
   if (isFullscreen) {
     return (
-      <DraggableModal blurBackdrop onClose={onClose} open={showValidatorInfo} px={0}>
+      <DraggableModal blurBackdrop onClose={onClose} open={showValidatorInfo}>
         {page}
       </DraggableModal>
     );

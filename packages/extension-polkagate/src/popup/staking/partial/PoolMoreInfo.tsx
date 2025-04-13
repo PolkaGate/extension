@@ -332,7 +332,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         ? <SlidePopUp show={showPoolInfo}>
           {page}
         </SlidePopUp>
-        : <DraggableModal blurBackdrop minHeight={650} onClose={_closeMenu} open={showPoolInfo} pt={0} px={0}>
+        : <DraggableModal blurBackdrop minHeight={650} onClose={_closeMenu} open={showPoolInfo}>
           {page}
         </DraggableModal>
       }
