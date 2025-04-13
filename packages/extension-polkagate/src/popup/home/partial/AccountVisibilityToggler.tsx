@@ -1,24 +1,20 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import { Radar2 } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 
 import { Tooltip } from '../../../components';
-import { useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../../../hooks';
 import { showAccount } from '../../../messaging';
 
-function AccountVisibilityToggler(): React.ReactElement {
+function AccountVisibilityToggler (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
   const ref = useRef(null);
-
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const hovered = useIsHovered(ref);
 
   const toggleVisibility = useCallback((): void => {
     account?.address && showAccount(account.address, account.isHidden || false).catch(console.error);
@@ -44,7 +40,7 @@ function AccountVisibilityToggler(): React.ReactElement {
 
   return (
     <>
-      <Grid container item onClick={toggleVisibility} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={ref} sx={containerStyle}>
+      <Grid container item onClick={toggleVisibility} ref={ref} sx={containerStyle}>
         <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} size='24' />
         <Divider sx={{ bgcolor: '#FF4FB9', height: '1.5px', opacity: account?.isHidden ? 1 : 0, position: 'absolute', rotate: '-45deg', transition: 'all 150ms ease-out', width: '28px' }} />
       </Grid>

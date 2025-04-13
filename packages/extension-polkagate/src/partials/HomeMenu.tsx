@@ -1,18 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 import type { Pages } from '../popup/home/type';
 
 import { Container, Grid, styled, useTheme } from '@mui/material';
 import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
-import { useSelectedAccount } from '../hooks';
+import { useIsHovered, useSelectedAccount } from '../hooks';
 import { windowOpen } from '../messaging';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
@@ -51,13 +50,10 @@ interface MenuItemProps {
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
-
-  const [hovered, setHovered] = useState<boolean>(false);
   const refContainer = useRef<HTMLDivElement>(null);
-
-  const toggleHovered = useCallback(() => setHovered((prev) => !prev), []);
+  const hovered = useIsHovered(refContainer);
 
   useEffect(() => {
     if (isSelected && refContainer.current) {
@@ -67,7 +63,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
 
   return (
     <>
-      <Grid container item onClick={onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
+      <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
         <ButtonIcon color={hovered || isSelected ? theme.palette.menuIcon.hover : theme.palette.menuIcon.active} size='24' variant='Bulk' />
         <SelectedItemBackground hovered={hovered || isSelected} />
       </Grid>
@@ -90,7 +86,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
   );
 }
 
-function HomeMenu(): React.ReactElement {
+function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useSelectedAccount();

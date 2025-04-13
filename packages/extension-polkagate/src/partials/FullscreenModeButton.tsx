@@ -3,11 +3,11 @@
 
 import { Box, Grid } from '@mui/material';
 import { Maximize4 } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Tooltip } from '../components';
-import { useIsDark, useSelectedAccount, useTranslation } from '../hooks';
+import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
 interface Props {
@@ -20,10 +20,8 @@ function FullscreenModeButton ({ url = '/' }: Props) {
   const buttonContainer = useRef(null);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
+  const hovered = useIsHovered(buttonContainer);
 
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
   const open = useCallback(() => {
     windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/0` : url).catch(console.error);
   }, [account, pathname, url]);
@@ -52,8 +50,6 @@ function FullscreenModeButton ({ url = '/' }: Props) {
     <>
       <Box
         onClick={open}
-        onMouseEnter={toggleHovered}
-        onMouseLeave={toggleHovered}
         ref={buttonContainer}
         sx={{
           alignItems: 'center',

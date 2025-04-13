@@ -1,17 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
 
 import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowCircleRight, ArrowRight2 } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { logoBlackBirdTransparent } from '../../../assets/logos';
 import NftManager from '../../../class/nftManager';
 import { ActionContext } from '../../../components';
 import { fetchItemMetadata } from '../../../fullscreen/nft/utils/util';
-import { useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { toTitleCase } from '../../../util';
 import NftPrice from '../../nft/NftPrice';
@@ -46,20 +48,18 @@ function NFTItem ({ index, item }: NftItemProps) {
   const isDark = useIsDark();
   const onAction = useContext(ActionContext);
   const account = useSelectedAccount();
-
-  const [isHovered, setHovered] = useState(false);
+  const containerRef = useRef(null);
+  const isHovered = useIsHovered(containerRef);
 
   const bgcolor = isDark ? isHovered ? '#2D1E4A' : '#1B133C' : '#FFF';
   const bgcolor2 = isDark ? '#05091C' : '#EFEEF7';
   const itemIdColor = isDark ? '#EAEBF1' : '#291443';
   const itemNameColor = isDark ? '#BEAAD8' : '#745D8B';
 
-  const handleMouseEnter = useCallback(() => setHovered(true), []);
-  const handleMouseLeave = useCallback(() => setHovered(false), []);
   const onClick = useCallback(() => account?.address && onAction(`/nft-extension/${account.address}/${index}`), [account?.address, index, onAction]);
 
   return (
-    <Grid container item onClick={onClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} sx={{ bgcolor, borderRadius: '18px', cursor: 'pointer', p: '4px', width: '152px' }}>
+    <Grid container item onClick={onClick} ref={containerRef} sx={{ bgcolor, borderRadius: '18px', cursor: 'pointer', p: '4px', width: '152px' }}>
       <Grid container direction='column' item sx={{ bgcolor: bgcolor2, borderRadius: '14px' }}>
         <Grid container item sx={{
           borderRadius: '14px',

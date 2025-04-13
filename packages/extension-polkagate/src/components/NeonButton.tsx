@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 
 import { Button, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
+
+import { useIsHovered } from '../hooks';
 
 interface Props {
   disabled?: boolean;
@@ -18,12 +19,10 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function NeonButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
+export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-
-  const [hovered, setHovered] = useState(false);
-
-  const toggleHover = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
 
   const ButtonFontStyle = useMemo(() => ({
     color: hovered ? '#FF4FB9' : '#BEAAD8',
@@ -84,8 +83,7 @@ export default function NeonButton({ EndIcon, StartIcon, contentPlacement = 'sta
         ? <EndIcon size={20} variant={hovered ? 'Bold' : 'Bulk'} />
         : undefined}
       onClick={onClick}
-      onMouseEnter={toggleHover}
-      onMouseLeave={toggleHover}
+      ref={containerRef}
       startIcon={StartIcon
         ? <StartIcon size={20} variant={hovered ? 'Bold' : 'Bulk'} />
         : undefined}
