@@ -5,7 +5,7 @@
 import type { TransitionProps } from '@mui/material/transitions';
 
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
-import { Check, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
+import { Check, ColorSwatch, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionButton, ActionContext } from '../../components';
@@ -108,8 +108,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Restore'),
-                  secondPart: t('from file')
+                  firstPart: t('Restore from'),
+                  secondPart: t('File')
                 }}
                 variant='contained'
               />
@@ -151,12 +151,12 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                 }}
                 text={{
                   firstPart: t('Attach'),
-                  secondPart: t('QR-signer')
+                  secondPart: t('QR-Signer')
                 }}
                 variant='contained'
               />
               <ActionButton
-                StartIcon={ScanBarcode} // TODO
+                StartIcon={ColorSwatch}
                 onClick={onImportLedger}
                 style={{
                   borderRadius: '18px',
@@ -180,7 +180,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                 }}
                 text={{
                   firstPart: t('Add'),
-                  secondPart: t('Watch-Only Account')
+                  secondPart: t('Watch-only Account')
                 }}
                 variant='contained'
               />

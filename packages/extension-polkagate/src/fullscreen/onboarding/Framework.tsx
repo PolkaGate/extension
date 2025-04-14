@@ -44,7 +44,6 @@ function Framework ({ children, width = '582px' }: Props): React.ReactElement {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
-            bgcolor: '#000000',
             borderRadius: '24px',
             height: '764px',
             p: '7px',

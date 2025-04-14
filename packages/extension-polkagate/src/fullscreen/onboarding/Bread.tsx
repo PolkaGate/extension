@@ -83,13 +83,13 @@ function Bread(): React.ReactElement {
           {t('Already have a wallet')}
         </Typography>
       }
-      {[STATUS.CREATE_A_NEW_WALLET].includes(status) &&
+      {[STATUS.ALREADY_HAVE_A_WALLET, STATUS.CREATE_A_NEW_WALLET].includes(status) &&
         <Typography color={status === STATUS.CREATE_A_NEW_WALLET ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} fontSize='14px' onClick={onCreateClick} sx={{ cursor: status === STATUS.CREATE_A_NEW_WALLET ? 'default' : 'pointer' }} variant='B-1'>
           {t('Create a new account')}
         </Typography>
       }
       {[STATUS.OTHERS].includes(status) &&
-        <Typography color={DISABLED_LINK_COLOR} fontSize='14px' onClick={onCreateClick} sx={{ cursor: 'default' }} variant='B-1'>
+        <Typography color={DISABLED_LINK_COLOR} fontSize='14px' sx={{ cursor: 'default' }} variant='B-1'>
           {pathToHuman}
         </Typography>
       }

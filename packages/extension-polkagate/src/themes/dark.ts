@@ -25,11 +25,11 @@ export const darkTheme: ThemeOptions = {
     error: { main: '#FF4FB9' },
     background: { default: '#05091C', paper: '#05091C' },
     border: { default: '#05091C', paper: '#1B133C' },
-    backgroundFL: { primary: '#000000', secondary: '#171717' },
+    backgroundFL: { primary: '#1B133C', secondary: '#171717' },
     text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B' },
-    action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
+    action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#3988FF' },
     success: { main: '#1F7720', light: '#46890C', contrastText: '#2ECC71' },
-    warning: { main: '#FF002B' },
+    warning: { main: '#FF4FB9' },
     divider: 'rgba(255, 255, 255, 0.1)',
     gradient: {
       primary: `radial-gradient(

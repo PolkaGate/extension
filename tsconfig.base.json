@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"composite": true,
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
 		"paths": {
       "@polkadot/extension": ["extension/src/index.ts"],
       "@polkadot/extension/*": ["extension/src/*.ts"],

@@ -166,7 +166,7 @@ export default function ImportSeed (): React.ReactElement {
               </Stack>
               <Collapse in={showMore}>
                 <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
-                  {t('To import a specific account from your recovery phrase, use a derivation path like //0, //1, etc.')}
+                  {t('To import a specific account, use a derivation path like //0, //1, etc.')}
                 </Typography>
                 <MyTextField
                   focused

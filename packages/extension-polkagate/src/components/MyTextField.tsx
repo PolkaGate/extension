@@ -43,7 +43,7 @@ const StyledTextField = styled(TextField, {
     borderRadius: '12px',
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
-    marginTop: '10px',
+    marginTop: '5px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },

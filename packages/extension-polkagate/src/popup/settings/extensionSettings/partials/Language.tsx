@@ -1,19 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
+
+import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
 
 import { SettingsContext } from '../../../../components/contexts';
 import { useTranslation } from '../../../../components/translate';
 import useIsDark from '../../../../hooks/useIsDark';
 import SelectLanguage from '../../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../../util/constants';
-import getLanguageOptions from '../../../../util/getLanguageOptions';
 
-export default function Language(): React.ReactElement {
+export default function Language (): React.ReactElement {
   const { t } = useTranslation();
   const settings = useContext(SettingsContext);
 
