@@ -191,7 +191,6 @@ function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, o
 
   const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
 
-
   const onDrop = useCallback(
     (files: File[]): void => {
       files.forEach((file): void => {
