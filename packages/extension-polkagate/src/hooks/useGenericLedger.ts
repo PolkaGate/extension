@@ -25,7 +25,7 @@ interface State extends StateBase {
   warning: string | null;
 }
 
-function getState(): StateBase {
+function getState (): StateBase {
   const isLedgerCapable = 'USB' in window;
 
   return {
@@ -34,7 +34,7 @@ function getState(): StateBase {
   };
 }
 
-function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
+function retrieveLedger (chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
   const { isLedgerCapable } = getState();
 
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
@@ -42,7 +42,7 @@ function retrieveLedger(chainSlip?: number | null, txMetadataChainId?: string): 
   return new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
 }
 
-export function useGenericLedger(accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
+export function useGenericLedger (accountIndex = 0, addressOffset = 0, chainSlip?: number | null, txMetadataChainId?: string): State {
   const { t } = useTranslation();
   const isFetching = useRef(false);
 
