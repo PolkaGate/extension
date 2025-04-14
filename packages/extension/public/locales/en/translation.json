@@ -1659,5 +1659,9 @@
   "Derivation path": "",
   "Enter your account ID": "",
   "Add Watch-only account": "",
-  "To import a specific account, use a derivation path like //0, //1, etc.": ""
+  "To import a specific account, use a derivation path like //0, //1, etc.": "",
+  "Restore from": "",
+  "File": "",
+  "QR-Signer": "",
+  "Watch-only Account": ""
 }
