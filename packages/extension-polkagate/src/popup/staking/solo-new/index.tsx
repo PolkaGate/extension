@@ -17,6 +17,7 @@ import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingPortfolio from '../partial/StakingPortfolio';
 import ToBeReleased from '../partial/ToBeReleased';
+import StakingMenu from '../partial/StakingMenu';
 
 export default function Solo(): React.ReactElement {
   const { t } = useTranslation();
@@ -135,6 +136,10 @@ export default function Solo(): React.ReactElement {
           />
         </Motion>
       </Grid>
+      <StakingMenu
+        genesisHash={genesisHash ?? ''}
+        type='solo'
+      />
       <ToBeReleased
         decimal={decimal ?? 0}
         handleClose={handleCloseMenu}
