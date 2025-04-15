@@ -7,7 +7,7 @@ import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Copy } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
@@ -17,7 +17,7 @@ import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox } from '../../../style';
 import getLogo2 from '../../../util/getLogo2';
 import { toShortAddress } from '../../../util/utils';
-import StakingActionButton, { type StakingActionButtonProps } from './StakingActionButton';
+import PortfolioActionButton, { type PortfolioActionButtonProps } from './PortfolioActionButton';
 
 const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: string | undefined; }) => {
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
@@ -37,6 +37,11 @@ const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: strin
 };
 
 const StakerAddress = ({ address }: { address: string | undefined; }) => {
+  const onCopy = useCallback(() => {
+    navigator.clipboard.writeText(address ?? '')
+      .catch((err) => console.error('Error copying text: ', err));
+  }, [address]);
+
   if (!address) {
     return null;
   }
@@ -46,7 +51,7 @@ const StakerAddress = ({ address }: { address: string | undefined; }) => {
       <Typography color='text.highlight' variant='B-2'>
         {toShortAddress(address)}
       </Typography>
-      <Copy color='#809ACB' size='18' variant='Bulk' />
+      <Copy color='#809ACB' onClick={onCopy} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
     </Grid>
   );
 };
@@ -68,7 +73,7 @@ interface Props {
   staked: BN | undefined;
   type: 'solo' | 'pool';
   style?: SxProps<Theme>;
-  buttons?: StakingActionButtonProps[];
+  buttons?: PortfolioActionButtonProps[];
 }
 
 export default function StakingPortfolio ({ address, buttons = [], genesisHash, staked, style, type }: Props): React.ReactElement {
@@ -133,7 +138,7 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-start' sx={{ columnGap: '8px' }}>
         {buttons.map(({ Icon, disabled, onClick, text }, index) => (
-          <StakingActionButton
+          <PortfolioActionButton
             Icon={Icon}
             disabled={disabled}
             key={index}
