@@ -139,18 +139,19 @@ function HomeMenu (): React.ReactElement {
       return;
     }
 
-    navigate(`/${input}`, { state: { previousUrl: page } });
+    navigate(`/${input}`, { state: { previousUrl: page } }) as void;
   }, [account, assetId, navigate, page]);
 
-  const selectionLineStyle = useMemo(
-    () => ({
-      position: 'relative',
-      top: '2px',
-      transform: `translateX(${leftPosition ? leftPosition - 24 : 7}px)`,
-      transition: 'transform 0.3s ease-in-out'
-    }),
-    [leftPosition]
-  );
+  const selectionLineStyle = useMemo(() => ({
+    background: 'linear-gradient(263.83deg, rgba(255, 79, 185, 0) 9.75%, #FF4FB9 52.71%, rgba(255, 79, 185, 0) 95.13%)',
+    border: 'none',
+    height: '2px',
+    position: 'relative',
+    top: '2px',
+    transform: `translateX(${leftPosition ? leftPosition - 24 : 7}px)`,
+    transition: 'transform 0.3s ease-in-out',
+    width: '48px'
+  }), [leftPosition]);
 
   return (
     <>
