@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-max-props-per-line */
 
 import { Container, Grid } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -12,9 +13,10 @@ import { ConnectedDapp } from '.';
 
 interface Props {
   homeType?: 'default' | 'active';
+  noAccountSelected?: boolean;
 }
 
-function UserDashboardHeader ({ homeType }: Props) {
+function UserDashboardHeader ({ homeType, noAccountSelected = false }: Props) {
   const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
 
   return (
@@ -22,9 +24,9 @@ function UserDashboardHeader ({ homeType }: Props) {
       <Grid columnGap='6px' container item width='fit-content'>
         <Grid container item width='fit-content'>
           <HomeButton type={homeType || (isConnectedDapp.length ? 'default' : 'active')} />
-          <ConnectedDapp />
+          {!noAccountSelected && <ConnectedDapp />}
         </Grid>
-        <AccountSelection />
+        {!noAccountSelected && <AccountSelection />}
       </Grid>
       <FullscreenModeButton />
     </Container>
