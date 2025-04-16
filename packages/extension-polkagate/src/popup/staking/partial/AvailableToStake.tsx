@@ -18,9 +18,10 @@ export interface Props {
   decimal: number | undefined;
   token: string | undefined;
   style?: SxProps<Theme>;
+  noStakeButton?: boolean;
 }
 
-export default function AvailableToStake ({ availableAmount, decimal, stakeType, style, token }: Props): React.ReactElement {
+export default function AvailableToStake ({ availableAmount, decimal, noStakeButton = false, stakeType, style, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -62,12 +63,13 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
           </Typography>
         </Container>
       </Grid>
-      <StakingActionButton
-        disabled={!availableAmount || availableAmount.isZero()}
-        onClick={noop}
-        style={{ height: '28px', width: 'fit-content' }}
-        text={t('Stake')}
-      />
+      {!noStakeButton &&
+        <StakingActionButton
+          disabled={!availableAmount || availableAmount.isZero()}
+          onClick={noop}
+          style={{ height: '28px', width: 'fit-content' }}
+          text={t('Stake')}
+        />}
     </Container>
   );
 }
