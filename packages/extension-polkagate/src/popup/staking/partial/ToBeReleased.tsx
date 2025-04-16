@@ -10,7 +10,7 @@ import React from 'react';
 import { ExtensionPopup, FormatBalance2, GradientDivider } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { formatTimestamp } from '../../../util/utils';
-import StakingActionButton from './PortfolioActionButton';
+import StakingActionButton from './StakingActionButton';
 
 interface Props {
   openMenu: boolean;

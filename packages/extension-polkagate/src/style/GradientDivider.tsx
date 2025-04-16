@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Divider, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
+
 import { useIsDark } from '../hooks';
 
 interface GradientDividerProps {
-  isSelectionLine?: boolean; // Add flag to differentiate selection line
   orientation?: 'horizontal' | 'vertical';
   style?: SxProps<Theme>;
 }
@@ -31,12 +30,6 @@ interface GradientDividerProps {
 export default function GradientDivider ({ orientation = 'horizontal', style }: GradientDividerProps): React.ReactElement {
   const isDark = useIsDark();
 
-  // ? {
-  //   background: 'linear-gradient(263.83deg, rgba(255, 79, 185, 0) 9.75%, #FF4FB9 52.71%, rgba(255, 79, 185, 0) 95.13%)',
-  //   border: 'none',
-  //   height: '2px',
-  //   width: '48px'
-  // }
   const DividerStyle = {
     background: orientation === 'horizontal'
       ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'

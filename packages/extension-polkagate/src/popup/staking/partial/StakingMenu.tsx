@@ -149,14 +149,14 @@ function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
     height: '2px',
     position: 'relative',
     top: '2px',
-    transform: `translateX(${leftPosition ? leftPosition - 53 : 7}px)`,
+    transform: `translateX(${leftPosition ? leftPosition - 56 : 7}px)`,
     transition: 'transform 0.3s ease-in-out',
     width: '48px'
   }), [leftPosition]);
 
   return (
     <Container disableGutters sx={{ bottom: '15px', mx: type === 'solo' ? '45px' : '15px', position: 'fixed', width: `calc(100% - ${type === 'solo' ? '90px' : '30px'})`, zIndex: 1 }}>
-      {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
+      {leftPosition && <GradientDivider style={selectionLineStyle} />}
       <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
         {pageConfig.map(({ icon: ButtonIcon, tooltip, url }, index) => {
           const path = url.replace('genesisHash', genesisHash);

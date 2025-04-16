@@ -22,7 +22,7 @@ export default function TokenStakeStatus ({ amount, decimal, genesisHash, style,
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', columnGap: '8px', display: 'flex', p: '10px', width: '100%', ...style }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', columnGap: '10px', display: 'flex', p: '10px', width: '100%', ...style }}>
       <AssetLogo assetSize='36px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
         {amount
