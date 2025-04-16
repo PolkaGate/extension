@@ -17,24 +17,26 @@ import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool/unstake';
 import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/fastUnstake';
 import SoloNominations from '@polkadot/extension-polkagate/src/popup/staking/solo/nominations';
-import SoloRestake from '@polkadot/extension-polkagate/src/popup/staking/solo/restake';
 import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
-import SoloStake from '@polkadot/extension-polkagate/src/popup/staking/solo/stake';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
 import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
+import BondExtra from '@polkadot/extension-polkagate/src/popup/staking/solo-new/BondExtra';
+import SoloInfo from '@polkadot/extension-polkagate/src/popup/staking/solo-new/Info';
+import SoloRestake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/restake';
 
 export const STAKING_ROUTES: RouteConfig[] = [
   {
     Component: StakingIndex,
     path: '/stakingIndex',
-    trigger: 'pool-create'
+    trigger: 'staking-index'
   },
   {
     Component: EarningOptions,
     path: '/stakingIndex-options',
-    trigger: 'pool-create'
+    trigger: 'staking-index-options'
   },
+  // POOL STAKING ROUTE
   {
     Component: CreatePool,
     path: '/pool/create/:address',
@@ -75,7 +77,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
     path: '/poolfs/:address',
     trigger: 'pool-staking-fullscreen'
   },
-  // Solo Staking
+  // SOLO STAKING ROUTE
   {
     Component: FastUnstake,
     path: '/solo/fastUnstake/:address',
@@ -93,13 +95,18 @@ export const STAKING_ROUTES: RouteConfig[] = [
   },
   {
     Component: SoloRestake,
-    path: '/solo/restake/:address',
+    path: '/solo/:genesisHash/restake',
     trigger: 'solo-restake'
   },
   {
-    Component: SoloStake,
-    path: '/solo/stake/:address',
-    trigger: 'solo-stake'
+    Component: SoloInfo,
+    path: '/solo/:genesisHash/info',
+    trigger: 'solo-info'
+  },
+  {
+    Component: BondExtra,
+    path: '/solo/:genesisHash/bondExtra',
+    trigger: 'solo-bond-extra'
   },
   {
     Component: SoloUnstake,
