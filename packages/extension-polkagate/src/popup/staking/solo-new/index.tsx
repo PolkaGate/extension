@@ -15,11 +15,11 @@ import { useChainInfo, useSelectedAccount, useSoloStakingInfo, useTranslation } 
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
+import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
 import ToBeReleased from '../partial/ToBeReleased';
-import StakingMenu from '../partial/StakingMenu';
 
-export default function Solo(): React.ReactElement {
+export default function Solo (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
@@ -46,6 +46,7 @@ export default function Solo(): React.ReactElement {
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
+  const onRestake = useCallback(() => navigate('/solo/' + genesisHash + '/restake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex'), [navigate]);
 
   return (
@@ -115,7 +116,7 @@ export default function Solo(): React.ReactElement {
               Icon={LockSlash}
               buttonsArray={[{
                 Icon: Trade,
-                onClick: noop,
+                onClick: onRestake,
                 text: t('Restake')
               }]}
               cryptoAmount={unlockingAmount}
@@ -143,7 +144,7 @@ export default function Solo(): React.ReactElement {
       <ToBeReleased
         decimal={decimal ?? 0}
         handleClose={handleCloseMenu}
-        onRestake={noop}
+        onRestake={onRestake}
         openMenu={unstakingMenu}
         toBeReleased={toBeReleased ?? []}
         token={token ?? ''}
