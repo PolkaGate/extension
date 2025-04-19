@@ -11,19 +11,20 @@ import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/compon
 import usePriceIds from '@polkadot/extension-polkagate/src/hooks/usePriceIds';
 import { isPriceUpToDate } from '@polkadot/extension-polkagate/src/hooks/usePrices';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
+import { EXTRA_PRICE_IDS } from '@polkadot/extension-polkagate/src/util/api/getPrices';
 
 interface CurrencyProviderProps {
   children: React.ReactNode;
 }
 
-export default function CurrencyProvider({ children }: CurrencyProviderProps) {
-  const priceIds = usePriceIds();
+export default function CurrencyProvider ({ children }: CurrencyProviderProps) {
+  const priceIdsInfo = usePriceIds();
 
   const [currency, setCurrency] = useState<CurrencyItemType>();
   const isFetchingPricesRef = React.useRef(false);
 
   useEffect(() => {
-    if (priceIds && currency?.code && !isFetchingPricesRef.current) {
+    if (priceIdsInfo && currency?.code && !isFetchingPricesRef.current) {
       isFetchingPricesRef.current = true;
 
       getStorage('pricesInCurrencies')
@@ -37,9 +38,27 @@ export default function CurrencyProvider({ children }: CurrencyProviderProps) {
             return;
           }
 
+          const priceIds = priceIdsInfo.map(({ id }) => id);
+
           getPrices(priceIds, currency.code.toLowerCase())
             .then((newPrices) => {
               delete (newPrices as Prices).currencyCode;
+
+              priceIdsInfo.forEach(({ genesisHash, id: rawId, symbol }) => {
+                const id = EXTRA_PRICE_IDS[rawId] ?? rawId;
+                const priceEntry = newPrices.prices[id];
+
+                if (!priceEntry) {
+                  return;
+                }
+
+                priceEntry.genesisHash = genesisHash;
+
+                if (symbol) {
+                  priceEntry.symbol = symbol;
+                }
+              });
+
               savedPricesInCurrencies[currency.code] = newPrices;
               setStorage('pricesInCurrencies', savedPricesInCurrencies)
                 .catch(console.error);
@@ -51,7 +70,7 @@ export default function CurrencyProvider({ children }: CurrencyProviderProps) {
           isFetchingPricesRef.current = false;
         });
     }
-  }, [currency?.code, priceIds]);
+  }, [currency?.code, priceIdsInfo]);
 
   return (
     <CurrencyContext.Provider value={{ currency, setCurrency }}>

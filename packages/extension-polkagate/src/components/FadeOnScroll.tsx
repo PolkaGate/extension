@@ -4,21 +4,38 @@
 import { styled } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 
-const Fader = styled('div')(({ showFade }: { showFade: boolean }) => ({
-  background: 'linear-gradient(0deg, #05091C 0%, #05091C 60%, transparent 100%)',
-  bottom: 0,
-  height: '105px',
-  left: 0,
-  opacity: showFade ? 1 : 0,
-  pointerEvents: 'none',
-  position: 'absolute',
-  right: 0,
-  transition: 'opacity 0.1s ease-out',
-  width: '100%',
-  zIndex: 1
-}));
+interface FaderProps {
+  height?: string;
+  ratio?: number;
+  showFade?: boolean;
+  style?: React.CSSProperties;
+}
+interface Props extends FaderProps {
+  containerRef: React.RefObject<HTMLElement>;
+}
 
-function FadeOnScroll ({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
+const Fader = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'height' && prop !== 'ratio' && prop !== 'showFade'
+})<FaderProps>(({ height = '105px', ratio = 0.6, showFade = false, style = {} }) => {
+  const fadeHeight = parseInt(height); // Convert the height to a number (in pixels)
+
+  return {
+    background: `linear-gradient(0deg, #05091C 0%, #05091C ${fadeHeight * ratio}px, transparent 100%)`,
+    bottom: 0,
+    height,
+    left: 0,
+    opacity: showFade ? 1 : 0,
+    pointerEvents: 'none',
+    position: 'absolute',
+    right: 0,
+    transition: 'opacity 0.1s ease-out',
+    width: '100%',
+    zIndex: 1,
+    ...style
+  };
+});
+
+function FadeOnScroll ({ containerRef, height, ratio, style }: Props) {
   const [isScrollable, setIsScrollable] = useState<boolean>(false);
   const [showFade, setShowFade] = useState<boolean>(false);
 
@@ -79,7 +96,12 @@ function FadeOnScroll ({ containerRef }: { containerRef: React.RefObject<HTMLEle
   }
 
   return (
-    <Fader showFade={showFade} />
+    <Fader
+      height={height}
+      ratio={ratio}
+      showFade={showFade}
+      style={style}
+    />
   );
 }
 

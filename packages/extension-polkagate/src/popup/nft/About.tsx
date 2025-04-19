@@ -36,8 +36,6 @@ function AccountRow ({ address, genesisHash, label }: { label: string, address: 
 export default function About ({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
 
-  console.log('nft:',nft)
-
   return (
     <Grid container item sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '18px', m: '10px', p: '10px 15px' }}>
       {nft &&

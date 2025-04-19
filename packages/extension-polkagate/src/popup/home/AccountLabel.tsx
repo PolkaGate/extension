@@ -51,7 +51,7 @@ function AccountLabel({ account, ml, parentName, right }: Props): React.ReactEle
         return t('Ledger-Migration');
       }
 
-      return t('Ledger');
+      return t('Hardware');
     }
 
     if (account?.isQR) {

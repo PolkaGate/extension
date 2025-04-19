@@ -1,13 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { MetadataDefBase } from '@polkadot/extension-inject/types';
-
 import { selectableNetworks } from '@polkadot/networks';
 
 import { DISABLED_NETWORKS } from './constants';
 
-const hashes: MetadataDefBase[] = selectableNetworks
+const hashes = selectableNetworks
   .filter(({ displayName, genesisHash }) => !!genesisHash.length && !DISABLED_NETWORKS.includes(displayName))
   .map((network) => ({
     chain: network.displayName,

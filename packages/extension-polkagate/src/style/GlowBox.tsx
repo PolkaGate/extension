@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
@@ -39,7 +38,7 @@ const FadeOut = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
   height: '160px',
   inset: 0,
   position: 'absolute',
-  width: '375px'
+  width: '100%'
 }));
 
 const Fade = styled('div')({
@@ -47,10 +46,36 @@ const Fade = styled('div')({
   height: '220px',
   inset: 0,
   position: 'absolute',
-  width: '375px'
+  width: '100%'
 });
 
-function GlowBox ({ children, showTopBorder = true, style }: { showTopBorder?: boolean, children: React.ReactNode, style?: SxProps<Theme> }): React.ReactElement {
+function GlowDivider({ isDark, placement }: { isDark: boolean, placement: 'right' | 'left' }): React.ReactElement {
+  return (
+    <GradientDivider
+      orientation='vertical'
+      style={{
+        bottom: 0,
+        height: isDark ? '65%' : '110%',
+        left: placement === 'left' ? 0 : undefined,
+        m: 'auto',
+        position: 'absolute',
+        right: placement === 'right' ? 0 : undefined,
+        top: 0,
+        width: '2px',
+        zIndex: 1
+      }}
+    />
+  );
+}
+
+interface Props {
+  showTopBorder?: boolean;
+  children: React.ReactNode;
+  style?: SxProps<Theme>;
+  withFading?: boolean;
+}
+
+function GlowBox({ children, showTopBorder = true, style, withFading = true }: Props): React.ReactElement {
   const isDark = useIsDark();
 
   return (
@@ -58,13 +83,19 @@ function GlowBox ({ children, showTopBorder = true, style }: { showTopBorder?: b
       {children}
       <GlowBoxContainer disableGutters>
         {showTopBorder && <GradientBorder style={{ width: '311px' }} type='pinkish' />}
-        <GradientDivider orientation='vertical' style={{ bottom: 0, height: isDark ? '65%' : '110%', left: 0, m: 'auto', position: 'absolute', top: 0, width: '2px', zIndex: 1 }} />
-        <GradientDivider orientation='vertical' style={{ bottom: 0, height: isDark ? '65%' : '110%', m: 'auto', position: 'absolute', right: 0, top: 0, width: '2px', zIndex: 1 }} />
-        {isDark && <GlowBall />}
-        <Fade />
-        <FadeOut isDark={isDark} />
+        <GlowDivider isDark={isDark} placement='left' />
+        <GlowDivider isDark={isDark} placement='right' />
+        {isDark &&
+          <GlowBall />
+        }
+        {withFading &&
+          <>
+            <Fade />
+            <FadeOut isDark={isDark} />
+          </>
+        }
       </GlowBoxContainer>
-    </Container>
+    </Container >
   );
 }
 

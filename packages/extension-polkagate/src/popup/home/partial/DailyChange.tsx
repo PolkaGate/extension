@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Container, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
+import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/TotalBalancePieChart';
+
 import { FormatPrice } from '../../../components';
-import { PORTFOLIO_CHANGE_DECIMAL } from '../../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
 import { useIsDark, useIsHideNumbers, useYouHave2 } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
@@ -32,7 +32,7 @@ interface DailyChangeProps {
   showPercentage?: boolean;
 }
 
-function DailyChange({ change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
+function DailyChange ({ change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const youHave = useYouHave2();
@@ -76,7 +76,7 @@ function DailyChange({ change = null, iconSize = 15, showHours = true, showPerce
       : changed > 0
         ? isDark ? '#82FFA5' : '#00CA8D'
         : '#FF165C'
-    , [changed, isDark]);
+  , [changed, isDark]);
 
   if (changed === undefined) {
     return <RenderSkeleton />;

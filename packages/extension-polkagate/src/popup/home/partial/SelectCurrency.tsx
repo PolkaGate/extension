@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { CurrencyItemType } from '../../../fullscreen/homeFullScreen/partials/Currency';
 
 import { Box, Grid, styled, Typography } from '@mui/material';
@@ -11,9 +10,11 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+
 import { CurrencyContext, ExtensionPopup, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
-import { useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { CRYPTO_AS_CURRENCY, CURRENCY_LIST } from '../../../util/currencyList';
 
 interface Props {
@@ -125,7 +126,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
   );
 };
 
-const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -184,7 +185,7 @@ const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, se
   );
 });
 
-function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 
@@ -198,47 +199,73 @@ function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
     setSelectedCurrency(currency);
   }, []);
 
-  const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
-
   const applyLanguageChange = useCallback(() => {
     if (selectedCurrency) {
       setCurrency(selectedCurrency);
       setStorage('currency', selectedCurrency).then(() => {
-        handleClose();
+        setOpenMenu(false);
       }).catch(console.error);
     }
-  }, [selectedCurrency, setCurrency, handleClose]);
+  }, [selectedCurrency, setCurrency, setOpenMenu]);
 
   return (
-    <ExtensionPopup
-      TitleIcon={Hashtag}
-      handleClose={handleClose}
-      iconVariant='Linear'
-      openMenu={openMenu}
-      pt={60}
-      title={t('Currency for your balance')}
-      titleAlignment='flex-start'
-      withoutBackground
-      withoutTopBorder
-    >
-      <Grid container item justifyContent='center' sx={{ position: 'relative', py: '1px', zIndex: 1 }}>
-        <CurrencyOptions
-          handleCurrencySelect={handleCurrencySelect}
-          selectedCurrency={selectedCurrency}
-        />
-        <GradientButton
-          contentPlacement='center'
-          disabled={currency === selectedCurrency}
-          onClick={applyLanguageChange}
-          style={{
-            height: '44px',
-            marginTop: '15px',
-            width: '345px'
-          }}
-          text={t('Apply')}
-        />
-      </Grid>
-    </ExtensionPopup>
+    <Grid container item justifyContent='center' sx={{ position: 'relative', py: '1px', zIndex: 1 }}>
+      <CurrencyOptions
+        handleCurrencySelect={handleCurrencySelect}
+        selectedCurrency={selectedCurrency}
+      />
+      <GradientButton
+        contentPlacement='center'
+        disabled={currency === selectedCurrency}
+        onClick={applyLanguageChange}
+        style={{
+          height: '44px',
+          marginTop: '15px',
+          width: '345px'
+        }}
+        text={t('Apply')}
+      />
+    </Grid>
+  );
+}
+
+function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
+
+  const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
+  const title = t('Balance Display Currency');
+
+  return (
+    <>
+      {isExtension
+        ? <ExtensionPopup
+          TitleIcon={Hashtag}
+          handleClose={handleClose}
+          iconVariant='Linear'
+          openMenu={openMenu}
+          pt={60}
+          title={title}
+          titleAlignment='flex-start'
+          withoutBackground
+          withoutTopBorder
+        >
+          <Content
+            setOpenMenu={setOpenMenu}
+          />
+        </ExtensionPopup>
+        : <DraggableModal
+          onClose={handleClose}
+          open={openMenu}
+          style={{ minHeight: '400px', padding: '20px' }}
+          title={title}
+        >
+          <Content
+            setOpenMenu={setOpenMenu}
+          />
+        </DraggableModal>
+      }
+    </>
   );
 }
 

@@ -29,6 +29,7 @@ interface Props {
   num?: number | string;
   price?: number | null,
   sign?: string;
+  style?: React.CSSProperties;
   skeletonHeight?: number;
   textAlign?: 'left' | 'right';
   textColor?: string;
@@ -91,7 +92,7 @@ export function formatDecimalWithCommas (_number: number | string, decimalDigit 
   return { decimalPart: fractionalDigits, integerPart: integerDigits };
 }
 
-function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, height, ignoreHide, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+function FormatPrice({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, height, ignoreHide, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
@@ -146,7 +147,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
             </span>
             {idx < arr.length - 1 && (
               <span key={`comma-${idx}`} style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
-              ,
+                ,
               </span>
             )}
           </>
@@ -161,7 +162,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
   ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
 
   return (
-    <Grid item mt={mt} sx={{ height }} textAlign={textAlign}>
+    <Grid item mt={mt} sx={{ height, ...style }} textAlign={textAlign}>
       {isHideNumbers && !ignoreHide
         ? <Dots
           color={textColor}
@@ -172,7 +173,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
           style={dotStyle}
         />
         : total !== undefined
-          ? <Stack alignItems='baseline' direction='row'>
+          ? <Stack alignItems='baseline' direction='row' width='fit-content'>
             <Typography
               fontFamily={fontFamily}
               fontSize={fontSize}
