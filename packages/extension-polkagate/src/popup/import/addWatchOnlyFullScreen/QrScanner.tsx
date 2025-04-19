@@ -5,6 +5,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { Camera } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
+import { GradientButton } from '@polkadot/extension-polkagate/src/components/index';
 import { QrScanSignature } from '@polkadot/react-qr';
 
 import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
@@ -15,12 +16,12 @@ interface Props {
   setAddress: React.Dispatch<React.SetStateAction<string | undefined>> | ((newAddr?: string) => void);
 }
 
-export default function QrScanner ({ setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
+export default function QrScanner({ setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => setOpenCamera(false), [setOpenCamera]);
 
-  const _onSignature = useCallback(({ signature }: { signature: string }): void => {
+  const onScan = useCallback(({ signature }: { signature: string }): void => {
     if (!signature) {
       return;
     }
@@ -28,10 +29,11 @@ export default function QrScanner ({ setAddress, setOpenCamera }: Props): React.
     let address = '';
 
     if (signature.includes(':')) {
-      const firstColon = signature.indexOf(':');
-      const secondColon = signature.indexOf(':', firstColon + 1);
+      const parts = signature.split(':');
 
-      address = signature.substring(firstColon + 1, secondColon);
+      if (parts.length >= 2) {
+        address = parts[1];
+      }
     } else if (signature.startsWith('0x')) { // NOVA WALLET QR CODE
       address = signature.slice(2);
     }
@@ -41,31 +43,41 @@ export default function QrScanner ({ setAddress, setOpenCamera }: Props): React.
   }, [setAddress, setOpenCamera]);
 
   const page = (
-    <Grid alignItems='flex-start' container display='block' item position='relative' sx={{ height: 'parent.innerHeight' }}>
+    <Grid alignItems='flex-start' container display='block' item justifyItems='center' position='relative' sx={{ height: 'parent.innerHeight', zIndex: 1 }}>
       <Typography color='#EAEBF1' sx={{ textAlign: 'center', width: '100%' }} variant='B-1'>
-        {t('Scan address QR code')}
+        {t('Scan account QR code')}
       </Typography>
-      <QrScanSignature
-        onScan={_onSignature}
+      <QrScanSignature // TODO: consider using ScanAddress component
+        onScan={onScan}
         style={{
           background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
           borderRadius: '14px',
-          height: 'fit-content',
+          height: '200px',
           margin: '15px auto 5px',
           minHeight: '200Px',
           padding: '3px',
-          width: '272px'
+          width: '200px'
         }}
       />
-      <Stack alignItems='center' direction='row' justifyContent='center'>
+      <Stack alignItems='center' direction='row' justifyContent='center' sx= {{ mt: '20px' }}>
         <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
-          {t('Hold the QR code in front of your ')}
+          {t('Hold the QR code in front of the ')}
         </Typography>
         <Camera color='#AA83DC' size={16} style={{ marginLeft: '4px', marginRight: '4px' }} variant='Bold' />
         <Typography color='#AA83DC' variant='B-1'>
           {t('device’s camera')}
         </Typography>
       </Stack>
+      <GradientButton
+        contentPlacement='center'
+        onClick={onClose}
+        style={{
+          borderRadius: '18px',
+          margin: '25px 0 5px',
+          width: '92%'
+        }}
+        text={t('Cancel')}
+      />
     </Grid>
   );
 
@@ -74,7 +86,7 @@ export default function QrScanner ({ setAddress, setOpenCamera }: Props): React.
       onClose={onClose}
       open
       style={{ minHeight: '100px' }}
-      title={t('Account ID')}>
+      title={t('Scan account QR code')}>
       {page}
     </DraggableModal>
   );

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Share } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -9,7 +8,7 @@ import React, { useCallback, useState } from 'react';
 import { useCurrency, useIsDark } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
 
-function Currency() {
+function Currency () {
   const currency = useCurrency();
   const isDark = useIsDark();
 

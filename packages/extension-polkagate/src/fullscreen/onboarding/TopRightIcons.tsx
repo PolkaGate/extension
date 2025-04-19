@@ -3,7 +3,9 @@
 
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+
+import uiSetting from '@polkadot/ui-settings';
 
 import { SettingsContext } from '../../components';
 import CustomTooltip from '../../components/Tooltip';
@@ -45,7 +47,15 @@ function TopRightIcons (): React.ReactElement {
     setHovered(popup ?? ExtensionPopups.NONE);
   }, [setHovered]);
 
-  const languageTicker = settings.i18nLang === 'default' ? 'EN' : settings.i18nLang.toUpperCase();
+  const [languageTicker, setLanguage] = useState('EN');
+
+  useEffect(() => {
+    setLanguage(settings.i18nLang);
+
+    uiSetting.on('change', (newSettings) => {
+      setLanguage(newSettings.i18nLang);
+    });
+  }, [settings]);
 
   return (
     <Grid container sx={{ maxWidth: '30%', position: 'absolute', right: '0' }}>
@@ -58,7 +68,7 @@ function TopRightIcons (): React.ReactElement {
           onMouseLeave={onHoveredPopup()}
           sx={{ alignItems: 'center', bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
         >
-          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ transition: 'all 250ms ease-out' }} variant='B-1'>
+          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ textTransform: 'uppercase', transition: 'all 250ms ease-out' }} variant='B-1'>
             {languageTicker}
           </Typography>
           <ArrowDown2

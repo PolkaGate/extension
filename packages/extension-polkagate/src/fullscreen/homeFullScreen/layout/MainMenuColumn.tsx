@@ -1,0 +1,97 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { Box, Grid, Link, Stack, Typography } from '@mui/material';
+import { ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
+import React from 'react';
+
+import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
+import { PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
+
+import { logoTransparent, polkagateVector } from '../../../assets/logos';
+import { useManifest, useTranslation } from '../../../hooks';
+import NeedHelp from '../../onboarding/NeedHelp';
+import Language from './Language';
+import MenuButton from './MenuButton';
+
+function Shining(): React.ReactElement {
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', position: 'absolute', top: '-100px', width: '100%' }}>
+      <Box sx={{
+        bgcolor: '#FF59EE',
+        borderRadius: '50%',
+        filter: 'blur(50px)',
+        height: '128px',
+        mixBlendMode: 'hard-light',
+        width: '100px'
+      }}
+      />
+    </Box>
+  );
+}
+
+function MainMenuColumn(): React.ReactElement {
+  const { t } = useTranslation();
+  const version = useManifest()?.version;
+
+  return (
+    <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px' }}>
+      <Shining />
+      <Stack alignItems='center' direction='row' sx={{ mb: '20px', zIndex: 10 }}>
+        <Box
+          component='img'
+          src={(logoTransparent) as string}
+          sx={{ width: '38px' }}
+        />
+        <Box
+          component='img'
+          src={(polkagateVector) as string}
+          sx={{ width: '84px' }}
+        />
+      </Stack>
+      <MenuButton
+        Icon={Home}
+        text={t('Home')}
+      />
+      <MenuButton
+        Icon={ArrowCircleRight2}
+        text={t('Send')}
+      />
+      <MenuButton
+        Icon={ScanBarcode}
+        text={t('Receive')}
+      />
+      <MenuButton
+        Icon={BuyCrypto}
+        text={t('Staking')}
+      />
+      <MenuButton
+        Icon={MedalStar}
+        text={t('Governance')}
+      />
+      <MenuButton
+        Icon={Setting}
+        text={t('Settings')}
+      />
+      <MenuButton
+        Icon={Clock}
+        text={t('History')}
+      />
+      <Stack direction='column' rowGap='20px' sx={{ bottom: '15px', position: 'absolute'}}>
+        <Grid container item width='fit-content'>
+          <Typography color='#674394' variant='B-5'>
+            {`v.${version}`}
+          </Typography>
+          <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />
+          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px' }} target='_blank' underline='none' variant='B-5'>
+            {t('Privacy & Security')}
+          </Link>
+        </Grid>
+        <Language />
+        <Socials buttonSize={24} columnGap='4px' iconSize={13.5} style={{ flexWrap: 'nowrap', width: 'fit-content' }} />
+      </Stack>
+    </Grid>
+  );
+}
+
+export default React.memo(MainMenuColumn);

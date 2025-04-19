@@ -1,26 +1,28 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { ChevronRight } from '@mui/icons-material';
 import { Stack, Typography } from '@mui/material';
-import { ArrowDown2, Translate } from 'iconsax-react';
+import { Translate } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
 import uiSetting from '@polkadot/ui-settings';
 
-import { SettingsContext } from '../../../../components/contexts';
-import { useTranslation } from '../../../../components/translate';
-import useIsDark from '../../../../hooks/useIsDark';
-import SelectLanguage from '../../../../partials/SelectLanguage';
-import { ExtensionPopups } from '../../../../util/constants';
+import { SettingsContext } from '../../../components/contexts';
+import useIsDark from '../../../hooks/useIsDark';
+import SelectLanguage from '../../../partials/SelectLanguage';
+import { ExtensionPopups } from '../../../util/constants';
 
 export default function Language (): React.ReactElement {
-  const { t } = useTranslation();
   const settings = useContext(SettingsContext);
   const isDark = useIsDark();
 
   const [language, setLanguage] = useState('');
   const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const [hovered, setHovered] = useState(false);
+
+  const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
 
   useEffect(() => {
     const options = getLanguageOptions();
@@ -44,19 +46,18 @@ export default function Language (): React.ReactElement {
 
   return (
     <>
-      <Stack direction='column'>
-        <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
-          {t('LANGUAGE')}
-        </Typography>
-        <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center', mt: '5px' }}>
-          <Translate color={isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-          <Stack columnGap='5px' direction='row' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer' }}>
-            <Typography variant='B-1'>
-              {language}
-            </Typography>
-            <ArrowDown2 color={isDark ? '#EAEBF1' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
-          </Stack>
+      <Stack
+        columnGap='10px'
+        direction='row'
+        justifyContent='space-between' onClick={onClick} onMouseEnter={toggleHover} onMouseLeave={toggleHover} sx={{ alignItems: 'center', bgcolor: hovered ? '#2D1E4A' : 'transparent', border: '1px solid #1B133C', borderRadius: '12px', cursor: 'pointer', height: '36px', width: '100%', px: '10px' }}
+      >
+        <Stack alignItems='center' columnGap='8px' direction='row' sx={{ alignItems: 'center' }}>
+          <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='14' variant='Bulk' />
+          <Typography color='#BEAAD8' variant='B-4'>
+            {language}
+          </Typography>
         </Stack>
+        <ChevronRight sx={{ color: '#AA83DC', fontSize: '20px' }} />
       </Stack>
       <SelectLanguage
         openMenu={showPopUp === ExtensionPopups.LANGUAGE}

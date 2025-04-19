@@ -10,7 +10,7 @@ import { useTranslation } from '.';
 
 export const PROFILE_TAGS = {
   ALL: 'All',
-  LEDGER: 'Ledger',
+  LEDGER: 'Hardware',
   LOCAL: 'Local',
   QR_ATTACHED: 'QR-attached',
   WATCH_ONLY: 'Watch-only'
@@ -19,7 +19,7 @@ export const PROFILE_TAGS = {
 /**
  * @description returns the list of accounts which has a profile tag, if profile is undefined it returns 'All' accounts
  */
-export default function useProfileAccounts(initialAccountList: AccountsOrder[] | undefined, profile?: string) {
+export default function useProfileAccounts (initialAccountList: AccountsOrder[] | undefined, profile?: string | null) {
   const { t } = useTranslation();
 
   const [_profile, setProfile] = useState<string>();
