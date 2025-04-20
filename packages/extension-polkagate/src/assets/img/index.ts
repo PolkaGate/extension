@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
+export { default as baseEffect } from './baseEffect.svg';
 export { default as endpointUrlPng } from './endpoint.png';
 export { default as homeBackgroundEffect } from './homeBackground.svg';
 export { default as ledgerErrorImage } from './ledgerErrorImage.svg';
