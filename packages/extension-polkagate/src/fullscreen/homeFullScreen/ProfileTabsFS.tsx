@@ -4,7 +4,8 @@
 import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 import { Box, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
@@ -30,10 +31,11 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
     <Stack
       direction='column'
       onClick={onClick}
-      onMouseEnter={toggleHover} onMouseLeave={toggleHover} sx={{ cursor: 'pointer', width: 'fit-content' }}>
+      onMouseEnter={toggleHover} onMouseLeave={toggleHover} sx={{ cursor: 'pointer', width: 'fit-content' }}
+    >
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' sx={{ mt: '10px' }}>
         <profileInfo.Icon color={isSelected || hovered ? '#FF4FB9' : '#AA83DC'} size='18' variant='Bulk' />
-        <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} variant='B-2' sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }}>
+        <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
           {t(label)}
         </Typography>
         <Box alignItems='center' sx={{ bgcolor: isSelected ? '#FF4FB926' : '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: '10px' }}>
@@ -51,8 +53,45 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
 
 function ProfileTabsFS (): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
-
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [showRightArrow, setShowRightArrow] = useState(false);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [hovered, setIsHovered] = useState('');
+
+  const checkScroll = () => {
+    const container = containerRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    const isScrollable = container.scrollWidth > container.clientWidth;
+    const isAtStart = container.scrollLeft <= 0;
+    const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 1;
+
+    setShowRightArrow(isScrollable && !isAtEnd);
+    setShowLeftArrow(isScrollable && !isAtStart);
+  };
+
+  useEffect(() => {
+    checkScroll(); // Check on mount
+
+    const container = containerRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    container.addEventListener('scroll', checkScroll);
+    window.addEventListener('resize', checkScroll);
+
+    return () => {
+      container.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, []);
 
   const profilesToShow = useMemo(() => {
     if (defaultProfiles.length === 0 && userDefinedProfiles.length === 0) {
@@ -62,15 +101,48 @@ function ProfileTabsFS (): React.ReactElement {
     return defaultProfiles.concat(userDefinedProfiles);
   }, [defaultProfiles, userDefinedProfiles]);
 
+  const onClickLeftArrow = useCallback(() => {
+    containerRef.current?.scrollBy({ behavior: 'smooth', left: -150 });
+  }, []);
+
+  const onClickRightArrow = useCallback(() => {
+    containerRef.current?.scrollBy({ behavior: 'smooth', left: 150 });
+  }, []);
+
   return (
-    <Stack columnGap='20px' direction='row' sx={{ ml: '10px', overflowX: 'scroll', width: '500px' }}>
-      {profilesToShow?.map((label, index) => (
-        <Tab
-          initialAccountList={initialAccountList}
-          key={index}
-          label={label}
-        />
-      ))
+    <Stack alignItems='center' direction='row' sx={{ position: 'relative', width: '535px' }}>
+      {
+        showLeftArrow &&
+        <Box justifyContent='start' sx={{ background: 'linear-gradient(90deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', left: '-25px', width: '69px' }}>
+          <ArrowCircleLeft
+            color={hovered === 'left' ? '#FF4FB9' : '#EAEBF1'}
+            onClick={onClickLeftArrow}
+            onMouseEnter={() => setIsHovered('left')}
+            onMouseLeave={() => setIsHovered('')} 
+            size='24' style={{ cursor: 'pointer', marginLeft: '30%' }} variant='Bold'
+          />
+        </Box>
+      }
+      <Stack columnGap='20px' direction='row' ref={containerRef} sx={{ ml: '10px', overflowX: 'scroll', width: '500px' }}>
+        {profilesToShow?.map((label, index) => (
+          <Tab
+            initialAccountList={initialAccountList}
+            key={index}
+            label={label}
+          />
+        ))
+        }
+      </Stack>
+      {showRightArrow &&
+        <Box justifyContent='end' sx={{ background: 'linear-gradient(0deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', right: '-25px', width: '69px' }}>
+          <ArrowCircleRight
+            color={hovered === 'right' ? '#FF4FB9' : '#EAEBF1'}
+            onClick={onClickRightArrow}
+            onMouseEnter={() => setIsHovered('right')}
+            onMouseLeave={() => setIsHovered('')} 
+            size='24' style={{ cursor: 'pointer', marginRight: '30%' }} variant='Bold'
+          />
+        </Box>
       }
     </Stack>
   );

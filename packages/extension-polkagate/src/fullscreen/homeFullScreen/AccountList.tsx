@@ -35,7 +35,7 @@ function AccountsProfileLabel({ label }: { label: string }): React.ReactElement 
   );
 }
 
-function AccountList (): React.ReactElement {
+function AccountList(): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
   const selectedProfile = useSelectedProfile();
   const profileAccounts = useProfileAccounts(initialAccountList);
@@ -99,7 +99,10 @@ function AccountList (): React.ReactElement {
                             width: '100%'
                           }}
                         >
-                          {isFirstAccount && <AccountsProfileLabel label={label} />}
+                          {
+                            isFirstAccount &&
+                            <AccountsProfileLabel label={label} />
+                          }
                           <Account account={account.account} />
                         </Stack>
                       </motion.div>
