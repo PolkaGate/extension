@@ -212,7 +212,7 @@ function Account ({ account }: { account: AccountWithChildren }): React.ReactEle
               fontWeight={600}
               num={totalBalance}
               style={{ margin: '3px 0 0 20px' }}
-              width='fit-content'
+              width={totalBalance ? 'fit-content' : '100px'}
               withSmallDecimal
             />
             <Grid alignItems='center' container item sx={{ ml: '10px', position: 'relative' }} width='fit-content'>
