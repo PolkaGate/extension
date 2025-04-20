@@ -30,6 +30,8 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     return this.withApp(async (app): Promise<LedgerVersion> => {
       const { deviceLocked: locked, major, minor, patch, testMode } = await app.getVersion();
 
+      console.log('8: GenericLedger- locked, major, minor, patch, testMode:', locked, major, minor, patch, testMode);
+
       return {
         isLocked: !!locked,
         isTestMode: !!testMode,
@@ -49,8 +51,11 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   getAddress (confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress> {
     return this.withApp(async (app): Promise<LedgerAddress> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
+      console.log('5: GenericLedger- getAddress- accountOffset, addressOffset, accountOptions:', accountOffset, addressOffset, accountOptions);
 
       const { address, pubKey } = await this.wrapError(app.getAddress(path, 42, confirm));
+      
+      console.log('5-1: Generic App! - GenericLedger- getAddress- address, pubKey:', address, pubKey);
 
       return {
         address,
@@ -103,17 +108,20 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   getApp = async (): Promise<PolkadotGenericApp> => {
     if (!this.app) {
       const def = transports.find(({ type }) => type === this.transport);
+      console.log('4: GenericLedger- getApp, def, this.transport:', def, this.transport);
 
       if (!def) {
         throw new Error(`Unable to find a transport for ${this.transport}`);
       }
 
       const transport = await def.create();
+      console.log('4-1: GenericLedger- transport:', transport);
 
       this.app = this.txMetadataChainId
         ? new PolkadotGenericApp(transport, this.txMetadataChainId, ZONDAX_METADATA_URL)
         : new PolkadotGenericApp(transport);
     }
+    console.log('4-2: GenericLedger- this.app:', this.app);
 
     return this.app;
   };
@@ -121,6 +129,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   protected override wrapError = async<V>(promise: Promise<V>): Promise<V> => {
     try {
       const result = await promise as ResponseSign;
+      console.log('6: GenericLedger- wrapError:', result);
 
       if (!result.returnCode) {
         return result as V;
@@ -131,6 +140,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
       }
     } catch (e) {
       const error = e as Error;
+      console.log('6-1: GenericLedger- error:', error);
 
       error.message = this.mappingError(error);
 
@@ -140,6 +150,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
 
   mappingError (_error: Error): string {
     const error = _error.message || (_error as unknown as ResponseSign).errorMessage;
+    console.log('9: GenericLedger-mappingError- _error:', _error);
 
     if (error.includes('28160') || error.includes('CLA Not Supported')) {
       return 'App does not seem to be open';

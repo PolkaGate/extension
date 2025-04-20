@@ -50,6 +50,15 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
 
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
+  console.log(`
+    🔍 Ledger Migration Status:
+      📍 Address       : ${address}
+      ❌ Error         : ${ledgerError}
+      ⏳ Loading       : ${ledgerLoading}
+      🔒 Locked        : ${ledgerLocked}
+      ⚠️  Warning       : ${ledgerWarning}
+    `);
+
   const networkOps = useRef(
     [{
       text: t('No chain selected'),

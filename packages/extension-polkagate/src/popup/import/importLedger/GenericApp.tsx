@@ -88,6 +88,15 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
 
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
 
+  console.log(`
+    🔍 Ledger Generic Status:
+      📍 Address       : ${address}
+      ❌ Error         : ${ledgerError}
+      ⏳ Loading       : ${ledgerLoading}
+      🔒 Locked        : ${ledgerLocked}
+      ⚠️  Warning       : ${ledgerWarning}
+    `);
+
   const importDisabled = useMemo((): boolean =>
     isAdvancedMode
       ? !address

@@ -35,9 +35,15 @@ function getState (): StateBase {
 }
 
 function retrieveLedger (chainSlip?: number | null, txMetadataChainId?: string): GenericLedger {
+  console.log('2: useGenericLedger - retrieveLedger');
+
   const { isLedgerCapable } = getState();
 
+  console.log('2-1: useGenericLedger - retrieveLedger- isLedgerCapable:', isLedgerCapable);
+
   assert(isLedgerCapable, 'Incompatible browser, only Chrome is supported');
+
+  console.log('2-2:  useGenericLedger - retrieveLedger- chainSlip,txMetadataChainId:', chainSlip, txMetadataChainId);
 
   return new GenericLedger('webusb', chainSlip || POLKADOT_SLIP44, txMetadataChainId);
 }
@@ -57,6 +63,7 @@ export function useGenericLedger (accountIndex = 0, addressOffset = 0, chainSlip
     setError(null);
     setIsLocked(false);
     setRefreshLock(false);
+    console.log('1: useGenericLedger - retrieving Ledger ...');
 
     try {
       return retrieveLedger(chainSlip, txMetadataChainId);
@@ -68,12 +75,17 @@ export function useGenericLedger (accountIndex = 0, addressOffset = 0, chainSlip
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshLock, chainSlip, txMetadataChainId]);
 
+  console.log('💡 ledger in hook:👇');
+  console.dir(ledger, { depth: null });
+
   useEffect(() => {
     if (!ledger) {
       setAddress(null);
 
       return;
     }
+
+    console.log('3: useGenericLedger- useEffect - setIsLoading(true)');
 
     setIsLoading(true);
     setError(null);
@@ -84,13 +96,18 @@ export function useGenericLedger (accountIndex = 0, addressOffset = 0, chainSlip
     }
 
     isFetching.current = true;
+    console.log('3-1: useGenericLedger - 🧲 ledger.getAddress ... accountIndex, addressOffset:', accountIndex, addressOffset);
 
     ledger.getAddress(false, accountIndex, addressOffset)
       .then((res) => {
+        console.log('3-2: useGenericLedger - ledger.getAddress,  res:', res);
+
         setIsLoading(false);
         setAddress(res.address);
       }).catch((e: Error) => {
         setIsLoading(false);
+
+        console.log('3-3: useGenericLedger - ledger.getAddress,  Error:', e);
 
         const warningMessage = e.message.includes('Code: 26628')
           ? t('Is your ledger locked?')
@@ -117,6 +134,8 @@ export function useGenericLedger (accountIndex = 0, addressOffset = 0, chainSlip
   }, [accountIndex, addressOffset, ledger]);
 
   const refresh = useCallback(() => {
+    console.log('7: useGenericLedger - refresh ...');
+
     setRefreshLock(true);
     setError(null);
     setWarning(null);
