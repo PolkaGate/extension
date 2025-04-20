@@ -1,12 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
+import { FadeOnScroll } from '../../components';
 import { useAccountsOrder, useProfileAccounts, useSelectedProfile, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import Account from './Account';
@@ -20,7 +21,7 @@ export const DEFAULT_PROFILE_TAGS = {
   WATCH_ONLY: 'Watch-only'
 };
 
-function AccountsProfileLabel ({ label }: { label: string }): React.ReactElement {
+function AccountsProfileLabel({ label }: { label: string }): React.ReactElement {
   const { t } = useTranslation();
   const { Icon, bgcolor, color } = useProfileInfo(label);
 
@@ -38,6 +39,7 @@ function AccountList (): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
   const selectedProfile = useSelectedProfile();
   const profileAccounts = useProfileAccounts(initialAccountList);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const categorizedAccounts = useMemo(() => {
     if (!initialAccountList || !selectedProfile) {
@@ -61,51 +63,55 @@ function AccountList (): React.ReactElement {
   return (
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
       <ProfileTabsFS />
-      <VelvetBox style={{ maxHeight: '595px', minHeight: '100px', mt: '5px', overflowY: 'scroll' }}>
-        {
-          Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => (
-            <motion.div
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 10 }}
-              key={`${label}-${profileIndex}`}
-              transition={{ delay: profileIndex * (accounts?.length ?? 1) * 0.4, duration: profileIndex === 0 ? 0.3 : 0.8 }}
-            >
-              {
-                accounts?.map((account, accIndex) => {
-                  const isFirstProfile = profileIndex === 0;
-                  const isFirstAccount = accIndex === 0;
-                  const isLast = accIndex === accounts.length - 1;
-                  const justOneAccount = isFirstAccount && isLast;
+      <VelvetBox style={{ mt: '5px' }}>
+        <Stack ref={scrollContainerRef} style={{ maxHeight: '595px', minHeight: '100px', overflowY: 'scroll', position: 'relative' }}>
+          {
+            Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => (
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 10 }}
+                key={`${label}-${profileIndex}`}
+                transition={{ delay: profileIndex * (accounts?.length ?? 1) * 0.4, duration: profileIndex === 0 ? 0.3 : 0.8 }}
+              >
+                {
+                  accounts?.map((account, accIndex) => {
+                    const isFirstProfile = profileIndex === 0;
+                    const isFirstAccount = accIndex === 0;
+                    const isLast = accIndex === accounts.length - 1;
+                    const justOneAccount = isFirstAccount && isLast;
 
-                  return (
-                    <motion.div
-                      animate={{ opacity: 1, y: 0 }}
-                      initial={{ opacity: 0, y: 10 }}
-                      key={`${label}-${profileIndex}`}
-                      transition={{ delay: accIndex * 0.2, duration: profileIndex === 0 ? 0.3 : 1 }}
-                    >
-                      <Stack
-                        direction='column'
-                        key={accIndex}
-                        sx={{
-                          bgcolor: '#05091C',
-                          borderRadius: justOneAccount ? '14px' : isFirstAccount ? '14px 14px 0 0' : isLast ? '0 0 14px 14px' : 0,
-                          minHeight: '63px',
-                          mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
-                          mx: '1px',
-                          width: '100%'
-                        }}
+                    return (
+                      <motion.div
+                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        key={`${label}-${profileIndex}`}
+                        transition={{ delay: accIndex * 0.2, duration: profileIndex === 0 ? 0.3 : 1 }}
                       >
-                        {isFirstAccount && <AccountsProfileLabel label={label} />}
-                        <Account account={account.account} />
-                      </Stack>
-                    </motion.div>
-                  );
-                })
-              }
-            </motion.div>
-          ))}
+                        <Stack
+                          direction='column'
+                          key={accIndex}
+                          sx={{
+                            bgcolor: '#05091C',
+                            borderRadius: justOneAccount ? '14px' : isFirstAccount ? '14px 14px 0 0' : isLast ? '0 0 14px 14px' : 0,
+                            minHeight: '63px',
+                            mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
+                            mx: '1px',
+                            width: '100%'
+                          }}
+                        >
+                          {isFirstAccount && <AccountsProfileLabel label={label} />}
+                          <Account account={account.account} />
+                        </Stack>
+                      </motion.div>
+                    );
+                  })
+                }
+              </motion.div>
+            ))
+          }
+        </Stack>
       </VelvetBox>
+      <FadeOnScroll containerRef={scrollContainerRef} height='50px' ratio={0.3} />
     </Stack>
   );
 }

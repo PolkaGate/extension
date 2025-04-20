@@ -39,7 +39,7 @@ function HomePageFullScreen(): React.ReactElement {
         <TrendingAssets />
       </Stack>
       {/* Right column */}
-      <Stack direction='column' sx={{ height: 'inherit', mx: '8px', width: ' 541px', ml: '20px' }}>
+      <Stack direction='column' sx={{ height: 'inherit', mx: '8px', width: ' 541px', ml: '20px', position: 'relative' }}>
         <AccountsAdd />
         <AccountList />
       </Stack>
