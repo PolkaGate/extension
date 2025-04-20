@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useMemo, useRef } from 'react';
 

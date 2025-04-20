@@ -12,7 +12,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, AssetLogo, AssetNull, FadeOnScroll, FormatPrice } from '../../components';
-import { useCurrency, usePortfolio, usePrices, useTranslation, useYouHave } from '../../hooks';
+import { useCurrency, usePortfolio, usePrices, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 
 function adjustColor (token: string, color: string | undefined, theme: Theme): string {

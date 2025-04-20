@@ -8,11 +8,11 @@ import React, { memo, useMemo } from 'react';
 import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/TotalBalancePieChart';
 
 import { FormatPrice } from '../../../components';
-import { useIsDark, useIsHideNumbers, usePortfolio, useYouHave2 } from '../../../hooks';
+import { useIsDark, useIsHideNumbers, usePortfolio } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
-const RenderSkeleton = memo(function RenderSkeleton() {
+const RenderSkeleton = memo(function RenderSkeleton () {
   return (
     <Skeleton
       animation='wave'

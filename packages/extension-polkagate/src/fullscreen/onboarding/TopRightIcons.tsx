@@ -3,11 +3,8 @@
 
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
-import uiSetting from '@polkadot/ui-settings';
-
-import { SettingsContext } from '../../components';
 import CustomTooltip from '../../components/Tooltip';
 import { useSelectedLanguage, useTranslation } from '../../hooks';
 import PrivacyPolicy from '../../partials/PrivacyPolicy';
