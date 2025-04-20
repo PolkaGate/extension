@@ -9,6 +9,7 @@ import { getAssetOnAssetHub } from './shared-helpers/getAssetOnAssetHub.js';
 import { getAssetOnMultiAssetChain } from './shared-helpers/getAssetOnMultiAssetChain.js';
 import { getAssetOnRelayChain } from './shared-helpers/getAssetOnRelayChain.js';
 import getNFTs from './shared-helpers/getNFTs.js';
+import getValidatorsInformation from './shared-helpers/getValidatorsInformation.js';
 
 const assetsChains = createAssets();
 
@@ -59,6 +60,10 @@ onconnect = (event) => {
 
         case 'getNFTs':
           getNFTs(...params, port).catch(console.error);
+          break;
+
+        case 'getValidatorsInformation':
+          getValidatorsInformation(...params, port).catch(console.error);
           break;
 
         default:
