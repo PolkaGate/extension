@@ -85,7 +85,9 @@ function Portfolio (): React.ReactElement {
             />
           }
         </Grid>
-        <DailyChange />
+        <DailyChange
+          address={account?.address}
+        />
         <AccountVisibilityToggler />
       </Grid>
     </GlowBox>

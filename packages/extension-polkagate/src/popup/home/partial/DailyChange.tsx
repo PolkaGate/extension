@@ -8,7 +8,7 @@ import React, { memo, useMemo } from 'react';
 import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/TotalBalancePieChart';
 
 import { FormatPrice } from '../../../components';
-import { useIsDark, useIsHideNumbers, useYouHave2 } from '../../../hooks';
+import { useIsDark, useIsHideNumbers, usePortfolio, useYouHave2 } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
@@ -25,6 +25,7 @@ const RenderSkeleton = memo(function RenderSkeleton() {
 
 interface DailyChangeProps {
   change?: number | null;
+  address?: string;
   style?: SxProps<Theme>;
   textVariant?: string;
   iconSize?: number;
@@ -32,10 +33,10 @@ interface DailyChangeProps {
   showPercentage?: boolean;
 }
 
-function DailyChange ({ change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
+function DailyChange ({ address, change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
-  const youHave = useYouHave2();
+  const youHave = usePortfolio(address);
   const { isHideNumbers } = useIsHideNumbers();
 
   const changed = useMemo(() => {

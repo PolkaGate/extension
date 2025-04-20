@@ -7,7 +7,7 @@ import React from 'react';
 import { safeBox, safeBoxLight } from '../assets/icons';
 import { useIsDark, useTranslation } from '../hooks';
 
-const AssetNull = () => {
+const AssetNull = ({ text }: {text?: string}) => {
   const { t } = useTranslation();
   const isDark = useIsDark();
 
@@ -19,7 +19,7 @@ const AssetNull = () => {
         sx={{ width: '135px' }}
       />
       <Typography color='#BEAAD8' pt='10px' variant='B-2'>
-        {t("You don't have any tokens yet")}
+        {text ?? t("You don't have any tokens yet")}
       </Typography>
     </Container>
   );

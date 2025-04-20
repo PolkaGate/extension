@@ -12,7 +12,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, AssetLogo, AssetNull, FadeOnScroll, FormatPrice } from '../../components';
-import { useCurrency, usePrices, useTranslation, useYouHave } from '../../hooks';
+import { useCurrency, usePortfolio, usePrices, useTranslation, useYouHave } from '../../hooks';
 import { VelvetBox } from '../../style';
 
 function adjustColor (token: string, color: string | undefined, theme: Theme): string {
@@ -65,7 +65,7 @@ const BorderLinearProgress = styled(LinearProgress, {
   }
 }));
 
-function truncateToMaxYDecimals (num: number, y: number): string {
+function truncateToMaxYDecimals(num: number, y: number): string {
   const [intPart, decPart] = num.toString().split('.');
 
   if (!decPart) {
@@ -82,14 +82,96 @@ const WIDTHS = {
   4: 27
 };
 
+function PortfolioInRow ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.ReactElement {
+  return (
+    <Stack direction='row' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '14px', height: '36px', ml: '8px' }}>
+      <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: '#05091C', borderRadius: '10px', m: '4px', width: '100%' }}>
+        <Stack direction='row' sx={{ borderRadius: 12, height: 11, overflow: 'hidden', width: '98%' }}>
+          {assets.map((asset, index) => (
+            <Box
+              key={index}
+              sx={{
+                bgcolor: asset.ui.color,
+                height: '100%',
+                width: `${asset.percent}%`
+              }}
+            />
+          ))}
+        </Stack>
+      </Stack>
+    </Stack>
+  );
+}
+
+function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.ReactElement {
+  const { t } = useTranslation();
+
+  const currency = useCurrency();
+  const refContainer = useRef<HTMLDivElement>(null);
+
+  return (
+    <Container disableGutters>
+      <Stack direction='row' justifyContent='space-between' sx={{ m: '8px 12px 5px' }}>
+        <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[1]}%`}>
+          {t('Token')}
+        </Typography>
+        <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[2]}%`}>
+          {t('Cost')}
+        </Typography>
+        <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[3]}%`}>
+          {t('Allocation')}
+        </Typography>
+        <Typography color='#BEAAD8' textAlign='right' variant='B-1' width={`${WIDTHS[4]}%`}>
+          {t('Value')}
+        </Typography>
+      </Stack>
+      <Container disableGutters ref={refContainer} sx={{ maxHeight: '260px', overflowY: 'scroll' }}>
+        {assets.map(({ genesisHash, percent, price, token, totalBalance, ui }, index) => {
+          const logoInfo = getLogo2(genesisHash, token);
+
+          return (
+            <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', m: '5px', px: '10px' }}>
+              <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
+                <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+                <Typography variant='B-2'>
+                  {token}
+                </Typography>
+              </Stack>
+              <Typography color='#BEAAD8' textAlign='left' variant='B-2' width={`${WIDTHS[2]}%`}>
+                {currency?.sign} {price ? truncateToMaxYDecimals(price, 4) : 0}
+              </Typography>
+              <Stack alignItems='center' direction='row' justifyContent='start' width={`${WIDTHS[3]}%`}>
+                <Typography color='#BEAAD8' minWidth='60px' sx={{ textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
+                  {percent >= 0.01 ? truncateToMaxYDecimals(percent, 2) : '~ 0'}%
+                </Typography>
+                <BorderLinearProgress barColor={ui.color} barHeight={8} sx={{ width: '72px' }} value={percent > 1 ? percent : 1} variant='determinate' />
+              </Stack>
+              <FormatPrice
+                commify
+                decimalColor='#BEAAD8'
+                fontFamily='Inter'
+                fontSize='14px'
+                fontWeight={600}
+                num={totalBalance}
+                style={{ display: 'flex', justifyContent: 'end', width: `${WIDTHS[4]}%` }}
+                textAlign='right'
+              />
+            </Stack>
+          );
+        })
+        }
+        <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} style={{ justifySelf: 'center', width: '95%' }} />
+      </Container>
+    </Container>
+  );
+}
+
 function AssetsBars (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const currency = useCurrency();
   const pricesInCurrencies = usePrices();
-  const youHave = useYouHave();
+  const youHave = usePortfolio();
   const { accountsAssets } = useContext(AccountsAssetsContext);
-  const refContainer = useRef<HTMLDivElement>(null);
 
   const assets = useMemo((): AssetsWithUiAndPrice[] | undefined => {
     if (!accountsAssets || !youHave || !pricesInCurrencies) {
@@ -108,7 +190,6 @@ function AssetsBars (): React.ReactElement {
     });
 
     const groupedAssets = allAccountsAssets.reduce((acc, asset) => {
-      // const key = `${asset.token}_${asset.genesisHash}`;
       const key = asset.priceId; // Group by priceId
 
       if (!acc[key]) {
@@ -150,80 +231,21 @@ function AssetsBars (): React.ReactElement {
 
   return (
     <Container disableGutters>
-      {!!assets?.length &&
-        <Stack direction='row' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '14px', height: '36px', ml: '8px' }}>
-          <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: '#05091C', width: '100%', m: '4px', borderRadius: '10px' }}>
-            <Stack direction='row' sx={{ borderRadius: 12, height: 11, overflow: 'hidden', width: '98%' }}>
-              {assets.map((asset, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    bgcolor: asset.ui.color,
-                    height: '100%',
-                    width: `${asset.percent}%`
-                  }}
-                />
-              ))}
-            </Stack>
-          </Stack>
-        </Stack>}
+      {
+        !!assets?.length && !!youHave?.portfolio &&
+        <PortfolioInRow
+          assets={assets}
+        />
+      }
       <VelvetBox style={{ m: '8px', minHeight: '200px', pb: '10px' }}>
         {
-          !assets?.length
-            ? <AssetNull />
-            : <>
-              <Stack direction='row' justifyContent='space-between' sx={{ m: '8px 12px 5px' }}>
-                <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[1]}%`}>
-                  {t('Token')}
-                </Typography>
-                <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[2]}%`}>
-                  {t('Cost')}
-                </Typography>
-                <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[3]}%`}>
-                  {t('Allocation')}
-                </Typography>
-                <Typography color='#BEAAD8' textAlign='right' variant='B-1' width={`${WIDTHS[4]}%`}>
-                  {t('Value')}
-                </Typography>
-              </Stack>
-              <Container disableGutters ref={refContainer} sx={{ maxHeight: '260px', overflowY: 'scroll' }}>
-                {assets.map(({ genesisHash, percent, price, token, totalBalance, ui }, index) => {
-                  const logoInfo = getLogo2(genesisHash, token);
-
-                  return (
-                    <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', m: '5px', px: '10px' }}>
-                      <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
-                        <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-                        <Typography variant='B-2'>
-                          {token}
-                        </Typography>
-                      </Stack>
-                      <Typography color='#BEAAD8' textAlign='left' variant='B-2' width={`${WIDTHS[2]}%`}>
-                        {currency?.sign} {price ? truncateToMaxYDecimals(price, 4) : 0}
-                      </Typography>
-                      <Stack alignItems='center' direction='row' justifyContent='start' width={`${WIDTHS[3]}%`}>
-                        <Typography color='#BEAAD8' minWidth='60px' sx={{ textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
-                          {percent >= 0.01 ? truncateToMaxYDecimals(percent, 2) : '~ 0'}%
-                        </Typography>
-                        <BorderLinearProgress barColor={ui.color} barHeight={8} sx={{ width: '72px' }} value={percent > 1 ? percent : 1} variant='determinate' />
-                      </Stack>
-                      <FormatPrice
-                        commify
-                        decimalColor='#BEAAD8'
-                        fontFamily='Inter'
-                        fontSize='14px'
-                        fontWeight={600}
-                        num={totalBalance}
-                        style={{ display: 'flex', justifyContent: 'end', width: `${WIDTHS[4]}%` }}
-                        textAlign= 'right'
-                      />
-                    </Stack>
-                  );
-                })
-                }
-                <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} style={{ justifySelf: 'center', width: '95%' }} />
-              </Container>
-            </>
+          !assets?.length || !youHave?.portfolio
+            ? <AssetNull
+              text={t("You don't have any valuable tokens yet")}
+            />
+            : <AssetsRows
+              assets={assets}
+            />
         }
       </VelvetBox>
     </Container>
