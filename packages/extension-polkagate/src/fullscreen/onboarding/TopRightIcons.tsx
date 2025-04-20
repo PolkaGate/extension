@@ -9,7 +9,7 @@ import uiSetting from '@polkadot/ui-settings';
 
 import { SettingsContext } from '../../components';
 import CustomTooltip from '../../components/Tooltip';
-import { useTranslation } from '../../hooks';
+import { useSelectedLanguage, useTranslation } from '../../hooks';
 import PrivacyPolicy from '../../partials/PrivacyPolicy';
 import SelectLanguage from '../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../util/constants';
@@ -17,10 +17,10 @@ import { ExtensionPopups } from '../../util/constants';
 function TopRightIcons (): React.ReactElement {
   const { t } = useTranslation();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
-  const settings = useContext(SettingsContext);
 
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const [hovered, setHovered] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const languageTicker = useSelectedLanguage();
 
   const shieldHoveredStyle = {
     '&::after': {
@@ -46,16 +46,6 @@ function TopRightIcons (): React.ReactElement {
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);
   }, [setHovered]);
-
-  const [languageTicker, setLanguage] = useState('EN');
-
-  useEffect(() => {
-    setLanguage(settings.i18nLang);
-
-    uiSetting.on('change', (newSettings) => {
-      setLanguage(newSettings.i18nLang);
-    });
-  }, [settings]);
 
   return (
     <Grid container sx={{ maxWidth: '30%', position: 'absolute', right: '0' }}>
