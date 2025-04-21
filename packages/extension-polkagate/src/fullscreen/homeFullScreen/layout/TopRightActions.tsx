@@ -7,6 +7,7 @@ import React from 'react';
 import { HomeAccountDropDown } from '../../../components';
 import CurrencySelection from './CurrencySelection';
 import HideNumbers from './HideNumbers';
+import Notifications from './Notifications';
 
 function MyDivider (): React.ReactElement {
   return (
@@ -27,6 +28,8 @@ function TopRightActions (): React.ReactElement {
       <HideNumbers />
       <MyDivider />
       <CurrencySelection />
+      <MyDivider />
+      <Notifications />
       <MyDivider />
       <HomeAccountDropDown
         style={{
