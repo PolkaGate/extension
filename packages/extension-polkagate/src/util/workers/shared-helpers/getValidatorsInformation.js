@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import { hexToString } from '@polkadot/util';
 
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
@@ -27,7 +29,7 @@ const getChainName = (genesisHash) => {
  * Extended version of DeriveStakingQuery which includes identity information
  * @typedef {Object} ValidatorInformation
  * @extends {import('@polkadot/api-derive/types').DeriveStakingQuery}
- * @property {import('@polkadot/api-derive/types').DeriveAccountRegistration} [identity] - Optional identity information for the validator
+ * @property {import('@polkadot/api-derive/types').DeriveAccountRegistration | null | undefined} [identity] - Optional identity information for the validator
 */
 
 /**
@@ -123,13 +125,14 @@ export default async function getValidatorsInformation (genesisHash, port) {
 
     const results = {
       eraIndex: Number(currentEra?.toString() || '0'),
+      genesisHash,
       validatorsInformation: {
-        elected: JSON.parse(JSON.stringify(electedValidatorsInformation)),
-        waiting: JSON.parse(JSON.stringify(waitingValidatorsInformation))
+        elected: electedValidatorsInformation,
+        waiting: waitingValidatorsInformation
       }
     };
 
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results }));
+    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: JSON.stringify(results) }));
   } catch (e) {
     console.error('Something went wrong while fetching validators', e);
 
@@ -161,7 +164,7 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
       // Process results
       const processedBatch = currentBatch.map((validatorInfo, index) => {
         const identityOption = identityEntries[index];
-        const identity = identityOption.isEmpty ? undefined : identityOption.unwrap()[0];
+        const identity = !identityOption.isSome ? undefined : identityOption.unwrap()[0];
 
         return {
           ...validatorInfo,
@@ -214,22 +217,29 @@ async function processSubIdentities (api, mayHaveSubId, validatorsInformation, a
       const processedBatch = currentBatch.map((validatorInfo, index) => {
         const subIdOption = subIdEntries[index];
 
-        if (subIdOption.isEmpty) {
-          return validatorInfo;
+        if (!subIdOption.isSome) {
+          return {
+            ...validatorInfo,
+            identity: null
+          };
         }
 
-        const { data: parentAddress, info: subId } = subIdOption.unwrap();
+        const subId = subIdOption.unwrap();
 
         return {
           ...validatorInfo,
-          identity: subId ? convertId(subId) : undefined,
-          parentAddress
+          identity: subId
+            ? {
+              display: hexToString(subId[1].asRaw.toHex()),
+              parentAddress: subId[0].toString()
+            }
+            : undefined
         };
       });
 
       // Separate validators with and without sub-identity
-      const noSubId = processedBatch.filter((info) => info.identity === undefined);
-      const withSubId = processedBatch.filter((info) => info.identity !== undefined);
+      const noSubId = processedBatch.filter((info) => info.identity === null);
+      const withSubId = processedBatch.filter((info) => info.identity !== null);
 
       // Add to appropriate result arrays
       if (noSubId.length > 0) {
@@ -243,7 +253,7 @@ async function processSubIdentities (api, mayHaveSubId, validatorsInformation, a
       totalProcessed += BATCH_SIZE;
     }
 
-    console.log(`Fetching validators sub-identity, DONE 👍 : ${accountSubInfo.length === 0 ? 0 : mayHaveSubId.length - accountSubInfo.length}/${mayHaveSubId.length}`);
+    console.log(`Fetching validators sub-identity, DONE 👍 : ${accountSubInfo.length}/${mayHaveSubId.length}`);
   } catch (error) {
     console.error('Error fetching validators sub-identity:', error);
   }
@@ -266,18 +276,18 @@ async function processParentIdentities (api, accountSubInfo, validatorsInformati
 
       // Query parent identities in batch
       const parentIdentityEntries = await Promise.all(
-        currentBatch.map((info) => api.query['identity']['identityOf'](info.parentAddress))
+        currentBatch.map((info) => api.query['identity']['identityOf'](info.identity.parentAddress))
       );
 
       // Process results
       const processedBatch = currentBatch.map((validatorInfo, index) => {
         const parentIdentityOption = parentIdentityEntries[index];
 
-        if (parentIdentityOption.isEmpty) {
+        if (!parentIdentityOption.isSome) {
           return validatorInfo;
         }
 
-        const parentIdentity = parentIdentityOption.unwrap();
+        const parentIdentity = parentIdentityOption.unwrap()[0];
         const parentDisplay = parentIdentity.info.display.isRaw
           ? hexToString(parentIdentity.info.display.asRaw.toHex())
           : '';
