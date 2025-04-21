@@ -43,6 +43,7 @@ export { default as Dots } from './Dots';
 export { default as DropSelect } from './DropSelect';
 export { default as ExtensionPopup } from './ExtensionPopup';
 export { default as FadeOnScroll } from './FadeOnScroll';
+export { default as FadeOnScrollHorizontal } from './FadeOnScrollHorizontal';
 export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';
 export { default as FormatPrice } from './FormatPrice';

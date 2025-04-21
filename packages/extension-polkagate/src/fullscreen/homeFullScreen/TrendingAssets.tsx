@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo } from '../../components';
+import { AssetLogo, FadeOnScrollHorizontal } from '../../components';
 import { useCurrency, usePrices, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 
@@ -115,6 +115,7 @@ function TrendingAssets (): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
   const cardRefs = useRef<HTMLDivElement[]>([]);
+  const refContainer = useRef<HTMLDivElement>(null);
 
   const [cardWidths, setCardWidths] = useState<number[]>([]);
   const [indexMove, setMove] = useState(0);
@@ -152,7 +153,7 @@ function TrendingAssets (): React.ReactElement {
           <Move direction='right' max={MAX_ASSETS_TO_MOVE} setMove={setMove} />
         </Stack>
       </Stack>
-      <Stack alignItems='center' direction='row' sx={{ overflowX: 'scroll', width: '100%' }}>
+      <Stack alignItems='center' direction='row' ref={refContainer} sx={{ overflowX: 'scroll', width: '100%' }}>
         <motion.div
           animate={{ x: offsetX }}
           style={{ display: 'flex' }}
@@ -170,6 +171,7 @@ function TrendingAssets (): React.ReactElement {
               );
             })}
         </motion.div>
+        <FadeOnScrollHorizontal containerRef={refContainer} style={{ height: refContainer.current?.offsetHeight}} width='130px' />
       </Stack>
     </VelvetBox>
   );
