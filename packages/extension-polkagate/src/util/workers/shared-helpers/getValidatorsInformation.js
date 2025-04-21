@@ -68,8 +68,8 @@ export default async function getValidatorsInformation (genesisHash, port) {
 
   try {
     const [electedInfo, waitingInfo, currentEra] = await Promise.all([
-      api.derive.staking.electedInfo(),
-      api.derive.staking.waitingInfo(),
+      api.derive.staking.electedInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureErasStakersLegacy: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
+      api.derive.staking.waitingInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureErasStakersLegacy: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
       api.query['staking']['currentEra']()
     ]);
 

@@ -3,11 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+
 import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { BN, noop } from '@polkadot/util';
+import { noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../hooks';
@@ -49,8 +51,6 @@ export default function BondExtra (): React.ReactElement {
     return amountToHuman(unlockingAmount, decimal);
   }, [decimal, unlockingAmount]);
   const onNext = useCallback(() => noop, []);
-
-  console.log('rebondValue:', rebondValue?.toString());
 
   return (
     <>
