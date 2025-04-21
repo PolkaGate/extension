@@ -15,8 +15,8 @@ interface MessageBody {
   eraIndex: number;
   genesisHash: string;
   validatorsInformation: {
-    elected: ValidatorInformation;
-    waiting: ValidatorInformation;
+    elected: ValidatorInformation[];
+    waiting: ValidatorInformation[];
   };
 }
 
