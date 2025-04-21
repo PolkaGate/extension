@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PriceValue } from '@polkadot/extension-polkagate/src/util/types';
+
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -13,6 +15,8 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { AssetLogo } from '../../components';
 import { useCurrency, usePrices, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
+
+const ASSET_IN_A_ROW = 4;
 
 type Direction = 'right' | 'left';
 
@@ -51,18 +55,69 @@ function Move ({ direction, max, setMove }: { direction: Direction, max?: number
   );
 }
 
-const ASSET_IN_A_ROW = 4;
+const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }, ref) => {
+  const currency = useCurrency();
+
+  const [hoveredIndex, setHoveredIndex] = useState<boolean>(false);
+
+  const onMouseEnter = useCallback(() => {
+    setHoveredIndex(true);
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    setHoveredIndex(false);
+  }, []);
+
+  const logoInfo = getLogo2(asset.genesisHash, asset.symbol);
+
+  return (
+    <Stack
+      direction='column'
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      ref={ref}
+      sx={{
+        bgcolor: hoveredIndex ? '#2D1E4A' : '#05091C',
+        borderRadius: '14px',
+        minWidth: '122px',
+        mr: '5px',
+        p: '15px',
+        transform: hoveredIndex ? 'translateY(-2px)' : 'none',
+        transition: 'transform 0.2s ease-in-out',
+        width: 'fit-content'
+      }}
+    >
+      <AssetLogo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ width: 'fit-content' }} />
+      <Typography color='#EAEBF1' sx={{ mt: '10px', textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
+        {asset.symbol} / {currency?.code}
+      </Typography>
+      <Stack direction='row'>
+        <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-2'>
+          {currency?.sign}{asset.value.toFixed(2)}
+        </Typography>
+        <DailyChange
+          change={asset.change}
+          iconSize={12}
+          showHours={false}
+          showPercentage
+          style={{ marginLeft: '5px', padding: '0px 2px' }}
+          textVariant='B-4'
+        />
+      </Stack>
+    </Stack>
+
+  );
+});
+
+Asset.displayName = 'Asset';
 
 function TrendingAssets (): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
-  const currency = useCurrency();
-
   const cardRefs = useRef<HTMLDivElement[]>([]);
-  const [cardWidths, setCardWidths] = useState<number[]>([]);
 
+  const [cardWidths, setCardWidths] = useState<number[]>([]);
   const [indexMove, setMove] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number>();
 
   const trendingAssets = useMemo(() => {
     const prices = pricesInCurrencies?.prices;
@@ -79,14 +134,6 @@ function TrendingAssets (): React.ReactElement {
 
     setCardWidths(widths);
   }, [trendingAssets]);
-
-  const onMouseEnter = useCallback((index: number) => {
-    setHoveredIndex(index);
-  }, []);
-
-  const onMouseLeave = useCallback(() => {
-    setHoveredIndex(undefined);
-  }, []);
 
   const MAX_ASSETS_TO_MOVE = (trendingAssets?.length ?? ASSET_IN_A_ROW) - ASSET_IN_A_ROW;
   const offsetX = -cardWidths.slice(0, indexMove).reduce((sum, w) => sum + w + 5, 0); // include margin
@@ -105,60 +152,23 @@ function TrendingAssets (): React.ReactElement {
           <Move direction='right' max={MAX_ASSETS_TO_MOVE} setMove={setMove} />
         </Stack>
       </Stack>
-      <Stack
-        alignItems='center'
-        direction='row'
-        sx={{
-          overflow: 'hidden',
-          width: 'fit-content'
-        }}
-      >
+      <Stack alignItems='center' direction='row' sx={{ overflowX: 'scroll', width: '100%' }}>
         <motion.div
           animate={{ x: offsetX }}
           style={{ display: 'flex' }}
           transition={{ damping: 30, stiffness: 300, type: 'spring' }}
         >
-          {trendingAssets?.map((asset, index) => {
-            const logoInfo = getLogo2(asset.genesisHash, asset.symbol);
-
-            return (
-              <Stack
-                direction='column'
-                key={index}
-                onMouseEnter={() => onMouseEnter(index)}
-                onMouseLeave={onMouseLeave}
-                ref={(el) => (el && (cardRefs.current[index] = el))}
-                sx={{
-                  bgcolor: hoveredIndex === index ? '#2D1E4A' : '#05091C',
-                  borderRadius: '14px',
-                  minWidth: '122px',
-                  mr: '5px',
-                  p: '15px',
-                  transform: hoveredIndex === index ? 'translateY(-2px)' : 'none',
-                  transition: 'transform 0.2s ease-in-out',
-                  width: 'fit-content'
-                }}
-              >
-                <AssetLogo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ width: 'fit-content' }} />
-                <Typography color='#EAEBF1' sx={{ mt: '10px', textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
-                  {asset.symbol} / {currency?.code}
-                </Typography>
-                <Stack direction='row'>
-                  <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-2'>
-                    {currency?.sign}{asset.value.toFixed(2)}
-                  </Typography>
-                  <DailyChange
-                    change={asset.change}
-                    iconSize={12}
-                    showHours={false}
-                    showPercentage
-                    style={{ marginLeft: '5px', padding: '0px 2px' }}
-                    textVariant='B-4'
-                  />
-                </Stack>
-              </Stack>
-            );
-          })}
+          {
+            trendingAssets?.map((asset, index) => {
+              return (
+                <Asset
+                  asset={asset}
+                  key={index}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  ref={(el) => (el && (cardRefs.current[index] = el))}
+                />
+              );
+            })}
         </motion.div>
       </Stack>
     </VelvetBox>
