@@ -130,6 +130,7 @@ function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
+  const title = t('Select your language');
   const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
@@ -140,7 +141,7 @@ function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
             TitleIcon={Translate}
             handleClose={handleClose}
             openMenu={openMenu}
-            title={t('Select your language')}
+            title={title}
           >
             <Content
               setPopup={setPopup}
@@ -150,7 +151,7 @@ function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
             onClose={handleClose}
             open={openMenu}
             style={{ minHeight: '400px', padding: '20px' }}
-            title={t('Select your language')}
+            title={title}
           >
             <Content
               setPopup={setPopup}

@@ -36,7 +36,7 @@ export default function useProfiles(account?: AccountJson): Profiles {
     const hasLedger = accounts.find(({ isHardware }) => isHardware);
 
     if (hasLedger) {
-      defaultProfiles.push('Ledger');
+      defaultProfiles.push('Hardware');
     }
 
     const hasWatchOnly = accounts.find(({ isExternal, isHardware, isQR }) => isExternal && !isQR && !isHardware);

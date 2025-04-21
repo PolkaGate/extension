@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { ArrowDropDown as ArrowDropDownIcon } from '@mui/icons-material';
 import { Box, Collapse, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -159,6 +158,7 @@ function TotalBalancePieChart({ setGroupedAssets }: Props): React.ReactElement {
 
       return acc;
     }, {} as Record<string, AssetsWithUiAndPrice[]>);
+
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
       const assetSample = groupedAssets[index][0];
       const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);

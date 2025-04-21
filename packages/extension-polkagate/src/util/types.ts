@@ -651,8 +651,10 @@ export interface Step {
 }
 
 interface PriceValue {
-  value: number,
-  change: number
+  value: number;
+  change: number;
+  genesisHash?: string;
+  symbol?: string;
 }
 
 export interface PricesType {

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Close } from '@mui/icons-material';
-import { Box, Divider, IconButton, Modal, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Modal, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
@@ -15,7 +15,7 @@ interface Props {
   open: boolean;
   onClose: () => void
   style?: React.CSSProperties;
-  title?:string;
+  title?: string;
   width?: number;
 }
 
@@ -107,23 +107,25 @@ export function DraggableModal ({ blurBackdrop = true, children, maxHeight = 740
           backgroundSize: 'cover'
         }}
       >
-        <IconButton
-          onClick={onClose}
-          sx={{
-            background: '#BFA1FF26',
-            borderRadius: '10px',
-            height: '36px',
-            left: '20px',
-            position: 'absolute',
-            width: '36px',
-            zIndex: 1
-          }}
-        >
-          <Close sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
-        </IconButton>
-        <Typography color='#EAEBF1' sx={{ textAlign: 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
-          {title}
-        </Typography>
+        <Grid alignItems='center' container item>
+          <IconButton
+            onClick={onClose}
+            sx={{
+              background: '#BFA1FF26',
+              borderRadius: '10px',
+              height: '36px',
+              left: '20px',
+              position: 'absolute',
+              width: '36px',
+              zIndex: 1
+            }}
+          >
+            <Close sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+          </IconButton>
+          <Typography color='#EAEBF1' sx={{ textAlign: 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+            {title}
+          </Typography>
+        </Grid>
         <Divider sx={{ bgcolor: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '90%' }} />
         {children}
       </Box>

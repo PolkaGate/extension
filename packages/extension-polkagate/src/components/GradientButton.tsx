@@ -111,7 +111,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
 
   const textStyle: React.CSSProperties = {
     transform: hovered ? 'translateX(-5px)' : '',
-    transition: 'all 500ms ease-out',
+    transition: 'all 500ms ease-out'
   };
 
   return (

@@ -11,12 +11,13 @@ import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountExternal } from '../../messaging';
-import { DEMO_ACCOUNT } from '../../util/constants';
+import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
 import Framework from './Framework';
+import { setStorage } from '../../util';
 
 export const ICON_BOX_WIDTH = '300px';
 
-function OrSeparator (): React.ReactElement {
+function OrSeparator(): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -30,7 +31,7 @@ function OrSeparator (): React.ReactElement {
   );
 }
 
-function Onboarding (): React.ReactElement {
+function Onboarding(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -43,7 +44,10 @@ function Onboarding (): React.ReactElement {
 
   const onExploreDemo = useCallback((): void => {
     createAccountExternal('Demo account', DEMO_ACCOUNT, POLKADOT_GENESIS)
-      .then(() => navigate('/'))
+      .then(() => {
+        setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+        navigate('/');
+      })
       .catch((error: Error) => {
         console.error(error);
       });
