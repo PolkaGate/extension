@@ -12,9 +12,9 @@ function MyDivider (): React.ReactElement {
   return (
     <Box
       sx={{
-        background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+        background: 'linear-gradient(180deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
         height: '24px',
-        mx: '3px',
+        mx: '4px',
         width: '1px'
       }}
     />
