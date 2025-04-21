@@ -123,7 +123,7 @@ function ProfileTabsFS (): React.ReactElement {
           />
         </Box>
       }
-      <Stack columnGap='20px' direction='row' ref={containerRef} sx={{ ml: '10px', overflowX: 'scroll', width: '500px' }}>
+      <Stack columnGap='20px' direction='row' ref={containerRef} sx={{ ml: '10px', overflowX: 'scroll', width: '100%' }}>
         {profilesToShow?.map((label, index) => (
           <Tab
             initialAccountList={initialAccountList}

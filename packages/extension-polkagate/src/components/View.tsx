@@ -69,9 +69,21 @@ const BodyTheme = createGlobalStyle<{ theme: Theme }>`
    background-color: ${(props) => props.theme.palette.background.default};
   }
   * {
-    scrollbar-width: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: ${(props) => props.theme.palette.label.primary} transparent;
+
     &::-webkit-scrollbar {
-      display: auto;
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: ${(props) => props.theme.palette.label.primary};
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
     }
   }
 `;
