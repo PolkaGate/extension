@@ -152,6 +152,7 @@ export { default as useUnSupportedNetwork } from './useUnSupportedNetwork';
 export { default as useValidatorApy } from './useValidatorApy';
 export { default as useValidators } from './useValidators';
 export { default as useValidatorsIdentities } from './useValidatorsIdentities';
+export { default as useValidatorsInformation } from './useValidatorsInformation';
 export { default as useValidatorSuggestion } from './useValidatorSuggestion';
 export { default as useYouHave } from './useYouHave';
 export { default as useYouHave2 } from './useYouHave2';
