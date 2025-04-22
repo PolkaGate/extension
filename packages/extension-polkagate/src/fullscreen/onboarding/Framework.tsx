@@ -4,7 +4,7 @@
 import { Box, Container, Grid, Link, Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { backgroundBlur } from '../../assets/img';
+import { onboardingBackground } from '../../assets/img';
 import { logoTransparent, polkagateVector } from '../../assets/logos';
 import { TwoToneText } from '../../components';
 import { useManifest, useTranslation } from '../../hooks';
@@ -19,7 +19,7 @@ interface Props {
   width?: string;
 }
 
-function Framework ({ children, width = '582px' }: Props): React.ReactElement {
+function Framework({ children, width = '582px' }: Props): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
 
@@ -40,11 +40,10 @@ function Framework ({ children, width = '582px' }: Props): React.ReactElement {
         </Stack>
         <Grid
           alignItems='flex-start' container sx={{
-            backgroundImage: `url(${backgroundBlur})`,
+            backgroundImage: `url(${onboardingBackground})`,
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
-            bgcolor: '#000000',
             borderRadius: '24px',
             height: '764px',
             p: '7px',
@@ -68,14 +67,14 @@ function Framework ({ children, width = '582px' }: Props): React.ReactElement {
               </Typography>
             </Grid>
           </Grid>
-          <Grid container item sx={{ borderRadius: '24px', height: '693px', m: '40px 0 0 100px', position: 'relative', width }}>
+          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '40px 0 0 100px', position: 'relative', width }}>
             {children}
           </Grid>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: '7px', width: '50%' }}>
-            <Socials buttonSize={24} iconSize={13.5} style={{ width: 'fit-content', pr: '50px' }} />
+            <Socials buttonSize={24} iconSize={13.5} style={{ pr: '50px', width: 'fit-content' }} />
             <Grid columnGap='40px' container item width='fit-content'>
               <NeedHelp />
-              <Link color='#674394' href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ cursor: 'pointer' }} target='_blank' variant='B-5'>
+              <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer' }} target='_blank' underline='none' variant='B-5'>
                 {t('Privacy & Security')}
               </Link>
               <Typography color='#674394' variant='B-5'>

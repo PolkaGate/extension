@@ -149,7 +149,6 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
             chain={chain}
             disabled
             label={'Depositor'}
-            showIdenticon
             style={{
               m: '15px auto 0',
               width: '98%'
@@ -161,7 +160,6 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
             chain={chain}
             label={'Root'}
             setAddress={setNewRootAddress}
-            showIdenticon
             style={{
               m: '15px auto 0',
               width: '98%'
@@ -173,7 +171,6 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
             chain={chain}
             label={t('Nominator')}
             setAddress={setNewNominatorAddress}
-            showIdenticon
             style={{
               m: '15px auto 0',
               width: '98%'
@@ -185,7 +182,6 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
             chain={chain}
             label={t('Bouncer')}
             setAddress={setNewBouncerAddress}
-            showIdenticon
             style={{
               m: '15px auto 10px 0',
               width: '98%'
@@ -238,7 +234,6 @@ export default function Edit({ api, chain, changes, onClose, pool, setChanges, s
             chain={chain}
             label={t('Payee')}
             setAddress={setNewCommissionPayee}
-            showIdenticon
             style={{ m: '15px auto 0' }}
           />
         </>

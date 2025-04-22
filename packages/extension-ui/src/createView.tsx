@@ -9,7 +9,7 @@ import { HashRouter } from 'react-router-dom';
 
 import View from '@polkadot/extension-polkagate/src/components/View';
 
-export default function createView(Entry: React.ComponentType, rootId = 'root'): void {
+export default function createView (Entry: React.ComponentType, rootId = 'root'): void {
   const rootElement = document.getElementById(rootId);
 
   if (!rootElement) {

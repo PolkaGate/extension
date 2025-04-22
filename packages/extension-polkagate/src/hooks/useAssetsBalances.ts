@@ -248,10 +248,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
   }, [addresses]);
 
   useEffect(() => {
-    if (!FETCH_PATHS) {
-      return;
-    }
-
     if (!addresses) {
       console.info('useAssetsBalances: no addresses to fetch assets!');
 
@@ -271,7 +267,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     return () => {
       unsubscribe();
     };
-  }, [FETCH_PATHS, addresses]);
+  }, [addresses]);
 
   const handleRequestCount = useCallback((functionName: string) => {
     if (FUNCTIONS.includes(functionName) && workerCallsCount.current) {

@@ -7,7 +7,8 @@ export default [
   ...baseConfig,
   {
     rules: {
-      'react/jsx-max-props-per-line': 'off'
+      'import/extensions': 'off',
+      'react/jsx-max-props-per-line': 'off',
     }
   }
 ];

@@ -650,9 +650,11 @@ export interface Step {
   style?: SxProps<Theme> | undefined;
 }
 
-interface PriceValue {
-  value: number,
-  change: number
+export interface PriceValue {
+  value: number;
+  change: number;
+  genesisHash?: string;
+  symbol?: string;
 }
 
 export interface PricesType {

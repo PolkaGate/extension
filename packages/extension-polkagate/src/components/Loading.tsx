@@ -1,13 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { Theme } from '@mui/material';
-
-import { Box, Grid, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { logoMotionDark, logoMotionLight } from '../assets/logos';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useAutoLockPeriod } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
@@ -17,6 +13,7 @@ import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPasswo
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
 import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD } from '../util/constants';
+import FlyingLogo from './FlyingLogo';
 
 interface Props {
   children?: React.ReactNode;
@@ -96,25 +93,13 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
   });
 };
 
-const MAX_WAITING_TIME = 1000; // ms
-
-const FlyingLogo = ({ theme }: { theme: Theme }) => (
-  <Grid alignItems='center' container item justifyContent='center' sx={{ height: '100vh', width: '100%' }}>
-    <Box
-      component='img'
-      src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
-      sx={{ height: 'fit-content', width: '100%' }}
-    />
-  </Grid>
-);
+const MAX_WAITING_TIME = 1500; // ms
 
 export default function Loading({ children }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
   const autoLockPeriod = useAutoLockPeriod();
-
-  const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const isPopupOpenedByExtension = useIsExtensionPopup();
 
+  const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const [isFlying, setIsFlying] = useState(true);
   const [step, setStep] = useState<number>();
 
@@ -222,7 +207,7 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
           }
           <Grid container item>
             {isFlying && isPopupOpenedByExtension
-              ? <FlyingLogo theme={theme} />
+              ? <FlyingLogo />
               : <>
                 {step === STEPS.ASK_TO_SET_PASSWORD &&
                   <AskToSetPassword

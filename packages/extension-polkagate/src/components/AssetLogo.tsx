@@ -14,12 +14,13 @@ interface Props {
   chainName?: string;
   genesisHash?: string | undefined;
   logo?: string | undefined;
-  subLogo: string | undefined;
+  subLogo?: string | undefined;
   subLogoPosition?: string;
   logoRoundness?: string;
+  style?: React.CSSProperties;
 }
 
-function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, logoRoundness, subLogo, subLogoPosition }: Props): React.ReactElement<Props> {
+function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, logoRoundness, style, subLogo, subLogoPosition }: Props): React.ReactElement<Props> {
   const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find((chain) => chain.value === genesisHash)?.text;
@@ -42,6 +43,7 @@ function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash,
           logo={logo || subLogo}
           logoRoundness={logoRoundness}
           size={Number(assetSize.replace('px', ''))}
+          style={style}
         />
       }
     </>

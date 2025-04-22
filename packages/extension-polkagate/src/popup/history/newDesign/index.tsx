@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { DropdownOption, TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Tab, Tabs, Typography } from '@mui/material';

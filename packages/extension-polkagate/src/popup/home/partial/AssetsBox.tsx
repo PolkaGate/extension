@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { safeBox, safeBoxLight } from '../../../assets/icons';
-import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useSelectedChains, useTranslation } from '../../../hooks';
+import { AssetNull } from '../../../components';
+import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
@@ -19,24 +19,6 @@ export enum TAB {
   TOKENS = 'tokens',
   NFTS = 'nfts'
 }
-
-const AssetNull = () => {
-  const { t } = useTranslation();
-  const isDark = useIsDark();
-
-  return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'grid', justifyItems: 'center', py: '33px', width: '100%' }}>
-      <Box
-        component='img'
-        src={(isDark ? safeBox : safeBoxLight) as string}
-        sx={{ width: '135px' }}
-      />
-      <Typography pt='10px' variant='B-2'>
-        {t("You don't have any tokens yet")}
-      </Typography>
-    </Container>
-  );
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },

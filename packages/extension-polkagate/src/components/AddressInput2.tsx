@@ -15,7 +15,7 @@ import settings from '@polkadot/ui-settings';
 
 import { useTranslation } from '../hooks';
 import { VaadinIcon } from '../components';
-import QrScanner from '../popup/import/addWatchOnly/QrScanner';
+import QrScanner from '../popup/import/addWatchOnlyFullScreen/QrScanner';
 import isValidAddress from '../util/validateAddress';
 import Identicon from './Identicon';
 import Label from './Label';

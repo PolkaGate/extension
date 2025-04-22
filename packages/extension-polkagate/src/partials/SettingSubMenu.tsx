@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Collapse, Divider, Grid, useTheme } from '@mui/material';
@@ -13,7 +12,7 @@ import { ActionContext, Checkbox2, MenuItem, Select, SelectIdenticonTheme, Vaadi
 import { getStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { setNotification } from '../messaging';
-import getLanguageOptions from '../util/getLanguageOptions';
+import { getLanguageOptions } from '../util/getLanguageOptions';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;
@@ -22,7 +21,7 @@ interface Props {
   onChange: () => void;
 }
 
-export default function SettingSubMenu({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
+export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, setTestnetEnabledChecked, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);

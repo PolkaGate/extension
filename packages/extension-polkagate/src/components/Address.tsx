@@ -139,14 +139,14 @@ function Address ({ address, backgroundColor, check, genesisHash, handleCheck, m
           />
         </Grid>
       }
-      <Grid item width='40px'>
+      <Grid item width='42px'>
         {_address &&
           <PolkaGateIdenticon
             address={_address}
             size={36}
           />}
       </Grid>
-      <Grid container direction='row' justifyContent='space-between' item width={`calc(${showCheckbox ? 95 : 100}% - 40px)`} pl='10px'>
+      <Grid alignItems='center' container direction='row' item justifyContent='space-between' pl='8px' width={`calc(${showCheckbox ? 95 : 100}% - 42px)`}>
         <Stack direction='column' width='inherit'>
           <Typography maxWidth={`calc(${showCheckbox ? 95 : 100}% - 40px)`} overflow='hidden' textAlign='left' variant='B-2' whiteSpace='nowrap'>
             {name || accountName || t('<unknown>')}

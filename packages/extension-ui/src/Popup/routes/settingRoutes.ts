@@ -32,7 +32,7 @@ export const SETTINGS_ROUTES: RouteConfig[] = [
   },
   {
     Component: ExtensionSettings,
-    path: '/settings-extension/',
+    path: '/settings-extension/*',
     trigger: 'settings-extension'
   },
   {

@@ -1,8 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { lazy, useMemo } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import type { TabProps } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
+
+import React, { lazy, useEffect, useMemo } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
@@ -130,6 +132,21 @@ const ALL_ROUTES: RouteConfig[] = [
 ];
 
 export default function AppRoutes () {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (message: TabProps, _sender: unknown, sendResponse: (response: unknown) => void) => {
+      if (message?.type === 'NAVIGATE_TO') {
+        navigate(`/${message.payload}`);
+        sendResponse({ success: true });
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(handler);
+
+    return () => chrome.runtime.onMessage.removeListener(handler);
+  }, [navigate]);
+
   const routeComponents = useMemo(() =>
     ALL_ROUTES.map(({ Component, path, props, trigger }) => (
       <Route

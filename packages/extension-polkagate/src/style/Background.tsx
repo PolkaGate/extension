@@ -1,9 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { backgroundLogoDarkMode, backgroundLogoLightMode } from '../assets/logos';
 import { useIsDark } from '../hooks';
@@ -68,6 +67,7 @@ interface Props {
 
 function Background ({ id, style }: Props): React.ReactNode {
   const isDark = useIsDark();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <Box id={id} sx={{ height: '220px', inset: 0, position: 'absolute', ...style }}>
@@ -77,9 +77,13 @@ function Background ({ id, style }: Props): React.ReactNode {
         <Smoother />
         <Box
           component='img'
-          src={ (isDark ? backgroundLogoDarkMode : backgroundLogoLightMode) as string}
-          sx={backgroundImageStyle}
-        />
+          onLoad={() => setImageLoaded(true)}
+          src={(isDark ? backgroundLogoDarkMode : backgroundLogoLightMode) as string}
+          sx={{
+            opacity: imageLoaded ? 1 : 0,
+            transition: 'opacity 4s ease-in-out',
+            ...backgroundImageStyle
+          }} />
       </Container>
       <FadeOut />
     </Box>

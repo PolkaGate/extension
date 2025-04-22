@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 
 import { Grid, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
@@ -10,6 +9,9 @@ import React, { useCallback, useState } from 'react';
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
 })<{ hasError?: boolean }>(({ hasError, theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
@@ -41,12 +43,12 @@ const StyledTextField = styled(TextField, {
     borderRadius: '12px',
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
-    marginTop: '10px',
+    marginTop: '5px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  '& input': {
+    autocomplete: 'off'
   },
   '& input::placeholder': {
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
@@ -57,7 +59,7 @@ const StyledTextField = styled(TextField, {
 }));
 
 interface Props {
-  Icon: Icon;
+  Icon?: Icon;
   focused?: boolean;
   iconSize?: number;
   onEnterPress?: () => void;
@@ -67,7 +69,7 @@ interface Props {
   title?: string;
 }
 
-export default function MyTextField({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -103,6 +105,7 @@ export default function MyTextField({ Icon, focused = false, iconSize = 22, onEn
             </InputAdornment>
           )
         }}
+        autoComplete='off'
         autoFocus={focused}
         fullWidth
         onBlur={toggle}

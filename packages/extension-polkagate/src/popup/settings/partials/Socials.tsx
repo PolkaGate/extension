@@ -9,14 +9,15 @@ import { Discord, Docs, Email, Github, Web, XIcon, YoutubeIcon } from '../icons'
 import SocialIcon from './SocialIcon';
 
 interface Props {
-  short?: boolean;
-  label?: string;
   buttonSize?: number;
+  columnGap?: string;
   iconSize?: number;
+  label?: string;
+  short?: boolean;
   style?: SxProps;
 }
 
-export default function Socials ({ buttonSize, iconSize = 18, label, short, style = {} }: Props): React.ReactElement {
+export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18, label, short, style = {} }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
 
@@ -34,7 +35,7 @@ export default function Socials ({ buttonSize, iconSize = 18, label, short, styl
         >
           {label}
         </Typography>}
-      <Grid columnGap='8px' container item justifyContent={short ? 'flex-start' : 'center'}>
+      <Grid columnGap={columnGap} container item justifyContent={short ? 'flex-start' : 'center'}>
         <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} />
         <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize - 2}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
         <SocialIcon Icon={<Discord color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://discord.gg/gsUrreJh' size={buttonSize} />

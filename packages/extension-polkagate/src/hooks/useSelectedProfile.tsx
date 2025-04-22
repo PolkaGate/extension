@@ -4,15 +4,16 @@
 import { useEffect, useState } from 'react';
 
 import { getStorage, watchStorage } from '../components/Loading';
+import { PROFILE_TAGS } from '../util/constants';
 
-export default function useSelectedProfile(): string | undefined | null {
+export default function useSelectedProfile (): string | undefined | null {
   const [selectedProfile, setSelectedProfile] = useState<string | null>();
 
   useEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
     getStorage('profile')
       .then((res) => {
-        setSelectedProfile(res as string | undefined ?? null);
+        setSelectedProfile(res as string | undefined ?? PROFILE_TAGS.ALL);
       })
       .catch(console.error);
 

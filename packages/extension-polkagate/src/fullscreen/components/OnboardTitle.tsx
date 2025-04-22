@@ -13,10 +13,10 @@ interface Props {
   url?: string;
   label: string;
   labelPartInColor?: string;
-  onBack?: () => void;
+  onBack?: () => unknown;
 }
 
-function OnboardTitle({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
+function OnboardTitle ({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
   const isDark = useIsDark();
   const navigate = useNavigate();
 

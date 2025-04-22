@@ -247,6 +247,14 @@ export const PROFILE_COLORS = [
   { light: '#FCF0CC', dark: '#5F4842' },
 ];
 
+export const PROFILE_TAGS = {
+  ALL: 'All',
+  LEDGER: 'Hardware',
+  LOCAL: 'Local',
+  QR_ATTACHED: 'QR-attached',
+  WATCH_ONLY: 'Watch-only'
+};
+
 export const AUTO_MODE = {
   text: 'Auto Mode',
   value: 'AutoMode'
