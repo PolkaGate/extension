@@ -6,20 +6,21 @@ import type { INumber } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Stack, Typography, useTheme } from '@mui/material';
-import React from 'react';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { Container, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import React, { useCallback } from 'react';
 
 import { FormatBalance2 } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';
+import ValidatorDetail from './ValidatorDetail';
 
-interface ValidatorInfoProp {
+interface ValidatorIdentityProp {
   validatorInfo: ValidatorInformation;
-  genesisHash?: string;
 }
 
-const ValidatorIdentity = ({ validatorInfo }: ValidatorInfoProp) => {
+const ValidatorIdentity = ({ validatorInfo }: ValidatorIdentityProp) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row' }}>
       <PolkaGateIdenticon
@@ -80,7 +81,13 @@ const ValidatorStakingInfo = ({ amount, decimal, text, title, token }: Validator
   );
 };
 
-const ValidatorInfo = ({ genesisHash, validatorInfo }: ValidatorInfoProp) => {
+interface ValidatorInfoProp {
+  validatorInfo: ValidatorInformation;
+  genesisHash: string;
+  onDetailClick: () => void;
+}
+
+const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorInfoProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -89,12 +96,17 @@ const ValidatorInfo = ({ genesisHash, validatorInfo }: ValidatorInfoProp) => {
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
         <ValidatorIdentity validatorInfo={validatorInfo} />
       </Container>
-      <GradientDivider style={{ mt: '2px' }} />
-      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-around', p: '4px' }}>
-        <ValidatorStakingInfo amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
-        <ValidatorStakingInfo text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
-        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */}
-        <ValidatorStakingInfo text={validatorInfo.exposurePaged.others.length.toString()} title={t('Nominators')} />
+      <GradientDivider style={{ my: '4px' }} />
+      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
+        <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+          <ValidatorStakingInfo amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
+          <ValidatorStakingInfo text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */}
+          <ValidatorStakingInfo text={validatorInfo.exposurePaged.others.length.toString()} title={t('Nominators')} />
+        </Container>
+        <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
+          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} />
+        </IconButton>
       </Container>
     </Stack>
   );
@@ -106,15 +118,28 @@ interface NominatorsTableProp {
 }
 
 export default function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+  const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
+
+  const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
+    setValidatorDetail(validatorInfo);
+  }, []);
+
   return (
-    <Stack direction='column' sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'scroll', rowGap: '4px', width: '100%' }}>
-      {validatorsInformation?.map((validatorInfo, index) => (
-        <ValidatorInfo
-          genesisHash={genesisHash}
-          key={index}
-          validatorInfo={validatorInfo}
-        />
-      ))}
-    </Stack>
+    <>
+      <Stack direction='column' sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'scroll', rowGap: '4px', width: '100%' }}>
+        {validatorsInformation?.map((validatorInfo, index) => (
+          <ValidatorInfo
+            genesisHash={genesisHash}
+            key={index}
+            onDetailClick={toggleValidatorDetail(validatorInfo)}
+            validatorInfo={validatorInfo}
+          />
+        ))}
+      </Stack>
+      <ValidatorDetail
+        handleClose={toggleValidatorDetail(undefined)}
+        validatorDetail={validatorDetail}
+      />
+    </>
   );
 }
