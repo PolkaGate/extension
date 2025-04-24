@@ -17,8 +17,6 @@ export default function NominationsSetting (): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
-  // const { decimal, token } = useChainInfo(genesisHash, true);
-  // const formatted = useFormatted3(selectedAccount?.address, genesisHash);
 
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
@@ -39,8 +37,6 @@ export default function NominationsSetting (): React.ReactElement {
 
     return filtered;
   }, [nominatedValidatorsIds, validatorsInfo]);
-
-  console.log('nominatedValidatorsInformation:', nominatedValidatorsInformation);
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
 

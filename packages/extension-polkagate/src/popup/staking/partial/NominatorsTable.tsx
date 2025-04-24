@@ -51,7 +51,7 @@ interface ValidatorStakingInfoProps {
   amount?: string | BN | Compact<INumber> | null | undefined
 }
 
-const ValidatorStakingInfo = ({ amount, decimal, text, title, token }: ValidatorStakingInfoProps) => {
+export const ValidatorStakingInfo = ({ amount, decimal, text, title, token }: ValidatorStakingInfoProps) => {
   const theme = useTheme();
 
   return (
@@ -102,7 +102,7 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
           <ValidatorStakingInfo amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
           <ValidatorStakingInfo text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
           {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */}
-          <ValidatorStakingInfo text={validatorInfo.exposurePaged.others.length.toString()} title={t('Nominators')} />
+          <ValidatorStakingInfo text={validatorInfo.exposureMeta.nominatorCount} title={t('Nominators')} />
         </Container>
         <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
           <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} />
@@ -137,6 +137,7 @@ export default function NominatorsTable ({ genesisHash, validatorsInformation }:
         ))}
       </Stack>
       <ValidatorDetail
+        genesisHash={genesisHash}
         handleClose={toggleValidatorDetail(undefined)}
         validatorDetail={validatorDetail}
       />
