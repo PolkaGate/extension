@@ -16,12 +16,12 @@ import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenDetailBoxProp {
   Icon: Icon;
-  iconVariant?:string;
+  iconVariant?: 'Bulk' | 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'TwoTone' | undefined;
   amount: BN | undefined;
   background?: string;
   decimal: number | undefined;
   description?: React.ReactNode;
-  iconSize?:string | number;
+  iconSize?: string | number;
   onClick?: () => void;
   priceId: string | undefined;
   title: string;
