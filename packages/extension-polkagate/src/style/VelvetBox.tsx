@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, styled, type SxProps, type Theme } from '@mui/material';
+import { Container, styled } from '@mui/material';
 import React from 'react';
 
 import { useIsDark } from '../hooks';
@@ -21,10 +21,10 @@ const GlowBall = styled('div')({
 
 interface VelvetBoxProp {
   children: React.ReactNode;
-  style?: SxProps<Theme>;
+  style?: React.CSSProperties;
 }
 
-function VelvetBox ({ children, style }: VelvetBoxProp) {
+function VelvetBox ({ children, style = {} }: VelvetBoxProp) {
   const isDark = useIsDark();
 
   return (

@@ -26,7 +26,6 @@ function Layout ({ children, style = {} }: Props): React.ReactElement {
             backgroundRepeat: 'no-repeat',
             borderRadius: '32px',
             display: 'block',
-            // height: 'inherit',
             width: '1100px'
           }}
         >

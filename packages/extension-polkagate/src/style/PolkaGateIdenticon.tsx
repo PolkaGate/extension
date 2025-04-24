@@ -6,9 +6,10 @@ import React, { useMemo } from 'react';
 interface Props {
   address: string;
   size?: number;
+  style?: React.CSSProperties;
 }
 
-const PolkaGateIdenticon = ({ address, size = 32 }: Props) => {
+const PolkaGateIdenticon = ({ address, size = 32, style={} }: Props) => {
   const hashBytes = useMemo(() => {
     const arr = new Uint8Array(32);
 
@@ -146,7 +147,7 @@ const PolkaGateIdenticon = ({ address, size = 32 }: Props) => {
   }, [size, params]);
 
   return (
-    <div style={{ alignItems: 'center', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px` }}>
+    <div style={{ alignItems: 'center', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px`, ...style }}>
       <svg className='rounded-full' height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
         <defs>
           <radialGradient id={`bg-${params.hue}`}>

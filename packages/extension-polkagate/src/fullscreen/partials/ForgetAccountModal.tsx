@@ -14,7 +14,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
 import { useAlerts, useTranslation } from '../../hooks';
 import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {

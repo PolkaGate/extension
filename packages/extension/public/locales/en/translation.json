@@ -1672,5 +1672,10 @@
   "Hardware": "",
   "Balance Display Currency": "",
   "Hold the QR code in front of the ": "",
-  "You don't have any valuable tokens yet": ""
+  "You don't have any valuable tokens yet": "",
+  "Account has proxy on {{chains}}.": "",
+  "Account is recoverable on {{chains}}.": "",
+  "Internet is disconnected ...": "",
+  "your address": "",
+  "Your {{chainName}} address": ""
 }

@@ -179,7 +179,7 @@ function DetailCard({ historyItem }: Props) {
   }, [historyItem]);
 
   return (
-    <VelvetBox style={{ p: '4px' }}>
+    <VelvetBox style={{ padding: '4px' }}>
       <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', p: '12px 18px', width: '100%' }}>
         {historyItem.calls?.length && <DisplayCalls calls={historyItem.calls} />}
         {items.map((item, index) => {

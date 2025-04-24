@@ -118,7 +118,7 @@ function Tokens(): React.ReactElement {
   const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
 
   const isMigrationEnabled = useMemo(() => MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-  const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '0'), token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+  const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
   const { lockedReasonLoading, reservedReasonLoading } = useMemo(() => {
     const reasons = Object.values(reservedReason);

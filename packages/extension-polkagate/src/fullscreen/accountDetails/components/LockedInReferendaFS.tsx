@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { UnlockInformationType } from '..';
+import type { UnlockInformationType } from '../LeftColumn';
 
 import { faLock, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +11,7 @@ import React, { useCallback } from 'react';
 import { FormatPrice, ShowBalance } from '../../../components';
 import { useAnimateOnce, useInfo, useLockedInReferenda, useTranslation } from '../../../hooks';
 import { TIME_TO_SHAKE_ICON } from '../../../util/constants';
-import { popupNumbers } from '..';
+import { popupNumbers } from '../index copy';
 
 interface DisplayBalanceProps {
   address: string | undefined;
@@ -22,7 +21,7 @@ interface DisplayBalanceProps {
   setUnlockInformation: React.Dispatch<React.SetStateAction<UnlockInformationType | undefined>>;
 }
 
-export default function LockedInReferendaFS({ address, price, refreshNeeded, setDisplayPopup, setUnlockInformation }: DisplayBalanceProps): React.ReactElement {
+export default function LockedInReferendaFS ({ address, price, refreshNeeded, setDisplayPopup, setUnlockInformation }: DisplayBalanceProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

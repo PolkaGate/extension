@@ -7,7 +7,7 @@ import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemT
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../components';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/components/DraggableModal';
 import { useTranslation } from '../../hooks';
 
 interface Props {

@@ -17,7 +17,7 @@ import { useAccountDisplay, useBalances, useEstimatedFee, useInfo, useProxies, u
 import { ThroughProxy } from '../../../../partials';
 import { getValue } from '../../../../popup/account/util';
 import { PROXY_TYPE } from '../../../../util/constants';
-import { DraggableModal } from '../../components/DraggableModal';
+import { DraggableModal } from '../../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { type Track } from '../../utils/types';

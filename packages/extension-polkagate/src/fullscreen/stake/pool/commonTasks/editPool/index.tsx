@@ -9,7 +9,7 @@ import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 
 import { useFormatted, useTranslation } from '../../../../../hooks';

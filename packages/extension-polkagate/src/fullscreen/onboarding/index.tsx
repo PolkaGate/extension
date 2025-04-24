@@ -11,13 +11,13 @@ import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountExternal } from '../../messaging';
+import { setStorage } from '../../util';
 import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
 import Framework from './Framework';
-import { setStorage } from '../../util';
 
 export const ICON_BOX_WIDTH = '300px';
 
-function OrSeparator(): React.ReactElement {
+function OrSeparator (): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -31,7 +31,7 @@ function OrSeparator(): React.ReactElement {
   );
 }
 
-function Onboarding(): React.ReactElement {
+function Onboarding (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();

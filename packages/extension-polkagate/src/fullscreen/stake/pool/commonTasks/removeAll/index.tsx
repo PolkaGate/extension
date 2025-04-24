@@ -14,7 +14,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { BN_ZERO } from '@polkadot/util';
 

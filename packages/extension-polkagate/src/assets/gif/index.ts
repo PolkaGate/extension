@@ -4,6 +4,7 @@
 // @ts-nocheck
 
 export { default as celebration } from './Celebration.gif';
+export { default as check } from './check.gif';
 export { default as handWave } from './handWave.gif';
 export { default as info } from './info.gif';
 export { default as loader } from './loader.png';

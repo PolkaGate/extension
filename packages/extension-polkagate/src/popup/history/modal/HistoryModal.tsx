@@ -9,7 +9,7 @@ import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Progress } from '../../../components';
-import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../../fullscreen/components/DraggableModal';
 import SimpleModalTitle from '../../../fullscreen/partials/SimpleModalTitle';
 import { useInfo, useTranslation } from '../../../hooks';
 import HistoryTabs, { TAB_MAP } from '../HistoryTabs';

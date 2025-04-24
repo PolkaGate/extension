@@ -11,7 +11,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Identity, ShowBalance, VaadinIcon } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
-import { DraggableModal } from '../../components/DraggableModal';
+import { DraggableModal } from '../../../components/DraggableModal';
 import { AbstainVoteType, VoteType } from '../../utils/helpers';
 import { getVoteCapital, getVoteValue } from '.';
 

@@ -140,7 +140,7 @@ function TrendingAssets (): React.ReactElement {
   const offsetX = -cardWidths.slice(0, indexMove).reduce((sum, w) => sum + w + 5, 0); // include margin
 
   return (
-    <VelvetBox style={{ m: '0 8px', minHeight: '150px', overflow: 'hidden' }}>
+    <VelvetBox style={{ margin: '0 8px', minHeight: '150px', overflow: 'hidden' }}>
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '45px', mb: '4px', px: '10px', width: '100%' }}>
         <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#97949B26', borderRadius: '9px', height: '24px', px: '5px' }}>
           <AlignBottom color='#97949B' size='18' variant='Bulk' />

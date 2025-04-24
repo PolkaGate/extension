@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { BN } from '@polkadot/util';
 
 import { Grid, styled, Typography } from '@mui/material';
@@ -18,8 +17,10 @@ import { ColumnAmounts } from './ColumnAmounts';
 interface TokenDetailBoxProp {
   Icon: Icon;
   amount: BN | undefined;
+  background?: string;
   decimal: number | undefined;
   description?: React.ReactNode;
+  iconSize?:string | number;
   onClick?: () => void;
   priceId: string | undefined;
   title: string;
@@ -27,14 +28,14 @@ interface TokenDetailBoxProp {
 }
 const DISABLED_COLOR = '#674394'; // should be added to theme
 
-const TokenDetailBoxContainer = styled(Grid)(({ clickable }: { clickable: boolean }) => ({
+const TokenDetailBoxContainer = styled(Grid)(({ background, clickable }: { background: string, clickable: boolean }) => ({
   ':hover': clickable
     ? {
       background: '#2D1E4A',
       transform: 'translateY(-4px)'
     }
     : {},
-  background: '#2D1E4A4D',
+  background,
   borderRadius: '14px',
   cursor: clickable ? 'pointer' : 'default',
   display: 'grid',
@@ -44,7 +45,7 @@ const TokenDetailBoxContainer = styled(Grid)(({ clickable }: { clickable: boolea
   transition: 'all 250ms ease-out'
 }));
 
-function TokenDetailBox ({ Icon, amount, decimal, description, onClick, priceId, title, token }: TokenDetailBoxProp) {
+function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize='21', onClick, priceId, title, token }: TokenDetailBoxProp) {
   const pricesInCurrency = usePrices();
   const toolTipRef = useRef(null);
 
@@ -54,9 +55,9 @@ function TokenDetailBox ({ Icon, amount, decimal, description, onClick, priceId,
 
   return (
     <>
-      <TokenDetailBoxContainer clickable={clickable} onClick={onClick}>
+      <TokenDetailBoxContainer background={background} clickable={clickable} onClick={onClick}>
         <Grid container direction='column' gap='8px' item>
-          <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size='21' variant='Bulk' />
+          <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size={iconSize} variant='Bulk' />
           <Grid alignItems='center' container item sx={{ columnGap: '6px' }}>
             <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} variant='B-1'>
               {title}

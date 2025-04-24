@@ -5,11 +5,10 @@ import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
-import { FormatPrice } from '../../../components';
+import { AccountVisibilityToggler, FormatPrice } from '../../../components';
 import { useAccountAssets, useIsDark, useIsHideNumbers, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { GlowBox } from '../../../style';
-import AccountVisibilityToggler from './AccountVisibilityToggler';
 import Currency from './Currency';
 import DailyChange from './DailyChange';
 

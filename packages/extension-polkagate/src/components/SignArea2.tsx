@@ -19,7 +19,7 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
 import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
 import Qr from '../popup/signing/Request/Qr';

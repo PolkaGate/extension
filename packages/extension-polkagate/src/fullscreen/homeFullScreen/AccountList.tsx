@@ -1,18 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useMemo, useRef } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { FadeOnScroll } from '../../components';
-import { useAccountsOrder, useProfileAccounts, useSelectedProfile, useTranslation } from '../../hooks';
+import { useAccountsOrder, useProfileAccounts, useSelectedProfile } from '../../hooks';
 import { VelvetBox } from '../../style';
-import Account from './Account';
+import { AccountProfileLabel } from '../components';
+import AccountRow from './AccountRow';
 import ProfileTabsFS from './ProfileTabsFS';
-import useProfileInfo from './useProfileInfo';
 
 export const DEFAULT_PROFILE_TAGS = {
   LEDGER: 'Hardware',
@@ -21,21 +21,7 @@ export const DEFAULT_PROFILE_TAGS = {
   WATCH_ONLY: 'Watch-only'
 };
 
-function AccountsProfileLabel({ label }: { label: string }): React.ReactElement {
-  const { t } = useTranslation();
-  const { Icon, bgcolor, color } = useProfileInfo(label);
-
-  return (
-    <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' sx={{ bgcolor, borderRadius: '9px', height: '24px', m: '10px 0 7px 10px', p: '0 7px 0 5px', width: 'fit-content' }}>
-      <Icon color={color} size='18' variant='Bulk' />
-      <Typography color={color} variant='B-2'>
-        {t(label)}
-      </Typography>
-    </Stack>
-  );
-}
-
-function AccountList(): React.ReactElement {
+function AccountList (): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
   const selectedProfile = useSelectedProfile();
   const profileAccounts = useProfileAccounts(initialAccountList);
@@ -63,7 +49,7 @@ function AccountList(): React.ReactElement {
   return (
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
       <ProfileTabsFS />
-      <VelvetBox style={{ mt: '5px' }}>
+      <VelvetBox style={{ marginTop: '5px' }}>
         <Stack ref={scrollContainerRef} style={{ maxHeight: '595px', minHeight: '100px', overflowY: 'scroll', position: 'relative' }}>
           {
             Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => (
@@ -101,9 +87,9 @@ function AccountList(): React.ReactElement {
                         >
                           {
                             isFirstAccount &&
-                            <AccountsProfileLabel label={label} />
+                            <AccountProfileLabel label={label} />
                           }
-                          <Account account={account.account} />
+                          <AccountRow account={account.account} />
                         </Stack>
                       </motion.div>
                     );

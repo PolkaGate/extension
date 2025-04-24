@@ -96,7 +96,7 @@ export default function EarningOptions(): React.ReactElement {
             placeholder='🔍 Search Token'
             style={{ padding: '4%' }}
           />
-          <VelvetBox style={{ minHeight: '63px', mx: '4%', width: '92%' }}>
+          <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
               {filteredToken?.map((token, index) => {
                 const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;

@@ -7,7 +7,7 @@ import QRCode from 'qrcode.react';
 import React, { useCallback } from 'react';
 
 import { Identity, PButton } from '../../components';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/components/DraggableModal';
 import SimpleModalTitle from '../../fullscreen/partials/SimpleModalTitle';
 import { useInfo, useTranslation } from '../../hooks';
 
