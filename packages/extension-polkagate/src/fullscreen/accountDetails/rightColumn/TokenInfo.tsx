@@ -6,7 +6,7 @@ import type { BN } from '@polkadot/util';
 import type { BalancesInfo, FetchedBalance } from '../../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
-import { Coin, Lock1, Trade } from 'iconsax-react';
+import { Coin, Lock1, Trade, UserOctagon } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import ReservedLockedPopup from '@polkadot/extension-polkagate/src/popup/tokens/partial/ReservedLockedPopup';
@@ -266,11 +266,12 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             {
               stakings?.hasPoolStake &&
             <TokenDetailBox
-              Icon={Coin}
+              Icon={UserOctagon}
               amount={stakings.maybePoolStake}
               background='#05091C'
               decimal={token?.decimal}
               iconSize='20'
+              iconVariant='Bold'
               onClick={noop}
               priceId={token?.priceId}
               title={t('Pool Staked')}
@@ -280,11 +281,12 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             {
               stakings?.hasSoloStake &&
             <TokenDetailBox
-              Icon={Coin}
+              Icon={UserOctagon}
               amount={stakings.maybeSoloStake}
               background='#05091C'
               decimal={token?.decimal}
               iconSize='20'
+              iconVariant='Bold'
               onClick={noop}
               priceId={token?.priceId}
               title={t('Solo Staked')}

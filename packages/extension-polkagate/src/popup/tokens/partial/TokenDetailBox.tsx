@@ -16,6 +16,7 @@ import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenDetailBoxProp {
   Icon: Icon;
+  iconVariant?:string;
   amount: BN | undefined;
   background?: string;
   decimal: number | undefined;
@@ -45,7 +46,7 @@ const TokenDetailBoxContainer = styled(Grid)(({ background, clickable }: { backg
   transition: 'all 250ms ease-out'
 }));
 
-function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize='21', onClick, priceId, title, token }: TokenDetailBoxProp) {
+function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize = '21', iconVariant, onClick, priceId, title, token }: TokenDetailBoxProp) {
   const pricesInCurrency = usePrices();
   const toolTipRef = useRef(null);
 
@@ -57,7 +58,7 @@ function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, desc
     <>
       <TokenDetailBoxContainer background={background} clickable={clickable} onClick={onClick}>
         <Grid container direction='column' gap='8px' item>
-          <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size={iconSize} variant='Bulk' />
+          <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size={iconSize} variant={iconVariant ?? 'Bulk'} />
           <Grid alignItems='center' container item sx={{ columnGap: '6px' }}>
             <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} variant='B-1'>
               {title}
