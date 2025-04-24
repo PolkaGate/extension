@@ -37,9 +37,13 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
   const [flipCondition, setFlipCondition] = useState(false);
 
   useEffect(() => {
+    if (!token?.genesisHash) {
+      return;
+    }
+
     setFlipCondition(true);
-    setTimeout(() => setFlipCondition(false), 1000);
-  }, [token]);
+    setTimeout(() => setFlipCondition(false), 500);
+  }, [token?.genesisHash]);
 
   return (
     <GlowBox style={{ justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }} withFading={false}>

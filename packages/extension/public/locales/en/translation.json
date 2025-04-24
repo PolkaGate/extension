@@ -1677,5 +1677,7 @@
   "Account is recoverable on {{chains}}.": "",
   "Internet is disconnected ...": "",
   "your address": "",
-  "Your {{chainName}} address": ""
+  "Your {{chainName}} address": "",
+  "Pool Staked": "",
+  "Solo Staked": ""
 }

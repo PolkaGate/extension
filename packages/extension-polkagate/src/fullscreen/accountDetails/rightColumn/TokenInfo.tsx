@@ -69,7 +69,7 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
+function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted3(address, genesisHash);
   const reservedReason = useReservedDetails2(formatted, genesisHash);
@@ -208,10 +208,23 @@ function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
+  const stakings = useMemo(() => {
+    if (!token) {
+      return undefined;
+    }
+
+    return {
+      hasPoolStake: token.pooledBalance && !token.pooledBalance.isZero(),
+      hasSoloStake: token?.soloTotal && !token.soloTotal.isZero(),
+      maybePoolStake: token?.pooledBalance?.add(token?.poolReward ?? BN_ZERO) ?? BN_ZERO,
+      maybeSoloStake: token?.soloTotal ?? BN_ZERO
+    };
+  }, [token]);
+
   return (
     <>
       <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px', pb: '10px' }}>
-        <Typography sx={{ display: 'flex', width: '100%', mb: '10px' }} variant='B-3'>
+        <Typography sx={{ display: 'flex', mb: '10px', width: '100%' }} variant='B-3'>
           {t('Info')}
         </Typography>
         <VelvetBox>
@@ -250,10 +263,34 @@ function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
               title={t('Reserved')}
               token={token?.token}
             />
-            {/* <TokenStakingInfo
-            address={address}
-            tokenDetail={token}
-          /> */}
+            {
+              stakings?.hasPoolStake &&
+            <TokenDetailBox
+              Icon={Coin}
+              amount={stakings.maybePoolStake}
+              background='#05091C'
+              decimal={token?.decimal}
+              iconSize='20'
+              onClick={noop}
+              priceId={token?.priceId}
+              title={t('Pool Staked')}
+              token={token?.token}
+            />
+            }
+            {
+              stakings?.hasSoloStake &&
+            <TokenDetailBox
+              Icon={Coin}
+              amount={stakings.maybeSoloStake}
+              background='#05091C'
+              decimal={token?.decimal}
+              iconSize='20'
+              onClick={noop}
+              priceId={token?.priceId}
+              title={t('Solo Staked')}
+              token={token?.token}
+            />
+            }
           </Stack>
         </VelvetBox>
       </Grid>
