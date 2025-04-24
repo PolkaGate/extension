@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransitionProps } from '@mui/material/transitions';
 import type { TransactionDetail } from '../../../util/types';
 
@@ -9,11 +8,12 @@ import { Avatar, Collapse, Container, Dialog, Grid, Slide, Stack, Typography, us
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FadeOnScroll, FormatBalance2, FormatPrice, GradientButton } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
-import { useChainInfo, useSelectedAccount, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsExtensionPopup, useSelectedAccount, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
@@ -23,7 +23,7 @@ import { amountToMachine, countDecimalPlaces, formatTimestamp, toShortAddress } 
 import { getLink } from '../Explorer';
 import { getVoteType, isReward } from './HistoryItem';
 
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
@@ -39,7 +39,7 @@ interface HistoryDetailProps {
 const isReceived = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() !== 'send';
 const isSend = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() === 'send';
 
-const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; }) {
+const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }) {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState<boolean>(false);
@@ -67,7 +67,7 @@ const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; })
   );
 });
 
-function HistoryStatus({ action, success }: { action: string, success: boolean }) {
+function HistoryStatus ({ action, success }: { action: string, success: boolean }) {
   const { t } = useTranslation();
 
   return (
@@ -90,7 +90,7 @@ function HistoryStatus({ action, success }: { action: string, success: boolean }
   );
 }
 
-function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
+function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
   const price = useTokenPriceBySymbol(token, genesisHash);
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal ?? 0), [amount, decimal, price.price]);
@@ -136,11 +136,12 @@ function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: 
   );
 }
 
-function DetailHeader({ historyItem }: Props) {
+function DetailHeader ({ historyItem }: Props) {
+  const isExtension = useIsExtensionPopup();
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
   return (
-    <GlowBox style={{ m: 0, pb: '15px', width: '100%' }}>
+    <GlowBox style={{ m: 0, pb: '15px', width: '100%' }} withFading={!!isExtension}>
       <HistoryStatus
         action={historyItem.subAction ?? historyItem.action}
         success={historyItem.success}
@@ -156,7 +157,7 @@ function DetailHeader({ historyItem }: Props) {
   );
 }
 
-function DetailCard({ historyItem }: Props) {
+function DetailCard ({ historyItem }: Props) {
   const items = useMemo(() => {
     const card: Record<string, string | number>[] = [];
 
@@ -237,7 +238,7 @@ function DetailCard({ historyItem }: Props) {
   );
 }
 
-function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
+function Content ({ historyItem, style = {}}: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties}): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -258,65 +259,92 @@ function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.
     return { link: getLink(chainName ?? '', 'subscan', 'extrinsic', historyItem?.txHash ?? ''), name: 'subscan' };
   }, [chainName, historyItem?.txHash, isWestmint, selectedAccount?.address]);
 
-  const handleClose = useCallback(() => setOpenMenu(undefined), [setOpenMenu]);
   const openExplorer = useCallback(() => window.open(link, '_blank'), [link]);
 
   return (
-    <Dialog
-      PaperProps={{
-        sx: {
-          backgroundImage: 'unset',
-          bgcolor: 'transparent',
-          boxShadow: 'unset'
-        }
-      }}
-      TransitionComponent={Transition}
-      componentsProps={{
-        backdrop: {
-          sx: {
-            backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
-            bgcolor: 'transparent'
-          }
-        }
-      }}
-      fullScreen
-      open={!!historyItem}
-    >
-      <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
-        </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 }}>
-          {historyItem &&
-            <>
-              <DetailHeader historyItem={historyItem} />
-              <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'scroll', pb: '65px' }}>
-                <DetailCard historyItem={historyItem} />
-                <FadeOnScroll containerRef={containerRef} />
-              </Grid>
-              <GradientButton
-                onClick={openExplorer}
-                startIconNode={
-                  <Avatar
-                    src={getLogo(name)}
-                    sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
-                    variant='square'
-                  />
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 , ...style }}>
+      {historyItem &&
+          <>
+            <DetailHeader historyItem={historyItem} />
+            <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'scroll', pb: '65px' }}>
+              <DetailCard historyItem={historyItem} />
+              <FadeOnScroll containerRef={containerRef} />
+            </Grid>
+            <GradientButton
+              onClick={openExplorer}
+              startIconNode={
+                <Avatar
+                  src={getLogo(name)}
+                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
+                  variant='square'
+                />
+              }
+              style={{
+                bottom: '15px',
+                position: 'absolute',
+                width: '96%',
+                zIndex: 1
+              }}
+              text={t('View on Explorer')}
+            />
+          </>
+      }
+    </Grid>
+  );
+}
+
+function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
+  const isExtension = useIsExtensionPopup();
+  const handleClose = useCallback(() => setOpenMenu(undefined), [setOpenMenu]);
+
+  return (
+    <>
+      {
+        isExtension
+          ? <Dialog
+            PaperProps={{
+              sx: {
+                backgroundImage: 'unset',
+                bgcolor: 'transparent',
+                boxShadow: 'unset'
+              }
+            }}
+            TransitionComponent={Transition}
+            componentsProps={{
+              backdrop: {
+                sx: {
+                  backdropFilter: 'blur(10px)',
+                  background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+                  bgcolor: 'transparent'
                 }
-                style={{
-                  bottom: '15px',
-                  position: 'absolute',
-                  width: '351px',
-                  zIndex: 1
-                }}
-                text={t('View on Explorer')}
+              }
+            }}
+            fullScreen
+            open={!!historyItem}
+          >
+            <Container disableGutters sx={{ height: '100%', width: '100%' }}>
+              <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
+                <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+              </Grid>
+              <Content
+                historyItem={historyItem}
               />
-            </>
-          }
-        </Grid>
-      </Container>
-    </Dialog>
+            </Container>
+          </Dialog>
+          : <DraggableModal
+            noDivider
+            onClose={handleClose}
+            open={!!historyItem}
+            style={{ backgroundColor: '#1B133C', minHeight: '400px', padding: ' 20px 10px 10px' }}
+            title={historyItem?.subAction ?? historyItem?.action}
+          >
+            <Content
+              historyItem={historyItem}
+              style={{ background: 'transparent', border: 0 }}
+            />
+          </DraggableModal>
+      }
+    </>
   );
 }
 

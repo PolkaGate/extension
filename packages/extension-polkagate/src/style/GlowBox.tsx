@@ -75,7 +75,7 @@ interface Props {
   withFading?: boolean;
 }
 
-function GlowBox({ children, showTopBorder = true, style, withFading = true }: Props): React.ReactElement {
+function GlowBox ({ children, showTopBorder = true, style, withFading = true }: Props): React.ReactElement {
   const isDark = useIsDark();
 
   return (

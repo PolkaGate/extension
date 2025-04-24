@@ -11,7 +11,7 @@ interface Props {
   blurBackdrop?: boolean;
   children: React.ReactElement;
   maxHeight?: number;
-  noDivider?:boolean;
+  noDivider?: boolean;
   minHeight?: number;
   open: boolean;
   onClose: () => void
@@ -20,7 +20,7 @@ interface Props {
   width?: number;
 }
 
-export function DraggableModal({ blurBackdrop = true, children, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ blurBackdrop = true, children, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
