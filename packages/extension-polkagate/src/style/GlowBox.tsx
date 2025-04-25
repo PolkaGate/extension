@@ -95,7 +95,7 @@ function GlowBox ({ children, showTopBorder = true, style, withFading = true }: 
           </>
         }
       </GlowBoxContainer>
-    </Container >
+    </Container>
   );
 }
 

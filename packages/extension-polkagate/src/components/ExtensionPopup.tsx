@@ -79,7 +79,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
                 size='24'
                 variant='Bulk'
               />
-              <Typography color='#EAEBF1' variant='B-1' ml='4px'>
+              <Typography color='#EAEBF1' ml='4px' variant='B-1'>
                 {t('Back')}
               </Typography>
             </Grid>}
