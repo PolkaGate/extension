@@ -19,7 +19,7 @@ import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMem
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/utils/types';
-import type { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import type { CurrencyItemType } from '../fullscreen/home/partials/Currency';
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
 import type { SavedAssets } from '../hooks/useAssetsBalances';
 

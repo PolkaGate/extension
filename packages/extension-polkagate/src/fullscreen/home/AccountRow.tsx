@@ -5,6 +5,7 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 
 import { ChevronRight, MoreVert } from '@mui/icons-material';
 import { Grid, Stack } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +14,6 @@ import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGat
 
 import { AccountContext } from '../../components';
 import { Account } from '../components';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 
 function MoreButton ({ address }: { address?: string }): React.ReactElement {
   const navigate = useNavigate();
@@ -27,14 +27,9 @@ function MoreButton ({ address }: { address?: string }): React.ReactElement {
     setChevronHovered(false);
   }, []);
 
-  const goToAccountPage = useCallback(() => {
-    address && navigate(`accountfs/${address}/0`);
-  }, [address, navigate]);
-
   return (
     <Grid
       alignItems='center' container item justifyContent='center'
-      onClick={goToAccountPage}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeaveChevron}
       sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', borderRadius: '10px', border: '3px solid #1B133C', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
@@ -89,7 +84,7 @@ function GoToAccountButton ({ address, defaultGenesisAndAssetId }: { address?: s
 }
 
 function AccountRow ({ account }: { account: AccountWithChildren }): React.ReactElement {
-  const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); //'genesisHash/assetId'
+  const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); // 'genesisHash/assetId'
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ m: '2px 0 10px', width: '95%' }}>

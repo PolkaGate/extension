@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { CurrencyItemType } from '../../../fullscreen/homeFullScreen/partials/Currency';
+import type { CurrencyItemType } from '../../../fullscreen/home/partials/Currency';
 
 import { Box, Grid, styled, Typography } from '@mui/material';
 import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';

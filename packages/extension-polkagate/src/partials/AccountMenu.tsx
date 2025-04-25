@@ -12,7 +12,7 @@ import { Dialog, Divider, Grid, IconButton, Slide, useTheme } from '@mui/materia
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
-import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
+import ProfileMenu from '../fullscreen/home/partials/ProfileMenu';
 import { useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';

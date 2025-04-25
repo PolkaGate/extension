@@ -7,7 +7,7 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
-import { saveNewOrder } from '../fullscreen/homeFullScreen/partials/DraggableAccountList';
+import { saveNewOrder } from '../fullscreen/home/partials/DraggableAccountList';
 
 export default function useAccountsOrder(isFullScreenMode?: boolean): AccountsOrder[] | undefined {
   const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);

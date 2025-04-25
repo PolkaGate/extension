@@ -5,7 +5,7 @@ import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../../hooks';
-import useProfileInfo from '../homeFullScreen/useProfileInfo';
+import useProfileInfo from '../home/useProfileInfo';
 
 interface Props {
   label: string | undefined;

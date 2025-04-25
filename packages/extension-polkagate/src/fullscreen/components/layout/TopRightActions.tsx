@@ -25,7 +25,7 @@ function MyDivider (): React.ReactElement {
   );
 }
 
-function TopRightActions(): React.ReactElement {
+function TopRightActions (): React.ReactElement {
   const isOnline = useIsOnline();
 
   return (

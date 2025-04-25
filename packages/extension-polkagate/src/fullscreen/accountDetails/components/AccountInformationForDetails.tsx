@@ -17,8 +17,8 @@ import { getValue } from '../../../popup/account/util';
 import { BALANCES_VALIDITY_PERIOD } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
-import AccountBodyFs from '../../homeFullScreen/partials/AccountBodyFs';
-import AccountIdenticonIconsFS from '../../homeFullScreen/partials/AccountIdenticonIconsFS';
+import AccountBodyFs from '../../home/partials/AccountBodyFs';
+import AccountIdenticonIconsFS from '../../home/partials/AccountIdenticonIconsFS';
 import AOC from './AOC';
 
 interface PriceJSXType {
