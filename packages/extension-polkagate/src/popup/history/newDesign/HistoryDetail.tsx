@@ -137,11 +137,10 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
 }
 
 function DetailHeader ({ historyItem }: Props) {
-  const isExtension = useIsExtensionPopup();
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
   return (
-    <GlowBox style={{ m: 0, pb: '15px', width: '100%' }} withFading={!!isExtension}>
+    <GlowBox style={{ m: 0, pb: '15px', width: '100%' }}>
       <HistoryStatus
         action={historyItem.subAction ?? historyItem.action}
         success={historyItem.success}

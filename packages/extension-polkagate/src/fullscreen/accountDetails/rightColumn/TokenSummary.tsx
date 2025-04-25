@@ -46,7 +46,7 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
   }, [token?.genesisHash]);
 
   return (
-    <GlowBox style={{ justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }} withFading={false}>
+    <GlowBox style={{ justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
       <Grid container item
         sx={{
           backdropFilter: 'blur(4px)',

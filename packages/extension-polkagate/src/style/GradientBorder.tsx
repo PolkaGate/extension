@@ -4,7 +4,7 @@
 import { Box, type SxProps } from '@mui/material';
 import React from 'react';
 
-import { useIsDark } from '../hooks';
+import { useIsDark, useIsExtensionPopup } from '../hooks';
 
 interface GradientBorderProps {
   type?: 'pinkish' | 'pastel';
@@ -13,11 +13,14 @@ interface GradientBorderProps {
 
 function GradientBorder ({ style, type }: GradientBorderProps): React.ReactElement {
   const isDark = useIsDark();
+  const isExtension = useIsExtensionPopup();
 
   return (<Box sx={{
     background: type === 'pinkish'
       ? isDark
-        ? 'linear-gradient(90deg, #1D0939 0%, #E74FCF 50.06%, rgba(29, 9, 57, 0) 100%)'
+        ? isExtension
+          ? 'linear-gradient(90deg, #1D0939 0%, #E74FCF 50.06%, rgba(29, 9, 57, 0) 100%)'
+          : 'linear-gradient(90deg, #280849 0%, #E74FCF 50.06%, rgba(40, 8, 73, 0) 100%)'
         : 'linear-gradient(90deg, rgba(217, 204, 242, 0) 0%, #CFB1FF 50.06%, rgba(217, 204, 242, 0) 100%)'
       : 'linear-gradient(178deg, transparent 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, transparent 72.53%)',
     height: '2px',
