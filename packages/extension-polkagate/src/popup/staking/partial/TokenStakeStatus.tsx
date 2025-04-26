@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { type BN } from '@polkadot/util';

@@ -1672,5 +1672,11 @@
   "Hardware": "",
   "Balance Display Currency": "",
   "Hold the QR code in front of the ": "",
-  "You don't have any valuable tokens yet": ""
+  "You don't have any valuable tokens yet": "",
+  "Manage": "",
+  "Change": "",
+  "Stake More": "",
+  "solo staking": "",
+  "Max Validators you can select": "",
+  "Min {{token}} to be staker": ""
 }

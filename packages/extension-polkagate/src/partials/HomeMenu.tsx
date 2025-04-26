@@ -156,7 +156,7 @@ function HomeMenu (): React.ReactElement {
   return (
     <>
       <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)', zIndex: 1 }}>
-        {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
+        {leftPosition && <GradientDivider style={selectionLineStyle} />}
         <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
           <MenuItem ButtonIcon={Logout} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ScanBarcode} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
