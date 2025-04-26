@@ -24,10 +24,10 @@ function TileActionButton ({ Icon, noText = false, onClick, text }: TileActionBu
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='center' onClick={onClick} ref={containerRef} sx={{ ':hover': { bgcolor: '#809ACB', borderColor: 'transparent' }, bgcolor: '#110F2A', borderRadius: '11px', columnGap: '4px', cursor: 'pointer', p: '4px 7px', transition: 'all 150ms ease-out' }} xs>
+      <Grid alignItems='center' container item justifyContent='center' onClick={onClick} ref={containerRef} sx={{ ':hover': { bgcolor: '#809ACB', borderColor: 'transparent' }, bgcolor: '#110F2A', borderRadius: '11px', columnGap: '4px', cursor: 'pointer', flexWrap: 'nowrap', p: '4px 7px', transition: 'all 150ms ease-out' }} xs>
         <Icon color={hovered ? '#ffffff' : '#809ACB'} size='19' variant='Bulk' />
         {!noText &&
-          <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out' }} variant='B-2'>
+          <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-2'>
             {text}
           </Typography>}
       </Grid>
