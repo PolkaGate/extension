@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { BackWithLabel, Motion } from '../../../../components';
 import { useSelectedAccount, useSoloStakingInfo, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
+import NominationSettingButtons from '../../partial/NominationSettingButtons';
 import NominatorsTable from '../../partial/NominatorsTable';
 import StakingMenu from '../../partial/StakingMenu';
 
@@ -49,7 +50,12 @@ export default function NominationsSetting (): React.ReactElement {
           style={{ pb: 0 }}
           text={t('Validators')}
         />
-        <Stack direction='row' sx={{ mt: '20px', px: '15px', width: '100%' }}>
+        <NominationSettingButtons
+          nominatedValidatorsInformation={nominatedValidatorsInformation}
+          soloStakingInfo={stakingInfo}
+          style={{ mt: '12px', px: '15px' }}
+        />
+        <Stack direction='row' sx={{ mt: '12px', px: '15px', width: '100%' }}>
           <NominatorsTable
             genesisHash={genesisHash ?? ''}
             validatorsInformation={nominatedValidatorsInformation}
