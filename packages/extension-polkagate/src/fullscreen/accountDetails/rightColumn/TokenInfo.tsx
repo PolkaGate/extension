@@ -223,7 +223,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
 
   return (
     <>
-      <Grid container item sx={{ display: 'flex', gap: '4px', p: '15px', pb: '10px' }}>
+      <Grid container item sx={{ display: 'flex', gap: '4px', mb: '10px', p: '15px', pb: '10px' }}>
         <Typography sx={{ display: 'flex', mb: '10px', width: '100%' }} variant='B-3'>
           {t('Info')}
         </Typography>
