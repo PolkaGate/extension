@@ -18,13 +18,10 @@ const enum STATUS {
 const DISABLED_LINK_COLOR = '#674394';
 const ENABLED_LINK_COLOR = '#AA83DC';
 
-function Bread(): React.ReactElement {
+function Bread (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-
-
-  console.log('pathname:', pathname);
 
   const status = useMemo(() => {
     switch (pathname) {

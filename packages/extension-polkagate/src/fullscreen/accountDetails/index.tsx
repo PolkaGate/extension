@@ -4,17 +4,17 @@
 import { Stack } from '@mui/material';
 import React, { } from 'react';
 
-import Layout from '../components/layout';
+import HomeLayout from '../components/layout';
 import LeftColumn from './LeftColumn';
 import RightColumn from './rightColumn';
 
 export default function AccountDetails (): React.ReactElement {
   return (
-    <Layout>
+    <HomeLayout>
       <Stack columnGap='8px' direction='row' sx={{ height: '685px' }}>
         <LeftColumn />
         <RightColumn />
       </Stack>
-    </Layout>
+    </HomeLayout>
   );
 }

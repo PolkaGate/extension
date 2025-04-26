@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AccountContext } from '../../components';
 import { useAlerts, useFullscreen, useTranslation } from '../../hooks';
-import Layout from '../components/layout';
+import HomeLayout from '../components/layout';
 import AccountList from './AccountList';
 import AccountsAdd from './AccountsAdd';
 import AssetsBars from './AssetsBars';
@@ -31,7 +31,7 @@ function HomePageFullScreen (): React.ReactElement {
   }, [accountsInExtension, notify, navigate, t]);
 
   return (
-    <Layout>
+    <HomeLayout>
       {/* left column */}
       <Stack direction='column' sx={{ height: 'inherit', mx: '8px', width: ' 506px' }}>
         <PortfolioFullScreen />
@@ -43,7 +43,7 @@ function HomePageFullScreen (): React.ReactElement {
         <AccountsAdd />
         <AccountList />
       </Stack>
-    </Layout>
+    </HomeLayout>
   );
 }
 

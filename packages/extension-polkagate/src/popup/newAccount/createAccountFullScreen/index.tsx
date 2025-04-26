@@ -12,8 +12,8 @@ import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType
 import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { OnboardTitle } from '../../../fullscreen/components/index';
-import Framework from '../../../fullscreen/onboarding/Framework';
-import { useFullscreen, useTranslation } from '../../../hooks';
+import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
+import { useTranslation } from '../../../hooks';
 import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
@@ -24,7 +24,6 @@ enum STEP {
 }
 
 function CreateAccount (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -85,7 +84,7 @@ function CreateAccount (): React.ReactElement {
   }, [name, navigate, password, seed]);
 
   return (
-    <Framework>
+    <AdaptiveLayout>
       <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
         <OnboardTitle
           label={t('Create a new account')}
@@ -98,18 +97,28 @@ function CreateAccount (): React.ReactElement {
               {t('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
             </Typography>
             <MnemonicSeedDisplay seed={seed} style={{ marginBlock: '20px' }} />
-            <GradientButton
-              contentPlacement='center'
-              onClick={onContinue}
-              showChevron
-              style={{
-                borderRadius: '18px',
-                height: '48px',
-                marginTop: '25px',
-                width: '236px'
-              }}
-              text={t('Continue')}
-            />
+            <Stack alignItems='center' columnGap='20px' direction='row' sx={{ marginTop: '25px' }}>
+              <GradientButton
+                contentPlacement='center'
+                disabled={!isMnemonicSaved}
+                onClick={onContinue}
+                showChevron
+                style={{
+                  borderRadius: '18px',
+                  height: '44px',
+                  width: '236px'
+                }}
+                text={t('Continue')}
+              />
+              <GlowCheckbox
+                changeState={onCheck}
+                checked={isMnemonicSaved}
+                disabled={isBusy}
+                label={t('I have saved my recovery phrase safely')}
+                labelPartInColor={t('my recovery phrase safely')}
+                labelStyle={{ ...theme.typography['B-1'] }}
+              />
+            </Stack>
           </>
         }
         {step === STEP.DETAIL &&
@@ -119,7 +128,7 @@ function CreateAccount (): React.ReactElement {
               focused
               iconSize={18}
               onTextChange={onNameChange}
-              placeholder={t('Name account')}
+              placeholder={t('Enter account name')}
               style={{ margin: '40px 0 20px' }}
               title={t('Choose a name for this account')}
             />
@@ -131,19 +140,10 @@ function CreateAccount (): React.ReactElement {
               title1={t('Password for this account')}
               title2={t('Repeat the password')}
             />
-            <GlowCheckbox
-              changeState={onCheck}
-              checked={isMnemonicSaved}
-              disabled={isBusy}
-              label={t('I have saved my recovery phrase safely')}
-              labelPartInColor={t('my recovery phrase safely')}
-              labelStyle={{ ...theme.typography['B-1'] }}
-              style={{ justifyContent: 'start', mt: '40px' }}
-            />
             <DecisionButtons
               cancelButton
               direction='horizontal'
-              disabled={!password || !isMnemonicSaved}
+              disabled={!password}
               isBusy={isBusy}
               onPrimaryClick={onCreate}
               onSecondaryClick={onCancel}
@@ -155,7 +155,7 @@ function CreateAccount (): React.ReactElement {
           </Motion>
         }
       </Stack>
-    </Framework>
+    </AdaptiveLayout>
   );
 }
 

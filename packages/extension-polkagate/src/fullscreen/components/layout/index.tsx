@@ -11,10 +11,11 @@ import TopRightActions from './TopRightActions';
 
 interface Props {
   children?: React.ReactNode;
+  childrenStyle?: React.CSSProperties;
   style?: React.CSSProperties;
 }
 
-function Layout ({ children, style = {} }: Props): React.ReactElement {
+function HomeLayout ({ children, childrenStyle = {}, style = {} }: Props): React.ReactElement {
   return (
     <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
       <Grid alignItems='flex-start' columnGap='10px' container justifyContent='flex-end' sx={{ bgcolor: '#05091C', borderRadius: '24px', height: '788px', minWidth: '1440px', overflowX: 'auto', p: '12px', position: 'relative', width: '1440px' }} wrap='nowrap'>
@@ -31,7 +32,7 @@ function Layout ({ children, style = {} }: Props): React.ReactElement {
         >
           <TopRightActions />
           <Bread />
-          <Grid container item>
+          <Grid container item sx={{ ...childrenStyle }}>
             {children}
           </Grid>
         </Grid>
@@ -40,4 +41,4 @@ function Layout ({ children, style = {} }: Props): React.ReactElement {
   );
 }
 
-export default React.memo(Layout);
+export default React.memo(HomeLayout);

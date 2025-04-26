@@ -80,7 +80,7 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         width='fit-content'
         withSmallDecimal
       />
-      <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
+      <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '30px', width: 'fit-content' }}>
         <FormatBalance2
           decimalPoint={4}
           decimals={[token?.decimal ?? 0]}
@@ -89,7 +89,6 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
             fontFamily: 'Inter',
             fontSize: '12px',
             fontWeight: 500,
-            height: '21px',
             width: 'max-content'
           }}
           tokens={[token?.token ?? '']}

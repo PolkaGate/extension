@@ -17,14 +17,15 @@ import TopRightIcons from './TopRightIcons';
 interface Props {
   children?: React.ReactNode;
   width?: string;
+  style?: React.CSSProperties;
 }
 
-function Framework({ children, width = '582px' }: Props): React.ReactElement {
+function OnboardingLayout ({ children, style, width = '582px' }: Props): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
 
   return (
-    <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center' }}>
+    <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
       <Grid alignItems='flex-start' container sx={{ bgcolor: '#05091C', borderRadius: '24px', height: '788px', p: '12px', position: 'relative', width: '1440px' }}>
         <Stack alignItems='center' direction='row' sx={{ borderRadius: '32px', left: '0', p: '15px', position: 'absolute', top: '0', zIndex: 10 }}>
           <Box
@@ -88,4 +89,4 @@ function Framework({ children, width = '582px' }: Props): React.ReactElement {
   );
 }
 
-export default React.memo(Framework);
+export default React.memo(OnboardingLayout);

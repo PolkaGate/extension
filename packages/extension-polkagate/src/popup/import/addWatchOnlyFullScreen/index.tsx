@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
-import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import keyring from '@polkadot/ui-keyring';
@@ -24,7 +24,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function AddWatchOnlyFullScreen (): React.ReactElement {
+export default function AddWatchOnlyFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
 
@@ -60,7 +60,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 
   return (
-    <Framework width='600px'>
+    <AdaptiveLayout style= {{ width: '600px' }}>
       <OnboardTitle
         label={t('Add Watch-only account')}
         labelPartInColor='Watch-only'
@@ -81,7 +81,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
           Icon={User}
           iconSize={18}
           onTextChange={onNameChange}
-          placeholder={t('Name account')}
+          placeholder={t('Enter account name')}
           style={{ margin: '15px 0 0' }}
           title={t('Choose a name for this account')}
         />
@@ -98,6 +98,6 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
           style={{ flexDirection: 'row-reverse', margin: '15px 0', width: '65%' }}
         />
       </Stack>
-    </Framework>
+    </AdaptiveLayout>
   );
 }

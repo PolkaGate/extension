@@ -151,7 +151,6 @@
   "Select the chain": "",
   "Create account": "",
   "Please write down your wallet’s recovery phrase and keep it in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.": "",
-  "I have saved my recovery phrase safely.": "",
   "Next": "",
   "Generated 12-word recovery phrase": "",
   "Create a new account": "",
@@ -1000,7 +999,6 @@
   "Account to be overtaken": "",
   "Nothing to unstake.": "",
   "This amount will be redeemable on {{redeemDate}}.": "",
-  "Welcome!": "",
   "Privacy and Security": "",
   "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.": "",
   "Before we begin, here are a few important points to keep in mind:": "",
@@ -1681,5 +1679,6 @@
   "Pool Staked": "",
   "Solo Staked": "",
   "Remove account": "",
-  "Confirmation of action": ""
+  "Confirmation of action": "",
+  "Enter account name": ""
 }
