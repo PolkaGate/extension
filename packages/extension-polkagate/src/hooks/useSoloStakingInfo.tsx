@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { AccountStakingInfo, BalancesInfo } from '../util/types';
+import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -24,6 +24,15 @@ export interface DateAmount {
 interface UnstakingType {
   toBeReleased: DateAmount[] | undefined; // Array of amounts with release dates
   unlockingAmount: BN | undefined; // Total amount in the unlocking process
+}
+
+export interface SoloStakingInfo {
+  availableBalanceToStake: BN | undefined; // Amount available for staking
+  rewardDestinationAddress: string | undefined; // Address for rewards
+  rewards: BN | undefined; // Total rewards earned
+  sessionInfo: UnstakingType | undefined; // Information about unstaking and release dates
+  stakingAccount: AccountStakingInfo | null | undefined; // User's staking account information
+  stakingConsts: StakingConsts | null | undefined; // Staking constants like minimum bond amount
 }
 
 /**
