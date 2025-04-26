@@ -132,7 +132,6 @@ function Account ({ account, setDefaultGenesisAndAssetId, style = {}, variant = 
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
         identiconSize={14}
         noIdenticon
-        showShortAddress
         style={{ color: '#BEAAD8', variant }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>

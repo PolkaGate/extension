@@ -21,6 +21,19 @@ export const DEFAULT_PROFILE_TAGS = {
   WATCH_ONLY: 'Watch-only'
 };
 
+const profileContainerVariants = {
+  animate: {
+    transition: {
+      staggerChildren: 0.3
+    }
+  }
+};
+
+const accountItemVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 }
+};
+
 function AccountList (): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
   const selectedProfile = useSelectedProfile();
@@ -28,7 +41,7 @@ function AccountList (): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const categorizedAccounts = useMemo(() => {
-    if (!initialAccountList || !selectedProfile) {
+    if (!initialAccountList || !selectedProfile || !profileAccounts) {
       return {};
     }
 
@@ -46,58 +59,62 @@ function AccountList (): React.ReactElement {
     };
   }, [initialAccountList, profileAccounts, selectedProfile]);
 
+  let totalAccountsBefore = 0; // ← track accounts of previous profiles
+
   return (
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
       <ProfileTabsFS />
       <VelvetBox style={{ marginTop: '5px' }}>
         <Stack ref={scrollContainerRef} style={{ maxHeight: '595px', minHeight: '100px', overflowY: 'scroll', position: 'relative' }}>
-          {
-            Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => (
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 10 }}
-                key={`${label}-${profileIndex}`}
-                transition={{ delay: profileIndex * (accounts?.length ?? 1) * 0.4, duration: profileIndex === 0 ? 0.3 : 0.8 }}
-              >
-                {
-                  accounts?.map((account, accIndex) => {
-                    const isFirstProfile = profileIndex === 0;
-                    const isFirstAccount = accIndex === 0;
-                    const isLast = accIndex === accounts.length - 1;
-                    const justOneAccount = isFirstAccount && isLast;
+          {Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => {
+            const renderedAccounts = accounts?.map((account, accIndex) => {
+              const isFirstProfile = profileIndex === 0;
+              const isFirstAccount = accIndex === 0;
+              const isLast = accIndex === accounts.length - 1;
+              const justOneAccount = isFirstAccount && isLast;
 
-                    return (
-                      <motion.div
-                        animate={{ opacity: 1, y: 0 }}
-                        initial={{ opacity: 0, y: 10 }}
-                        key={`${label}-${profileIndex}`}
-                        transition={{ delay: accIndex * 0.2, duration: profileIndex === 0 ? 0.3 : 1 }}
-                      >
-                        <Stack
-                          direction='column'
-                          key={accIndex}
-                          sx={{
-                            bgcolor: '#05091C',
-                            borderRadius: justOneAccount ? '14px' : isFirstAccount ? '14px 14px 0 0' : isLast ? '0 0 14px 14px' : 0,
-                            minHeight: '63px',
-                            mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
-                            mx: '1px',
-                            width: '100%'
-                          }}
-                        >
-                          {
-                            isFirstAccount &&
-                            <AccountProfileLabel label={label} />
-                          }
-                          <AccountRow account={account.account} />
-                        </Stack>
-                      </motion.div>
-                    );
-                  })
-                }
-              </motion.div>
-            ))
-          }
+              const totalIndex = totalAccountsBefore + accIndex;
+              const delay = totalIndex * 0.4;
+
+              return (
+                <motion.div
+                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  key={`${label}-${profileIndex}-${accIndex}`}
+                  transition={{ delay, duration: 0.4 }}
+                >
+                  <Stack
+                    direction='column'
+                    sx={{
+                      bgcolor: '#05091C',
+                      borderRadius: justOneAccount
+                        ? '14px'
+                        : isFirstAccount
+                          ? '14px 14px 0 0'
+                          : isLast
+                            ? '0 0 14px 14px'
+                            : 0,
+                      minHeight: '63px',
+                      mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
+                      mx: '1px',
+                      width: '100%'
+                    }}
+                  >
+                    {isFirstAccount && <AccountProfileLabel label={label} />}
+                    <AccountRow account={account.account} />
+                  </Stack>
+                </motion.div>
+              );
+            });
+
+            totalAccountsBefore += accounts.length;
+
+            return (
+              <div key={`${label}-${profileIndex}`}>
+                {renderedAccounts}
+              </div>
+            );
+          })}
         </Stack>
       </VelvetBox>
       <FadeOnScroll containerRef={scrollContainerRef} height='50px' ratio={0.3} />
