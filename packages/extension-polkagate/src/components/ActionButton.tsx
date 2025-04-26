@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { useIsDark } from '../hooks';
+import { useIsDark, useIsExtensionPopup } from '../hooks';
 
 interface Props {
   StartIcon?: Icon;
@@ -25,9 +25,11 @@ interface Props {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
+  const isExtension = useIsExtensionPopup();
+  const borderRadius = isExtension ? '12px' : '18px';
 
   const [hovered, setHovered] = useState(false);
 
@@ -45,7 +47,7 @@ export default function ActionButton({ StartIcon, contentPlacement = 'start', di
       transition: 'all 250ms ease-out'
     },
     background: isDark ? '#2D1E4A' : '#FFFFFF',
-    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? '12px'}`,
+    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
     padding: '6px 24px',

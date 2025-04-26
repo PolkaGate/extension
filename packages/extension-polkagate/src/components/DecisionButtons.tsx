@@ -74,7 +74,7 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
         isBusy={isBusy}
         onClick={onPrimaryClick}
         showChevron={showChevron}
-        style={{ flex: flexibleWidth ? 1 : 'none', height: '48px', width: primaryWidth }}
+        style={{ flex: flexibleWidth ? 1 : 'none', height: '44px', width: primaryWidth }}
         text={primaryBtnText}
       />
     </Container>

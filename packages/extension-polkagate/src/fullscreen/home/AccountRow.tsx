@@ -3,7 +3,7 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { ChevronRight, MoreVert } from '@mui/icons-material';
+import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useContext, useState } from 'react';
@@ -14,30 +14,7 @@ import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGat
 
 import { AccountContext } from '../../components';
 import { Account } from '../components';
-
-function MoreButton ({ address }: { address?: string }): React.ReactElement {
-  const navigate = useNavigate();
-  const [chevronHovered, setChevronHovered] = useState<boolean>(false);
-
-  const onMouseEnter = useCallback(() => {
-    setChevronHovered(true);
-  }, []);
-
-  const onMouseLeaveChevron = useCallback(() => {
-    setChevronHovered(false);
-  }, []);
-
-  return (
-    <Grid
-      alignItems='center' container item justifyContent='center'
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeaveChevron}
-      sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', borderRadius: '10px', border: '3px solid #1B133C', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
-    >
-      <MoreVert sx={{ color: chevronHovered ? '#EAEBF1' : '#AA83DC', fontSize: '25px' }} />
-    </Grid>
-  );
-}
+import AccountDropDown from './AccountDropDown';
 
 function GoToAccountButton ({ address, defaultGenesisAndAssetId }: { address?: string, defaultGenesisAndAssetId: string | undefined}): React.ReactElement {
   const { accounts } = useContext(AccountContext);
@@ -99,7 +76,9 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
         />
       </Stack>
       <Stack columnGap='5px' direction='row'>
-        <MoreButton />
+        <AccountDropDown
+          address={account?.address}
+        />
         <GoToAccountButton
           address={account?.address}
           defaultGenesisAndAssetId={defaultGenesisAndAssetId}

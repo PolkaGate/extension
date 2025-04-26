@@ -17,7 +17,6 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { AddressInput, DecisionButtons, MyTextField } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { createAccountExternal } from '../../../messaging';
-import { getSubstrateAddress } from '../../../util/utils';
 
 export interface AccountInfo {
   address: string;
@@ -43,15 +42,12 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
     if (name && realAddress) {
       setIsBusy(true);
 
-      const substrateAddress = getSubstrateAddress(realAddress);
-
       createAccountExternal(name, realAddress, undefined)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         })
-        .finally(() => substrateAddress
-          ? switchToOrOpenTab(`/accountfs/${substrateAddress}/0`, true)
-          : switchToOrOpenTab('/', true)
+        .finally(() =>
+          switchToOrOpenTab('/', true)
         )
         .catch((error: Error) => {
           setIsBusy(false);

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, useTheme } from '@mui/material';

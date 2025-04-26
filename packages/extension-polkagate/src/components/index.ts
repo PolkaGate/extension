@@ -41,6 +41,7 @@ export { default as CopyAddressButton } from './CopyAddressButton';
 export { default as DecisionButtons } from './DecisionButtons';
 export { default as DisplayInfo } from './DisplayInfo';
 export { default as Dots } from './Dots';
+export { default as DropContent } from './DropContent';
 export { default as DropSelect } from './DropSelect';
 export { default as ExtensionPopup } from './ExtensionPopup';
 export { default as FadeOnScroll } from './FadeOnScroll';

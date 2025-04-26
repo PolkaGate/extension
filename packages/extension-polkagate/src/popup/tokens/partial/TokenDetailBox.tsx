@@ -60,7 +60,7 @@ function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, desc
         <Grid container direction='column' gap='8px' item>
           <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size={iconSize} variant={iconVariant ?? 'Bulk'} />
           <Grid alignItems='center' container item sx={{ columnGap: '6px' }}>
-            <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} variant='B-1'>
+            <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} variant='B-1' sx={{ textWrap: 'nowrap'}}>
               {title}
             </Typography>
             {description && <InfoCircle color={clickable ? '#AA83DC' : DISABLED_COLOR} ref={toolTipRef} size='19' variant='Bold' />}

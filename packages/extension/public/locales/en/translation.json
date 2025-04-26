@@ -1679,5 +1679,7 @@
   "your address": "",
   "Your {{chainName}} address": "",
   "Pool Staked": "",
-  "Solo Staked": ""
+  "Solo Staked": "",
+  "Remove account": "",
+  "Confirmation of action": ""
 }
