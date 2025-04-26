@@ -184,7 +184,7 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
               return (
                 <motion.div key={index} style={{ display: 'grid', rowGap: '6px', width: 'inherit' }} variants={itemVariants}>
                   <AssetsDetail asset={asset} />
-                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', ml: '-10px', width: '325px' }} />}
+                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', mx: '-10px' }} />}
                 </motion.div>
               );
             })}
