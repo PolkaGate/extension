@@ -7,7 +7,7 @@ import type { Prices } from '../../../util/types';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { memo, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { selectableNetworks } from '@polkadot/networks';
 
@@ -60,6 +60,9 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const account = useSelectedAccount();
+  const params = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
+
+  const isSelected = useMemo(() => params?.genesisHash === asset.genesisHash && params?.paramAssetId === String(asset.assetId), [asset, params]);
 
   const pricesInCurrency = usePrices();
   const onHoverColor = theme.palette.mode === 'dark' ? '#1B133C' : '#f4f7ff';
@@ -75,7 +78,7 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   }, [account?.address, asset.assetId, asset.genesisHash, isExtension, navigate]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, borderRadius: '12px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, background: isSelected ? onHoverColor : undefined, borderRadius: '12px', cursor: 'pointer', px: isSelected ? '8px' : undefined, py: '4px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <TokenPriceInfo

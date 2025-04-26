@@ -21,19 +21,6 @@ export const DEFAULT_PROFILE_TAGS = {
   WATCH_ONLY: 'Watch-only'
 };
 
-const profileContainerVariants = {
-  animate: {
-    transition: {
-      staggerChildren: 0.3
-    }
-  }
-};
-
-const accountItemVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 }
-};
-
 function AccountList (): React.ReactElement {
   const initialAccountList = useAccountsOrder(true);
   const selectedProfile = useSelectedProfile();
