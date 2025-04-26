@@ -180,10 +180,10 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
                 validatorDetail={validatorDetail}
               />
               <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '12px' }}>
-                <ValidatorStakingInfo amount={validatorDetail.exposureMeta.own} decimal={decimal} title={t('Own')} token={token} />
+              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '12px' }}>
+                <ValidatorStakingInfo amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
                 <ValidatorStakingInfo text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
-                <ValidatorStakingInfo amount={validatorDetail.exposureMeta.total} decimal={decimal} title={t('Total')} token={token} />
+                <ValidatorStakingInfo amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
                 <ValidatorStakingInfo text={validatorAPY ?? '--'} title={t('APY')} />
               </Container>
               <GradientDivider style={{ my: '12px' }} />
@@ -192,14 +192,14 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
                   {t('Nominators')}
                 </Typography>
                 <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '8px', p: '2px 4px' }} variant='B-4'>
-                  {validatorDetail.exposureMeta.nominatorCount as unknown as string}
+                  {validatorDetail.exposureMeta?.nominatorCount as unknown as string ?? '0'}
                 </Typography>
               </Container>
               <AccountsTable
-                accounts={validatorDetail.exposurePaged.others as unknown as SpStakingIndividualExposure[]}
+                accounts={validatorDetail.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
                 genesisHash={genesisHash}
                 style={{ px: '6px' }}
-                totalStaked={validatorDetail.exposureMeta.total as string}
+                totalStaked={validatorDetail.exposureMeta?.total as string ?? '0'}
               />
             </Stack>
           </Grid>

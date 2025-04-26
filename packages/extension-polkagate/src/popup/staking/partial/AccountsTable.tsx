@@ -77,6 +77,10 @@ export default function AccountsTable ({ accounts, genesisHash, style, tableMaxH
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  if (!accounts || accounts.length === 0) {
+    return <></>;
+  }
+
   return (
     <Stack direction='column' sx={style}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', mb: '12px', width: '100%' }}>

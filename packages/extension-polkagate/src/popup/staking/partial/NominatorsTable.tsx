@@ -6,7 +6,7 @@ import type { INumber } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
@@ -95,6 +95,9 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '8px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
         <ValidatorIdentity validatorInfo={validatorInfo} />
+        <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
+          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
+        </IconButton>
       </Container>
       <GradientDivider style={{ my: '4px' }} />
       <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
@@ -102,11 +105,11 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
           <ValidatorStakingInfo amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
           <ValidatorStakingInfo text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
           {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */}
-          <ValidatorStakingInfo text={validatorInfo.exposureMeta.nominatorCount} title={t('Nominators')} />
+          <ValidatorStakingInfo text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
         </Container>
-        <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
-          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} />
-        </IconButton>
+        {/* <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
+          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} /> // it is available in the design onFigma but has no functionality
+        </IconButton> */}
       </Container>
     </Stack>
   );
