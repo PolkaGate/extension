@@ -47,6 +47,7 @@ export default function Solo (): React.ReactElement {
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
   const onRestake = useCallback(() => navigate('/solo/' + genesisHash + '/restake') as void, [genesisHash, navigate]);
+  const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex'), [navigate]);
 
   return (
@@ -68,7 +69,7 @@ export default function Solo (): React.ReactElement {
             },
             {
               Icon: Timer1,
-              onClick: noop,
+              onClick: onFastUnstake,
               text: t('Fast Unstake')
             }]}
             genesisHash={genesisHash as unknown as string}
