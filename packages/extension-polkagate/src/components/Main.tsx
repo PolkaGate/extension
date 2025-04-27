@@ -14,7 +14,7 @@ export default function Main ({ children }: Props): React.ReactElement<Props> {
   const isExtensionMode = useIsExtensionPopup();
 
   return (
-    <main id='main'>
+    <main id='main' style={{ height: '100%', width: '100%' }}>
       {isExtensionMode && <Background id='logoBackground' />}
       {children}
     </main>

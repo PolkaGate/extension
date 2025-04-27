@@ -58,7 +58,7 @@ const StakerAddress = ({ address }: { address: string | undefined; }) => {
 
 const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
   return (
-    <Grid container item sx={{ bottom: '20px', height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
+    <Grid container item sx={{ bottom: 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
         : <Ice size='32' style={{ zIndex: -1 }} />
@@ -92,7 +92,7 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
   }, [decimal, tokenPrice, pricesInCurrency, staked]);
 
   return (
-    <GlowBox style={{ display: 'grid', p: '18px', rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
+    <GlowBox style={{ display: 'grid', p: '18px', pb: 0, rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
       <Grid alignItems='center' container item justifyContent='space-between'>
         <StakedToken genesisHash={genesisHash} token={token} />
         <StakerAddress address={formatted} />
