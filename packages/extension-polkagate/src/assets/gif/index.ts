@@ -5,8 +5,10 @@
 
 export { default as celebration } from './Celebration.gif';
 export { default as handWave } from './handWave.gif';
+export { default as HourGlass } from './HourGlass.gif';
 export { default as info } from './info.gif';
 export { default as loader } from './loader.png';
 export { default as Lock } from './Lock.gif';
 export { default as money } from './money.gif';
 export { default as user } from './user.gif';
+export { default as WarningGif } from './WarningGif.gif';
