@@ -13,7 +13,7 @@ import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { BN, BN_ONE } from '@polkadot/util';
 

@@ -10,7 +10,7 @@ import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '@polkadot/extension-polkagate/src/components';
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool/partials/comparators';
 import { DEFAULT_POOL_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';

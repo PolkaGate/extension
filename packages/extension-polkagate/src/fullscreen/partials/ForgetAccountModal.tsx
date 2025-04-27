@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, useTheme } from '@mui/material';
@@ -14,7 +13,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { ActionContext, ButtonWithCancel, Checkbox2 as Checkbox, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
 import { useAlerts, useTranslation } from '../../hooks';
 import { forgetAccount, getAuthList, removeAuthorization, updateAuthorization } from '../../messaging';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {

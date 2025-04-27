@@ -13,7 +13,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Radio, RadioGroup, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { amountToHuman, upperCaseFirstChar } from '@polkadot/extension-polkagate/src/util/utils';
 

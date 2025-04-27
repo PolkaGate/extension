@@ -84,8 +84,8 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
         ? <>
           {_logo.startsWith('data:')
             ? <Avatar
-              src={_logo}
               imgProps={{ ref: imgRef }}
+              src={_logo}
               sx={{
                 borderRadius: logoRoundness,
                 filter,

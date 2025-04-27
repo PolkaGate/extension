@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 
 import { Button, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
+
+import { useIsExtensionPopup } from '../hooks';
 
 interface Props {
   disabled?: boolean;
@@ -18,8 +19,10 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function NeonButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
+export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
+  const borderRadius = isExtension ? '12px' : '18px';
 
   const [hovered, setHovered] = useState(false);
 
@@ -36,7 +39,7 @@ export default function NeonButton({ EndIcon, StartIcon, contentPlacement = 'sta
     background: 'transparent',
     border: '1px solid',
     borderColor: hovered ? '#FF4FB9' : '#2D1E4A',
-    borderRadius: `${style?.borderRadius ?? '12px'}`,
+    borderRadius: `${style?.borderRadius ?? borderRadius}`,
     boxShadow: 'unset',
     padding: '6px 24px',
     transition: 'all 250ms ease-out',

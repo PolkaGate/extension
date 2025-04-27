@@ -10,13 +10,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
 import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import Framework from '../../../fullscreen/onboarding/Framework';
 import { useFullscreen, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
@@ -25,7 +25,7 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -183,7 +183,7 @@ export default function RestoreJson (): React.ReactElement {
   const onCancel = useCallback(() => navigate('/'), [navigate]);
 
   return (
-    <Framework width='600px'>
+    <AdaptiveLayout style={{ maxWidth: '600px' }}>
       <OnboardTitle
         label={t('Restore from file')}
         labelPartInColor='from file'
@@ -290,6 +290,6 @@ export default function RestoreJson (): React.ReactElement {
           style={{ flexDirection: 'row-reverse', m: '15px 0 0', width: '65%' }}
         />
       </Stack>
-    </Framework>
+    </AdaptiveLayout>
   );
 }

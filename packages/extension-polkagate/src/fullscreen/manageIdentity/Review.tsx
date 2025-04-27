@@ -21,7 +21,7 @@ import { useCanPayFeeAndDeposit, useEstimatedFee, useInfo, useProxies } from '..
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { pgBoxShadow } from '../../util/utils';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -50,7 +50,7 @@ interface Props {
   selectedRegistrarName: string | undefined;
 }
 
-export default function Review ({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);

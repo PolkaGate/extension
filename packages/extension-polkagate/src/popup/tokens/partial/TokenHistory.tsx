@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 import type { TransactionDetail } from '../../../util/types';
 
@@ -189,7 +188,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
       <HistoryBox
         historyItems={historyItemsToShow}
         notReady={!genesisHash}
-        style={{ m: '10px 12px 15px', width: 'calc(100% - 24px)' }}
+        style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
       />
       <FilterHistory
         dispatchFilter={dispatchFilter}

@@ -30,7 +30,7 @@ export enum PASSWORD_STATUS {
   MATCHED
 }
 
-const MIN_LENGTH = 6;
+const MINIMUM_ALLOWED_PASSWORD_LENGTH = 1;
 
 function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, spacing = '18px', statusSetter, style, title1, title2 }: Props): React.ReactElement {
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
       return PASSWORD_STATUS.EMPTY_PASS;
     }
 
-    if (password.length < MIN_LENGTH) {
+    if (password.length < MINIMUM_ALLOWED_PASSWORD_LENGTH) {
       return PASSWORD_STATUS.WEEK_PASS;
     }
 

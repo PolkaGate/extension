@@ -1,9 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Container } from '@mui/material';
-import { Category, DocumentDownload, Edit2, Logout, Notification, People } from 'iconsax-react';
+import { Category, DocumentDownload, Edit2, LogoutCurve, Notification, People } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -101,7 +100,7 @@ function AccountSettings(): React.ReactElement {
           title={t('Export Accounts')}
         />
         <ActionCard
-          Icon={Logout}
+          Icon={LogoutCurve}
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform

@@ -14,7 +14,7 @@ interface Props {
   logoRoundness?: string;
 }
 
-export default function AssetDualLogo({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%' }: Props): React.ReactElement {
+export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%' }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (

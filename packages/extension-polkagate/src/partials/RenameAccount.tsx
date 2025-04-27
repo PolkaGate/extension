@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, Typography } from '@mui/material';
 import { Edit2, User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -59,12 +58,14 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
         <Typography color='#BEAAD8' variant='B-4'>
           {t('Choose a new name for your account')}
         </Typography>
-        {account &&
+        {
+          account &&
           <Address2
             address={account?.address}
             name={account?.name}
             style={{ mt: '15px' }}
-          />}
+          />
+        }
         <MyTextField
           Icon={User}
           focused

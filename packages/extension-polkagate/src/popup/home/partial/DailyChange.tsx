@@ -5,7 +5,7 @@ import { Container, Skeleton, type SxProps, type Theme, Typography, useTheme } f
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
-import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/homeFullScreen/partials/TotalBalancePieChart';
+import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/TotalBalancePieChart';
 
 import { FormatPrice } from '../../../components';
 import { useIsDark, useIsHideNumbers, usePortfolio } from '../../../hooks';
@@ -77,7 +77,7 @@ function DailyChange ({ address, change = null, iconSize = 15, showHours = true,
       : changed > 0
         ? isDark ? '#82FFA5' : '#00CA8D'
         : '#FF165C'
-  , [changed, isDark]);
+    , [changed, isDark]);
 
   if (changed === undefined) {
     return <RenderSkeleton />;

@@ -10,7 +10,7 @@ import { AccountContext, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { exportAccounts } from '../../../messaging';
 import { Passwords } from '../../../partials';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../components/DraggableModal';
 import SimpleModalTitle from '../../partials/SimpleModalTitle';
 
 interface Props {

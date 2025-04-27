@@ -19,7 +19,7 @@ import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { DEFAULT_COLOR } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { countDecimalPlaces, formatDecimal } from '../../../util/utils';
-import { adjustColor, changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../homeFullScreen/partials/TotalBalancePieChart';
+import { adjustColor, changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../home/partials/TotalBalancePieChart';
 
 interface Props {
   accountAssets: FetchedBalance[] | null | undefined;

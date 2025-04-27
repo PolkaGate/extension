@@ -1,18 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
-import React, { memo, useCallback, useContext, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { selectableNetworks } from '@polkadot/networks';
 
-import { ActionContext, AssetLogo, FormatPrice } from '../../../components';
-import { usePrices } from '../../../hooks';
+import { AssetLogo, FormatPrice } from '../../../components';
+import { useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import { TokenBalanceDisplay, TokenPriceInfo } from './TokensAssetsBox';
@@ -28,7 +28,7 @@ interface AssetDetailType {
 }
 type Summary = AssetDetailType[] | null | undefined;
 
-function AssetsHeader({ assetsDetail }: { assetsDetail: AssetDetailType }) {
+function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   const theme = useTheme();
 
   return (
@@ -55,10 +55,15 @@ function AssetsHeader({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   );
 }
 
-function AssetsDetail({ asset }: { asset: FetchedBalance }) {
+function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
+  const navigate = useNavigate();
+  const account = useSelectedAccount();
+  const params = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
 
-  const onAction = useContext(ActionContext);
+  const isSelected = useMemo(() => params?.genesisHash === asset.genesisHash && params?.paramAssetId === String(asset.assetId), [asset, params]);
+
   const pricesInCurrency = usePrices();
   const onHoverColor = theme.palette.mode === 'dark' ? '#1B133C' : '#f4f7ff';
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -67,11 +72,13 @@ function AssetsDetail({ asset }: { asset: FetchedBalance }) {
   const balancePrice = calcPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal);
 
   const onTokenClick = useCallback(() => {
-    onAction(`token/${asset.genesisHash}/${asset.assetId}`);
-  }, [asset.assetId, asset.genesisHash, onAction]);
+    isExtension
+      ? navigate(`token/${asset.genesisHash}/${asset.assetId}`)
+      : account?.address && navigate(`/accountfs/${account.address}/${asset.genesisHash}/${asset.assetId}`);
+  }, [account?.address, asset.assetId, asset.genesisHash, isExtension, navigate]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, borderRadius: '12px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, background: isSelected ? onHoverColor : undefined, borderRadius: '12px', cursor: 'pointer', px: isSelected ? '8px' : undefined, py: '4px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <TokenPriceInfo
@@ -94,7 +101,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -180,7 +187,7 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
               return (
                 <motion.div key={index} style={{ display: 'grid', rowGap: '6px', width: 'inherit' }} variants={itemVariants}>
                   <AssetsDetail asset={asset} />
-                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', ml: '-10px', width: '325px' }} />}
+                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', mx: '-10px' }} />}
                 </motion.div>
               );
             })}

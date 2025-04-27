@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
-import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { objectSpread } from '@polkadot/util';
 
@@ -134,7 +134,7 @@ export default function ImportSeed (): React.ReactElement {
   }, [navigate, step]);
 
   return (
-    <Framework width='600px'>
+    <AdaptiveLayout style={{ maxWidth: '600px' }}>
       <OnboardTitle
         label={t('Import from recovery phrase')}
         labelPartInColor='recovery phrase'
@@ -200,7 +200,7 @@ export default function ImportSeed (): React.ReactElement {
               focused
               iconSize={18}
               onTextChange={onNameChange}
-              placeholder={t('Name account')}
+              placeholder={t('Enter account name')}
               style={{ margin: '20px 0 20px' }}
               title={t('Choose a name for this account')}
             />
@@ -227,6 +227,6 @@ export default function ImportSeed (): React.ReactElement {
           </Motion>
         }
       </Stack>
-    </Framework>
+    </AdaptiveLayout>
   );
 }

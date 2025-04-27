@@ -13,7 +13,7 @@ import { Progress, TwoButtons } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 import { useMetadata } from '../../../hooks';
 import { KODADOT_URL } from '../../../util/constants';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../components/DraggableModal';
 import { IPFS_GATEWAY } from '../utils/constants';
 import { fetchWithRetry, getContentUrl } from '../utils/util';
 import AudioPlayer from './AudioPlayer';

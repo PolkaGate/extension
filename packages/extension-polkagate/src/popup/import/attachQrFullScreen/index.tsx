@@ -10,7 +10,7 @@ import React, { useCallback, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
-import Framework from '@polkadot/extension-polkagate/src/fullscreen/onboarding/Framework';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { QrScanAddress } from '@polkadot/react-qr';
@@ -32,7 +32,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
 
     account?.content && updateMeta(account.content, metaData).then(() => {
       setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
-      switchToOrOpenTab(`/accountfs/${account.content}/0`, true);
+      switchToOrOpenTab('/', true);
     }).catch(console.error);
   }, [account]);
 
@@ -73,7 +73,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
   );
 
   return (
-    <Framework width='600px'>
+    <AdaptiveLayout style={{ width: '600px' }}>
       <OnboardTitle
         label={t('Attach QR-signer')}
         labelPartInColor='QR-signer'
@@ -126,9 +126,9 @@ export default function AttachQrFullScreen (): React.ReactElement {
               Icon={User}
               focused
               iconSize={18}
-              onEnterPress = {onImport}
+              onEnterPress={onImport}
               onTextChange={setName}
-              placeholder={t('Name account')}
+              placeholder={t('Enter account name')}
               style={{ margin: '5px 0 0' }}
               title={t('Choose a name for this account')}
             />
@@ -146,6 +146,6 @@ export default function AttachQrFullScreen (): React.ReactElement {
           </Stack>
         }
       </Stack>
-    </Framework>
+    </AdaptiveLayout>
   );
 }

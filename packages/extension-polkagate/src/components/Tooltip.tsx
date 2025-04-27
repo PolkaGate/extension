@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { RefObject } from 'react';
 
 import { Tooltip, useTheme } from '@mui/material';
+import Zoom from '@mui/material/Zoom';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface CustomTooltipProps {
@@ -115,6 +115,9 @@ const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targ
       }}
       open={isVisible}
       placement={placement}
+      slots={{
+        transition: Zoom
+      }}
       title={content}
     >
       <div

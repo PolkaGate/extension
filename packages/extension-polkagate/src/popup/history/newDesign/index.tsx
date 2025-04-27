@@ -179,7 +179,7 @@ function History(): React.ReactElement {
         <HistoryBox
           historyItems={historyItemsToShow}
           notReady={!selectedChain}
-          style={{ m: '10px 12px 15px', width: 'calc(100% - 24px)' }}
+          style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
         />
       </Grid>
       <FadeOnScroll

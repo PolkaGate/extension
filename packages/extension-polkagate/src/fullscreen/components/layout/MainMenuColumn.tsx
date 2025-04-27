@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, Setting } from 'iconsax-react';
 import React from 'react';
 
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
@@ -14,7 +14,7 @@ import NeedHelp from '../../onboarding/NeedHelp';
 import Language from './Language';
 import MenuButton from './MenuButton';
 
-function Shining(): React.ReactElement {
+function Shining (): React.ReactElement {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', position: 'absolute', top: '-100px', width: '100%' }}>
       <Box sx={{
@@ -30,7 +30,7 @@ function Shining(): React.ReactElement {
   );
 }
 
-function MainMenuColumn(): React.ReactElement {
+function MainMenuColumn (): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
 
@@ -51,6 +51,7 @@ function MainMenuColumn(): React.ReactElement {
       </Stack>
       <MenuButton
         Icon={Home}
+        path = '/'
         text={t('Home')}
       />
       <MenuButton
@@ -58,7 +59,7 @@ function MainMenuColumn(): React.ReactElement {
         text={t('Send')}
       />
       <MenuButton
-        Icon={ScanBarcode}
+        Icon={ArrowCircleDown2}
         text={t('Receive')}
       />
       <MenuButton
@@ -77,7 +78,7 @@ function MainMenuColumn(): React.ReactElement {
         Icon={Clock}
         text={t('History')}
       />
-      <Stack direction='column' rowGap='20px' sx={{ bottom: '15px', position: 'absolute'}}>
+      <Stack direction='column' rowGap='20px' sx={{ bottom: '15px', position: 'absolute' }}>
         <Grid container item width='fit-content'>
           <Typography color='#674394' variant='B-5'>
             {`v.${version}`}

@@ -1,14 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 import type { Pages } from '../popup/home/type';
 
 import { Container, Grid, styled, useTheme } from '@mui/material';
-import { BuyCrypto, Clock, Logout, MedalStar, ScanBarcode, Setting } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, MedalStar, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
@@ -161,8 +160,8 @@ function HomeMenu(): React.ReactElement {
       <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)', zIndex: 1 }}>
         {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
         <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
-          <MenuItem ButtonIcon={Logout} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
-          <MenuItem ButtonIcon={ScanBarcode} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
+          <MenuItem ButtonIcon={ArrowCircleRight2} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
+          <MenuItem ButtonIcon={ArrowCircleDown2} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
           <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'stakingIndex'} onClick={handleMenuClick('stakingIndex')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
           <MenuItem ButtonIcon={MedalStar} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
           <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />

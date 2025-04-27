@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
@@ -11,7 +10,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { ActionContext, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { popupNumbers } from '..';
+import { popupNumbers } from '../index copy';
 import { TaskButton } from './CommonTasks';
 
 interface Props {

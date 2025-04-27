@@ -38,5 +38,6 @@ export { default as stashSettingBlack } from './stashSettingBlack.svg';
 export { default as stashSettingWhite } from './stashSettingWhite.svg';
 export { default as subId } from './subId.svg';
 export { default as subscan } from './subscan.svg';
+export { default as subscanTransparent } from './subscanTransparent.svg';
 export { default as text } from './text.svg';
 export { default as upload } from './upload.png';

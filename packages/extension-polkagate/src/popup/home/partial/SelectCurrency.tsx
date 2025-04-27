@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { CurrencyItemType } from '../../../fullscreen/homeFullScreen/partials/Currency';
+import type { CurrencyItemType } from '../../../fullscreen/home/partials/Currency';
 
 import { Box, Grid, styled, Typography } from '@mui/material';
 import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';
@@ -10,7 +10,7 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 
 import { CurrencyContext, ExtensionPopup, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';

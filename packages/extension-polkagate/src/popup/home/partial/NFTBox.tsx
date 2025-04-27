@@ -9,14 +9,13 @@ import React, { memo, useCallback, useContext, useEffect, useMemo, useState } fr
 
 import { logoBlackBirdTransparent } from '../../../assets/logos';
 import NftManager from '../../../class/nftManager';
-import { ActionContext } from '../../../components';
+import { ActionButton, ActionContext } from '../../../components';
 import { fetchItemMetadata } from '../../../fullscreen/nft/utils/util';
-import { useIsDark, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useIsDark, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
 import { toTitleCase } from '../../../util';
 import NftPrice from '../../nft/NftPrice';
 
-const MAX_NFT_TO_SHOW = 2; // we're gonna display up to 2 nfts if they were available!
 const nftManager = new NftManager();
 
 const NoNftAlert = () => {
@@ -61,14 +60,15 @@ function NFTItem ({ index, item }: NftItemProps) {
   return (
     <Grid container item onClick={onClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} sx={{ bgcolor, borderRadius: '18px', cursor: 'pointer', p: '4px', width: '152px' }}>
       <Grid container direction='column' item sx={{ bgcolor: bgcolor2, borderRadius: '14px' }}>
-        <Grid container item sx={{
-          borderRadius: '14px',
-          height: isHovered ? '135px' : '144px',
-          overflow: 'hidden',
-          position: 'relative',
-          transition: 'height 0.3s ease-in-out',
-          width: '144px'
-        }}
+        <Grid
+          container item sx={{
+            borderRadius: '14px',
+            height: isHovered ? '135px' : '144px',
+            overflow: 'hidden',
+            position: 'relative',
+            transition: 'height 0.3s ease-in-out',
+            width: '144px'
+          }}
         >
           <Box
             sx={{
@@ -129,6 +129,9 @@ function NFTBox () {
   const { t } = useTranslation();
   const account = useSelectedAccount();
   const isDark = useIsDark();
+  const isExtension = useIsExtensionPopup();
+
+  const MAX_NFT_TO_SHOW = isExtension ? 2 : undefined;
 
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
 
@@ -154,7 +157,7 @@ function NFTBox () {
     };
   }, [account, account?.address]);
 
-  const itemsToShow = useMemo(() => nfts?.filter(({ isCollection }) => !isCollection)?.slice(0, MAX_NFT_TO_SHOW), [nfts]);
+  const itemsToShow = useMemo(() => nfts?.filter(({ isCollection }) => !isCollection)?.slice(0, MAX_NFT_TO_SHOW), [MAX_NFT_TO_SHOW, nfts]);
 
   const fetchMetadata = useCallback(async () => {
     if (!itemsToShow || itemsToShow?.length === 0 || !account) {
@@ -184,7 +187,7 @@ function NFTBox () {
     <>
       {nfts
         ? <>
-          <Container disableGutters sx={{ bgcolor: isDark ? '#05091C' : '#F5F4FF', borderRadius: '14px', display: 'flex', height: '259px', justifyContent: 'space-evenly', py: '10px', width: '100%' }}>
+          <Container disableGutters sx={{ bgcolor: isDark ? '#05091C' : '#F5F4FF', borderRadius: '14px', columnGap: '5px', display: 'flex', height: '259px', justifyContent: 'space-evenly', overflowX: 'scroll', py: '10px', width: '100%', px: isExtension ? 0 : '15px'  }}>
             {itemsToShow?.map((item, index) => (
               <NFTItem
                 index={index}
@@ -193,12 +196,20 @@ function NFTBox () {
               />
             ))}
           </Container>
-          <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
-            <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-2'>
-              {t('See all')}
-            </Typography>
-            <ArrowRight2 color='#BEAAD880' size='14' />
-          </Grid>
+          {isExtension
+            ? <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
+              <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-2'>
+                {t('See all')}
+              </Typography>
+              <ArrowRight2 color='#BEAAD880' size='14' />
+            </Grid>
+            : <ActionButton
+              contentPlacement='center'
+              onClick={openNft}
+              style={{ height: '44px', margin: '20px 5%', width: '90%' }}
+              text={t('See all')}
+            />
+          }
         </>
         : <NoNftAlert />
       }

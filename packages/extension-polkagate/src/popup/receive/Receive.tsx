@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransitionProps } from '@mui/material/transitions';
 import type { Network } from '@polkadot/networks/types';
 
@@ -13,15 +12,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { selectableNetworks } from '@polkadot/networks';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { Motion, NeonButton, SearchField } from '../../components';
+import { NeonButton, SearchField } from '../../components';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import getLogo from '../../util/getLogo';
-import { sanitizeChainName } from '../../util/utils';
+import { sanitizeChainName, toShortAddress } from '../../util/utils';
 import MySnackbar from '../settings/extensionSettings/components/MySnackbar';
 
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
@@ -39,24 +38,24 @@ const ListItem = styled(Grid)(() => ({
 
 const chainNameSanitizer = (text: string) => sanitizeChainName(text)?.toLowerCase();
 
-const shortenAddress = (address: string, charactersCount = 4) => {
-  if (!address) {
-    return '';
-  }
+// const shortenAddress = (address: string, charactersCount = 4) => {
+//   if (!address) {
+//     return '';
+//   }
 
-  if (address.length <= charactersCount * 2) {
-    return address;
-  }
+//   if (address.length <= charactersCount * 2) {
+//     return address;
+//   }
 
-  return `${address.slice(0, charactersCount)}...${address.slice(-charactersCount)}`;
-};
+//   return `${address.slice(0, charactersCount)}...${address.slice(-charactersCount)}`;
+// };
 
 interface AddressComponentProp {
   address: string;
   chain: Network;
 }
 
-function AddressComponent({ address, chain }: AddressComponentProp) {
+function AddressComponent ({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -71,12 +70,12 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
   const handleSnackbarClose = useCallback(() => setShowSnackbar(false), []);
 
   return (
-    <Motion style={{ width: '100%' }}>
+    <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
           <Avatar src={getLogo(chainName)} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
           <Typography color='text.secondary' variant='B-4'>
-            {shortenAddress(address, 12)}
+            {toShortAddress(address, 12)}
           </Typography>
         </Grid>
         <Grid container item onClick={onCopy} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
@@ -88,7 +87,7 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
         open={showSnackbar}
         text={t("{{chainName}}'s address copied!", { replace: { chainName } })}
       />
-    </Motion>
+    </>
   );
 }
 
@@ -96,7 +95,7 @@ interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<Network | undefined>>;
 }
 
-function SelectChain({ setSelectedChain }: SelectChainProp) {
+function SelectChain ({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
 
   const customSort = useCallback((itemA: Network, itemB: Network) => {
@@ -135,6 +134,7 @@ function SelectChain({ setSelectedChain }: SelectChainProp) {
         </Grid>
         <Grid container item>
           <SearchField
+            focused
             onInputChange={onSearch}
             placeholder='🔍 Search Chain'
           />
@@ -170,7 +170,7 @@ interface QrCodeProps {
   onBackToAccount: () => void;
 }
 
-function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
+function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
 
   const formattedAddress = useMemo(() => {
@@ -230,7 +230,7 @@ interface Props {
   setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Receive({ openPopup, setOpenPopup }: Props) {
+export default function Receive ({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<Network | undefined>();

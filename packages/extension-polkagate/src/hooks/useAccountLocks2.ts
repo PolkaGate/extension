@@ -29,7 +29,7 @@ export type PalletReferenda = 'referenda' | 'rankedPolls' | 'fellowshipReferenda
 export type PalletVote = 'convictionVoting' | 'rankedCollective' | 'fellowshipCollective';
 
 function getLocks (api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, refIds: BN[], casting: PalletConvictionVotingVoteCasting][], referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][]): Lock[] {
-  const lockPeriod = api.consts[palletVote]?.['voteLockingPeriod'] as unknown as BN;
+  const lockPeriod = api.consts[palletVote]?.['voteLockingPeriod'] as unknown as BN | undefined;
   const locks: Lock[] = [];
 
   for (let i = 0; i < votes.length; i++) {
@@ -77,7 +77,7 @@ function getLocks (api: ApiPromise, palletVote: PalletVote, votes: [classId: BN,
             ? tally.asCancelled[0]
             : tally.asTimedOut[0];
         } else if (tally.isApproved || tally.isRejected) {
-          endBlock = lockPeriod
+          endBlock = (lockPeriod ?? BN_ZERO)
             .muln(convictionIndex ? CONVICTIONS[convictionIndex - 1][1] : 0)
             .add(
               tally.isApproved

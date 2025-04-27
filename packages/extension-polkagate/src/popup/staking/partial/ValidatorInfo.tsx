@@ -12,7 +12,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';

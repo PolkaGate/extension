@@ -8,7 +8,7 @@ import { Triangle } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import CustomCommand from '../../../components/SVG/CustomCommand';
-import { useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { TAB } from './AssetsBox';
 
 interface TabProps {
@@ -17,7 +17,7 @@ interface TabProps {
   setTab?: React.Dispatch<React.SetStateAction<TAB | undefined>>;
 }
 
-function ChainTokensTab({ setTab, tab }: TabProps) {
+function ChainTokensTab ({ setTab, tab }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -72,7 +72,7 @@ function ChainTokensTab({ setTab, tab }: TabProps) {
   }), [isActiveTab, nonSelectedSquareColor, showChains]);
 
   return (
-    <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: '72px' }}>
+    <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: 'fit-content' }}>
       <CustomCommand
         color={color}
         secondaryColor={secondaryColor}
@@ -89,7 +89,7 @@ function ChainTokensTab({ setTab, tab }: TabProps) {
   );
 }
 
-function NFTTab({ isSelected = false }: TabProps) {
+function NFTTab ({ isSelected = false }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -108,7 +108,9 @@ interface Props {
   tab: TAB | undefined;
 }
 
-function AssetTabs({ setTab, tab }: Props): React.ReactElement {
+function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
+  const isExtension = useIsExtensionPopup();
+
   const tabIndex = useMemo(() => !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
     ? TAB.CHAINS
     : TAB.NFTS
@@ -125,7 +127,7 @@ function AssetTabs({ setTab, tab }: Props): React.ReactElement {
   }, [setTab, tabIndex]);
 
   return (
-    <Container disableGutters sx={{ display: 'flex', mx: '30px', width: '100%' }}>
+    <Container disableGutters sx={{ display: 'flex', mx: isExtension ? '30px' : '15px', width: '100%' }}>
       <Tabs
         onChange={handleTabChange}
         sx={{

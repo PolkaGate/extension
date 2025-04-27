@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AssetNull } from '../../../components';
-import { useAccountAssets, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
+import { useAccountAssets, useIsExtensionPopup, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
@@ -33,6 +33,7 @@ function AssetsBox (): React.ReactElement {
   const accountAssets = useAccountAssets(account?.address);
   const selectedChains = useSelectedChains();
   const pricesInCurrency = usePrices();
+  const isExtension = useIsExtensionPopup();
 
   const [tab, setTab] = useState<TAB>();
 
@@ -90,7 +91,7 @@ function AssetsBox (): React.ReactElement {
   return (
     <>
       <AssetTabs setTab={setTab} tab={tab} />
-      <VelvetBox style={{ minHeight: '70px', mx: '15px' }}>
+      <VelvetBox style={{ margin: isExtension ? '0 15px' : 0, minHeight: '70px', padding: isExtension ? undefined : 0 }}>
         {renderContent()}
       </VelvetBox>
     </>

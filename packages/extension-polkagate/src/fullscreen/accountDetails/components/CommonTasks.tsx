@@ -18,7 +18,7 @@ import { noop } from '@polkadot/util';
 import { PoolStakingIcon } from '../../../components';
 import { useApi, useTranslation } from '../../../hooks';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
-import { popupNumbers } from '..';
+import { popupNumbers } from '../index copy';
 
 interface Props {
   address: string | undefined;
@@ -129,8 +129,7 @@ export default function CommonTasks({ address, assetId, balance, genesisHash, se
     hasSoloStake ||
     (api && !api.tx?.['nominationPools']?.['migrateDelegation']) ||
     (api?.tx?.['nominationPools']?.['migrateDelegation'] && balance?.pooledBalance?.isZero())
-    ,
-    [api, balance?.pooledBalance, hasSoloStake]);
+    , [api, balance?.pooledBalance, hasSoloStake]);
 
   const goToSend = useCallback(() => {
     address && genesisHash &&

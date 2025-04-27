@@ -17,7 +17,7 @@ export interface YouHaveType {
   portfolio: number;
 }
 
-export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0);
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal) || '0') * (assetPrice ?? 0);
 
 export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
   if (tokenPriceChange === -100) {

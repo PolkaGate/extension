@@ -11,7 +11,7 @@ import { faLock, faLockOpen, faTrashCan } from '@fortawesome/free-solid-svg-icon
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 
 import { AccountWithProxyInConfirmation } from '../../../../components';
