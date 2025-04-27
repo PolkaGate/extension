@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-import { useBalances2, useChainInfo, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards } from '.';
+import { useBalances2, useChainInfo, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
 interface SessionIfo {
   eraLength: number; // Length of an era in blocks
@@ -113,15 +113,15 @@ const getAvailableToStake = (balances: BalancesInfo | undefined, stakingAccount:
  * @param genesisHash - The chain's genesis hash to identify the network
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined) {
-  const { api } = useChainInfo(genesisHash);
+export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined): SoloStakingInfo {
+  const { api, chainName } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash);
 
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
 
   const stakingAccount = useStakingAccount2(address, genesisHash);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-  const rewards = useStakingRewards(address, stakingAccount);
+  const rewards = useStakingRewards2(chainName, stakingAccount);
   const stakingConsts = useStakingConsts2(genesisHash);
 
   // Fetch session and unstaking information

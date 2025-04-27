@@ -14,7 +14,7 @@ import { riot, subscan } from '../../../assets/icons';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { toShortAddress } from '../../../util/utils';
+import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../staking styles/BlueGradient';
@@ -142,7 +142,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
-  const validatorAPY = useValidatorApy(api, String(validatorDetail?.accountId), !!(new BN(validatorDetail?.stakingLedger.total as unknown as string))?.gtn(0));
+  const validatorAPY = useValidatorApy(api, String(validatorDetail?.accountId), !!(isHexToBn(validatorDetail?.stakingLedger.total as unknown as string))?.gtn(0));
 
   return (
     <Dialog
