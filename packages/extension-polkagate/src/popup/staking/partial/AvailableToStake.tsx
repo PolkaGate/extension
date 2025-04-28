@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, Skeleton, type SxProps, type Theme, Typography } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
-import { type BN, noop } from '@polkadot/util';
+import { type BN } from '@polkadot/util';
 
 import { FormatBalance2 } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
@@ -17,12 +18,15 @@ export interface Props {
   availableAmount: BN | undefined;
   decimal: number | undefined;
   token: string | undefined;
+  path?: string;
   style?: SxProps<Theme>;
   noStakeButton?: boolean;
 }
 
-export default function AvailableToStake ({ availableAmount, decimal, noStakeButton = false, stakeType, style, token }: Props): React.ReactElement {
+export default function AvailableToStake ({ availableAmount, decimal, noStakeButton = false, path, stakeType, style, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const onClick = useCallback(() => navigate(path ?? '') as void, [navigate, path]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#2D1E4A4D', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', p: '10px', width: '100%', ...style }}>
@@ -63,10 +67,10 @@ export default function AvailableToStake ({ availableAmount, decimal, noStakeBut
           </Typography>
         </Container>
       </Grid>
-      {!noStakeButton &&
+      {!noStakeButton && path &&
         <StakingActionButton
           disabled={!availableAmount || availableAmount.isZero()}
-          onClick={noop}
+          onClick={onClick}
           style={{ height: '28px', width: 'fit-content' }}
           text={t('Stake')}
         />}
