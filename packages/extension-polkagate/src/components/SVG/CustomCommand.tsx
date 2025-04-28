@@ -4,12 +4,12 @@
 import React from 'react';
 
 interface CustomCloseSquareProps {
-  onClick?: () => void;
-  style?: React.CSSProperties;
-  className?: string;
   color?: string;
+  className?: string;
+  onClick?: () => void;
   secondaryColor?: string;
   size?: string;
+  style?: React.CSSProperties;
 }
 
 export const CustomCommand: React.FC<CustomCloseSquareProps> = ({ className, color, onClick, secondaryColor, size = '48', style }) => (

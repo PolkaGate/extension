@@ -7,7 +7,7 @@ import React from 'react';
 
 import { useFullscreen, useTranslation } from '../../hooks';
 import { OnboardTitle } from '../components';
-import Framework from '../onboarding/Framework';
+import AdaptiveLayout from '../components/layout/AdaptiveLayout';
 import CreationButton from './CreationButton';
 
 function HaveWallet (): React.ReactElement {
@@ -16,7 +16,7 @@ function HaveWallet (): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Framework>
+    <AdaptiveLayout>
       <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
         <OnboardTitle
           label={t('Already have a wallet')}
@@ -65,7 +65,7 @@ function HaveWallet (): React.ReactElement {
           />
         </Grid>
       </Stack>
-    </Framework>
+    </AdaptiveLayout>
   );
 }
 

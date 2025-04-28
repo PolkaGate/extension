@@ -8,7 +8,7 @@ import React, { useCallback } from 'react';
 import { Translation } from 'react-i18next';
 
 import { ExtensionPopup, GradientButton } from '../components';
-import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '../hooks';
 import { ExtensionPopups } from '../util/constants';
 

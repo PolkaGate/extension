@@ -3,7 +3,8 @@
 
 import React, { useState } from 'react';
 
-import Framework from '../../../fullscreen/onboarding/Framework';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
+
 import { useFullscreen } from '../../../hooks';
 import LedgerOptions from './partials/LedgerOptions';
 import GenericApp from './generic';
@@ -23,7 +24,7 @@ export default function ImportLedger (): React.ReactElement {
   const [mode, setMode] = useState<MODE>(MODE.INDEX);
 
   return (
-    <Framework width='600px'>
+    <AdaptiveLayout style= {{ maxWidth: '600px' }}>
       {mode === MODE.INDEX &&
         <LedgerOptions
           setMode={setMode}
@@ -44,6 +45,6 @@ export default function ImportLedger (): React.ReactElement {
           setMode={setMode}
         />
       }
-    </Framework>
+    </AdaptiveLayout>
   );
 }

@@ -10,7 +10,7 @@ import { useAccount, useTranslation } from '../../hooks';
 import { deriveAccount } from '../../messaging';
 import CreateNewDerivedAccount from '../../popup/newAccount/deriveAccount/modal/CreateNewDerivedAccount';
 import SelectParent from '../../popup/newAccount/deriveAccount/modal/SelectParent';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { BN } from '@polkadot/util';
 
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
@@ -11,10 +10,12 @@ import { Container, Grid, Typography } from '@mui/material';
 import { Bezier, Data, type Icon, Image, LikeDislike, MedalStar, Paperclip2, People, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
+
 import { ExtensionPopup, GradientButton, GradientDivider } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import AssetLoading from '../../home/partial/AssetLoading';
 import { ColumnAmounts } from './ColumnAmounts';
@@ -111,7 +112,16 @@ interface Props {
   token: string | undefined;
 }
 
-export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
+interface ContentProps {
+  decimal: number | undefined;
+  handleClose: () => void;
+  items: Record<string, BN | undefined>;
+  price: number;
+  style?: React.CSSProperties;
+  token: string | undefined;
+}
+
+function Content ({ decimal, handleClose, items, price, style = {}, token }: ContentProps) {
   const { t } = useTranslation();
 
   const stillLoading = Object.entries(items).some(([_, amount]) => amount === undefined);
@@ -119,24 +129,8 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
   const noReasons = stillLoading === false && reasonsToShow.length === 0;
 
   return (
-    <ExtensionPopup
-      TitleIcon={TitleIcon}
-      handleClose={handleClose}
-      iconSize={22}
-      openMenu={openMenu}
-      style={{
-        '> div#container': {
-          height: 'fit-content',
-          zIndex: 1
-        },
-        display: 'flex',
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-        justifyContent: 'flex-end'
-      }}
-      title={title}
-    >
-      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', maxHeight: '360px', my: '15px', overflow: 'scroll', p: '8px' }}>
+    <>
+      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', maxHeight: '360px', my: '15px', overflow: 'scroll', p: '8px', ...style }}>
         {reasonsToShow.map(([reason, amount], index) => {
           const noDivider = reasonsToShow.length === index + 1;
 
@@ -173,6 +167,58 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
         }}
         text={t('Close')}
       />
-    </ExtensionPopup>
+    </>
+  );
+}
+
+export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
+  const isExtension = useIsExtensionPopup();
+
+  return (
+    <>
+      {isExtension
+        ? <ExtensionPopup
+          TitleIcon={TitleIcon}
+          handleClose={handleClose}
+          iconSize={22}
+          openMenu={openMenu}
+          style={{
+            '> div#container': {
+              height: 'fit-content',
+              zIndex: 1
+            },
+            display: 'flex',
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end'
+          }}
+          title={title}
+        >
+          <Content
+            decimal={decimal}
+            handleClose={handleClose}
+            items={items}
+            price={price}
+            token={token}
+          />
+        </ExtensionPopup>
+        : <DraggableModal
+          noDivider
+          onClose={handleClose}
+          open={openMenu}
+          style={{ minHeight: 'fit-content', padding: '20px', zIndex: 1 }}
+          title={title}
+        >
+          <Content
+            decimal={decimal}
+            handleClose={handleClose}
+            items={items}
+            price={price}
+            style={{ margin: '20px 0' }}
+            token={token}
+          />
+        </DraggableModal>
+      }
+    </>
   );
 }

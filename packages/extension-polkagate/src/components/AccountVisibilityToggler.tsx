@@ -5,11 +5,16 @@ import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import { Radar2 } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
 
-import { Tooltip } from '../../../components';
-import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../../../hooks';
-import { showAccount } from '../../../messaging';
+import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
+import { showAccount } from '../messaging';
+import { MyTooltip } from '.';
 
-function AccountVisibilityToggler (): React.ReactElement {
+interface Props {
+  size?: string | number;
+  style?: React.CSSProperties;
+}
+
+function AccountVisibilityToggler ({ size = '24', style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
@@ -35,23 +40,21 @@ function AccountVisibilityToggler (): React.ReactElement {
     p: '7px',
     position: 'relative',
     transition: 'all 250ms ease-out',
-    width: 'fit-content'
+    width: 'fit-content',
+    ...style
   };
 
   return (
-    <>
+    <MyTooltip
+      content={account?.isHidden
+        ? t('This account is invisible to websites')
+        : t('This account is visible to websites')}
+    >
       <Grid container item onClick={toggleVisibility} ref={ref} sx={containerStyle}>
-        <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} size='24' />
+        <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} size={size} />
         <Divider sx={{ bgcolor: '#FF4FB9', height: '1.5px', opacity: account?.isHidden ? 1 : 0, position: 'absolute', rotate: '-45deg', transition: 'all 150ms ease-out', width: '28px' }} />
       </Grid>
-      <Tooltip
-        content={account?.isHidden
-          ? t('This account is invisible to websites')
-          : t('This account is visible to websites')}
-        positionAdjustment={{ left: -8, top: -35 }}
-        targetRef={ref}
-      />
-    </>
+    </MyTooltip>
   );
 }
 

@@ -19,7 +19,7 @@ function PortfolioFullScreen (): React.ReactElement {
   const youHave = useYouHave();
 
   return (
-    <GlowBox style={{ width: '100%' }} withFading={false}>
+    <GlowBox style={{ width: '100%' }}>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '30px 25px 15px' }}>
         <Typography color={isDark ? 'text.secondary' : '#291443'} sx={{ userSelect: 'none' }} variant='B-2'>
           {t('Total Portfolio')}

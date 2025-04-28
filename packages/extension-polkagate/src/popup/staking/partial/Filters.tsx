@@ -11,7 +11,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';

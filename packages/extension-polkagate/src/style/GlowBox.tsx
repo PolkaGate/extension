@@ -4,7 +4,7 @@
 import { Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
-import { useIsDark } from '../hooks';
+import { useIsDark, useIsExtensionPopup } from '../hooks';
 import { GradientBorder, GradientDivider } from '.';
 
 const GlowBoxContainer = styled(Container)(() => ({
@@ -21,6 +21,7 @@ const GlowBoxContainer = styled(Container)(() => ({
 }));
 
 const GlowBall = styled('div')({
+  backgroundBlendMode: 'color-dodge',
   backgroundColor: '#FF59EE',
   borderRadius: '50%',
   filter: 'blur(60px)', // Glow effect
@@ -49,6 +50,17 @@ const Fade = styled('div')({
   width: '100%'
 });
 
+const FadeOutFs = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
+  background: isDark
+    ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(6, 10, 29, 0) 100%)'
+    : '',
+  borderRadius: '24px',
+  height: '158px',
+  inset: 0,
+  position: 'absolute',
+  width: '100%'
+}));
+
 function GlowDivider({ isDark, placement }: { isDark: boolean, placement: 'right' | 'left' }): React.ReactElement {
   return (
     <GradientDivider
@@ -72,11 +84,11 @@ interface Props {
   showTopBorder?: boolean;
   children: React.ReactNode;
   style?: SxProps<Theme>;
-  withFading?: boolean;
 }
 
-function GlowBox({ children, showTopBorder = true, style, withFading = true }: Props): React.ReactElement {
+function GlowBox ({ children, showTopBorder = true, style }: Props): React.ReactElement {
   const isDark = useIsDark();
+  const isExtension = useIsExtensionPopup();
 
   return (
     <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
@@ -88,14 +100,15 @@ function GlowBox({ children, showTopBorder = true, style, withFading = true }: P
         {isDark &&
           <GlowBall />
         }
-        {withFading &&
-          <>
+        {isExtension
+          ? <>
             <Fade />
             <FadeOut isDark={isDark} />
           </>
+          : <FadeOutFs isDark={isDark} />
         }
       </GlowBoxContainer>
-    </Container >
+    </Container>
   );
 }
 

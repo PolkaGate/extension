@@ -8,7 +8,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { useIsDark, useIsHovered } from '../hooks';
+import { useIsDark, useIsExtensionPopup, useIsHovered } from '../hooks';
 
 interface Props {
   StartIcon?: Icon;
@@ -30,6 +30,8 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
   const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
+  const isExtension = useIsExtensionPopup();
+  const borderRadius = isExtension ? '12px' : '18px';
 
   const ButtonFontStyle = useMemo(() => ({
     ...theme.typography['B-2'],
@@ -43,7 +45,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       transition: 'all 250ms ease-out'
     },
     background: isDark ? '#2D1E4A' : '#FFFFFF',
-    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? '12px'}`,
+    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
     padding: '6px 24px',

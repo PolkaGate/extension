@@ -4,9 +4,12 @@
 import { Box, Stack } from '@mui/material';
 import React from 'react';
 
+import { useIsOnline } from '@polkadot/extension-polkagate/src/hooks/index';
+
 import { HomeAccountDropDown } from '../../../components';
 import CurrencySelection from './CurrencySelection';
 import HideNumbers from './HideNumbers';
+import InternetConnection from './InternetConnection';
 import Notifications from './Notifications';
 
 function MyDivider (): React.ReactElement {
@@ -23,8 +26,16 @@ function MyDivider (): React.ReactElement {
 }
 
 function TopRightActions (): React.ReactElement {
+  const isOnline = useIsOnline();
+
   return (
     <Stack alignItems='center' columnGap='7px' direction='row' sx={{ position: 'absolute', right: 0, top: '5px' }}>
+      {!isOnline &&
+        <>
+          <InternetConnection />
+          <MyDivider />
+        </>
+      }
       <HideNumbers />
       <MyDivider />
       <CurrencySelection />

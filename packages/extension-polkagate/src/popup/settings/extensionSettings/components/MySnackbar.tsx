@@ -6,6 +6,8 @@
 import { Box, keyframes, Slide, Snackbar, Typography, useTheme } from '@mui/material';
 import React, { useEffect } from 'react';
 
+import { check } from '@polkadot/extension-polkagate/src/assets/gif/index';
+
 interface Props {
   text: string;
   open: boolean;
@@ -66,6 +68,11 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
           width: '330px'
         }}
       >
+        <Box
+          component='img'
+          src={check as string}
+          sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
+        />
         <Typography color={theme.palette.text.primary} variant='B-2'>
           {text}
         </Typography>

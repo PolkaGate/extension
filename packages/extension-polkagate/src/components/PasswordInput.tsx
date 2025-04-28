@@ -66,7 +66,7 @@ interface Props {
   hasError?: boolean;
 }
 
-export default function PasswordInput({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
+export default function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();

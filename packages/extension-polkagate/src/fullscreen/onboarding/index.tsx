@@ -11,13 +11,13 @@ import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
 import { createAccountExternal } from '../../messaging';
-import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
-import Framework from './Framework';
 import { setStorage } from '../../util';
+import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
+import OnboardingLayout from './OnboardingLayout';
 
 export const ICON_BOX_WIDTH = '300px';
 
-function OrSeparator(): React.ReactElement {
+function OrSeparator (): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -31,7 +31,7 @@ function OrSeparator(): React.ReactElement {
   );
 }
 
-function Onboarding(): React.ReactElement {
+function Onboarding (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function Onboarding(): React.ReactElement {
   }, [navigate]);
 
   return (
-    <Framework>
+    <OnboardingLayout>
       <Stack alignItems='center' direction='column' justifyContent='flex-start' sx={{ width: '396px', zIndex: 1 }}>
         <Stack alignContent='start' columnGap='10px' direction='row' justifyContent='start' width='100%'>
           <Box
@@ -117,7 +117,7 @@ function Onboarding(): React.ReactElement {
           variant='contained'
         />
       </Stack>
-    </Framework>
+    </OnboardingLayout>
   );
 }
 

@@ -8,7 +8,7 @@ import React, { useCallback } from 'react';
 import { GradientButton } from '@polkadot/extension-polkagate/src/components/index';
 import { QrScanSignature } from '@polkadot/react-qr';
 
-import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../../fullscreen/components/DraggableModal';
 import { useTranslation } from '../../../hooks';
 
 interface Props {
@@ -59,7 +59,7 @@ export default function QrScanner({ setAddress, setOpenCamera }: Props): React.R
           width: '200px'
         }}
       />
-      <Stack alignItems='center' direction='row' justifyContent='center' sx= {{ mt: '20px' }}>
+      <Stack alignItems='center' direction='row' justifyContent='center' sx={{ mt: '20px' }}>
         <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
           {t('Hold the QR code in front of the ')}
         </Typography>

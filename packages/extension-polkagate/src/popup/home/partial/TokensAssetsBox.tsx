@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 import type { Prices } from '../../../util/types';
@@ -9,13 +8,14 @@ import type { Prices } from '../../../util/types';
 import { Badge, Collapse, Container, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import { CloseCircle } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
-import { useIsDark, usePrices } from '../../../hooks';
+import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
+import { useIsDark, useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import DailyChange from './DailyChange';
@@ -40,13 +40,13 @@ export const Drawer = ({ length }: { length: number }) => {
 
   return (
     <Container disableGutters sx={{ display: 'flex', height: length === 0 ? 0 : length > 1 ? '18px' : '9px', justifyContent: 'center', overflow: 'hidden', position: 'relative', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '100%' }}>
-      <div style={{ background: colorD1, borderRadius: '14px', height: length ? '50px' : 0, position: 'absolute', top: '-41px', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '300px', zIndex: 1 }} />
-      <div style={{ background: colorD2, borderRadius: '14px', bottom: 0, height: length > 1 ? '50px' : 0, position: 'absolute', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '275px' }} />
+      <div style={{ background: colorD1, borderRadius: '14px', height: length ? '50px' : 0, position: 'absolute', top: '-41px', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '90%', zIndex: 1 }} />
+      <div style={{ background: colorD2, borderRadius: '14px', bottom: 0, height: length > 1 ? '50px' : 0, position: 'absolute', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '80%' }} />
     </Container>
   );
 };
 
-export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: string }) {
+export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
   const pricesInCurrency = usePrices();
   const isDark = useIsDark();
 
@@ -81,7 +81,7 @@ export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: s
   );
 }
 
-export function TokenBalanceDisplay({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
+export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
   const theme = useTheme();
   const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
   const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';
@@ -114,11 +114,13 @@ export function TokenBalanceDisplay({ decimal = 0, token = '', totalBalanceBN, t
   );
 }
 
-function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
+function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const theme = useTheme();
-  const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
+  const account = useSelectedAccount();
+  const isExtension = useIsExtensionPopup();
+  const navigate = useNavigate();
 
-  const onAction = useContext(ActionContext);
+  const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -132,8 +134,10 @@ function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const balancePrice = calcPrice(priceOf(tokenDetail.priceId), tokenDetail.totalBalance, tokenDetail.decimal);
 
   const onTokenClick = useCallback(() => {
-    onAction(`token/${tokenDetail.genesisHash}/${tokenDetail.assetId}`);
-  }, [tokenDetail.assetId, tokenDetail.genesisHash, onAction]);
+    isExtension
+    ? navigate(`token/${tokenDetail.genesisHash}/${tokenDetail.assetId}`)
+    : account?.address && navigate(`/accountfs/${account.address}/${tokenDetail.genesisHash}/${tokenDetail.assetId}`);
+  }, [isExtension, navigate, tokenDetail.genesisHash, tokenDetail.assetId, account?.address]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: bgcolor }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
@@ -160,7 +164,7 @@ function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   );
 }
 
-function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
+function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
   const theme = useTheme();
 
   const isDark = theme.palette.mode === 'dark';
@@ -176,8 +180,8 @@ function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
 
   return (
     <div>
-      <Grid container item onClick={toggleExpand} sx={{ background: bgColor, borderRadius: '14px', cursor: 'pointer', p: '12px 10px' }}>
-        <Container disableGutters sx={{ alignItems: 'center', display: 'flex' }}>
+      <Grid container item sx={{ background: bgColor, borderRadius: '14px', cursor: 'pointer', p: '12px 10px' }}>
+        <Container disableGutters onClick={toggleExpand} sx={{ alignItems: 'center', display: 'flex' }}>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ transition: 'all 250ms ease-out' }} xs>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
               <Badge
@@ -238,7 +242,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const tokens: Assets = useMemo(() => {

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -10,7 +10,7 @@ import React, { useCallback } from 'react';
 import { TwoButtons, Warning } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
   open: boolean;

@@ -11,7 +11,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 
 import { SlidePopUp } from '../../../../../components';
 import { useInfo, useIsExtensionPopup, useTranslation } from '../../../../../hooks';

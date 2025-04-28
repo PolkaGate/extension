@@ -41,7 +41,7 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
+function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address || '');
 

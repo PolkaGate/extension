@@ -1,7 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
+import type { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
 
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,8 +12,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Identity, InputFilter, Progress, ShowValue } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
-import { DraggableModal } from '../../components/DraggableModal';
-import { AbstainVoteType, AllVotesType, FilteredVotes, VoteType } from '../../utils/helpers';
+import { DraggableModal } from '../../../components/DraggableModal';
 import { getVoteValue, VOTE_PER_PAGE } from '.';
 
 interface Props {

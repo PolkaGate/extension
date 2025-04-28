@@ -22,10 +22,9 @@ import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
 import ChangeLog from './ChangeLog';
 
-export default function Home(): React.ReactElement {
+export default function Home (): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
-
   const refContainer = useRef<HTMLDivElement>(null);
 
   useMerkleScience(undefined, undefined, true); // to download the data file

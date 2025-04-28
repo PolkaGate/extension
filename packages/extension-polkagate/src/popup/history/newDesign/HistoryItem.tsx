@@ -5,7 +5,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { ArrowCircleUp2, ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, Logout, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
@@ -42,9 +42,9 @@ const HistoryIcon = ({ action }: { action: string }) => {
     nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
     proxy: <Data color='#AA83DC' size='20' />,
-    receive: <ArrowCircleUp2 color='#82FFA5' size='22' variant='Linear' />,
+    receive: <ArrowCircleDown2 color='#82FFA5' size='22' variant='Linear' />,
     reward: <Money color='#82FFA5' size='22' />,
-    send: <Logout color='#AA83DC' size='22' />,
+    send: <ArrowCircleRight2 color='#AA83DC' size='22' />,
     'solo staking': <Strongbox color='#AA83DC' size='26' />,
     utility: <ShoppingBag color='#AA83DC' size='22' />
   };

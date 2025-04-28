@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import HomePageFullScreen from '../../fullscreen/homeFullScreen';
+import HomePageFullScreen from '../../fullscreen/home';
 import useIsExtensionPopup from '../../hooks/useIsExtensionPopup';
 import Home from '.';
 

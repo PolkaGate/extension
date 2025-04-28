@@ -8,7 +8,7 @@ import React, { useCallback, useState } from 'react';
 import { noop } from '@polkadot/util';
 
 import { loader } from '../assets/gif';
-import { useIsDark } from '../hooks';
+import { useIsDark, useIsExtensionPopup } from '../hooks';
 
 /**
  * Props for the GradientButton component.
@@ -47,6 +47,8 @@ export interface Props {
 export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
+  const isExtension = useIsExtensionPopup();
+  const borderRadius = isExtension ? '12px' : '18px';
 
   const [hovered, setHovered] = useState<boolean>(false);
 
@@ -73,7 +75,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     /* ON HOVER EFFECT */
     '&::after': {
       background: '#6E00B1',
-      borderRadius: `${style?.borderRadius ?? '12px'}`,
+      borderRadius: `${style?.borderRadius ?? borderRadius}`,
       content: '""',
       inset: '-2px',
       opacity: hovered ? 1 : 0,
@@ -85,7 +87,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     ...(!disabled && {
       '&::before': {
         background: 'linear-gradient(90deg, #AA0DEB 0%, #FF91E7 50%, #AA0DEB 100%)',
-        borderRadius: `${style?.borderRadius ?? '12px'}`,
+        borderRadius: `${style?.borderRadius ?? borderRadius}`,
         content: '""',
         inset: '-2px',
         opacity: hovered ? 0 : 1,
@@ -96,7 +98,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     }),
     /* BUTTON BACKGROUND GRADIENT */
     background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
-    borderRadius: `${style?.borderRadius ?? '12px'}`,
+    borderRadius: `${style?.borderRadius ?? borderRadius}`,
     inset: disabled ? 0 : '2px',
     position: 'absolute',
     transition: 'all 250ms ease-out'

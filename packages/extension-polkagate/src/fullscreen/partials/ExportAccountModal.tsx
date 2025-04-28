@@ -9,7 +9,7 @@ import React, { useCallback, useState } from 'react';
 import { ButtonWithCancel, NewAddress, Password, Warning, WrongPasswordAlert } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { exportAccount } from '../../messaging';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {

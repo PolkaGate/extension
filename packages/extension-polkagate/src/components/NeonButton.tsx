@@ -6,7 +6,7 @@ import type { Icon } from 'iconsax-react';
 import { Button, useTheme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
-import { useIsHovered } from '../hooks';
+import { useIsExtensionPopup, useIsHovered } from '../hooks';
 
 interface Props {
   disabled?: boolean;
@@ -23,6 +23,8 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
   const theme = useTheme();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
+  const isExtension = useIsExtensionPopup();
+  const borderRadius = isExtension ? '12px' : '18px';
 
   const ButtonFontStyle = useMemo(() => ({
     color: hovered ? '#FF4FB9' : '#BEAAD8',
@@ -35,7 +37,7 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
     background: 'transparent',
     border: '1px solid',
     borderColor: hovered ? '#FF4FB9' : '#2D1E4A',
-    borderRadius: `${style?.borderRadius ?? '12px'}`,
+    borderRadius: `${style?.borderRadius ?? borderRadius}`,
     boxShadow: 'unset',
     padding: '6px 24px',
     transition: 'all 250ms ease-out',

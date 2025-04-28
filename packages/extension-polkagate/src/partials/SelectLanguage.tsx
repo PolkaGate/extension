@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import uiSetting from '@polkadot/ui-settings';
 
 import { ExtensionPopup, GradientButton, SettingsContext } from '../components';
-import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
 import { ExtensionPopups } from '../util/constants';

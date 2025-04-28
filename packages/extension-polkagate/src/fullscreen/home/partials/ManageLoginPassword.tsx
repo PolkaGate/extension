@@ -14,7 +14,7 @@ import Confirmation from '../../../popup/passwordManagement/Confirmation';
 import { STEPS } from '../../../popup/passwordManagement/constants';
 import Modify from '../../../popup/passwordManagement/Modify';
 import SetPassword from '../../../popup/passwordManagement/SetPassword';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../components/DraggableModal';
 import SimpleModalTitle from '../../partials/SimpleModalTitle';
 
 interface Props {

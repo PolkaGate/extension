@@ -25,7 +25,7 @@ import { useEstimatedFee, useInfo, useProxies, useTranslation } from '../../../h
 import { SubTitle } from '../../../partials';
 import { PROXY_TYPE } from '../../../util/constants';
 import { amountToHuman } from '../../../util/utils';
-import { DraggableModal } from '../../governance/components/DraggableModal';
+import { DraggableModal } from '../../components/DraggableModal';
 import SelectProxyModal2 from '../../governance/components/SelectProxyModal2';
 import WaitScreen from '../../governance/partials/WaitScreen';
 import { STEPS } from '../../stake/pool/stake';

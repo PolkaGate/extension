@@ -8,7 +8,7 @@ import { ButtonWithCancel, NewAddress } from '../../components';
 import { useAccountName, useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { Name } from '../../partials';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function RenameModal ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function RenameModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address);
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Close } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, Modal, Typography, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, Modal, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
@@ -11,6 +11,8 @@ interface Props {
   blurBackdrop?: boolean;
   children: React.ReactElement;
   maxHeight?: number;
+  noDivider?: boolean;
+  dividerStyle?:React.CSSProperties;
   minHeight?: number;
   open: boolean;
   onClose: () => void
@@ -19,7 +21,7 @@ interface Props {
   width?: number;
 }
 
-export function DraggableModal ({ blurBackdrop = true, children, maxHeight = 740, minHeight = 615, onClose, open, style = {}, title, width = 415 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -102,9 +104,8 @@ export function DraggableModal ({ blurBackdrop = true, children, maxHeight = 740
         sx={{
           ..._style,
           backgroundImage: `url(${modalEffect})`,
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover'
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'no-repeat'
         }}
       >
         <Grid alignItems='center' container item>
@@ -126,7 +127,18 @@ export function DraggableModal ({ blurBackdrop = true, children, maxHeight = 740
             {title}
           </Typography>
         </Grid>
-        <Divider sx={{ bgcolor: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '90%' }} />
+        {
+          !noDivider &&
+          <Box sx={{
+            background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+            height: '1px',
+            justifySelf: 'center',
+            m: '5px 0 15px',
+            width: '90%',
+            ...dividerStyle
+          }}
+          />
+        }
         {children}
       </Box>
     </Modal>

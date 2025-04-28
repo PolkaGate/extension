@@ -173,7 +173,7 @@ function AccountsOptions({ setOpenMenu }: AccountsOptionProps): React.ReactEleme
   );
 }
 
-function SelectAccount({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectAccount ({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);

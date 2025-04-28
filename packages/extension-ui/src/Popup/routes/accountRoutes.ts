@@ -60,7 +60,7 @@ export const ACCOUNT_ROUTES: RouteConfig[] = [
   },
   {
     Component: AccountFS,
-    path: '/accountfs/:address/:paramAssetId',
+    path: '/accountfs/:address/:genesisHash/:paramAssetId',
     trigger: 'account'
   },
   {

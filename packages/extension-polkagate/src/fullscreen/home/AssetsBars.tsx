@@ -237,7 +237,7 @@ function AssetsBars (): React.ReactElement {
           assets={assets}
         />
       }
-      <VelvetBox style={{ m: '8px', minHeight: '200px', pb: '10px' }}>
+      <VelvetBox style={{ margin: '8px', minHeight: '200px', paddingBottom: '10px' }}>
         {
           !assets?.length || !youHave?.portfolio
             ? <AssetNull
