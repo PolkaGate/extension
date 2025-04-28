@@ -1,27 +1,31 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AccountContext, ScrollingTextBox } from '../../../components';
 import useIsDark from '../../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../svg';
 import SelectAccount from './SelectAccount';
 
-function AccountSelection(): React.ReactElement {
+function AccountSelection (): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [selectedAccount, setSelectedAccount] = useState<AccountJson | undefined>();
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
-  const toggleMenu = useCallback(() => setOpenMenu((isOpen) => !isOpen), []);
+  const onClick = useCallback(() => {
+    navigate('/accounts', { state: { from: location.pathname } });
+  }, [location.pathname, navigate]);
 
   useEffect(() => {
     const selected = accounts.find(({ selected }) => selected);
@@ -31,15 +35,21 @@ function AccountSelection(): React.ReactElement {
     }
   }, [accounts, selectedAccount, openMenu]);
 
+  const isInAccountLists = location?.pathname === '/accounts';
+
   return (
     <>
       <Container
         disableGutters
-        onClick={toggleMenu}
+        onClick={onClick}
         sx={{
           ':hover': { background: '#674394' },
           alignItems: 'center',
-          background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
+          background: isDark
+            ? isInAccountLists
+              ? '#FF4FB9'
+              : '#BFA1FF26'
+            : '#FFFFFF8C',
           borderRadius: '10px',
           columnGap: '5px',
           cursor: 'pointer',
@@ -80,7 +90,7 @@ function AccountSelection(): React.ReactElement {
           }}
           width={65}
         />
-        <ArrowDown2 color={isDark ? '#AA83DC' : '#8F97B8'} size='18' variant='Bold' />
+        <ArrowDown2 color={isDark ? isInAccountLists ? '#05091C' : '#AA83DC' : '#8F97B8'} size='18' variant='Bold' style={{ transform: isInAccountLists ?'rotate(180deg)' : undefined, transition: 'all 250ms ease-out '}} />
       </Container>
       <SelectAccount
         openMenu={openMenu}

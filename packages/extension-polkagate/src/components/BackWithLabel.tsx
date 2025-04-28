@@ -15,7 +15,7 @@ interface DynamicBackButtonProps {
   style?: SxProps<Theme>;
 }
 
-function BackWithLabel({ content, onClick, style, text }: DynamicBackButtonProps) {
+function BackWithLabel ({ content, onClick, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
 
   const [hovered, setHovered] = useState<boolean>(false);

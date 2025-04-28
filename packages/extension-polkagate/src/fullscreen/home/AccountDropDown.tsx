@@ -149,6 +149,7 @@ function DropContent ({ containerRef, contentDropWidth, open, options, setOpen }
 interface Props {
   address: string | undefined;
   disabled?: boolean;
+  iconSize?:string;
   style?: SxProps<Theme>;
 }
 
@@ -157,7 +158,7 @@ enum HOME_POPUP {
   REMOVE
 }
 
-function AccountDropDown ({ address, disabled, style }: Props) {
+function AccountDropDown ({ address, disabled, iconSize= '25px', style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
 
@@ -228,7 +229,7 @@ function AccountDropDown ({ address, disabled, style }: Props) {
           ref={containerRef}
           sx={{ background: hovered || open ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '3px solid #1B133C', borderRadius: '10px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px', ...style }}
         >
-          <MoreVert sx={{ color: hovered || open ? '#EAEBF1' : '#AA83DC', fontSize: '25px' }} />
+          <MoreVert sx={{ color: hovered || open ? '#EAEBF1' : '#AA83DC', fontSize: iconSize }} />
         </Grid>
       </ClickAwayListener>
       <DropContent
