@@ -17,13 +17,13 @@ import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool/unstake';
 import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
-import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo/unstake';
 import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
-import BondExtra from '@polkadot/extension-polkagate/src/popup/staking/solo-new/BondExtra';
+import BondExtra from '@polkadot/extension-polkagate/src/popup/staking/solo-new/bondExtra';
 import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/fast-unstake/FastUnstake';
 import SoloInfo from '@polkadot/extension-polkagate/src/popup/staking/solo-new/Info';
 import SoloNominations from '@polkadot/extension-polkagate/src/popup/staking/solo-new/nominations/NominationsSetting';
 import SoloRestake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/restake';
+import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/unstake';
 
 export const STAKING_ROUTES: RouteConfig[] = [
   {
@@ -110,7 +110,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
   },
   {
     Component: SoloUnstake,
-    path: '/solo/unstake/:address',
+    path: '/solo/:genesisHash/unstake',
     trigger: 'solo-unstake'
   },
   {
