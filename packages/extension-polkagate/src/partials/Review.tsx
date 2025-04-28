@@ -1,0 +1,135 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
+
+import { Grid, Skeleton, Stack, Typography } from '@mui/material';
+import React, { useMemo } from 'react';
+
+import { AssetLogo, FormatBalance2, GradientDivider } from '../components';
+import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
+import { PolkaGateIdenticon } from '../style';
+import getLogo2 from '../util/getLogo2';
+import { toShortAddress } from '../util/utils';
+
+interface AccountBoxProps {
+  selectedAccount: AccountJson;
+  genesisHash: string;
+}
+
+const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
+  const { t } = useTranslation();
+  const formatted = useFormatted3(selectedAccount.address, genesisHash);
+
+  return (
+    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
+      <Typography color='text.highlight' sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
+        {t('Account')}
+      </Typography>
+      <GradientDivider />
+      <PolkaGateIdenticon address={selectedAccount.address} size={48} style={{ margin: 'auto' }} />
+      <Typography color='text.primary' sx={{ textAlign: 'center', width: '100%' }} variant='B-3'>
+        {selectedAccount.name}
+      </Typography>
+      <Typography color='text.highlight' sx={{ mt: '-10px', textAlign: 'center', width: '100%' }} variant='B-1'>
+        {toShortAddress(formatted ?? selectedAccount.address, 8)}
+      </Typography>
+    </Stack>
+  );
+};
+
+export interface Content {
+  title: string;
+  description?: string;
+  withLogo?: boolean;
+  content: string | BN | null | undefined;
+}
+
+interface ContentItemProps extends Content {
+  decimal?: number;
+  token?: string;
+  genesisHash: string;
+}
+
+const ContentItem = ({ content, decimal, description, genesisHash, title, token, withLogo }: ContentItemProps) => {
+  const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
+
+  return (
+    <>
+      <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
+          <Typography color='text.highlight' variant='B-1'>
+            {title}
+          </Typography>
+          {/* description */}
+        </Stack>
+        <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
+          {withLogo && <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />}
+          {content
+            ? (
+              <FormatBalance2
+                decimalPoint={4}
+                decimals={[decimal ?? 0]}
+                style={{
+                  color: '#ffffff',
+                  fontFamily: 'Inter',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  width: 'max-content'
+                }}
+                tokens={[token ?? '']}
+                value={content}
+              />)
+            : (
+              <Skeleton
+                animation='wave'
+                height='18px'
+                sx={{ borderRadius: '12px', fontWeight: 'bold', transform: 'none', width: '55px' }}
+                variant='text'
+              />
+            )
+          }
+        </Stack>
+      </Stack>
+      <GradientDivider />
+    </>
+  );
+};
+
+export interface ReviewProps {
+  genesisHash: string;
+  transactionInformation: Content[];
+  tx: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
+}
+
+export default function Review ({ genesisHash, transactionInformation, tx }: ReviewProps): React.ReactElement {
+  const { t } = useTranslation();
+  const { api, chain, chainName, decimal, token } = useChainInfo(genesisHash);
+  const selectedAccount = useSelectedAccount();
+
+  return (
+    <Stack direction='column' sx={{ p: '15px', width: '100%' }}>
+      <AccountBox
+        genesisHash={genesisHash}
+        selectedAccount={selectedAccount}
+      />
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', mt: '20px', width: '100%' }}>
+        {transactionInformation.map(({ content, description, title, withLogo }, index) => (
+          <ContentItem
+            content={content}
+            decimal={decimal}
+            description={description}
+            genesisHash={genesisHash}
+            key={index}
+            title={title}
+            token={token}
+            withLogo={withLogo}
+          />
+        ))}
+      </Grid>
+    </Stack>
+  );
+}
