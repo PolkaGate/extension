@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, type SxProps, type Theme } from '@mui/material';
 import { ArrowCircleLeft } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import { AddCircle, Setting2 } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
@@ -18,13 +18,12 @@ import BackButton from './BackButton';
 import ProfilesDropDown from './ProfilesDropDown';
 
 function AccountsLists(): React.ReactElement {
-  const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
   const initialAccountList = useAccountsOrder(true);
   const selectedProfile = useSelectedProfile();
-  const selectedAccount= useSelectedAccount();
+  const selectedAccount = useSelectedAccount();
   const profileAccounts = useProfileAccounts(initialAccountList);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -55,7 +54,7 @@ function AccountsLists(): React.ReactElement {
   }, [onAction]);
 
   const onSearch = useCallback((keyword: string) => {
-
+    console.log(keyword)
   }, []);
 
   const onAddClick = useCallback(() => {
@@ -77,7 +76,7 @@ function AccountsLists(): React.ReactElement {
               setOpen={setOpen}
             />
           </Stack>
-          <Box alignItems='center' justifyContent='center' sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor:'pointer', display: 'flex', height: '32px', width: '32px' }}>
+          <Box alignItems='center' justifyContent='center' sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: 'pointer', display: 'flex', height: '32px', width: '32px' }}>
             <Setting2 color='#AA83DC' size='18px' variant='Bulk' />
           </Box>
         </Stack>
@@ -138,7 +137,7 @@ function AccountsLists(): React.ReactElement {
                         }}
                       >
                         {isFirstAccount && <AccountProfileLabel label={label} />}
-                        <AccountRow account={account.account} isSelected={account.account.address === selectedAccount?.address}/>
+                        <AccountRow account={account.account} isSelected={account.account.address === selectedAccount?.address} />
                       </Stack>
                     </motion.div>
                   );

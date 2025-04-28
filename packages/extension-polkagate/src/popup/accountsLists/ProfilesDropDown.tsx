@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
 import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 import { ExpandMore } from '@mui/icons-material';
@@ -77,7 +76,7 @@ interface DropContentProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function DropContent({ containerRef, contentDropWidth, initialAccountList, open, options, setOpen }: DropContentProps) {
+function DropContent({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -126,7 +125,6 @@ interface Props {
 
 function ProfilesDropDown({open, setOpen, style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();
   const initialAccountList = useAccountsOrder(true);
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const selectedProfile = useSelectedProfile();
