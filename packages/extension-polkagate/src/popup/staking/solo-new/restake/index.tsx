@@ -9,18 +9,16 @@ import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { noop } from '@polkadot/util';
+import { BackWithLabel, Motion } from '../../../../components';
+import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
+import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import FeeValue from '../../partial/FeeValue';
+import StakeAmountInput from '../../partial/StakeAmountInput';
+import StakingActionButton from '../../partial/StakingActionButton';
+import TokenStakeStatus from '../../partial/TokenStakeStatus';
 
-import { BackWithLabel, Motion } from '../../../components';
-import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../hooks';
-import UserDashboardHeader from '../../../partials/UserDashboardHeader';
-import { amountToHuman, amountToMachine } from '../../../util/utils';
-import FeeValue from '../partial/FeeValue';
-import StakeAmountInput from '../partial/StakeAmountInput';
-import StakingActionButton from '../partial/StakingActionButton';
-import TokenStakeStatus from '../partial/TokenStakeStatus';
-
-export default function BondExtra (): React.ReactElement {
+export default function Restake (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
@@ -32,10 +30,30 @@ export default function BondExtra (): React.ReactElement {
   const rebond = api?.tx['staking']['rebond'];
 
   const [rebondValue, setRebondValue] = useState<BN | null | undefined>();
+  const [review, setReview] = useState<boolean>(false);
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, rebond, [rebondValue]);
 
+  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: rebondValue,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee2,
+      title: t('Fee')
+    },
+    {
+      content: rebondValue && staked ? (staked as unknown as BN).add(rebondValue) : undefined,
+      title: t('Total stake after'),
+      withLogo: true
+    }
+    ];
+  }, [estimatedFee2, rebondValue, staked, t]);
+  const tx = useMemo(() => rebond?.(rebondValue), [rebond, rebondValue]);
 
   const onInputChange = useCallback((value: string | null | undefined) => {
     const valueAsBN = value ? amountToMachine(value, decimal) : null;
@@ -50,9 +68,19 @@ export default function BondExtra (): React.ReactElement {
 
     return amountToHuman(unlockingAmount, decimal);
   }, [decimal, unlockingAmount]);
-  const onNext = useCallback(() => noop, []);
+  const onNext = useCallback(() => setReview(true), []);
+  const closeReview = useCallback(() => setReview(false), []);
 
-  return (
+  const transactionFlow = useTransactionFlow({
+    backPathTitle: t('Restaking'),
+    closeReview,
+    genesisHash: genesisHash ?? '',
+    review,
+    transactionInformation,
+    tx
+  });
+
+  return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' noAccountSelected />
@@ -73,7 +101,7 @@ export default function BondExtra (): React.ReactElement {
             />
             <StakeAmountInput
               buttonsArray={[{
-                buttonName: t('Max'),
+                buttonName: t('All'),
                 value: onMaxValue
               }]}
               onInputChange={onInputChange}

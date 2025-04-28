@@ -48,7 +48,8 @@ export default function Solo (): React.ReactElement {
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
   const onRestake = useCallback(() => navigate('/solo/' + genesisHash + '/restake') as void, [genesisHash, navigate]);
   const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
-  const onBack = useCallback(() => navigate('/stakingIndex'), [navigate]);
+  const onUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
+  const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
 
   return (
     <>
@@ -64,7 +65,7 @@ export default function Solo (): React.ReactElement {
             address={selectedAccount?.address}
             buttons={[{
               Icon: BuyCrypto,
-              onClick: noop,
+              onClick: onUnstake,
               text: t('Unstake')
             },
             {
@@ -132,6 +133,7 @@ export default function Solo (): React.ReactElement {
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}
             decimal={decimal}
+            path={'/solo/' + genesisHash + '/bondExtra'}
             stakeType='solo'
             style={{ m: '8px auto 0', width: 'calc(100% - 30px)' }}
             token={token}
