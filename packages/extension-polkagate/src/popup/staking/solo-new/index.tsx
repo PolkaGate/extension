@@ -81,6 +81,7 @@ export default function Solo (): React.ReactElement {
     },
     {
       content: redeemable && asset ? (asset.availableBalance).add(redeemable) : undefined,
+      description: t('Available balance after redeemable withdrawal'),
       title: t('Available balance after'),
       withLogo: true
     }

@@ -7,7 +7,7 @@ import { Container, Grid, Skeleton, Typography } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useRef } from 'react';
 
-import { Tooltip } from '../../../components';
+import { MyTooltip } from '../../../components';
 import { useIsHovered } from '../../../hooks';
 import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
 
@@ -24,19 +24,19 @@ function TileActionButton ({ Icon, noText = false, onClick, text }: TileActionBu
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='center' onClick={onClick} ref={containerRef} sx={{ ':hover': { bgcolor: '#809ACB', borderColor: 'transparent' }, bgcolor: '#110F2A', borderRadius: '11px', columnGap: '4px', cursor: 'pointer', flexWrap: 'nowrap', p: '4px 7px', transition: 'all 150ms ease-out' }} xs>
-        <Icon color={hovered ? '#ffffff' : '#809ACB'} size='19' variant='Bulk' />
-        {!noText &&
+      <MyTooltip
+        content={text}
+        notShow={!noText}
+        placement='top'
+      >
+        <Grid alignItems='center' container item justifyContent='center' onClick={onClick} ref={containerRef} sx={{ ':hover': { bgcolor: '#809ACB', borderColor: 'transparent' }, bgcolor: '#110F2A', borderRadius: '11px', columnGap: '4px', cursor: 'pointer', flexWrap: 'nowrap', p: '4px 7px', transition: 'all 150ms ease-out' }} xs>
+          <Icon color={hovered ? '#ffffff' : '#809ACB'} size='19' variant='Bulk' />
+          {!noText &&
           <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-2'>
             {text}
           </Typography>}
-      </Grid>
-      <Tooltip
-        content={text}
-        placement='top'
-        positionAdjustment={{ left: -37, top: -6 }}
-        targetRef={noText ? containerRef : null}
-      />
+        </Grid>
+      </MyTooltip>
     </>
   );
 }

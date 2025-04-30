@@ -4,16 +4,18 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import { isBn, type BN } from '@polkadot/util';
 
-import { Grid, Skeleton, Stack, Typography } from '@mui/material';
+import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { AssetLogo, FormatBalance2, GradientDivider, Identity2 } from '../components';
+import { type BN, isBn } from '@polkadot/util';
+
+import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip } from '../components';
 import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
 import { toShortAddress } from '../util/utils';
+import { InfoCircle } from 'iconsax-react';
 
 interface AccountBoxProps {
   selectedAccount: AccountJson;
@@ -41,6 +43,23 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   );
 };
 
+const DescriptionTip = ({ description }: { description: string | undefined }) => {
+  const theme = useTheme();
+
+  if (!description) {
+    return null;
+  }
+
+  return (
+    <MyTooltip
+      content={description}
+      placement='top'
+    >
+      <InfoCircle color={theme.palette.text.highlight} size='18' style={{ cursor: 'help' }} variant='Bold' />
+    </MyTooltip>
+  );
+};
+
 export interface Content {
   title: string;
   description?: string;
@@ -64,7 +83,7 @@ const ContentItem = ({ content, decimal, description, genesisHash, title, token,
           <Typography color='text.highlight' variant='B-1'>
             {title}
           </Typography>
-          {/* description */}
+          <DescriptionTip description={description} />
         </Stack>
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
           {withLogo && <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />}
@@ -116,7 +135,7 @@ export interface ReviewProps {
   tx: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
 }
 
-export default function Review ({ genesisHash, transactionInformation, tx }: ReviewProps): React.ReactElement {
+export default function Review({ genesisHash, transactionInformation, tx }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, chainName, decimal, token } = useChainInfo(genesisHash);
   const selectedAccount = useSelectedAccount();
