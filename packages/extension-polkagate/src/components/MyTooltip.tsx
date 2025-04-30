@@ -20,9 +20,10 @@ interface CustomTooltipProps {
   | 'top-start'
   | 'top';
   children: React.ReactElement;
+  notShow?: boolean;
 }
 
-const MyTooltip = ({ children, content, placement = 'bottom' }: CustomTooltipProps) => {
+const MyTooltip = ({ children, content, notShow = false, placement = 'bottom' }: CustomTooltipProps) => {
   const theme = useTheme();
 
   return (
@@ -45,6 +46,7 @@ const MyTooltip = ({ children, content, placement = 'bottom' }: CustomTooltipPro
           }
         }
       }}
+      disableHoverListener={notShow}
       placement={placement}
       slots={{
         transition: Zoom
