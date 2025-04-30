@@ -23,6 +23,7 @@ import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-ne
 import SoloInfo from '@polkadot/extension-polkagate/src/popup/staking/solo-new/Info';
 import SoloNominations from '@polkadot/extension-polkagate/src/popup/staking/solo-new/nominations/NominationsSetting';
 import SoloRestake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/restake';
+import SoloSettings from '@polkadot/extension-polkagate/src/popup/staking/solo-new/settings';
 import SoloUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/unstake';
 
 export const STAKING_ROUTES: RouteConfig[] = [
@@ -112,6 +113,11 @@ export const STAKING_ROUTES: RouteConfig[] = [
     Component: SoloUnstake,
     path: '/solo/:genesisHash/unstake',
     trigger: 'solo-unstake'
+  },
+  {
+    Component: SoloSettings,
+    path: '/solo/:genesisHash/settings',
+    trigger: 'solo-settings'
   },
   {
     Component: Solo,
