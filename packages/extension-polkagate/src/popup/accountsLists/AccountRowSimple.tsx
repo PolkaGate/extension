@@ -24,6 +24,7 @@ interface Props {
   isFirstAccount?: boolean;
   isFirstProfile?: boolean;
   isInSettingMode?: boolean;
+  isLast?: boolean;
 }
 
 function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
