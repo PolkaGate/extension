@@ -50,7 +50,8 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
         sx: {
           backgroundImage: 'unset',
           bgcolor: 'transparent',
-          boxShadow: 'unset'
+          boxShadow: 'unset',
+          overflow: 'hidden'
         }
       }}
       TransitionComponent={Transition}

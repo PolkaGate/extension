@@ -158,13 +158,13 @@ function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, i
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} variant={style?.variant} />
             </Grid>
           }
         </Grid>
         {withShortAddress && direction === 'row' &&
           <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
-            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
+            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start' }} variant={style?.variant} />
           </Grid>
         }
         {_showSocial && _accountInfo?.identity?.email &&
