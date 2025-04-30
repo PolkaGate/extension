@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { TransitionProps } from '@mui/material/transitions';
 import type { OverridableStringUnion } from '@mui/types';
@@ -36,11 +37,11 @@ export interface Props {
   withoutBackground?: boolean;
 }
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
+function ExtensionPopup({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
@@ -69,7 +70,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${79 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'auto', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
+        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
           {!!onBack &&
             <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', zIndex: 2 }}>
