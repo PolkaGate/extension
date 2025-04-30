@@ -3,10 +3,13 @@
 
 /* eslint-disable header/header */
 
-import type { ThemeOptions, TypeAction, TypeBackground, TypeText } from '@mui/material';
+import type { ThemeOptions, TypeAction, TypeBackground } from '@mui/material';
 import type { CSSProperties } from 'react';
 
 declare module '@mui/material/styles' {
+  interface TypeText {
+    highlight: string;
+  }
   interface Palette {
     approval: Palette['primary'];
     aye: Palette['primary'];
