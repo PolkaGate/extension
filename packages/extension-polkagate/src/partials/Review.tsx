@@ -4,12 +4,12 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { BN } from '@polkadot/util';
+import { isBn, type BN } from '@polkadot/util';
 
 import { Grid, Skeleton, Stack, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { AssetLogo, FormatBalance2, GradientDivider } from '../components';
+import { AssetLogo, FormatBalance2, GradientDivider, Identity2 } from '../components';
 import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
@@ -69,20 +69,31 @@ const ContentItem = ({ content, decimal, description, genesisHash, title, token,
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
           {withLogo && <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />}
           {content
-            ? (
-              <FormatBalance2
-                decimalPoint={4}
-                decimals={[decimal ?? 0]}
-                style={{
-                  color: '#ffffff',
-                  fontFamily: 'Inter',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  width: 'max-content'
-                }}
-                tokens={[token ?? '']}
-                value={content}
-              />)
+            ? isBn(content)
+              ? (
+                <FormatBalance2
+                  decimalPoint={4}
+                  decimals={[decimal ?? 0]}
+                  style={{
+                    color: '#ffffff',
+                    fontFamily: 'Inter',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    width: 'max-content'
+                  }}
+                  tokens={[token ?? '']}
+                  value={content}
+                />)
+              : (
+                <Identity2
+                  address={content}
+                  genesisHash={genesisHash}
+                  identiconSize={22}
+                  showShortAddress
+                  style={{ variant: 'B-1' }}
+                  withShortAddress
+                />
+              )
             : (
               <Skeleton
                 animation='wave'
