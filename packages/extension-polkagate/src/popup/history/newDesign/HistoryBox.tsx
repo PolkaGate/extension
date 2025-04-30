@@ -100,8 +100,8 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
           <AssetLoading itemsCount={short ? 2 : 5} noDrawer />
         }
         {notReady &&
-          <Typography color='text.secondary' my='30px' variant='B-2'>
-            {t('Select a chain to view the transaction history on')}
+          <Typography color='text.primary' my='40px' variant='B-2'>
+            {t('Select a chain to view your account history.')}
           </Typography>
         }
         <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} />
