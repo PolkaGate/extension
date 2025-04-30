@@ -1690,5 +1690,8 @@
   "Profile name": "",
   "Select the addresses you’d like to include in {{profileLabel}} profile": "",
   "Skip": "",
-  "Customization": ""
+  "Customization": "",
+  "Give a name to the profile": "",
+  "Enter a name": "",
+  "Add {{num}} address{{es}}": ""
 }

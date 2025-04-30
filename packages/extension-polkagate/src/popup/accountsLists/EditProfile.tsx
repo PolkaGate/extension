@@ -47,7 +47,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
     const cleanedProfiles = new Map<string, string>();
 
     await Promise.all(profileAccounts?.map(async ({ account }) => {
-      if (maybeNewName && account.profile?.includes(profileLabel)) {
+      if (maybeNewName || account.profile?.includes(profileLabel)) {
         const maybeNewProfile = removeProfileTag(account.profile, profileLabel);
 
         cleanedProfiles.set(account.address, maybeNewProfile);
@@ -87,12 +87,13 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
       handleClose={handleClose}
       iconSize={24}
       iconVariant='Bulk'
+      maxHeight='100%'
       openMenu={!!profileLabel}
       title={t('Edit profile')}
       withoutTopBorder
     >
       {step === STEP.EDIT_NAME &&
-        <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ height: '440px', display: 'block', pb: '5px', position: 'relative', zIndex: 1 }}>
+        <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
           <Typography color='#BEAAD8' variant='B-4'>
             {t('You can give the profile a new name')}
           </Typography>
@@ -119,11 +120,11 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
         </Grid>
       }
       {step === STEP.CHOOSE_ACCOUNTS &&
-        <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ height: '440px', pb: '5px', position: 'relative', zIndex: 1 }}>
+        <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
           <Typography color='#BEAAD8' variant='B-4'>
             {t('Select the addresses you’d like to include in {{profileLabel}} profile', { replace: { profileLabel: maybeNewName ?? profileLabel } })}
           </Typography>
-          <Stack direction='column' sx={{ height: '338px', mt: '25px', overflow: 'scroll', width: '100%' }}>
+          <Stack direction='column' sx={{ height: '350px', mt: '25px', overflow: 'scroll', width: '100%' }}>
             {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
               return (
                 <>
@@ -151,7 +152,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
             onSecondaryClick={handleClose}
             primaryBtnText={t('Apply')}
             secondaryBtnText={t('Skip')}
-            style={{ mt: '10px' }}
+            style={{ bottom: 0, position: 'absolute' }}
           />
         </Grid>
       }

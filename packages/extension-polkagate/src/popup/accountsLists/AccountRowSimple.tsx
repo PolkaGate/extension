@@ -16,6 +16,7 @@ import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
 import { AccountContext, Identity2 } from '../../components';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   account: AccountWithChildren;
@@ -27,8 +28,9 @@ interface Props {
   isLast?: boolean;
 }
 
-function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
+function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
   const { accounts } = useContext(AccountContext);
+  const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: account?.address });
 
   const onClick = useCallback(() => {
@@ -45,8 +47,9 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
       updateMeta(address, JSON.stringify({ selected: true })),
       ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
     ])
-      .catch(console.error);
-  }, [account?.address, accounts]);
+      .catch(console.error)
+      .finally(() => navigate('/'));
+  }, [account?.address, accounts, navigate]);
 
   return (
     <motion.div
@@ -59,8 +62,7 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
       }}
       transition={{ duration: 0.4 }}
     >
-      <Stack
-        {...attributes} alignItems='center' direction='row' justifyContent='space-between'
+      <Stack {...attributes} alignItems='center' direction='row' justifyContent='space-between'
         sx={{
           bgcolor: '#05091C',
           borderRadius: isLast

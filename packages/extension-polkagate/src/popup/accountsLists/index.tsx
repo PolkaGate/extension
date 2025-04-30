@@ -9,6 +9,7 @@ import { UserDashboardHeader } from '../../partials';
 import BodySection from './BodySection';
 import ConfirmationOfAction from './ConfirmationOfAction';
 import HeaderSection from './HeaderSection';
+import NewProfile from './NewProfile';
 import { PROFILE_MODE } from './type';
 
 function AccountsLists(): React.ReactElement {
@@ -29,11 +30,20 @@ function AccountsLists(): React.ReactElement {
           setShowDeleteConfirmation={setProfileLabelToDelete}
         />
       </Motion>
-      {profileLabelToDelete &&
+      {
+        profileLabelToDelete &&
         <ConfirmationOfAction
           label={profileLabelToDelete}
           setPopup={setProfileLabelToDelete}
-        />}
+        />
+      }
+      {
+        mode === PROFILE_MODE.ADD &&
+        <NewProfile
+          setPopup={setMode}
+        />
+      }
+
     </Grid>
   );
 }

@@ -14,14 +14,14 @@ import { GlowCheckbox, Identity2 } from '../../components';
 
 interface Props {
   accounts: AccountsOrder[];
-  defaultProfile: string;
+  defaultProfile?: string;
   label: string;
-  maybeNewName: string | null | undefined;
+  maybeNewName?: string | null | undefined;
   selectedAddresses: Set<string>;
   setSelectedAddresses: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
-function ProfileAccountSelection ({ accounts, defaultProfile, label, maybeNewName, selectedAddresses, setSelectedAddresses }: Props): React.ReactElement {
+function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeNewName, selectedAddresses, setSelectedAddresses }: Props): React.ReactElement {
   const profileInfo = useProfileInfo(label);
 
   const [openTab, setOpen] = useState<string>(defaultProfile);
@@ -36,7 +36,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile, label, maybeNewNam
   }, [accounts, selectedAddresses]);
 
   useEffect(() => {
-    setSelectedAddresses((prev) => {
+    defaultProfile && setSelectedAddresses((prev) => {
       const next = new Set(prev);
 
       accounts.every(({ account: { address, profile } }) => profile?.includes(defaultProfile) && next.add(address));
@@ -106,7 +106,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile, label, maybeNewNam
                 <GlowCheckbox
                   changeState={(value) => handleCheck(value, address)}
                   checked={selectedAddresses.has(address)}
-                  style={{ justifyContent: 'end', width:'10%' }}
+                  style={{ justifyContent: 'end', width: '10%' }}
                 />
               </Stack>
             </Stack>
