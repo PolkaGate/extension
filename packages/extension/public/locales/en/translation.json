@@ -1686,5 +1686,11 @@
   "Solo Staked": "",
   "Remove account": "",
   "Confirmation of action": "",
-  "Enter account name": ""
+  "Enter account name": "",
+  "Please wait a few seconds": "",
+  "and don’t close the extension": "",
+  "This account is not eligible for fast unstake, because the requirements (highlighted above) are not met": "",
+  "Not being rewarded in the past {{day}} days": "",
+  "You can proceed to do fast unstake. Note your stake amount will be available within a few minutes after submitting the transaction": "",
+  "The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount": ""
 }

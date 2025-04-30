@@ -5,13 +5,13 @@
 
 import { Container, Grid } from '@mui/material';
 import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { type BN, noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useChainInfo, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
@@ -25,10 +25,33 @@ export default function Solo (): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
-  const { decimal, token } = useChainInfo(genesisHash);
+  const { api, decimal, token } = useChainInfo(genesisHash);
+  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+  const accountAssets = useAccountAssets(selectedAccount?.address);
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
+  const [review, setReview] = useState<boolean>(false);
+  const [param, setParam] = useState<number | null | undefined>(null);
 
+  const redeem = api?.tx['staking']['withdrawUnbonded'];
+
+  useEffect(() => {
+    if (!api || param !== null || !formatted) {
+      return;
+    }
+
+    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
+      const spanCount = optSpans.isEmpty
+        ? 0
+        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
+
+      setParam(spanCount as unknown as number);
+    }).catch(console.error);
+  }, [api, formatted, param]);
+
+  const asset = useMemo(() =>
+    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
+  , [accountAssets, genesisHash]);
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
@@ -44,14 +67,46 @@ export default function Solo (): React.ReactElement {
     }
   }, [StakingInfoTileCount]);
 
+  const estimatedFee2 = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
+
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: redeemable,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee2,
+      title: t('Fee')
+    },
+    {
+      content: redeemable && asset ? (asset.availableBalance).add(redeemable) : undefined,
+      title: t('Available balance after'),
+      withLogo: true
+    }
+    ];
+  }, [asset, estimatedFee2, redeemable, t]);
+  const tx = useMemo(() => redeem?.(param), [redeem, param]);
+
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
   const onRestake = useCallback(() => navigate('/solo/' + genesisHash + '/restake') as void, [genesisHash, navigate]);
   const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
   const onUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
+  const onWithdraw = useCallback(() => setReview(true), []);
+  const closeReview = useCallback(() => setReview(false), []);
 
-  return (
+  const transactionFlow = useTransactionFlow({
+    backPathTitle: t('Withdraw redeemable'),
+    closeReview,
+    genesisHash: genesisHash ?? '',
+    review,
+    transactionInformation,
+    tx
+  });
+
+  return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' noAccountSelected />
@@ -104,7 +159,7 @@ export default function Solo (): React.ReactElement {
               Icon={Moneys}
               buttonsArray={[{
                 Icon: Strongbox2,
-                onClick: noop,
+                onClick: onWithdraw,
                 text: t('Withdraw')
               }]}
               cryptoAmount={redeemable}
