@@ -1680,5 +1680,15 @@
   "Solo Staked": "",
   "Remove account": "",
   "Confirmation of action": "",
-  "Enter account name": ""
+  "Enter account name": "",
+  "Profile \"{{label}}\" will be deleted.": "",
+  "Accounts unique to this profile will be deleted.": "",
+  "Are you sure you want to continue?": "",
+  "Yes, delete the profile": "",
+  "Edit profile": "",
+  "You can give the profile a new name": "",
+  "Profile name": "",
+  "Select the addresses you’d like to include in {{profileLabel}} profile": "",
+  "Skip": "",
+  "Customization": ""
 }

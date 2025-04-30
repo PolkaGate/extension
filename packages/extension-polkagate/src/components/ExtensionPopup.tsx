@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { TransitionProps } from '@mui/material/transitions';
 import type { OverridableStringUnion } from '@mui/types';
@@ -26,7 +25,7 @@ export interface Props {
   openMenu: boolean;
   pt?: number;
   style?: SxProps<Theme>;
-  title: string;
+  title?: string;
   titleAlignment?: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   titleVariant?: OverridableStringUnion<Variant, TypographyPropsVariantOverrides> | undefined;
@@ -70,7 +69,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
+        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${79 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'auto', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
           {!!onBack &&
             <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', zIndex: 2 }}>
@@ -84,13 +83,17 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
               </Typography>
             </Grid>}
           <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p='10px'>
-            {TitleIcon
-              ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />
-              : undefined
+            {
+              TitleIcon
+                ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />
+                : undefined
             }
-            <Typography color='text.primary' sx={{ ...titleStyle, zIndex: 2 }} textTransform='uppercase' variant={titleVariant}>
-              {title}
-            </Typography>
+            {
+              title &&
+              <Typography color='text.primary' sx={{ ...titleStyle, zIndex: 2 }} textTransform='uppercase' variant={titleVariant}>
+                {title}
+              </Typography>
+            }
           </Grid>
           {!withoutTopBorder && <GradientDivider />}
           {!withoutBackground && <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />}

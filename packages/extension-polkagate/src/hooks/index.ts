@@ -32,6 +32,7 @@ export { default as useBalancesOnMultiAssetChain } from './useBalancesOnMultiAss
 export { default as useBlockInterval } from './useBlockInterval';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
+export { default as useCategorizedAccountsInProfiles } from './useCategorizedAccountsInProfiles';
 export { default as useChain } from './useChain';
 export { default as useChainInfo } from './useChainInfo';
 export { default as useChainName } from './useChainName';

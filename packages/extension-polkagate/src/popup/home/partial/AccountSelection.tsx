@@ -11,9 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AccountContext, ScrollingTextBox } from '../../../components';
 import useIsDark from '../../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../svg';
-import SelectAccount from './SelectAccount';
 
-function AccountSelection (): React.ReactElement {
+function AccountSelection(): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
@@ -21,11 +20,16 @@ function AccountSelection (): React.ReactElement {
   const navigate = useNavigate();
 
   const [selectedAccount, setSelectedAccount] = useState<AccountJson | undefined>();
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
 
   const onClick = useCallback(() => {
-    navigate('/accounts', { state: { from: location.pathname } });
-  }, [location.pathname, navigate]);
+    const from = location?.state?.from || '/';
+
+    if (location.pathname === '/accounts') {
+      navigate(from);
+    } else {
+      navigate('/accounts', { state: { from: location.pathname } });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     const selected = accounts.find(({ selected }) => selected);
@@ -33,7 +37,7 @@ function AccountSelection (): React.ReactElement {
     if (!selectedAccount || selectedAccount !== selected) {
       setSelectedAccount(selected ?? accounts[0]);
     }
-  }, [accounts, selectedAccount, openMenu]);
+  }, [accounts, selectedAccount]);
 
   const isInAccountLists = location?.pathname === '/accounts';
 
@@ -67,7 +71,7 @@ function AccountSelection (): React.ReactElement {
           </Stack>
           <Grid
             alignContent='center' container item justifyContent='center' sx={{
-              background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+              background: isInAccountLists ? 'transparent' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
               borderRadius: '1024px',
               color: isDark ? '#EAEBF1' : '#FFFFFF',
               fontFamily: 'Inter',
@@ -85,17 +89,13 @@ function AccountSelection (): React.ReactElement {
         <ScrollingTextBox
           text={selectedAccount?.name ?? ''}
           textStyle={{
-            color: 'text.primary',
+            color: isInAccountLists ? '#05091C' : 'text.primary',
             ...theme.typography['B-2']
           }}
           width={65}
         />
-        <ArrowDown2 color={isDark ? isInAccountLists ? '#05091C' : '#AA83DC' : '#8F97B8'} size='18' variant='Bold' style={{ transform: isInAccountLists ?'rotate(180deg)' : undefined, transition: 'all 250ms ease-out '}} />
+        <ArrowDown2 color={isDark ? isInAccountLists ? '#05091C' : '#AA83DC' : '#8F97B8'} size='18' variant='Bold' style={{ transform: isInAccountLists ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} />
       </Container>
-      <SelectAccount
-        openMenu={openMenu}
-        setOpenMenu={setOpenMenu}
-      />
     </>
   );
 }

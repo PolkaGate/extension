@@ -11,6 +11,7 @@ import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/us
 
 import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
+import { PROFILE_MODE } from './type';
 
 const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
   background: '#05091C',
@@ -73,7 +74,6 @@ interface DropContentProps {
   open: boolean;
   options: string[];
   initialAccountList: AccountsOrder[] | undefined
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function DropContent({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
@@ -118,19 +118,23 @@ function DropContent({ containerRef, contentDropWidth, initialAccountList, open,
 }
 
 interface Props {
-  open: boolean;
+  mode: PROFILE_MODE;
+  setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>>
   style?: SxProps<Theme>;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function ProfilesDropDown({open, setOpen, style }: Props) {
+function ProfilesDropDown({ mode, setMode, style }: Props) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
-  const initialAccountList = useAccountsOrder(true);
+  const initialAccountList = useAccountsOrder();
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const selectedProfile = useSelectedProfile();
   const profileAccounts = useProfileAccounts(initialAccountList, selectedProfile);
 
   const [hovered, setHovered] = useState<boolean>(false);
+
+  const title = mode === PROFILE_MODE.SETTING_MODE ? t('Customization') : undefined;
+  const open = mode === PROFILE_MODE.DROP_DOWN;
 
   const onMouseEnter = useCallback(() => setHovered(true), []);
   const onMouseLeave = useCallback(() => setHovered(false), []);
@@ -143,8 +147,15 @@ function ProfilesDropDown({open, setOpen, style }: Props) {
     return defaultProfiles.concat(userDefinedProfiles);
   }, [defaultProfiles, userDefinedProfiles]);
 
-  const toggleOpen = useCallback(() => setOpen((prev) => !prev), []);
-  const handleClickAway = useCallback(() => setOpen(false), []);
+  const toggleOpen = useCallback(() => {
+    setMode((pre) => pre === PROFILE_MODE.DROP_DOWN
+      ? PROFILE_MODE.NONE
+      : PROFILE_MODE.DROP_DOWN);
+  }, [setMode]);
+
+  const handleClickAway = useCallback(() => {
+    mode === PROFILE_MODE.DROP_DOWN && setMode(PROFILE_MODE.NONE);
+  }, [mode, setMode]);
 
   return (
     <>
@@ -157,15 +168,22 @@ function ProfilesDropDown({open, setOpen, style }: Props) {
           ref={containerRef}
           sx={{ cursor: 'pointer', gap: '4px', width: 'fit-content', ...style }}
         >
-          <Typography sx={{ lineHeight: '100%', textTransform: 'uppercase' }} variant='H-3'>
-            {`${selectedProfile} accounts`}
-          </Typography>
-          <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '50%', display: 'flex', justifyContent: 'center', minWidth: '20px', height: '20px' }}>
-            <Typography fontWeight={700} variant='B-1'>
-              {profileAccounts?.length}
+          {title
+            ? <Typography sx={{ lineHeight: '100%', textTransform: 'uppercase' }} variant='H-3'>
+              {title}
             </Typography>
-          </Box>
-          <ExpandMore sx={{ color: open || hovered ? '#FF4FB9' : '#FFFFFF', fontSize: '30px', ml: '-5px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
+            : <>
+              <Typography sx={{ lineHeight: '100%', textTransform: 'uppercase' }} variant='H-3'>
+                {`${selectedProfile} accounts`}
+              </Typography>
+              <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '50%', display: 'flex', justifyContent: 'center', minWidth: '20px', height: '20px' }}>
+                <Typography fontWeight={700} variant='B-1'>
+                  {profileAccounts?.length}
+                </Typography>
+              </Box>
+              <ExpandMore sx={{ color: open || hovered ? '#FF4FB9' : '#FFFFFF', fontSize: '30px', ml: '-5px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
+            </>
+          }
         </Grid>
       </ClickAwayListener>
       <DropContent
@@ -173,7 +191,6 @@ function ProfilesDropDown({open, setOpen, style }: Props) {
         initialAccountList={initialAccountList}
         open={open}
         options={profilesToShow}
-        setOpen={setOpen}
       />
     </>
   );

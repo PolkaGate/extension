@@ -3,12 +3,10 @@
 
 import { Stack } from '@mui/material';
 import { motion } from 'framer-motion';
-import React, { useMemo, useRef } from 'react';
-
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
+import React, { useRef } from 'react';
 
 import { FadeOnScroll } from '../../components';
-import { useAccountsOrder, useProfileAccounts, useSelectedProfile } from '../../hooks';
+import { useCategorizedAccountsInProfiles } from '../../hooks';
 import { VelvetBox } from '../../style';
 import { AccountProfileLabel } from '../components';
 import AccountRow from './AccountRow';
@@ -22,29 +20,8 @@ export const DEFAULT_PROFILE_TAGS = {
 };
 
 function AccountList (): React.ReactElement {
-  const initialAccountList = useAccountsOrder(true);
-  const selectedProfile = useSelectedProfile();
-  const profileAccounts = useProfileAccounts(initialAccountList);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const categorizedAccounts = useMemo(() => {
-    if (!initialAccountList || !selectedProfile || !profileAccounts) {
-      return {};
-    }
-
-    if (selectedProfile === PROFILE_TAGS.ALL) {
-      return {
-        [PROFILE_TAGS.LEDGER]: initialAccountList.filter(({ account: { isHardware } }) => isHardware),
-        [PROFILE_TAGS.LOCAL]: initialAccountList.filter(({ account: { isExternal } }) => !isExternal),
-        [PROFILE_TAGS.QR_ATTACHED]: initialAccountList.filter(({ account: { isQR } }) => isQR),
-        [PROFILE_TAGS.WATCH_ONLY]: initialAccountList.filter(({ account: { isExternal, isHardware, isQR } }) => isExternal && !isQR && !isHardware)
-      };
-    }
-
-    return {
-      [selectedProfile]: profileAccounts
-    };
-  }, [initialAccountList, profileAccounts, selectedProfile]);
+  const categorizedAccounts = useCategorizedAccountsInProfiles();
 
   let totalAccountsBefore = 0; // ← track accounts of previous profiles
 

@@ -52,7 +52,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
 }
 
 function ProfileTabsFS (): React.ReactElement {
-  const initialAccountList = useAccountsOrder(true);
+  const initialAccountList = useAccountsOrder();
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
 

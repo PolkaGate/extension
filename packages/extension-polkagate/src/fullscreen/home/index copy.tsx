@@ -23,7 +23,7 @@ function HomePageFullScreen (): React.ReactElement {
   const navigate = useNavigate();
 
   const { notify } = useAlerts();
-  const initialAccountList = useAccountsOrder(true);
+  const initialAccountList = useAccountsOrder();
   const { accounts: accountsInExtension } = useContext(AccountContext);
 
   const [groupedAssets, setGroupedAssets] = useState<AssetsWithUiAndPrice[] | undefined>();
