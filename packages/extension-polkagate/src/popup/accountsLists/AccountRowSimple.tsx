@@ -24,10 +24,9 @@ interface Props {
   isFirstAccount?: boolean;
   isFirstProfile?: boolean;
   isInSettingMode?: boolean;
-  isLast?: boolean;
 }
 
-function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected, ...style }: Props): React.ReactElement {
+function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: account?.address });
 

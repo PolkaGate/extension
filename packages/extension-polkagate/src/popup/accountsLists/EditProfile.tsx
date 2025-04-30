@@ -33,7 +33,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
   const [selectedAddresses, setSelectedAddresses] = useState<Set<string>>(new Set());
   const [step, setStep] = useState(STEP.EDIT_NAME);
 
-  const handleClose = useCallback(() => setPopup(undefined), [setPopup]);
+  const handleClose = useCallback(() => setPopup(false), [setPopup]);
 
   const onNext = useCallback(() => {
     setStep(STEP.CHOOSE_ACCOUNTS);
