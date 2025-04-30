@@ -12,7 +12,7 @@ import HeaderSection from './HeaderSection';
 import NewProfile from './NewProfile';
 import { PROFILE_MODE } from './type';
 
-function AccountsLists(): React.ReactElement {
+function AccountsLists (): React.ReactElement {
   const [mode, setMode] = useState<PROFILE_MODE>(PROFILE_MODE.NONE);
   const [profileLabelToDelete, setProfileLabelToDelete] = useState<string>();
 
@@ -43,7 +43,6 @@ function AccountsLists(): React.ReactElement {
           setPopup={setMode}
         />
       }
-
     </Grid>
   );
 }

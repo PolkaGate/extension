@@ -71,12 +71,13 @@ function NewProfile ({ setPopup }: Props): React.ReactElement {
       handleClose={handleClose}
       iconSize={24}
       iconVariant='Bulk'
+      maxHeight='100%'
       openMenu={true}
       title={t('New profile')}
       withoutTopBorder
     >
       {step === STEP.ADD_NAME &&
-        <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ height: '440px', display: 'block', pb: '5px', position: 'relative', zIndex: 1 }}>
+        <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
           <Typography color='#BEAAD8' variant='B-4'>
             {t('Give a name to the profile')}
           </Typography>
@@ -105,11 +106,11 @@ function NewProfile ({ setPopup }: Props): React.ReactElement {
         </Grid>
       }
       {step === STEP.CHOOSE_ACCOUNTS &&
-        <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ height: '440px', pb: '5px', position: 'relative', zIndex: 1 }}>
+        <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
           <Typography color='#BEAAD8' variant='B-4'>
             {t('Select the addresses you’d like to include in {{profileLabel}} profile', { replace: { profileLabel: profileName } })}
           </Typography>
-          <Stack direction='column' sx={{ height: '338px', mt: '25px', overflow: 'scroll', width: '100%' }}>
+          <Stack direction='column' sx={{ height: '350px', mt: '25px', overflow: 'scroll', width: '100%' }}>
             {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
               return (
                 <>
@@ -135,7 +136,7 @@ function NewProfile ({ setPopup }: Props): React.ReactElement {
             onSecondaryClick={handleClose}
             primaryBtnText={t('Add {{num}} address{{es}}', { replace: { num: selectedAddresses.size, es: selectedAddresses.size > 1 ? 'es' : '' } })}
             secondaryBtnText={t('Skip')}
-            style={{ mt: '10px' }}
+            style={{ bottom: 0, position: 'absolute' }}
           />
         </Grid>
       }
