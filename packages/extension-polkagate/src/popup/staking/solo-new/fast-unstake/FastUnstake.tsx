@@ -3,15 +3,15 @@
 
 import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { TickCircle, Warning2 } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
-import { BN, BN_ZERO, noop } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee2, useIsExposed2, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../../hooks';
+import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { amountToHuman } from '../../../../util/utils';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -105,19 +105,23 @@ export default function FastUnstake (): React.ReactElement {
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const isExposed = useIsExposed2(genesisHash, stakingInfo);
+  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+
+  const [review, setReview] = useState<boolean>(false);
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
   , [accountAssets, genesisHash]);
 
-  const tx = api?.tx['fastUnstake']['registerFastUnstake'];
-  const estimatedFee = useEstimatedFee2(genesisHash, selectedAccount?.address, tx?.());
+  const fastUnstake = api?.tx['fastUnstake']['registerFastUnstake'];
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, fastUnstake?.());
 
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
   const hasEnoughDeposit = fastUnstakeDeposit && estimatedFee && asset?.availableBalance
     ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(asset.availableBalance || BN_ZERO)
     : undefined;
 
+  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const redeemable = stakingInfo.stakingAccount?.redeemable;
 
   const hasUnlockingAndRedeemable = redeemable !== undefined && stakingInfo.stakingAccount
@@ -138,9 +142,38 @@ export default function FastUnstake (): React.ReactElement {
 
   const checkDone = useMemo(() => eligibilityCheck.every(({ status }) => status !== undefined), [eligibilityCheck]);
 
-  const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: staked as unknown as BN,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee,
+      title: t('Fee')
+    },
+    {
+      content: staked && asset ? (asset.availableBalance).add(staked as unknown as BN) : undefined,
+      title: t('Available balance after'),
+      withLogo: true
+    }];
+  }, [asset, estimatedFee, staked, t]);
+  const tx = useMemo(() => fastUnstake?.(), [fastUnstake]);
 
-  return (
+  const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
+  const onNext = useCallback(() => setReview(true), []);
+  const closeReview = useCallback(() => setReview(false), []);
+
+  const transactionFlow = useTransactionFlow({
+    backPathTitle: t('Withdraw redeemable'),
+    closeReview,
+    genesisHash: genesisHash ?? '',
+    review,
+    transactionInformation,
+    tx
+  });
+
+  return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
       <UserDashboardHeader homeType='default' noAccountSelected />
       <Motion variant='slide'>
@@ -176,7 +209,7 @@ export default function FastUnstake (): React.ReactElement {
               </Typography>
             </Container>
             <StakingActionButton
-              onClick={noop}
+              onClick={onNext}
               text={t('Next')}
             />
           </Stack>
