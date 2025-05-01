@@ -13,7 +13,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { info } from '../../assets/gif';
 import { DecisionButtons, GlowCheckbox, PasswordInput } from '../../components';
 import { useAccount, useTranslation } from '../../hooks';
-import { DraggableModal } from '../components/DraggableModal';
+import { SharePopup } from '../../partials';
 
 interface Props {
   address: string | undefined;
@@ -81,11 +81,12 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
   }, []);
 
   return (
-    <DraggableModal
-      dividerStyle={{ margin: '5px 0 0' }}
+    <SharePopup
+      modalProps={{ dividerStyle: { margin: '5px 0 0' } }}
+      modalStyle={{ minHeight: '200px' }}
       onClose={handleClose}
       open={open !== undefined}
-      style={{ minHeight: '200px', padding: '20px' }}
+      popupProps={{ pt: account?.isExternal ? 95 : 50 }}
       title={t('Confirmation of action')}
     >
       <Grid container item justifyContent='center' sx={{ position: 'relative', px: '5px', zIndex: 1 }}>
@@ -129,7 +130,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
           text={t('Account successfully removed!')}
         />
       </Grid>
-    </DraggableModal>
+    </SharePopup>
   );
 }
 
