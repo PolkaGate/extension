@@ -4,7 +4,10 @@
 import type { DropdownOption, TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Tab, Tabs, Typography } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+
+import useAccountSelectedChain, { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
@@ -26,7 +29,7 @@ export enum TAB {
   GOVERNANCE = 'governance'
 }
 
-function HistoryTabs({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
+function HistoryTabs ({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const isSelected = useCallback((selectedTab: TAB | undefined) => tab === selectedTab, [tab]);
@@ -71,12 +74,21 @@ function HistoryTabs({ setTab, tab, unSupportedTabs }: Props): React.ReactElemen
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 
-function History(): React.ReactElement {
+function History (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const options = useContext(GenesisHashOptionsContext);
   const selectedAccount = useSelectedAccount();
+  const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const [tab, setTab] = useState<TAB>(TAB.ALL);
+  const [selectedChain, setSelectedChain] = useState<number | string>(DEFAULT_SELECTED_OPTION.value);
+  const { decimal, token } = useChainInfo(selectedChain as string, true);
+
+  useEffect(() => {
+    savedSelectedChain && setSelectedChain(savedSelectedChain);
+  }, [savedSelectedChain]);
 
   const chainOptions = useMemo(() => {
     const filteredOptions = options.filter((option) => option.value); // filter out the "Allow on any chain" option
@@ -85,11 +97,6 @@ function History(): React.ReactElement {
 
     return filteredOptions;
   }, [options]);
-
-  const [tab, setTab] = useState<TAB>(TAB.ALL);
-  const [selectedChain, setSelectedChain] = useState<number | string>(DEFAULT_SELECTED_OPTION.value);
-
-  const { decimal, token } = useChainInfo(selectedChain as string, true);
 
   const historyFilter: FilterOptions = useMemo(() => {
     const defaultFilters = {
@@ -147,8 +154,10 @@ function History(): React.ReactElement {
   }, [selectedChain]);
 
   const handleSelectedChain = useCallback((value: number | string) => {
-    setSelectedChain(value);
-  }, []);
+    selectedAccount && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: value }).then(() => {
+      setSelectedChain(value);
+    }).catch(console.error);
+  }, [selectedAccount]);
   const onBack = useCallback(() => onAction('/'), [onAction]);
 
   return (
@@ -163,18 +172,19 @@ function History(): React.ReactElement {
         tab={tab}
         unSupportedTabs={tabsToFilter}
       />
-      <DropSelect
-        defaultValue={DEFAULT_SELECTED_OPTION.value}
-        displayContentType='logo'
-        onChange={handleSelectedChain}
-        options={chainOptions}
-        style={{
-          mt: '12px',
-          mx: '15px',
-          width: 'calc(100% - 30px)'
-        }}
-        value={selectedChain}
-      />
+      {savedSelectedChain !== undefined &&
+        <DropSelect
+          defaultValue={savedSelectedChain ?? DEFAULT_SELECTED_OPTION.value}
+          displayContentType='logo'
+          onChange={handleSelectedChain}
+          options={chainOptions}
+          style={{
+            mt: '12px',
+            mx: '15px',
+            width: 'calc(100% - 30px)'
+          }}
+          value={selectedChain}
+        />}
       <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '405px', mt: '10px', overflow: 'scroll', pb: '60px' }}>
         <HistoryBox
           historyItems={historyItemsToShow}
