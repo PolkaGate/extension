@@ -248,19 +248,21 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
           />
           : <ActionButton
             StartIcon={AddCircle}
+            iconVariant='Bold'
             contentPlacement='center'
-            iconSize={14}
+            iconSize={18}
             onClick={onCreateClick}
             style={{
               bottom: '10px',
               height: '44px',
               margin: '0 1%',
               position: 'absolute',
-              width: '98%'
+              width: '98%',
+              '& .MuiButton-startIcon': {
+                marginRight: '4px'
+              }
             }}
-            text={{
-              firstPart: t('Create a new account')
-            }}
+            text={ t('Create a new account')}
             variant='contained'
           />
       }
