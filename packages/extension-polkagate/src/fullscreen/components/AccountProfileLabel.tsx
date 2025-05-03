@@ -8,6 +8,7 @@ import React, { useCallback, useMemo } from 'react';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import EditProfile from '@polkadot/extension-polkagate/src/popup/accountsLists/EditProfile';
 
+import { MyTooltip } from '../../components';
 import { useTranslation } from '../../hooks';
 import useProfileInfo from '../home/useProfileInfo';
 
@@ -52,7 +53,9 @@ function AccountProfileLabel ({ isInSettingMode, label, style = {} }: Props): Re
         </Typography>
         {
           isInSettingMode && !isDefaultProfile &&
-          <Edit2 color='#AA83DC' size='18' variant='Bold' />
+          <MyTooltip content={t('Edit profile')}>
+            <Edit2 color='#AA83DC' size='18' variant='Bold' />
+          </MyTooltip>
         }
       </Stack>
       {

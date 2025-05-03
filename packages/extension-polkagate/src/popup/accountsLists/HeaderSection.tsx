@@ -7,8 +7,8 @@ import React, { memo, useCallback, useContext } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 
-import { ActionContext } from '../../components';
-import { useSelectedProfile } from '../../hooks';
+import { ActionContext, MyTooltip } from '../../components';
+import { useSelectedProfile, useTranslation } from '../../hooks';
 import BackButton from './BackButton';
 import ProfilesDropDown from './ProfilesDropDown';
 import { PROFILE_MODE } from './type';
@@ -18,7 +18,8 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>>;
 }
 
-function HeaderSection ({ mode, setMode }: Props): React.ReactElement {
+function HeaderSection({ mode, setMode }: Props): React.ReactElement {
+  const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const selectedProfile = useSelectedProfile();
 
@@ -52,9 +53,11 @@ function HeaderSection ({ mode, setMode }: Props): React.ReactElement {
           setMode={setMode}
         />
       </Stack>
-      <Box alignItems='center' justifyContent='center' sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px' }}>
-        <ActionIcon color={disabledSettings ? '#BFA1FF26' : '#AA83DC'} onClick={onActionClick} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
-      </Box>
+      <MyTooltip content={t(isInSettingMode ? 'Add profile' : 'Profile settings')}>
+        <Box alignItems='center' justifyContent='center' sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px' }}>
+          <ActionIcon color={disabledSettings ? '#BFA1FF26' : '#AA83DC'} onClick={onActionClick} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
+        </Box>
+      </MyTooltip>
     </Stack>
   );
 }
