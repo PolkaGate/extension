@@ -11,7 +11,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { info } from '../../assets/gif';
-import { DecisionButtons, GlowCheckbox, PasswordInput } from '../../components';
+import { Address2, DecisionButtons, GlowCheckbox, PasswordInput } from '../../components';
 import { useAccount, useTranslation } from '../../hooks';
 import { SharePopup } from '../../partials';
 
@@ -89,7 +89,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       popupProps={{ pt: account?.isExternal ? 95 : 50 }}
       title={t('Confirmation of action')}
     >
-      <Grid container item justifyContent='center' sx={{ position: 'relative', px: '5px', zIndex: 1 }}>
+      <Grid container item justifyContent='center' sx={{ p: '0 5px 10px', position: 'relative', zIndex: 1 }}>
         <Box
           component='img'
           src={info as string}
@@ -98,6 +98,16 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
         <Typography color='#BEAAD8' sx={{ m: '20px 45px 0' }} variant='B-4'>
           {t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
         </Typography>
+        {
+          address &&
+          <Address2
+            address={address}
+            charsCount={14}
+            showAddress
+            showCopy={false}
+            style={{ marginTop: '32px' }}
+          />
+        }
         {account && account.isExternal
           ? <GlowCheckbox
             changeState={toggleAcknowledge}
@@ -111,8 +121,8 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
             hasError={isPasswordWrong}
             onEnterPress={onRemove}
             onPassChange={onPassChange}
-            style={{ marginBottom: '33px', marginTop: '33px' }}
-            title={t('Your Password')}
+            style={{ marginBottom: '25px', marginTop: '35px' }}
+            title={t('Password for {{accountName}}', { replace: { accountName: account?.name } })}
           />
         }
         <DecisionButtons
