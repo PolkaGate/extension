@@ -75,7 +75,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
 
   return (
     <Stack alignItems='center' direction='column' justifyContent='start' sx={{ bgcolor: '#060518', borderRadius: '14px', mb: '7px', width: '345px' }}>
-      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '8px 20px 8px 15px', width: '100%' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '10px 20px 10px 15px', width: '100%' }}>
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onClick} sx={{ cursor: 'pointer', width: 'fill-available' }}>
           <profileInfo.Icon color='#AA83DC' size='18' variant='Bulk' />
           <Typography color={isOpen ? '#AA83DC' : '#EAEBF1'} sx={{ textWrap: 'noWrap' }} variant='B-2'>
@@ -89,7 +89,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
           style={{ justifyContent: 'end', width: 'fit-content' }}
         />
       </Stack>
-      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isOpen} sx={{ bgcolor: '#222540A6', borderRadius: '10px', m: '3px', width: 'fill-available' }}>
+      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isOpen} sx={{ bgcolor: '#222540A6', borderRadius: '10px', m: '0 3px 3px', width: 'fill-available' }}>
         <Stack alignItems='center' direction='column'>
           {accounts.map(({ account: { address, genesisHash } }, index) => (
             <Stack direction='column' key={index} sx={{ width: '100%' }}>
