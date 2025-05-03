@@ -131,6 +131,7 @@ function NewProfile ({ setPopup }: Props): React.ReactElement {
           <DecisionButtons
             cancelButton
             direction='horizontal'
+            disabled={ !selectedAddresses.size}
             isBusy={isBusy}
             onPrimaryClick={onAdd}
             onSecondaryClick={handleClose}
