@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import CheckIcon from '@mui/icons-material/Check';
 import { Fade } from '@mui/material';
 import React from 'react';

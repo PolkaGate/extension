@@ -63,7 +63,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     cursor: disabled ? 'default' : 'pointer',
     height: '44px',
     justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
-    opacity: disabled ? 0.3 : 1,
+    opacity: disabled ? 0.5 : 1,
     paddingInline: '24px',
     position: 'relative',
     transition: 'all 250ms ease-out',

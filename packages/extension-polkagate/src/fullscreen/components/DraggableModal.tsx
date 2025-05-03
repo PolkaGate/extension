@@ -7,12 +7,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
 
-interface Props {
+export interface DraggableModalProps {
   blurBackdrop?: boolean;
   children: React.ReactElement;
   maxHeight?: number;
   noDivider?: boolean;
-  dividerStyle?:React.CSSProperties;
+  dividerStyle?: React.CSSProperties;
   minHeight?: number;
   open: boolean;
   onClose: () => void
@@ -21,7 +21,7 @@ interface Props {
   width?: number;
 }
 
-export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: Props): React.ReactElement<Props> {
+export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);

@@ -32,7 +32,7 @@ enum STEP {
   DETAIL
 }
 
-export default function ImportSeed (): React.ReactElement {
+export default function ImportSeed(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export default function ImportSeed (): React.ReactElement {
   const [address, setAddress] = useState('');
   const [type, setType] = useState(DEFAULT_TYPE);
   const [path, setPath] = useState<string | null>(null);
-  const [showMore, setShowMore] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [name, setName] = useState<string | null | undefined>();
   const [password, setPassword] = useState<string>();
   const [step, setStep] = useState(STEP.SEED);
@@ -110,7 +110,7 @@ export default function ImportSeed (): React.ReactElement {
   }, []);
 
   const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
-  const toggleMore = useCallback(() => setShowMore(!showMore), [showMore]);
+  const toggleMore = useCallback(() => setShowAdvanced(!showAdvanced), [showAdvanced]);
 
   const onContinue = useCallback(() => {
     setStep(STEP.DETAIL);
@@ -125,7 +125,7 @@ export default function ImportSeed (): React.ReactElement {
       setAddress('');
       setType(DEFAULT_TYPE);
       setPath(null);
-      setShowMore(false);
+      setShowAdvanced(false);
       setName(undefined);
       setPassword('');
       setError(undefined);
@@ -158,14 +158,14 @@ export default function ImportSeed (): React.ReactElement {
               </Typography>
             }
             <Collapse in={!!seed}>
-              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', m: '15px 0 10px 0 ', p: '4px 6px', width: 'fit-content' }}>
-                <More color='#AA83DC' size='18' style={{ rotate: '90deg' }} variant='Linear' />
-                <Typography sx={{ color: '#BEAAD8', cursor: 'pointer' }} variant='B-2'>
+              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: showAdvanced ? '#BEAAD8' : '#2D1E4A', borderRadius: '8px', m: '15px 0 10px 0 ', p: '4px 6px', width: 'fit-content' }}>
+                <More color={showAdvanced ? '#05091C' : '#BEAAD8'} size='18' style={{ rotate: showAdvanced ? '180deg' : '90deg', transition: 'all 250ms ease-out' }} variant='Linear' />
+                <Typography sx={{ color: showAdvanced ? '#05091C' : '#BEAAD8', cursor: 'pointer', userSelect: 'none' }} variant='B-2'>
                   {t('Advanced')}
                 </Typography>
               </Stack>
-              <Collapse in={showMore}>
-                <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+              <Collapse in={showAdvanced}>
+                <Typography color={'#BEAAD8'} sx={{ textAlign: 'left' }} variant='B-1'>
                   {t('To import a specific account, use a derivation path like //0, //1, etc.')}
                 </Typography>
                 <MyTextField

@@ -13,7 +13,7 @@ import AssetsBox from '@polkadot/extension-polkagate/src/popup/home/partial/Asse
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
 import { AccountContext, AccountVisibilityToggler, FadeOnScroll, Recoverability } from '../../components';
-import { useAccountProfile } from '../../hooks';
+import { useAccountProfile, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import { Account, AccountProfileLabel } from '../components';
 
@@ -24,6 +24,7 @@ export interface UnlockInformationType {
 }
 
 export default function LeftColumn (): React.ReactElement {
+  const { t } = useTranslation();
   const { address } = useParams<{ address: string, paramAssetId?: string }>();
   const { accounts } = useContext(AccountContext);
   const account = accounts.find(({ address: accountAddress }) => accountAddress === address);
@@ -43,7 +44,7 @@ export default function LeftColumn (): React.ReactElement {
           style={{ margin: '50px 0 0 20px' }}
           variant='B-3'
         />
-        <AccountProfileLabel label={profile} style={{ position: 'absolute', right: '8px', top: '0' }} />
+        <AccountProfileLabel label={profile ?? t('Unknown')} style={{ position: 'absolute', right: '8px', top: '0' }} />
         <Stack columnGap='5px' direction='row' sx={{ bottom: '18px', left: '20px', position: 'absolute' }}>
           <AccountVisibilityToggler
             size={20}

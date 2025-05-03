@@ -36,7 +36,7 @@ export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
       <Typography color='#BEAAD8' py='20px' textAlign='left' variant='B-1' width='100%'>
         {t('Choose the type of Ledger connection. The Polkadot Generic app is new and recommended. However, if you already have assets on a Ledger device for chains other than Polkadot and its asset hub, you can use the Ledger Legacy apps. In this case, you will need to migrate your assets to the Polkadot Generic app using the Migration app, provided that your desired chain has upgraded its runtime and is compatible with the Polkadot Generic app.')}
       </Typography>
-      <Grid columnGap='10px' container item rowGap='10px' sx={{ mb: '20px', mt: '10px' }}>
+      <Grid columnGap='10px' container item rowGap='10px' sx={{ flexWrap: 'nowrap', mb: '20px', mt: '10px' }}>
         <ImportTypeButton
           Icon={More2}
           label={t('Ledger Polkadot Generic')}

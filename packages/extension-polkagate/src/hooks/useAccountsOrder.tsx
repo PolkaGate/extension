@@ -8,89 +8,76 @@ import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
 import { saveNewOrder } from '../fullscreen/home/partials/DraggableAccountList';
+import { getStorage } from '../util';
 
-export default function useAccountsOrder(isFullScreenMode?: boolean): AccountsOrder[] | undefined {
-  const { accounts: accountsInExtension, hierarchy } = useContext(AccountContext);
-
-  const [initialAccountList, setInitialAccountList] = useState<AccountsOrder[] | undefined>();
+export default function useAccountsOrder (): AccountsOrder[] | undefined {
+  const { accounts: flatAccounts, hierarchy } = useContext(AccountContext);
+  const [orderedAccounts, setOrderedAccounts] = useState<AccountsOrder[]>();
 
   const flattenHierarchy = useCallback((account: AccountWithChildren): AccountWithChildren[] => {
-    const flattenedChildren = (account.children || []).flatMap(flattenHierarchy);
-
-    return [account, ...flattenedChildren];
+    return [account, ...(account.children || []).flatMap(flattenHierarchy)];
   }, []);
 
   useLayoutEffect(() => {
-    chrome.storage.local.get('addressOrder').then(({ addressOrder }: { addressOrder?: string[] }) => {
-      if (addressOrder && addressOrder.length > 0) {
-        const accountsOrder: AccountsOrder[] = [];
-        let idCounter = 0;
+    const applyAccountOrder = async () => {
+      try {
+        const { addressOrder } = await getStorage('addressOrder') as { addressOrder?: string[] };
 
-        addressOrder.forEach((_address) => {
-          const account = accountsInExtension.find(({ address }) => _address === address);
+        const orderedList: AccountsOrder[] = [];
+        const usedAddresses = new Set<string>();
+        let id = 1;
 
-          if (account) {
-            idCounter++;
-            accountsOrder.push({
-              account,
-              id: idCounter
-            });
+        // Match stored order
+        if (addressOrder?.length) {
+          for (const addr of addressOrder) {
+            const match = flatAccounts.find(({ address }) => address === addr);
+
+            if (match) {
+              orderedList.push({ account: match, id: id++ });
+              usedAddresses.add(addr);
+            }
           }
-        });
-
-        // Detects newly added accounts that may not be present in the storage.
-        const untrackedAccounts = accountsInExtension.filter(({ address }) => !accountsOrder.map(({ account }) => account.address).includes(address));
-
-        if (untrackedAccounts.length > 0) {
-          const newAccounts = untrackedAccounts.filter(({ parentAddress }) => !parentAddress);
-          const derivedAccounts = untrackedAccounts.filter(({ parentAddress }) => parentAddress);
-
-          derivedAccounts.forEach((derivedAccount) => {
-            const parentIndex = accountsOrder.findIndex(({ account }) => account.address === derivedAccount.parentAddress);
-            const derivedAccountWithId = {
-              account: derivedAccount,
-              id: parentIndex + 1
-            };
-
-            accountsOrder.splice(parentIndex + 1, 0, derivedAccountWithId);
-
-            accountsOrder.forEach((account, index) => {
-              if (index <= parentIndex) {
-                return;
-              }
-
-              account.id += 1;
-            });
-          });
-
-          newAccounts.forEach((account) => {
-            idCounter++;
-            accountsOrder.push({
-              account,
-              id: idCounter
-            });
-          });
         }
 
-        saveNewOrder(accountsOrder);
-        setInitialAccountList(accountsOrder);
-      } else {
-        const accounts = hierarchy.flatMap((account) => flattenHierarchy(account));
+        // Handle new or missing accounts
+        const newAccounts = flatAccounts.filter(({ address }) => !usedAddresses.has(address));
+        const parentMap = new Map(flatAccounts.map((acc) => [acc.address, acc]));
 
-        const accountsOrder = accounts.map((_account, index) => (
-          {
-            account: _account,
-            id: index + 1
+        for (const acc of newAccounts) {
+          if (acc.parentAddress && parentMap.has(acc.parentAddress)) {
+            const parentIndex = orderedList.findIndex(({ account }) => account.address === acc.parentAddress);
+
+            if (parentIndex >= 0) {
+              orderedList.splice(parentIndex + 1, 0, { account: acc, id: parentIndex + 2 });
+
+              // Reassign IDs
+              for (let i = parentIndex + 2; i < orderedList.length; i++) {
+                orderedList[i].id = i + 1;
+              }
+
+              id = orderedList.length + 1;
+              continue;
+            }
           }
-        ));
 
-        saveNewOrder(accountsOrder);
-        setInitialAccountList(accountsOrder);
+          orderedList.push({ account: acc, id: id++ });
+        }
+
+        saveNewOrder(orderedList);
+        setOrderedAccounts(orderedList);
+      } catch (error) {
+        console.error('Failed to retrieve account order:', error);
+        // fallback: flat + hierarchical merge
+        const flattened = hierarchy.flatMap(flattenHierarchy);
+        const fallbackOrder = flattened.map((account, idx) => ({ account, id: idx + 1 }));
+
+        saveNewOrder(fallbackOrder);
+        setOrderedAccounts(fallbackOrder);
       }
-    }).catch(console.error);
-  }, [accountsInExtension, accountsInExtension.length, flattenHierarchy, hierarchy, setInitialAccountList]);
+    };
 
-  return (isFullScreenMode
-    ? initialAccountList
-    : initialAccountList?.map(({ account }) => account)) as AccountsOrder[] | undefined;
+    applyAccountOrder().catch(console.error);
+  }, [flatAccounts, flattenHierarchy, hierarchy]);
+
+  return orderedAccounts;
 }

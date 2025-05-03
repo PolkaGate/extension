@@ -14,7 +14,7 @@ import { useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
 
-export interface Props {
+export interface ExtensionPopupProps {
   TitleIcon?: Icon;
   children: React.ReactNode;
   handleClose?: () => void;
@@ -26,7 +26,7 @@ export interface Props {
   openMenu: boolean;
   pt?: number;
   style?: SxProps<Theme>;
-  title: string;
+  title?: string;
   titleAlignment?: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   titleVariant?: OverridableStringUnion<Variant, TypographyPropsVariantOverrides> | undefined;
@@ -41,7 +41,7 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
+function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
 
   return (
@@ -57,7 +57,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
       componentsProps={{
         backdrop: {
           sx: {
-            backdropFilter: 'blur(7px)',
+            backdropFilter: 'blur(5px)',
             background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
             bgcolor: 'transparent'
           }
@@ -70,7 +70,7 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 0)}px)`, overflow: 'hidden', overflowY: 'scroll', p: '10px', pb: '10px', position: 'relative', width: '100%' }}>
+        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 18)}px)`, overflow: 'hidden', overflowY: 'scroll', px: '10px', position: 'relative', width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
           {!!onBack &&
             <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', zIndex: 2 }}>
@@ -82,15 +82,20 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
               <Typography color='#EAEBF1' ml='4px' variant='B-1'>
                 {t('Back')}
               </Typography>
-            </Grid>}
+            </Grid>
+          }
           <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p='10px'>
-            {TitleIcon
-              ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />
-              : undefined
+            {
+              TitleIcon
+                ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />
+                : undefined
             }
-            <Typography color='text.primary' sx={{ ...titleStyle, zIndex: 2 }} textTransform='uppercase' variant={titleVariant}>
-              {title}
-            </Typography>
+            {
+              title &&
+              <Typography color='text.primary' sx={{ ...titleStyle, zIndex: 2 }} textTransform='uppercase' variant={titleVariant}>
+                {title}
+              </Typography>
+            }
           </Grid>
           {!withoutTopBorder && <GradientDivider />}
           {!withoutBackground && <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />}

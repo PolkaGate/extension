@@ -1,9 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
 import { Category, DocumentDownload, Edit2, LogoutCurve, Notification, People } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { noop } from '@polkadot/util';
 
@@ -15,13 +16,15 @@ import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
 import { ExtensionPopups } from '../../../util/constants';
 
-function AccountSettings(): React.ReactElement {
+function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
+  const location = useLocation();
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onAction = useContext(ActionContext);
 
-  const onBack = useCallback(() => onAction('/settings'), [onAction]);
+  const isComingFromAccountsList = location.state?.pathname === '/accounts';
+  const onBack = useCallback(() => onAction(isComingFromAccountsList ? location.state.pathname as string : '/settings'), [isComingFromAccountsList, location, onAction]);
   const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
   const onForget = useCallback(() => setPopup(ExtensionPopups.FORGET), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
@@ -84,7 +87,7 @@ function AccountSettings(): React.ReactElement {
             height: '64px',
             mt: '8px'
           }}
-          title={t('Connected Accounts')}
+          title={t('Connected dApps')}
         />
         <ActionCard
           Icon={DocumentDownload}
@@ -99,19 +102,12 @@ function AccountSettings(): React.ReactElement {
           }}
           title={t('Export Accounts')}
         />
-        <ActionCard
-          Icon={LogoutCurve}
-          iconColor='#FF4FB9'
-          iconSize={24}
-          iconWithoutTransform
-          onClick={onForget}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
-          title={t('Remove Account')}
-        />
+        <Stack alignItems='center' columnGap='5px' direction='row' onClick={onForget} sx={{ cursor: 'pointer', mt: '25px' }}>
+          <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
+          <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+            {t('Remove account')}
+          </Typography>
+        </Stack>
       </Motion>
       <HomeMenu />
       <RenameAccount

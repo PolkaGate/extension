@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack } from '@mui/material';
+import { Container, Stack } from '@mui/material';
 import { LogoutCurve } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -19,7 +19,7 @@ interface Props {
   open: boolean;
 }
 
-function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
+function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -84,44 +84,47 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
       title={t('Remove Account')}
       withoutTopBorder
     >
-      <WarningBox
-        description={t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
-        title={t('WARNING')}
-      />
-      <Stack direction='column' sx={{ position: 'relative', zIndex: 1 }}>
-        {account &&
-          <Address2
-            address={account?.address}
-            name={account?.name}
-            showAddress
-            style={{ mt: '5px', borderRadius: '14px' }}
-          />}
-        {account && account.isExternal
-          ? <GlowCheckbox
-            changeState={toggleAcknowledge}
-            checked={acknowledged}
-            disabled={isBusy}
-            label={t('I want to remove this account')}
-            style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
-          />
-          : <PasswordInput
-            focused
-            hasError={isPasswordWrong}
-            onEnterPress={onRemove}
-            onPassChange={onPassChange}
-            style={{ marginBottom: '23px', marginTop: '33px' }}
-            title={t('Your Password')}
-          />
-        }
-        <DecisionButtons
-          direction='vertical'
-          disabled={isBusy || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)}
-          onPrimaryClick={onRemove}
-          onSecondaryClick={handleClose}
-          primaryBtnText={t('Remove')}
-          secondaryBtnText={t('Cancel')}
+      <Container disableGutters sx={{ height: '440px', position: 'relative', pt: '15px' }}>
+        <WarningBox
+          description={t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
+          title={t('WARNING')}
         />
-      </Stack>
+        <Stack direction='column' sx={{ zIndex: 1 }}>
+          {account &&
+            <Address2
+              address={account?.address}
+              name={account?.name}
+              showAddress
+              style={{ borderRadius: '14px', mt: '5px' }}
+            />}
+          {account && account.isExternal
+            ? <GlowCheckbox
+              changeState={toggleAcknowledge}
+              checked={acknowledged}
+              disabled={isBusy}
+              label={t('I want to remove this account')}
+              style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
+            />
+            : <PasswordInput
+              focused
+              hasError={isPasswordWrong}
+              onEnterPress={onRemove}
+              onPassChange={onPassChange}
+              style={{ marginTop: '45px' }}
+              title={t('Your Password')}
+            />
+          }
+          <DecisionButtons
+            direction='vertical'
+            disabled={isBusy || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)}
+            onPrimaryClick={onRemove}
+            onSecondaryClick={handleClose}
+            primaryBtnText={t('Remove')}
+            secondaryBtnText={t('Cancel')}
+            style={{ bottom: 0, position: 'absolute' }}
+          />
+        </Stack>
+      </Container>
       <MySnackbar
         onClose={handleClose}
         open={showSnackbar}

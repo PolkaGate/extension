@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
-import { User } from 'iconsax-react';
+import { Edit2, User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
@@ -10,7 +10,7 @@ import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensi
 import { Address2, DecisionButtons, MyTextField } from '../../components';
 import { useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
-import { DraggableModal } from '../components/DraggableModal';
+import { SharePopup } from '../../partials';
 
 interface Props {
   address: string | undefined;
@@ -38,10 +38,11 @@ function RenameAccount({ address, open, setPopup }: Props): React.ReactElement {
   }, [address, newName]);
 
   return (
-    <DraggableModal
+    <SharePopup
+      modalStyle={{ minHeight: '200px' }}
       onClose={handleClose}
       open={open !== undefined}
-      style={{ minHeight: '200px', padding: '20px' }}
+      popupProps={{ TitleIcon: Edit2, iconSize: 24, pt: 185 }}
       title={t('Rename Account')}
     >
       <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1, px: '5px' }}>
@@ -59,7 +60,7 @@ function RenameAccount({ address, open, setPopup }: Props): React.ReactElement {
           onTextChange={onNameChange}
           placeholder={t('Enter your name')}
           style={{ margin: '20px 0 30px' }}
-          title= {t('Choose a new name for your account')}
+          title={t('Choose a new name for your account')}
         />
         <DecisionButtons
           cancelButton
@@ -76,7 +77,7 @@ function RenameAccount({ address, open, setPopup }: Props): React.ReactElement {
           text={t('Account successfully renamed!')}
         />
       </Grid>
-    </DraggableModal>
+    </SharePopup>
   );
 }
 
