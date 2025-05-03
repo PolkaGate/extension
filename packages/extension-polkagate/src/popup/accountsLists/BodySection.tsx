@@ -9,12 +9,12 @@ import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Box, Container, Stack } from '@mui/material';
 import { AddCircle, Trash } from 'iconsax-react';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { ActionButton, FadeOnScroll, GradientButton, SearchField } from '../../components';
+import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip, SearchField } from '../../components';
 import { AccountProfileLabel } from '../../fullscreen/components';
 import { useCategorizedAccountsInProfiles, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -48,6 +48,8 @@ interface Props {
 
 function BodySection({ mode, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const { accounts: flatAccounts } = useContext(AccountContext);
+  const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
   const selectedAccount = useSelectedAccount();
   const initialCategorizedAccounts = useCategorizedAccountsInProfiles();
@@ -57,11 +59,17 @@ function BodySection({ mode, setMode, setShowDeleteConfirmation }: Props): React
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  console.log(activeId);
+  console.log(activeId); // should be removed if not decided on drag and drop
 
   useEffect(() => {
     setCategorizedAccounts(initialCategorizedAccounts);
   }, [initialCategorizedAccounts]);
+
+  useEffect(() => {
+    if (flatAccounts.length === 0) { // when all accounts/profiles are deleted
+      onAction('/');
+    }
+  }, [flatAccounts.length, onAction]);
 
   const onSearch = useCallback((keyword: string) => {
     console.log(keyword);
@@ -187,9 +195,11 @@ function BodySection({ mode, setMode, setShowDeleteConfirmation }: Props): React
                               />
                               {
                                 isInSettingMode && notLocalProfile &&
-                                <Box onClick={() => onDeleteProfile(label)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
-                                  <Trash color='#FF165C' size='16' variant='Bulk' />
-                                </Box>
+                                <MyTooltip content={t('Delete profile')}>
+                                  <Box onClick={() => onDeleteProfile(label)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
+                                    <Trash color='#FF165C' size='16' variant='Bulk' />
+                                  </Box>
+                                </MyTooltip>
                               }
                             </Stack>
                           }
