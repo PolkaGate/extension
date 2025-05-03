@@ -10,13 +10,13 @@ import { Divider, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
 import React, { useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import AccountDropDown from '@polkadot/extension-polkagate/src/fullscreen/home/AccountDropDown';
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
 import { AccountContext, Identity2 } from '../../components';
-import { useNavigate } from 'react-router-dom';
 
 interface Props {
   account: AccountWithChildren;
@@ -62,7 +62,8 @@ function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSetting
       }}
       transition={{ duration: 0.4 }}
     >
-      <Stack {...attributes} alignItems='center' direction='row' justifyContent='space-between'
+      <Stack
+        {...attributes} alignItems='center' direction='row' justifyContent='space-between'
         sx={{
           bgcolor: '#05091C',
           borderRadius: isLast
@@ -78,12 +79,12 @@ function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSetting
           isInSettingMode &&
           <DragIndicatorIcon {...listeners} sx={{ ':active': { cursor: 'grabbing' }, color: '#674394', cursor: 'grab', fontSize: '20px' }} />
         }
-        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ '&:hover': { backgroundColor: isInSettingMode ? undefined : '#1B133C', padding: isInSettingMode ? undefined : '0 8px' }, borderRadius: '12px', m: `5px 8px 5px ${isInSettingMode ? '5px' : '15px'}`, position: 'relative', transition: 'all 250ms ease-out', width: '100%' }}>
+        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ borderRadius: '12px', m: `5px 8px 5px ${isInSettingMode ? '5px' : '15px'}`, minHeight: '36px', position: 'relative', width: '100%' }}>
           {
             isSelected && !isInSettingMode &&
             <Divider orientation='vertical' sx={{ background: '#FF4FB9', height: '24px', left: '-13px', position: 'absolute', width: '3px' }} />
           }
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={onClick} sx={{ cursor: 'pointer', width: '80%' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '80%' }}>
             <PolkaGateIdenticon
               address={account.address}
               size={isInSettingMode ? 18 : 24}

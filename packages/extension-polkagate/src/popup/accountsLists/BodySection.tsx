@@ -21,7 +21,7 @@ import { VelvetBox } from '../../style';
 import AccountRow from './AccountRowSimple';
 import { PROFILE_MODE } from './type';
 
-function BackDrop({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>> }): React.ReactElement {
+function BackDrop ({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>> }): React.ReactElement {
   return (
     <Box
       // eslint-disable-next-line react/jsx-no-bind
@@ -46,7 +46,7 @@ interface Props {
   setShowDeleteConfirmation: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function BodySection({ mode, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
+function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts: flatAccounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -230,7 +230,7 @@ function BodySection({ mode, setMode, setShowDeleteConfirmation }: Props): React
             </DndContext>
           )}
         </Stack>
-        <FadeOnScroll containerRef={refContainer} height='15px' />
+        <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
       </VelvetBox>
       {
         isInSettingMode
