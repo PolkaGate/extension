@@ -111,6 +111,8 @@ export { default as ShowBalance2 } from './ShowBalance2';
 export { default as ShowBalance3 } from './ShowBalance3';
 export { default as ShowValue } from './ShowValue';
 export { default as SignArea2 } from './SignArea2';
+export { default as SignArea3 } from './SignArea3';
+export { default as SignUsingProxy } from './SignUsingProxy';
 export { default as SlidePopUp } from './SlidePopUp';
 export { default as Steps } from './Steps';
 export { default as EndRecoveryIcon } from './SVG/EndRecoveryIcon';

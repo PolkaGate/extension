@@ -4,27 +4,29 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
+import type { TRANSACTION_FLOW_STEPS } from './TransactionFlow';
 
 import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { InfoCircle } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { type BN, isBn } from '@polkadot/util';
 
-import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip } from '../components';
+import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip, SignArea3 } from '../components';
 import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
 import { toShortAddress } from '../util/utils';
-import { InfoCircle } from 'iconsax-react';
+import type { TxInfo } from '../util/types';
 
 interface AccountBoxProps {
-  selectedAccount: AccountJson;
+  selectedAccount: AccountJson | undefined;
   genesisHash: string;
 }
 
 const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const { t } = useTranslation();
-  const formatted = useFormatted3(selectedAccount.address, genesisHash);
+  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
 
   return (
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
@@ -32,12 +34,12 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
         {t('Account')}
       </Typography>
       <GradientDivider />
-      <PolkaGateIdenticon address={selectedAccount.address} size={48} style={{ margin: 'auto' }} />
+      <PolkaGateIdenticon address={selectedAccount?.address ?? ''} size={48} style={{ margin: 'auto' }} />
       <Typography color='text.primary' sx={{ textAlign: 'center', width: '100%' }} variant='B-3'>
-        {selectedAccount.name}
+        {selectedAccount?.name}
       </Typography>
       <Typography color='text.highlight' sx={{ mt: '-10px', textAlign: 'center', width: '100%' }} variant='B-1'>
-        {toShortAddress(formatted ?? selectedAccount.address, 8)}
+        {toShortAddress(formatted ?? selectedAccount?.address, 8)}
       </Typography>
     </Stack>
   );
@@ -132,10 +134,13 @@ const ContentItem = ({ content, decimal, description, genesisHash, title, token,
 export interface ReviewProps {
   genesisHash: string;
   transactionInformation: Content[];
-  tx: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  stepCount: number;
+  setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
 }
 
-export default function Review({ genesisHash, transactionInformation, tx }: ReviewProps): React.ReactElement {
+export default function Review({ genesisHash, setFlowStep, setTxInfo, stepCount, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, chainName, decimal, token } = useChainInfo(genesisHash);
   const selectedAccount = useSelectedAccount();
@@ -160,6 +165,16 @@ export default function Review({ genesisHash, transactionInformation, tx }: Revi
           />
         ))}
       </Grid>
+      <SignArea3
+        address={selectedAccount?.address}
+        genesisHash={genesisHash}
+        maybeApi={undefined}
+        proxyTypeFilter={[]}
+        setFlowStep={setFlowStep}
+        setTxInfo={setTxInfo}
+        stepCount={stepCount}
+        transaction={transaction}
+      />
     </Stack>
   );
 }
