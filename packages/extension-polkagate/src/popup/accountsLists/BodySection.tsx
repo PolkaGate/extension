@@ -1,12 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DragEndEvent, UniqueIdentifier } from '@dnd-kit/core';
 import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
 
-import { closestCenter, DndContext } from '@dnd-kit/core';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Box, Container, Stack } from '@mui/material';
 import { AddCircle, Trash } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -58,8 +54,6 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
   const isProfileDropDownOpen = mode === PROFILE_MODE.DROP_DOWN;
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  console.log(activeId); // should be removed if not decided on drag and drop
 
   useEffect(() => {
     setCategorizedAccounts(initialCategorizedAccounts);
@@ -83,78 +77,6 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
     setMode(PROFILE_MODE.NONE);
   }, [setMode]);
 
-  const handleDragStart = useCallback(({ active }: { active: { id: UniqueIdentifier } }) => {
-    setActiveId(active.id);
-  }, []);
-
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-
-    setActiveId(null);
-
-    // If dropped outside
-    if (!over) {
-      return;
-    }
-
-    const activeId = active.id as string;
-    const overId = over.id as string;
-
-    if (activeId === overId) {
-      return;
-    } // No movement if same account
-
-    let sourceProfile: string | undefined;
-    let destinationProfile: string | undefined;
-
-    // Find the source and destination profiles based on activeId and overId
-    for (const [profile, accounts] of Object.entries(categorizedAccounts)) {
-      if (accounts.some((acc) => acc.account.address === activeId)) {
-        sourceProfile = profile;
-      }
-
-      if (accounts.some((acc) => acc.account.address === overId)) {
-        destinationProfile = profile;
-      }
-    }
-
-    if (!sourceProfile || !destinationProfile) {
-      return; // Exit if no valid source or destination found
-    }
-
-    // Find the account being dragged from sourceProfile
-    const activeAccount = categorizedAccounts[sourceProfile].find((acc) => acc.account.address === activeId);
-
-    if (!activeAccount) {
-      return;
-    } // Exit if no account found for activeId
-
-    // If moving within the same profile
-    if (sourceProfile === destinationProfile) {
-      const accounts = categorizedAccounts[sourceProfile];
-      const oldIndex = accounts.findIndex((acc) => acc.account.address === activeId);
-      const newIndex = accounts.findIndex((acc) => acc.account.address === overId);
-
-      const newAccounts = arrayMove(accounts, oldIndex, newIndex);
-
-      setCategorizedAccounts({
-        ...categorizedAccounts,
-        [sourceProfile]: newAccounts
-      });
-    } else {
-      // Moving to a different profile
-      const newSourceAccounts = categorizedAccounts[sourceProfile].filter((acc) => acc.account.address !== activeId);
-      const newDestinationAccounts = [...categorizedAccounts[destinationProfile], activeAccount];
-
-      // Update the categorizedAccounts state correctly for source and destination profiles
-      setCategorizedAccounts({
-        ...categorizedAccounts,
-        [sourceProfile]: newSourceAccounts,
-        [destinationProfile]: newDestinationAccounts
-      });
-    }
-  }, [categorizedAccounts]);
-
   const onDeleteProfile = useCallback((label: string) => {
     setShowDeleteConfirmation(label);
   }, [setShowDeleteConfirmation]);
@@ -171,14 +93,10 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
       <VelvetBox style={{ margin: '5px 0 15px' }}>
         <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflowY: 'scroll', position: 'relative' }}>
           {Object.keys(categorizedAccounts).length > 0 && (
-            <DndContext collisionDetection={closestCenter} modifiers={[restrictToParentElement]} onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+            <>
               {Object.entries(categorizedAccounts).map(([label, accounts], profileIndex) => {
                 return (
-                  <SortableContext
-                    items={accounts.map((acc) => acc.account.address)}
-                    key={label}
-                    strategy={verticalListSortingStrategy}
-                  >
+                  <>
                     {accounts.map((account, accIndex) => {
                       const isFirstProfile = profileIndex === 0;
                       const isFirstAccount = accIndex === 0;
@@ -214,20 +132,10 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
                         </React.Fragment>
                       );
                     })}
-                  </SortableContext>
+                  </>
                 );
               })}
-              {/* <DragOverlay>
-                {activeId
-                  ? <AccountRow
-                    account={Object.values(categorizedAccounts).flat().find((acc) => acc.account.address === activeId)?.account}
-                    isSelected={false} // We don't need selected state here for the preview
-                    style={{ background: '#1B133C', borderRadius: '12px', color: 'white', opacity: 0.8, padding: '5px' }}
-                  />
-                  : null
-                }
-              </DragOverlay> */}
-            </DndContext>
+            </>
           )}
         </Stack>
         <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
@@ -253,14 +161,14 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
             iconVariant='Bold'
             onClick={onCreateClick}
             style={{
+              '& .MuiButton-startIcon': {
+                marginRight: '4px'
+              },
               bottom: '10px',
               height: '44px',
               margin: '0 1%',
               position: 'absolute',
-              width: '98%',
-              '& .MuiButton-startIcon': {
-                marginRight: '4px'
-              }
+              width: '98%'
             }}
             text={ t('Create a new account')}
             variant='contained'
