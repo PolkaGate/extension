@@ -4,6 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
+import type { TxInfo } from '../util/types';
 import type { TRANSACTION_FLOW_STEPS } from './TransactionFlow';
 
 import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
@@ -17,7 +18,6 @@ import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from 
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
 import { toShortAddress } from '../util/utils';
-import type { TxInfo } from '../util/types';
 
 interface AccountBoxProps {
   selectedAccount: AccountJson | undefined;
@@ -140,18 +140,17 @@ export interface ReviewProps {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
 }
 
-export default function Review({ genesisHash, setFlowStep, setTxInfo, stepCount, transaction, transactionInformation }: ReviewProps): React.ReactElement {
-  const { t } = useTranslation();
-  const { api, chain, chainName, decimal, token } = useChainInfo(genesisHash);
+export default function Review ({ genesisHash, setFlowStep, setTxInfo, stepCount, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+  const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
   return (
-    <Stack direction='column' sx={{ p: '15px', width: '100%' }}>
+    <Stack direction='column' sx={{ p: '15px', pb: 0, width: '100%' }}>
       <AccountBox
         genesisHash={genesisHash}
         selectedAccount={selectedAccount}
       />
-      <Grid container item sx={{ flexDirection: 'column', gap: '6px', mt: '20px', width: '100%' }}>
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'scroll', width: '100%' }}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem
             content={content}

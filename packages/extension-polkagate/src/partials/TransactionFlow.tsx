@@ -38,9 +38,9 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
 
   return (
     <>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
         <UserDashboardHeader homeType='default' noAccountSelected />
-        <Motion variant='slide'>
+        <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
           <BackWithLabel
             onClick={closeReview}
             style={{ pb: 0 }}

@@ -210,7 +210,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
         txHash: txResult?.txHash || ''
       };
 
-      // setTxInfo({ ...info, api, chain });
+      setTxInfo({ ...info, api, chain } as TxInfo);
 
       // saveAsHistory(String(from), info as any);
     } catch (e) {
