@@ -5,15 +5,14 @@ import type { Icon } from 'iconsax-react';
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, Popover, styled, type SxProps, type Theme, Typography } from '@mui/material';
-import { Data, DocumentUpload, Edit, LogoutCurve, Shield, Triangle, User } from 'iconsax-react';
+import { Data, Edit, LogoutCurve, Setting4, Shield, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { useTranslation } from '../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import { GradientDivider } from '../../style';
 import RemoveAccount from './RemoveAccount';
 import RenameAccount from './RenameAccount';
-
 
 const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
   background: '#05091C',
@@ -34,6 +33,7 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
 }));
 
 interface Options {
+  pathname?: string;
   text?: string;
   value?: string | number | (() => void);
   Icon?: Icon;
@@ -41,22 +41,22 @@ interface Options {
 }
 
 interface ContentDisplayProps {
-  Icon?: Icon;
+  option: Options
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  text: string | number;
-  value: string | number | (() => void);
 }
 
-function LogoContentDisplay ({ Icon, setOpen, text, value }: ContentDisplayProps) {
-  const [hovered, setHovered] = useState(false);
+function LogoContentDisplay ({ option, setOpen }: ContentDisplayProps) {
   const navigate = useNavigate();
+
+  const { Icon, pathname, text, value } = option;
+  const [hovered, setHovered] = useState(false);
 
   const handleClick = useCallback(async () => {
     setOpen(false);
     typeof value === 'function'
       ? value()
-      : await navigate(value as string);
-  }, [navigate, setOpen, value]);
+      : await navigate(value as string, { state: { pathname } });
+  }, [navigate, pathname, setOpen, value]);
 
   return (
     <Grid
@@ -78,7 +78,7 @@ function LogoContentDisplay ({ Icon, setOpen, text, value }: ContentDisplayProps
     >
       <Grid alignItems='center' container item sx={{ columnGap: '7px', flexWrap: 'nowrap' }} xs>
         {Icon &&
-          <Icon size='18' style={{ color: hovered ? '#FF4FB9' : '#AA83DC' }} variant='Bulk' />
+        <Icon size='18' style={{ color: hovered ? '#FF4FB9' : '#AA83DC' }} variant='Bulk' />
         }
         <Typography color='text.primary' sx={{ textWrap: 'nowrap' }} variant='B-2'>
           {text}
@@ -124,18 +124,15 @@ function DropContent ({ containerRef, contentDropWidth, open, options, setOpen }
       }}
     >
       <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
-        {options.map(({ Icon, isLine, text, value }, index) => {
+        {options.map((option, index) => {
           return (
             <>
-              {isLine
+              {option.isLine
                 ? <GradientDivider style={{ my: '3px' }} />
-                : text && value &&
-                <LogoContentDisplay
-                  Icon={Icon}
+                : <LogoContentDisplay
                   key={index}
+                  option={option}
                   setOpen={setOpen}
-                  text={text}
-                  value={value}
                 />
               }
             </>
@@ -149,7 +146,7 @@ function DropContent ({ containerRef, contentDropWidth, open, options, setOpen }
 interface Props {
   address: string | undefined;
   disabled?: boolean;
-  iconSize?:string;
+  iconSize?: string;
   style?: SxProps<Theme>;
 }
 
@@ -158,9 +155,10 @@ enum HOME_POPUP {
   REMOVE
 }
 
-function AccountDropDown ({ address, disabled, iconSize= '25px', style }: Props) {
+function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
 
   const [hovered, setHovered] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -169,7 +167,7 @@ function AccountDropDown ({ address, disabled, iconSize= '25px', style }: Props)
   const onMouseEnter = useCallback(() => setHovered(true), []);
   const onMouseLeave = useCallback(() => setHovered(false), []);
 
-  const _options = useMemo(() => {
+  const baseOption = useMemo(() => {
     return [
       {
         Icon: User,
@@ -185,19 +183,14 @@ function AccountDropDown ({ address, disabled, iconSize= '25px', style }: Props)
         Icon: Shield,
         text: t('Social recovery'),
         value: `/socialRecovery/${address}/false`
-      },
-      {
-        Icon: Triangle,
-        text: t('NFT album'),
-        value: `/nft/${address}`
-      },
+      }
+    ];
+  }, [address, t]);
+
+  const extraFullscreenOptions = useMemo(() => {
+    return [
       {
         isLine: true
-      },
-      {
-        Icon: DocumentUpload,
-        text: t('Add to profile'),
-        value: 'TBD'
       },
       {
         Icon: Edit,
@@ -213,7 +206,28 @@ function AccountDropDown ({ address, disabled, iconSize= '25px', style }: Props)
         value: () => setPopup(HOME_POPUP.REMOVE)
       }
     ];
-  }, [address, t]);
+  }, [t]);
+
+  const extraExtensionOptions = useMemo(() => {
+    return [
+      {
+        isLine: true
+      },
+      {
+        Icon: Setting4,
+        pathname: '/accounts',
+        text: t('Account settings'),
+        value: '/settings-account'
+      }
+    ];
+  }, [t]);
+
+  const _options = useMemo(() => {
+    return [
+      ...baseOption,
+      ...(isExtension ? extraExtensionOptions : extraFullscreenOptions)
+    ];
+  }, [baseOption, extraExtensionOptions, extraFullscreenOptions, isExtension]);
 
   const toggleOpen = useCallback(() => !disabled && setOpen((isOpen) => !isOpen), [disabled]);
   const handleClickAway = useCallback(() => setOpen(false), []);

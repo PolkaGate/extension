@@ -4,6 +4,7 @@
 import { Container } from '@mui/material';
 import { Category, DocumentDownload, Edit2, LogoutCurve, Notification, People } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { noop } from '@polkadot/util';
 
@@ -15,13 +16,15 @@ import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
 import { ExtensionPopups } from '../../../util/constants';
 
-function AccountSettings(): React.ReactElement {
+function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
+  const location = useLocation();
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onAction = useContext(ActionContext);
 
-  const onBack = useCallback(() => onAction('/settings'), [onAction]);
+  const isComingFromAccountsList = location.state?.pathname === '/accounts';
+  const onBack = useCallback(() => onAction(isComingFromAccountsList ? location.state.pathname as string : '/settings'), [isComingFromAccountsList, location, onAction]);
   const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
   const onForget = useCallback(() => setPopup(ExtensionPopups.FORGET), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
@@ -84,7 +87,7 @@ function AccountSettings(): React.ReactElement {
             height: '64px',
             mt: '8px'
           }}
-          title={t('Connected Accounts')}
+          title={t('Connected dApps')}
         />
         <ActionCard
           Icon={DocumentDownload}
