@@ -65,9 +65,9 @@ function AccountSelection(): React.ReactElement {
         }}
       >
         <Grid container item justifyContent='space-around' sx={{ background: isDark ? '#2D1E4A' : '#CCD2EA', borderRadius: '9px', height: '26px', width: '26px' }}>
-          <Stack columnGap='2px' direction='row'>
-            <Box component='img' src={identiconPink as string} sx={{ width: '9.75px' }} />
-            <Box component='img' src={identiconBlue as string} sx={{ width: '9.75px' }} />
+          <Stack columnGap='2px' direction='row' sx={{ mt: '1px' }}>
+            <Box component='img' src={identiconPink as string} sx={{ height: '9.75px', width: '9.75px' }} />
+            <Box component='img' src={identiconBlue as string} sx={{ height: '9.75px', width: '9.75px' }} />
           </Stack>
           <Grid
             alignContent='center' container item justifyContent='center' sx={{
