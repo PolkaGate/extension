@@ -248,9 +248,9 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
           />
           : <ActionButton
             StartIcon={AddCircle}
-            iconVariant='Bold'
             contentPlacement='center'
             iconSize={18}
+            iconVariant='Bold'
             onClick={onCreateClick}
             style={{
               bottom: '10px',

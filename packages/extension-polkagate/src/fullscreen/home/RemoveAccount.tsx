@@ -119,6 +119,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
           cancelButton
           direction='vertical'
           disabled={isBusy || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)}
+          isBusy={isBusy}
           onPrimaryClick={onRemove}
           onSecondaryClick={handleClose}
           primaryBtnText={t('Remove account')}
