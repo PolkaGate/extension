@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Stack, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React from 'react';
@@ -11,12 +10,12 @@ interface Props {
   description?: string;
 }
 
-export default function WarningBox({ description, title }: Props): React.ReactElement {
+export default function WarningBox ({ description, title }: Props): React.ReactElement {
   return (
     <Stack columnGap='10px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', mb: '5px', overflow: 'hidden', p: '15px', position: 'relative' }}>
-      <Box sx={{ bgcolor: '#FFCE4F', height: '32px', position: 'absolute', width: '32px', filter: 'blur(24px)', opacity: 0.9, borderRadius: '50%', transform: 'translate(-35%, -35%)' }} />
+      <Box sx={{ bgcolor: '#FFCE4F', borderRadius: '50%', filter: 'blur(24px)', height: '32px', opacity: 0.9, position: 'absolute', transform: 'translate(-35%, -35%)', width: '32px' }} />
       <Warning2 color='#FFCE4F' size='24px' style={{ marginTop: '10px' }} variant='Bold' />
-      <Stack alignContent='flex-start' direction='column' justifyContent='start' rowGap='10px' width='100%'>
+      <Stack alignContent='flex-start' direction='column' justifyContent='start' width='100%'>
         <Typography color='#FFFFFF' lineHeight='19.94px' textAlign='start' variant='H-4'>
           {title}
         </Typography>

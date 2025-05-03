@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
 import { Category, DocumentDownload, Edit2, LogoutCurve, Notification, People } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -102,19 +102,12 @@ function AccountSettings (): React.ReactElement {
           }}
           title={t('Export Accounts')}
         />
-        <ActionCard
-          Icon={LogoutCurve}
-          iconColor='#FF4FB9'
-          iconSize={24}
-          iconWithoutTransform
-          onClick={onForget}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
-          title={t('Remove Account')}
-        />
+        <Stack alignItems='center' columnGap='5px' direction='row' onClick={onForget} sx={{ cursor: 'pointer', mt: '25px' }}>
+          <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
+          <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+            {t('Remove account')}
+          </Typography>
+        </Stack>
       </Motion>
       <HomeMenu />
       <RenameAccount
