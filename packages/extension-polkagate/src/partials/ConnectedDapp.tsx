@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 import type { AuthorizeRequestHandlerProp } from '../popup/authorize';
 
@@ -201,7 +200,7 @@ export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeR
   const [checking, setChecking] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean | undefined>(undefined);
   const [dapp, setDapp] = useState<AuthUrlInfo | undefined>(undefined);
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const [openMenu, setOpenMenu] = useState<boolean>(!!authorizeRequestHandler);
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const favIconUrl = useFavIcon(dapp?.url ?? authorizeRequestHandler?.request?.url);
