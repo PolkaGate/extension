@@ -76,7 +76,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
   return (
     <Stack alignItems='center' direction='column' justifyContent='start' sx={{ bgcolor: '#060518', borderRadius: '14px', mb: '7px', width: '345px' }}>
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '8px 20px 8px 15px', width: '100%' }}>
-        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onClick} sx={{ cursor: 'pointer' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onClick} sx={{ cursor: 'pointer', width: 'fill-available' }}>
           <profileInfo.Icon color='#AA83DC' size='18' variant='Bulk' />
           <Typography color={isOpen ? '#AA83DC' : '#EAEBF1'} sx={{ textWrap: 'noWrap' }} variant='B-2'>
             {maybeNewName ?? label}
@@ -86,7 +86,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
         <GlowCheckbox
           changeState={handleAllCheck}
           checked={allSelected}
-          style={{ justifyContent: 'end' }}
+          style={{ justifyContent: 'end', width: 'fit-content' }}
         />
       </Stack>
       <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isOpen} sx={{ bgcolor: '#222540A6', borderRadius: '10px', m: '3px', width: 'fill-available' }}>
