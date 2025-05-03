@@ -44,7 +44,7 @@ function AccountProfileLabel ({ isInSettingMode, label, style = {} }: Props): Re
     <>
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={onClick} sx={{ bgcolor, borderRadius: '9px', cursor: isInSettingMode ? 'pointer' : 'default', height: '24px', m: '10px 0 7px 10px', p: '0 7px 0 5px', width: 'fit-content', ...style }}>
         <Icon color={color} size='18' variant='Bulk' />
-        <Typography color={color} variant='B-2'>
+        <Typography color={color} sx={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
           {
             label
               ? t(expandedLabel)
