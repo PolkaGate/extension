@@ -54,8 +54,8 @@ function HeaderSection({ mode, setMode }: Props): React.ReactElement {
         />
       </Stack>
       <MyTooltip content={t(isInSettingMode ? 'Add profile' : 'Profile settings')}>
-        <Box alignItems='center' justifyContent='center' sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px' }}>
-          <ActionIcon color={disabledSettings ? '#BFA1FF26' : '#AA83DC'} onClick={onActionClick} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
+        <Box alignItems='center' justifyContent='center' onClick={onActionClick} sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px' }}>
+          <ActionIcon color={disabledSettings ? '#BFA1FF26' : '#AA83DC'} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
         </Box>
       </MyTooltip>
     </Stack>
