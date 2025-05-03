@@ -105,7 +105,6 @@ function PortfolioInRow ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.
 
 function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.ReactElement {
   const { t } = useTranslation();
-
   const currency = useCurrency();
   const refContainer = useRef<HTMLDivElement>(null);
 
@@ -128,6 +127,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
       <Container disableGutters ref={refContainer} sx={{ maxHeight: '260px', overflowY: 'scroll' }}>
         {assets.map(({ genesisHash, percent, price, token, totalBalance, ui }, index) => {
           const logoInfo = getLogo2(genesisHash, token);
+          const normalizePercent = (p: number) => (p > 5 ? p : p > 0 ? 5 : 0);
 
           return (
             <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', m: '5px', px: '10px' }}>
@@ -144,7 +144,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
                 <Typography color='#BEAAD8' minWidth='60px' sx={{ textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
                   {percent >= 0.01 ? truncateToMaxYDecimals(percent, 2) : '~ 0'}%
                 </Typography>
-                <BorderLinearProgress barColor={ui.color} barHeight={8} sx={{ width: '72px' }} value={percent > 1 ? percent : 1} variant='determinate' />
+                <BorderLinearProgress barColor={ui.color} barHeight={8} sx={{ width: '72px' }} value={normalizePercent(percent)} variant='determinate' />
               </Stack>
               <FormatPrice
                 commify
