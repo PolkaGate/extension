@@ -29,11 +29,11 @@ const UseProxy = ({ proxies }: UseProxyProps) => {
 
   if (!proxies || proxies.length) {
     return (
-      <Grid container item sx={{ width: 'fit-content' }}>
+      <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
         <MyTooltip
           content={t('Checking if you have proxy accounts')}
         >
-          <BeatLoader color={theme.palette.text.highlight} loading size={4} speedMultiplier={0.6} />
+          <BeatLoader color={theme.palette.text.highlight} loading size={5} />
         </MyTooltip>
       </Grid>
     );
@@ -95,9 +95,9 @@ export default function SignUsingPassword ({ api, formatted, from, handleTxResul
   }, [api, formatted, from, handleTxResult, password, preparedTransaction, setFlowStep]);
 
   return (
-    <Stack direction='column' sx={{ width: 'fit-content' }}>
-      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: 'fit-content' }}>
-        <Typography>
+    <Stack direction='column' sx={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '12px' }}>
+        <Typography color='text.primary' variant='B-1'>
           {t('Password')}
         </Typography>
         <UseProxy
@@ -109,6 +109,7 @@ export default function SignUsingPassword ({ api, formatted, from, handleTxResul
         hasError={hasError}
         onEnterPress={onConfirm}
         onPassChange={onChangePassword}
+        style={{ margin: '6px 0 30px' }}
       />
       <StakingActionButton
         disabled={!password || hasError}
