@@ -4,31 +4,64 @@
 import type { Proxy, ProxyItem } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { Data } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import { Data, Trash, Warning2 } from 'iconsax-react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { useTranslation } from '../hooks';
 import Radio from '../popup/staking/components/Radio';
+import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
-import { ExtensionPopup, Identity2 } from '.';
+import { getSubstrateAddress } from '../util/utils';
+import { AccountContext, ExtensionPopup, Identity2 } from '.';
+
+const ResetSelection = ({ onReset }: { onReset: () => void }) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: '#809ACB26', borderRadius: '12px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px', width: 'fit-content' }}>
+      <Trash color={theme.palette.text.highlight} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
+      <Typography color='text.highlight' textAlign='left' variant='B-2'>
+        {t('Reset')}
+      </Typography>
+    </Container>
+  );
+};
 
 interface ProxiesItemProps {
   proxy: ProxyItem;
-  selectedProxyItem: ProxyItem;
+  selectedProxyItem: Proxy | undefined;
   onSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   genesisHash: string | null | undefined;
 }
 
 const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: ProxiesItemProps) => {
-  const isChecked = useMemo(() => (
-    selectedProxyItem.proxy.delegate === proxy.proxy.delegate &&
-    selectedProxyItem.proxy.proxyType === proxy.proxy.proxyType &&
-    selectedProxyItem.proxy.delay === proxy.proxy.delay
-  ), [proxy.proxy.delay, proxy.proxy.delegate, proxy.proxy.proxyType, selectedProxyItem.proxy.delay, selectedProxyItem.proxy.delegate, selectedProxyItem.proxy.proxyType]);
+  const { accounts } = useContext(AccountContext);
+
+  const isAvailable = useMemo(() => {
+    if (!proxy) {
+      return false;
+    }
+
+    const found = accounts.find((account) => account.address === getSubstrateAddress(proxy.proxy.delegate));
+
+    return found !== undefined;
+  }, [accounts, proxy]);
+
+  const isChecked = useMemo(() => {
+    if (!selectedProxyItem) {
+      return false;
+    }
+
+    return (
+      selectedProxyItem.delegate === proxy.proxy.delegate &&
+      selectedProxyItem.proxyType === proxy.proxy.proxyType &&
+      selectedProxyItem.delay === proxy.proxy.delay);
+  }, [proxy.proxy.delay, proxy.proxy.delegate, proxy.proxy.proxyType, selectedProxyItem]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', border: '4px solid ##3988FF', borderRadius: '18px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '16px 12px' }}>
-      <Grid container item sx={{ width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', border: '4px solid', borderColor: isChecked ? '#3988FF' : '#222442', borderRadius: '18px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
+      <Grid container item sx={{ alignItems: 'center', columnGap: '6px', width: 'fit-content' }}>
         <PolkaGateIdenticon
           address={proxy.proxy.delegate}
           size={32}
@@ -38,12 +71,13 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
             address={proxy.proxy.delegate}
             genesisHash={genesisHash ?? ''}
             noIdenticon
+            showShortAddress
           />
-          <Grid container flexDirection='row' item sx={{ width: 'fit-content' }}>
+          <Grid container flexDirection='row' item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
             <Typography color='txt.highlight' variant='B-1'>
               {proxy.proxy.proxyType}
             </Typography>
-            <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px' }} variant='S-1'>
+            <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', p: '1px 3px' }} variant='S-1'>
               {proxy.proxy.delay}
             </Typography>
           </Grid>
@@ -51,9 +85,11 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
       </Grid>
       <Radio
         checked={isChecked}
+        disabled={!isAvailable}
         onChange={onSelect}
-        value={proxy}
+        value={JSON.stringify(proxy)}
       />
+      {!isAvailable && <Grid sx={{ backdropFilter: 'blur(1px)', bgcolor: 'rgba(0,0,0, 0.3)', borderRadius: '18px', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 1 }} />}
     </Container>
   );
 };
@@ -64,45 +100,79 @@ interface Props {
   proxies: Proxy[] | undefined;
   genesisHash: string | null | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
+  selectedProxy: Proxy | undefined;
 }
 
-export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, setSelectedProxy }: Props) {
+export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const [proxyItem, setProxyItem] = useState<Proxy | undefined>(selectedProxy);
+
   const proxyItems = useMemo(() => (proxies ?? []).map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[], [proxies]);
 
-  const handleSelectedProxy = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = event.target.value;
-    const found = proxies?.find((proxy) => proxy.delegate === selected);
+  const noProxyAvailable = useMemo(() => proxies && proxyItems.length === 0, [proxies, proxyItems.length]);
+  const loadingProxy = useMemo(() => proxies === undefined, [proxies]);
 
-    setSelectedProxy(found);
-  }, [proxies, setSelectedProxy]);
+  const handleSelectedProxy = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = JSON.parse(event.target.value) as ProxyItem;
+
+    const found = proxies?.find((proxy) => proxy.delegate === selected.proxy.delegate && proxy.proxyType === selected.proxy.proxyType && proxy.delay === selected.proxy.delay);
+
+    setProxyItem(found);
+  }, [proxies]);
+
+  const onApply = useCallback(() => {
+    setSelectedProxy(proxyItem);
+    handleClose();
+  }, [handleClose, proxyItem, setSelectedProxy]);
+
+  const onReset = useCallback(() => setProxyItem(undefined), []);
+
+  const onClosePopup = useCallback(() => {
+    onReset();
+    handleClose();
+  }, [handleClose, onReset]);
 
   return (
     <ExtensionPopup
+      RightItem={<ResetSelection onReset={onReset} />}
       TitleIcon={Data}
-      handleClose={handleClose}
+      handleClose={onClosePopup}
       iconColor={theme.palette.text.highlight}
       iconSize={25}
       openMenu={openMenu}
       title={t('Select Proxy')}
+      withoutTopBorder
     >
-      <Stack direction='column' sx={{ height: '415px', position: 'relative', width: '100%' }}>
+      <Stack direction='column' sx={{ height: '450px', position: 'relative', width: '100%' }}>
         <Typography color='text.highlight' sx={{ px: '15%', width: '100%' }} variant='B-4'>
           {t('Choose a suitable proxy for the account to conduct the transaction on its behalf')}
         </Typography>
-        <Stack direction='column'>
+        <Stack direction='column' sx={{ columnGap: '8px', mt: '25px' }}>
           {proxyItems.map((item, index) => (
             <ProxiesItem
               genesisHash={genesisHash}
               key={index}
               onSelect={handleSelectedProxy}
               proxy={item}
-              selectedProxyItem={item}
+              selectedProxyItem={proxyItem ?? selectedProxy}
             />
           ))}
         </Stack>
+        {noProxyAvailable &&
+          <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center', mt: '90px' }}>
+            <Warning2 color='#FF4FB9' size='22' style={{ height: 'fit-content' }} variant='Bold' />
+            <Typography color='#FF4FB9' textAlign='left' variant='B-4'>
+              {t('No proxy available')}
+            </Typography>
+          </Container>}
+        <StakingActionButton
+          disabled={noProxyAvailable || loadingProxy || proxyItem === undefined}
+          onClick={onApply}
+          style={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}
+          text={t('Apply')}
+        />
       </Stack>
     </ExtensionPopup>
   );
