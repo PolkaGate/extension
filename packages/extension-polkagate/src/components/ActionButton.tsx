@@ -61,13 +61,13 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       marginRight: '16px'
     },
     '& .MuiButton-startIcon svg': {
-      color: '#BEAAD8'
+      color: disabled ? '#BEAAD84D' : '#BEAAD8'
     }
   };
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: isDark ? '#BEAAD8' : '#745D8B', ...ButtonFontStyle }}>
+      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? '#BEAAD8' : '#745D8B', ...ButtonFontStyle }}>
         {text}
       </span>;
     } else {
@@ -79,7 +79,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
         </>
       );
     }
-  }, [ButtonFontStyle, isDark, text, theme.palette.text.primary, theme.palette.text.secondary]);
+  }, [ButtonFontStyle, disabled, isDark, text, theme.palette.text.primary, theme.palette.text.secondary]);
 
   return (
     <Button
@@ -97,7 +97,14 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
           }
         />
         : undefined}
-      sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style }}
+      sx={{
+        '&.Mui-disabled': {
+          backgroundColor: '#2D1E4A4D'
+        },
+        ...GeneralButtonStyle,
+        ...StartIconStyle,
+        ...style
+      }}
       variant={variant}
     >
       {renderText}

@@ -93,6 +93,7 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
           {account &&
             <Address2
               address={account?.address}
+              charsCount={14}
               name={account?.name}
               showAddress
               style={{ borderRadius: '14px', mt: '5px' }}

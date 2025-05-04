@@ -10,7 +10,7 @@ import { noop } from '@polkadot/util';
 
 import { ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { UserDashboardHeader } from '../../../partials';
+import { UserDashboardHeader, WebsitesAccess } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
@@ -25,7 +25,9 @@ function AccountSettings (): React.ReactElement {
 
   const isComingFromAccountsList = location.state?.pathname === '/accounts';
   const onBack = useCallback(() => onAction(isComingFromAccountsList ? location.state.pathname as string : '/settings'), [isComingFromAccountsList, location, onAction]);
+
   const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
+  const onDapps = useCallback(() => setPopup(ExtensionPopups.DAPPS), []);
   const onForget = useCallback(() => setPopup(ExtensionPopups.FORGET), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
 
@@ -81,13 +83,13 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={noop}
+          onClick={onDapps}
           style={{
             alignItems: 'center',
             height: '64px',
             mt: '8px'
           }}
-          title={t('Connected dApps')}
+          title={t('Websites Access')}
         />
         <ActionCard
           Icon={DocumentDownload}
@@ -116,6 +118,10 @@ function AccountSettings (): React.ReactElement {
       />
       <RemoveAccount
         open={popup === ExtensionPopups.FORGET}
+        setPopup={setPopup}
+      />
+      <WebsitesAccess
+        open={popup === ExtensionPopups.DAPPS}
         setPopup={setPopup}
       />
     </Container>

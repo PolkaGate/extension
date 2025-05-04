@@ -194,7 +194,7 @@ function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, requestId, setRef
   );
 }
 
-export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
+export default function EditDappAccess ({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);
@@ -273,7 +273,7 @@ export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeR
   return (
     <>
       {!authorizeRequestHandler &&
-        <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
+        <Container className='EditDappAccess' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
           <ArrowSwapHorizontal color='#82FFA5' size='15' style={{ background: '#BFA1FF26' }} />
           <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: '#82FFA533', border: '2px solid', borderColor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
             <MonitorMobbile color='#82FFA5' size='22' variant='Bulk' />
