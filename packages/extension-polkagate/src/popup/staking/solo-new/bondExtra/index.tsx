@@ -76,61 +76,61 @@ export default function BondExtra (): React.ReactElement {
     closeReview,
     genesisHash: genesisHash ?? '',
     review,
+    stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
     tx
   });
 
   return transactionFlow || (
-    <>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noAccountSelected />
-        <Motion variant='slide'>
-          <BackWithLabel
-            onClick={onBack}
-            style={{ pb: 0 }}
-            text={t('Stake More')}
+    <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <UserDashboardHeader homeType='default' noAccountSelected />
+      <Motion variant='slide'>
+        <BackWithLabel
+          onClick={onBack}
+          stepCounter={{ currentStep: 1, totalSteps: 2 }}
+          style={{ pb: 0 }}
+          text={t('Stake More')}
+        />
+        <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px' }}>
+          <TokenStakeStatus
+            amount={staked as BN | undefined}
+            decimal={decimal}
+            genesisHash={genesisHash}
+            style={{ mt: '8px' }}
+            text={t('Staked')}
+            token={token}
           />
-          <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px' }}>
-            <TokenStakeStatus
-              amount={staked as BN | undefined}
-              decimal={decimal}
-              genesisHash={genesisHash}
-              style={{ mt: '8px' }}
-              text={t('Staked')}
-              token={token}
-            />
-            <AvailableToStake
-              availableAmount={stakingInfo.availableBalanceToStake}
-              decimal={decimal}
-              noStakeButton
-              stakeType='solo'
-              style={{ mt: '8px' }}
-              token={token}
-            />
-            <StakeAmountInput
-              buttonsArray={[{
-                buttonName: t('Max'),
-                value: onMaxValue
-              }]}
-              onInputChange={onInputChange}
-              style={{ mb: '18px', mt: '8px' }}
-              title={t('Amount')}
-              titleInColor={token?.toUpperCase()}
-            />
-            <FeeValue
-              decimal={decimal}
-              feeValue={estimatedFee2}
-              token={token}
-            />
-            <StakingActionButton
-              disabled={!bondExtraValue || bondExtraValue.isZero()}
-              onClick={onNext}
-              style={{ mt: '24px' }}
-              text={t('Next')}
-            />
-          </Stack>
-        </Motion>
-      </Grid>
-    </>
+          <AvailableToStake
+            availableAmount={stakingInfo.availableBalanceToStake}
+            decimal={decimal}
+            noStakeButton
+            stakeType='solo'
+            style={{ mt: '8px' }}
+            token={token}
+          />
+          <StakeAmountInput
+            buttonsArray={[{
+              buttonName: t('Max'),
+              value: onMaxValue
+            }]}
+            onInputChange={onInputChange}
+            style={{ mb: '18px', mt: '8px' }}
+            title={t('Amount')}
+            titleInColor={token?.toUpperCase()}
+          />
+          <FeeValue
+            decimal={decimal}
+            feeValue={estimatedFee2}
+            token={token}
+          />
+          <StakingActionButton
+            disabled={!bondExtraValue || bondExtraValue.isZero()}
+            onClick={onNext}
+            style={{ mt: '24px' }}
+            text={t('Next')}
+          />
+        </Stack>
+      </Motion>
+    </Grid>
   );
 }

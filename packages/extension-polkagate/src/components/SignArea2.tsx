@@ -394,7 +394,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
               {formatted && (account?.genesisHash || api?.genesisHash?.toHex()) && payload
                 ? <Qr
                   address={formatted}
-                  buttonLeft='0px'
                   cmd={CMD_MORTAL}
                   genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as string}
                   onSignature={onSignature}

@@ -8,8 +8,6 @@ import type { ValidatorInformation } from '../../../hooks/useValidatorsInformati
 import { Avatar, Container, Dialog, Grid, Link, Slide, Stack, styled, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { BN } from '@polkadot/util';
-
 import { riot, subscan } from '../../../assets/icons';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';

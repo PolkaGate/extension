@@ -169,6 +169,7 @@ export default function FastUnstake (): React.ReactElement {
     closeReview,
     genesisHash: genesisHash ?? '',
     review,
+    stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
     tx
   });
@@ -179,6 +180,7 @@ export default function FastUnstake (): React.ReactElement {
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}
+          stepCounter={{ currentStep: 2, totalSteps: 2 }}
           style={{ pb: 0 }}
           text={t('Fast Unstake')}
         />
