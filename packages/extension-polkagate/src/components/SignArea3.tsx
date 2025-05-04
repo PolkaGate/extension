@@ -10,9 +10,9 @@ import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/type
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
-import { useTheme } from '@mui/material';
-import { ScanBarcode } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
+import { ColorSwatch, Data, ScanBarcode, Warning2 } from 'iconsax-react';
+import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -22,10 +22,18 @@ import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useProxies
 import { TRANSACTION_FLOW_STEPS } from '../partials/TransactionFlow';
 import Qr from '../popup/signing/Request/Qr';
 import { CMD_MORTAL } from '../popup/signing/types';
+import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress, noop } from '../util/utils';
 import SignUsingPassword from './SignUsingPassword';
 import { ExtensionPopup, SignUsingProxy } from '.';
+
+type AlertHandler = {
+  alertText: string;
+  buttonText: string;
+  icon: ReactNode;
+  onClick: () => void;
+} | undefined;
 
 interface SignUsingQRProps {
   handleClose: () => void;
@@ -59,15 +67,43 @@ const SignUsingQR = ({ handleClose, onSignature, openMenu, payload, signerPayloa
   );
 };
 
+interface SignUsingPasswordProps {
+  alertHandler: AlertHandler;
+}
+
+const ChooseSigningButton = ({ alertHandler }: SignUsingPasswordProps) => {
+  if (!alertHandler) {
+    return null;
+  }
+
+  return (
+    <Stack direction='column' sx={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}>
+      <Container disableGutters sx={{ columnGap: '8px', display: 'flex' }}>
+        <Warning2 color='#596AFF' size='35' style={{ height: 'fit-content' }} variant='Bold' />
+        <Typography color='text.highlight' textAlign='left' variant='B-4'>
+          {alertHandler.alertText}
+        </Typography>
+      </Container>
+      <StakingActionButton
+        onClick={alertHandler.onClick}
+        startIcon={alertHandler.icon}
+        style={{ mt: '18px' }}
+        text={alertHandler.buttonText}
+      />
+    </Stack>
+  );
+};
+
 interface Props {
   address: string | undefined;
   maybeApi?: ApiPromise;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   proxyTypeFilter: ProxyTypes[] | string[];
-  stepCount: number;
   genesisHash: string | null | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  selectedProxy: Proxy | undefined;
+  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
 }
 
 /**
@@ -76,7 +112,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFilter, setFlowStep, setTxInfo, stepCount, transaction }: Props): React.ReactElement<Props> {
+export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setTxInfo, transaction }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -93,7 +129,6 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
   const [showQR, setShowQR] = useState<boolean>(false);
   const [lastHeader, setLastHeader] = useState<Header>();
   const [rawNonce, setRawNonce] = useState<number>();
-  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
 
   const selectedProxyName = useAccountDisplay2(getSubstrateAddress(selectedProxy?.delegate), genesisHash);
   const from = selectedProxy?.delegate ?? formatted ?? address;
@@ -101,22 +136,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
   const isLedger = useMemo(() => account?.isHardware, [account?.isHardware]);
   const showUseProxy = useMemo(() => !account?.isHardware && !account?.isQR && account?.isExternal && !selectedProxy, [account, selectedProxy]);
   const showQrSign = useMemo(() => account?.isQR, [account]);
-
-  const alertText = useMemo(() => {
-    if (isLedger) {
-      return t('This is a ledger account. To complete this transaction, use your ledger.');
-    }
-
-    if (showQrSign) {
-      return t('This is a QR-attached account. To complete this transaction, you need to use your QR-signer.');
-    }
-
-    if (showUseProxy) {
-      return t('This is a watch-only account. To complete this transaction, you must use a proxy.');
-    }
-
-    return undefined;
-  }, [isLedger, showQrSign, showUseProxy, t]);
+  const noPrivateKeyAccount = useMemo(() => account?.isExternal || account?.isHardware || account?.isQR, [account]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -188,6 +208,37 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
   const toggleSelectProxy = useCallback(() => setShowProxy((show) => !show), []);
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
 
+  const alertHandler = useMemo((): AlertHandler => {
+    if (isLedger) {
+      return {
+        alertText: t('This is a ledger account. To complete this transaction, use your ledger.'),
+        buttonText: t('Use Ledger'),
+        icon: <ColorSwatch color={theme.palette.text.primary} size={18} variant='Bold' />,
+        onClick: noop
+      };
+    }
+
+    if (showQrSign) {
+      return {
+        alertText: t('This is a QR-attached account. To complete this transaction, you need to use your QR-signer.'),
+        buttonText: t('Use QR-Signer'),
+        icon: <ScanBarcode color={theme.palette.text.primary} size={18} variant='Bold' />,
+        onClick: toggleQrScan
+      };
+    }
+
+    if (showUseProxy) {
+      return {
+        alertText: t('This is a watch-only account. To complete this transaction, you must use a proxy.'),
+        buttonText: t('Use Proxy'),
+        icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
+        onClick: toggleSelectProxy
+      };
+    }
+
+    return undefined;
+  }, [isLedger, showQrSign, showUseProxy, t, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
       if (!txResult || !api || !chain) {
@@ -216,7 +267,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
     } catch (e) {
       console.log('error:', e);
     }
-  }, []);
+  }, [api, chain, formatted, selectedProxyAddress, selectedProxyName, senderName, setTxInfo, token]);
 
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
     if (!api || !payload || !signature || !preparedTransaction || !from) {
@@ -232,20 +283,27 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
 
   return (
     <>
-      <SignUsingPassword
-        api={api}
-        formatted={formatted}
-        from={from}
-        handleTxResult={handleTxResult}
-        preparedTransaction={preparedTransaction}
-        proxies={proxies}
-        setFlowStep={setFlowStep}
-      />
+      {noPrivateKeyAccount
+        ? (
+          <ChooseSigningButton
+            alertHandler={alertHandler}
+          />)
+        : (
+          <SignUsingPassword
+            api={api}
+            formatted={formatted}
+            from={from}
+            handleTxResult={handleTxResult}
+            preparedTransaction={preparedTransaction}
+            proxies={proxies}
+            setFlowStep={setFlowStep}
+          />)}
       <SignUsingProxy
         genesisHash={genesisHash}
         handleClose={toggleSelectProxy}
         openMenu={showProxy}
         proxies={proxies}
+        selectedProxy={selectedProxy}
         setSelectedProxy={setSelectedProxy}
       />
       <SignUsingQR
