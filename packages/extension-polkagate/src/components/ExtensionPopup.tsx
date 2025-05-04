@@ -35,13 +35,14 @@ export interface Props {
   withoutTopBorder?: boolean;
   withGradientBorder?: boolean;
   withoutBackground?: boolean;
+  RightItem?: React.ReactNode;
 }
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
+function ExtensionPopup ({ RightItem, TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
@@ -93,6 +94,10 @@ function ExtensionPopup ({ TitleIcon, children, handleClose, iconColor = '#AA83D
               {title}
             </Typography>
           </Grid>
+          {RightItem &&
+            <Grid alignItems='center' container item sx={{ position: 'absolute', pt: '15px', right: '15px', top: '5px', width: 'fit-content', zIndex: 2 }}>
+              {RightItem}
+            </Grid>}
           {!withoutTopBorder && <GradientDivider />}
           {!withoutBackground && <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />}
           <Box sx={{ maxHeight, overflow: 'scroll', position: 'relative', width: '100%' }}>
