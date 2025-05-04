@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { TxInfo } from '../util/types';
+import type { Proxy, TxInfo } from '../util/types';
 import type { TRANSACTION_FLOW_STEPS } from './TransactionFlow';
 
 import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
@@ -136,11 +136,12 @@ export interface ReviewProps {
   transactionInformation: Content[];
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
-  stepCount: number;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
+  selectedProxy: Proxy | undefined;
+  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
 }
 
-export default function Review ({ genesisHash, setFlowStep, setTxInfo, stepCount, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ genesisHash, selectedProxy, setFlowStep, setSelectedProxy, setTxInfo, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
@@ -169,9 +170,10 @@ export default function Review ({ genesisHash, setFlowStep, setTxInfo, stepCount
         genesisHash={genesisHash}
         maybeApi={undefined}
         proxyTypeFilter={[]}
+        selectedProxy={selectedProxy}
         setFlowStep={setFlowStep}
+        setSelectedProxy={setSelectedProxy}
         setTxInfo={setTxInfo}
-        stepCount={stepCount}
         transaction={transaction}
       />
     </Stack>
