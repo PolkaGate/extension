@@ -7,7 +7,7 @@ import type { Variant } from '@mui/material/styles/createTypography';
 import { Stack, type SxProps, Typography } from '@mui/material';
 import React, { } from 'react';
 
-import { useAccountName, useTranslation } from '../hooks';
+import { useAccountName, useIsExtensionPopup, useTranslation } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { toTitleCase } from '../util';
 import { ShortAddress } from '.';
@@ -44,6 +44,7 @@ interface Props {
 function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address || '');
+  const isExtension = useIsExtensionPopup();
 
   return (
     <Stack alignItems='center' direction='column' sx={{ rowGap: '10px', width: '100%' }}>
@@ -72,7 +73,7 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
               address={address}
               charsCount={charsCount}
               showCopy={showCopy}
-              style={{ color: 'text.secondary', justifyContent: 'flex-start' }}
+              style={{ color: isExtension ? 'text.secondary' : '#AA83DC', justifyContent: 'flex-start' }}
               variant={(variant || 'B-4') as Variant}
             />
           }

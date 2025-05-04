@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Maximize4 } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
 import { useLocation } from 'react-router';
@@ -23,7 +24,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
   const hovered = useIsHovered(buttonContainer);
 
   const open = useCallback(() => {
-    windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/0` : url).catch(console.error);
+    windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/${POLKADOT_GENESIS}/0` : url).catch(console.error);
   }, [account, pathname, url]);
 
   const gradientBackgroundStyle = {

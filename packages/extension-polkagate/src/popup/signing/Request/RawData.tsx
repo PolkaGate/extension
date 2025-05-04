@@ -27,7 +27,7 @@ interface Props {
   url: string;
 }
 
-export default function RawData({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+export default function RawData ({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -59,7 +59,7 @@ export default function RawData({ account, error, isFirst, request, setError, se
   const text = useMemo(() => isAscii(data)
     ? u8aToString(u8aUnwrapBytes(data))
     : data
-    , [data]);
+  , [data]);
 
   return (
     <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
@@ -88,14 +88,14 @@ export default function RawData({ account, error, isFirst, request, setError, se
         background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
         borderRadius: '14px',
         justifySelf: 'center',
-        mt: '10px',
         mb: '30px',
+        mt: '10px',
         padding: '3.75px',
         position: 'relative',
         width: '100%'
       }}
       >
-        <Grid container justifyContent='center' item sx={{ bgcolor: '#1B133C', borderRadius: '10px', height: '100%', px: '10px', py: '5px', width: '100%', maxHeight: '65px', overflowY: 'scroll', overflowWrap: 'anywhere', minHeight: '50px', textAlign: 'center' }}>
+        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'scroll', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
           <Typography color='#EAEBF1' variant='B-1'>
             {text}
           </Typography>
@@ -120,5 +120,5 @@ export default function RawData({ account, error, isFirst, request, setError, se
         signId={signId}
       />
     </Grid>
-  )
+  );
 }

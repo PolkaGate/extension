@@ -8,6 +8,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
+import AccountsLists from '@polkadot/extension-polkagate/src/popup/accountsLists';
 import Home from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
@@ -100,6 +101,12 @@ const ROOT_ROUTES: RouteConfig[] = [
     exact: true,
     path: '/',
     trigger: 'accounts'
+  },
+  {
+    Component: AccountsLists,
+    exact: true,
+    path: '/accounts',
+    trigger: 'accounts-list'
   },
   {
     Component: Authorize,

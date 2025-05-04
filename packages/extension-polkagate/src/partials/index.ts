@@ -14,6 +14,7 @@ export { default as LogoDropAnimation } from './LogoDropAnimation';
 export { default as Name } from './Name';
 export { default as Passwords } from './Passwords';
 export { default as RemoteNodeSelectorWithSignals } from './RemoteNodeSelectorWithSignals';
+export { default as SharePopup } from './SharePopup';
 export { default as SubTitle } from './SubTitle';
 export { default as ThroughProxy } from './ThroughProxy';
 export { default as UserDashboardHeader } from './UserDashboardHeader';
