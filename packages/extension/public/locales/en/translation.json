@@ -1517,5 +1517,6 @@
   "Control which of your accounts this website can access.": "",
   "Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.": "",
   "Access successfully removed!": "",
-  "Website access": ""
+  "Website access": "",
+  "Edit access": ""
 }

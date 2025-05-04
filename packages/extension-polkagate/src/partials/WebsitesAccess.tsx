@@ -20,7 +20,7 @@ interface Props {
   open: boolean;
 }
 
-function EmptyAccessList() {
+function EmptyAccessList () {
   const { t } = useTranslation();
 
   return (
