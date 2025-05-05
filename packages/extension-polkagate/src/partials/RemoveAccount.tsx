@@ -35,6 +35,9 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
 
   const handleClose = useCallback(() => {
     setShowSnackbar(false);
+    setAcknowledge(false);
+    setPassword(undefined);
+    setPasswordError(false);
     setPopup(ExtensionPopups.NONE);
   }, [setPopup]);
 
