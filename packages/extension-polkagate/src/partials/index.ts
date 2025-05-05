@@ -21,4 +21,5 @@ export { default as UserDashboardHeader } from './UserDashboardHeader';
 export { default as Version } from './Version';
 export { default as Version2 } from './Version2';
 export { default as WaitScreen } from './WaitScreen';
+export { default as WaitScreen2 } from './WaitScreen2';
 export { default as WelcomeHeader } from './WelcomeHeader';
