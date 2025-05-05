@@ -7,7 +7,7 @@ import { Import } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { user } from '../../../assets/gif/index';
-import { AccountContext, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, PasswordInput } from '../../../components';
+import { AccountContext, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, Motion, PasswordInput } from '../../../components';
 import { useSelectedAccount, useTranslation } from '../../../hooks';
 import { exportAccount, exportAccounts } from '../../../messaging';
 import { UserDashboardHeader } from '../../../partials';
@@ -82,7 +82,7 @@ function AccountSettings (): React.ReactElement {
         onClick={onBack}
         text={t('Export Accounts')}
       />
-      <Grid container item sx={{ borderRadius: '14px', mt: '15px', mx: '15px', overflow: 'hidden', width: 'auto' }}>
+      <Motion style={{ borderRadius: '14px', margin: '15px 15px 0', overflow: 'hidden', width: 'auto' }} variant='slide'>
         <GradientBox2 style={{ border: '4px solid #1B133C', borderRadius: '14px', boxShadow: 'none', overflow: 'none' }} withGradientTopBorder={false}>
           <Stack columnGap='15px' direction='column' sx={{ p: '15px', pt: 0 }}>
             <Box component='img' src={user as string} sx={{ alignSelf: 'center', width: '76px' }} />
@@ -138,7 +138,7 @@ function AccountSettings (): React.ReactElement {
             text={t('Account export is completed!')}
           />
         </GradientBox2>
-      </Grid>
+      </Motion>
       <HomeMenu />
     </Container>
   );

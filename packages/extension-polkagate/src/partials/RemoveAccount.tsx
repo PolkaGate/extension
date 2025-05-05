@@ -35,6 +35,9 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
 
   const handleClose = useCallback(() => {
     setShowSnackbar(false);
+    setAcknowledge(false);
+    setPassword(undefined);
+    setPasswordError(false);
     setPopup(ExtensionPopups.NONE);
   }, [setPopup]);
 
@@ -93,6 +96,7 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
           {account &&
             <Address2
               address={account?.address}
+              charsCount={14}
               name={account?.name}
               showAddress
               style={{ borderRadius: '14px', mt: '5px' }}

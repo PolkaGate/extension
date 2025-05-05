@@ -34,6 +34,7 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
 
   const handleClose = useCallback(() => {
     setShowSnackbar(false);
+    setNewName(undefined); // to reset on re open
     setPopup(ExtensionPopups.NONE);
   }, [setPopup]);
   const onNameChange = useCallback((text?: string) => setNewName(text), [setNewName]);
