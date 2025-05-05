@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type React from 'react';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
@@ -16,7 +14,7 @@ import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
 import { isHexToBn } from '../util/utils';
-import { useChainInfo, useSelectedAccount, useStashId } from '.';
+import { useChainInfo, useSelectedAccount, useStashId2 } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();
@@ -34,7 +32,7 @@ BN.prototype.toJSON = function () {
 export default function useStakingAccount2 (address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew?: boolean): AccountStakingInfo | null | undefined {
   const { api, decimal, token } = useChainInfo(genesisHash);
   const account = useSelectedAccount();
-  const stashId = useStashId(address);
+  const stashId = useStashId2(address, genesisHash);
 
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null>();
 

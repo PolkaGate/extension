@@ -144,6 +144,7 @@ export { default as useStakingRewardDestinationAddress } from './useStakingRewar
 export { default as useStakingRewards } from './useStakingRewards';
 export { default as useStakingRewards2 } from './useStakingRewards2';
 export { default as useStashId } from './useStashId';
+export { default as useStashId2 } from './useStashId2';
 export { default as useTeleport } from './useTeleport';
 export { default as useTimeToUnlock } from './useTimeToUnlock';
 export { default as useTimeToUnlock2 } from './useTimeToUnlock2';
