@@ -87,15 +87,15 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
 
   return (
     <Stack alignItems='center' direction='column' sx={{ height: '460px', position: 'relative', pt: '10px' }}>
-      <Typography color='#BEAAD8' variant='B-4' sx={{ px: '15px'}}>
+      <Typography color='#BEAAD8' sx={{ px: '10px' }} variant='B-4'>
         {t('Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.')}
       </Typography>
       <SearchField
         onInputChange={onSearch}
         placeholder='🔍 Search'
-        style={{ marginTop: '17px' }}
+        style={{ marginTop: '17px', padding: '0 10px' }}
       />
-      <Stack direction='row' justifyContent='space-between' sx={{ m: '20px 15px 10px', width: '100%' }}>
+      <Stack direction='row' justifyContent='space-between' sx={{ m: '20px 0 10px', px: '15px', width: '100%' }}>
         <Typography color='#7956A5' sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
           {t('origin')}
         </Typography>
