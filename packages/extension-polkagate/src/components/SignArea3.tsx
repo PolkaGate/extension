@@ -98,7 +98,7 @@ interface Props {
   address: string | undefined;
   maybeApi?: ApiPromise;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
-  proxyTypeFilter: ProxyTypes[] | string[];
+  proxyTypeFilter: ProxyTypes[] | undefined;
   genesisHash: string | null | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
@@ -293,6 +293,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
           api={api}
           from={from}
           handleTxResult={handleTxResult}
+          onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
           preparedTransaction={preparedTransaction}
           proxies={proxies}
           setFlowStep={setFlowStep}
@@ -302,6 +303,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
         handleClose={toggleSelectProxy}
         openMenu={showProxySelection}
         proxies={proxies}
+        proxyTypeFilter={proxyTypeFilter}
         selectedProxy={selectedProxy}
         setSelectedProxy={setSelectedProxy}
       />

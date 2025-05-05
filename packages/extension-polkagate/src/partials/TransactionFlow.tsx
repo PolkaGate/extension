@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { StepCounterType } from '../components/BackWithLabel';
-import type { Proxy, TxInfo } from '../util/types';
+import type { Proxy, ProxyTypes, TxInfo } from '../util/types';
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
@@ -12,7 +12,7 @@ import React, { useCallback, useState } from 'react';
 
 import { BackWithLabel, Motion } from '../components';
 import Review from './Review';
-import { UserDashboardHeader } from '.';
+import { UserDashboardHeader, WaitScreen2 } from '.';
 
 export interface TransactionFlowProps {
   closeReview: () => void;
@@ -21,6 +21,7 @@ export interface TransactionFlowProps {
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   backPathTitle: string;
   stepCounter: StepCounterType;
+  proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
 export enum TRANSACTION_FLOW_STEPS {
@@ -29,13 +30,15 @@ export enum TRANSACTION_FLOW_STEPS {
   CONFIRMATION
 }
 
-export default function TransactionFlow ({ backPathTitle, closeReview, genesisHash, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ backPathTitle, closeReview, genesisHash, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
   const onOpenProxySelection = useCallback(() => setShowProxySelection(true), []);
+
+  console.log('txInfo', txInfo);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
@@ -58,6 +61,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
             genesisHash={genesisHash}
+            proxyTypeFilter={proxyTypeFilter}
             selectedProxy={selectedProxy}
             setFlowStep={setFlowStep}
             setSelectedProxy={setSelectedProxy}
@@ -67,6 +71,9 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
             transaction={transaction}
             transactionInformation={transactionInformation}
           />}
+        {flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
+          <WaitScreen2 />
+        }
       </Motion>
     </Grid>
   );

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Proxy, ProxyItem } from '../util/types';
+import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data, Trash, Warning2 } from 'iconsax-react';
@@ -101,15 +101,20 @@ interface Props {
   genesisHash: string | null | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   selectedProxy: Proxy | undefined;
+  proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, selectedProxy, setSelectedProxy }: Props) {
+export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [proxyItem, setProxyItem] = useState<Proxy | undefined>(selectedProxy);
 
-  const proxyItems = useMemo(() => (proxies ?? []).map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[], [proxies]);
+  const proxyItems = useMemo(() => {
+    return (proxies ?? [])
+      .map((p: Proxy) => ({ proxy: p, status: 'current' }))
+      .filter(({ proxy }) => proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true) as ProxyItem[];
+  }, [proxies, proxyTypeFilter]);
 
   const noProxyAvailable = useMemo(() => proxies && proxyItems.length === 0, [proxies, proxyItems.length]);
   const loadingProxy = useMemo(() => proxies === undefined, [proxies]);
