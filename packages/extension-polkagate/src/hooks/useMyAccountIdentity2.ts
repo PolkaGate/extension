@@ -16,7 +16,7 @@ import { useAccount, useChainInfo, useFormatted3, useIdentity2 } from '.';
  * it utilizes the saved identities in the local storage if any, while fetching the online identity
  * */
 export default function useMyAccountIdentity2 (address: AccountId | string | undefined, genesisHash: string | null | undefined): DeriveAccountRegistration | null | undefined {
-  const { chainName } = useChainInfo(genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
   const account = useAccount(address);
   const formatted = useFormatted3(address, genesisHash);
   const info = useIdentity2(genesisHash ?? '', formatted);

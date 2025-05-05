@@ -7,7 +7,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { useIsHovered, useTranslation } from '../hooks';
 
-export interface StepCounterType { currentStep: number; totalSteps: number };
+export interface StepCounterType { currentStep: number; totalSteps: number }
 
 const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
   return (

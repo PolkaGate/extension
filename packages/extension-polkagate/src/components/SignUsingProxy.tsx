@@ -141,6 +141,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
       handleClose={onClosePopup}
       iconColor={theme.palette.text.highlight}
       iconSize={25}
+      maxHeight='450px'
       openMenu={openMenu}
       title={t('Select Proxy')}
       withoutTopBorder
@@ -149,14 +150,14 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
         <Typography color='text.highlight' sx={{ px: '15%', width: '100%' }} variant='B-4'>
           {t('Choose a suitable proxy for the account to conduct the transaction on its behalf')}
         </Typography>
-        <Stack direction='column' sx={{ columnGap: '8px', mt: '25px' }}>
+        <Stack direction='column' sx={{ gap: '8px', mt: '25px' }}>
           {proxyItems.map((item, index) => (
             <ProxiesItem
               genesisHash={genesisHash}
               key={index}
               onSelect={handleSelectedProxy}
               proxy={item}
-              selectedProxyItem={proxyItem ?? selectedProxy}
+              selectedProxyItem={proxyItem}
             />
           ))}
         </Stack>
@@ -168,7 +169,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
             </Typography>
           </Container>}
         <StakingActionButton
-          disabled={noProxyAvailable || loadingProxy || proxyItem === undefined}
+          disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
           onClick={onApply}
           style={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}
           text={t('Apply')}
