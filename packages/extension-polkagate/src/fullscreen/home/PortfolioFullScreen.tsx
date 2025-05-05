@@ -5,8 +5,7 @@ import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { FormatPrice } from '../../components';
-import { useIsDark, useTranslation } from '../../hooks';
-import useYouHave from '../../hooks/useYouHave';
+import { useIsDark, usePortfolio, useTranslation } from '../../hooks';
 import DailyChange from '../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../style';
 
@@ -16,7 +15,7 @@ function PortfolioFullScreen (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
-  const youHave = useYouHave();
+  const youHave = usePortfolio();
 
   return (
     <GlowBox style={{ width: '100%' }}>
