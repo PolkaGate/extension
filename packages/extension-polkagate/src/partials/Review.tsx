@@ -139,9 +139,11 @@ export interface ReviewProps {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   selectedProxy: Proxy | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
+  showProxySelection: boolean;
+  setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review ({ genesisHash, selectedProxy, setFlowStep, setSelectedProxy, setTxInfo, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ genesisHash, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
@@ -173,7 +175,9 @@ export default function Review ({ genesisHash, selectedProxy, setFlowStep, setSe
         selectedProxy={selectedProxy}
         setFlowStep={setFlowStep}
         setSelectedProxy={setSelectedProxy}
+        setShowProxySelection={setShowProxySelection}
         setTxInfo={setTxInfo}
+        showProxySelection={showProxySelection}
         transaction={transaction}
       />
     </Stack>

@@ -8,7 +8,7 @@ import type { Proxy, TxInfo } from '../util/types';
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { BackWithLabel, Motion } from '../components';
 import Review from './Review';
@@ -33,10 +33,21 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
   const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
+  const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
+
+  const onOpenProxySelection = useCallback(() => setShowProxySelection(true), []);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
-      <UserDashboardHeader homeType='default' noAccountSelected />
+      <UserDashboardHeader
+        genesisHash={genesisHash}
+        homeType='default'
+        noAccountSelected
+        signerInformation={{
+          onClick: onOpenProxySelection,
+          selectedProxy
+        }}
+      />
       <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
         <BackWithLabel
           onClick={closeReview}
@@ -50,7 +61,9 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
             selectedProxy={selectedProxy}
             setFlowStep={setFlowStep}
             setSelectedProxy={setSelectedProxy}
+            setShowProxySelection={setShowProxySelection}
             setTxInfo={setTxInfo}
+            showProxySelection={showProxySelection}
             transaction={transaction}
             transactionInformation={transactionInformation}
           />}

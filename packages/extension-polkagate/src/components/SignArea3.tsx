@@ -104,6 +104,8 @@ interface Props {
   setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
   selectedProxy: Proxy | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
+  setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
+  showProxySelection: boolean;
 }
 
 /**
@@ -112,7 +114,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setTxInfo, transaction }: Props): React.ReactElement<Props> {
+export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -125,7 +127,6 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
   const senderName = useAccountDisplay2(address, genesisHash);
   const proxies = useProxies(api, formatted);
 
-  const [showProxy, setShowProxy] = useState<boolean>(false);
   const [showQR, setShowQR] = useState<boolean>(false);
   const [lastHeader, setLastHeader] = useState<Header>();
   const [rawNonce, setRawNonce] = useState<number>();
@@ -205,7 +206,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
     }
   }, [api, formatted, from, selectedProxy]);
 
-  const toggleSelectProxy = useCallback(() => setShowProxy((show) => !show), []);
+  const toggleSelectProxy = useCallback(() => setShowProxySelection((show) => !show), [setShowProxySelection]);
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
 
   const alertHandler = useMemo((): AlertHandler => {
@@ -283,25 +284,23 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
 
   return (
     <>
-      {noPrivateKeyAccount
-        ? (
-          <ChooseSigningButton
-            alertHandler={alertHandler}
-          />)
-        : (
-          <SignUsingPassword
-            api={api}
-            formatted={formatted}
-            from={from}
-            handleTxResult={handleTxResult}
-            preparedTransaction={preparedTransaction}
-            proxies={proxies}
-            setFlowStep={setFlowStep}
-          />)}
+      {noPrivateKeyAccount &&
+        <ChooseSigningButton
+          alertHandler={alertHandler}
+        />}
+      {(selectedProxy || !noPrivateKeyAccount) &&
+        <SignUsingPassword
+          api={api}
+          from={from}
+          handleTxResult={handleTxResult}
+          preparedTransaction={preparedTransaction}
+          proxies={proxies}
+          setFlowStep={setFlowStep}
+        />}
       <SignUsingProxy
         genesisHash={genesisHash}
         handleClose={toggleSelectProxy}
-        openMenu={showProxy}
+        openMenu={showProxySelection}
         proxies={proxies}
         selectedProxy={selectedProxy}
         setSelectedProxy={setSelectedProxy}
