@@ -6,10 +6,11 @@
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { Box as BoxIcon } from '../../assets/icons';
-import { ActionButton, GradientBox, GradientButton, PasswordInput } from '../../components';
+import { DecisionButtons, GradientBox, PasswordInput } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
@@ -24,7 +25,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Login({ setStep }: Props): React.ReactElement {
+function Content({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isPopup = useIsExtensionPopup();
   // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
@@ -68,51 +69,59 @@ function Login({ setStep }: Props): React.ReactElement {
   }, [isPopup, setStep]);
 
   return (
-    <Container disableGutters sx={{ position: 'relative' }}>
-      <Header />
-      <GradientBox noGradient style={{ height: '496px', m: 'auto', mt: '8px', width: '359px' }}>
-        <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
-        <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
-          <Box
-            component='img'
-            src={BoxIcon as string}
-            sx={{ height: '145px', mt: '20px', width: '140px' }}
-          />
-          <Typography sx={{ mb: '15px', mt: '25px', width: '100%' }} textTransform='uppercase' variant='H-2'>
-            {t('login')}
-          </Typography>
-          <PasswordInput
-            focused
-            hasError={isPasswordError}
-            onEnterPress={onUnlock}
-            onPassChange={onPassChange}
-            title={t('Please enter your password to proceed')}
-          />
-          <GradientButton
-            contentPlacement='center'
-            disabled={!hashedPassword}
-            onClick={onUnlock}
-            style={{
-              height: '44px',
-              marginTop: '24px',
-              width: '325px'
-            }}
-            text={t('Unlock')}
-          />
-          <ActionButton
-            contentPlacement='center'
-            onClick={onForgotPassword}
-            style={{
-              height: '44px',
-              marginTop: '18px',
-              width: '325px'
-            }}
-            text={t('Forgot password')}
-          />
-        </Grid>
-      </GradientBox>
-      <Version />
-    </Container>
+    <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
+      <Box
+        component='img'
+        src={BoxIcon as string}
+        sx={{ height: '145px', mt: '20px', width: '140px' }}
+      />
+      <Typography sx={{ mb: '15px', mt: '25px', width: '100%' }} textTransform='uppercase' variant='H-2'>
+        {t('login')}
+      </Typography>
+      <PasswordInput
+        focused
+        hasError={isPasswordError}
+        onEnterPress={onUnlock}
+        onPassChange={onPassChange}
+        title={t('Please enter your password to proceed')}
+      />
+      <DecisionButtons
+        cancelButton
+        direction='vertical'
+        disabled={!hashedPassword}
+        onPrimaryClick={onUnlock}
+        onSecondaryClick={onForgotPassword}
+        primaryBtnText={t('Unlock')}
+        secondaryBtnText={t('Forgot password')}
+        style={{
+          height: '44px',
+          marginTop: '80px',
+          width: '100%'
+        }}
+      />
+    </Grid>
+  );
+}
+
+function Login({ setStep }: Props): React.ReactElement {
+  const isExtensionPopup = useIsExtensionPopup();
+
+  return (
+    <>
+      {isExtensionPopup
+        ? <Container disableGutters sx={{ position: 'relative' }}>
+          <Header />
+          <GradientBox noGradient style={{ height: '496px', m: 'auto', mt: '8px', width: '359px' }}>
+            <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
+            <Content setStep={setStep} />
+          </GradientBox>
+          <Version />
+        </Container>
+        : <OnboardingLayout childrenStyle={{ justifyContent: 'center', margin: '40px 0', width: '434px' }} showBread={false} showLeftColumn={false}>
+          <Content setStep={setStep} />
+        </OnboardingLayout>
+      }
+    </>
   );
 }
 
