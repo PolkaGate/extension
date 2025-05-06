@@ -3,11 +3,10 @@
 
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 
 import { AccountVisibilityToggler, FormatPrice } from '../../../components';
-import { useAccountAssets, useIsDark, useIsHideNumbers, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
+import { useIsDark, useIsHideNumbers, usePortfolio, useSelectedAccount, useTranslation } from '../../../hooks';
 import { GlowBox } from '../../../style';
 import Currency from './Currency';
 import DailyChange from './DailyChange';
@@ -16,39 +15,13 @@ function Portfolio (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
-
-  const eyeColor = isDark ? '#BEAAD8' : '#745D8B';
-
   const account = useSelectedAccount();
-  const accountAssets = useAccountAssets(account?.address);
-  const pricesInCurrency = usePrices();
+  const youHave = usePortfolio(account?.address);
+
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
-  const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
-
-  const totalWorth = useMemo(() => {
-    if (accountAssets === undefined) {
-      return undefined;
-    }
-
-    if (accountAssets === null) {
-      return 0;
-    }
-
-    if (!accountAssets?.length) {
-      return undefined;
-    }
-
-    return accountAssets.reduce((total, asset) => {
-      const assetWorth = calcPrice(
-        priceOf(asset.priceId),
-        asset.totalBalance,
-        asset.decimal
-      );
-
-      return total + assetWorth;
-    }, 0);
-  }, [accountAssets, priceOf]);
+  const eyeColor = isDark ? '#BEAAD8' : '#745D8B';
+  const EyeIcon = isHideNumbers ? EyeSlash : Eye;
 
   return (
     <GlowBox>
@@ -57,13 +30,11 @@ function Portfolio (): React.ReactElement {
           <Typography color={isDark ? 'text.secondary' : '#291443'} variant='B-2'>
             {t('Account Portfolio')}
           </Typography>
-          {isHideNumbers
-            ? <EyeSlash color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
-            : <Eye color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />}
+          <EyeIcon color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
         </Grid>
         <Currency />
         <Grid container item>
-          {totalWorth === undefined
+          {youHave?.portfolio === undefined
             ? <Skeleton
               animation='wave'
               height='24px'
@@ -78,7 +49,7 @@ function Portfolio (): React.ReactElement {
               fontSize='40px'
               fontWeight={400}
               height={40}
-              num={totalWorth}
+              num={youHave?.portfolio}
               width='fit-content'
               withSmallDecimal
             />
@@ -93,4 +64,4 @@ function Portfolio (): React.ReactElement {
   );
 }
 
-export default Portfolio;
+export default React.memo(Portfolio);

@@ -16,13 +16,18 @@ import TopRightIcons from './TopRightIcons';
 
 interface Props {
   children?: React.ReactNode;
+  showBread?: boolean;
+  showLeftColumn?: boolean;
   width?: string;
+  childrenStyle?: React.CSSProperties;
   style?: React.CSSProperties;
 }
 
-function OnboardingLayout ({ children, style, width = '582px' }: Props): React.ReactElement {
+function OnboardingLayout ({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
+
+  const INNER_WIDTH = 1416;
 
   return (
     <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
@@ -40,7 +45,10 @@ function OnboardingLayout ({ children, style, width = '582px' }: Props): React.R
           />
         </Stack>
         <Grid
-          alignItems='flex-start' container sx={{
+          alignItems='flex-start'
+          container
+          justifyContent={showLeftColumn ? 'start' : 'center' }
+          sx={{
             backgroundImage: `url(${onboardingBackground})`,
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -49,29 +57,44 @@ function OnboardingLayout ({ children, style, width = '582px' }: Props): React.R
             height: '764px',
             p: '7px',
             position: 'relative',
-            width: '1416px'
+            width: `${INNER_WIDTH}px`
           }}
         >
-          <Box sx={{ background: 'linear-gradient(262.56deg, rgba(236, 180, 255, 0) 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, rgba(236, 180, 255, 0) 72.53%)', height: '2px', left: `${(1416 - 375) / 2}px`, position: 'absolute', top: 0, width: '375px' }} />
+          <Box
+            sx={{
+              background: 'linear-gradient(262.56deg, rgba(236, 180, 255, 0) 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, rgba(236, 180, 255, 0) 72.53%)',
+              height: '2px',
+              left: `${(INNER_WIDTH - 375) / 2}px`,
+              position: 'absolute',
+              top: 0,
+              width: '375px'
+            }}
+          />
           <TopRightIcons />
-          <Bread />
-          <Grid container item sx={{ background: 'linear-gradient(90deg, rgba(197, 151, 255, 0.0125) 0%, rgba(91, 31, 166, 0.15) 50.06%, rgba(197, 151, 255, 0.05) 100%)', borderRadius: '24px', height: '693px', m: '5px', position: 'relative', width: '582px' }}>
-            <Grid item sx={{ bottom: '100px', ml: '10%', position: 'absolute', width: '50%' }}>
-              <Typography color='#FFFFFF' display='block' lineHeight='100%' textAlign='left' textTransform='uppercase' variant='H-1'>
-                <TwoToneText
-                  text={t('We appreciate your choice in selecting PolkaGate!')}
-                  textPartInColor={t('PolkaGate!')}
-                />
-              </Typography>
-              <Typography color='#BEAAD8' display='block' fontSize='14px' pt='15px' variant='B-1'>
-                {t('as your gateway to the Polkadot ecosystem! ')}
-              </Typography>
+          {
+            showBread &&
+            <Bread />
+          }
+          {
+            showLeftColumn &&
+            <Grid container item sx={{ background: 'linear-gradient(90deg, rgba(197, 151, 255, 0.0125) 0%, rgba(91, 31, 166, 0.15) 50.06%, rgba(197, 151, 255, 0.05) 100%)', borderRadius: '24px', height: '693px', m: '5px', position: 'relative', width: '582px' }}>
+              <Grid item sx={{ bottom: '100px', ml: '10%', position: 'absolute', width: '50%' }}>
+                <Typography color='#FFFFFF' display='block' lineHeight='100%' textAlign='left' textTransform='uppercase' variant='H-1'>
+                  <TwoToneText
+                    text={t('We appreciate your choice in selecting PolkaGate!')}
+                    textPartInColor={t('PolkaGate!')}
+                  />
+                </Typography>
+                <Typography color='#BEAAD8' display='block' fontSize='14px' pt='15px' variant='B-1'>
+                  {t('as your gateway to the Polkadot ecosystem! ')}
+                </Typography>
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '40px 0 0 100px', position: 'relative', width }}>
+          }
+          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '40px 0 0 100px', position: 'relative', width: '582px', ...childrenStyle }}>
             {children}
           </Grid>
-          <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: '7px', width: '50%' }}>
+          <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: showLeftColumn ? '7px' : `calc(${INNER_WIDTH}-50%)px`, width: '50%' }}>
             <Socials buttonSize={24} iconSize={13.5} style={{ pr: '50px', width: 'fit-content' }} />
             <Grid columnGap='40px' container item width='fit-content'>
               <NeedHelp />

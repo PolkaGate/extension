@@ -40,7 +40,7 @@ export default function usePortfolio (address?: string): PortfolioType | undefin
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
 
-  const portfolioData = useMemo(() => {
+  return useMemo(() => {
     if (!accountsAssets?.balances) {
       return null;
     }
@@ -69,28 +69,30 @@ export default function usePortfolio (address?: string): PortfolioType | undefin
         continue;
       }
 
-      Object.values(perChainAssets).forEach((assets) => {
-        assets.forEach((asset) => {
-          const tokenValue = pricesInCurrencies.prices[asset.priceId]?.value ?? 0;
-          const tokenPriceChange = pricesInCurrencies.prices[asset.priceId]?.change ?? 0;
+      for (const assets of Object.values(perChainAssets)) {
+        for (const asset of assets) {
+          const { decimal, priceId, totalBalance } = asset;
+          const tokenData = pricesInCurrencies.prices[priceId];
 
-          const currentAssetPrice = calcPrice(tokenValue, asset.totalBalance, asset.decimal);
-          const transferable = getValue('transferable', asset);
-          const currentAvailableAssetPrice = calcPrice(tokenValue, transferable ?? BN_ZERO, asset.decimal);
+          if (!tokenData) {
+            continue;
+          }
+
+          const { change: tokenPriceChange = 0, value: tokenValue = 0 } = tokenData;
+
+          const transferable = getValue('transferable', asset) ?? BN_ZERO;
+
+          const currentAssetPrice = calcPrice(tokenValue, totalBalance, decimal);
+          const currentAvailableAssetPrice = calcPrice(tokenValue, transferable, decimal);
+          const tokenBalanceNum = Number(totalBalance) / 10 ** decimal;
 
           portfolio += currentAssetPrice;
           available += currentAvailableAssetPrice;
-          change += calcChange(
-            tokenValue,
-            Number(asset.totalBalance) / 10 ** asset.decimal,
-            tokenPriceChange
-          );
-        });
-      });
+          change += calcChange(tokenValue, tokenBalanceNum, tokenPriceChange);
+        }
+      }
     }
 
     return { available, change, date, portfolio };
   }, [address, accountsAssets, pricesInCurrencies]);
-
-  return portfolioData;
 }
