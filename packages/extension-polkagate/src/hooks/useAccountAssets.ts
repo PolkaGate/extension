@@ -27,8 +27,11 @@ export default function useAccountAssets (address: string | undefined): FetchedB
         const updatedAsset = { ...asset };
 
         BN_MEMBERS.forEach((key) => {
-          if (updatedAsset[key]) {
-            updatedAsset[key] = isHexToBn(updatedAsset[key]);
+          const _key = key as keyof typeof updatedAsset;
+
+          if (updatedAsset[_key]) {
+            //@ts-ignore
+            updatedAsset[_key] = isHexToBn(updatedAsset[_key] as string);
           }
         });
 
