@@ -25,7 +25,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Content({ setStep }: Props): React.ReactElement {
+function Content ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isPopup = useIsExtensionPopup();
   // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
@@ -103,7 +103,7 @@ function Content({ setStep }: Props): React.ReactElement {
   );
 }
 
-function Login({ setStep }: Props): React.ReactElement {
+function Login ({ setStep }: Props): React.ReactElement {
   const isExtensionPopup = useIsExtensionPopup();
 
   return (
