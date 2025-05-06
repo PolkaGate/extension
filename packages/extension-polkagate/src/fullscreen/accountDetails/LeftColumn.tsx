@@ -32,7 +32,7 @@ export default function LeftColumn (): React.ReactElement {
   const refContainer = useRef<HTMLDivElement>(null);
 
   return (
-    <VelvetBox style={{ height: '100%', marginLeft: '15px', minHeight: '150px', width: ' 505px' }}>
+    <VelvetBox style={{ height: 'fit-content', marginLeft: '15px', minHeight: '150px', width: ' 505px' }}>
       <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '172px', m: '40px auto 5px', position: 'relative', width: '497px' }}>
         <PolkaGateIdenticon
           address={address ?? '' }
