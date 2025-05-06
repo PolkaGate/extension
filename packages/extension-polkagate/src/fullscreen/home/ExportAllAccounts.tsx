@@ -27,11 +27,6 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
-  console.log('password', password);
-  const onCurrentPasswordChange = useCallback((pass: string | null): void => {
-    setPassword(pass || '');
-  }, []);
-
   const onClose = useCallback(() => setPopup(undefined), [setPopup]);
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
@@ -46,26 +41,18 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
     setIsBusy(true);
 
     try {
-      exportAccounts(accounts.map((account) => account.address), password)
-        .then(({ exportedJson }) => {
-          const blob = new Blob([JSON.stringify(exportedJson)], { type: 'application/json; charset=utf-8' });
+      const { exportedJson } = await exportAccounts(accounts.map((account) => account.address), password);
+      const blob = new Blob([JSON.stringify(exportedJson)], { type: 'application/json; charset=utf-8' });
 
-          saveAs(blob, `batch_exported_account_${Date.now()}.json`);
+      saveAs(blob, `batch_exported_account_${Date.now()}.json`);
 
-          setShowSnackbar(true);
-          setIsBusy(false);
-        })
-        .catch((error: Error) => {
-          console.error(error);
-          setShowSnackbar(true);
-          setError(error.message);
-          setIsBusy(false);
-        });
+      setShowSnackbar(true);
+      setIsBusy(false);
     } catch (error) {
       console.error(error);
       setShowSnackbar(true);
       setIsBusy(false);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     }
   }, [accounts, password, setShowSnackbar]);
 
@@ -77,8 +64,8 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
       style={{ minHeight: '200px' }}
       title={t('Export all Accounts')}
     >
-      <Grid container item justifyContent='center' sx={{ p: '0 5px 10px', position: 'relative', zIndex: 1 }}>
-        <Stack columnGap='15px' direction='column' sx={{ m: '10px 15px' }}>
+      <Grid container item justifyContent='center' sx={{ position: 'relative', px: '5px', zIndex: 1 }}>
+        <Stack columnGap='15px' direction='column' sx={{ m: '10px 15px 0' }}>
           <Box component='img' src={exportAccountsGif as string} sx={{ alignSelf: 'center', width: '100px' }} />
           <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px', m: '5px 15px' }} textAlign='center' variant='B-4'>
             {t('All your accounts will be encrypted with a password and stored in a JSON file inside your browser’s download history.')}
@@ -88,11 +75,11 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
           </Typography>
           <MatchPasswordField
             focused
-            onSetPassword={onCurrentPasswordChange}
-            setConfirmedPassword={onCurrentPasswordChange}
-            style={{ marginTop: '20px' }}
-            title1={t('Create a Password')}
-            title2={t('Repeat the Password')}
+            onSetPassword={onExport}
+            setConfirmedPassword={setPassword}
+            style={{ marginTop: '25px' }}
+            title1={t('Create a password')}
+            title2={t('Repeat the password')}
           />
           <DecisionButtons
             cancelButton

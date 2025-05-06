@@ -5,10 +5,9 @@ import { ClickAwayListener, Grid, styled, type SxProps, type Theme } from '@mui/
 import { AddCircle, ArrowDown2, Broom, ExportCurve, ImportCurve, Setting, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import ExportAllAccounts from '../fullscreen/home/ExportAllAccounts';
 import { useTranslation } from '../hooks';
 import DropMenuContent from './DropMenuContent';
-import Export from '../popup/export/Export';
-import ExportAllAccounts from '../fullscreen/home/ExportAllAccounts';
 
 const DropSelectContainer = styled(Grid)(({ focused }: { focused: boolean }) => ({
   ':hover': { background: '#674394' },
