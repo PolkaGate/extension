@@ -1518,5 +1518,8 @@
   "Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.": "",
   "Access successfully removed!": "",
   "Website access": "",
-  "Edit access": ""
+  "Edit access": "",
+  "Export all Accounts": "",
+  "Create a Password": "",
+  "Repeat the Password": ""
 }

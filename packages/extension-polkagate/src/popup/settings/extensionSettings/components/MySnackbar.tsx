@@ -11,6 +11,7 @@ import { check } from '@polkadot/extension-polkagate/src/assets/gif/index';
 interface Props {
   text: string;
   open: boolean;
+  isError?: boolean;
   onClose: () => void;
 }
 
