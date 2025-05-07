@@ -1505,5 +1505,18 @@
   "If you have any questions, please contact us at polkagate@outlook.com or follow us on our social media accounts.": "",
   "An error occurred": "",
   "Something went wrong with the query and rendering of this component": "",
-  "Back to home": ""
+  "Back to home": "",
+  "Password for {{accountName}}": "",
+  "This is where the sites that have access to the accounts will appear.": "",
+  "Control which visible accounts websites can access. Update or deny access by adjusting the access list or deleting the website entry. Only your visible accounts can be accessed": "",
+  "origin": "",
+  "action": "",
+  "Remove access": "",
+  "Website successfully removed!": "",
+  "Websites Access": "",
+  "Control which of your accounts this website can access.": "",
+  "Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.": "",
+  "Access successfully removed!": "",
+  "Website access": "",
+  "Edit access": ""
 }
