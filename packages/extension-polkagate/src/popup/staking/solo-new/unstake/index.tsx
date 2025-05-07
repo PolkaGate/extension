@@ -102,6 +102,7 @@ export default function Unstake (): React.ReactElement {
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Unstaking'),
     closeReview,
+    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

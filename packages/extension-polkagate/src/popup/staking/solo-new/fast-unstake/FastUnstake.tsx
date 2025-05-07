@@ -167,6 +167,7 @@ export default function FastUnstake (): React.ReactElement {
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
+    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

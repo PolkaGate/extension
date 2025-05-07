@@ -74,6 +74,7 @@ export default function BondExtra (): React.ReactElement {
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Stake More'),
     closeReview,
+    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

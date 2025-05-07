@@ -8,9 +8,12 @@ import type { Proxy, ProxyTypes, TxInfo } from '../util/types';
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+
+import { isBn } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../components';
+import Confirmation2 from './Confirmation2';
 import Review from './Review';
 import { UserDashboardHeader, WaitScreen2 } from '.';
 
@@ -22,6 +25,7 @@ export interface TransactionFlowProps {
   backPathTitle: string;
   stepCounter: StepCounterType;
   proxyTypeFilter: ProxyTypes[] | undefined;
+  formatted: string | undefined;
 }
 
 export enum TRANSACTION_FLOW_STEPS {
@@ -30,7 +34,7 @@ export enum TRANSACTION_FLOW_STEPS {
   CONFIRMATION
 }
 
-export default function TransactionFlow ({ backPathTitle, closeReview, genesisHash, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
@@ -38,7 +42,28 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
 
   const onOpenProxySelection = useCallback(() => setShowProxySelection(true), []);
 
-  console.log('txInfo', txInfo);
+  const transactionDetail = useMemo(() => {
+    if (!txInfo) {
+      return undefined;
+    }
+
+    const _txInfo = txInfo;
+
+    // The first item is always amount or the reward destination account address,
+    // So by checking that if it is a BN number we can retrieve the amount value
+    if (isBn(transactionInformation[0].content)) {
+      _txInfo.amount = transactionInformation[0].content.toString();
+    }
+
+    // The second item of this array is always the fee amount
+    if (isBn(transactionInformation[1].content)) {
+      _txInfo.fee = transactionInformation[1].content.toString();
+    }
+
+    return _txInfo;
+  }, [transactionInformation, txInfo]);
+
+  console.log('transactionDetail:', transactionDetail);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
@@ -73,6 +98,13 @@ export default function TransactionFlow ({ backPathTitle, closeReview, genesisHa
           />}
         {flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
           <WaitScreen2 />
+        }
+        {flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
+          <Confirmation2
+            address={formatted ?? ''}
+            genesisHash={genesisHash}
+            transactionDetail={transactionDetail}
+          />
         }
       </Motion>
     </Grid>

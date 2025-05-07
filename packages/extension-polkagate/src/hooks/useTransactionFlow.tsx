@@ -20,9 +20,10 @@ interface UseTransactionFlowProps {
   closeReview: () => void;
   stepCounter: StepCounterType;
   proxyTypeFilter?: ProxyTypes[] | undefined;
+  formatted: string | undefined;
 }
 
-export default function useTransactionFlow ({ backPathTitle, closeReview, genesisHash, proxyTypeFilter, review, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, proxyTypeFilter, review, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }
@@ -31,6 +32,7 @@ export default function useTransactionFlow ({ backPathTitle, closeReview, genesi
     <TransactionFlow
       backPathTitle={backPathTitle}
       closeReview={closeReview}
+      formatted={formatted}
       genesisHash={genesisHash}
       proxyTypeFilter={proxyTypeFilter}
       stepCounter={stepCounter}

@@ -154,7 +154,7 @@ export default function Settings (): React.ReactElement {
     return undefined;
   }, [stashId]);
 
-  const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount), []);
+  const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount), [makePayee, rewardDestinationType, specificAccount]);
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
 
@@ -163,16 +163,16 @@ export default function Settings (): React.ReactElement {
       content: specificAccount,
       title: t('Reward destination')
     },
-      {
+    {
       content: estimatedFee2,
       title: t('Fee')
     }];
-  }, [estimatedFee2, t]);
+  }, [estimatedFee2, specificAccount, t]);
   const tx = useMemo(() => {
     return rewardDestination && setPayee
       ? setPayee('Staked')
       : undefined;
-  }, [makePayee, rewardDestinationType, setPayee, specificAccount]);
+  }, [rewardDestination, setPayee]);
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
   const onNext = useCallback(() => setReview(true), []);
@@ -181,8 +181,10 @@ export default function Settings (): React.ReactElement {
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Settings'),
     closeReview,
+    formatted,
     genesisHash: genesisHash ?? '',
     review,
+    stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
     tx
   });
@@ -194,6 +196,7 @@ export default function Settings (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
+            stepCounter={{ currentStep: 2, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Settings')}
           />

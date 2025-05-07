@@ -3,6 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { Content } from '../../../partials/Review';
+
 import { Container, Grid } from '@mui/material';
 import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -69,7 +71,7 @@ export default function Solo (): React.ReactElement {
 
   const estimatedFee2 = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: redeemable,
       title: t('Amount'),
@@ -84,8 +86,7 @@ export default function Solo (): React.ReactElement {
       description: t('Available balance after redeemable withdrawal'),
       title: t('Available balance after'),
       withLogo: true
-    }
-    ];
+    }];
   }, [asset, estimatedFee2, redeemable, t]);
   const tx = useMemo(() => redeem?.(param), [redeem, param]);
 
@@ -101,6 +102,7 @@ export default function Solo (): React.ReactElement {
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
+    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

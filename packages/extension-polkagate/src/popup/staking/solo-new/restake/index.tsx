@@ -74,6 +74,7 @@ export default function Restake (): React.ReactElement {
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Restaking'),
     closeReview,
+    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

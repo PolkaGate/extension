@@ -279,6 +279,8 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
 
     const txResult = await send(from, api, preparedTransaction, payload.toHex(), signature);
 
+    setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
+
     handleTxResult(txResult);
   }, [api, from, handleTxResult, payload, preparedTransaction, setFlowStep]);
 
