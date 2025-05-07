@@ -5,6 +5,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { GenericExtrinsicPayload } from '@polkadot/types/extrinsic';
 import type { ExtrinsicPayload, Header } from '@polkadot/types/interfaces';
+// @ts-ignore
 import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
 import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';

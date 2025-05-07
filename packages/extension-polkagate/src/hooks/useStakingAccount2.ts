@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import type React from 'react';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';

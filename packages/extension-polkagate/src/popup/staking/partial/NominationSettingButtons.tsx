@@ -55,6 +55,7 @@ export default function NominationSettingButtons ({ nominatedValidatorsInformati
     }
 
     return nominatedValidatorsInformation.some((nominatedValidator) =>
+      // @ts-ignore
       nominatedValidator?.exposureMeta?.others?.find(({ who }: { who: string }) => who?.toString() === soloStakingInfo.stakingAccount?.accountId?.toString()));
   }, [nominatedValidatorsInformation, soloStakingInfo]);
 
