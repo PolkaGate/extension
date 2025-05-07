@@ -21,26 +21,34 @@ import { MyTooltip, PasswordInput } from '.';
 
 interface UseProxyProps {
   proxies: Proxy[] | undefined;
+  onClick: (() => void) | undefined;
 }
 
-const UseProxy = ({ proxies }: UseProxyProps) => {
+const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-  if (!proxies || proxies.length) {
+  if ((proxies && proxies.length === 0) || !onClick) {
+    return null;
+  }
+
+  if (!proxies) {
     return (
       <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
         <MyTooltip
           content={t('Checking if you have proxy accounts')}
+          placement='top'
         >
-          <BeatLoader color={theme.palette.text.highlight} loading size={5} />
+          <Grid container item sx={{ alignItems: 'center', p: '4px', width: 'fit-content' }}>
+            <BeatLoader color={theme.palette.text.highlight} loading size={5} />
+          </Grid>
         </MyTooltip>
       </Grid>
     );
   }
 
   return (
-    <Grid container item sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', width: 'fit-content' }}>
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '4px', width: 'fit-content' }}>
       <Data color={theme.palette.text.highlight} size='12' />
       <Typography color='text.highlight' variant='B-1'>
         {t('Use Proxy')}
@@ -51,27 +59,30 @@ const UseProxy = ({ proxies }: UseProxyProps) => {
 
 interface Props {
   api: ApiPromise | undefined;
-  formatted: string | undefined;
   from: string | undefined;
   style?: SxProps<Theme>;
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   handleTxResult: (txResult: TxResult) => void;
   proxies: Proxy[] | undefined;
   setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  onUseProxy: (() => void) | undefined;
 }
 
-export default function SignUsingPassword ({ api, formatted, from, handleTxResult, preparedTransaction, proxies, setFlowStep, style }: Props) {
+export default function SignUsingPassword ({ api, from, handleTxResult, onUseProxy, preparedTransaction, proxies, setFlowStep, style }: Props) {
   const { t } = useTranslation();
 
   const [password, setPassword] = useState<string | undefined>(undefined);
   const [hasError, setHasError] = useState<boolean>(false);
   const [isBusy, setBusy] = useState<boolean>(false);
 
-  const onChangePassword = useCallback((pass: string) => setPassword(pass), []);
+  const onChangePassword = useCallback((pass: string) => {
+    setPassword(pass);
+    setHasError(false);
+  }, []);
 
   const onConfirm = useCallback(async () => {
     try {
-      if (!formatted || !api || !preparedTransaction || !from) {
+      if (!api || !preparedTransaction || !from) {
         return;
       }
 
@@ -83,8 +94,9 @@ export default function SignUsingPassword ({ api, formatted, from, handleTxResul
 
       setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-      const txResult = await signAndSend(api, preparedTransaction, signer, formatted);
+      const txResult = await signAndSend(api, preparedTransaction, signer, from);
 
+      setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
       setBusy(false);
       handleTxResult(txResult);
     } catch (e) {
@@ -92,7 +104,7 @@ export default function SignUsingPassword ({ api, formatted, from, handleTxResul
       setHasError(true);
       setBusy(false);
     }
-  }, [api, formatted, from, handleTxResult, password, preparedTransaction, setFlowStep]);
+  }, [api, from, handleTxResult, password, preparedTransaction, setFlowStep]);
 
   return (
     <Stack direction='column' sx={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}>
@@ -101,6 +113,7 @@ export default function SignUsingPassword ({ api, formatted, from, handleTxResul
           {t('Password')}
         </Typography>
         <UseProxy
+          onClick={onUseProxy}
           proxies={proxies}
         />
       </Container>
