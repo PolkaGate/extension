@@ -6,6 +6,7 @@ export { default as AccountHolder } from './AccountHolder';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
 export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
+export { default as AccountSelectionDropDown } from './AccountDropDown';
 export { default as AccountsTable } from './AccountsTable';
 export { default as AccountVisibilityToggler } from './AccountVisibilityToggler';
 export { default as AccountWithProxyInConfirmation } from './AccountWithProxyInConfirmation';

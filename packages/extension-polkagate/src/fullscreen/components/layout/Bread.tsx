@@ -7,13 +7,14 @@ import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '../../../hooks';
+import { noop } from '@polkadot/util';
 
-function Bread(): React.ReactElement {
+function Bread (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const isImport = useMemo(() => ['restore', 'attach', 'import'].some((keyword) => pathname.includes(keyword)), [pathname])
+  const isImport = useMemo(() => ['restore', 'attach', 'import'].some((keyword) => pathname.includes(keyword)), [pathname]);
 
   const onImportClick = useCallback(() => {
     navigate('/account/have-wallet');
@@ -30,6 +31,11 @@ function Bread(): React.ReactElement {
       {isImport &&
         <Typography color='#AA83DC' onClick={onImportClick} sx={{ cursor: 'pointer' }} variant='B-2'>
           {t('Import account')}
+        </Typography>
+      }
+      {pathname.includes('/historyfs') &&
+        <Typography color='#AA83DC' onClick={noop} sx={{ cursor: 'pointer' }} variant='B-2'>
+          {t('History')}
         </Typography>
       }
     </Stack>

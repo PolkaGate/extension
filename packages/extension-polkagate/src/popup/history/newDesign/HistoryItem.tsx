@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
@@ -104,7 +103,7 @@ const TimeOfTheDay = ({ date }: { date: number }) => {
   );
 };
 
-const ActionSubAction = memo(function SubAction({ historyItem }: { historyItem: TransactionDetail; }) {
+const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem: TransactionDetail; }) {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -148,7 +147,7 @@ const ActionSubAction = memo(function SubAction({ historyItem }: { historyItem: 
   }, [historyItem.action, historyItem.date, historyItem.from.address, historyItem.from.name, historyItem.subAction, historyItem.to, t, theme.typography]);
 });
 
-const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
+const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
@@ -184,7 +183,7 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
                 fontSize='14px'
                 fontWeight={600}
                 num={totalBalancePrice}
-                textColor={isReceivedOrReward ? '#82FFA5' : theme.palette.text.primary}
+                textColor={isReceivedOrReward ? '#82FFA5' : theme.palette.text.secondary}
                 width='fit-content'
                 withSmallDecimal
               />
@@ -205,7 +204,7 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
   );
 });
 
-function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
+function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
   const theme = useTheme();
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();

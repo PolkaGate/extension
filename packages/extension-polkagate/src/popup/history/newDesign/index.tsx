@@ -29,7 +29,7 @@ export enum TAB {
   GOVERNANCE = 'governance'
 }
 
-function HistoryTabs ({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
+export function HistoryTabs ({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const isSelected = useCallback((selectedTab: TAB | undefined) => tab === selectedTab, [tab]);

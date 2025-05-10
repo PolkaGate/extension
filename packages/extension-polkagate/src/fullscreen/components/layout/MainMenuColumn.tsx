@@ -14,7 +14,7 @@ import NeedHelp from '../../onboarding/NeedHelp';
 import Language from './Language';
 import MenuButton from './MenuButton';
 
-function Shining (): React.ReactElement {
+function Shining(): React.ReactElement {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', position: 'absolute', top: '-100px', width: '100%' }}>
       <Box sx={{
@@ -51,7 +51,7 @@ function MainMenuColumn (): React.ReactElement {
       </Stack>
       <MenuButton
         Icon={Home}
-        path = '/'
+        path='/'
         text={t('Home')}
       />
       <MenuButton
@@ -76,6 +76,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={Clock}
+        path='/historyfs'
         text={t('History')}
       />
       <Stack direction='column' rowGap='20px' sx={{ bottom: '15px', position: 'absolute' }}>

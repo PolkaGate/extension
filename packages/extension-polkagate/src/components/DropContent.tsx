@@ -10,6 +10,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useIsDark } from '../hooks';
 import { GradientDivider } from '../style';
+import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 import GlowCheck from './GlowCheck';
@@ -50,9 +51,11 @@ interface ContentDisplayProps {
   selectedValue: string | number | undefined;
   text: string | number;
   value: string | number;
+  logoType?: 'logo' | 'icon' | 'account' | undefined;
+  showCheckAsIcon?: boolean;
 }
 
-function Logo ({ text }: { text: string }) {
+function Logo({ text }: { text: string }) {
   const isDark = useIsDark();
   const icon = getLogo(text);
 
@@ -69,7 +72,7 @@ function Logo ({ text }: { text: string }) {
   );
 }
 
-function LogoContentDisplay ({ Icon, onChange, selectedValue, setOpen, setSelectedValue, text, value }: ContentDisplayProps) {
+function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, text, value }: ContentDisplayProps) {
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -80,27 +83,41 @@ function LogoContentDisplay ({ Icon, onChange, selectedValue, setOpen, setSelect
 
   return (
     <ContentDisplayContainer container isSelectedItem={isSelectedItem} item onClick={handleClick} style={{ justifyContent: 'space-between' }}>
-      <Grid alignItems='center' container item sx={{ columnGap: '5px' }} xs>
-        {Icon
-          ? <Icon color='#BEAAD8' size='18' variant='Bulk' />
-          : <Logo
-            text={text as string}
-          />
+      <Grid alignItems='center' container item sx={{ columnGap: '5px', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'nowrap' }} xs>
+        {logoType === 'account'
+          ? showCheckAsIcon && isSelectedItem
+            ? <GlowCheck
+              show={isSelectedItem}
+              size='18px'
+              timeout={100}
+            />
+            : <PolkaGateIdenticon
+              address={value}
+              size={18}
+            />
+          : Icon
+            ? <Icon color='#BEAAD8' size='18' variant='Bulk' />
+            : <Logo
+              text={text as string}
+            />
         }
         <Typography color='text.primary' textTransform='capitalize' variant='B-2'>
           {text}
         </Typography>
       </Grid>
-      <GlowCheck
-        show={isSelectedItem}
-        size='15px'
-        timeout={100}
-      />
+      {
+        !showCheckAsIcon &&
+        <GlowCheck
+          show={isSelectedItem}
+          size='15px'
+          timeout={100}
+        />
+      }
     </ContentDisplayContainer>
   );
 }
 
-function TextContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValue, text, value }: ContentDisplayProps) {
+function TextContentDisplay({ onChange, selectedValue, setOpen, setSelectedValue, text, value }: ContentDisplayProps) {
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -127,17 +144,18 @@ interface DropContentProps {
   contentDropWidth: number | undefined;
   containerRef: React.RefObject<HTMLDivElement>;
   Icon?: Icon;
-  displayContentType?: 'logo' | 'text' | 'icon';
+  displayContentType?: 'logo' | 'text' | 'icon' | 'account';
   options: DropdownOption[];
   open: boolean;
   onChange?: (value: number | string) => void;
   setSelectedValue: React.Dispatch<React.SetStateAction<string | number | undefined>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedValue: string | number | undefined;
+  showCheckAsIcon?: boolean;
   withDivider: boolean;
 }
 
-function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, withDivider }: DropContentProps) {
+function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, withDivider }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -180,10 +198,12 @@ function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType,
                   <LogoContentDisplay
                     Icon={Icon}
                     key={index}
+                    logoType={displayContentType}
                     onChange={onChange}
                     selectedValue={selectedValue}
                     setOpen={setOpen}
                     setSelectedValue={setSelectedValue}
+                    showCheckAsIcon={showCheckAsIcon}
                     text={text}
                     value={value}
                   />)

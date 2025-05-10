@@ -505,7 +505,7 @@ export default class Extension {
     const url = `${chrome.runtime.getURL('index.html')}#${path}`;
 
     if (!ALLOWED_PATH.includes(path as any) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for PolkaGate, updated
-      console.error('Not allowed to open the url:', url);
+      console.error('Extension background handler says: not allowed to open the url:', url);
 
       return false;
     }

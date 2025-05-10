@@ -72,7 +72,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
   }), [isActiveTab, nonSelectedSquareColor, showChains]);
 
   return (
-    <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', columnGap: '3px', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: 'fit-content' }}>
+    <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: 'fit-content' }}>
       <CustomCommand
         color={color}
         secondaryColor={secondaryColor}
@@ -81,7 +81,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
           transition: 'all 250ms ease-out'
         }}
       />
-      <Typography color={isActiveTab ? 'text.primary' : 'secondary.main'} sx={{ opacity: textOpacity, textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
+      <Typography color={isActiveTab ? 'text.primary' : 'secondary.main'} sx={{ opacity: textOpacity, paddingLeft: '4px', textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
         {displayedText}
       </Typography>
       <UnfoldMoreIcon sx={{ color: isActiveTab ? 'text.primary' : 'secondary.main', fontSize: '15px' }} />

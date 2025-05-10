@@ -6,6 +6,7 @@ import type { RouteConfig } from './RouteDefinitions';
 import AddNewChain from '@polkadot/extension-polkagate/src/fullscreen/addNewChain';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
+import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
@@ -53,6 +54,11 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: History,
     path: '/history',
     trigger: 'history'
+  },
+  {
+    Component: HistoryFs,
+    path: '/historyfs',
+    trigger: 'history-fullscreen'
   },
   {
     Component: ManageProxies,
