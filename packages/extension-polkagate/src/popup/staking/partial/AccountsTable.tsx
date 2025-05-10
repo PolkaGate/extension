@@ -5,9 +5,9 @@
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 
 import { Container, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 
-import { FormatBalance2 } from '../../../components';
+import { FadeOnScroll, FormatBalance2 } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util/utils';
@@ -77,13 +77,14 @@ interface AccountsTableProps {
 export default function AccountsTable ({ accounts, genesisHash, style, tableMaxHeight, totalStaked }: AccountsTableProps) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const refContainer = useRef(null);
 
   if (!accounts || accounts.length === 0) {
     return <></>;
   }
 
   return (
-    <Stack direction='column' sx={style}>
+    <Stack direction='column' sx={{ maxHeight: '275px', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', mb: '12px', width: '100%' }}>
         <Typography color='text.highlight' sx={{ letterSpacing: '1px', maxWidth: '45%', textAlign: 'left', textTransform: 'uppercase', width: '45%' }} variant='S-1'>
           {t('Accounts')}
@@ -95,7 +96,7 @@ export default function AccountsTable ({ accounts, genesisHash, style, tableMaxH
           {t('Percent')}
         </Typography>
       </Container>
-      <Stack direction='column' sx={{ height: 'fit-content', maxHeight: tableMaxHeight ?? '300px', overflowY: 'scroll', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: tableMaxHeight ?? '300px', overflowY: 'scroll', width: '100%' }}>
         {accounts.map((account, index) => (
           <TableItem
             account={account}
@@ -107,6 +108,7 @@ export default function AccountsTable ({ accounts, genesisHash, style, tableMaxH
           />
         ))}
       </Stack>
+      <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} />
     </Stack>
   );
 }
