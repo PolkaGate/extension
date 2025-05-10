@@ -129,7 +129,7 @@ export default function NominatorsTable ({ genesisHash, validatorsInformation }:
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', overflowY: 'scroll', rowGap: '4px', width: '100%' }}>
+      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', rowGap: '4px', width: '100%' }}>
         {validatorsInformation.map((validatorInfo, index) => (
           <ValidatorInfo
             genesisHash={genesisHash}

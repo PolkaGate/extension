@@ -3,11 +3,11 @@
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { Refresh } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { EmptyWarning } from '../../../../assets/icons/index';
-import { Motion, NeonButton } from '../../../../components';
+import { FadeOnScroll, Motion, NeonButton } from '../../../../components';
 import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import BackButton from '../../partial/BackButton';
@@ -54,6 +54,7 @@ export default function NominationsSetting (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const { api } = useChainInfo(genesisHash);
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+  const refContainer = useRef(null);
 
   const chill = api?.tx['staking']['chill'];
 
@@ -119,7 +120,7 @@ export default function NominationsSetting (): React.ReactElement {
           soloStakingInfo={stakingInfo}
           style={{ mt: '8px' }}
         />
-        <Stack direction='row' sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
+        <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
           {stakingInfo.stakingAccount === undefined &&
             <Progress
               text={t("Loading the validators' list")}
@@ -135,6 +136,7 @@ export default function NominationsSetting (): React.ReactElement {
               setRefresh={setRefresh}
             />
           }
+          <FadeOnScroll containerRef={refContainer} height='75px' ratio={0.6} />
         </Stack>
       </Motion>
       <StakingMenu
