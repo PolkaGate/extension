@@ -1,12 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, Typography } from '@mui/material';
-import React, { type CSSProperties, useCallback, useState } from 'react';
+import React, { type CSSProperties, useCallback, useRef, useState } from 'react';
 
 import Sparkles from '../components/SVG/Sparkles';
-import { useIsDark, useManifest, useTranslation } from '../hooks';
+import { useIsDark, useIsHovered, useManifest, useTranslation } from '../hooks';
 import ChangeLog from '../popup/home/ChangeLog';
 import { GradientBorder } from '../style';
 
@@ -19,11 +18,11 @@ export default function Version ({ showLabel = true, style = { columnGap: '5px',
   const { t } = useTranslation();
   const isDark = useIsDark();
   const version = useManifest()?.version;
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
 
-  const [hovered, setHovered] = useState<boolean>(false);
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
   const toggleOpenPopup = useCallback(() => setOpenMenu(true), []);
 
   const textColor = isDark ? '#BEAAD880' : '#8F97B8';
@@ -41,7 +40,7 @@ export default function Version ({ showLabel = true, style = { columnGap: '5px',
         </Typography>
         <GradientBorder style={{ height: '1px', opacity: 0.5, position: 'static', rotate: '90deg', width: '14px', zIndex: 'auto' }} />
         <Sparkles color={hovered ? '#AA83DC' : sparklesColor} height={12} width={12} />
-        <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onClick={toggleOpenPopup} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
+        <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onClick={toggleOpenPopup} ref={containerRef} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
           {t('What’s new page')}
         </Typography>
       </Grid>

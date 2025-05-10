@@ -44,7 +44,7 @@ const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), []);
+  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), [calls.length]);
 
   return (
     <>
@@ -237,7 +237,7 @@ function DetailCard ({ historyItem }: Props) {
   );
 }
 
-function Content ({ historyItem, style = {}}: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties}): React.ReactElement {
+function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties}): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);

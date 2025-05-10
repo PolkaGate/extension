@@ -10,6 +10,9 @@ import { useIsDark, useTranslation } from '../hooks';
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
 })<{ hasError?: boolean }>(({ hasError, theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
@@ -44,10 +47,6 @@ const StyledTextField = styled(TextField, {
     marginTop: '5px',
     transition: 'all 150ms ease-out',
     width: '100%'
-  },
-
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
   },
   '& input::placeholder': {
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,

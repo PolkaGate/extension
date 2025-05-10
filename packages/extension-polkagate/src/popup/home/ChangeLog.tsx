@@ -259,7 +259,7 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
     const usingVersion = window.localStorage.getItem('using_version') ?? '';
 
     const filteredChangelog = newVersion
-      ? changelog.filter(({ version }) => semver.gt(version, usingVersion))
+      ? changelog.filter(({ version }) => semver.gte(version, usingVersion))
       : [...changelog];
 
     const mergedChangelog = filteredChangelog.map((entry) => {

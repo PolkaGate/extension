@@ -1,0 +1,131 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { Container, Stack, Typography, useTheme } from '@mui/material';
+import { ArrowCircleDown, UserOctagon } from 'iconsax-react';
+import React, { useCallback, useContext, useState } from 'react';
+
+import { AccountContext, ExtensionPopup, GradientDivider, Identity2 } from '../../../../components';
+import { useChainInfo, useTranslation } from '../../../../hooks';
+import { getFormattedAddress } from '../../../../util/utils';
+import PRadio from '../../components/Radio';
+import StakingActionButton from '../../partial/StakingActionButton';
+
+interface ChooseAccountMenuProps {
+  openMenu: boolean;
+  handleClose: () => void;
+  genesisHash: string | undefined;
+  setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
+  specificAccount: string | undefined;
+}
+
+const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAccount, specificAccount }: ChooseAccountMenuProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { accounts } = useContext(AccountContext);
+  const { chain } = useChainInfo(genesisHash, true);
+
+  const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedAccount = event.target.value;
+
+    setSpecificAccount(selectedAccount);
+  }, [setSpecificAccount]);
+
+  return (
+    <ExtensionPopup
+      TitleIcon={UserOctagon}
+      handleClose={handleClose}
+      iconColor={theme.palette.text.highlight}
+      iconSize={26}
+      openMenu={openMenu}
+      title={t('Accounts')}
+      withoutBackground
+      withoutTopBorder
+    >
+      <Stack direction='column' sx={{ height: '440px', position: 'relative', rowGap: '24px', width: '100%' }}>
+        <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
+          {t('My Accounts')}
+        </Typography>
+        <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflow: 'scroll', rowGap: '12px' }}>
+          {accounts.map(({ address }) => {
+            const formatted = getFormattedAddress(address, chain, chain?.ss58Format ?? 0);
+            const checked = formatted === specificAccount;
+
+            return (
+              <>
+                <Container disableGutters key={address} sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Identity2
+                    address={address}
+                    genesisHash={genesisHash ?? ''}
+                    identiconSize={24}
+                    style={{
+                      color: checked ? '#3988FF' : 'text.primary',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      variant: 'B-4'
+                    }}
+                    withShortAddress
+                  />
+                  <PRadio
+                    checked={checked}
+                    onChange={handleSelect}
+                    value={formatted}
+                  />
+                </Container>
+                <GradientDivider />
+              </>
+            );
+          })}
+        </Stack>
+        <StakingActionButton
+          onClick={handleClose}
+          text={t('Close')}
+          style={{
+            bottom: '10px',
+            height: '44px',
+            left: '0',
+            right: '0',
+            position: 'absolute',
+            width: '100%'
+          }}
+        />
+      </Stack>
+    </ExtensionPopup>
+  );
+};
+
+interface Props {
+  genesisHash: string | undefined;
+  setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
+  specificAccount: string | undefined;
+}
+
+export default function ChooseAccount ({ genesisHash, setSpecificAccount, specificAccount }: Props): React.ReactElement {
+  const theme = useTheme();
+
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+
+  const handleToggleMenu = useCallback(() => setOpenMenu((isMenuOpen) => !isMenuOpen), []);
+
+  return (
+    <>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
+        <Identity2
+          identiconSize={36}
+          address={specificAccount}
+          genesisHash={genesisHash ?? ''}
+          style={{ variant: 'B-2' }}
+          withShortAddress
+        />
+        <ArrowCircleDown color={theme.palette.text.highlight} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
+      </Container>
+      <ChooseAccountMenu
+        genesisHash={genesisHash}
+        handleClose={handleToggleMenu}
+        openMenu={openMenu}
+        setSpecificAccount={setSpecificAccount}
+        specificAccount={specificAccount}
+      />
+    </>
+  );
+}

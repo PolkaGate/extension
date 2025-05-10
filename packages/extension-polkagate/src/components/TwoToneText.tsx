@@ -21,7 +21,7 @@ function TwoToneText ({ backgroundColor, color = '#BEAAD8', text, textPartInColo
         __html: text.replace(
           textPartInColor,
           `<span style="color: ${color}; ${
-            backgroundColor ? `background-color: ${backgroundColor}; border-radius: 6px; padding: 2px;` : ''
+            backgroundColor ? `background-color: ${backgroundColor}; border-radius: 6px;` : ''
           }">${textPartInColor}</span>`
         )
       }}

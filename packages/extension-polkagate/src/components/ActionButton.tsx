@@ -4,11 +4,11 @@
 import type { Icon } from 'iconsax-react';
 
 import { Button, type SxProps, type Theme, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { useIsDark, useIsExtensionPopup } from '../hooks';
+import { useIsDark, useIsExtensionPopup, useIsHovered } from '../hooks';
 
 interface Props {
   StartIcon?: Icon;
@@ -28,12 +28,10 @@ interface Props {
 export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
   const isExtension = useIsExtensionPopup();
   const borderRadius = isExtension ? '12px' : '18px';
-
-  const [hovered, setHovered] = useState(false);
-
-  const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
 
   const ButtonFontStyle = useMemo(() => ({
     ...theme.typography['B-2'],
@@ -85,17 +83,17 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
     <Button
       disabled={disabled || isBusy}
       onClick={onClick ?? noop}
-      onMouseEnter={toggleHover}
-      onMouseLeave={toggleHover}
+      ref={containerRef}
       startIcon={StartIcon
-        ? <StartIcon
-          size={iconSize}
-          variant={
-            (iconAlwaysBold ?? hovered)
-              ? iconVariantOnHover ?? 'Bold'
-              : iconVariant ?? 'Bulk'
-          }
-        />
+        ? (
+          <StartIcon
+            size={iconSize}
+            variant={
+              (iconAlwaysBold ?? hovered)
+                ? iconVariantOnHover ?? 'Bold'
+                : iconVariant ?? 'Bulk'
+            }
+          />)
         : undefined}
       sx={{
         '&.Mui-disabled': {

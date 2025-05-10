@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Container, Grid } from '@mui/material';
 import { Edit2, type Icon, LogoutCurve, People } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 
-import { GradientDivider, Tooltip } from '../../../components/index';
+import { GradientDivider, Tooltip } from '../../../components';
 import { useTranslation } from '../../../components/translate';
+import { useIsHovered } from '../../../hooks';
 
 interface ActionButtonProps {
   ButtonIcon: Icon;
@@ -23,14 +23,11 @@ interface Props {
 
 const ActionButton = ({ ButtonIcon, index, name, onClick }: ActionButtonProps) => {
   const containerRef = useRef(null);
-
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const hovered = useIsHovered(containerRef);
 
   return (
     <>
-      <Grid container item onClick={onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={containerRef} sx={{ '&:hover': { background: '#FF4FB9' }, background: '#2D1E4A', borderRadius: '999px', cursor: 'pointer', height: 'fit-content', p: '3px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
+      <Grid container item onClick={onClick} ref={containerRef} sx={{ '&:hover': { background: '#FF4FB9' }, background: '#2D1E4A', borderRadius: '999px', cursor: 'pointer', height: 'fit-content', p: '3px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
         <ButtonIcon color={hovered ? '#05091C' : '#AA83DC'} size='22' variant='Bulk' />
       </Grid>
       <Tooltip
@@ -43,7 +40,7 @@ const ActionButton = ({ ButtonIcon, index, name, onClick }: ActionButtonProps) =
   );
 };
 
-function AccountActionButtons({ address, index }: Props): React.ReactElement {
+function AccountActionButtons ({ address, index }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const noop = useCallback(() => {

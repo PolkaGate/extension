@@ -4,7 +4,9 @@
 /* eslint-disable sort-keys */
 
 import { Box, styled, type SxProps, type Theme, Typography } from '@mui/material';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+
+import { useIsHovered } from '../hooks';
 
 interface ScrollingTextBoxProps {
   text: string;
@@ -40,16 +42,18 @@ const BoxContainer = styled(Box)(({ maximumWidth, shouldScroll }: { shouldScroll
   width: 'fit-content'
 }));
 
-function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+function ScrollingTextBox ({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
   const textRef = useRef<HTMLDivElement>(null);
+
   const [shouldScroll, setShouldScroll] = useState(false);
   const [textWidth, setTextWidth] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
 
   const uniqueKeyframeName = useMemo(() => `scrollText-${Math.random().toString(36).substring(2, 11)}`, []);
 
   useEffect(() => {
-    if (scrollOnHover && !isHovering) {
+    if (scrollOnHover && !hovered) {
       setShouldScroll(false);
 
       return;
@@ -61,7 +65,7 @@ function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width
       setShouldScroll(isOverflowing);
       setTextWidth(textRef.current.scrollWidth);
     }
-  }, [isHovering, scrollOnHover, text]);
+  }, [hovered, scrollOnHover, text]);
 
   const animationDuration = useMemo(() => Math.max(10, textWidth / 50), [textWidth]); // Adjusts scrolling speed
 
@@ -79,14 +83,12 @@ function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width
     animation: shouldScroll
       ? `${uniqueKeyframeName} ${animationDuration}s linear infinite`
       : 'none',
-    animationPlayState: scrollOnHover ? (isHovering ? 'running' : 'paused') : isHovering ? 'paused' : 'running',
+    animationPlayState: scrollOnHover ? (hovered ? 'running' : 'paused') : hovered ? 'paused' : 'running',
     whiteSpace: 'nowrap'
-  }), [animationDuration, isHovering, scrollOnHover, shouldScroll, textWidth, uniqueKeyframeName, width]);
-
-  const toggleHover = useCallback(() => setIsHovering((isHovered) => !isHovered), []);
+  }), [animationDuration, hovered, scrollOnHover, shouldScroll, textWidth, uniqueKeyframeName, width]);
 
   return (
-    <BoxContainer maximumWidth={width} onMouseEnter={toggleHover} onMouseLeave={toggleHover} shouldScroll={shouldScroll} sx={style}>
+    <BoxContainer maximumWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
       <Typography ref={textRef} sx={{ ...textboxStyle, ...textStyle }}>
         {text}
       </Typography>
