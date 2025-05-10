@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
 
@@ -111,15 +112,16 @@ const getAvailableToStake = (balances: BalancesInfo | undefined, stakingAccount:
  *
  * @param address - The account address to get staking info for
  * @param genesisHash - The chain's genesis hash to identify the network
+ * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined): SoloStakingInfo {
+export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
   const { api, chainName } = useChainInfo(genesisHash);
-  const balances = useBalances2(address, genesisHash);
+  const balances = useBalances2(address, genesisHash, refresh, setRefresh);
 
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
 
-  const stakingAccount = useStakingAccount2(address, genesisHash);
+  const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const rewards = useStakingRewards2(chainName, stakingAccount);
   const stakingConsts = useStakingConsts2(genesisHash);
@@ -129,7 +131,8 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     const info = await getUnstakingAmount(api, stakingAccount);
 
     setSessionInfo(info);
-  }, [api, stakingAccount]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [api, stakingAccount, refresh]);
 
   // Update session info whenever dependencies change
   useEffect(() => {

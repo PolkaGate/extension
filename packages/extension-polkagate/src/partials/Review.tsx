@@ -12,6 +12,7 @@ import { InfoCircle } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { type BN, isBn } from '@polkadot/util';
+import { isAddress } from '@polkadot/util-crypto';
 
 import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip, SignArea3 } from '../components';
 import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
@@ -105,16 +106,19 @@ const ContentItem = ({ content, decimal, description, genesisHash, title, token,
                   tokens={[token ?? '']}
                   value={content}
                 />)
-              : (
-                <Identity2
-                  address={content}
-                  genesisHash={genesisHash}
-                  identiconSize={22}
-                  showShortAddress
-                  style={{ variant: 'B-1' }}
-                  withShortAddress
-                />
-              )
+              : isAddress(content)
+                ? (
+                  <Identity2
+                    address={content}
+                    genesisHash={genesisHash}
+                    identiconSize={22}
+                    showShortAddress
+                    style={{ variant: 'B-1' }}
+                    withShortAddress
+                  />)
+                : <Typography color='text.primary' variant='B-1'>
+                  {content}
+                </Typography>
             : (
               <Skeleton
                 animation='wave'
