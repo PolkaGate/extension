@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, Grid, Typography } from '@mui/material';
 import { Check, DocumentText } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
@@ -9,12 +8,14 @@ import React, { useCallback, useContext } from 'react';
 import { Lock } from '../../assets/gif';
 import { ActionCard, ActionContext, BackWithLabel } from '../../components';
 import { updateStorage } from '../../components/Loading';
-import { useTranslation } from '../../hooks';
+import { useBackground, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { Version } from '../../partials';
 import Header from './Header';
 
-function Reset(): React.ReactElement {
+function Reset (): React.ReactElement {
+  useBackground('drops');
+
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
 

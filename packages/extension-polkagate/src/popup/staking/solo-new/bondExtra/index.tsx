@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import AvailableToStake from '../../partial/AvailableToStake';
@@ -21,6 +21,8 @@ import StakingActionButton from '../../partial/StakingActionButton';
 import TokenStakeStatus from '../../partial/TokenStakeStatus';
 
 export default function BondExtra (): React.ReactElement {
+  useBackground('staking');
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();

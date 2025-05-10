@@ -10,7 +10,7 @@ import { type BN } from '@polkadot/util';
 
 import { ActionButton, ActionContext, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
-import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { TEST_NETS } from '../../util/constants';
@@ -76,6 +76,8 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
 }
 
 export default function StakingPositions (): React.ReactElement {
+  useBackground('default');
+
   const { t } = useTranslation();
   const account = useSelectedAccount();
   const pricesInCurrency = usePrices();

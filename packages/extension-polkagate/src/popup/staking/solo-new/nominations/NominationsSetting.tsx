@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import { EmptyWarning } from '../../../../assets/icons/index';
 import { FadeOnScroll, Motion, NeonButton } from '../../../../components';
-import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useValidatorsInformation } from '../../../../hooks';
+import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import BackButton from '../../partial/BackButton';
 import NominatorsTable from '../../partial/NominatorsTable';
@@ -49,6 +49,8 @@ const EmptyNomination = ({ setRefresh }: EmptyNominationProps) => {
 };
 
 export default function NominationsSetting (): React.ReactElement {
+  useBackground('staking');
+
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();

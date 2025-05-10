@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box } from '@mui/material';
-import React, { useCallback, useContext, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { logoBlackBirdTransparent, logoTransparent, logoWhiteTransparent } from '../assets/logos';
 import { useIsDark, useIsHovered, useTranslation } from '../hooks';
-import { ActionContext } from './contexts';
 import { Tooltip } from '.';
 
 interface Props {
@@ -16,11 +16,11 @@ interface Props {
 function HomeButton ({ type = 'default' }: Props) {
   const { t } = useTranslation();
   const isDark = useIsDark();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const buttonContainer = useRef(null);
   const hovered = useIsHovered(buttonContainer);
 
-  const goHome = useCallback(() => onAction('/'), [onAction]);
+  const goHome = useCallback(() => navigate('/') as void, [navigate]);
 
   const src = useMemo(() => {
     if (type === 'active') {

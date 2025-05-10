@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { BN_ZERO } from '@polkadot/util';
 
 import { BackWithLabel, ChainLogo, FadeOnScroll, FormatBalance2, Motion, SearchField } from '../../components';
-import { useAccountAssets, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useBackground, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS } from '../../util/constants';
@@ -22,6 +22,8 @@ import { sanitizeChainName } from '../../util/utils';
 import StakingInfo from './stakingInfo';
 
 export default function EarningOptions (): React.ReactElement {
+  useBackground('default');
+
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
@@ -80,7 +82,7 @@ export default function EarningOptions (): React.ReactElement {
     setSelectedPosition(token);
   }, []);
 
-  const onBack = useCallback(() => navigate('/'), [navigate]);
+  const onBack = useCallback(() => navigate('/') as void, [navigate]);
 
   return (
     <>

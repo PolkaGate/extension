@@ -27,6 +27,7 @@ export { default as useAuction } from './useAuction';
 export { default as useAutoLock } from './useAutoLock';
 export { default as useAutoLockPeriod } from './useAutoLockPeriod';
 export { default as useAvailableToSoloStake } from './useAvailableToSoloStake';
+export { default as useBackground } from './useBackground';
 export { default as useBalances } from './useBalances';
 export { default as useBalances2 } from './useBalances2';
 export { default as useBalancesOnAssethub } from './useBalancesOnAssethub';

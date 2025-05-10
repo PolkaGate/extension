@@ -13,7 +13,7 @@ import { useNavigate, useParams } from 'react-router';
 import { type BN, noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
@@ -22,6 +22,8 @@ import StakingPortfolio from '../partial/StakingPortfolio';
 import ToBeReleased from '../partial/ToBeReleased';
 
 export default function Solo (): React.ReactElement {
+  useBackground('staking');
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();

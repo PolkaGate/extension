@@ -63,8 +63,6 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
     return _txInfo;
   }, [transactionInformation, txInfo]);
 
-  console.log('transactionDetail:', transactionDetail);
-
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
       <UserDashboardHeader

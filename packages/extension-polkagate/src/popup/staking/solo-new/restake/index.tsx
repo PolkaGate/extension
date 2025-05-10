@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import FeeValue from '../../partial/FeeValue';
@@ -19,6 +19,8 @@ import StakingActionButton from '../../partial/StakingActionButton';
 import TokenStakeStatus from '../../partial/TokenStakeStatus';
 
 export default function Restake (): React.ReactElement {
+  useBackground('staking');
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();

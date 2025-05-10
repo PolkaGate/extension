@@ -1,14 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import { AddCircle, Wallet } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, Carousel, GradientBox, GradientButton } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useBackground, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { Version, WelcomeHeader } from '../../partials';
 import { GradientDivider } from '../../style';
@@ -19,7 +18,9 @@ export enum Popups {
   ADD_ACCOUNT
 }
 
-function Welcome(): React.ReactElement {
+function Welcome (): React.ReactElement {
+  useBackground('drops');
+
   const { t } = useTranslation();
   const theme = useTheme();
 

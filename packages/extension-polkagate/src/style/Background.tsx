@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Container, styled, type SxProps, type Theme, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
 import { backgroundLogoDarkMode, backgroundLogoLightMode } from '../assets/logos';
 import { useIsDark } from '../hooks';
@@ -12,20 +12,21 @@ const BallStyle: React.CSSProperties = {
   height: '128px',
   opacity: 1,
   position: 'absolute',
+  transition: 'all 150ms ease-out',
   width: '128px'
 };
 
-const RedBall = styled('div')(() => ({
+const RedBall = styled('div')(({ type }: { type: 'default' | 'staking' }) => ({
   ...BallStyle,
-  backgroundColor: '#b30a0a',
+  backgroundColor: type === 'default' ? '#b30a0a' : '#00C2FF',
   filter: 'blur(90px)', // Glow effect
   left: '35%',
   top: '-60px'
 }));
 
-const BlueBall = styled('div')(() => ({
+const BlueBall = styled('div')(({ type }: { type: 'default' | 'staking' }) => ({
   ...BallStyle,
-  backgroundColor: '#5B00B6',
+  backgroundColor: type === 'default' ? '#5B00B6' : '#0F00B6',
   filter: 'blur(100px)', // Glow effect
   left: '-35px',
   top: '-45px'
@@ -34,19 +35,20 @@ const BlueBall = styled('div')(() => ({
 const backgroundImageStyle: SxProps<Theme> = {
   backdropFilter: 'blur(20px)',
   height: '452.63px',
-  left: '26px',
+  left: '6px',
   mixBlendMode: 'color-dodge',
   position: 'absolute',
   rotate: '0deg',
   top: '-129px',
-  width: '344.77px'
+  width: '370px'
 };
 
-const FadeOut = styled('div')(() => ({
-  background: 'linear-gradient(180deg, transparent 13.79%, background.default 100%)',
+const FadeOut = styled('div')(({ backgroundColor }: {backgroundColor: string}) => ({
+  background: `linear-gradient(180deg, transparent 13.79%, ${backgroundColor} 100%)`,
   height: '220px',
   inset: 0,
   position: 'absolute',
+  transition: 'all 150ms ease-out',
   width: '375px'
 }));
 
@@ -62,30 +64,34 @@ const Smoother = styled('div')(() => ({
 
 interface Props {
   style?: React.CSSProperties;
-  id?: string;
+  type?: 'default' | 'staking';
 }
 
-function Background ({ id, style }: Props): React.ReactNode {
+function Background ({ style, type = 'default' }: Props): React.ReactNode {
+  const theme = useTheme();
   const isDark = useIsDark();
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  const onLoad = useCallback(() => setImageLoaded(true), []);
+
   return (
-    <Box id={id} sx={{ height: '220px', inset: 0, position: 'absolute', ...style }}>
+    <Box sx={{ height: '220px', inset: 0, position: 'absolute', ...style }}>
       <Container disableGutters sx={{ height: '220px', overflow: 'hidden', position: 'relative', width: '100%' }}>
-        <RedBall />
-        <BlueBall />
+        <RedBall type={type} />
+        <BlueBall type={type} />
         <Smoother />
         <Box
           component='img'
-          onLoad={() => setImageLoaded(true)}
+          onLoad={onLoad}
           src={(isDark ? backgroundLogoDarkMode : backgroundLogoLightMode) as string}
           sx={{
             opacity: imageLoaded ? 1 : 0,
             transition: 'opacity 4s ease-in-out',
             ...backgroundImageStyle
-          }} />
+          }}
+        />
       </Container>
-      <FadeOut />
+      <FadeOut backgroundColor={theme.palette.background.default} />
     </Box>
   );
 }

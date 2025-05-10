@@ -13,7 +13,7 @@ import { isBn } from '@polkadot/util';
 
 import { info } from '../../../assets/gif';
 import { BackWithLabel, Motion, ShowValue } from '../../../components';
-import { useChainInfo, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { amountToHuman } from '../../../util/utils';
 import StakingMenu from '../partial/StakingMenu';
@@ -39,6 +39,8 @@ const InfoBox = ({ decimal, label, value }: InfoBoxProps) => (
 );
 
 export default function Info (): React.ReactElement {
+  useBackground('staking');
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();

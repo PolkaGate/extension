@@ -11,7 +11,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { amountToHuman } from '../../../../util/utils';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -97,6 +97,8 @@ const EligibilityStatus = ({ onBack, status }: { status: boolean | undefined, on
 };
 
 export default function FastUnstake (): React.ReactElement {
+  useBackground('staking');
+
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const selectedAccount = useSelectedAccount();

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -14,16 +13,15 @@ interface Drop {
 }
 
 interface Props {
-  style: React.CSSProperties;
-  ground: number;
-  id?: string;
+  style?: React.CSSProperties;
+  ground?: number;
 }
 
 const DROP_SPEED = 500;
 const MAX_DROPS = 25;
 const DROP_INTERVAL = 50;
 
-function LogoDropAnimation ({ ground = 200, id, style }: Props) {
+function LogoDropAnimation ({ ground = 200, style }: Props) {
   const [drops, setDrops] = useState<Drop[]>([]);
 
   const requestRef = useRef<number>();
@@ -80,7 +78,6 @@ function LogoDropAnimation ({ ground = 200, id, style }: Props) {
 
   return (
     <Box
-      id={id}
       sx={{
         height: '100%',
         opacity: 0.3,
