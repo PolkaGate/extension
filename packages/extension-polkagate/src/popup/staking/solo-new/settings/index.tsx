@@ -196,7 +196,7 @@ export default function Settings (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            stepCounter={{ currentStep: 2, totalSteps: 2 }}
+            stepCounter={{ currentStep: 1, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Settings')}
           />

@@ -117,7 +117,7 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
 
 interface NominatorsTableProp {
   genesisHash: string;
-  validatorsInformation?: ValidatorInformation[];
+  validatorsInformation: ValidatorInformation[];
 }
 
 export default function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
@@ -129,8 +129,8 @@ export default function NominatorsTable ({ genesisHash, validatorsInformation }:
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'scroll', rowGap: '4px', width: '100%' }}>
-        {validatorsInformation?.map((validatorInfo, index) => (
+      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', overflowY: 'scroll', rowGap: '4px', width: '100%' }}>
+        {validatorsInformation.map((validatorInfo, index) => (
           <ValidatorInfo
             genesisHash={genesisHash}
             key={index}
