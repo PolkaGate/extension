@@ -109,8 +109,8 @@ export default function Restake (): React.ReactElement {
               }]}
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
-              title={t('Amount')}
-              titleInColor={token?.toUpperCase()}
+              title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
+              titleInColor={` (${token?.toUpperCase() ?? '--'})`}
             />
             <FeeValue
               decimal={decimal}

@@ -83,7 +83,7 @@ const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme 
   '& input::placeholder': {
     alignItems: 'center',
     color: theme.palette.text.highlight,
-    fontSize: '22px',
+    fontSize: '32px',
     fontWeight: 500,
     textAlign: 'left'
   },
@@ -154,7 +154,7 @@ export default function StakeAmountInput ({ buttonsArray = [], enteredValue, foc
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
         <TwoToneText
           backgroundColor='#110F2A'
-          color={theme.palette.text.primary}
+          color={theme.palette.text.highlight}
           text={title ?? ''}
           textPartInColor={titleInColor ?? ''}
         />
@@ -174,7 +174,7 @@ export default function StakeAmountInput ({ buttonsArray = [], enteredValue, foc
         autoFocus={focused}
         fullWidth
         onChange={onChange}
-        placeholder={placeholder ?? 'Amount'}
+        placeholder={placeholder ?? '0.00'}
         theme={theme}
         type='text'
         value={enteredValue ?? textFieldValue ?? ''}
