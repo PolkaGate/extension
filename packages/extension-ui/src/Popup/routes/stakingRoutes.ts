@@ -8,13 +8,13 @@ import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
 import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
-import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool';
 import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
 import PoolNominations from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations';
 import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool/stake';
 import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/createPool';
 import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool';
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool/unstake';
+import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool-new';
 import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
 import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
@@ -70,7 +70,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
   },
   {
     Component: Pool,
-    path: '/pool/:address',
+    path: '/pool/:genesisHash',
     trigger: 'pool-staking'
   },
   {
