@@ -42,7 +42,7 @@ interface Props {
 
 function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { chain } = useChainInfo(genesisHash);
+  const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
   const isDark = useIsDark();
   const bgColor = !isDark ? '#CCD2EA' : undefined;

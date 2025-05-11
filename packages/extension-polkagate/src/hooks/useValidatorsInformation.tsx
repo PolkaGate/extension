@@ -55,7 +55,7 @@ export default function useValidatorsInformation (genesisHash: string | undefine
     });
   }, []);
 
-  const fetchAssetOnRelayChain = useCallback(() => {
+  const fetchValidatorsInformation = useCallback(() => {
     if (!worker || !genesisHash) {
       return;
     }
@@ -109,9 +109,9 @@ export default function useValidatorsInformation (genesisHash: string | undefine
 
     setFetching(genesisHash);
     loadFromStorage(genesisHash);
-    fetchAssetOnRelayChain();
+    fetchValidatorsInformation();
     handleWorkerMessages();
-  }, [fetchAssetOnRelayChain, fetching, genesisHash, handleWorkerMessages, loadFromStorage]);
+  }, [fetchValidatorsInformation, fetching, genesisHash, handleWorkerMessages, loadFromStorage]);
 
   return fetchedValidatorsInformation && fetchedValidatorsInformation.genesisHash === genesisHash
     ? fetchedValidatorsInformation

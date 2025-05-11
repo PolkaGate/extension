@@ -48,7 +48,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
     });
   }, [request]);
 
-  const { decimal, token } = useChainInfo(signerPayload.genesisHash);
+  const { decimal, token } = useChainInfo(signerPayload.genesisHash, true);
 
   const docs = useMemo(() => {
     if (!data?.meta?.docs) {

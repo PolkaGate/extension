@@ -46,7 +46,7 @@ export default function Info (): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
-  const { decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
 
   const stakingStats = useMemo(() => ([
     { label: t('Max Validators you can select'), value: stakingInfo.stakingConsts?.maxNominations },

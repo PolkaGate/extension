@@ -50,7 +50,7 @@ function AddressComponent({ address, chain, onCopy }: AddressComponentProp) {
 
 function Receive({ address, genesisHash, open, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { chain } = useChainInfo(genesisHash);
+  const { chain } = useChainInfo(genesisHash, true);
   const account = useSelectedAccount();
 
   const [showSnackbar, setShowSnackbar] = useState(false);

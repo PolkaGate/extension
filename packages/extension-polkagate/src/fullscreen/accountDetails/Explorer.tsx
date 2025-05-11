@@ -13,7 +13,7 @@ interface Props {
 }
 
 function Explorer ({ address, genesisHash }: Props): React.ReactElement {
-  const { chainName } = useChainInfo(genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
 
   return (
     <Link alignItems='center' href={`https://${chainName}.subscan.io/account/${String(address)}`} justifyContent='center' rel='noreferrer' sx={{ bgcolor: '#FF4FB91A', borderRadius: '128px', display: 'flex', height: '32px', position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', width: '32px' }} target='_blank'>

@@ -92,7 +92,7 @@ interface ValidatorIdentityDetailProps {
 }
 
 const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIdentityDetailProps) => {
-  const { chainName } = useChainInfo(genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
