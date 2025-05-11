@@ -155,7 +155,7 @@ function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
   }), [leftPosition]);
 
   return (
-    <Container disableGutters sx={{ bottom: '15px', mx: type === 'solo' ? '45px' : '15px', position: 'fixed', width: `calc(100% - ${type === 'solo' ? '90px' : '30px'})`, zIndex: 1 }}>
+    <Container disableGutters sx={{ bottom: '15px', mx: type === 'solo' ? '45px' : '70px', position: 'fixed', width: `calc(100% - ${type === 'solo' ? '90px' : '140px'})`, zIndex: 1 }}>
       {leftPosition && <GradientDivider style={selectionLineStyle} />}
       <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
         {pageConfig.map(({ icon: ButtonIcon, tooltip, url }, index) => {
