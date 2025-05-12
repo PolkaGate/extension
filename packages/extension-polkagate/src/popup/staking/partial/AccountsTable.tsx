@@ -36,9 +36,9 @@ const TableItem = ({ account, decimal, token, totalStaked, withDivider }: Accoun
         <Container disableGutters sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', flexDirection: 'row', m: 0, maxWidth: '45%', width: '45%' }}>
           <PolkaGateIdenticon
             address={account.who.toString()}
-            size={24}
+            size={18}
           />
-          <Typography color='text.primary' variant='B-2'>
+          <Typography color='text.primary' variant='B-4'>
             {toShortAddress(account.who.toString())}
           </Typography>
         </Container>
@@ -57,7 +57,7 @@ const TableItem = ({ account, decimal, token, totalStaked, withDivider }: Accoun
           tokens={[token ?? '']}
           value={account.value}
         />
-        <Typography color='text.primary' variant='B-4'>
+        <Typography color='text.primary' variant='B-4' sx={{ textAlign: 'right', width: '15%'}}>
           {percentage}%
         </Typography>
       </Container>
