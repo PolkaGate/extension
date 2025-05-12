@@ -70,7 +70,7 @@ const SpecificAccountOption = ({ ED, genesisHash, onNext, setSpecificAccount, sh
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   return (
-    <Stack direction='column' sx={{ opacity: showOption ? 1 : 0, rowGap: '10px', transition: 'all 150ms ease-out' }}>
+    <Stack direction='column' sx={{ height: showOption ? 'auto' : 0, opacity: showOption ? 1 : 0, rowGap: '10px', transition: showOption ? 'all 150ms ease-out' : 'unset' }}>
       <Typography color='text.highlight' variant='B-2' width='fit-content'>
         {t('Specific account')}
       </Typography>
@@ -83,6 +83,26 @@ const SpecificAccountOption = ({ ED, genesisHash, onNext, setSpecificAccount, sh
         <Warning2 color='#596AFF' size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
         <Typography color='text.highlight' textAlign='left' variant='B-4'>
           {t('The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount', { replace: { ED: ED ? amountToHuman(ED, decimal) : '--', token } })}
+        </Typography>
+      </Container>
+      <StakingActionButton
+        onClick={onNext}
+        style={{ mt: '10px' }}
+        text={t('Next')}
+      />
+    </Stack>
+  );
+};
+
+const SetToStaked = ({ onNext, showOption }: { onNext: () => void; showOption: boolean; }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack direction='column' sx={{ height: showOption ? 'auto' : 0, opacity: showOption ? 1 : 0, transition: showOption ? 'all 150ms ease-out' : 'unset', width: '100%' }}>
+      <Container disableGutters sx={{ columnGap: '8px', display: 'flex' }}>
+        <Warning2 color='#596AFF' size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
+        <Typography color='text.highlight' textAlign='left' variant='B-4'>
+          {t('The reward amount will be automatically added to your staked amount.')}
         </Typography>
       </Container>
       <StakingActionButton
@@ -108,15 +128,16 @@ export default function Settings (): React.ReactElement {
   const setPayee = api?.tx['staking']['setPayee'];
 
   const stashId = stakingInfo.stakingAccount?.stashId.toString() ?? formatted ?? selectedAccount?.address;
+  const rewardDestinationAddress = stakingInfo.rewardDestinationAddress;
   const ED = stakingInfo.stakingConsts?.existentialDeposit;
 
   const [rewardDestinationType, setRewardDestinationType] = useState<RewardDestinationType>(undefined);
-  const [specificAccount, setSpecificAccount] = useState<string | undefined>(stashId);
+  const [specificAccount, setSpecificAccount] = useState<string | undefined>(undefined);
   const [review, setReview] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!stakingInfo.stakingAccount || rewardDestinationType) {
-      return;
+  const rewardType = useMemo(() => {
+    if (!stakingInfo.stakingAccount) {
+      return undefined;
     }
 
     // initialize settings
@@ -124,17 +145,25 @@ export default function Settings (): React.ReactElement {
 
     /** in Westend it is null recently if user has not staked yet */
     if (!parsedStakingAccount.rewardDestination) {
-      return;
+      return undefined;
     }
 
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
 
     if (destinationType === 'account') {
-      setRewardDestinationType('Others');
+      return 'Others';
     } else {
-      setRewardDestinationType('Staked');
+      return 'Staked';
     }
-  }, [rewardDestinationType, stakingInfo.stakingAccount]);
+  }, [stakingInfo.stakingAccount]);
+
+  useEffect(() => {
+    if (!stakingInfo.stakingAccount) {
+      return;
+    }
+
+    setRewardDestinationType(rewardType);
+  }, [rewardType, stakingInfo.stakingAccount]);
 
   const makePayee = useCallback((value: RewardDestinationType, account: string | undefined) => {
     if (!value) {
@@ -159,20 +188,21 @@ export default function Settings (): React.ReactElement {
   const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount), [makePayee, rewardDestinationType, specificAccount]);
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
+  const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
 
   const transactionInformation = useMemo(() => {
     return [{
-      content: specificAccount,
+      content: rewardDestinationType === 'Others' ? specificAccount : 'staked',
       title: t('Reward destination')
     },
     {
       content: estimatedFee2,
       title: t('Fee')
     }];
-  }, [estimatedFee2, specificAccount, t]);
+  }, [estimatedFee2, rewardDestinationType, specificAccount, t]);
   const tx = useMemo(() => {
     return rewardDestination && setPayee
-      ? setPayee('Staked')
+      ? setPayee(rewardDestination)
       : undefined;
   }, [rewardDestination, setPayee]);
 
@@ -214,7 +244,11 @@ export default function Settings (): React.ReactElement {
               onNext={onNext}
               setSpecificAccount={setSpecificAccount}
               showOption={rewardDestinationType === 'Others'}
-              specificAccount={specificAccount}
+              specificAccount={specificAccount ?? rewardDestinationAddress}
+            />
+            <SetToStaked
+              onNext={onNext}
+              showOption={changeToStake}
             />
           </Stack>
         </Motion>

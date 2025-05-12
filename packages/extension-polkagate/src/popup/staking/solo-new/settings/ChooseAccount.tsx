@@ -5,6 +5,8 @@ import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { AccountContext, ExtensionPopup, GradientDivider, Identity2 } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { getFormattedAddress } from '../../../../util/utils';
@@ -25,9 +27,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
   const { accounts } = useContext(AccountContext);
   const { chain } = useChainInfo(genesisHash, true);
 
-  const handleSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedAccount = event.target.value;
-
+  const handleSelect = useCallback((selectedAccount: string) => () => {
     setSpecificAccount(selectedAccount);
   }, [setSpecificAccount]);
 
@@ -53,7 +53,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
 
             return (
               <>
-                <Container disableGutters key={address} sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Container disableGutters key={address} onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
                     addressStyle={{ color: '#809ACB' }}
@@ -69,7 +69,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
                   />
                   <PRadio
                     checked={checked}
-                    onChange={handleSelect}
+                    onChange={noop}
                     value={formatted}
                   />
                 </Container>
@@ -80,15 +80,15 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
         </Stack>
         <StakingActionButton
           onClick={handleClose}
-          text={t('Close')}
           style={{
             bottom: '10px',
             height: '44px',
             left: '0',
-            right: '0',
             position: 'absolute',
+            right: '0',
             width: '100%'
           }}
+          text={t('Close')}
         />
       </Stack>
     </ExtensionPopup>
@@ -112,9 +112,9 @@ export default function ChooseAccount ({ genesisHash, setSpecificAccount, specif
     <>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
         <Identity2
-          identiconSize={36}
           address={specificAccount}
           genesisHash={genesisHash ?? ''}
+          identiconSize={36}
           style={{ variant: 'B-2' }}
           withShortAddress
         />
