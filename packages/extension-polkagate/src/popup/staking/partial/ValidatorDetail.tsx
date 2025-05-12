@@ -54,13 +54,13 @@ const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%' }}>
       {validatorDetail.identity?.discord &&
-        <SocialIcon Icon={<Discord color={theme.palette.icon.secondary} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Discord color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.email &&
-        <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Email color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.github &&
-        <SocialIcon Icon={<Github color={theme.palette.icon.secondary} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Github color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {(validatorDetail.identity?.matrix || validatorDetail.identity?.riot) &&
         <Link
@@ -77,10 +77,10 @@ const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
         </Link>
       }
       {validatorDetail.identity?.twitter &&
-        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<XIcon color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.web &&
-        <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Web color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
     </Container>
   );
@@ -130,7 +130,7 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
               {validatorDetail.identity.display}
             </Typography>}
         </Grid>
-        <Typography color='#82FFA5' sx={{ fontSize: '12px', fontWeight: 700 }}>
+        <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
           {toShortAddress(validatorDetail.accountId)}
         </Typography>
       </Container>
@@ -169,7 +169,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
       {validatorDetail &&
         <Container disableGutters sx={{ height: '100%', width: '100%' }}>
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-            <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+            <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
           <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 }}>
             <BlueGradient style={{ top: '-120px' }} />
@@ -180,7 +180,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
                 validatorDetail={validatorDetail}
               />
               <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '12px' }}>
+              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
                 <ValidatorStakingInfo amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
                 <ValidatorStakingInfo text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
                 <ValidatorStakingInfo amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
