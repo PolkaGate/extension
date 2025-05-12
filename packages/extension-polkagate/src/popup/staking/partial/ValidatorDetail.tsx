@@ -1,16 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Avatar, Container, Dialog, Grid, Link, Slide, Stack, styled, Typography, useTheme } from '@mui/material';
+import { Container, Dialog, Grid, Link, Slide, Stack, styled, Typography } from '@mui/material';
 import React from 'react';
 
-import { riot, subscan } from '../../../assets/icons';
+import Riot from '@polkadot/extension-polkagate/src/assets/icons/Riot';
+import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
+
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
@@ -47,8 +47,6 @@ interface ValidatorIdSocialsProps {
 }
 
 const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
-  const theme = useTheme();
-
   const bgColor = '#FFFFFF1A';
 
   return (
@@ -70,14 +68,15 @@ const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
           target='_blank'
           underline='none'
         >
-          <Avatar
-            src={riot as string}
-            sx={{ height: '15px', width: '15px' }}
+          <Riot
+            color='#809ACB'
+            height={15}
+            width={15}
           />
         </Link>
       }
       {validatorDetail.identity?.twitter &&
-        <SocialIcon Icon={<XIcon color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<XIcon color='#809ACB' width='13px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.web &&
         <SocialIcon Icon={<Web color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
@@ -112,9 +111,8 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
             target='_blank'
             underline='none'
           >
-            <Avatar
-              src={subscan as string}
-              sx={{ height: '15px', width: '15px' }}
+            <Subscan
+              color='#809ACB'
             />
           </Link>
         </Grid>
