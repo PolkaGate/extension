@@ -18,7 +18,6 @@ import AvailableToStake from '../../partial/AvailableToStake';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
-import TokenStakeStatus from '../../partial/TokenStakeStatus';
 
 export default function BondExtra (): React.ReactElement {
   useBackground('staking');
@@ -95,14 +94,6 @@ export default function BondExtra (): React.ReactElement {
           text={t('Stake More')}
         />
         <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px' }}>
-          <TokenStakeStatus
-            amount={staked as BN | undefined}
-            decimal={decimal}
-            genesisHash={genesisHash}
-            style={{ mt: '8px' }}
-            text={t('Staked')}
-            token={token}
-          />
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}
             decimal={decimal}
