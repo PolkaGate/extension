@@ -92,7 +92,7 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
   }, [decimal, tokenPrice, pricesInCurrency, staked]);
 
   return (
-    <GlowBox style={{ display: 'grid', p: '18px', pb: 0, rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
+    <GlowBox staking style={{ display: 'grid', p: '18px', pb: 0, rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
       <Grid alignItems='center' container item justifyContent='space-between'>
         <StakedToken genesisHash={genesisHash} token={token} />
         <StakerAddress address={formatted} />

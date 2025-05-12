@@ -119,6 +119,7 @@ export default function Solo (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
+            staking
             style={{ pb: 0 }}
             text={t('solo staking')}
           />

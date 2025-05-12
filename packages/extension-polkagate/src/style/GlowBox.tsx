@@ -61,7 +61,11 @@ const FadeOutFs = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
   width: '100%'
 }));
 
-function GlowDivider({ isDark, placement }: { isDark: boolean, placement: 'right' | 'left' }): React.ReactElement {
+function GlowDivider ({ isDark, placement, staking }: { staking: boolean; isDark: boolean; placement: 'right' | 'left'; }): React.ReactElement {
+  const stakingStyle = staking
+    ? { background: 'linear-gradient(180deg, rgba(16, 16, 25, 0.1) 0%, hsla(198, 100.00%, 61.80%, 0.50) 50.06%, transparent 100%)' }
+    : {};
+
   return (
     <GradientDivider
       orientation='vertical'
@@ -74,7 +78,8 @@ function GlowDivider({ isDark, placement }: { isDark: boolean, placement: 'right
         right: placement === 'right' ? 0 : undefined,
         top: 0,
         width: '2px',
-        zIndex: 1
+        zIndex: 1,
+        ...stakingStyle
       }}
     />
   );
@@ -84,19 +89,25 @@ interface Props {
   showTopBorder?: boolean;
   children: React.ReactNode;
   style?: SxProps<Theme>;
+  staking?: boolean;
 }
 
-function GlowBox ({ children, showTopBorder = true, style }: Props): React.ReactElement {
+function GlowBox ({ children, showTopBorder = true, staking = false, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
+
+  const stakingStyle = staking
+    ? { background: 'linear-gradient(90deg, #1D0939 0%, #3CC4FF 50.06%, rgba(29, 9, 57, 0) 100%)' }
+    : {};
 
   return (
     <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
       {children}
       <GlowBoxContainer disableGutters>
-        {showTopBorder && <GradientBorder style={{ width: '311px' }} type='pinkish' />}
-        <GlowDivider isDark={isDark} placement='left' />
-        <GlowDivider isDark={isDark} placement='right' />
+        {showTopBorder &&
+          <GradientBorder style={{ width: '311px', ...stakingStyle }} type='pinkish' />}
+        <GlowDivider isDark={isDark} placement='left' staking={staking} />
+        <GlowDivider isDark={isDark} placement='right' staking={staking} />
         {isDark &&
           <GlowBall />
         }
