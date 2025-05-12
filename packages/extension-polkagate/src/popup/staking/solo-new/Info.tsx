@@ -67,7 +67,7 @@ export default function Info (): React.ReactElement {
           <BackWithLabel
             onClick={onBack}
             style={{ pb: 0 }}
-            text={t('solo staking')}
+            text={t('info')}
           />
           <Grid alignItems='center' container item justifyContent='center'>
             <Box

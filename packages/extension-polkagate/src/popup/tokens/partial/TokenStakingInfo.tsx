@@ -5,11 +5,12 @@ import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
 
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import { BN_ZERO, noop } from '@polkadot/util';
 
-import { ActionContext, ToggleDots } from '../../../components';
+import { ToggleDots } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
@@ -19,7 +20,7 @@ import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenStakingInfoProp {
   tokenDetail: FetchedBalance | undefined;
-  address: string | undefined;
+  genesisHash: string | undefined;
 }
 
 enum STAKING_TYPE {
@@ -27,11 +28,11 @@ enum STAKING_TYPE {
   POOL
 }
 
-function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
+function TokenStakingInfo ({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
 
-  const onAction = useContext(ActionContext);
   const pricesInCurrency = usePrices();
 
   const [state, setState] = useState<STAKING_TYPE>();
@@ -75,11 +76,11 @@ function TokenStakingInfo ({ address, tokenDetail }: TokenStakingInfoProp) {
     }
 
     const path = state === STAKING_TYPE.POOL
-      ? `/pool/${address}`
-      : `/solo/${address}`;
+      ? `/pool/${genesisHash}`
+      : `/solo/${genesisHash}`;
 
-    onAction(path);
-  }, [address, notStaked, onAction, state]);
+    navigate(path) as void;
+  }, [genesisHash, navigate, notStaked, state]);
 
   if (!STAKING_CHAINS.includes(tokenDetail?.genesisHash ?? '')) {
     return null;

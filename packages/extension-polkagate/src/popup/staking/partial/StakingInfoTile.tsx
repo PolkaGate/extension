@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, Skeleton, Typography } from '@mui/material';
+import { Container, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useRef } from 'react';
 
@@ -52,7 +52,7 @@ function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text 
         >
           <Icon color={hovered ? '#ffffff' : '#809ACB'} size='19' variant='Bulk' />
           {!noText &&
-          <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-2'>
+          <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
             {text}
           </Typography>}
         </Grid>
@@ -74,6 +74,8 @@ export interface Props {
 }
 
 export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, layoutDirection = 'column', onExpand, title, token }: Props): React.ReactElement {
+  const theme = useTheme();
+
   if (cryptoAmount?.isZero()) {
     return <></>;
   }
@@ -119,6 +121,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
               />)
             : (
               <ColumnAmounts
+                color={theme.palette.text.highlight}
                 cryptoAmount={cryptoAmount}
                 decimal={decimal}
                 fiatAmount={fiatAmount}

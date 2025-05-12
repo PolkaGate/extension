@@ -99,7 +99,7 @@ export default function BackButton ({ nominatedValidatorsInformation, onChill, s
       <Container disableGutters onClick={onBack} ref={containerRef} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px', ml: 0, width: 'max-content' }}>
         <ArrowCircleLeft color='#FF4FB9' size='24' variant={hovered ? 'Bold' : 'Bulk'} />
         <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
-          {t('Back')}
+          {t('Validators')}
         </Typography>
       </Container>
       <NominationSettingButtons

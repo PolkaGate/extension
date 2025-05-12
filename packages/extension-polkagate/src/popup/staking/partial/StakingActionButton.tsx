@@ -27,8 +27,7 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
 
   const GeneralButtonStyle = {
     '&:disabled': {
-      background: 'rgba(89, 106, 255, 0.3)',
-      //   background: 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)',
+      background: '#596aff',
       cursor: 'default'
     },
     '&:hover': {
@@ -38,8 +37,7 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
     background:
       !isButtonDisabled
         ? '#596AFF'
-        // ? 'linear-gradient(262.56deg, #0094FF 0%, #596AFF 45%, #0094FF 100%)'
-        : 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)',
+        : 'linear-gradient(262.56deg, #0094ff 0%, #596aff 45%, #0094ff 100%)',
     borderRadius: '12px',
     boxShadow: 'unset',
     height: '44px',

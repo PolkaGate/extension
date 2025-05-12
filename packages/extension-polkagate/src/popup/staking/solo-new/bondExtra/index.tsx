@@ -106,7 +106,6 @@ export default function BondExtra (): React.ReactElement {
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}
             decimal={decimal}
-            noStakeButton
             stakeType='solo'
             style={{ mt: '8px' }}
             token={token}

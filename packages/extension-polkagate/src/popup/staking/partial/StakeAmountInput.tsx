@@ -152,12 +152,14 @@ export default function StakeAmountInput ({ buttonsArray = [], enteredValue, foc
   return (
     <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', p: '12px', width: '100%', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <TwoToneText
-          backgroundColor='#110F2A'
-          color={theme.palette.text.highlight}
-          text={title ?? ''}
-          textPartInColor={titleInColor ?? ''}
-        />
+        <Typography variant='B-1'>
+          <TwoToneText
+            backgroundColor='#110F2A'
+            color={theme.palette.text.highlight}
+            text={title ?? ''}
+            textPartInColor={titleInColor ?? ''}
+          />
+        </Typography>
         <Grid container item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
           {buttonsArray.map(({ buttonName, value }, index) => (
             <AmountButton
@@ -171,6 +173,7 @@ export default function StakeAmountInput ({ buttonsArray = [], enteredValue, foc
       </Container>
       <GradientDivider style={{ my: '6px' }} />
       <StyledTextField
+        autoComplete='off'
         autoFocus={focused}
         fullWidth
         onChange={onChange}

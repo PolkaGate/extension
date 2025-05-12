@@ -126,7 +126,7 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
           decimalPoint={4}
           decimals={[decimal ?? 0]}
           style={{
-            color: '#BEAAD8',
+            color: theme.palette.text.highlight,
             fontFamily: 'Inter',
             fontSize: '12px',
             fontWeight: 500,

@@ -6,7 +6,7 @@ import type { TransactionDetail } from '../util/types';
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 import { subscan } from '../assets/icons';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
@@ -103,7 +103,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
           return (
             <>
               <Container disableGutters key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography color='text.secondary' textTransform='capitalize' variant='B-1' width='fit-content'>
+                <Typography color='text.highlight' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(title)}
                 </Typography>
                 <Typography color={color} sx={{ bgcolor: isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
@@ -158,9 +158,12 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const stakingType = pathname.includes('pool') ? '/pool/' : '/solo/';
 
   const goToHistory = useCallback(() => navigate('/history') as void, [navigate]);
-  const backToStakingHome = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
+  const backToStakingHome = useCallback(() => navigate(stakingType + genesisHash) as void, [genesisHash, navigate, stakingType]);
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;
 

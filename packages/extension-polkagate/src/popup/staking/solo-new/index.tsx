@@ -194,7 +194,6 @@ export default function Solo (): React.ReactElement {
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}
             decimal={decimal}
-            path={'/solo/' + genesisHash + '/bondExtra'}
             stakeType='solo'
             style={{ m: '8px auto 0', width: 'calc(100% - 30px)' }}
             token={token}
