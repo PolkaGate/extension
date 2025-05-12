@@ -56,6 +56,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
                 <Container disableGutters key={address} sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
+                    addressStyle={{ color: '#809ACB' }}
                     genesisHash={genesisHash ?? ''}
                     identiconSize={24}
                     style={{
