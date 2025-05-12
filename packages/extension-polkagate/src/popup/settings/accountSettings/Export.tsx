@@ -32,6 +32,7 @@ function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
   const { accounts } = useContext(AccountContext);
+  const onAction = useContext(ActionContext);
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [password, setPassword] = useState<string>();
@@ -47,8 +48,6 @@ function AccountSettings (): React.ReactElement {
     setPassword(pass || '');
   }, []);
 
-  const onAction = useContext(ActionContext);
-
   const onBack = useCallback(() => onAction('/settings-account'), [onAction]);
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
@@ -60,7 +59,7 @@ function AccountSettings (): React.ReactElement {
     }
 
     try {
-      const exportedJson = isExportAll
+      const { exportedJson } = isExportAll
         ? await exportAccounts(accounts.map((account) => account.address), password)
         : await exportAccount(account.address, password);
 
