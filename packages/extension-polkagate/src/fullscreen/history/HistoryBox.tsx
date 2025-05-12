@@ -3,78 +3,23 @@
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
 import React, { memo, useRef } from 'react';
 
-import AssetLoading from '@polkadot/extension-polkagate/src/popup/home/partial/AssetLoading';
-
-import { emptyHistoryList } from '../../assets/icons/index';
 import { useTranslation } from '../../hooks';
 import { COLUMN_WIDTH } from './consts';
+import EmptyHistoryBox from './EmptyHistoryBox';
 import HistoryItem from './HistoryItem';
-
-function EmptyHistoryBox() {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <Box
-        component='img'
-        src={emptyHistoryList as string}
-        sx={{ height: 'auto', m: '30px auto 15px', width: '125px' }}
-      />
-      <Typography color='text.secondary' mb='30px' variant='B-2'>
-        {t('No transaction history is available yet')}
-      </Typography>
-    </>
-  );
-}
+import HistoryLoading from './HistoryLoading';
 
 interface Props {
   historyItems: TransactionDetail[] | null | undefined;
   notReady?: boolean;
 }
 
-function HistoryBox({ historyItems, notReady = false }: Props) {
+function HistoryBox ({ historyItems, notReady = false }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
-
-  const short = window.location.hash.includes('token');
-
-  // const formatDate = useCallback((inputDate: string) => {
-  //   // Handle invalid dates
-  //   const date = new Date(inputDate);
-
-  //   if (isNaN(date.getTime())) {
-  //     return inputDate;
-  //   }
-
-  //   const today = new Date();
-  //   const yesterday = new Date(today);
-
-  //   yesterday.setDate(today.getDate() - 1);
-
-  //   // Reset time components for accurate comparison
-  //   const resetTime = (date: Date) => {
-  //     date.setHours(0, 0, 0, 0);
-
-  //     return date;
-  //   };
-
-  //   const compareDate = resetTime(new Date(date));
-  //   const compareToday = resetTime(new Date(today));
-  //   const compareYesterday = resetTime(new Date(yesterday));
-
-  //   if (compareDate.getTime() === compareToday.getTime()) {
-  //     return 'Today';
-  //   }
-
-  //   if (compareDate.getTime() === compareYesterday.getTime()) {
-  //     return 'Yesterday';
-  //   }
-
-  //   return inputDate;
-  // }, []);
 
   return (
     <>
@@ -83,7 +28,7 @@ function HistoryBox({ historyItems, notReady = false }: Props) {
           {t('Type')}
         </Typography>
         <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.SUB_ACTION }} variant='B-1'>
-          {t('Info')}
+          {t('Object info')}
         </Typography>
         <Typography color='#BEAAD8' sx={{ textAlign: 'right', width: COLUMN_WIDTH.AMOUNT }} variant='B-1'>
           {t('Amount')}
@@ -95,25 +40,28 @@ function HistoryBox({ historyItems, notReady = false }: Props) {
           {t('Status')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ display: 'grid', maxHeight: '470px', overflow: 'scroll', position: 'relative', rowGap: '4px' }}>
-        {!notReady && historyItems?.map((item, index) => (
-          <HistoryItem
-            historyItem={item}
-            key={index}
-            short={short}
-          />
-        ))
+      <Container disableGutters ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: '422px', maxHeight: '470px', overflow: 'scroll', position: 'relative', rowGap: '3px' }}>
+        {
+          !notReady && historyItems?.map((item, index) => (
+            <HistoryItem
+              historyItem={item}
+              key={index}
+            />
+          ))
         }
-        <Typography fontSize='18px' fontWeight={600} >
+        <Typography fontSize='18px' fontWeight={600}>
           <div id='observerObj' style={{ height: '1px' }} />
         </Typography>
-        {!notReady && historyItems === null &&
+        {
+          !notReady && historyItems === null &&
           <EmptyHistoryBox />
         }
-        {!notReady && historyItems === undefined &&
-          <AssetLoading itemsCount={short ? 2 : 5} noDrawer />
+        {
+          !notReady && historyItems === undefined &&
+          <HistoryLoading itemsCount={7} />
         }
-        {notReady &&
+        {
+          notReady &&
           <Typography color='text.primary' my='40px' variant='B-2'>
             {t('Select a chain to view your account history.')}
           </Typography>

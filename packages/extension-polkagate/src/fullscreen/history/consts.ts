@@ -8,3 +8,13 @@ export const COLUMN_WIDTH = {
   DATE: '200px',
   STATUS: '200px'
 };
+
+export enum TAB {
+  ALL = 'all',
+  TRANSFERS = 'transfers',
+  STAKING = 'staking',
+  GOVERNANCE = 'governance'
+}
+
+export const ALL_TYPES = 'all types';
+export const ANY_STATUS = 'any status';

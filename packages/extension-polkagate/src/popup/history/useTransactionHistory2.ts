@@ -175,7 +175,6 @@ export default function useTransactionHistory (address: AccountId | string | und
   const [fetchedExtrinsicsHistories, setFetchedExtrinsicsHistories] = useState<TransactionDetail[]>([]);
   const [allHistories, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
-  const [count, setCount] = useState<number>(0);
 
   // Previous values for comparison to detect changes
   const prevAddressRef = useRef<string | undefined>();
@@ -524,7 +523,6 @@ export default function useTransactionHistory (address: AccountId | string | und
         return;
       }
 
-      setCount(res.data.count);
       const { count = 0, extrinsics = [] } = res.data || {};
       const nextPageNum = pageNum + 1;
       const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
@@ -708,7 +706,7 @@ export default function useTransactionHistory (address: AccountId | string | und
 
   return {
     allHistories,
-    count: count || allHistories?.length || 0,
+    count: allHistories?.length || 0,
     grouped,
     isLoading
   };

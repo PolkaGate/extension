@@ -3,7 +3,7 @@
 
 import type { DropdownOption, TransactionDetail } from '../../../util/types';
 
-import { Container, Grid, Tab, Tabs, Typography } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import useAccountSelectedChain, { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
@@ -12,65 +12,9 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
-import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 import useTransactionHistory2, { type FilterOptions } from '../useTransactionHistory2';
 import HistoryBox from './HistoryBox';
-
-interface Props {
-  setTab: React.Dispatch<React.SetStateAction<TAB>>;
-  tab: TAB | undefined;
-  unSupportedTabs: TAB[];
-}
-
-export enum TAB {
-  ALL = 'all',
-  TRANSFERS = 'transfers',
-  STAKING = 'staking',
-  GOVERNANCE = 'governance'
-}
-
-export function HistoryTabs ({ setTab, tab, unSupportedTabs }: Props): React.ReactElement {
-  const { t } = useTranslation();
-
-  const isSelected = useCallback((selectedTab: TAB | undefined) => tab === selectedTab, [tab]);
-
-  const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
-    setTab(value);
-  }, [setTab]);
-
-  return (
-    <Container disableGutters sx={{ display: 'flex', mx: '30px', width: '100%' }}>
-      <Tabs
-        onChange={handleTabChange}
-        sx={{
-          '& div.MuiTabs-flexContainer': {
-            columnGap: '20px'
-          },
-          '& span.MuiTabs-indicator': {
-            background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
-            borderRadius: '999px',
-            height: '2px'
-          },
-          minHeight: 'unset'
-        }}
-        value={tab}
-      >
-        {Object.entries(TAB).filter(([_, value]) => !unSupportedTabs.includes(value)).map(([key, value]) => (
-          <Tab
-            key={key}
-            label={
-              <Typography color={isSelected(value) ? 'text.primary' : 'secondary.main'} textTransform='capitalize' variant='B-2'>
-                {t(value)}
-              </Typography>
-            }
-            sx={{ m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' }}
-            value={value}
-          />
-        ))}
-      </Tabs>
-    </Container>
-  );
-}
+import HistoryTabs, { TAB } from './HistoryTabs';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 
@@ -139,20 +83,6 @@ function History (): React.ReactElement {
     return Object.keys(result).length === 0 ? null : result;
   }, [decimal, grouped, token]);
 
-  const tabsToFilter = useMemo(() => {
-    const unsupportedTabs = [];
-
-    if (!GOVERNANCE_CHAINS.includes(selectedChain as string)) {
-      unsupportedTabs.push(TAB.GOVERNANCE);
-    }
-
-    if (!STAKING_CHAINS.includes(selectedChain as string)) {
-      unsupportedTabs.push(TAB.STAKING);
-    }
-
-    return unsupportedTabs;
-  }, [selectedChain]);
-
   const handleSelectedChain = useCallback((value: number | string) => {
     selectedAccount && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: value }).then(() => {
       setSelectedChain(value);
@@ -168,9 +98,9 @@ function History (): React.ReactElement {
         text={t('Transaction History')}
       />
       <HistoryTabs
+        selectedChain={selectedChain}
         setTab={setTab}
         tab={tab}
-        unSupportedTabs={tabsToFilter}
       />
       {savedSelectedChain !== undefined &&
         <DropSelect
@@ -179,8 +109,7 @@ function History (): React.ReactElement {
           onChange={handleSelectedChain}
           options={chainOptions}
           style={{
-            mt: '12px',
-            mx: '15px',
+            margin: '12px 15px',
             width: 'calc(100% - 30px)'
           }}
           value={selectedChain}

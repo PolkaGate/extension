@@ -51,7 +51,7 @@ export default function ManualLedgerImport ({ accountIndex, address, addressOffs
             displayContentType='icon'
             onChange={_onSetAccountIndex}
             options={accOps}
-            style={{ mt: '3px' }}
+            style={{ marginTop: '3px' }}
             value={accountIndex}
           />
         </Grid>
@@ -66,7 +66,7 @@ export default function ManualLedgerImport ({ accountIndex, address, addressOffs
             displayContentType='icon'
             onChange={_onSetAddressOffset}
             options={addOps}
-            style={{ mt: '3px' }}
+            style={{ marginTop: '3px' }}
             value={addressOffset}
           />
         </Grid>

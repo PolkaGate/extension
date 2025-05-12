@@ -135,7 +135,7 @@ function AccountSelectionDropDown ({ style }: Props) {
         <DropSelectContainer container focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
           <Grid alignItems='center' columnGap='10px' container direction='row' item justifyContent='start' sx={{ flexWrap: 'nowrap', width: '180px' }}>
             <PolkaGateIdenticon
-              address={selectedAccount?.address}
+              address={String(selectedAccount?.address)}
               size={18}
             />
             <ScrollingTextBox

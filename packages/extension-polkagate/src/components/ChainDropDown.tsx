@@ -18,7 +18,7 @@ interface Props {
   withSelectChainText?: boolean;
 }
 
-function ChainDropDown({ style = {}, withSelectChainText = true }: Props): React.ReactElement {
+function ChainDropDown ({ style = {}, withSelectChainText = true }: Props): React.ReactElement {
   const options = useContext(GenesisHashOptionsContext);
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
@@ -50,8 +50,7 @@ function ChainDropDown({ style = {}, withSelectChainText = true }: Props): React
       onChange={handleSelectedChain}
       options={chainOptions}
       style={{
-        mt: '12px',
-        mx: '15px',
+        margin: '12px 15px',
         width: 'calc(100% - 30px)',
         ...style
       }}

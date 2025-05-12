@@ -1,12 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Variant } from '@mui/material/styles/createTypography';
 import type { Icon } from 'iconsax-react';
-import type { DropdownOption } from '../util/types';
+import type { AdvancedDropdownOption } from '../util/types';
 
-import { Avatar, ClickAwayListener, Grid, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { ExpandMore } from '@mui/icons-material';
+import { Avatar, ClickAwayListener, Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, Global } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useIsDark } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
@@ -47,40 +49,49 @@ function Logo ({ text }: { text: string }) {
 }
 
 interface Props {
+  Icon?: Icon;
+  contentDropWidth?: number | undefined;
   defaultValue?: string | number;
   disabled?: boolean;
-  displayContentType?: 'icon' | 'logo' | 'text' | 'account';
-  Icon?: Icon;
+  displayContentType?: 'icon' | 'logo' | 'text' | 'account' | 'iconOption';
   onChange?: (value: number | string) => void;
-  options: DropdownOption[];
-  style?: SxProps<Theme>;
+  options: AdvancedDropdownOption[];
+  style?: React.CSSProperties;
+  dropContentStyle?: React.CSSProperties;
+  scrollTextOnOverflow?: boolean;
+  showCheckAsIcon?: boolean;
+  simpleArrow?: boolean;
+  textVariant?: Variant;
   value?: string | number | undefined;
   withDivider?: boolean;
-  scrollTextOnOverFlowX?: boolean;
-  showCheckAsIcon?: boolean;
-  contentDropWidth?: number | undefined;
 }
 
-function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', onChange, options, scrollTextOnOverFlowX, showCheckAsIcon, style, value, withDivider = false }: Props) {
+function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', dropContentStyle, onChange, options, scrollTextOnOverflow, showCheckAsIcon, simpleArrow, style, textVariant, value, withDivider = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<number | string | undefined>(defaultValue);
+  const [selectedValue, setSelectedValue] = useState<number | string | undefined>(value ?? defaultValue);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const _contentDropWidth = useMemo(() => containerRef.current?.clientWidth, [containerRef.current?.clientWidth]);
   const defaultValueText = useMemo(() => options.find(({ value }) => value === defaultValue)?.text, [defaultValue, options]);
   const selectedValueText = useMemo(() => options.find(({ value: optionValue }) => optionValue === (selectedValue ?? value))?.text, [options, selectedValue, value]);
+  const selectedOption = useMemo(() => options.find(({ value: optionValue }) => optionValue === (selectedValue ?? value)), [options, selectedValue, value]);
 
   const toggleOpen = useCallback(() => !disabled && setOpen((isOpen) => !isOpen), [disabled]);
   const handleClickAway = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    // Update selectedValue when the value prop changes
+    setSelectedValue(value);
+  }, [value]);
 
   return (
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropSelectContainer container focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
-          <Grid alignItems='center' container item sx={{ columnGap: '5px', flexWrap: 'noWrap' }} xs>
+          <Grid alignItems='center' container item sx={{ columnGap: style?.columnGap ?? '5px', flexWrap: 'noWrap' }} xs>
             {displayContentType === 'logo' && selectedValueText &&
               <Logo
                 text={selectedValueText}
@@ -92,24 +103,33 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
                 size={18}
               />
             }
+            {displayContentType === 'iconOption' &&
+              <>
+                {selectedOption?.Icon}
+              </>
+            }
             {displayContentType === 'icon' && Icon &&
               <Icon color='#BEAAD8' size='18' variant='Bulk' />
             }
-            {scrollTextOnOverFlowX && _contentDropWidth
+            {scrollTextOnOverflow && _contentDropWidth
               ? <ScrollingTextBox
-                text={selectedValueText ?? defaultValueText}
+                text={selectedValueText ?? defaultValueText ?? ''}
                 textStyle={{
-                  color: 'text.primary',
+                  color: style?.color ?? 'text.secondary',
                   ...theme.typography['B-4']
                 }}
                 width={Math.floor(_contentDropWidth * 0.6)}
               />
-              : <Typography color='text.secondary' variant='B-1'>
+              : <Typography color={style?.color ?? 'text.secondary'} variant={textVariant ?? 'B-1'}>
                 {selectedValueText ?? defaultValueText}
               </Typography>
             }
           </Grid>
-          <ArrowDown2 color={open ? '#FF4FB9' : '#AA83DC'} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
+          {
+            simpleArrow
+              ? <ExpandMore sx={{ color: open ? '#FF4FB9' : '#AA83DC', fontSize: '17px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
+              : <ArrowDown2 color={open ? '#FF4FB9' : '#AA83DC'} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
+          }
         </DropSelectContainer>
       </ClickAwayListener>
       <DropContent
@@ -124,6 +144,7 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
         setOpen={setOpen}
         setSelectedValue={setSelectedValue}
         showCheckAsIcon={showCheckAsIcon}
+        style={dropContentStyle}
         withDivider={withDivider}
       />
     </>

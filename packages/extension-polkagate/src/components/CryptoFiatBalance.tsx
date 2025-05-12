@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 import { Grid, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
-import { FormatBalance2, FormatPrice } from '../../components';
+import { FormatBalance2, FormatPrice } from '.';
 
 type FormatPriceProps = ComponentProps<typeof FormatPrice>;
 type FormatBalance2Props = ComponentProps<typeof FormatBalance2>;
@@ -24,7 +24,7 @@ interface Props {
   whichFirst?: 'crypto' | 'fiat';
 }
 
-export function CryptoFiatBalance ({ cryptoProps, cryptoBalance, decimal = 0, fiatBalance, fiatProps, style = {}, token = '', whichFirst = 'fiat' }: Props) {
+export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, style = {}, token = '', whichFirst = 'fiat' }: Props) {
   const theme = useTheme();
   const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
   const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';

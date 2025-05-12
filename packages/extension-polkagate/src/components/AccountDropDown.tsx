@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SxProps, type Theme } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { useSelectedAccount } from '../hooks';
@@ -9,18 +8,18 @@ import { updateMeta } from '../messaging';
 import { AccountContext, DropSelect } from '.';
 
 interface Props {
-  style?: SxProps<Theme>;
+  style?: React.CSSProperties;
 }
 
 function AccountDropDown ({ style }: Props) {
   const selectedAccount = useSelectedAccount();
   const { accounts } = useContext(AccountContext);
 
-  const onClick = useCallback((address: string) => {
+  const onClick = useCallback((address: string | number) => {
     const accountToUnselect = accounts.find(({ address: accountAddress, selected }) => selected && address !== accountAddress);
 
     Promise.all([
-      updateMeta(address, JSON.stringify({ selected: true })),
+      updateMeta(String(address), JSON.stringify({ selected: true })),
       ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
     ])
       .catch(console.error);
@@ -29,7 +28,7 @@ function AccountDropDown ({ style }: Props) {
   const options = useMemo(() => {
     return accounts.map(({ address, name }) => {
       return {
-        text: name,
+        text: name || 'unknown',
         value: address
       };
     });
@@ -37,16 +36,15 @@ function AccountDropDown ({ style }: Props) {
 
   return (
     <DropSelect
-      contentDropWidth = {250}
+      contentDropWidth={250}
       defaultValue={selectedAccount?.address}
       displayContentType='account'
       onChange={onClick}
       options={options}
-      scrollTextOnOverFlowX
+      scrollTextOnOverflow
       showCheckAsIcon
       style={{
-        mt: '12px',
-        mx: '15px',
+        margin: '12px 15px',
         ...style
       }}
       value={selectedAccount?.address}

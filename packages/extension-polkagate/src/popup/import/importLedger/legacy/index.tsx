@@ -93,7 +93,7 @@ export default function LegacyApps ({ setMode }: Props): React.ReactElement {
           onChange={onSelectChange}
           options={networkOps as DropdownOption[]}
           style={{
-            mt: '12px',
+            marginTop: '12px',
             width: 'calc(100% - 30px)'
           }}
           value={genesis}
