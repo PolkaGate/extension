@@ -62,12 +62,13 @@ export default function Info (): React.ReactElement {
   return (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noAccountSelected />
+        <UserDashboardHeader homeType='default' noSelection />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
+            staking
             style={{ pb: 0 }}
-            text={t('solo staking')}
+            text={t('info')}
           />
           <Grid alignItems='center' container item justifyContent='center'>
             <Box

@@ -328,7 +328,7 @@ function Tokens (): React.ReactElement {
               token={token?.token}
             />
             <TokenStakingInfo
-              address={account?.address}
+              genesisHash={genesisHash}
               tokenDetail={token}
             />
           </Grid>

@@ -6,17 +6,15 @@
 import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { Copy } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useChainInfo, useFormatted3, usePrices, useTokenPrice2 } from '../../../hooks';
+import { useChainInfo, usePrices, useTokenPrice2 } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox } from '../../../style';
 import getLogo2 from '../../../util/getLogo2';
-import { toShortAddress } from '../../../util/utils';
 import PortfolioActionButton, { type PortfolioActionButtonProps } from './PortfolioActionButton';
 
 const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: string | undefined; }) => {
@@ -36,26 +34,6 @@ const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: strin
   );
 };
 
-const StakerAddress = ({ address }: { address: string | undefined; }) => {
-  const onCopy = useCallback(() => {
-    navigator.clipboard.writeText(address ?? '')
-      .catch((err) => console.error('Error copying text: ', err));
-  }, [address]);
-
-  if (!address) {
-    return null;
-  }
-
-  return (
-    <Grid alignItems='center' container item sx={{ bgcolor: '#BFA1FF26', borderRadius: '12px', columnGap: '4px', p: '4px', width: 'fit-content' }}>
-      <Typography color='text.highlight' variant='B-2'>
-        {toShortAddress(address)}
-      </Typography>
-      <Copy color='#809ACB' onClick={onCopy} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-    </Grid>
-  );
-};
-
 const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
   return (
     <Grid container item sx={{ bottom: 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
@@ -68,7 +46,6 @@ const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
 };
 
 interface Props {
-  address: string | undefined;
   genesisHash: string;
   staked: BN | undefined;
   type: 'solo' | 'pool';
@@ -76,12 +53,11 @@ interface Props {
   buttons?: PortfolioActionButtonProps[];
 }
 
-export default function StakingPortfolio ({ address, buttons = [], genesisHash, staked, style, type }: Props): React.ReactElement {
+export default function StakingPortfolio ({ buttons = [], genesisHash, staked, style, type }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const formatted = useFormatted3(address, genesisHash);
 
   const stakedInCurrency = useMemo(() => {
     if (!staked || !pricesInCurrency || !tokenPrice || !decimal) {
@@ -92,11 +68,8 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
   }, [decimal, tokenPrice, pricesInCurrency, staked]);
 
   return (
-    <GlowBox style={{ display: 'grid', p: '18px', pb: 0, rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
-      <Grid alignItems='center' container item justifyContent='space-between'>
-        <StakedToken genesisHash={genesisHash} token={token} />
-        <StakerAddress address={formatted} />
-      </Grid>
+    <GlowBox staking style={{ display: 'grid', p: '18px', pb: 0, rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
+      <StakedToken genesisHash={genesisHash} token={token} />
       <Grid container item>
         {staked === undefined
           ? (
@@ -109,7 +82,7 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
           : (
             <FormatPrice
               commify
-              decimalColor={theme.palette.text.secondary}
+              decimalColor={theme.palette.text.highlight}
               dotStyle={'big'}
               fontFamily='OdibeeSans'
               fontSize='40px'
@@ -126,7 +99,7 @@ export default function StakingPortfolio ({ address, buttons = [], genesisHash, 
           decimalPoint={4}
           decimals={[decimal ?? 0]}
           style={{
-            color: '#BEAAD8',
+            color: theme.palette.text.highlight,
             fontFamily: 'Inter',
             fontSize: '12px',
             fontWeight: 500,

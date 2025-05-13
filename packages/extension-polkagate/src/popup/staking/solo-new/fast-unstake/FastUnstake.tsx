@@ -179,10 +179,11 @@ export default function FastUnstake (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noAccountSelected />
+      <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}
+          staking
           stepCounter={{ currentStep: 1, totalSteps: 2 }}
           style={{ pb: 0 }}
           text={t('Fast Unstake')}

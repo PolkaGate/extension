@@ -50,12 +50,12 @@ const SelectedProxy = ({ genesisHash, signerInformation }: { signerInformation: 
 
 interface Props {
   homeType?: 'default' | 'active';
-  noAccountSelected?: boolean;
+  noSelection?: boolean;
   signerInformation?: SignerInformation;
   genesisHash?: string | null | undefined;
 }
 
-function UserDashboardHeader ({ genesisHash, homeType, noAccountSelected = false, signerInformation }: Props) {
+function UserDashboardHeader ({ genesisHash, homeType, noSelection = false, signerInformation }: Props) {
   const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
 
   return (
@@ -63,9 +63,9 @@ function UserDashboardHeader ({ genesisHash, homeType, noAccountSelected = false
       <Grid columnGap='6px' container item width='fit-content'>
         <Grid container item width='fit-content'>
           <HomeButton type={homeType || (isConnectedDapp.length ? 'default' : 'active')} />
-          {!noAccountSelected && <ConnectedDapp />}
+          {!noSelection && <ConnectedDapp />}
         </Grid>
-        {!noAccountSelected && <AccountSelection />}
+        {!(signerInformation?.selectedProxy && genesisHash) && <AccountSelection noSelection={noSelection} />} {/** Should not display the selected account while the selected proxy account is being shown. */}
         {signerInformation?.selectedProxy && genesisHash && <SelectedProxy genesisHash={genesisHash} signerInformation={signerInformation} />}
       </Grid>
       <FullscreenModeButton />

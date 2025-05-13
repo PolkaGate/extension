@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router';
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import { amountToMachine } from '../../../../util/utils';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -38,6 +38,17 @@ export default function Restake (): React.ReactElement {
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
+  const errorMessage = useMemo(() => {
+    if (!unlockingAmount || unlockingAmount.isZero() || !rebondValue || rebondValue.isZero() || !api) {
+      return undefined;
+    }
+
+    if (rebondValue.gt(unlockingAmount)) {
+      return t('It is more than unstaking amount.');
+    }
+
+    return undefined;
+  }, [api, rebondValue, t, unlockingAmount]);
   const transactionInformation = useMemo(() => {
     return [{
       content: rebondValue,
@@ -68,7 +79,7 @@ export default function Restake (): React.ReactElement {
       return '0';
     }
 
-    return amountToHuman(unlockingAmount, decimal);
+    return unlockingAmount.toString();
   }, [decimal, unlockingAmount]);
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
@@ -87,10 +98,11 @@ export default function Restake (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noAccountSelected />
+        <UserDashboardHeader homeType='default' noSelection />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
+            staking
             stepCounter={{ currentStep: 1, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Restake')}
@@ -109,6 +121,8 @@ export default function Restake (): React.ReactElement {
                 buttonName: t('All'),
                 value: onMaxValue
               }]}
+              decimal={decimal}
+              errorMessage={errorMessage}
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
@@ -120,7 +134,7 @@ export default function Restake (): React.ReactElement {
               token={token}
             />
             <StakingActionButton
-              disabled={!rebondValue || rebondValue.isZero()}
+              disabled={!rebondValue || rebondValue.isZero() || !!errorMessage || !api}
               onClick={onNext}
               style={{ mt: '24px' }}
               text={t('Next')}

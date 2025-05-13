@@ -32,9 +32,10 @@ interface DynamicBackButtonProps {
   onClick: () => void;
   style?: SxProps<Theme>;
   stepCounter?: StepCounterType;
+  staking?: boolean;
 }
 
-function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicBackButtonProps) {
+function BackWithLabel ({ content, onClick, staking = false, stepCounter, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
@@ -60,7 +61,7 @@ function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicB
       sx={{ cursor: 'pointer', justifyContent: 'space-between', px: '15px', py: '8px', width: '100%', ...style }}
     >
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', flexDirection: 'row', width: 'fit-content' }}>
-        <ArrowCircleLeft color='#FF4FB9' size='24' variant={hovered ? 'Bold' : 'Bulk'} />
+        <ArrowCircleLeft color={!staking ? '#FF4FB9' : '#809ACB'} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
         {renderContent}
       </Grid>
       {stepCounter && <StepCounter stepCounter={stepCounter} />}
