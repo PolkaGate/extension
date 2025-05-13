@@ -179,7 +179,7 @@ export default function FastUnstake (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noAccountSelected />
+      <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}

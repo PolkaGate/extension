@@ -18,6 +18,7 @@ import AvailableToStake from '../../partial/AvailableToStake';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
+import TokenStakeStatus from '../../partial/TokenStakeStatus';
 
 export default function BondExtra (): React.ReactElement {
   useBackground('staking');
@@ -85,7 +86,7 @@ export default function BondExtra (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noAccountSelected />
+      <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}
@@ -95,11 +96,12 @@ export default function BondExtra (): React.ReactElement {
           text={t('Stake More')}
         />
         <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px' }}>
-          <AvailableToStake
-            availableAmount={stakingInfo.availableBalanceToStake}
+          <TokenStakeStatus
+            amount={stakingInfo.availableBalanceToStake}
             decimal={decimal}
-            stakeType='solo'
+            genesisHash={genesisHash}
             style={{ mt: '8px' }}
+            text={t('Available to stake')}
             token={token}
           />
           <StakeAmountInput

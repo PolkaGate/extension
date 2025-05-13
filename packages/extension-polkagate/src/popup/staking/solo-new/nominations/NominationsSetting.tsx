@@ -114,7 +114,7 @@ export default function NominationsSetting (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noAccountSelected />
+      <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <BackButton
           nominatedValidatorsInformation={nominatedValidatorsInformation}

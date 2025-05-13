@@ -20,6 +20,7 @@ interface TileActionButtonProps {
 }
 
 function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text }: TileActionButtonProps): React.ReactElement {
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
 
@@ -38,7 +39,7 @@ function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text 
           onClick={onClick}
           ref={containerRef}
           sx={{
-            ':hover': { bgcolor: '#809ACB', borderColor: 'transparent' },
+            ':hover': { bgcolor: theme.palette.text.highlight, borderColor: 'transparent' },
             bgcolor: '#110F2A',
             border: isRow ? 'none' : '2px solid #060518',
             borderRadius: '11px',
@@ -50,7 +51,7 @@ function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text 
           }}
           xs
         >
-          <Icon color={hovered ? '#ffffff' : '#809ACB'} size='19' variant='Bulk' />
+          <Icon color={hovered ? '#ffffff' : theme.palette.text.highlight} size='19' variant='Bulk' />
           {!noText &&
           <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
             {text}
@@ -99,16 +100,16 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         }}
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: layoutDirection === 'row' ? '100%' : 'fit-content' }}>
-          <Icon color='#809ACB' size='20' variant='Bulk' />
+          <Icon color={theme.palette.text.highlight} size='20' variant='Bulk' />
           {layoutDirection === 'row' && onExpand &&
-            <ArrowCircleDown color='#809ACB' onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item xs>
           <Typography color='text.highlight' variant='B-1'>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
-            <ArrowCircleDown color='#809ACB' onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
         </Grid>
         {
           cryptoAmount === undefined

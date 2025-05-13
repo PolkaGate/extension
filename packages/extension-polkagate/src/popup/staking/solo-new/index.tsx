@@ -115,7 +115,7 @@ export default function Solo (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noAccountSelected />
+        <UserDashboardHeader homeType='default' noSelection />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
@@ -124,7 +124,6 @@ export default function Solo (): React.ReactElement {
             text={t('solo staking')}
           />
           <StakingPortfolio
-            address={selectedAccount?.address}
             buttons={[{
               Icon: BuyCrypto,
               onClick: onUnstake,

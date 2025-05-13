@@ -20,17 +20,17 @@ const GlowBoxContainer = styled(Container)(() => ({
   zIndex: -1
 }));
 
-const GlowBall = styled('div')({
+const GlowBall = styled('div')<{ staking: boolean }>(({ staking }) => ({
   backgroundBlendMode: 'color-dodge',
-  backgroundColor: '#FF59EE',
+  backgroundColor: staking ? '#59CDFF' : '#FF59EE',
   borderRadius: '50%',
-  filter: 'blur(60px)', // Glow effect
+  filter: staking ? 'blur(85px)' : 'blur(60px)', // Glow effect
   height: '128px',
   left: '35%',
   position: 'absolute',
   top: '-75px',
   width: '100px'
-});
+}));
 
 const FadeOut = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
   background: isDark
@@ -52,7 +52,7 @@ const Fade = styled('div')({
 
 const FadeOutFs = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
   background: isDark
-    ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(6, 10, 29, 0) 100%)'
+    ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%)'
     : '',
   borderRadius: '24px',
   height: '158px',
@@ -63,7 +63,7 @@ const FadeOutFs = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
 
 function GlowDivider ({ isDark, placement, staking }: { staking: boolean; isDark: boolean; placement: 'right' | 'left'; }): React.ReactElement {
   const stakingStyle = staking
-    ? { background: 'linear-gradient(180deg, rgba(16, 16, 25, 0.1) 0%, hsla(198, 100.00%, 61.80%, 0.50) 50.06%, transparent 100%)' }
+    ? { background: 'linear-gradient(180deg, rgba(16, 16, 25, 0.1) 0%, rgba(60, 196, 255, 0.5) 50.06%, transparent 100%)' }
     : {};
 
   return (
@@ -109,11 +109,11 @@ function GlowBox ({ children, showTopBorder = true, staking = false, style }: Pr
         <GlowDivider isDark={isDark} placement='left' staking={staking} />
         <GlowDivider isDark={isDark} placement='right' staking={staking} />
         {isDark &&
-          <GlowBall />
+          <GlowBall staking={staking} />
         }
         {isExtension
           ? <>
-            <Fade />
+            {!staking && <Fade />}
             <FadeOut isDark={isDark} />
           </>
           : <FadeOutFs isDark={isDark} />
