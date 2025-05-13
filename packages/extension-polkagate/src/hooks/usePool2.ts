@@ -1,15 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { MyPoolInfo } from '../util/types';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { FetchingContext, WorkerContext } from '../components';
-import { AUTO_MODE } from '../util/constants';
 import { isHexToBn } from '../util/utils';
-import { useChainInfo, useFormatted3 } from '.';
+import { useFormatted3 } from '.';
 
 interface WorkerMessage {
   functionName?: string;
@@ -17,7 +15,7 @@ interface WorkerMessage {
 }
 
 // export default function usePool2 (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
-export default function usePool2(address: string | undefined, genesisHash: string | undefined): MyPoolInfo | null | undefined {
+export default function usePool2 (address: string | undefined, genesisHash: string | undefined): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
 
   // const { decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
@@ -56,6 +54,10 @@ export default function usePool2(address: string | undefined, genesisHash: strin
         return;
       }
 
+      /** reset isFetching */
+      isFetching.fetching[String(formatted)]['getPool'] = false;
+      isFetching.set(isFetching.fetching);
+
       if (!results) {
         setNewPool(null);
 
@@ -85,7 +87,7 @@ export default function usePool2(address: string | undefined, genesisHash: strin
     return () => {
       worker.removeEventListener('message', handleMessage);
     };
-  }, [worker]);
+  }, [formatted, isFetching, worker]);
 
   // const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
   //   const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
@@ -170,12 +172,12 @@ export default function usePool2(address: string | undefined, genesisHash: strin
     //   return;
     // }
 
-    if (!isFetching.fetching[String(formatted)]?.getPool) {
+    if (!isFetching.fetching[String(formatted)]?.['getPool']) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {}; // to initialize
       }
 
-      isFetching.fetching[String(formatted)].getPool = true;
+      isFetching.fetching[String(formatted)]['getPool'] = true;
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
@@ -185,7 +187,7 @@ export default function usePool2(address: string | undefined, genesisHash: strin
       setWaiting(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetching.fetching[String(formatted)]?.length, formatted, fetchPoolInformation]);
+  }, [isFetching.fetching[String(formatted)]?.['length'], formatted, fetchPoolInformation]);
 
   // useEffect(() => {
   //   refresh && console.log('refreshing ...');

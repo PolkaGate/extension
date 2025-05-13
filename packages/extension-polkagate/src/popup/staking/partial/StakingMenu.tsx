@@ -149,10 +149,10 @@ function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
     height: '2px',
     position: 'relative',
     top: '2px',
-    transform: `translateX(${leftPosition ? leftPosition - 56 : 7}px)`,
+    transform: `translateX(${leftPosition ? leftPosition - (type === 'solo' ? 56 : 80) : 7}px)`,
     transition: 'transform 0.3s ease-in-out',
     width: '48px'
-  }), [leftPosition]);
+  }), [leftPosition, type]);
 
   return (
     <Container disableGutters sx={{ bottom: '15px', mx: type === 'solo' ? '45px' : '70px', position: 'fixed', width: `calc(100% - ${type === 'solo' ? '90px' : '140px'})`, zIndex: 1 }}>
