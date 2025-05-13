@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, type Icon as IconType } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -22,7 +21,7 @@ interface Props {
   title: string;
 }
 
-function ActionCard({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
+function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
 
