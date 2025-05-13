@@ -13,8 +13,7 @@ import { useNavigate, useParams } from 'react-router';
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { amountToHuman, amountToMachine } from '../../../../util/utils';
-import AvailableToStake from '../../partial/AvailableToStake';
+import { amountToMachine } from '../../../../util/utils';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -39,6 +38,21 @@ export default function BondExtra (): React.ReactElement {
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, bondExtra, [bondExtraValue]);
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
+  const errorMessage = useMemo(() => {
+    if (!bondExtraValue || bondExtraValue.isZero() || !stakingInfo.availableBalanceToStake || !api) {
+      return undefined;
+    }
+
+    if (stakingInfo.availableBalanceToStake.isZero()) {
+      return t('Not enough amount to stake more.');
+    }
+
+    if (bondExtraValue.gt(stakingInfo.availableBalanceToStake)) {
+      return t('It is more than available amount to stake.');
+    }
+
+    return undefined;
+  }, [api, bondExtraValue, stakingInfo.availableBalanceToStake, t]);
   const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: bondExtraValue,
@@ -68,8 +82,8 @@ export default function BondExtra (): React.ReactElement {
       return '0';
     }
 
-    return amountToHuman(stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2)), decimal); // TO-DO: check if this is correct
-  }, [decimal, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
+    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+  }, [stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
 
@@ -109,6 +123,8 @@ export default function BondExtra (): React.ReactElement {
               buttonName: t('Max'),
               value: onMaxValue
             }]}
+            decimal={decimal}
+            errorMessage={errorMessage}
             onInputChange={onInputChange}
             style={{ mb: '18px', mt: '8px' }}
             title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
@@ -120,7 +136,7 @@ export default function BondExtra (): React.ReactElement {
             token={token}
           />
           <StakingActionButton
-            disabled={!bondExtraValue || bondExtraValue.isZero()}
+            disabled={!bondExtraValue || bondExtraValue.isZero() || !!errorMessage || !api}
             onClick={onNext}
             style={{ mt: '24px' }}
             text={t('Next')}

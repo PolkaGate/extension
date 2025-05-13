@@ -12,7 +12,7 @@ import { type BN, BN_ONE } from '@polkadot/util';
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { amountToHuman, amountToMachine } from '../../../../util/utils';
+import { amountToMachine } from '../../../../util/utils';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -37,8 +37,8 @@ export default function Unstake (): React.ReactElement {
   const [unstakingValue, setUnstakingValue] = useState<BN | null | undefined>();
   const [review, setReview] = useState<boolean>(false);
 
-  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
-  const isStopStaking = useMemo(() => Boolean(unstakingValue && staked && unstakingValue.eq(staked as unknown as BN)), [staked, unstakingValue]);
+  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active as unknown as BN | undefined, [stakingInfo.stakingAccount?.stakingLedger.active]);
+  const isStopStaking = useMemo(() => Boolean(unstakingValue && staked && unstakingValue.eq(staked)), [staked, unstakingValue]);
 
   const unlockingLen = stakingInfo.stakingAccount?.stakingLedger?.unlocking?.length;
 
@@ -68,6 +68,25 @@ export default function Unstake (): React.ReactElement {
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? unbonded?.(unstakingValue ?? BN_ONE));
 
+  const errorMessage = useMemo(() => {
+    if (!unstakingValue || unstakingValue.isZero() || !staked || !api) {
+      return undefined;
+    }
+
+    if (unstakingValue.gt(staked)) {
+      return t('It is more than already staked.');
+    }
+
+    if (stakingInfo.stakingConsts && !staked.sub(unstakingValue).isZero() && !isStopStaking && staked.sub(unstakingValue).lt(stakingInfo.stakingConsts.minNominatorBond)) {
+      const remained = api.createType('Balance', staked.sub(unstakingValue)).toHuman();
+      const min = api.createType('Balance', stakingInfo.stakingConsts.minNominatorBond).toHuman();
+
+      return t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } });
+    }
+
+    return undefined;
+  }, [api, isStopStaking, staked, stakingInfo.stakingConsts, t, unstakingValue]);
+
   const transactionInformation = useMemo(() => {
     return [{
       content: unstakingValue,
@@ -79,7 +98,7 @@ export default function Unstake (): React.ReactElement {
       title: t('Fee')
     },
     {
-      content: unstakingValue && staked ? (staked as unknown as BN).sub(unstakingValue) : undefined,
+      content: unstakingValue && staked ? (staked).sub(unstakingValue) : undefined,
       title: t('Total stake after'),
       withLogo: true
     }];
@@ -96,7 +115,7 @@ export default function Unstake (): React.ReactElement {
       return '0';
     }
 
-    return amountToHuman(staked, decimal);
+    return staked.toString();
   }, [decimal, staked]);
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
@@ -126,7 +145,7 @@ export default function Unstake (): React.ReactElement {
           />
           <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', px: '15px' }}>
             <TokenStakeStatus
-              amount={staked as unknown as BN}
+              amount={staked}
               decimal={decimal}
               genesisHash={genesisHash}
               style={{ mt: '8px' }}
@@ -138,6 +157,8 @@ export default function Unstake (): React.ReactElement {
                 buttonName: t('All'),
                 value: onMaxValue
               }]}
+              decimal={decimal}
+              errorMessage={errorMessage}
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
@@ -149,7 +170,7 @@ export default function Unstake (): React.ReactElement {
               token={token}
             />
             <StakingActionButton
-              disabled={!unstakingValue || unstakingValue.isZero()}
+              disabled={!unstakingValue || unstakingValue.isZero() || !!errorMessage || !api}
               onClick={onNext}
               style={{ mt: '24px' }}
               text={t('Next')}

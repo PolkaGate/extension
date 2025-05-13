@@ -3,13 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
+import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { GradientDivider, TwoToneText } from '../../../components';
+import { amountToHuman } from '../../../util/utils';
 
 interface AmountButtonProps extends AmountButtonInputProps {
-  onClick: ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => void
+  onClick: ({ target: { value } }: React.ChangeEvent<HTMLInputElement>, fromButtons?: boolean) => void
 }
 
 interface AmountButtonInputProps {
@@ -33,7 +34,7 @@ const StyledButton = styled(Grid)(() => ({
 
 const AmountButton = ({ buttonName, onClick, value }: AmountButtonProps) => {
   const handleClick = useCallback(() => {
-    onClick({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
+    onClick({ target: { value } } as React.ChangeEvent<HTMLInputElement>, true);
   }, [onClick, value]);
 
   return (
@@ -101,14 +102,25 @@ interface Props {
   numberOnly?: boolean;
   maxLength?: { integer: number; decimal: number };
   enteredValue?: string;
+  errorMessage?: string | undefined;
+  decimal: number | undefined;
 }
 
-export default function StakeAmountInput ({ buttonsArray = [], enteredValue, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, title, titleInColor }: Props): React.ReactElement {
+export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [textFieldValue, setTextFieldValue] = useState<string | null | undefined>();
 
-  const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>, fromButtons?: boolean) => {
+    if (fromButtons) {
+      const stringValue = String(Number(value) / (10 ** (decimal ?? 0)));
+
+      setTextFieldValue(amountToHuman(value, decimal));
+      onInputChange(stringValue);
+
+      return;
+    }
+
     if (numberOnly) {
       // Allow decimal point and numbers only
       const filteredValue = value.replace(/[^0-9.]/g, '');
@@ -147,41 +159,48 @@ export default function StakeAmountInput ({ buttonsArray = [], enteredValue, foc
       setTextFieldValue(value);
       onInputChange(value);
     }
-  }, [maxLength, numberOnly, onInputChange]);
+  }, [decimal, maxLength.decimal, maxLength.integer, numberOnly, onInputChange]);
 
   return (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', p: '12px', width: '100%', ...style }}>
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant='B-1'>
-          <TwoToneText
-            backgroundColor='#110F2A'
-            color={theme.palette.text.highlight}
-            text={title ?? ''}
-            textPartInColor={titleInColor ?? ''}
-          />
-        </Typography>
-        <Grid container item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
-          {buttonsArray.map(({ buttonName, value }, index) => (
-            <AmountButton
-              buttonName={buttonName}
-              key={index}
-              onClick={onChange}
-              value={value}
+    <Stack direction='column' sx={style}>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%' }}>
+        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant='B-1'>
+            <TwoToneText
+              backgroundColor='#110F2A'
+              color={theme.palette.text.highlight}
+              text={title ?? ''}
+              textPartInColor={titleInColor ?? ''}
             />
-          ))}
-        </Grid>
-      </Container>
-      <GradientDivider style={{ my: '6px' }} />
-      <StyledTextField
-        autoComplete='off'
-        autoFocus={focused}
-        fullWidth
-        onChange={onChange}
-        placeholder={placeholder ?? '0.00'}
-        theme={theme}
-        type='text'
-        value={enteredValue ?? textFieldValue ?? ''}
-      />
+          </Typography>
+          <Grid container item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
+            {buttonsArray.map(({ buttonName, value }, index) => (
+              <AmountButton
+                buttonName={buttonName}
+                key={index}
+                onClick={onChange}
+                value={value}
+              />
+            ))}
+          </Grid>
+        </Container>
+        <GradientDivider style={{ my: '6px' }} />
+        <StyledTextField
+          autoComplete='off'
+          autoFocus={focused}
+          fullWidth
+          onChange={onChange}
+          placeholder={placeholder ?? '0.00'}
+          theme={theme}
+          type='text'
+          value={enteredValue ?? textFieldValue ?? ''}
+        />
+      </Stack>
+      <Collapse in={!!errorMessage} sx={{ width: '100%' }}>
+        <Typography color='#FF4FB9' variant='B-1'>
+          {errorMessage}
+        </Typography>
+      </Collapse>
     </Stack>
   );
 }
