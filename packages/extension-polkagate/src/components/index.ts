@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as GradientDivider } from '../style/GradientDivider';
+export { default as AccountSelectionDropDown } from './AccountDropDown';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
@@ -38,6 +39,7 @@ export { default as ColorContext } from './ColorContext';
 export * from './contexts';
 export { default as Convictions } from './Convictions';
 export { default as CopyAddressButton } from './CopyAddressButton';
+export { default as CryptoFiatBalance } from './CryptoFiatBalance';
 export { default as DecisionButtons } from './DecisionButtons';
 export { default as DisplayInfo } from './DisplayInfo';
 export { default as Dots } from './Dots';

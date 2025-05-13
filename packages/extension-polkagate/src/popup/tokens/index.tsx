@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '../../hooks/useAssetsBalances';
@@ -84,7 +83,7 @@ const lockedReservedReducer = (state: LockedReservedState, action: Action): Lock
   }
 };
 
-function Tokens(): React.ReactElement {
+function Tokens (): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);

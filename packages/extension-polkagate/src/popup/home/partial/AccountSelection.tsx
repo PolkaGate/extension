@@ -1,25 +1,24 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountJson } from '@polkadot/extension-base/background/types';
-
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 
 import { AccountContext, ScrollingTextBox } from '../../../components';
 import useIsDark from '../../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../svg';
 
-function AccountSelection(): React.ReactElement {
+function AccountSelection (): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [selectedAccount, setSelectedAccount] = useState<AccountJson | undefined>();
+  const selectedAccount = useSelectedAccount();
 
   const onClick = useCallback(() => {
     const from = location?.state?.from || '/';
@@ -30,14 +29,6 @@ function AccountSelection(): React.ReactElement {
       navigate('/accounts', { state: { from: location.pathname } });
     }
   }, [location, navigate]);
-
-  useEffect(() => {
-    const selected = accounts.find(({ selected }) => selected);
-
-    if (!selectedAccount || selectedAccount !== selected) {
-      setSelectedAccount(selected ?? accounts[0]);
-    }
-  }, [accounts, selectedAccount]);
 
   const isInAccountLists = location?.pathname === '/accounts';
 

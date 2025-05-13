@@ -1,17 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
+import { type ActionType, historyIconBgColor, isReward, resolveActionType } from '@polkadot/extension-polkagate/src/util/index';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
-import { isAye } from '../../../fullscreen/governance/post/myVote/util';
 import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import GradientDivider from '../../../style/GradientDivider';
@@ -23,10 +22,6 @@ interface HistoryItemProps {
   historyItems: TransactionDetail[];
   short: boolean;
 }
-
-type ActionType = 'send' | 'receive' | 'solo staking' | 'pool staking' | 'reward' | 'aye' | 'nay' | 'abstain' | 'delegate' | 'utility' | 'balances' | 'governance' | 'proxy';
-const actionTypes: ActionType[] = ['send', 'receive', 'solo staking', 'pool staking', 'reward', 'aye', 'nay', 'abstain', 'delegate', 'utility', 'balances', 'governance', 'proxy'];
-const isActionType = (value: string): value is ActionType => actionTypes.includes(value as ActionType);
 
 const HistoryIcon = ({ action }: { action: string }) => {
   const normalizedAction = action.toLowerCase() as ActionType;
@@ -52,44 +47,6 @@ const HistoryIcon = ({ action }: { action: string }) => {
   return actionIcons[normalizedAction] || DEFAULT_ICON;
 };
 
-const historyIconBgColor = (action: string) => {
-  const normalizedAction = action.toLowerCase() as ActionType;
-
-  const actionColors: Record<ActionType, string> = {
-    abstain: '#6743944D',
-    aye: '#6743944D',
-    balances: '#6743944D',
-    delegate: '#6743944D',
-    governance: '#6743944D',
-    nay: '#6743944D',
-    'pool staking': '#6743944D',
-    proxy: 'transparent',
-    receive: '#82FFA540',
-    reward: '#82FFA540',
-    send: 'transparent',
-    'solo staking': '#6743944D',
-    utility: 'transparent'
-  } as const;
-
-  return actionColors[normalizedAction] || '#6743944D';
-};
-
-export const isReward = (historyItem: TransactionDetail) => ['withdraw rewards', 'claim payout'].includes(historyItem.subAction?.toLowerCase() ?? '');
-
-export const getVoteType = (voteType: number | null | undefined) => {
-  if (voteType === undefined) {
-    return undefined;
-  } else if (voteType === null) {
-    return 'abstain';
-  } else if (isAye(voteType as unknown as string)) {
-    return 'aye';
-  } else if (!isAye(voteType as unknown as string)) {
-    return 'nay';
-  }
-
-  return undefined;
-};
-
 const TimeOfTheDay = ({ date }: { date: number }) => {
   const formatTimestamp = useCallback((timestamp: number) => {
     const date = new Date(timestamp);
@@ -104,7 +61,7 @@ const TimeOfTheDay = ({ date }: { date: number }) => {
   );
 };
 
-const ActionSubAction = memo(function SubAction({ historyItem }: { historyItem: TransactionDetail; }) {
+const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem: TransactionDetail; }) {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -148,7 +105,7 @@ const ActionSubAction = memo(function SubAction({ historyItem }: { historyItem: 
   }, [historyItem.action, historyItem.date, historyItem.from.address, historyItem.from.name, historyItem.subAction, historyItem.to, t, theme.typography]);
 });
 
-const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
+const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
@@ -184,7 +141,7 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
                 fontSize='14px'
                 fontWeight={600}
                 num={totalBalancePrice}
-                textColor={isReceivedOrReward ? '#82FFA5' : theme.palette.text.primary}
+                textColor={isReceivedOrReward ? '#82FFA5' : theme.palette.text.secondary}
                 width='fit-content'
                 withSmallDecimal
               />
@@ -205,7 +162,7 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
   );
 });
 
-function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
+function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
   const theme = useTheme();
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();
@@ -221,14 +178,7 @@ function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
           {historyDate}
         </Typography>
         {historyItems.map((historyItem, index) => {
-          let action = isReward(historyItem)
-            ? 'reward'
-            : getVoteType(historyItem.voteType) ?? historyItem.subAction ?? '';
-
-          if (!isActionType(action)) {
-            action = historyItem.action;
-          }
-
+          const action = resolveActionType(historyItem);
           const iconBgColor = historyIconBgColor(action);
           const noDivider = historyItems.length === index + 1;
 

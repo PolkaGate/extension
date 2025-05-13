@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
 
@@ -27,7 +26,7 @@ const log = (message: string, data?: unknown) => {
 const formatString = (input: string) => input.replaceAll('_', ' ');
 
 // Saves transaction history to Chrome's local storage for a specific address and chain
-async function saveHistoryToStorage(address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
+async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
   if (!address || !genesisHash || !transactions?.length) {
     log('Missing required parameters for saving history');
 
@@ -72,7 +71,7 @@ async function saveHistoryToStorage(address: string, genesisHash: string, transa
 }
 
 // Retrieves transaction history from Chrome's local storage for a specific address and chain
-export async function getHistoryFromStorage(address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage (address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
   if (!address || !genesisHash) {
     log('Missing required parameters for loading history');
 
@@ -113,8 +112,9 @@ interface RecordTabStatusGov {
 }
 
 export interface TransactionHistoryOutput {
-  grouped: Record<string, TransactionDetail[]> | null | undefined;
   allHistories: TransactionDetail[] | null;
+  count: number;
+  grouped: Record<string, TransactionDetail[]> | null | undefined;
   isLoading: boolean;
 }
 
@@ -167,7 +167,7 @@ const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsAction):
   }
 };
 
-export default function useTransactionHistory(address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -706,6 +706,7 @@ export default function useTransactionHistory(address: AccountId | string | unde
 
   return {
     allHistories,
+    count: allHistories?.length || 0,
     grouped,
     isLoading
   };
