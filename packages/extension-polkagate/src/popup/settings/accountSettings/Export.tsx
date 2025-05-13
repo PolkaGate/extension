@@ -48,7 +48,7 @@ function AccountSettings (): React.ReactElement {
     setPassword(pass || '');
   }, []);
 
-  const onBack = useCallback(() => onAction('/settings-account'), [onAction]);
+  const onBack = useCallback(() => account?.address && onAction(`/settings-account/${account?.address}`), [account?.address, onAction]);
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
   }, []);

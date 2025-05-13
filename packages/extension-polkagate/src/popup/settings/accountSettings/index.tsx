@@ -3,12 +3,13 @@
 
 import { Container, Stack, Typography } from '@mui/material';
 import { Category, DocumentDownload, Edit2, LogoutCurve, Notification, People } from 'iconsax-react';
-import React, { useCallback, useContext, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 
+import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { noop } from '@polkadot/util';
 
-import { ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
+import { AccountContext, ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { UserDashboardHeader, WebsitesAccess } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -19,7 +20,24 @@ import { ExtensionPopups } from '../../../util/constants';
 function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
   const location = useLocation();
+  const { accounts } = useContext(AccountContext);
+  const { address } = useParams<{ address: string }>();
+
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+
+    const accountToUnselect = accounts.find(({ address: addr, selected }) => selected && address !== addr);
+
+    Promise.all([
+      updateMeta(address, JSON.stringify({ selected: true })),
+      ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
+    ])
+      .catch(console.error);
+  }, [accounts, address]);
 
   const onAction = useContext(ActionContext);
 
