@@ -68,7 +68,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
       <UserDashboardHeader
         genesisHash={genesisHash}
         homeType='default'
-        noAccountSelected
+        noSelection
         signerInformation={{
           onClick: onOpenProxySelection,
           selectedProxy
