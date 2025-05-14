@@ -3,13 +3,12 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useRef } from 'react';
 
-import { MyTooltip } from '../../../components';
+import { CryptoFiatBalance, MyTooltip } from '../../../components';
 import { useIsHovered } from '../../../hooks';
-import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
 
 interface TileActionButtonProps {
   text: string;
@@ -27,6 +26,7 @@ function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text 
   return (
     <>
       <MyTooltip
+        color='#1c498a'
         content={text}
         notShow={!noText}
         placement='top'
@@ -53,9 +53,9 @@ function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text 
         >
           <Icon color={hovered ? '#ffffff' : theme.palette.text.highlight} size='19' variant='Bulk' />
           {!noText &&
-          <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
-            {text}
-          </Typography>}
+            <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
+              {text}
+            </Typography>}
         </Grid>
       </MyTooltip>
     </>
@@ -105,31 +105,27 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item xs>
-          <Typography color='text.highlight' variant='B-1'>
+          <Typography color='text.highlight' variant='B-1' sx={{ textWrap: 'nowrap' }}>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
             <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
         </Grid>
-        {
-          cryptoAmount === undefined
-            ? (
-              <Skeleton
-                animation='wave'
-                height='18px'
-                sx={{ borderRadius: '10px', fontWeight: 'bold', my: layoutDirection === 'row' ? '3px' : '9px', transform: 'none', width: '65px' }}
-                variant='text'
-              />)
-            : (
-              <ColumnAmounts
-                color={theme.palette.text.highlight}
-                cryptoAmount={cryptoAmount}
-                decimal={decimal}
-                fiatAmount={fiatAmount}
-                placement={layoutDirection === 'row' ? 'left' : 'right'}
-                token={token}
-              />)
-        }
+        <CryptoFiatBalance
+          cryptoBalance={cryptoAmount}
+          cryptoProps={{ style: { color: theme.palette.text.highlight } }}
+          decimal={decimal}
+          fiatBalance={fiatAmount}
+          fiatProps={{ decimalColor: theme.palette.text.highlight }}
+          skeletonColor='none'
+          style={{
+            alignItems: layoutDirection === 'row' ? 'start' : 'end',
+            rowGap: '3px',
+            textAlign: layoutDirection === 'row' ? 'left' : 'right',
+            width: '100%'
+          }}
+          token={token}
+        />
       </Container>
       {buttonsArray.length > 0 &&
         <Container

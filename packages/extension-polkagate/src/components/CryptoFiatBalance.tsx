@@ -5,7 +5,7 @@ import type { ComponentProps } from 'react';
 import type { DotsStyle } from '@polkadot/extension-polkagate/src/components/Dots';
 import type { BN } from '@polkadot/util';
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Skeleton, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
 import { FormatBalance2, FormatPrice } from '.';
@@ -14,20 +14,31 @@ type FormatPriceProps = ComponentProps<typeof FormatPrice>;
 type FormatBalance2Props = ComponentProps<typeof FormatBalance2>;
 
 interface Props {
-  cryptoBalance: BN;
+  cryptoBalance: BN | undefined;
   decimal: number | undefined;
-  fiatBalance: number;
+  fiatBalance: number | undefined;
   fiatProps?: Partial<FormatPriceProps>;
   cryptoProps?: Partial<FormatBalance2Props>;
   token: string | undefined;
   style?: React.CSSProperties;
   whichFirst?: 'crypto' | 'fiat';
+  skeletonColor?: string;
 }
 
-export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, style = {}, token = '', whichFirst = 'fiat' }: Props) {
+function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
+  return <Skeleton
+    animation='wave'
+    height={12}
+    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
+  />;
+}
+
+export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
   const theme = useTheme();
-  const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
-  const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';
+
+  const isDark = theme.palette.mode === 'dark';
+  const balanceColor = isDark ? '#BEAAD8' : '#291443';
+  const priceColor = isDark ? '#BEAAD8' : '#8F97B8';
 
   const balanceStyle = {
     color: balanceColor,
@@ -73,7 +84,21 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
 
   return (
     <Grid container direction='column' item sx={{ '> div.balance': { color: priceColor, ...theme.typography['S-2'] }, alignItems: 'start', rowGap: '6px', width: 'fit-content', ...style }}>
-      {renderBalances()}
+      {(!cryptoBalance || fiatBalance === undefined)
+        ? <Grid alignItems='flex-end' container direction='column' item sx={{ rowGap: '6px', width: '100%' }}>
+          <MySkeleton
+            bgcolor={isDark ? skeletonColor ?? '#946CC826' : '#99A1C440'}
+            width={70}
+          />
+          <MySkeleton
+            bgcolor={isDark ? skeletonColor ?? '#946CC826' : '#99A1C459'}
+            width={50}
+          />
+        </Grid>
+        : <>
+          {renderBalances()}
+        </>
+      }
     </Grid>
   );
 }
