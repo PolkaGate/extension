@@ -85,14 +85,6 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
     }
   }, [location.pathname, location?.state?.from, navigate, noSelection]);
 
-  useEffect(() => {
-    const selected = accounts.find(({ selected }) => selected);
-
-    if (!selectedAccount || selectedAccount !== selected) {
-      setSelectedAccount(selected ?? accounts[0]);
-    }
-  }, [accounts, selectedAccount]);
-
   const isInAccountLists = location?.pathname === '/accounts';
 
   return (

@@ -20,24 +20,23 @@ function FullscreenModeButton ({ url }: Props) {
   const theme = useTheme();
   const isDark = useIsDark();
   const buttonContainer = useRef(null);
+  const hovered = useIsHovered(buttonContainer);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
-
-  const [hovered, setHovered] = useState<boolean>(false);
 
   const onStakingPages = useMemo(() => pathname.includes('pool') || pathname.includes('solo'), [pathname]);
 
   const onClick = useCallback(() => {
     if (url) {
-      return windowOpen(url);
+      return windowOpen(url).catch(console.error);
     }
 
     if (account && pathname.includes('token')) {
-      return windowOpen(`/accountfs/${account.address}/${POLKADOT_GENESIS}/0`);
+      return windowOpen(`/accountfs/${account.address}/${POLKADOT_GENESIS}/0`).catch(console.error);
     }
 
     if (pathname.includes('history')) {
-      return windowOpen('/historyfs');
+      return windowOpen('/historyfs').catch(console.error);
     }
 
     return windowOpen('/').catch(console.error);
@@ -66,7 +65,7 @@ function FullscreenModeButton ({ url }: Props) {
   return (
     <>
       <Box
-        onClick={onClick}
+        onClick={onClick as unknown as () => void}
         ref={buttonContainer}
         sx={{
           alignItems: 'center',
