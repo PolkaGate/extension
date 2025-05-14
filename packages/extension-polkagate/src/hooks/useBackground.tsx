@@ -5,18 +5,26 @@ import React, { useEffect, useState } from 'react';
 
 import { LogoDropAnimation } from '../partials';
 import { Background } from '../style';
+import useIsExtensionPopup from './useIsExtensionPopup';
 
 enum BACKGROUND {
   DEFAULT,
   DROPS,
-  STAKING
+  STAKING,
+  NONE
 }
 
 export default function useBackground (backgroundType?: 'drops' | 'staking' | 'default'): React.ReactNode {
-  const [background, setBackground] = useState<BACKGROUND>(BACKGROUND.DEFAULT);
+  const isExtensionMode = useIsExtensionPopup();
+
+  const [background, setBackground] = useState<BACKGROUND>(BACKGROUND.NONE);
 
   // Apply class if backgroundType is provided
   useEffect(() => {
+    if (!isExtensionMode) {
+      return setBackground(BACKGROUND.NONE);
+    }
+
     if (!backgroundType) {
       return;
     }
@@ -26,10 +34,14 @@ export default function useBackground (backgroundType?: 'drops' | 'staking' | 'd
     if (element) {
       element.className = backgroundType;
     }
-  }, [backgroundType]);
+  }, [backgroundType, isExtensionMode]);
 
   // Observe class changes on #main
   useEffect(() => {
+    if (!isExtensionMode) {
+      return setBackground(BACKGROUND.NONE);
+    }
+
     const element = document.getElementById('main');
 
     if (!element) {
@@ -62,9 +74,12 @@ export default function useBackground (backgroundType?: 'drops' | 'staking' | 'd
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [isExtensionMode]);
 
   switch (background) {
+    case BACKGROUND.NONE:
+      return null;
+
     case BACKGROUND.DEFAULT:
       return <Background />;
 
@@ -75,6 +90,6 @@ export default function useBackground (backgroundType?: 'drops' | 'staking' | 'd
       return <Background type='staking' />;
 
     default:
-      return <Background />;
+      return null;
   }
 }
