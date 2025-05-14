@@ -13,6 +13,7 @@ import React from 'react';
 import { useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
+import BlueGradient from '../style/BlueGradient';
 
 export interface ExtensionPopupProps {
   TitleIcon?: Icon;
@@ -21,6 +22,7 @@ export interface ExtensionPopupProps {
   iconSize?: number;
   iconColor?: string;
   iconVariant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone' | undefined;
+  isBlueish?: boolean;
   maxHeight?: string;
   onBack?: () => void;
   openMenu: boolean;
@@ -39,11 +41,11 @@ export interface ExtensionPopupProps {
   RightItem?: React.ReactNode;
 }
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ RightItem, TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
+function ExtensionPopup({ RightItem, TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, isBlueish, maxHeight = '440px', onBack, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
 
   return (
@@ -71,7 +73,7 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, handleClose, iconColo
     >
       <Container disableGutters sx={{ height: '100%', width: '100%', ...style }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+          <CustomCloseSquare color={isBlueish ? '#809ACB' : '#AA83DC'} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
         <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 18)}px)`, overflow: 'hidden', overflowY: 'scroll', px: `${px ?? 10}px`, position: 'relative', width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
@@ -105,7 +107,15 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, handleClose, iconColo
               {RightItem}
             </Grid>}
           {!withoutTopBorder && <GradientDivider />}
-          {!withoutBackground && <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />}
+          {!withoutBackground &&
+            <>
+              {
+                isBlueish
+                  ? <BlueGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />
+                  : <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />
+              }
+            </>
+          }
           <Box sx={{ maxHeight, overflow: 'scroll', position: 'relative', width: '100%' }}>
             {children}
           </Box>

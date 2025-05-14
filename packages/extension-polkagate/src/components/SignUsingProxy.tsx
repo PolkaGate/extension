@@ -78,7 +78,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
               {proxy.proxy.proxyType}
             </Typography>
             <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', p: '1px 3px' }} variant='S-1'>
-              {proxy.proxy.delay}
+              {proxy.proxy.delay * 6}sec
             </Typography>
           </Grid>
         </Grid>
@@ -146,6 +146,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
       handleClose={onClosePopup}
       iconColor={theme.palette.text.highlight}
       iconSize={25}
+      isBlueish
       maxHeight='450px'
       openMenu={openMenu}
       title={t('Select Proxy')}
