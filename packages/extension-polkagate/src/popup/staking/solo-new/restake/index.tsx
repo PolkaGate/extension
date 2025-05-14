@@ -121,7 +121,7 @@ export default function Restake (): React.ReactElement {
             />
             <StakeAmountInput
               buttonsArray={[{
-                buttonName: t('All'),
+                buttonName: t('Max'),
                 value: onMaxValue
               }]}
               decimal={decimal}

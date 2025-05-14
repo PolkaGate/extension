@@ -53,7 +53,7 @@ function FullscreenModeButton ({ url }: Props) {
       transition: 'all 250ms ease-out',
       zIndex: 1
     },
-    background: onStakingPages ? theme.palette.text.highlight : isDark ? '#BFA1FF26' : '#FFFFFF8C',
+    background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
     borderRadius: '10px',
     height: '30px',
     inset: 0,
@@ -77,7 +77,7 @@ function FullscreenModeButton ({ url }: Props) {
           width: '30px'
         }}
       >
-        <Maximize4 color={hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
+        <Maximize4 color={hovered ? '#EAEBF1' : onStakingPages ? theme.palette.text.highlight : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
         <Grid sx={gradientBackgroundStyle} />
       </Box>
       <Tooltip content={t('Fullscreen')} targetRef={buttonContainer} />
