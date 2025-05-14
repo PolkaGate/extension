@@ -254,7 +254,7 @@ function Tokens (): React.ReactElement {
         <BackWithLabel
           content={<BackButton logoInfo={logoInfo} token={token} />}
           onClick={backHome}
-          style={{ pb: 0 }}
+          style={{ height: '40px', pb: 0 }}
         />
         <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'scroll', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
