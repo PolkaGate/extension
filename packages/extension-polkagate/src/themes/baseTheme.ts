@@ -48,6 +48,7 @@ declare module '@mui/material/styles' {
     'B-3': CSSProperties;
     'B-4': CSSProperties;
     'B-5': CSSProperties;
+    'B-6': CSSProperties;
     'S-1': CSSProperties;
     'S-2': CSSProperties;
   }
@@ -63,6 +64,7 @@ declare module '@mui/material/styles' {
     'B-3': CSSProperties;
     'B-4': CSSProperties;
     'B-5': CSSProperties;
+    'B-6': CSSProperties;
     'S-1': CSSProperties;
     'S-2': CSSProperties;
   }
@@ -80,6 +82,7 @@ declare module '@mui/material/Typography' {
     'B-3': true;
     'B-4': true;
     'B-5': true;
+    'B-6': true;
     'S-1': true;
     'S-2': true;
   }
@@ -92,7 +95,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '13px',
       fontWeight: 500,
       letterSpacing: '-0.19px',
-      // lineHeight: '18px',
       textAlign: 'center'
     },
     'B-2': {
@@ -100,7 +102,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '14px',
       fontWeight: 600,
       letterSpacing: '-0.6px',
-      // lineHeight: '18px',
       textAlign: 'center'
     },
     'B-3': {
@@ -116,7 +117,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '12px',
       fontWeight: 500,
       letterSpacing: '-0.19px',
-      // lineHeight: '18px',
       textAlign: 'center'
     },
     'B-5': {
@@ -124,7 +124,13 @@ export const baseTheme: ThemeOptions = {
       fontSize: '11px',
       fontWeight: 500,
       letterSpacing: '-0.19px',
-      // lineHeight: '18px',
+      textAlign: 'center'
+    },
+    'B-6': {
+      fontFamily: 'Inter',
+      fontSize: '14px',
+      fontWeight: 700,
+      letterSpacing: '-0.6px',
       textAlign: 'center'
     },
     'H-1': {
@@ -132,7 +138,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '40px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
-      // lineHeight: '32px',
       textAlign: 'center'
     },
     'H-2': {
@@ -140,7 +145,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '29px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
-      // lineHeight: '32px',
       textAlign: 'center'
     },
     'H-3': {
@@ -148,7 +152,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '24px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
-      // lineHeight: '26px',
       textAlign: 'center'
     },
     'H-4': {
@@ -156,7 +159,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '18px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
-      // lineHeight: '26px',
       textAlign: 'center'
     },
     'H-5': {
@@ -164,7 +166,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '16px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
-      // lineHeight: '26px',
       textAlign: 'center'
     },
     'S-1': {
@@ -172,7 +173,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '11px',
       fontWeight: 600,
       letterSpacing: '-0.19px',
-      // lineHeight: '18px',
       textAlign: 'center'
     },
     'S-2': {
@@ -180,7 +180,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '11px',
       fontWeight: 500,
       letterSpacing: '-0.19px',
-      // lineHeight: '18px',
       textAlign: 'center'
     }
   }

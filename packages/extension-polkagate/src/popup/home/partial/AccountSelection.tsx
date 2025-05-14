@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountJson } from '@polkadot/extension-base/background/types';
-
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 
 import { AccountContext, ScrollingTextBox } from '../../../components';
 import useIsDark from '../../../hooks/useIsDark';
@@ -69,8 +69,7 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [selectedAccount, setSelectedAccount] = useState<AccountJson | undefined>();
+  const selectedAccount = useSelectedAccount();
 
   const onClick = useCallback(() => {
     if (noSelection) {

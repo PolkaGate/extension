@@ -25,7 +25,7 @@ interface Props {
   isLast?: boolean;
 }
 
-function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
+function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const navigate = useNavigate();
 

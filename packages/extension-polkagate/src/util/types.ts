@@ -867,6 +867,11 @@ export interface SoloSettings {
   stashId?: AccountId | string | undefined,
 }
 
+export interface AdvancedDropdownOption extends DropdownOption {
+  Icon?: React.JSX.Element;
+  count?: number;
+}
+
 export interface DropdownOption {
   text: string;
   value: string | number;

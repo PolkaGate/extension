@@ -15,19 +15,32 @@ interface Props {
   url?: string;
 }
 
-function FullscreenModeButton ({ url = '/' }: Props) {
+function FullscreenModeButton ({ url }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
   const buttonContainer = useRef(null);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
-  const hovered = useIsHovered(buttonContainer);
+
+  const [hovered, setHovered] = useState<boolean>(false);
 
   const onStakingPages = useMemo(() => pathname.includes('pool') || pathname.includes('solo'), [pathname]);
 
-  const open = useCallback(() => {
-    windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/${POLKADOT_GENESIS}/0` : url).catch(console.error);
+  const onClick = useCallback(() => {
+    if (url) {
+      return windowOpen(url);
+    }
+
+    if (account && pathname.includes('token')) {
+      return windowOpen(`/accountfs/${account.address}/${POLKADOT_GENESIS}/0`);
+    }
+
+    if (pathname.includes('history')) {
+      return windowOpen('/historyfs');
+    }
+
+    return windowOpen('/').catch(console.error);
   }, [account, pathname, url]);
 
   const gradientBackgroundStyle = {
@@ -53,7 +66,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
   return (
     <>
       <Box
-        onClick={open}
+        onClick={onClick}
         ref={buttonContainer}
         sx={{
           alignItems: 'center',

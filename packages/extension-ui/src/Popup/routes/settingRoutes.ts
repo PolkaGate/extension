@@ -27,7 +27,7 @@ export const SETTINGS_ROUTES: RouteConfig[] = [
   },
   {
     Component: AccountSettings,
-    path: '/settings-account',
+    path: '/settings-account/:address',
     trigger: 'settings-about'
   },
   {
