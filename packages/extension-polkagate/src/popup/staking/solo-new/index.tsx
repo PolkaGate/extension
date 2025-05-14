@@ -10,10 +10,11 @@ import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
 import { type BN, noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
@@ -32,6 +33,7 @@ export default function Solo (): React.ReactElement {
   const { api, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);
   const accountAssets = useAccountAssets(selectedAccount?.address);
+  const pricesInCurrency = usePrices();
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);
@@ -55,7 +57,10 @@ export default function Solo (): React.ReactElement {
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+    , [accountAssets, genesisHash]);
+
+  const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
+
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
@@ -156,7 +161,7 @@ export default function Solo (): React.ReactElement {
               ]}
               cryptoAmount={rewards}
               decimal={decimal ?? 0}
-              fiatAmount={0}
+              fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
               layoutDirection={layoutDirection}
               title={t('Rewards paid')}
               token={token ?? ''}
@@ -170,7 +175,7 @@ export default function Solo (): React.ReactElement {
               }]}
               cryptoAmount={redeemable}
               decimal={decimal ?? 0}
-              fiatAmount={0}
+              fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
               layoutDirection={layoutDirection}
               title={t('Redeemable')}
               token={token ?? ''}
@@ -184,7 +189,7 @@ export default function Solo (): React.ReactElement {
               }]}
               cryptoAmount={unlockingAmount}
               decimal={decimal ?? 0}
-              fiatAmount={0}
+              fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
               layoutDirection={layoutDirection}
               onExpand={toBeReleased?.length ? onExpand : undefined}
               title={t('Unstaking')}
