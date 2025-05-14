@@ -39,7 +39,7 @@ const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
     <Grid container item sx={{ bottom: 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
-        : <Ice size='32' style={{ zIndex: -1 }} />
+        : <Ice size='28' style={{ opacity: 0.3 }} />
       }
     </Grid>
   );
@@ -95,19 +95,28 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, staked, s
         }
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-start'>
-        <FormatBalance2
-          decimalPoint={4}
-          decimals={[decimal ?? 0]}
-          style={{
-            color: theme.palette.text.highlight,
-            fontFamily: 'Inter',
-            fontSize: '12px',
-            fontWeight: 500,
-            width: 'max-content'
-          }}
-          tokens={[token ?? '']}
-          value={staked}
-        />
+        {staked === undefined
+          ? (
+            <Skeleton
+              animation='wave'
+              height='16px'
+              sx={{ borderRadius: '10px', fontWeight: 'bold', m: '6px 0 4px', maxWidth: '75px', transform: 'none', width: '100%' }}
+              variant='text'
+            />)
+          : (
+            <FormatBalance2
+              decimalPoint={4}
+              decimals={[decimal ?? 0]}
+              style={{
+                color: theme.palette.text.highlight,
+                fontFamily: 'Inter',
+                fontSize: '12px',
+                fontWeight: 500,
+                width: 'max-content'
+              }}
+              tokens={[token ?? '']}
+              value={staked}
+            />)}
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-start' sx={{ columnGap: '8px' }}>
         {buttons.map(({ Icon, disabled, onClick, text }, index) => (
