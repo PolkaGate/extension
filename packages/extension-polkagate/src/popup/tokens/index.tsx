@@ -11,6 +11,7 @@ import { Coin, Lock1, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useParams } from 'react-router';
 
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { BN_ZERO } from '@polkadot/util';
 
 import { ActionContext, AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';
@@ -19,7 +20,7 @@ import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
-import { toTitleCase } from '../../util';
+import { toTitleCase, updateStorage } from '../../util';
 import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../util/constants';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 import { getValue } from '../account/util';
@@ -238,6 +239,10 @@ function Tokens (): React.ReactElement {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delegatedBalance, lockedReasonLoading, JSON.stringify(lockedReservedState.data?.items), lockedReservedState.type, reservedReason, reservedReasonLoading, totalLocked]);
+
+  useEffect(() => {
+    account?.address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [account.address]: genesisHash }).catch(console.error);
+  }, [account?.address, genesisHash]);
 
   const closeMenu = useCallback(() => {
     dispatch({ type: 'CLOSE_MENU' });

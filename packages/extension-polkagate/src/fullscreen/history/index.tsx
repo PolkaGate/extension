@@ -25,7 +25,7 @@ const DEFAULT_EXTRA_FILTERS = {
   type: ALL_TYPES
 };
 
-function HistoryFs(): React.ReactElement {
+function HistoryFs (): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);

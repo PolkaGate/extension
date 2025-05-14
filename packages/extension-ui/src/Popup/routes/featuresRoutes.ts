@@ -37,7 +37,7 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   },
   {
     Component: FullScreenManageProxies,
-    path: '/fullscreenProxyManagement/:address/',
+    path: '/fullscreenProxyManagement/:genesisHash/:address/',
     trigger: 'fullscreen-proxy-management'
   },
   {

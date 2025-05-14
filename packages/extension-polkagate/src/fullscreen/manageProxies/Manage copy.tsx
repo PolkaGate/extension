@@ -1,22 +1,23 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
 import type { ProxyItem } from '../../util/types';
 
 import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
-import { AddCircle, Firstline } from 'iconsax-react';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, ChainLogo, FormatBalance2, GradientButton, ShowBalance, TwoButtons } from '../../components';
+import { ActionContext, ShowBalance, TwoButtons, VaadinIcon } from '../../components';
 import { useTranslation } from '../../hooks';
 import { noop } from '../../util/utils';
+import Bread from '../partials/Bread';
+import { Title } from '../sendFund/InputPage';
 import ProxyTableFL from './components/ProxyTableFL';
 import { STEPS } from '.';
 
@@ -39,7 +40,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -79,9 +80,16 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
     isDisabledAddProxyButton === false && setStep(STEPS.ADD_PROXY);
   }, [isDisabledAddProxyButton, setStep]);
 
-  const onDeleteProxy = useCallback(() => {
-    setStep(STEPS.REVIEW);
-  }, [setStep]);
+  const AddProxyButton = ({ disabled, onClick }: AddProxyButton) => (
+    <Grid container sx={{ my: '40px', opacity: disabled ? 0.5 : 1 }}>
+      <Grid display='inline-flex' item onClick={disabled ? noop : onClick} sx={{ cursor: disabled ? 'context-menu' : 'pointer' }}>
+        <AddRoundedIcon sx={{ bgcolor: 'primary.main', borderRadius: '50px', color: '#fff', fontSize: '32px' }} />
+        <Typography fontSize='18px' fontWeight={400} lineHeight='36px' pl='10px' sx={{ textDecoration: 'underline' }}>
+          {t('Add proxy')}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
 
   const handleDelete = useCallback((proxyItem: ProxyItem) => {
     const updatedProxyItems = proxyItems?.map((_proxyItem) => {
@@ -105,90 +113,70 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
     setProxyItems(updatedProxyItems);
   }, [proxyItems, setProxyItems]);
 
-  const toBeDeletedProxies = useMemo(() => proxyItems?.filter(({ status }) => status === 'remove'), [proxyItems]);
-
   return (
-    <Stack direction='column' sx={{ height: '584px', position: 'relative', width: '800px', zIndex: 1 }}>
-      <Stack alignItems='center' columnGap={3} direction='row' sx={{ justifyContent: 'start', mb: '20px', width: '100%' }}>
-        <GradientButton
-          StartIcon={AddCircle}
-          contentPlacement='center'
-          disabled={isDisabledAddProxyButton}
-          onClick={toAddProxy}
-          style={{
-            borderRadius: '18px',
-            height: '40px',
-            minWidth: '20%',
-            width: 'fit-content'
-          }}
-          text={t('Add proxy')}
-        />
-        <Stack columnGap={1} direction='row'>
-          <Typography color='#AA83DC' variant='B-1'>
-            {t('Deposit')}
-          </Typography>
-          <ChainLogo genesisHash={chain?.genesisHash} size={18} />
-          <Typography color='#EAEBF1' variant='B-1'>
-            {decimal && token &&
-              <FormatBalance2
-                decimalPoint={FLOATING_POINT_DIGIT}
-                decimals={[decimal]}
-                tokens={[token]}
-                value={depositedValue ?? newDepositValue ?? BN_ZERO}
-              />}
-          </Typography>
-          {newDepositValue && depositedValue &&
-            <>
-              <Typography color='#AA83DC' variant='B-1' px='8px'>
-                {'-->'}
-              </Typography>
-              <Typography color='#EAEBF1' variant='B-1'>
-                <ShowBalance
-                  balance={newDepositValue}
-                  decimal={decimal}
-                  decimalPoint={4}
-                  height={22}
-                  token={token}
-                />
-              </Typography>
-            </>
-          }
-        </Stack>
-      </Stack>
+    <Grid container item>
+      <Bread />
+      <Title
+        height='100px'
+        logo={<VaadinIcon icon='vaadin:sitemap' style={{ color: `${theme.palette.text.primary}`, fontSize: '20px' }} />}
+        text={t('Proxy Management')}
+      />
+      <Typography fontSize='14px' fontWeight={400}>
+        {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
+      </Typography>
+      <AddProxyButton
+        disabled={isDisabledAddProxyButton}
+        onClick={toAddProxy}
+      />
       <ProxyTableFL
         api={api}
         chain={chain}
         handleDelete={handleDelete}
         proxyItems={proxyItems}
       />
-      {
-        !!toBeDeletedProxies?.length &&
-        <Stack alignItems= 'end' direction='row' justifyContent='space-between' sx={{ bottom: '0', position: 'absolute', width: '100%' }}>
-          <Stack alignItems='center' columnGap='10px' direction='row'>
-            <Firstline color='#674394' size='18px' variant='Bold' />
-            <Typography color='#EAEBF1' variant='B-2'>
-              {toBeDeletedProxies?.length}
-            </Typography>
-            <Typography color='#AA83DC' variant='B-4'>
-              {`/ ${proxyItems?.length} selected`}
-            </Typography>
-            <Typography color='#AA83DC' variant='H-4'>
-             X
-            </Typography>
-          </Stack>
-          <GradientButton
-            contentPlacement='center'
-            disabled={isDisabledAddProxyButton}
-            onClick={onDeleteProxy}
-            style={{
-              borderRadius: '18px',
-              height: '40px',
-              width: '377px'
-            }}
-            text={t('Delete {{count}} prox{{ending}}', { replace: { count: toBeDeletedProxies?.length, ending: toBeDeletedProxies?.length && toBeDeletedProxies.length > 1 ? 'ies' : 'y' } })}
+      <Grid container item pl='15px' pt='15px'>
+        <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
+          {t('Deposit:')}
+        </Typography>
+        <Grid fontSize='16px' fontWeight={500} item lineHeight='22px' pl='5px'>
+          <ShowBalance
+            balance={depositedValue ?? newDepositValue ?? BN_ZERO}
+            decimal={decimal}
+            decimalPoint={4}
+            height={22}
+            token={token}
           />
-        </Stack>
-      }
-    </Stack>
+        </Grid>
+        {newDepositValue && depositedValue &&
+          <>
+            <Typography fontSize='16px' fontWeight={400} lineHeight='23px' px='8px'>
+              {'-->'}
+            </Typography>
+            <Grid fontSize='16px' fontWeight={600} item lineHeight='22px'>
+              <ShowBalance
+                balance={newDepositValue}
+                decimal={decimal}
+                decimalPoint={4}
+                height={22}
+                token={token}
+              />
+            </Grid>
+          </>
+        }
+      </Grid>
+      <Grid container item justifyContent='flex-end' sx={{ borderColor: 'divider', borderTop: 1, bottom: '25px', height: '50px', left: 0, mx: '7%', position: 'absolute', width: '85%' }}>
+        <Grid container item xs={7}>
+          <TwoButtons
+            disabled={confirmDisabled}
+            mt='10px'
+            onPrimaryClick={toReview}
+            onSecondaryClick={onCancel}
+            primaryBtnText={t('Next')}
+            secondaryBtnText={t('Cancel')}
+            width='100%'
+          />
+        </Grid>
+      </Grid>
+    </Grid>
   );
 }

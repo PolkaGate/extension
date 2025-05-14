@@ -1,19 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+// @ts-nocheck
 
-import type { ApiPromise } from '@polkadot/api';
+
 import type { Proxy, ProxyItem } from '../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Warning } from '../../components';
-import { useAccount, useChainInfo, useFullscreen, useInfo, useTranslation } from '../../hooks';
-import { PROXY_CHAINS } from '../../util/constants';
-import HomeLayout from '../components/layout';
+import { useFullscreen, useInfo, useTranslation } from '../../hooks';
+import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
+import FullScreenHeader from '../governance/FullScreenHeader';
 import AddProxy from './AddProxy';
 import Manage from './Manage';
 import Review from './Review';
@@ -30,13 +32,12 @@ export const STEPS = {
   WAIT_SCREEN: 5
 };
 
-function ManageProxies (): React.ReactElement {
+function ManageProxies(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
-  const account = useAccount(address);
-  const { api, chain, decimal, token } = useChainInfo(genesisHash);
+  const { address } = useParams<{ address: string; }>();
+  const { account, api, chain, decimal, token } = useInfo(address);
 
   const [step, setStep] = useState<number>(STEPS.CHECK);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
@@ -51,7 +52,7 @@ function ManageProxies (): React.ReactElement {
     setRefresh(false);
     setFetching(true);
 
-    _api.query['proxy']?.['proxies'](_address).then((_proxies) => {
+    _api.query.proxy?.proxies(_address).then((_proxies) => {
       const fetchedProxies = _proxies.toHuman() as [Proxy[], string];
 
       const _proxyItems = fetchedProxies[0].map((_proxy) => ({ proxy: _proxy, status: 'current' })) as ProxyItem[];
@@ -70,14 +71,14 @@ function ManageProxies (): React.ReactElement {
   }, []);
 
   useLayoutEffect(() => {
-    if (!genesisHash) {
+    if (!account?.genesisHash) {
       setStep(STEPS.CHECK);
-    } else if (!PROXY_CHAINS.includes(genesisHash ?? '')) {
+    } else if (!PROXY_CHAINS.includes(account.genesisHash ?? '')) {
       setStep(STEPS.UNSUPPORTED);
     } else {
       setStep(STEPS.MANAGE);
     }
-  }, [genesisHash, chain, refresh]);
+  }, [account?.genesisHash, chain, refresh]);
 
   useEffect(() => {
     setProxyItems(undefined);
@@ -85,7 +86,7 @@ function ManageProxies (): React.ReactElement {
   }, [chain?.genesisHash, refresh]);
 
   useEffect(() => {
-    if (!address || !api || proxyItems !== undefined || fetching) {
+    if (!api || proxyItems !== undefined || fetching) {
       return;
     }
 
@@ -100,15 +101,11 @@ function ManageProxies (): React.ReactElement {
   }, [address, api, chain?.genesisHash, fetchProxies, fetching, proxyItems, refresh]);
 
   return (
-    <HomeLayout childrenStyle={{ marginLeft: '25px' }}>
-      <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
-        {t('Proxy Management') }
-      </Typography>
-      <Typography color='text.secondary' sx={{ m: '10px 0 20px' }} variant='B-4'>
-        {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
-      </Typography>
-      <Grid container item sx={{ display: 'block', position: 'relative' }}>
-        {step === STEPS.UNSUPPORTED &&
+    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
+      <FullScreenHeader page='proxyManagement' />
+      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
+        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
+          {step === STEPS.UNSUPPORTED &&
             <Grid alignItems='center' container direction='column' display='block' item>
               <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 30px'>
                 {t('Proxy Management')}
@@ -123,11 +120,11 @@ function ManageProxies (): React.ReactElement {
                 </Warning>
               </Grid>
             </Grid>
-        }
-        {step === STEPS.MANAGE &&
+          }
+          {step === STEPS.MANAGE &&
             <Manage
               api={api}
-              chain={chain}
+              chain={chain as any}
               decimal={decimal}
               depositedValue={depositedValue}
               isDisabledAddProxyButton={!!isDisabledAddProxyButton}
@@ -138,8 +135,8 @@ function ManageProxies (): React.ReactElement {
               setStep={setStep}
               token={token}
             />
-        }
-        {step === STEPS.ADD_PROXY &&
+          }
+          {step === STEPS.ADD_PROXY &&
             <AddProxy
               chain={chain as any}
               proxiedAddress={address}
@@ -147,8 +144,8 @@ function ManageProxies (): React.ReactElement {
               setProxyItems={setProxyItems}
               setStep={setStep}
             />
-        }
-        {[STEPS.REVIEW, STEPS.PROXY, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.SIGN_QR].includes(step) &&
+          }
+          {[STEPS.REVIEW, STEPS.PROXY, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.SIGN_QR].includes(step) &&
             <Review
               address={address}
               api={api}
@@ -160,9 +157,10 @@ function ManageProxies (): React.ReactElement {
               setStep={setStep}
               step={step}
             />
-        }
+          }
+        </Grid>
       </Grid>
-    </HomeLayout>
+    </Grid>
   );
 }
 
