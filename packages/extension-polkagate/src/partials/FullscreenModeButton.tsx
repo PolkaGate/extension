@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Maximize4 } from 'iconsax-react';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Tooltip } from '../components';
@@ -17,11 +17,14 @@ interface Props {
 
 function FullscreenModeButton ({ url = '/' }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const buttonContainer = useRef(null);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
   const hovered = useIsHovered(buttonContainer);
+
+  const onStakingPages = useMemo(() => pathname.includes('pool') || pathname.includes('solo'), [pathname]);
 
   const open = useCallback(() => {
     windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/${POLKADOT_GENESIS}/0` : url).catch(console.error);
@@ -38,7 +41,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
       transition: 'all 250ms ease-out',
       zIndex: 1
     },
-    background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
+    background: onStakingPages ? theme.palette.text.highlight : isDark ? '#BFA1FF26' : '#FFFFFF8C',
     borderRadius: '10px',
     height: '30px',
     inset: 0,

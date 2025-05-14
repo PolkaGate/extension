@@ -48,7 +48,7 @@ export default function BondExtra (): React.ReactElement {
     }
 
     if (bondExtraValue.gt(stakingInfo.availableBalanceToStake)) {
-      return t('It is more than available amount to stake.');
+      return t('It is more than the available balance to stake.');
     }
 
     return undefined;
