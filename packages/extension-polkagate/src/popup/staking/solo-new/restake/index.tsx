@@ -82,7 +82,10 @@ export default function Restake (): React.ReactElement {
     return unlockingAmount.toString();
   }, [decimal, unlockingAmount]);
   const onNext = useCallback(() => setReview(true), []);
-  const closeReview = useCallback(() => setReview(false), []);
+  const closeReview = useCallback(() => {
+    setReview(false);
+    setRebondValue(undefined);
+  }, []);
 
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Restaking'),

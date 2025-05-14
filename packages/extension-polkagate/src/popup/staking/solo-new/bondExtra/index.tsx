@@ -85,7 +85,10 @@ export default function BondExtra (): React.ReactElement {
     return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
   }, [stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
   const onNext = useCallback(() => setReview(true), []);
-  const closeReview = useCallback(() => setReview(false), []);
+  const closeReview = useCallback(() => {
+    setReview(false);
+    setBondExtraValue(undefined);
+  }, []);
 
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Stake More'),

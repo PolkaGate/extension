@@ -118,7 +118,10 @@ export default function Unstake (): React.ReactElement {
     return staked.toString();
   }, [decimal, staked]);
   const onNext = useCallback(() => setReview(true), []);
-  const closeReview = useCallback(() => setReview(false), []);
+  const closeReview = useCallback(() => {
+    setReview(false);
+    setUnstakingValue(undefined);
+  }, []);
 
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Unstaking'),
