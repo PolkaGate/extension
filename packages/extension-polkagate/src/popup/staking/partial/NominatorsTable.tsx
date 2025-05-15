@@ -100,7 +100,7 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
         </IconButton>
       </Container>
       <GradientDivider style={{ my: '4px' }} />
-      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
+      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
           <ValidatorStakingInfo amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
           <ValidatorStakingInfo text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
