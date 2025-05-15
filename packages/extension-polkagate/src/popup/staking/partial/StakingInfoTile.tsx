@@ -101,11 +101,13 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: layoutDirection === 'row' ? '100%' : 'fit-content' }}>
           <Icon color={theme.palette.text.highlight} size='20' variant='Bulk' />
-          {layoutDirection === 'row' && onExpand &&
-            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
+          {
+            layoutDirection === 'row' && onExpand &&
+            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />
+          }
         </Grid>
         <Grid alignItems='center' container item xs>
-          <Typography color='text.highlight' variant='B-1' sx={{ textWrap: 'nowrap' }}>
+          <Typography color='text.highlight' sx={{ textWrap: 'nowrap' }} variant='B-1'>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
