@@ -1,8 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, type SxProps, type Theme, useTheme } from '@mui/material';
+import { Box, Button, type SxProps, type Theme, useTheme } from '@mui/material';
 import React from 'react';
+
+import { loader } from '@polkadot/extension-polkagate/src/assets/gif/index';
 
 interface Props {
   startIcon?: React.ReactNode;
@@ -27,7 +29,7 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
 
   const GeneralButtonStyle = {
     '&:disabled': {
-      background: '#596aff',
+      background: 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)',
       cursor: 'default'
     },
     '&:hover': {
@@ -66,9 +68,28 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
       sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style }}
       variant='contained'
     >
-      <span style={ButtonFontStyle}>
-        {text}
-      </span>
+      {isBusy
+        ? <Box
+          component='img'
+          src={loader as string}
+          sx={{
+            animation: 'spin 1.5s linear infinite',
+            height: '42px',
+            zIndex: 2,
+            '@keyframes spin': {
+              '0%': {
+                transform: 'rotate(0deg)'
+              },
+              '100%': {
+                transform: 'rotate(360deg)'
+              }
+            }
+          }}
+        />
+        : <span style={ButtonFontStyle}>
+          {text}
+        </span>
+      }
     </Button>
   );
 }

@@ -136,24 +136,25 @@ const ContentItem = ({ content, decimal, description, genesisHash, title, token,
 };
 
 export interface ReviewProps {
+  closeReview: () => void;
   genesisHash: string;
-  transactionInformation: Content[];
-  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  proxyTypeFilter: ProxyTypes[] | undefined;
   setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   selectedProxy: Proxy | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   showProxySelection: boolean;
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
-  proxyTypeFilter: ProxyTypes[] | undefined;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  transactionInformation: Content[];
 }
 
-export default function Review ({ genesisHash, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ closeReview, genesisHash, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
   return (
-    <Stack direction='column' sx={{ p: '15px', pb: 0, width: '100%' }}>
+    <Stack direction='column' sx={{ height: '500px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
       <AccountBox
         genesisHash={genesisHash}
         selectedAccount={selectedAccount}
@@ -176,6 +177,7 @@ export default function Review ({ genesisHash, proxyTypeFilter, selectedProxy, s
         address={selectedAccount?.address}
         genesisHash={genesisHash}
         maybeApi={undefined}
+        onClose={closeReview}
         proxyTypeFilter={proxyTypeFilter}
         selectedProxy={selectedProxy}
         setFlowStep={setFlowStep}

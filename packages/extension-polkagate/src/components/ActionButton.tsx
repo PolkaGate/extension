@@ -16,6 +16,7 @@ interface Props {
   iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   contentPlacement?: 'start' | 'center' | 'end';
   disabled?: boolean;
+  isBlueish?: boolean;
   iconSize?: number;
   iconAlwaysBold?: boolean;
   isBusy?: boolean;
@@ -25,7 +26,7 @@ interface Props {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBusy, isBlueish, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
@@ -41,10 +42,11 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
 
   const GeneralButtonStyle = {
     '&:hover': {
-      background: isDark ? '#674394' : '#EFF1F9',
+      background: isDark ? isBlueish ? '#2E2948' : '#674394' : '#EFF1F9',
       transition: 'all 250ms ease-out'
     },
-    background: isDark ? '#2D1E4A' : '#FFFFFF',
+    background: isDark ? isBlueish ? 'transparent' : '#2D1E4A' : '#FFFFFF',
+    border: isBlueish ? '1px solid #2E2948' : 'none',
     borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
@@ -65,7 +67,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? '#BEAAD8' : '#745D8B', ...ButtonFontStyle }}>
+      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', ...ButtonFontStyle }}>
         {text}
       </span>;
     } else {
@@ -77,7 +79,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
         </>
       );
     }
-  }, [ButtonFontStyle, disabled, isDark, text, theme.palette.text.primary, theme.palette.text.secondary]);
+  }, [ButtonFontStyle, disabled, isBlueish, isDark, text, theme]);
 
   return (
     <Button

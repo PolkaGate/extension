@@ -28,6 +28,7 @@ import { send } from '../util/api';
 import { getSubstrateAddress, noop } from '../util/utils';
 import SignUsingPassword from './SignUsingPassword';
 import { ExtensionPopup, SignUsingProxy } from '.';
+import SignWithLedger from './SignWithLedger';
 
 type AlertHandler = {
   alertText: string;
@@ -97,6 +98,7 @@ const ChooseSigningButton = ({ alertHandler }: SignUsingPasswordProps) => {
 
 interface Props {
   address: string | undefined;
+  onClose: () => void
   maybeApi?: ApiPromise;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   proxyTypeFilter: ProxyTypes[] | undefined;
@@ -115,7 +117,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction }: Props): React.ReactElement<Props> {
+export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -287,11 +289,28 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
 
   return (
     <>
-      {noPrivateKeyAccount &&
+      {
+        noPrivateKeyAccount && !isLedger &&
         <ChooseSigningButton
           alertHandler={alertHandler}
-        />}
-      {(selectedProxy || !noPrivateKeyAccount) &&
+        />
+      }
+      { isLedger &&
+        <SignWithLedger
+          address={address}
+          api={api}
+          from={from}
+          handleTxResult={handleTxResult}
+          onSecondaryClick={onClose}
+          onSignature={onSignature}
+          payload={payload}
+          preparedTransaction={preparedTransaction}
+          setFlowStep={setFlowStep}
+          signerPayload={signerPayload}
+        />
+      }
+      {
+        (selectedProxy || !noPrivateKeyAccount) &&
         <SignUsingPassword
           api={api}
           from={from}
@@ -300,7 +319,8 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, proxyTypeFi
           preparedTransaction={preparedTransaction}
           proxies={proxies}
           setFlowStep={setFlowStep}
-        />}
+        />
+      }
       <SignUsingProxy
         genesisHash={genesisHash}
         handleClose={toggleSelectProxy}

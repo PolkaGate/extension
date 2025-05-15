@@ -106,7 +106,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />
           }
         </Grid>
-        <Grid alignItems='center' container item xs>
+        <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
           <Typography color='text.highlight' sx={{ textWrap: 'nowrap' }} variant='B-1'>
             {title}
           </Typography>

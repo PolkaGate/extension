@@ -1555,5 +1555,6 @@
   "Loading the validators' list": "",
   "It is more than unstaking amount.": "",
   "The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount": "",
-  "The reward amount will be automatically added to your staked amount.": ""
+  "The reward amount will be automatically added to your staked amount.": "",
+  "Stake more": ""
 }
