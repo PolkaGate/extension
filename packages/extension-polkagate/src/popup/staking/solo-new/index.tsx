@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Content } from '../../../partials/Review';
 
 import { Container, Grid } from '@mui/material';
@@ -57,7 +55,7 @@ export default function Solo (): React.ReactElement {
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-    , [accountAssets, genesisHash]);
+  , [accountAssets, genesisHash]);
 
   const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
 
@@ -67,7 +65,7 @@ export default function Solo (): React.ReactElement {
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
 
-  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
+  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
   const layoutDirection = useMemo((): 'row' | 'column' => {
     if (StakingInfoTileCount > 2) {
       return 'row';
@@ -166,35 +164,41 @@ export default function Solo (): React.ReactElement {
               title={t('Rewards paid')}
               token={token ?? ''}
             />
-            <StakingInfoTile
-              Icon={Moneys}
-              buttonsArray={[{
-                Icon: Strongbox2,
-                onClick: onWithdraw,
-                text: t('Withdraw')
-              }]}
-              cryptoAmount={redeemable}
-              decimal={decimal ?? 0}
-              fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
-              layoutDirection={layoutDirection}
-              title={t('Redeemable')}
-              token={token ?? ''}
-            />
-            <StakingInfoTile
-              Icon={LockSlash}
-              buttonsArray={[{
-                Icon: Trade,
-                onClick: onRestake,
-                text: t('Restake')
-              }]}
-              cryptoAmount={unlockingAmount}
-              decimal={decimal ?? 0}
-              fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
-              layoutDirection={layoutDirection}
-              onExpand={toBeReleased?.length ? onExpand : undefined}
-              title={t('Unstaking')}
-              token={token ?? ''}
-            />
+            {
+              redeemable &&
+              <StakingInfoTile
+                Icon={Moneys}
+                buttonsArray={[{
+                  Icon: Strongbox2,
+                  onClick: onWithdraw,
+                  text: t('Withdraw')
+                }]}
+                cryptoAmount={redeemable}
+                decimal={decimal ?? 0}
+                fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
+                layoutDirection={layoutDirection}
+                title={t('Redeemable')}
+                token={token ?? ''}
+              />
+            }
+            {
+              unlockingAmount &&
+              <StakingInfoTile
+                Icon={LockSlash}
+                buttonsArray={[{
+                  Icon: Trade,
+                  onClick: onRestake,
+                  text: t('Restake')
+                }]}
+                cryptoAmount={unlockingAmount}
+                decimal={decimal ?? 0}
+                fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
+                layoutDirection={layoutDirection}
+                onExpand={toBeReleased?.length ? onExpand : undefined}
+                title={t('Unstaking')}
+                token={token ?? ''}
+              />
+            }
           </Container>
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}

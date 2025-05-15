@@ -91,7 +91,7 @@ export default function BondExtra (): React.ReactElement {
   }, []);
 
   const transactionFlow = useTransactionFlow({
-    backPathTitle: t('Stake More'),
+    backPathTitle: t('Stake more'),
     closeReview,
     formatted,
     genesisHash: genesisHash ?? '',

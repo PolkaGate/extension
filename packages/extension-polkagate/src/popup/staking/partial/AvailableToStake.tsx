@@ -51,7 +51,7 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
             : (
               <Skeleton
                 animation='wave'
-                height='19px'
+                height='12px'
                 sx={{ borderRadius: '50px', fontWeight: 'bold', my: '1px', transform: 'none', width: '125px' }}
                 variant='text'
               />
