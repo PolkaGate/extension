@@ -157,10 +157,10 @@ export default function Settings (): React.ReactElement {
 
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
 
-    if (destinationType === 'account') {
-      return 'Others';
-    } else {
+    if (destinationType === 'Staked') {
       return 'Staked';
+    } else {
+      return 'Others';
     }
   }, [stakingInfo.stakingAccount]);
 
