@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Maximize4 } from 'iconsax-react';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Tooltip } from '../components';
@@ -15,16 +15,31 @@ interface Props {
   url?: string;
 }
 
-function FullscreenModeButton ({ url = '/' }: Props) {
+function FullscreenModeButton ({ url }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const buttonContainer = useRef(null);
+  const hovered = useIsHovered(buttonContainer);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
-  const hovered = useIsHovered(buttonContainer);
 
-  const open = useCallback(() => {
-    windowOpen(account && pathname !== '/' ? `/accountfs/${account.address}/${POLKADOT_GENESIS}/0` : url).catch(console.error);
+  const onStakingPages = useMemo(() => pathname.includes('pool') || pathname.includes('solo'), [pathname]);
+
+  const onClick = useCallback(() => {
+    if (url) {
+      return windowOpen(url).catch(console.error);
+    }
+
+    if (account && pathname.includes('token')) {
+      return windowOpen(`/accountfs/${account.address}/${POLKADOT_GENESIS}/0`).catch(console.error);
+    }
+
+    if (pathname.includes('history')) {
+      return windowOpen('/historyfs').catch(console.error);
+    }
+
+    return windowOpen('/').catch(console.error);
   }, [account, pathname, url]);
 
   const gradientBackgroundStyle = {
@@ -50,7 +65,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
   return (
     <>
       <Box
-        onClick={open}
+        onClick={onClick as unknown as () => void}
         ref={buttonContainer}
         sx={{
           alignItems: 'center',
@@ -62,7 +77,7 @@ function FullscreenModeButton ({ url = '/' }: Props) {
           width: '30px'
         }}
       >
-        <Maximize4 color={hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
+        <Maximize4 color={hovered ? '#EAEBF1' : onStakingPages ? theme.palette.text.highlight : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
         <Grid sx={gradientBackgroundStyle} />
       </Box>
       <Tooltip content={t('Fullscreen')} targetRef={buttonContainer} />

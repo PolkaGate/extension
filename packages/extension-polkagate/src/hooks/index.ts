@@ -73,6 +73,7 @@ export { default as useIdentity } from './useIdentity';
 export { default as useIdentity2 } from './useIdentity2';
 export { default as useInfo } from './useInfo';
 export { default as useIsAutoEndpoint } from './useIsAutoEndpoint';
+export { default as useIsBlueish } from './useIsBlueish';
 export { default as useIsDark } from './useIsDark';
 export { default as useIsExposed } from './useIsExposed';
 export { default as useIsExposed2 } from './useIsExposed2';

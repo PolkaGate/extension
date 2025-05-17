@@ -1524,6 +1524,11 @@
   "Choose a suitable proxy for the account to conduct the transaction on its behalf": "",
   "No proxy available": "",
   "Export all Accounts": "",
+  "Create a Password": "",
+  "Repeat the Password": "",
+  "Object info": "",
+  "Show:": "",
+  "Any status": "",
   "block": "",
   "hash": "",
   "amount": "",
@@ -1531,6 +1536,8 @@
   "View On Explorer": "",
   "Please wait a few seconds and don’t close the extension": "",
   "Change": "",
+  "Not enough amount to stake more.": "",
+  "It is more than the available balance to stake.": "",
   "Stake More": "",
   "Please wait a few seconds": "",
   "and don’t close the extension": "",
@@ -1546,5 +1553,8 @@
   "No validator found": "",
   "Chill": "",
   "Loading the validators' list": "",
-  "The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount": ""
+  "It is more than unstaking amount.": "",
+  "The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount": "",
+  "The reward amount will be automatically added to your staked amount.": "",
+  "Stake more": ""
 }

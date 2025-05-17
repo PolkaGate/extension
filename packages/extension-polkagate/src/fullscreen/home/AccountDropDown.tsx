@@ -86,10 +86,10 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
         Icon: Setting4,
         pathname: '/accounts',
         text: t('Account settings'),
-        value: '/settings-account'
+        value: `/settings-account/${address}`
       }
     ];
-  }, [t]);
+  }, [address, t]);
 
   const _options = useMemo(() => {
     return [

@@ -5,7 +5,8 @@ import { Tooltip, useTheme } from '@mui/material';
 import Zoom from '@mui/material/Zoom';
 import React from 'react';
 
-interface CustomTooltipProps {
+interface Props {
+  color?: string;
   content: React.ReactNode;
   placement?: 'bottom-end'
   | 'bottom-start'
@@ -23,7 +24,7 @@ interface CustomTooltipProps {
   notShow?: boolean;
 }
 
-const MyTooltip = ({ children, content, notShow = false, placement = 'bottom' }: CustomTooltipProps) => {
+const MyTooltip = ({ children, color, content, notShow = false, placement = 'bottom' }: Props) => {
   const theme = useTheme();
 
   return (
@@ -35,10 +36,10 @@ const MyTooltip = ({ children, content, notShow = false, placement = 'bottom' }:
           style: { margin: '5px', marginTop: '12px' },
           sx: {
             '& .MuiTooltip-arrow': {
-              color: '#674394',
+              color: color ?? '#674394',
               height: '9px'
             },
-            backgroundColor: '#674394',
+            backgroundColor: color ?? '#674394',
             borderRadius: '8px',
             color: '#fff',
             ...theme.typography['B-4'],

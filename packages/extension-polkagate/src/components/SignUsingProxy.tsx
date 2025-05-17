@@ -7,6 +7,8 @@ import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data, Trash, Warning2 } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { useTranslation } from '../hooks';
 import Radio from '../popup/staking/components/Radio';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
@@ -31,7 +33,7 @@ const ResetSelection = ({ onReset }: { onReset: () => void }) => {
 interface ProxiesItemProps {
   proxy: ProxyItem;
   selectedProxyItem: Proxy | undefined;
-  onSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelect: (stringifyProxy: string) => void;
   genesisHash: string | null | undefined;
 }
 
@@ -59,8 +61,18 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
       selectedProxyItem.delay === proxy.proxy.delay);
   }, [proxy.proxy.delay, proxy.proxy.delegate, proxy.proxy.proxyType, selectedProxyItem]);
 
+  const handleSelect = useCallback(() => {
+    if (!isAvailable) {
+      return;
+    }
+
+    const stringifyProxy = JSON.stringify(proxy);
+
+    onSelect(stringifyProxy);
+  }, [isAvailable, onSelect, proxy]);
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', border: '4px solid', borderColor: isChecked ? '#3988FF' : '#222442', borderRadius: '18px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
+    <Container disableGutters onClick={handleSelect} sx={{ alignItems: 'center', bgcolor: '#05091C', border: '4px solid', borderColor: isChecked ? '#3988FF' : '#222442', borderRadius: '18px', cursor: isAvailable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', width: 'fit-content' }}>
         <PolkaGateIdenticon
           address={proxy.proxy.delegate}
@@ -78,7 +90,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
               {proxy.proxy.proxyType}
             </Typography>
             <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', p: '1px 3px' }} variant='S-1'>
-              {proxy.proxy.delay}
+              {proxy.proxy.delay * 6}sec
             </Typography>
           </Grid>
         </Grid>
@@ -86,7 +98,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
       <Radio
         checked={isChecked}
         disabled={!isAvailable}
-        onChange={onSelect}
+        onChange={noop}
         value={JSON.stringify(proxy)}
       />
       {!isAvailable && <Grid sx={{ backdropFilter: 'blur(1px)', bgcolor: 'rgba(0,0,0, 0.3)', borderRadius: '18px', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 1 }} />}
@@ -119,8 +131,8 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
   const noProxyAvailable = useMemo(() => proxies && proxyItems.length === 0, [proxies, proxyItems.length]);
   const loadingProxy = useMemo(() => proxies === undefined, [proxies]);
 
-  const handleSelectedProxy = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = JSON.parse(event.target.value) as ProxyItem;
+  const handleSelectedProxy = useCallback((stringifyProxy: string) => {
+    const selected = JSON.parse(stringifyProxy) as ProxyItem;
 
     const found = proxies?.find((proxy) => proxy.delegate === selected.proxy.delegate && proxy.proxyType === selected.proxy.proxyType && proxy.delay === selected.proxy.delay);
 
@@ -146,6 +158,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
       handleClose={onClosePopup}
       iconColor={theme.palette.text.highlight}
       iconSize={25}
+      isBlueish
       maxHeight='450px'
       openMenu={openMenu}
       title={t('Select Proxy')}

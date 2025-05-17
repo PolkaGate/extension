@@ -8,7 +8,8 @@ import { AddSquare, Book, Discover, Menu, Setting2, UserOctagon } from 'iconsax-
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import Tooltip from '../../../components/Tooltip';
+import { MyTooltip } from '@polkadot/extension-polkagate/src/components/index';
+
 import { useTranslation } from '../../../components/translate';
 import { useIsHovered } from '../../../hooks';
 import { GradientDivider } from '../../../style';
@@ -60,10 +61,16 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
 
   return (
     <>
-      <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
-        <ButtonIcon color={hovered || isSelected ? '#3F76FF' : theme.palette.text.highlight} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
-        {/* <SelectedItemBackground hovered={hovered || isSelected} /> */}
-      </Grid>
+      <MyTooltip
+        color='#1c498a'
+        content={tooltip}
+        notShow={!tooltip}
+        placement='top'
+      >
+        <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
+          <ButtonIcon color={hovered || isSelected ? '#3F76FF' : theme.palette.text.highlight} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
+        </Grid>
+      </MyTooltip>
       {withBorder &&
         <GradientDivider
           orientation='vertical'
@@ -73,18 +80,9 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
           }}
         />
       }
-      <Tooltip
-        content={tooltip}
-        placement='top'
-        positionAdjustment={{ left: -45, top: -540 }}
-        targetRef={refContainer}
-      />
     </>
   );
 }
-
-// import { STAKING_ROUTES } from '@polkadot/extension-ui/src/Popup/routes/stakingRoutes';
-// export type StakingPages = '/pool/genesisHash/stakingIndex' | '/pool/genesisHash/bondExtra' | '/pool/genesisHash/poolInfo' | '/pool/genesisHash/info' | '/solo/genesisHash/stakingIndex' | '/solo/genesisHash/validator' | '/solo/genesisHash/bondExtra' | '/solo/genesisHash/settings' | '/solo/genesisHash/info';
 
 interface MenuItemConfig {
   icon: Icon;

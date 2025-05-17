@@ -16,12 +16,11 @@ import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useSelectedAccount, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
-import { toTitleCase } from '../../../util';
+import { getVoteType, isReward, toTitleCase } from '../../../util';
 import { CHAINS_ON_POLKAHOLIC, CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
 import { amountToMachine, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../../util/utils';
 import { getLink } from '../Explorer';
-import { getVoteType, isReward } from './HistoryItem';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;

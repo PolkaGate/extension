@@ -27,7 +27,7 @@ const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: strin
   return (
     <Grid alignItems='center' container item sx={{ columnGap: '4px', width: 'fit-content' }}>
       <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
-      <Typography color='text.secondary' variant='B-2'>
+      <Typography color='text.highlight' variant='B-2'>
         {`Staked ${token}`}
       </Typography>
     </Grid>
@@ -39,6 +39,7 @@ const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
     <Grid container item sx={{ bottom: 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
+        : <Ice size='28' style={{ opacity: 0.3 }} />
         : <Ice size='28' style={{ opacity: 0.3 }} />
       }
     </Grid>
@@ -75,8 +76,8 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, staked, s
           ? (
             <Skeleton
               animation='wave'
-              height='24px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
+              height='30px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', mt: '5px', transform: 'none', width: '100%' }}
               variant='text'
             />)
           : (
@@ -94,13 +95,13 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, staked, s
             />)
         }
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-start'>
+      <Grid alignItems='center' container item justifyContent='flex-start' sx={{ m: '-3px 0 6px' }}>
         {staked === undefined
           ? (
             <Skeleton
               animation='wave'
               height='16px'
-              sx={{ borderRadius: '10px', fontWeight: 'bold', m: '6px 0 4px', maxWidth: '75px', transform: 'none', width: '100%' }}
+              sx={{ borderRadius: '10px', fontWeight: 'bold', m: '6px 0 1px', maxWidth: '75px', transform: 'none', width: '100%' }}
               variant='text'
             />)
           : (

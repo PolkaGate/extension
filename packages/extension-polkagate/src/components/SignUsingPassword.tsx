@@ -108,7 +108,7 @@ export default function SignUsingPassword ({ api, from, handleTxResult, onUsePro
 
   return (
     <Stack direction='column' sx={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}>
-      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '12px' }}>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 5px' }}>
         <Typography color='text.primary' variant='B-1'>
           {t('Password')}
         </Typography>

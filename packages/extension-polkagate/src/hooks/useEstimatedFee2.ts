@@ -17,6 +17,10 @@ export default function useEstimatedFee2 (genesisHash: string | undefined, addre
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   useEffect(() => {
+    if (estimatedFee) {
+      return;
+    }
+
     if (!address || !call) {
       return;
     }
@@ -37,7 +41,7 @@ export default function useEstimatedFee2 (genesisHash: string | undefined, addre
       .then(
         (i) => setEstimatedFee(i?.partialFee && api.createType('Balance', i.partialFee) as Balance)
       ).catch(console.error);
-  }, [address, api, call, params]);
+  }, [address, api, call, params, estimatedFee]);
 
   return estimatedFee;
 }

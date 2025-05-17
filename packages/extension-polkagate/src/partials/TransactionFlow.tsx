@@ -84,6 +84,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
+            closeReview={closeReview}
             genesisHash={genesisHash}
             proxyTypeFilter={proxyTypeFilter}
             selectedProxy={selectedProxy}

@@ -18,7 +18,7 @@ import { decodeMultiLocation } from '../util/utils';
 import { useChainInfo, useFormatted3, useSelectedAccount, useStakingAccount2 } from '.';
 
 export default function useNativeAssetBalances2 (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
-  const stakingAccount = useStakingAccount2(address, genesisHash, undefined, undefined, onlyNew);
+  const stakingAccount = useStakingAccount2(address, genesisHash, undefined, undefined);
   const { api, chainName, decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
   const account = useSelectedAccount();
   const formatted = useFormatted3(address, genesisHash);

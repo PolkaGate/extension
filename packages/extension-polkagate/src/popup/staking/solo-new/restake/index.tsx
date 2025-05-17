@@ -82,7 +82,10 @@ export default function Restake (): React.ReactElement {
     return unlockingAmount.toString();
   }, [decimal, unlockingAmount]);
   const onNext = useCallback(() => setReview(true), []);
-  const closeReview = useCallback(() => setReview(false), []);
+  const closeReview = useCallback(() => {
+    setReview(false);
+    setRebondValue(undefined);
+  }, []);
 
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Restaking'),
@@ -118,7 +121,7 @@ export default function Restake (): React.ReactElement {
             />
             <StakeAmountInput
               buttonsArray={[{
-                buttonName: t('All'),
+                buttonName: t('Max'),
                 value: onMaxValue
               }]}
               decimal={decimal}

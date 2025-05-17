@@ -48,7 +48,7 @@ const EmptyNomination = ({ setRefresh }: EmptyNominationProps) => {
   );
 };
 
-export default function NominationsSetting (): React.ReactElement {
+export default function NominationsSetting(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
@@ -70,7 +70,7 @@ export default function NominationsSetting (): React.ReactElement {
     stakingInfo.stakingAccount === null || stakingInfo.stakingAccount?.nominators?.length === 0
       ? null
       : stakingInfo.stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingInfo.stakingAccount]);
+    , [stakingInfo.stakingAccount]);
 
   const nominatedValidatorsInformation = useMemo(() => {
     if (!validatorsInfo || !nominatedValidatorsIds) {
@@ -98,7 +98,7 @@ export default function NominationsSetting (): React.ReactElement {
   }, [estimatedFee2, nominatedValidatorsInformation?.length, t]);
   const tx = useMemo(() => chill?.(), [chill]);
 
-  const goChill = useCallback(() => setReview(true), []);
+  // const goChill = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
@@ -117,14 +117,15 @@ export default function NominationsSetting (): React.ReactElement {
       <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <BackButton
-          nominatedValidatorsInformation={nominatedValidatorsInformation}
-          onChill={goChill}
-          soloStakingInfo={stakingInfo}
+          // nominatedValidatorsInformation={nominatedValidatorsInformation}
+          // onChill={goChill}
+          // soloStakingInfo={stakingInfo}
           style={{ mt: '8px' }}
         />
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
-          {stakingInfo.stakingAccount === undefined &&
+          {(stakingInfo.stakingAccount === undefined || nominatedValidatorsInformation === undefined) &&
             <Progress
+              loaderSize={40}
               text={t("Loading the validators' list")}
             />
           }

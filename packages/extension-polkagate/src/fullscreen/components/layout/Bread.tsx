@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { Home } from 'iconsax-react';
+import { Clock, Home } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { noop } from '@polkadot/util';
 
 import { useTranslation } from '../../../hooks';
 
@@ -13,7 +15,7 @@ function Bread(): React.ReactElement {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const isImport = useMemo(() => ['restore', 'attach', 'import'].some((keyword) => pathname.includes(keyword)), [pathname])
+  const isImport = useMemo(() => ['restore', 'attach', 'import'].some((keyword) => pathname.includes(keyword)), [pathname]);
 
   const onImportClick = useCallback(() => {
     navigate('/account/have-wallet');
@@ -21,16 +23,26 @@ function Bread(): React.ReactElement {
 
   return (
     <Stack columnGap='20px' direction='row' sx={{ height: '24px', m: '20px' }}>
-      <Stack columnGap='5px' direction='row'>
-        <Home color='#AA83DC' size='18' variant='Bulk' />
-        <Typography color='#AA83DC' variant='B-2'>
-          {t('Home')}
-        </Typography>
-      </Stack>
+      {!['/historyfs'].includes(pathname) &&
+        <Stack columnGap='5px' direction='row'>
+          <Home color='#AA83DC' size='18' variant='Bulk' />
+          <Typography color='#AA83DC' variant='B-2'>
+            {t('Home')}
+          </Typography>
+        </Stack>
+      }
       {isImport &&
         <Typography color='#AA83DC' onClick={onImportClick} sx={{ cursor: 'pointer' }} variant='B-2'>
           {t('Import account')}
         </Typography>
+      }
+      {pathname.includes('/historyfs') &&
+        <Stack columnGap='5px' direction='row'>
+          <Clock color='#AA83DC' size='18' variant='Bulk' />
+          <Typography color='#AA83DC' onClick={noop} sx={{ cursor: 'pointer' }} variant='B-2'>
+            {t('History')}
+          </Typography>
+        </Stack>
       }
     </Stack>
 

@@ -1,13 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
-/** 
- * @description
- * this hook returns a 
- * */
-
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { AccountStakingInfo } from '../util/types';
 
@@ -16,16 +9,16 @@ import { useEffect, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
-import { useChainName, useStakingRewardDestinationAddress } from '.';
+import { useStakingRewardDestinationAddress } from '.';
 
-export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
+export async function getStakingReward (chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
     console.log('address is null in getting get Staking Rewards ');
 
     return null;
   }
 
-  console.log(`Getting Staking Reward from subscan  on ${chainName} for ${address} ... `);
+  console.log(`Getting Staking Reward from subscan  on ${chainName} for ${String(address)} ... `);
 
   return new Promise((resolve) => {
     try {
@@ -47,7 +40,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting get Staking Rewards ');
+      console.log('something went wrong while getting get Staking Rewards ', error);
       resolve(null);
     }
   });

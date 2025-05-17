@@ -31,6 +31,7 @@ interface Props {
   withCurrency?: boolean;
   withSi?: boolean;
   decimalPoint?: number;
+  tokenColor?: string;
 }
 
 const K_LENGTH = 3 + 1;
@@ -46,10 +47,10 @@ function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [num
   ];
 }
 
-function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number): React.ReactNode {
+function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number, tokenColor?: string | undefined): React.ReactNode {
   const maybeTilde = postfix && parseFloat(postfix) > parseFloat(postfix.slice(0, decimalPoint)) ? '~' : '';
 
-  return <>{`${maybeTilde}${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span> {unit}</span>{label}</>;
+  return <>{`${maybeTilde}${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span style={{ color: tokenColor ?? 'inherit' }}> {unit}</span>{label}</>;
 }
 
 function splitFormat (value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
@@ -59,7 +60,7 @@ function splitFormat (value: string, decimalPoint: number, label?: LabelPost, is
   return createElement(prefix, postfix, unit, label, isShort, decimalPoint);
 }
 
-function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost): React.ReactNode {
+function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost, tokenColor?: string | undefined): React.ReactNode {
   const [prefix, postfix] = formatBalance(value, { decimals, forceUnit: '-', withSi: false }).split('.');
   const isShort = _isShort || (withSi && prefix.length >= K_LENGTH);
   const unitPost = withCurrency ? token : '';
@@ -69,13 +70,13 @@ function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | strin
     const minor = rest.slice(0, decimalPoint);
     const unit = rest.slice(4);
 
-    return <>{major}.<span>{minor}</span><span>{unit}{unit ? unitPost : ` ${unitPost}`}</span>{labelPost || ''}</>;
+    return <>{major}.<span>{minor}</span><span style={{ color: tokenColor ?? 'inherit' }}>{unit}{unit ? unitPost : ` ${unitPost}`}</span>{labelPost || ''}</>;
   }
 
-  return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint);
+  return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint, tokenColor);
 }
 
-function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
+function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokenColor, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { isHideNumbers } = useIsHideNumbers();
 
@@ -102,7 +103,7 @@ function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimal
             : value
               ? value === 'all'
                 ? <>{t('everything')}{labelPost || ''}</>
-                : applyFormat(decimalPoint, value, formatInfo, withCurrency, withSi, isShort, labelPost)
+                : applyFormat(decimalPoint, value, formatInfo, withCurrency, withSi, isShort, labelPost, tokenColor)
               : isString(labelPost)
                 ? `-${labelPost}`
                 : labelPost

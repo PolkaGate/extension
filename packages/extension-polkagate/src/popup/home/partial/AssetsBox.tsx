@@ -28,7 +28,7 @@ const containerVariants = {
   }
 };
 
-function AssetsBox (): React.ReactElement {
+function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): React.ReactElement {
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
   const selectedChains = useSelectedChains();
@@ -46,13 +46,13 @@ function AssetsBox (): React.ReactElement {
       : setTab(window.localStorage.getItem('HomeTab') as TAB ?? TAB.TOKENS);
   }, [tab]);
 
-  const renderContent = useCallback(() => {
+  const renderContent = useCallback((loadingItemsCount?: number) => {
     if (TAB.NFTS === tab) {
       return <NFTBox />;
     }
 
     if (isLoading || !tab || !account || !selectedChains || !pricesInCurrency) {
-      return <AssetLoading />;
+      return <AssetLoading itemsCount={loadingItemsCount} />;
     }
 
     if (nothingToShow) {
@@ -92,7 +92,7 @@ function AssetsBox (): React.ReactElement {
     <>
       <AssetTabs setTab={setTab} tab={tab} />
       <VelvetBox style={{ margin: isExtension ? '0 15px' : 0, minHeight: '70px', padding: isExtension ? undefined : 0 }}>
-        {renderContent()}
+        {renderContent(loadingItemsCount)}
       </VelvetBox>
     </>
   );

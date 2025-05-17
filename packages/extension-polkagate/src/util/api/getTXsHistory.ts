@@ -297,6 +297,7 @@ export async function getTXsHistory (chainName: string, address: string, pageNum
     ...extrinsics,
     data: {
       ...extrinsics.data,
+      count: extrinsics.data.count,
       extrinsics: extrinsicsInfo
     },
     for: `${address} - ${chainName}`

@@ -45,8 +45,8 @@ export default function FeeValue ({ decimal, feeValue, token }: Props): React.Re
           : (
             <Skeleton
               animation='wave'
-              height='18px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '55px' }}
+              height='12px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '70px' }}
               variant='text'
             />
           )

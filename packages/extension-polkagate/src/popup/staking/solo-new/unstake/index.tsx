@@ -118,7 +118,10 @@ export default function Unstake (): React.ReactElement {
     return staked.toString();
   }, [decimal, staked]);
   const onNext = useCallback(() => setReview(true), []);
-  const closeReview = useCallback(() => setReview(false), []);
+  const closeReview = useCallback(() => {
+    setReview(false);
+    setUnstakingValue(undefined);
+  }, []);
 
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Unstaking'),
@@ -154,13 +157,13 @@ export default function Unstake (): React.ReactElement {
             />
             <StakeAmountInput
               buttonsArray={[{
-                buttonName: t('All'),
+                buttonName: t('Max'),
                 value: onMaxValue
               }]}
               decimal={decimal}
               errorMessage={errorMessage}
               onInputChange={onInputChange}
-              style={{ mb: '18px', mt: '8px' }}
+              style={{ mb: '18px', mt: '18px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
               titleInColor={` (${token?.toUpperCase() ?? '--'})`}
             />

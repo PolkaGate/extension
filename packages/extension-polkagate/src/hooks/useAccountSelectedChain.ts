@@ -3,9 +3,10 @@
 
 import type { HexString } from '@polkadot/util/types';
 
-import { useEffect, useState } from 'react';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import { useCallback, useEffect, useState } from 'react';
 
-import { getStorage } from '../util';
+import { getStorage, watchStorage } from '../util';
 
 export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
 
@@ -23,38 +24,52 @@ export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
 export default function useAccountSelectedChain (address: string | undefined): HexString | undefined | null {
   const [genesisHash, setGenesisHash] = useState<HexString | null>();
 
+  const handleGenesis = useCallback((res: string | object) => {
+    if (!address) {
+      return;
+    }
+
+    let parsedRes: Record<string, HexString> | null = null;
+
+    if (typeof res === 'object' && res !== null) {
+      parsedRes = res as Record<string, HexString>;
+    } else if (typeof res === 'string') {
+      try {
+        parsedRes = JSON.parse(res) as Record<string, HexString>;
+      } catch {
+        parsedRes = null;
+      }
+    }
+
+    if (!parsedRes || JSON.stringify(parsedRes) === '{}') {
+      return setGenesisHash(POLKADOT_GENESIS);
+    }
+
+    if (address in parsedRes) {
+      setGenesisHash(parsedRes[address] as HexString | undefined ?? POLKADOT_GENESIS);
+    } else {
+      setGenesisHash(POLKADOT_GENESIS);
+    }
+  }, [address]);
+
   useEffect(() => {
     if (!address) {
       return;
     }
 
     getStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE).then((res: string | object) => {
-      let parsedRes: Record<string, HexString> | null = null;
-
-      if (typeof res === 'object' && res !== null) {
-        parsedRes = res as Record<string, HexString>;
-      } else if (typeof res === 'string') {
-        try {
-          parsedRes = JSON.parse(res) as Record<string, HexString>;
-        } catch {
-          parsedRes = null;
-        }
-      }
-
-      if (!parsedRes || JSON.stringify(parsedRes) === '{}') {
-        return setGenesisHash(null);
-      }
-
-      if (address in parsedRes) {
-        setGenesisHash(parsedRes[address] as HexString | undefined ?? null);
-      } else {
-        setGenesisHash(null);
-      }
+      handleGenesis(res);
     }).catch((error) => {
       console.log(error);
       setGenesisHash(null);
     });
-  }, [address]);
+
+    const unsubscribe = watchStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, handleGenesis);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [address, handleGenesis]);
 
   return genesisHash;
 }

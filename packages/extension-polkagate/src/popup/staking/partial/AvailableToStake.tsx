@@ -32,7 +32,7 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
             : <Ice size='26' />
           }
         </Grid>
-        <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <Container disableGutters sx={{ display: 'flex', flexDirection: 'column' }}>
           {availableAmount
             ? (
               <FormatBalance2
@@ -51,8 +51,8 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
             : (
               <Skeleton
                 animation='wave'
-                height='18px'
-                sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '55px' }}
+                height='12px'
+                sx={{ borderRadius: '50px', fontWeight: 'bold', my: '1px', transform: 'none', width: '125px' }}
                 variant='text'
               />
             )

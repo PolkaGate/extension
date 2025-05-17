@@ -112,7 +112,7 @@ export default function MigrationApp ({ setMode }: Props): React.ReactElement {
           onChange={onSelectChange}
           options={networkOps.current as DropdownOption[]}
           style={{
-            mt: '12px',
+            marginTop: '12px',
             width: 'calc(100% - 30px)'
           }}
           value={genesis}
