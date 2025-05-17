@@ -114,7 +114,7 @@ function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
   const tabIndex = useMemo(() => !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
     ? TAB.CHAINS
     : TAB.NFTS
-    , [tab]);
+  , [tab]);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
     const selectedTab = value === TAB.NFTS
