@@ -5,10 +5,11 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { BeatLoader, SyncLoader } from 'react-spinners';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
@@ -119,6 +120,7 @@ export default function Settings (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const theme = useTheme();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
@@ -238,18 +240,23 @@ export default function Settings (): React.ReactElement {
               rewardDestinationType={rewardDestinationType}
               setRewardDestinationType={setRewardDestinationType}
             />
-            <SpecificAccountOption
-              ED={ED}
-              genesisHash={genesisHash}
-              onNext={onNext}
-              setSpecificAccount={setSpecificAccount}
-              showOption={rewardDestinationType === 'Others'}
-              specificAccount={specificAccount ?? rewardDestinationAddress}
-            />
-            <SetToStaked
-              onNext={onNext}
-              showOption={changeToStake}
-            />
+            {rewardDestinationType === undefined
+              ? <BeatLoader color={theme.palette.text.highlight} cssOverride={{ alignSelf: 'center', marginTop: '20px' }} loading size={15} speedMultiplier={0.6} />
+              : <>
+                <SpecificAccountOption
+                  ED={ED}
+                  genesisHash={genesisHash}
+                  onNext={onNext}
+                  setSpecificAccount={setSpecificAccount}
+                  showOption={rewardDestinationType === 'Others'}
+                  specificAccount={specificAccount ?? rewardDestinationAddress}
+                />
+                <SetToStaked
+                  onNext={onNext}
+                  showOption={changeToStake}
+                />
+              </>
+            }
           </Stack>
         </Motion>
       </Grid>

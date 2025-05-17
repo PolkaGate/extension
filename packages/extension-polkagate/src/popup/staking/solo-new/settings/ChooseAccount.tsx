@@ -113,9 +113,10 @@ export default function ChooseAccount ({ genesisHash, setSpecificAccount, specif
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
         <Identity2
           address={specificAccount}
+          addressStyle={{ color: '#809ACB', fontSize: '12px', fontWeight: 500 }}
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
-          style={{ variant: 'B-2' }}
+          style={{ variant: 'B-4' }}
           withShortAddress
         />
         <ArrowCircleDown color={theme.palette.text.highlight} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
