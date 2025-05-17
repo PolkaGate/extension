@@ -154,7 +154,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
               }
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress && isValidAddress(String(_formatted))
-                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.variant} />
+                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
                   : t('Unknown')
                 : ''
               }
@@ -162,7 +162,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={style?.variant} />
+              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
             </Grid>
           }
         </Grid>
