@@ -19,7 +19,7 @@ export default function Progress ({ loaderSize = 15, style, text, withoutEllipsi
     <Stack direction='column' sx={{ alignItems: 'center', gap: '40px', justifyContent: 'center', mt: '90px', width: '100%', ...style }}>
       <BeatLoader color={theme.palette.text.highlight} cssOverride={{ alignSelf: 'center' }} loading size={loaderSize} speedMultiplier={0.6} />
       <Typography color='text.primary' variant='B-3'>
-        {text}{!withoutEllipsis && '...'}
+        {text}{!withoutEllipsis && ' ...'}
       </Typography>
     </Stack>
   );
