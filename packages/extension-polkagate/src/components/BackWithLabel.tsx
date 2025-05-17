@@ -18,7 +18,7 @@ const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
         return (
           <div
             key={index}
-            style={{ backgroundColor: isActive ? '#596AFF' : '#3E4165', borderRadius: '999px', height: '10px', transform: isActive ? 'scale(1.2)' : 'scale(0.8)', transition: 'transform 250ms ease', width: '10px' }}
+            style={{ backgroundColor: isActive ? '#596AFF' : '#3E4165', borderRadius: '999px', height: '10px', transform: isActive ? 'scale(1.263)' : 'scale(0.758)', transition: 'transform 250ms ease', width: '10px' }}
           />
         );
       })}
