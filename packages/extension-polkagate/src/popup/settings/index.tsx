@@ -6,7 +6,7 @@ import { Category, User } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
 import { ActionCard, ActionContext, Motion } from '../../components';
-import { useIsDark, useTranslation } from '../../hooks';
+import { useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import ActionRow from './partials/ActionRow';
@@ -23,10 +23,11 @@ function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const onAction = useContext(ActionContext);
+  const account = useSelectedAccount();
 
   const onClick = useCallback((input: SETTING_PAGES) => {
-    return () => onAction(`/settings-${input}/`);
-  }, [onAction]);
+    return () => onAction(`/settings-${input}/${input === SETTING_PAGES.ACCOUNT ? account?.address : ''}`);
+  }, [account?.address, onAction]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
