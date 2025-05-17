@@ -125,7 +125,6 @@ export default function NominationsSetting(): React.ReactElement {
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
           {(stakingInfo.stakingAccount === undefined || nominatedValidatorsInformation === undefined) &&
             <Progress
-              loaderSize={40}
               text={t("Loading the validators' list")}
             />
           }
