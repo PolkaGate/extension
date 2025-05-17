@@ -117,7 +117,7 @@ export default function NominationsSetting(): React.ReactElement {
       <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <BackButton
-          // nominatedValidatorsInformation={nominatedValidatorsInformation}
+          count={nominatedValidatorsInformation?.length}
           // onChill={goChill}
           // soloStakingInfo={stakingInfo}
           style={{ mt: '8px' }}

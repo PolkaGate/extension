@@ -38,12 +38,12 @@ const SettingButton = ({ Icon, disabled = false, onClick, text }: SettingButtonP
 
 interface Props {
   // soloStakingInfo: SoloStakingInfo | undefined;
-  // nominatedValidatorsInformation: ValidatorInformation[] | undefined;
+  count: number | undefined;
   style?: SxProps<Theme>;
   // onChill: () => void;
 }
 
-export default function BackButton ({ style }: Props) {
+export default function BackButton ({ count, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -61,6 +61,11 @@ export default function BackButton ({ style }: Props) {
         <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
           {t('Validators')}
         </Typography>
+        {count &&
+          <Typography color={theme.palette.text.highlight} variant='B-2'>
+            ({count})
+          </Typography>
+        }
       </Container>
       <SettingButton
         Icon={<Repeat color={theme.palette.text.highlight} size='18' variant='Bulk' />}
