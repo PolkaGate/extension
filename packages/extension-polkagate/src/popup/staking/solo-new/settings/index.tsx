@@ -9,7 +9,7 @@ import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { BeatLoader, SyncLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';

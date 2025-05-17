@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { AddCircle, Convertshape2, Wallet } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +42,7 @@ function Onboarding (): React.ReactElement {
   const onAddAccount = useCallback(() => navigate('/account/have-wallet'), [navigate]);
 
   const onExploreDemo = useCallback((): void => {
-    createAccountExternal('Demo account', DEMO_ACCOUNT, POLKADOT_GENESIS)
+    createAccountExternal('Demo account', DEMO_ACCOUNT)
       .then(() => {
         setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         navigate('/');
