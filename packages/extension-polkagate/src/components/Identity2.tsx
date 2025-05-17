@@ -168,7 +168,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
         </Grid>
         {withShortAddress && direction === 'row' &&
           <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
-            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', ...addressStyle }} variant={style?.variant} />
+            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
           </Grid>
         }
         {_showSocial && _accountInfo?.identity?.email &&
