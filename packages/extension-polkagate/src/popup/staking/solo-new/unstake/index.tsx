@@ -161,6 +161,7 @@ export default function Unstake (): React.ReactElement {
               }]}
               decimal={decimal}
               errorMessage={errorMessage}
+              focused
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '18px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}

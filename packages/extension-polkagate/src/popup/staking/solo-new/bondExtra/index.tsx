@@ -127,6 +127,7 @@ export default function BondExtra (): React.ReactElement {
             }]}
             decimal={decimal}
             errorMessage={errorMessage}
+            focused
             onInputChange={onInputChange}
             style={{ mb: '18px', mt: '8px' }}
             title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
