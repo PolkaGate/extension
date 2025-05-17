@@ -8,6 +8,8 @@ import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
 import { type BN, noop } from '@polkadot/util';
 
@@ -27,6 +29,7 @@ export default function Solo (): React.ReactElement {
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
+  
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);
@@ -38,6 +41,10 @@ export default function Solo (): React.ReactElement {
   const [param, setParam] = useState<number | null | undefined>(null);
 
   const redeem = api?.tx['staking']['withdrawUnbonded'];
+
+  useEffect(() => {
+    selectedAccount?.address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: genesisHash }).catch(console.error);
+  }, [genesisHash, selectedAccount?.address]);
 
   useEffect(() => {
     if (!api || param !== null || !formatted) {
