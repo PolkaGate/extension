@@ -42,7 +42,7 @@ function Onboarding (): React.ReactElement {
   const onAddAccount = useCallback(() => navigate('/account/have-wallet'), [navigate]);
 
   const onExploreDemo = useCallback((): void => {
-    createAccountExternal('Demo account', DEMO_ACCOUNT)
+    createAccountExternal('Demo account', DEMO_ACCOUNT, undefined)
       .then(() => {
         setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         navigate('/');
