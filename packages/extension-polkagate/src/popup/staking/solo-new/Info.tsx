@@ -66,7 +66,6 @@ export default function Info (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            staking
             style={{ pb: 0 }}
             text={t('info')}
           />

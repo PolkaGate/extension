@@ -77,7 +77,6 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
       <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
         <BackWithLabel
           onClick={closeReview}
-          staking
           stepCounter={stepCounter}
           style={{ pb: 0 }}
           text={backPathTitle}
