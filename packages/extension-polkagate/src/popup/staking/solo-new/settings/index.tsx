@@ -185,21 +185,21 @@ export default function Settings (): React.ReactElement {
     return undefined;
   }, [stashId]);
 
-  const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount), [makePayee, rewardDestinationType, specificAccount]);
+  const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount ?? rewardDestinationAddress ?? stashId), [makePayee, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId]);
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
   const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
 
   const transactionInformation = useMemo(() => {
     return [{
-      content: rewardDestinationType === 'Others' ? specificAccount : 'staked',
+      content: rewardDestinationType === 'Others' ? (specificAccount ?? rewardDestinationAddress ?? stashId) : 'staked',
       title: t('Reward destination')
     },
     {
       content: estimatedFee2,
       title: t('Fee')
     }];
-  }, [estimatedFee2, rewardDestinationType, specificAccount, t]);
+  }, [estimatedFee2, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId, t]);
   const tx = useMemo(() => {
     return rewardDestination && setPayee
       ? setPayee(rewardDestination)
