@@ -9,7 +9,7 @@ import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { BeatLoader, SyncLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
@@ -25,16 +25,21 @@ type RewardDestinationType = 'Others' | 'Staked' | undefined;
 interface OptionBoxProps {
   setRewardDestinationType: React.Dispatch<React.SetStateAction<RewardDestinationType>>;
   rewardDestinationType: RewardDestinationType;
+  disabled: boolean;
 }
 
-const OptionBox = ({ rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
+const OptionBox = ({ disabled, rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
   const { t } = useTranslation();
 
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) {
+      return;
+    }
+
     const value = event.target.value as RewardDestinationType;
 
     setRewardDestinationType(value);
-  }, [setRewardDestinationType]);
+  }, [disabled, setRewardDestinationType]);
 
   return (
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', padding: '12px', rowGap: '18px', width: '100%' }}>
@@ -236,6 +241,7 @@ export default function Settings (): React.ReactElement {
           />
           <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px', rowGap: '18px' }}>
             <OptionBox
+              disabled={rewardDestinationType === undefined}
               rewardDestinationType={rewardDestinationType}
               setRewardDestinationType={setRewardDestinationType}
             />
