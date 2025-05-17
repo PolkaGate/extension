@@ -14,7 +14,7 @@ import { DecisionButtons, GradientBox, PasswordInput } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
-import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import { useBackground, useIsExtensionPopup, useTranslation } from '../../hooks';
 import { Version } from '../../partials';
 import { RedGradient } from '../../style';
 import { STEPS } from './constants';
@@ -26,6 +26,8 @@ interface Props {
 }
 
 function Content ({ setStep }: Props): React.ReactElement {
+  useBackground('drops');
+
   const { t } = useTranslation();
   const isPopup = useIsExtensionPopup();
   // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();

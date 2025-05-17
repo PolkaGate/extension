@@ -1,26 +1,44 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import { Box, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowCircleLeft } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 
-import { useTranslation } from '../hooks';
+import { useIsBlueish, useIsHovered, useTranslation } from '../hooks';
+
+export interface StepCounterType { currentStep: number; totalSteps: number }
+
+const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', gap: '4px', justifyContent: 'center', m: 0, width: 'fit-content' }}>
+      {Array.from({ length: stepCounter.totalSteps }).map((_, index) => {
+        const isActive = index + 1 === stepCounter.currentStep;
+
+        return (
+          <div
+            key={index}
+            style={{ backgroundColor: isActive ? '#596AFF' : '#3E4165', borderRadius: '999px', height: '10px', transform: isActive ? 'scale(1.263)' : 'scale(0.758)', transition: 'transform 250ms ease', width: '10px' }}
+          />
+        );
+      })}
+    </Container>
+  );
+};
 
 interface DynamicBackButtonProps {
   text?: string;
   content?: React.ReactNode;
   onClick: () => void;
   style?: SxProps<Theme>;
+  stepCounter?: StepCounterType;
 }
 
-function BackWithLabel ({ content, onClick, style, text }: DynamicBackButtonProps) {
+function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
-
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
+  const staking = useIsBlueish();
 
   const renderContent = useMemo(() => {
     if (content) {
@@ -39,12 +57,14 @@ function BackWithLabel ({ content, onClick, style, text }: DynamicBackButtonProp
       alignItems='center'
       display='flex'
       onClick={onClick}
-      onMouseEnter={toggleHovered}
-      onMouseLeave={toggleHovered}
-      sx={{ columnGap: '6px', cursor: 'pointer', pl: '15px', py: '8px', width: 'fit-content', ...style }}
+      ref={containerRef}
+      sx={{ cursor: 'pointer', justifyContent: 'space-between', px: '15px', py: '8px', width: '100%', ...style }}
     >
-      <ArrowCircleLeft color='#FF4FB9' size='24' variant={hovered ? 'Bold' : 'Bulk'} />
-      {renderContent}
+      <Grid container item sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', flexDirection: 'row', width: 'fit-content' }}>
+        <ArrowCircleLeft color={!staking ? '#FF4FB9' : '#809ACB'} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
+        {renderContent}
+      </Grid>
+      {stepCounter && <StepCounter stepCounter={stepCounter} />}
     </Box>
   );
 }

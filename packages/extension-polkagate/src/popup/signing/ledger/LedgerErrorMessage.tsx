@@ -16,7 +16,7 @@ const LedgerErrorMessage = ({ error, style = {} }: Props) => {
   return (
     <Grid alignItems='center' columnGap='5px' container item sx={{ mb: '25px', ...style }}>
       <Warning2 color='#FF4FB9' size='24px' variant='Bold' />
-      <Typography sx={{ textAlign: 'left', width: '90%' }} variant='B-4'>
+      <Typography sx={{ letterSpacing: '-0.3px', textAlign: 'left', width: '90%' }} variant='B-4'>
         {parts.map((part, index) => (
           part.startsWith("'") && part.endsWith("'")
             ? <span key={index} style={{ color: '#AA83DC' }}>{part}</span> // Color for quoted text

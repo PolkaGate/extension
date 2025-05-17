@@ -104,7 +104,7 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
       title={t('Filters')}
     >
       <>
-        <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', height: '325px', justifyContent: 'flex-start', p: '5px', position: 'relative', pt: '25px', rowGap: '20px', zIndex: 1 }}>
+        <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', height: '333px', justifyContent: 'flex-start', p: '5px', position: 'relative', pt: '25px', rowGap: '20px', zIndex: 1 }}>
           <FilterItem
             Icon={ArrowSwapHorizontal}
             checked={filter.transfer}

@@ -92,7 +92,7 @@ function Menu({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
       setStorage('testnet_enabled', false).catch(console.error);
       accounts?.forEach(({ address, genesisHash }) => {
         if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          tieAccount(address, null).catch(console.error);
+          tieAccount(address, null).catch(console.error);     //NO TIE ANYMORE IN NEW DESIGN
         }
       });
       setIsTestnetEnableConfirmed(false);

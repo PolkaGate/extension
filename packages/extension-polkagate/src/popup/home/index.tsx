@@ -13,7 +13,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, FadeOnScroll, Motion } from '../../components';
 import { getStorage, type LoginInfo } from '../../components/Loading';
-import { useManifest, useMerkleScience } from '../../hooks';
+import { useBackground, useManifest, useMerkleScience } from '../../hooks';
 import { UserDashboardHeader, Version2 as Version } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
@@ -23,6 +23,8 @@ import Portfolio from './partial/Portfolio';
 import ChangeLog from './ChangeLog';
 
 export default function Home (): React.ReactElement {
+  useBackground('default');
+
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
   const refContainer = useRef<HTMLDivElement>(null);

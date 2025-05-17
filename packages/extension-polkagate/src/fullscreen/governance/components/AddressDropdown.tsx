@@ -37,6 +37,7 @@ export default function AddressDropdown({ api, chainGenesis, inHeading, onSelect
   const hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const toggleDropdown = useCallback(() => addressesToDisplay.length > 0 && setDropdownVisible(!isDropdownVisible), [addressesToDisplay, isDropdownVisible]);
   const _onSelect = useCallback((addr: string) => () => {
+    //NO TIE ANYMORE IN NEW DESIGN
     addr && chainGenesis && tieAccount(addr, chainGenesis as HexString).then(() => setTimeout(() => onSelect(addr), 150)).catch(console.error);
   }, [chainGenesis, onSelect]);
 

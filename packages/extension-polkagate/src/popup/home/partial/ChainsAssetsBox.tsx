@@ -73,8 +73,8 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
 
   const onTokenClick = useCallback(() => {
     isExtension
-      ? navigate(`token/${asset.genesisHash}/${asset.assetId}`)
-      : account?.address && navigate(`/accountfs/${account.address}/${asset.genesisHash}/${asset.assetId}`);
+      ? navigate(`token/${asset.genesisHash}/${asset.assetId}`) as void
+      : account?.address && navigate(`/accountfs/${account.address}/${asset.genesisHash}/${asset.assetId}`) as void;
   }, [account?.address, asset.assetId, asset.genesisHash, isExtension, navigate]);
 
   return (

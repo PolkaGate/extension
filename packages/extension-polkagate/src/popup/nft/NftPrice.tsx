@@ -13,7 +13,7 @@ import { amountToMachine } from '../../util/utils';
 function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?:SxProps}) {
   const { t } = useTranslation();
   const { genesisHash, price } = nft;
-  const { decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
 
   const convertedAmount = useMemo(() => price && decimal ? price / (10 ** decimal) : null, [decimal, price]);
 

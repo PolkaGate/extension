@@ -21,7 +21,7 @@ function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props
   const { t } = useTranslation();
   const accountName = useAccountName(to || '');
 
-  const { decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
 
   return (
     <Stack direction='row' justifyContent='start' columnGap='10px' alignItems='center'>

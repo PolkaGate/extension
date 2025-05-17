@@ -6,7 +6,6 @@ import { User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
 import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
@@ -71,7 +70,7 @@ function CreateAccount (): React.ReactElement {
     if (name && password && seed) {
       setIsBusy(true);
 
-      createAccountSuri(name, password, seed, DEFAULT_TYPE, POLKADOT_GENESIS_HASH)
+      createAccountSuri(name, password, seed, DEFAULT_TYPE)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
           navigate('/');

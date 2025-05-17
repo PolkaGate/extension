@@ -11,7 +11,7 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
-import { useSelectedAccount } from '../hooks';
+import { useIsHovered, useSelectedAccount } from '../hooks';
 import { windowOpen } from '../messaging';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
@@ -50,13 +50,10 @@ interface MenuItemProps {
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
-
-  const [hovered, setHovered] = useState<boolean>(false);
   const refContainer = useRef<HTMLDivElement>(null);
-
-  const toggleHovered = useCallback(() => setHovered((prev) => !prev), []);
+  const hovered = useIsHovered(refContainer);
 
   useEffect(() => {
     if (isSelected && refContainer.current) {
@@ -66,7 +63,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
 
   return (
     <>
-      <Grid container item onClick={onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
+      <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
         <ButtonIcon color={hovered || isSelected ? theme.palette.menuIcon.hover : theme.palette.menuIcon.active} size='24' variant='Bulk' />
         <SelectedItemBackground hovered={hovered || isSelected} />
       </Grid>
@@ -89,7 +86,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
   );
 }
 
-function HomeMenu(): React.ReactElement {
+function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useSelectedAccount();
@@ -142,23 +139,24 @@ function HomeMenu(): React.ReactElement {
       return;
     }
 
-    navigate(`/${input}`, { state: { previousUrl: page } });
+    navigate(`/${input}`, { state: { previousUrl: page } }) as void;
   }, [account, assetId, navigate, page]);
 
-  const selectionLineStyle = useMemo(
-    () => ({
-      position: 'relative',
-      top: '2px',
-      transform: `translateX(${leftPosition ? leftPosition - 24 : 7}px)`,
-      transition: 'transform 0.3s ease-in-out'
-    }),
-    [leftPosition]
-  );
+  const selectionLineStyle = useMemo(() => ({
+    background: 'linear-gradient(263.83deg, rgba(255, 79, 185, 0) 9.75%, #FF4FB9 52.71%, rgba(255, 79, 185, 0) 95.13%)',
+    border: 'none',
+    height: '2px',
+    position: 'relative',
+    top: '2px',
+    transform: `translateX(${leftPosition ? leftPosition - 24 : 7}px)`,
+    transition: 'transform 0.3s ease-in-out',
+    width: '48px'
+  }), [leftPosition]);
 
   return (
     <>
       <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)', zIndex: 1 }}>
-        {leftPosition && <GradientDivider isSelectionLine style={selectionLineStyle} />}
+        {leftPosition && <GradientDivider style={selectionLineStyle} />}
         <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
           <MenuItem ButtonIcon={ArrowCircleRight2} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ArrowCircleDown2} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />

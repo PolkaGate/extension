@@ -237,6 +237,7 @@ function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Pr
 
     setCurrentChainName(newChainName);
     setFirstTime(false);
+        //NO TIE ANYMORE IN NEW DESIGN
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((err) => {
       setCurrentChainName(currentChainNameFromAccount);
       console.error(err);

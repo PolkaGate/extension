@@ -110,7 +110,7 @@ export default function ImportSeed (): React.ReactElement {
       setIsBusy(true);
       await resetOnForgotPassword();
 
-      createAccountSuri(name, password, account.suri, type, POLKADOT_GENESIS)
+      createAccountSuri(name, password, account.suri, type)
         .then(() => {
           setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
           switchToOrOpenTab('/', true);

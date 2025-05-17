@@ -203,6 +203,7 @@ function RecentChains({ address, chainName }: Props): React.ReactElement<Props> 
 
     setCurrentSelectedChain(newChainName);
     setFirstTime(false);
+        //NO TIE ANYMORE IN NEW DESIGN
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((error) => {
       setCurrentSelectedChain(chainName);
       console.error(error);

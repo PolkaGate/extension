@@ -3,10 +3,10 @@
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, type Icon as IconType } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useRef } from 'react';
 
 import { logoTransparent } from '../assets/logos';
-import { useIsDark } from '../hooks';
+import { useIsDark, useIsHovered } from '../hooks';
 
 interface Props {
   Icon?: IconType;
@@ -24,10 +24,8 @@ interface Props {
 function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
-
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHover = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
 
   const actionCardStyle = {
     bgcolor: isDark ? '#05091C' : '#FFFF',
@@ -78,8 +76,7 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
     <Container
       disableGutters
       onClick={onClick}
-      onMouseEnter={toggleHover}
-      onMouseLeave={toggleHover}
+      ref={containerRef}
       sx={actionCardStyle}
     >
       {Icon && <Icon color={isDark ? iconColor : '#291443'} size={iconSize} style={IconStyle} variant='Bulk' />}

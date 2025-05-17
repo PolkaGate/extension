@@ -5,11 +5,13 @@
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, useTheme } from '@mui/material';
+import { Avatar, Box, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
+import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
+import { useIsDark } from '../hooks';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
@@ -24,7 +26,7 @@ interface Props {
 }
 
 function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size = 25, style = {} }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+  const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const [isDarkLogo, setIsDarkLogo] = useState(false);
 
@@ -34,13 +36,15 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
   const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;
   const _chainName = sanitizeChainName(foundChainName || chainName);
   const _logo = logo || getLogo2(_chainName)?.logo;
-  // const filter = (CHAINS_WITH_BLACK_LOGO.includes(_chainName || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '';
-  const filter = isDarkLogo && theme.palette.mode === 'dark' ? 'invert(1) brightness(2)' : '';
+
+  const filter = isDarkLogo && isDark ? 'invert(1) brightness(2)' : '';
 
   useEffect(() => {
     const img = imgRef.current;
 
-    if (!img) return;
+    if (!img) {
+      return;
+    }
 
     const handleLoad = () => {
       const canvas = document.createElement('canvas');
@@ -50,7 +54,9 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
 
       const ctx = canvas.getContext('2d');
 
-      if (!ctx) return;
+      if (!ctx) {
+        return;
+      }
 
       ctx.drawImage(img, 0, 0);
 
@@ -109,20 +115,33 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
             />
           }
         </>
-        : <Avatar
-          imgProps={{ ref: imgRef }}
-          sx={{
-            bgcolor: maybeUserAddedChainColor,
-            borderRadius: logoRoundness,
-            fontSize: size * 0.7,
-            height: size,
-            width: size,
-            ...style
-          }}
-          variant='square'
-        >
-          {_chainName?.charAt(0)?.toUpperCase() || ''}
-        </Avatar>
+        : _chainName
+          ? <Avatar
+            imgProps={{ ref: imgRef }}
+            sx={{
+              bgcolor: maybeUserAddedChainColor,
+              borderRadius: logoRoundness,
+              fontSize: size * 0.7,
+              height: size,
+              width: size,
+              ...style
+            }}
+            variant='square'
+          >
+            {_chainName?.charAt(0)?.toUpperCase() || ''}
+          </Avatar>
+          : <Box
+            component='img'
+            src={logoWhiteTransparent as string}
+            sx={{
+              bgcolor: isDark ? '#292247' : '#CFD5F0',
+              borderRadius: '999px',
+              filter: isDark ? 'brightness(0.4)' : 'brightness(0.9)',
+              height: size,
+              p: '4px',
+              width: size
+            }}
+          />
       }
     </>
   );

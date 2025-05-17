@@ -53,7 +53,7 @@ function ImportProxied(): React.ReactElement {
 
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
-
+    //NO TIE ANYMORE IN NEW DESIGN
     genesisHash && tieAccount(selectedAddress ?? '', genesisHash as HexString)
       .then(() => getMetadata(genesisHash, true))
       .then(setChain)

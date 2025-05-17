@@ -11,12 +11,16 @@ import { BN_ONE } from '@polkadot/util';
 
 import { useChainInfo } from '.';
 
-export default function useEstimatedFee2 (genesisHash: string, address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
+export default function useEstimatedFee2 (genesisHash: string | undefined, address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
   const { api } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   useEffect(() => {
+    if (estimatedFee) {
+      return;
+    }
+
     if (!address || !call) {
       return;
     }
@@ -37,7 +41,7 @@ export default function useEstimatedFee2 (genesisHash: string, address: string |
       .then(
         (i) => setEstimatedFee(i?.partialFee && api.createType('Balance', i.partialFee) as Balance)
       ).catch(console.error);
-  }, [address, api, call, params]);
+  }, [address, api, call, params, estimatedFee]);
 
   return estimatedFee;
 }

@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
@@ -303,17 +304,15 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       {isLedger
         ? <SignWithLedger
           address={address}
-          alertText={alertText}
           api={api}
           from={from}
           handleTxResult={handleTxResult}
           onSecondaryClick={onSecondaryClick}
           onSignature={onSignature}
           payload={payload}
-          ptx={ptx}
-          setStep={setStep}
+          preparedTransaction={ptx}
+          setFlowStep={setStep}
           signerPayload={signerPayload}
-          steps={steps}
         />
         : showQrSign
           ? <SignWithQR />
@@ -394,7 +393,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
               {formatted && (account?.genesisHash || api?.genesisHash?.toHex()) && payload
                 ? <Qr
                   address={formatted}
-                  buttonLeft='0px'
                   cmd={CMD_MORTAL}
                   genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as string}
                   onSignature={onSignature}

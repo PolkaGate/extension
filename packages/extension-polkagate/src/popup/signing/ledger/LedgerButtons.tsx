@@ -5,6 +5,8 @@ import { Grid, Typography } from '@mui/material';
 import { ColorSwatch } from 'iconsax-react';
 import React from 'react';
 
+import useIsBlueish from '@polkadot/extension-polkagate/src/hooks/useIsBlueish';
+
 import { DecisionButtons } from '../../../components';
 import useTranslation from '../../../hooks/useTranslation';
 import LedgerErrorMessage from './LedgerErrorMessage';
@@ -21,6 +23,7 @@ interface Props {
 
 function LedgerButtons ({ error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const isBlueish = useIsBlueish();
 
   return (
     <Grid container sx={{ bottom: 0, position: 'absolute' }}>
@@ -32,8 +35,8 @@ function LedgerButtons ({ error, isBusy, ledgerLocked, ledgerWarning, onCancel, 
       }
       {!error && !ledgerWarning &&
         <Grid alignItems='center' columnGap='5px' container item sx={{ mb: '25px' }}>
-          <ColorSwatch color='#674394' size='24px' variant='Bold' />
-          <Typography color='#AA83DC' sx={{ textAlign: 'left', width: '90%' }} variant='B-4'>
+          <ColorSwatch color={ isBlueish ? '#596AFF' : '#674394'} size='24px' variant='Bold' />
+          <Typography color={ isBlueish ? '#809ACB' : '#AA83DC'} sx={{ textAlign: 'left', width: '90%' }} variant='B-4'>
             {t('This is a ledger account. To complete this transaction, use your ledger')}
           </Typography>
         </Grid>

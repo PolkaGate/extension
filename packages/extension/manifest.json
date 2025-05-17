@@ -2,7 +2,7 @@
   "author": "PolkaGate",
   "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
   "homepage_url": "https://polkagate.xyz",
-  "name": "PolkaGate: The gateway to the Polkadot eco.",
+  "name": "PolkaGate",
   "short_name": "PolkaGate",
   "manifest_version": 3,
   "version": "0.3.2",

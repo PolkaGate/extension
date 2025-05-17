@@ -63,7 +63,6 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
       </Grid>
       <Explorer
         address={address}
-        genesisHash={token?.genesisHash}
       />
       <Typography color='text.secondary' sx={{ height: '18px' }} variant='B-4'>
         {token?.token}

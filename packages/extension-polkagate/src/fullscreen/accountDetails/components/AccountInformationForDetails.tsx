@@ -189,7 +189,7 @@ function AccountInformationForDetails({ accountAssets, address, label, price, pr
   }, [account?.genesisHash, accountAssets, setSelectedAsset]);
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
-    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
+    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => { // NO TIE ANYMORE IN NEW DESIGN
       setAssetIdOnAssetHub(undefined);
       setSelectedAsset(asset);
     }).catch(console.error);

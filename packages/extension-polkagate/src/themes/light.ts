@@ -3,11 +3,11 @@
 
 /* eslint-disable sort-keys */
 
-import type { ThemeOptions } from '@mui/material';
+import type { ExtendedThemeOptions } from './dark';
 
 import { baseTheme } from './baseTheme';
 
-export const lightTheme: ThemeOptions = {
+export const lightTheme: ExtendedThemeOptions = {
   ...baseTheme,
   palette: {
     mode: 'light',
@@ -24,7 +24,7 @@ export const lightTheme: ThemeOptions = {
     background: { default: '#CCD2EA', paper: '#FFFFFF' },
     backgroundFL: { primary: '#DFDFDF', secondary: '#F1F1F1' },
     border: { default: '#05091C', paper: '#F5F4FF' },
-    text: { primary: '#291443', secondary: '#8299BD;', disabled: '#747474' },
+    text: { primary: '#291443', secondary: '#8299BD;', disabled: '#747474', highlight: '#809ACB' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
     success: { main: '#1F7720', light: '#46890C', contrastText: '#228B22' },
     warning: { main: '#FF002B' },
@@ -40,12 +40,4 @@ export const lightTheme: ThemeOptions = {
       }
     }
   }
-  // ,
-  // typography: {
-  //   allVariants: {
-  //     fontWeight: 400,
-  //     fontFamily: 'Roboto',
-  //     letterSpacing: '-0.015em'
-  //   }
-  // }
 };

@@ -290,6 +290,10 @@ export function formatMeta(meta?: Meta): string[] | null {
 }
 
 export function toShortAddress(address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+  if (!address) {
+    return '';
+  }
+
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
@@ -600,53 +604,103 @@ export const addressToChain = (address: string) => {
   };
 };
 
+
 /**
- * Formats a timestamp into the pattern: "Tue, Aug 6, 2024, 7:48:00 PM"
+ * Format options for the timestamp display
+ */
+export type TimestampPart = 'weekday' | 'month' | 'day' | 'year' | 'hours' | 'minutes' | 'seconds' | 'ampm';
+
+/**
+ * Formats a timestamp with customizable output based on the parts you want to include.
  *
  * @param {number|string|Date} timestamp - The timestamp to format. Can be:
  *   - number: milliseconds since epoch (e.g., 1723026480000)
  *   - string: a date string parsable by the Date constructor (e.g., "2024-08-06T19:48:00")
  *   - Date: a JavaScript Date object
+ * 
+ * @param {TimestampPart[] | undefined} [parts] - Array of timestamp parts to include in the output:
+ *   - If undefined or empty, returns the full formatted date
+ *   - Available parts: 'weekday', 'month', 'day', 'year', 'hours', 'minutes', 'seconds', 'ampm'
+ * 
+ * @param {string} [separator=", "] - The separator to use between parts
  *
- * @returns {string} The formatted date string in the format "Weekday, Month Day, Year, Hour:Minute:Second AM/PM"
+ * @returns {string} The formatted date string including only the specified parts
  *
  * @example
  * // Returns something like "Tue, Aug 6, 2024, 7:48:00 PM"
  * formatTimestamp(1723026480000);
  *
  * @example
- * // Also works with Date objects or date strings
- * formatTimestamp(new Date());
- * formatTimestamp("2024-08-06T19:48:00");
+ * // Returns something like "Aug 6 7"
+ * formatTimestamp(1723026480000, ['month', 'day', 'hours']);
+ *
+ * @example
+ * // Returns something like "Aug-6-2024"
+ * formatTimestamp(1723026480000, ['month', 'day', 'year'], '-');
  */
-export function formatTimestamp (timestamp: number|string|Date): string {
-  // Create a new Date object from the timestamp
+export function formatTimestamp(
+  timestamp: number | string | Date,
+  parts?: TimestampPart[]
+): string {
   const date = new Date(timestamp);
 
-  // Array of weekday abbreviations
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  // Array of month abbreviations
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  // Get date components
-  const weekday = weekdays[date.getDay()];
-  const month = months[date.getMonth()];
-  const day = date.getDate();
-  const year = date.getFullYear();
+  const components: Record<TimestampPart, string | number> = {
+    ampm: date.getHours() >= 12 ? 'PM' : 'AM',
+    day: date.getDate(),
+    hours: date.getHours() % 12 || 12,
+    minutes: date.getMinutes().toString().padStart(2, '0'),
+    month: months[date.getMonth()],
+    seconds: date.getSeconds().toString().padStart(2, '0'),
+    weekday: weekdays[date.getDay()],
+    year: date.getFullYear()
+  };
 
-  // Get time components
-  let hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const seconds = date.getSeconds().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  if (!parts || parts.length === 0) {
+    // Default full date-time
+    return `${components.weekday}, ${components.month} ${components.day}, ${components.year}, ${components.hours}:${components.minutes}:${components.seconds} ${components.ampm}`;
+  }
 
-  // Convert to 12-hour format
-  hours = hours % 12;
-  hours = hours || 12; // the hour '0' should be '12'
+  const dateParts: string[] = [];
+  const timeParts: string[] = [];
 
-  // Construct the formatted string
-  const formattedDate = `${weekday}, ${month} ${day}, ${year}, ${hours}:${minutes}:${seconds} ${ampm}`;
+  parts.forEach((part) => {
+    if (['weekday', 'month', 'day', 'year'].includes(part)) {
+      if (part === 'month' && parts.includes('day')) {
+        // Let 'month' and 'day' group together like "Apr 13"
+        if (!dateParts.includes(`${components.month} ${components.day}`)) {
+          dateParts.push(`${components.month} ${components.day}`);
+        }
+      } else if (part === 'day' && parts.includes('month')) {
+        // Already handled above
+      } else {
+        dateParts.push(String(components[part]));
+      }
+    } else {
+      // time parts
+      timeParts.push(part);
+    }
+  });
 
-  return formattedDate;
+  // Format time block smartly
+  let timeString = '';
+
+  if (timeParts.length > 0) {
+    const hours = timeParts.includes('hours') ? components.hours : '';
+    const minutes = timeParts.includes('minutes') ? `:${components.minutes}` : '';
+    const seconds = timeParts.includes('seconds') ? `:${components.seconds}` : '';
+    const ampm = timeParts.includes('ampm') ? ` ${components.ampm}` : '';
+
+    timeString = `${hours}${minutes}${seconds}${ampm}`.trim();
+  }
+
+  if (dateParts.length > 0 && timeString) {
+    return `${dateParts.join(' ')}, ${timeString}`;
+  } else if (dateParts.length > 0) {
+    return dateParts.join(' ');
+  } else {
+    return timeString;
+  }
 }

@@ -9,7 +9,7 @@ import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useProfiles } from '../../../hooks';
+import { useIsHovered, useProfiles } from '../../../hooks';
 import ProfileTabFullScreen from './ProfileTabFullScreen';
 
 interface Props {
@@ -22,7 +22,6 @@ function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement 
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
 
   const [selectedProfile, setSelectedProfile] = useState<string>();
-  const [isHovered, setIsHovered] = useState<boolean>();
 
   const [showLeftMore, setShowLeftMore] = useState(false);
   const [showRightMore, setShowRightMore] = useState(false);
@@ -30,6 +29,7 @@ function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement 
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const checkTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const isHovered = useIsHovered(scrollContainerRef);
 
   const profilesToShow = useMemo(() => {
     if (defaultProfiles.length === 0 && userDefinedProfiles.length === 0) {
@@ -38,9 +38,6 @@ function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement 
 
     return defaultProfiles.concat(userDefinedProfiles);
   }, [defaultProfiles, userDefinedProfiles]);
-
-  const onMouseEnter = useCallback(() => setIsHovered(true), []);
-  const onMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -149,8 +146,6 @@ function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement 
       <Grid container display='ruby'
         item
         justifyContent='left'
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
         ref={scrollContainerRef}
         sx={{
           bgcolor: 'backgroundFL.secondary',

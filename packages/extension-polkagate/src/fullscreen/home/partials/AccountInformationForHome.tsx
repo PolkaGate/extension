@@ -173,7 +173,7 @@ function AccountInformationForHome({ accountAssets, address, isChild, selectedAs
   }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
 
   const onAssetBoxClicked = useCallback((asset: FetchedBalance | undefined) => {
-    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {
+    address && asset && tieAccount(address, asset.genesisHash as HexString).finally(() => {     //NO TIE ANYMORE IN NEW DESIGN
       setSelectedAsset(asset);
     }).catch(console.error);
   }, [address, setSelectedAsset]);

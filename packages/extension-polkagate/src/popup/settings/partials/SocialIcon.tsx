@@ -1,11 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { useIsDark } from '../../../hooks/index';
+import { useIsBlueish, useIsDark } from '../../../hooks/index';
 
 interface Props {
   Icon: React.JSX.Element;
@@ -14,13 +13,15 @@ interface Props {
   size?: number;
 }
 
-function SocialIcon({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
-  const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
+function SocialIcon ({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
   const isDark = useIsDark();
+  const isBlueish = useIsBlueish();
+
+  const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
 
   return (
     <Grid
-      bgcolor={bgColor || (isDark ? '#2D1E4A' : '#FFFFFF')}
+      bgcolor={bgColor || (isDark ? isBlueish ? '#809ACB33' : '#2D1E4A' : '#FFFFFF')}
       onClick={goToLink}
       sx={{
         '&:hover': {
