@@ -3,13 +3,16 @@
 
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { BN} from '@polkadot/util';
 import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO, bnMax } from '@polkadot/util';
 
-import { useBalances2, useChainInfo, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
+import { isHexToBn } from '../util/utils';
+import { useBalances2, useChainInfo, useCurrentEraIndex2, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
 interface SessionIfo {
   eraLength: number; // Length of an era in blocks
@@ -34,6 +37,10 @@ export interface SoloStakingInfo {
   sessionInfo: UnstakingType | undefined; // Information about unstaking and release dates
   stakingAccount: AccountStakingInfo | null | undefined; // User's staking account information
   stakingConsts: StakingConsts | null | undefined; // Staking constants like minimum bond amount
+}
+
+interface SavedSoloStakingInfo extends SoloStakingInfo {
+  currentEra: number;
 }
 
 /**
@@ -64,7 +71,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
     if (stakingAccount.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = new BN(value as unknown as string);
+          const amount = isHexToBn(value as unknown as string);
 
           unlockingAmount = unlockingAmount.add(amount);
           // Calculate release time in seconds, then convert to milliseconds for timestamp
@@ -78,6 +85,54 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
 
   return { toBeReleased, unlockingAmount };
 };
+
+function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStakingInfo {
+  return {
+    ...info,
+    availableBalanceToStake: info.availableBalanceToStake ? isHexToBn(info.availableBalanceToStake as unknown as string) : undefined,
+    rewards: info.rewards ? isHexToBn(info.rewards as unknown as string) : undefined,
+    sessionInfo: info.sessionInfo
+      ? {
+        toBeReleased: info.sessionInfo.toBeReleased?.map(({ amount, date }) => ({
+          amount: isHexToBn(amount as unknown as string),
+          date
+        })),
+        unlockingAmount: info.sessionInfo.unlockingAmount ? isHexToBn(info.sessionInfo.unlockingAmount as unknown as string) : undefined
+      }
+      : undefined,
+    stakingAccount: info.stakingAccount
+      ? {
+        ...info.stakingAccount,
+        redeemable: info.stakingAccount.redeemable ? isHexToBn(info.stakingAccount.redeemable as unknown as string) as Balance : undefined,
+        stakingLedger: info.stakingAccount.stakingLedger
+          ? {
+            ...info.stakingAccount.stakingLedger,
+            active: isHexToBn(info.stakingAccount.stakingLedger.active as unknown as string)
+          }
+          : undefined,
+        unlocking: info.stakingAccount.unlocking
+          ? Object.entries(info.stakingAccount.unlocking).reduce((acc, [k, v]) => {
+          // @ts-ignore
+            acc[k] = {
+              ...v,
+              remainingEras: isHexToBn(v.remainingEras as unknown as string),
+              value: isHexToBn(v.value as unknown as string)
+            };
+
+            return acc;
+          }, {} as typeof info.stakingAccount.unlocking)
+          : undefined
+      }
+      : info.stakingAccount,
+    stakingConsts: info.stakingConsts
+      ? {
+        ...info.stakingConsts,
+        existentialDeposit: isHexToBn(info.stakingConsts?.existentialDeposit as unknown as string ?? '0'),
+        minNominatorBond: isHexToBn(info.stakingConsts?.minNominatorBond as unknown as string ?? '0')
+      }
+      : info.stakingConsts
+  };
+}
 
 /**
  * Calculates the balance available for staking
@@ -107,6 +162,15 @@ const getAvailableToStake = (balances: BalancesInfo | undefined, stakingAccount:
   return bnMax(BN_ZERO, _availableToStake);
 };
 
+const DEFAULT_VALUE = {
+  availableBalanceToStake: undefined,
+  rewardDestinationAddress: undefined,
+  rewards: undefined,
+  sessionInfo: undefined,
+  stakingAccount: undefined,
+  stakingConsts: undefined
+};
+
 /**
  * Custom hook that provides solo staking information for a given address
  *
@@ -118,8 +182,15 @@ const getAvailableToStake = (balances: BalancesInfo | undefined, stakingAccount:
 export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
   const { api, chainName } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash, refresh, setRefresh);
+  const currentEra = useCurrentEraIndex2(genesisHash);
 
+  const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo>();
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
+
+  // Tracks when we need to save to storage
+  const needsStorageUpdate = useRef(false);
+  // Tracks when it is done with fetching solo staking information
+  const fetchingFlag = useRef(true);
 
   const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
@@ -131,22 +202,75 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     const info = await getUnstakingAmount(api, stakingAccount);
 
     setSessionInfo(info);
+    needsStorageUpdate.current = true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, stakingAccount, refresh]);
 
-  // Update session info whenever dependencies change
   useEffect(() => {
-    fetchSessionInfo().catch(console.error);
+    if (fetchingFlag.current) {
+      fetchSessionInfo().catch(console.error);
+    }
   }, [fetchSessionInfo]);
 
   const availableBalanceToStake = getAvailableToStake(balances, stakingAccount, sessionInfo?.unlockingAmount);
 
-  return {
-    availableBalanceToStake,
-    rewardDestinationAddress,
-    rewards,
-    sessionInfo,
-    stakingAccount,
-    stakingConsts
-  };
+  // Separate effect for updating the state
+  useEffect(() => {
+    if (fetchingFlag.current && currentEra !== undefined && availableBalanceToStake && stakingAccount !== undefined && rewardDestinationAddress && genesisHash && address) {
+      const info = {
+        availableBalanceToStake,
+        rewardDestinationAddress,
+        rewards,
+        sessionInfo,
+        stakingAccount,
+        stakingConsts
+      };
+
+      setSoloStakingInfo(info);
+      fetchingFlag.current = false;
+      needsStorageUpdate.current = true;
+    }
+  }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts]);
+
+  useEffect(() => {
+    // Only save to storage when specifically needed
+    if (needsStorageUpdate.current === true && fetchingFlag.current === false && soloStakingInfo && currentEra !== undefined && genesisHash && address) {
+      const toSave = {
+        ...soloStakingInfo,
+        currentEra
+      };
+
+      const key = genesisHash + 'SoloStakingInfo' + address;
+
+      chrome.storage.local.set({ [key]: JSON.stringify(toSave) })
+        .then(() => {
+          console.log('saved to storage');
+          needsStorageUpdate.current = false;
+        })
+        .catch(console.error);
+    }
+  }, [soloStakingInfo, currentEra, genesisHash, address]);
+
+  // Load from storage if needed
+  useEffect(() => {
+    if (!soloStakingInfo && genesisHash && address && currentEra !== undefined) {
+      const key = genesisHash + 'SoloStakingInfo' + address;
+
+      chrome.storage.local.get(key, (result) => {
+        const raw = result?.[key] as string | undefined;
+        const parsed = raw ? JSON.parse(raw) as unknown as SavedSoloStakingInfo : null;
+
+        if (parsed && parsed.currentEra === currentEra) {
+          console.log('loaded from storage:', parsed);
+
+          const revived = reviveSoloStakingInfoBNs(parsed);
+
+          setSoloStakingInfo(revived);
+          needsStorageUpdate.current = false;
+        }
+      });
+    }
+  }, [address, currentEra, genesisHash, soloStakingInfo]);
+
+  return soloStakingInfo ?? DEFAULT_VALUE;
 }
