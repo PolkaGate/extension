@@ -25,16 +25,21 @@ type RewardDestinationType = 'Others' | 'Staked' | undefined;
 interface OptionBoxProps {
   setRewardDestinationType: React.Dispatch<React.SetStateAction<RewardDestinationType>>;
   rewardDestinationType: RewardDestinationType;
+  disabled: boolean;
 }
 
-const OptionBox = ({ rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
+const OptionBox = ({ disabled, rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
   const { t } = useTranslation();
 
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) {
+      return;
+    }
+
     const value = event.target.value as RewardDestinationType;
 
     setRewardDestinationType(value);
-  }, [setRewardDestinationType]);
+  }, [disabled, setRewardDestinationType]);
 
   return (
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', padding: '12px', rowGap: '18px', width: '100%' }}>
@@ -230,13 +235,13 @@ export default function Settings (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            staking
             stepCounter={{ currentStep: 1, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Settings')}
           />
           <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px', rowGap: '18px' }}>
             <OptionBox
+              disabled={rewardDestinationType === undefined}
               rewardDestinationType={rewardDestinationType}
               setRewardDestinationType={setRewardDestinationType}
             />

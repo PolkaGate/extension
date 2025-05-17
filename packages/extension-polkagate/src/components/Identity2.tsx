@@ -108,7 +108,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
               />}
           </Grid>
         }
-        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+        <Grid container direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
           {msData
             ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
               <Grid display='flex' item sx={{ width: '25px' }}>
@@ -130,7 +130,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
                 {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
             </Grid>
-            : <Typography variant={style?.variant}>
+            : <Typography textAlign='left' variant={style?.variant}>
               {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
               {_accountInfo?.identity?.display && !subIdOnly
                 ? _accountInfo?.identity.displayParent

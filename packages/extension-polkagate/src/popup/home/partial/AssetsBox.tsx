@@ -91,7 +91,7 @@ function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): Reac
   return (
     <>
       <AssetTabs setTab={setTab} tab={tab} />
-      <VelvetBox style={{ margin: isExtension ? '0 15px' : 0, minHeight: '70px', padding: isExtension ? undefined : 0 }}>
+      <VelvetBox style={{ margin: isExtension ? '0 15px' : 0, minHeight: '70px', padding: isExtension ? '4px' : 0 }}>
         {renderContent(loadingItemsCount)}
       </VelvetBox>
     </>

@@ -5,7 +5,7 @@ import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui
 import { ArrowCircleLeft } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
-import { useIsHovered, useTranslation } from '../hooks';
+import { useIsBlueish, useIsHovered, useTranslation } from '../hooks';
 
 export interface StepCounterType { currentStep: number; totalSteps: number }
 
@@ -32,13 +32,13 @@ interface DynamicBackButtonProps {
   onClick: () => void;
   style?: SxProps<Theme>;
   stepCounter?: StepCounterType;
-  staking?: boolean;
 }
 
-function BackWithLabel ({ content, onClick, staking = false, stepCounter, style, text }: DynamicBackButtonProps) {
+function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
+  const staking = useIsBlueish();
 
   const renderContent = useMemo(() => {
     if (content) {
