@@ -37,13 +37,10 @@ const SettingButton = ({ Icon, disabled = false, onClick, text }: SettingButtonP
 };
 
 interface Props {
-  // soloStakingInfo: SoloStakingInfo | undefined;
-  // nominatedValidatorsInformation: ValidatorInformation[] | undefined;
   style?: SxProps<Theme>;
-  // onChill: () => void;
 }
 
-export default function BackButton ({ style }: Props) {
+export default function NominationsBackButton ({ style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 

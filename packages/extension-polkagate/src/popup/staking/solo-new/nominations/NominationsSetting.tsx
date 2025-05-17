@@ -10,7 +10,7 @@ import { EmptyWarning } from '../../../../assets/icons/index';
 import { FadeOnScroll, Motion, NeonButton } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
-import BackButton from '../../partial/BackButton';
+import NominationsBackButton from '../../partial/NominationsBackButton';
 import NominatorsTable from '../../partial/NominatorsTable';
 import Progress from '../../partial/Progress';
 import StakingMenu from '../../partial/StakingMenu';
@@ -48,7 +48,7 @@ const EmptyNomination = ({ setRefresh }: EmptyNominationProps) => {
   );
 };
 
-export default function NominationsSetting(): React.ReactElement {
+export default function NominationsSetting (): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
@@ -70,7 +70,7 @@ export default function NominationsSetting(): React.ReactElement {
     stakingInfo.stakingAccount === null || stakingInfo.stakingAccount?.nominators?.length === 0
       ? null
       : stakingInfo.stakingAccount?.nominators.map((item) => item.toString())
-    , [stakingInfo.stakingAccount]);
+  , [stakingInfo.stakingAccount]);
 
   const nominatedValidatorsInformation = useMemo(() => {
     if (!validatorsInfo || !nominatedValidatorsIds) {
@@ -116,12 +116,7 @@ export default function NominationsSetting(): React.ReactElement {
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
       <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
-        <BackButton
-          // nominatedValidatorsInformation={nominatedValidatorsInformation}
-          // onChill={goChill}
-          // soloStakingInfo={stakingInfo}
-          style={{ mt: '8px' }}
-        />
+        <NominationsBackButton style={{ mt: '8px' }} />
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
           {(stakingInfo.stakingAccount === undefined || nominatedValidatorsInformation === undefined) &&
             <Progress

@@ -9,7 +9,7 @@ import { useIsHovered, useTranslation } from '../hooks';
 
 export interface StepCounterType { currentStep: number; totalSteps: number }
 
-const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
+export const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', gap: '4px', justifyContent: 'center', m: 0, width: 'fit-content' }}>
       {Array.from({ length: stepCounter.totalSteps }).map((_, index) => {

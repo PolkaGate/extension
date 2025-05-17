@@ -40,7 +40,6 @@ const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
         : <Ice size='28' style={{ opacity: 0.3 }} />
-        : <Ice size='28' style={{ opacity: 0.3 }} />
       }
     </Grid>
   );
