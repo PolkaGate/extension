@@ -3,8 +3,8 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Container, Grid } from '@mui/material';
-import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer } from 'iconsax-react';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
+import { Award, BuyCrypto, Graph, LockSlash, Moneys, People, Strongbox2, Timer } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -18,6 +18,20 @@ import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
 import ToBeReleased from '../partial/ToBeReleased';
+
+const Back = () => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <>
+      <People color={theme.palette.text.highlight} size='24' variant='Bulk' />
+      <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
+        {t('pool staking')}
+      </Typography>
+    </>
+  );
+};
 
 export default function Pool (): React.ReactElement {
   useBackground('staking');
@@ -108,9 +122,10 @@ export default function Pool (): React.ReactElement {
         <UserDashboardHeader homeType='default' noSelection />
         <Motion variant='slide'>
           <BackWithLabel
+            content={<Back />}
             onClick={onBack}
+            staking
             style={{ pb: 0 }}
-            text={t('pool staking')}
           />
           <StakingPortfolio
             buttons={[{
@@ -145,30 +160,32 @@ export default function Pool (): React.ReactElement {
               title={t('Rewards paid')}
               token={token ?? ''}
             />
-            <StakingInfoTile
-              Icon={Moneys}
-              buttonsArray={[{
-                Icon: Strongbox2,
-                onClick: onWithdraw,
-                text: t('Withdraw')
-              }]}
-              cryptoAmount={redeemable}
-              decimal={decimal ?? 0}
-              fiatAmount={0}
-              layoutDirection={layoutDirection}
-              title={t('Redeemable')}
-              token={token ?? ''}
-            />
-            <StakingInfoTile
-              Icon={LockSlash}
-              cryptoAmount={unlockingAmount}
-              decimal={decimal ?? 0}
-              fiatAmount={0}
-              layoutDirection={layoutDirection}
-              onExpand={toBeReleased?.length ? onExpand : undefined}
-              title={t('Unstaking')}
-              token={token ?? ''}
-            />
+            {redeemable &&
+              <StakingInfoTile
+                Icon={Moneys}
+                buttonsArray={[{
+                  Icon: Strongbox2,
+                  onClick: onWithdraw,
+                  text: t('Withdraw')
+                }]}
+                cryptoAmount={redeemable}
+                decimal={decimal ?? 0}
+                fiatAmount={0}
+                layoutDirection={layoutDirection}
+                title={t('Redeemable')}
+                token={token ?? ''}
+              />}
+            {unlockingAmount &&
+              <StakingInfoTile
+                Icon={LockSlash}
+                cryptoAmount={unlockingAmount}
+                decimal={decimal ?? 0}
+                fiatAmount={0}
+                layoutDirection={layoutDirection}
+                onExpand={toBeReleased?.length ? onExpand : undefined}
+                title={t('Unstaking')}
+                token={token ?? ''}
+              />}
           </Container>
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}
