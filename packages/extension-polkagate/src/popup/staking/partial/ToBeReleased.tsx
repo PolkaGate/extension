@@ -77,7 +77,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
         })}
         <StakingActionButton
           onClick={onRestake}
-          style={{ mt: '35px', width: '337px' }}
+          style={{ marginTop: '35px', width: '337px' }}
           text={t('Restake')}
         />
       </Container>

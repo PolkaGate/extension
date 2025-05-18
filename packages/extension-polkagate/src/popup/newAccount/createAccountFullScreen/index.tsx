@@ -149,7 +149,7 @@ function CreateAccount (): React.ReactElement {
               primaryBtnText={t('Create account')}
               secondaryBtnText={t('Cancel')}
               showChevron
-              style={{ flexDirection: 'row-reverse', mt: '40px' }}
+              style={{ flexDirection: 'row-reverse', marginTop: '40px' }}
             />
           </Motion>
         }

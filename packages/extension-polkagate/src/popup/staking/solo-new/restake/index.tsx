@@ -139,7 +139,7 @@ export default function Restake (): React.ReactElement {
             <StakingActionButton
               disabled={!rebondValue || rebondValue.isZero() || !!errorMessage || !api}
               onClick={onNext}
-              style={{ mt: '24px' }}
+              style={{ marginTop: '24px' }}
               text={t('Next')}
             />
           </Stack>

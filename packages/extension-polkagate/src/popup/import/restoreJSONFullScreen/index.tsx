@@ -288,7 +288,7 @@ export default function RestoreJson (): React.ReactElement {
           primaryBtnText={t('Restore')}
           secondaryBtnText={stepOne ? t('Cancel') : t('Back')}
           showChevron
-          style={{ flexDirection: 'row-reverse', m: '15px 0 0', width: '65%' }}
+          style={{ flexDirection: 'row-reverse', margin: '15px 0 0', width: '65%' }}
         />
       </Stack>
     </AdaptiveLayout>

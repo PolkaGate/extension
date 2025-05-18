@@ -95,7 +95,7 @@ const SpecificAccountOption = ({ ED, disabled, genesisHash, onNext, setSpecificA
       <StakingActionButton
         disabled={disabled}
         onClick={onNext}
-        style={{ mt: '10px' }}
+        style={{ marginTop: '10px' }}
         text={t('Next')}
       />
     </Stack>
@@ -115,7 +115,7 @@ const SetToStaked = ({ onNext, showOption }: { onNext: () => void; showOption: b
       </Container>
       <StakingActionButton
         onClick={onNext}
-        style={{ mt: '10px' }}
+        style={{ marginTop: '10px' }}
         text={t('Next')}
       />
     </Stack>

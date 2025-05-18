@@ -141,7 +141,7 @@ export default function BondExtra (): React.ReactElement {
           <StakingActionButton
             disabled={!bondExtraValue || bondExtraValue.isZero() || !!errorMessage || !api}
             onClick={onNext}
-            style={{ mt: '24px' }}
+            style={{ marginTop: '24px' }}
             text={t('Next')}
           />
         </Stack>

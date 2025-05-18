@@ -89,7 +89,7 @@ const ChooseSigningButton = ({ alertHandler }: SignUsingPasswordProps) => {
       <StakingActionButton
         onClick={alertHandler.onClick}
         startIcon={alertHandler.icon}
-        style={{ mt: '18px' }}
+        style={{ marginTop: '18px' }}
         text={alertHandler.buttonText}
       />
     </Stack>
