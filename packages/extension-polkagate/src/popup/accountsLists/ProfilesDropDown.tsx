@@ -1,15 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
-import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/useProfileInfo';
-
-import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
+import useProfileInfo from '../../fullscreen/home/useProfileInfo';
+import { useAccountsOrder, useIsHovered, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
 import { PROFILE_MODE } from './type';
 
@@ -24,22 +25,20 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
   marginTop: '4px',
   maxHeight: '400px',
   minWidth: '197px',
-  overflowY: 'scroll',
+  overflow: 'hidden',
   padding: '6px',
   rowGap: '4px',
   transition: 'all 250ms ease-out',
   width: `${preferredWidth}px`
 }));
 
-function Tab({ initialAccountList, label }: { initialAccountList: AccountsOrder[] | undefined, label: string }): React.ReactElement {
+function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
   const profileInfo = useProfileInfo(label);
-
-  const [hovered, setHovered] = useState(false);
-
-  const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
+  const refContainer = useRef(null);
+  const hovered = useIsHovered(refContainer);
 
   const isSelected = selectedProfile === label;
 
@@ -48,9 +47,7 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountsOrder[
   }, [label]);
 
   return (
-    <Stack
-      alignItems='center' columnGap='5px' direction='row' justifyContent='space-between'
-      onClick={onClick} onMouseEnter={toggleHover} onMouseLeave={toggleHover}
+    <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
       sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start'>
@@ -76,7 +73,7 @@ interface DropContentProps {
   initialAccountList: AccountsOrder[] | undefined
 }
 
-function DropContent({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
+function DropContent ({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -123,7 +120,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function ProfilesDropDown({ mode, setMode, style }: Props) {
+function ProfilesDropDown ({ mode, setMode, style }: Props) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const initialAccountList = useAccountsOrder();
@@ -131,13 +128,10 @@ function ProfilesDropDown({ mode, setMode, style }: Props) {
   const selectedProfile = useSelectedProfile();
   const profileAccounts = useProfileAccounts(initialAccountList, selectedProfile);
 
-  const [hovered, setHovered] = useState<boolean>(false);
+  const hovered = useIsHovered(containerRef);
 
   const title = mode === PROFILE_MODE.SETTING_MODE ? t('Customization') : undefined;
   const open = mode === PROFILE_MODE.DROP_DOWN;
-
-  const onMouseEnter = useCallback(() => setHovered(true), []);
-  const onMouseLeave = useCallback(() => setHovered(false), []);
 
   const profilesToShow = useMemo(() => {
     if (defaultProfiles.length === 0 && userDefinedProfiles.length === 0) {
@@ -163,20 +157,18 @@ function ProfilesDropDown({ mode, setMode, style }: Props) {
         <Grid
           alignItems='center'
           container item justifyContent='center' onClick={toggleOpen}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
           ref={containerRef}
           sx={{ cursor: 'pointer', gap: '4px', width: 'fit-content', ...style }}
         >
           {title
-            ? <Typography sx={{ lineHeight: '100%', textTransform: 'uppercase' }} variant='H-3'>
+            ? <Typography sx={{ lineHeight: '100%', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase', whiteSpace: 'nowrap' }} variant='H-3'>
               {title}
             </Typography>
             : <>
-              <Typography sx={{ lineHeight: '100%', textTransform: 'uppercase' }} variant='H-3'>
+              <Typography sx={{ lineHeight: '100%', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase', whiteSpace: 'nowrap' }} variant='H-3'>
                 {`${selectedProfile} accounts`}
               </Typography>
-              <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '50%', display: 'flex', justifyContent: 'center', minWidth: '20px', height: '20px' }}>
+              <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', minWidth: '20px' }}>
                 <Typography fontWeight={700} variant='B-1'>
                   {profileAccounts?.length}
                 </Typography>

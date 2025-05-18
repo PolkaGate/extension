@@ -44,7 +44,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
       withoutBackground
       withoutTopBorder
     >
-      <Container disableGutters sx={{ maxHeight: '360px', mb: '15px', overflow: 'scroll', p: '8px' }}>
+      <Container disableGutters sx={{ maxHeight: '360px', mb: '15px', overflowY: 'auto', p: '8px' }}>
         <Typography color='text.highlight' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ letterSpacing: '1px', mb: '25px', textTransform: 'uppercase', width: 'fit-content' }}>
           {t('To be released')}
         </Typography>

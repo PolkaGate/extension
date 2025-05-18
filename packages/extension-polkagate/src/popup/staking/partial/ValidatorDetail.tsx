@@ -171,7 +171,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
             <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 }}>
             <BlueGradient style={{ top: '-120px' }} />
             <GradientBox />
             <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>

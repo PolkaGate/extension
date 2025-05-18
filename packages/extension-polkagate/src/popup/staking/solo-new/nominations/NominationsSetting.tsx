@@ -122,7 +122,7 @@ export default function NominationsSetting(): React.ReactElement {
           // soloStakingInfo={stakingInfo}
           style={{ mt: '8px' }}
         />
-        <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
+        <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
           {(stakingInfo.stakingAccount === undefined || nominatedValidatorsInformation === undefined) &&
             <Progress
               text={t("Loading the validators' list")}

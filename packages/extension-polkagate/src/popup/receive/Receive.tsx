@@ -139,7 +139,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
             placeholder='🔍 Search Chain'
           />
         </Grid>
-        <Grid container item sx={{ maxHeight: '395px', my: '10px', overflow: 'scroll' }}>
+        <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
           {chainsToShow.map((chain, index) => (
             <>
               <ListItem container item key={index} onClick={handleChainSelect(chain)}>

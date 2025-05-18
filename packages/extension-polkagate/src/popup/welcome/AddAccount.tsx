@@ -89,7 +89,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative' }}>
           <GradientBorder />
           <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
             <Typography color='#fff' textTransform='uppercase' variant='H-2'>
@@ -97,7 +97,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
             </Typography>
           </Grid>
           <RedGradient style={{ top: '-130px' }} />
-          <Box sx={{ maxHeight: '440px', overflow: 'scroll', position: 'relative', width: '100%' }}>
+          <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
             <Grid container item justifyContent='center' sx={{ pb: '5px', position: 'relative', px: '32px', rowGap: '12px', zIndex: 1 }}>
               <ActionButton
                 StartIcon={FolderOpen}

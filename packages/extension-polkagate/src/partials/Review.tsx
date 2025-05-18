@@ -159,7 +159,7 @@ export default function Review ({ closeReview, genesisHash, proxyTypeFilter, sel
         genesisHash={genesisHash}
         selectedAccount={selectedAccount}
       />
-      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'scroll', width: '100%' }}>
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflowY: 'auto', width: '100%' }}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem
             content={content}

@@ -131,7 +131,7 @@ export default function StakingPositions (): React.ReactElement {
             placeholder='🔍 Search Token'
             style={{ padding: '4%' }}
           />
-          <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'scroll', width: '92%' }}>
+          <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'auto', width: '92%' }}>
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
               {filteredToken?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }, index) => {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;

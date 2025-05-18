@@ -25,11 +25,12 @@ function BackDrop ({ setMode }: { setMode: React.Dispatch<React.SetStateAction<P
       sx={{
         backdropFilter: 'blur(5px)',
         background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)', // semi-transparent dark
-        height: '100vh',
+        bottom: 0,
+        height: 'calc(100% - 95px)',
         left: 0,
         position: 'absolute',
-        top: 1,
-        width: '100vw',
+        top: '95px',
+        width: '100%',
         zIndex: 10
       }}
     />
@@ -77,104 +78,108 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
     setMode(PROFILE_MODE.NONE);
   }, [setMode]);
 
-  const onDeleteProfile = useCallback((label: string) => {
+  const onDeleteProfile = useCallback((label: string) => () => {
     setShowDeleteConfirmation(label);
   }, [setShowDeleteConfirmation]);
 
   return (
-    <Container disableGutters sx={{ display: 'block', height: '100%', mt: '10px', position: 'relative', width: 'initial', zIndex: 1 }}>
+    <>
       {isProfileDropDownOpen &&
         <BackDrop setMode={setMode} />
       }
-      <SearchField
-        onInputChange={onSearch}
-        placeholder='🔍 Search Accounts'
-      />
-      <VelvetBox style={{ margin: '5px 0 15px' }}>
-        <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflowY: 'scroll', position: 'relative' }}>
-          {Object.keys(categorizedAccounts).length > 0 && (
-            <>
-              {Object.entries(categorizedAccounts).map(([label, accounts], profileIndex) => {
-                return (
-                  <>
-                    {accounts.map((account, accIndex) => {
-                      const isFirstProfile = profileIndex === 0;
-                      const isFirstAccount = accIndex === 0;
-                      const isLast = accIndex === accounts.length - 1;
-                      const notLocalProfile = PROFILE_TAGS.LOCAL !== label;
+      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
+        <SearchField
+          onInputChange={onSearch}
+          placeholder='🔍 Search Accounts'
+        />
+        <VelvetBox style={{ margin: '5px 0 15px' }}>
+          <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
+            {Object.keys(categorizedAccounts).length > 0 && (
+              <>
+                {Object.entries(categorizedAccounts).map(([label, accounts], profileIndex) => {
+                  return (
+                    <>
+                      {accounts.map((account, accIndex) => {
+                        const isFirstProfile = profileIndex === 0;
+                        const isFirstAccount = accIndex === 0;
+                        const isLast = accIndex === accounts.length - 1;
+                        const notLocalProfile = PROFILE_TAGS.LOCAL !== label;
 
-                      return (
-                        <React.Fragment key={account.account.address}>
-                          {isFirstAccount &&
-                            <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
-                              <AccountProfileLabel
-                                isInSettingMode={isInSettingMode}
-                                label={label}
-                              />
-                              {
-                                isInSettingMode && notLocalProfile &&
-                                <MyTooltip content={t('Delete profile')}>
-                                  <Box onClick={() => onDeleteProfile(label)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
-                                    <Trash color='#FF165C' size='16' variant='Bulk' />
-                                  </Box>
-                                </MyTooltip>
-                              }
-                            </Stack>
-                          }
-                          <AccountRow
-                            account={account.account}
-                            isFirstAccount={isFirstAccount}
-                            isFirstProfile={isFirstProfile}
-                            isInSettingMode={isInSettingMode}
-                            isLast={isLast}
-                            isSelected={account.account.address === selectedAccount?.address}
-                          />
-                        </React.Fragment>
-                      );
-                    })}
-                  </>
-                );
-              })}
-            </>
-          )}
-        </Stack>
-        <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
-      </VelvetBox>
-      {
-        isInSettingMode
-          ? <GradientButton
-            contentPlacement='center'
-            onClick={onApply}
-            style={{
-              bottom: '10px',
-              height: '44px',
-              margin: '0 1%',
-              position: 'absolute',
-              width: '98%'
-            }}
-            text={t('Done')}
-          />
-          : <ActionButton
-            StartIcon={AddCircle}
-            contentPlacement='center'
-            iconSize={18}
-            iconVariant='Bold'
-            onClick={onCreateClick}
-            style={{
-              '& .MuiButton-startIcon': {
-                marginRight: '4px'
-              },
-              bottom: '10px',
-              height: '44px',
-              margin: '0 1%',
-              position: 'absolute',
-              width: '98%'
-            }}
-            text={ t('Create a new account')}
-            variant='contained'
-          />
-      }
-    </Container>
+                        return (
+                          <React.Fragment key={account.account.address}>
+                            {isFirstAccount &&
+                              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
+                                <AccountProfileLabel
+                                  isInSettingMode={isInSettingMode}
+                                  label={label}
+                                />
+                                {
+                                  isInSettingMode && notLocalProfile &&
+                                  <MyTooltip content={t('Delete profile')}>
+                                    <Box onClick={onDeleteProfile(label)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
+                                      <Trash color='#FF165C' size='16' variant='Bulk' />
+                                    </Box>
+                                  </MyTooltip>
+                                }
+                              </Stack>
+                            }
+                            <AccountRow
+                              account={account.account}
+                              isFirstAccount={isFirstAccount}
+                              isFirstProfile={isFirstProfile}
+                              isInSettingMode={isInSettingMode}
+                              isLast={isLast}
+                              isSelected={account.account.address === selectedAccount?.address}
+                            />
+                          </React.Fragment>
+                        );
+                      })}
+                    </>
+                  );
+                })}
+              </>
+            )}
+          </Stack>
+          <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
+        </VelvetBox>
+        {
+          isInSettingMode
+            ? (
+              <GradientButton
+                contentPlacement='center'
+                onClick={onApply}
+                style={{
+                  bottom: '10px',
+                  height: '44px',
+                  margin: '0 1%',
+                  position: 'absolute',
+                  width: '98%'
+                }}
+                text={t('Done')}
+              />)
+            : (
+              <ActionButton
+                StartIcon={AddCircle}
+                contentPlacement='center'
+                iconSize={18}
+                iconVariant='Bold'
+                onClick={onCreateClick}
+                style={{
+                  '& .MuiButton-startIcon': {
+                    marginRight: '4px'
+                  },
+                  bottom: '10px',
+                  height: '44px',
+                  margin: '0 1%',
+                  position: 'absolute',
+                  width: '98%'
+                }}
+                text={t('Create a new account')}
+                variant='contained'
+              />)
+        }
+      </Container>
+    </>
   );
 }
 
