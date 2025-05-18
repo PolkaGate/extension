@@ -69,9 +69,10 @@ interface SpecificAccountOptionProps {
   showOption: boolean;
   onNext: () => void;
   ED: BN | undefined;
+  disabled: boolean;
 }
 
-const SpecificAccountOption = ({ ED, genesisHash, onNext, setSpecificAccount, showOption, specificAccount }: SpecificAccountOptionProps) => {
+const SpecificAccountOption = ({ ED, disabled, genesisHash, onNext, setSpecificAccount, showOption, specificAccount }: SpecificAccountOptionProps) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -92,6 +93,7 @@ const SpecificAccountOption = ({ ED, genesisHash, onNext, setSpecificAccount, sh
         </Typography>
       </Container>
       <StakingActionButton
+        disabled={disabled}
         onClick={onNext}
         style={{ mt: '10px' }}
         text={t('Next')}
@@ -196,6 +198,7 @@ export default function Settings (): React.ReactElement {
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
   const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
+  const nextDisabled = useMemo(() => rewardDestinationType === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount), [rewardDestinationAddress, rewardDestinationType, specificAccount]);
 
   const transactionInformation = useMemo(() => {
     return [{
@@ -250,6 +253,7 @@ export default function Settings (): React.ReactElement {
               : <>
                 <SpecificAccountOption
                   ED={ED}
+                  disabled={nextDisabled}
                   genesisHash={genesisHash}
                   onNext={onNext}
                   setSpecificAccount={setSpecificAccount}
