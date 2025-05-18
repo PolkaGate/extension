@@ -66,7 +66,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 60 px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: '10px', position: 'relative', width: '100%', zIndex: 1 }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 60 px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: '15px', position: 'relative', width: '100%', zIndex: 1 }}>
           <RedGradient style={{ right: '-3%' }} />
           <Box sx={{ alignContent: 'center', bgcolor: '#BFA1FF26', borderRadius: '12px', height: '32px', position: 'absolute', px: '10px', right: '15px', width: 'fit-content' }}>
             <Typography color='#BEAAD8' variant='B-2'>
