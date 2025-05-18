@@ -119,6 +119,7 @@ export { default as usePoolConst } from './usePoolConst';
 export { default as usePoolConsts } from './usePoolConsts';
 export { usePoolMembers } from './usePoolMembers';
 export { default as usePools } from './usePools';
+export { default as usePools2 } from './usePools2';
 export { default as usePoolStakingInfo } from './usePoolStakingInfo';
 export { default as usePortfolio } from './usePortfolio';
 export { default as usePreImage } from './usePreImage';
