@@ -33,8 +33,8 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
       cursor: 'default'
     },
     '&:hover': {
-      background: '#1E5FC0',
-      transition: 'all 250ms ease-out'
+      background: 'linear-gradient(262.56deg, #007CE0 0%, #405CFF 45%, #007CE0 100%)',
+      transition: 'background 250ms ease-out'
     },
     background:
       isButtonDisabled
