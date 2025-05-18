@@ -24,17 +24,33 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
     ...theme.typography['B-2'],
     color: isButtonDisabled ? '#EAEBF14D' : theme.palette.text.primary,
     justifyContent: 'center',
-    textTransform: 'none'
+    textTransform: 'none',
+    position: 'relative',
+    zIndex: 2
   } as React.CSSProperties;
 
   const GeneralButtonStyle = {
+    position: 'relative',
+    overflow: 'hidden',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(262.56deg, #007CE0 0%, #405CFF 45%, #007CE0 100%)',
+      opacity: 0,
+      transition: 'opacity 250ms ease-out',
+      borderRadius: '12px',
+      zIndex: 1
+    },
+    '&:hover::before': {
+      opacity: 1
+    },
     '&:disabled': {
       background: 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)',
       cursor: 'default'
-    },
-    '&:hover': {
-      background: 'linear-gradient(262.56deg, #007CE0 0%, #405CFF 45%, #007CE0 100%)',
-      transition: 'background 250ms ease-out'
     },
     background:
       isButtonDisabled
@@ -53,7 +69,9 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
   const StartIconStyle = {
     '& .MuiButton-startIcon': {
       marginLeft: 0,
-      marginRight: '16px'
+      marginRight: '16px',
+      position: 'relative',
+      zIndex: 2
     },
     '& .MuiButton-startIcon svg': {
       color: '#BEAAD8'
