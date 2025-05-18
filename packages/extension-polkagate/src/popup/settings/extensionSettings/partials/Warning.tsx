@@ -28,7 +28,7 @@ function Warning({ onConfirm, open, setPopup }: Props): React.ReactElement {
       iconColor='#FFCE4F'
       iconSize={48}
       openMenu={open}
-      pt={150}
+      pt={170}
       title={t('Warning')}
       titleDirection='column'
       titleStyle={{ pt: '12px' }}
@@ -45,8 +45,8 @@ function Warning({ onConfirm, open, setPopup }: Props): React.ReactElement {
           onClick={onConfirm}
           style={{
             height: '44px',
-            marginTop: '20px',
-            width: '278px'
+            marginTop: '30px',
+            width: '300px'
           }}
           text={t('Confirm')}
         />
@@ -56,7 +56,7 @@ function Warning({ onConfirm, open, setPopup }: Props): React.ReactElement {
           style={{
             height: '44px',
             marginTop: '15px',
-            width: '278px'
+            width: '300px'
           }}
           text={t('Reject')}
         />

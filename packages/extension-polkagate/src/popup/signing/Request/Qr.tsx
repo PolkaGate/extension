@@ -14,6 +14,7 @@ import { QrDisplayPayload, QrScanSignature } from '@polkadot/react-qr';
 
 import { GradientButton, NeonButton } from '../../../components';
 import useTranslation from '../../../hooks/useTranslation';
+import StakingActionButton from '../../staking/partial/StakingActionButton';
 import { CMD_MORTAL, CMD_SIGN_MESSAGE } from '../types';
 
 export interface Props {
@@ -24,10 +25,10 @@ export interface Props {
   genesisHash: string;
   onSignature: ({ signature }: { signature: HexString }) => void;
   payload: ExtrinsicPayload | string;
-  buttonLeft?: string;
+  staking?: boolean;
 }
 
-function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr ({ address, className, cmd, genesisHash, onSignature, payload, staking }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isScanning, setIsScanning] = useState(false);
 
@@ -58,7 +59,7 @@ function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Prop
   }
 
   return (
-    <div className={className} style={{ position: 'relative', zIndex: 1, height: '440px' }}>
+    <div className={className} style={{ height: '440px', position: 'relative', zIndex: 1 }}>
       <Typography color='#BEAAD8' display='flex' justifySelf='center' my='5px' variant='B-4'>
         {!isScanning
           ? <> {t('First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen')}</>
@@ -92,28 +93,38 @@ function Qr({ address, className, cmd, genesisHash, onSignature, payload }: Prop
             {
               isScanning
                 ? <QrScanSignature onScan={onSignature} style={{ height: '265px' }} />
-                : address && <QrDisplayPayload
-                  address={address}
-                  cmd={cmd}
-                  genesisHash={genesisHash}
-                  payload={payloadU8a}
-                />
+                : address && (
+                  <QrDisplayPayload
+                    address={address}
+                    cmd={cmd}
+                    genesisHash={genesisHash}
+                    payload={payloadU8a}
+                  />)
             }
           </div>
         </Grid>
       </Box>
       {isScanning
-        ? <NeonButton
-          contentPlacement='center'
-          onClick={onClick}
-          style={{ bottom: '0px', height: '44px', left: 0, marginTop: '20px', position: 'absolute', width: '100%' }}
-          text={t('Back')}
-        />
-        : <GradientButton
-          onClick={onClick}
-          style={{ bottom: '0px', height: '44px', marginTop: '20px', position: 'absolute', width: '100%' }}
-          text={t('Next')}
-        />
+        ? (
+          <NeonButton
+            contentPlacement='center'
+            onClick={onClick}
+            style={{ bottom: '0px', height: '44px', left: 0, marginTop: '20px', position: 'absolute', width: '100%' }}
+            text={t('Back')}
+          />)
+        : staking
+          ? (
+            <StakingActionButton
+              onClick={onClick}
+              style={{ height: '44px', width: '345px' }}
+              text={t('Next')}
+            />)
+          : (
+            <GradientButton
+              onClick={onClick}
+              style={{ bottom: '0px', height: '44px', marginTop: '20px', position: 'absolute', width: '100%' }}
+              text={t('Next')}
+            />)
       }
     </div>
   );

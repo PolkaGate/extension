@@ -95,7 +95,7 @@ export default function RawData ({ account, error, isFirst, request, setError, s
         width: '100%'
       }}
       >
-        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'scroll', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
+        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'auto', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
           <Typography color='#EAEBF1' variant='B-1'>
             {text}
           </Typography>

@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useIsHovered } from '../hooks';
 import TwoToneText from './TwoToneText';
 
 interface Props {
@@ -19,15 +20,14 @@ interface Props {
 
 function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {}, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
 
   const [state, setState] = useState<boolean>(checked);
-  const [hovered, setHovered] = useState<boolean>(false);
 
   useEffect(() => {
     setState(checked);
   }, [checked]);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
 
   const onClick = useCallback(() => {
     if (disabled) {
@@ -82,8 +82,7 @@ function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {},
     <Container
       disableGutters
       onClick={onClick}
-      onMouseEnter={toggleHovered}
-      onMouseLeave={toggleHovered}
+      ref={containerRef}
       sx={{ columnGap: '10px', cursor: disabled ? 'default' : 'pointer', display: 'flex', ...style }}
     >
       <Grid sx={{ ...CheckboxEffect }}>

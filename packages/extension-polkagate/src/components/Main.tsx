@@ -3,19 +3,18 @@
 
 import React from 'react';
 
-import { useIsExtensionPopup } from '../hooks';
-import { Background } from '../style';
+import { useBackground } from '../hooks';
 
 interface Props {
   children: React.ReactNode;
 }
 
 export default function Main ({ children }: Props): React.ReactElement<Props> {
-  const isExtensionMode = useIsExtensionPopup();
+  const background = useBackground();
 
   return (
-    <main id='main'>
-      {isExtensionMode && <Background id='logoBackground' />}
+    <main id='main' style={{ height: '100%', width: '100%' }}>
+      {background}
       {children}
     </main>
   );

@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
 import { ms, msGreen, msWarning } from '../assets/icons';
-import { useAccountName, useChainInfo, useFormatted2, useIdentity, useIsDark, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChainInfo, useFormatted2, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
 import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
@@ -35,15 +35,17 @@ interface Props {
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
+  addressStyle?: SxProps<Theme> | CSSProperties;
   style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { chain } = useChainInfo(genesisHash);
+  const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
+  const isBlueish = useIsBlueish();
   const isDark = useIsDark();
   const bgColor = !isDark ? '#CCD2EA' : undefined;
 
@@ -84,6 +86,8 @@ function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, i
     returnIdentity && _accountInfo?.identity && returnIdentity(_accountInfo.identity);
   }, [_accountInfo, returnIdentity]);
 
+  const iconColors = isBlueish ? '#809ACB' : theme.palette.icon.secondary;
+
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ maxWidth: '100%', width: 'fit-content', ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
@@ -104,7 +108,7 @@ function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, i
               />}
           </Grid>
         }
-        <Grid direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
+        <Grid container direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
           {msData
             ? <Grid container item sx={{ flexWrap: 'nowrap' }}>
               <Grid display='flex' item sx={{ width: '25px' }}>
@@ -126,7 +130,7 @@ function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, i
                 {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
             </Grid>
-            : <Typography variant={style?.variant}>
+            : <Typography textAlign='left' variant={style?.variant}>
               {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
               {_accountInfo?.identity?.display && !subIdOnly
                 ? _accountInfo?.identity.displayParent
@@ -150,7 +154,7 @@ function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, i
               }
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress && isValidAddress(String(_formatted))
-                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.variant} />
+                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
                   : t('Unknown')
                 : ''
               }
@@ -158,26 +162,26 @@ function Identity2 ({ accountInfo, address, direction = 'column', genesisHash, i
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px' }} />
+              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
             </Grid>
           }
         </Grid>
         {withShortAddress && direction === 'row' &&
           <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
-            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start' }} />
+            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
           </Grid>
         }
         {_showSocial && _accountInfo?.identity?.email &&
           <Grid alignItems='center' columnGap='2px' container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content' }}>
             {_accountInfo?.identity?.email &&
-              <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width='10.12px' />} link={`mailto:${_accountInfo.identity.email}`} size={18} />
+              <SocialIcon Icon={<Email color={iconColors} width='10.12px' />} link={`mailto:${_accountInfo.identity.email}`} size={18} />
             }
             {_accountInfo?.identity?.web &&
-              <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width='10.12px' />} link={_accountInfo?.identity.web} size={18} />
+              <SocialIcon Icon={<Web color={iconColors} width='10.12px' />} link={_accountInfo?.identity.web} size={18} />
 
             }
             {_accountInfo?.identity?.twitter &&
-              <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width='10.12px' />} bgColor={bgColor} link={`https://twitter.com/${_accountInfo.identity.twitter}`} size={18} />
+              <SocialIcon Icon={<XIcon color={iconColors} width='10.12px' />} bgColor={bgColor} link={`https://twitter.com/${_accountInfo.identity.twitter}`} size={18} />
             }
             {/* {_accountInfo?.identity?.riot &&
               <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} pl='5px' rel='noreferrer' target='_blank'>

@@ -3,9 +3,9 @@
 
 import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
 import { Radar2 } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 
-import { useIsDark, useSelectedAccount, useTranslation } from '../hooks';
+import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
 import { showAccount } from '../messaging';
 import { MyTooltip } from '.';
 
@@ -19,10 +19,7 @@ function AccountVisibilityToggler ({ size = '24', style = {} }: Props): React.Re
   const isDark = useIsDark();
   const account = useSelectedAccount();
   const ref = useRef(null);
-
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const hovered = useIsHovered(ref);
 
   const toggleVisibility = useCallback((): void => {
     account?.address && showAccount(account.address, account.isHidden || false).catch(console.error);
@@ -53,7 +50,7 @@ function AccountVisibilityToggler ({ size = '24', style = {} }: Props): React.Re
         ? t('This account is invisible to websites')
         : t('This account is visible to websites')}
     >
-      <Grid container item onClick={toggleVisibility} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} ref={ref} sx={containerStyle}>
+      <Grid container item onClick={toggleVisibility} ref={ref} sx={containerStyle}>
         <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} size={size} />
         <Divider sx={{ bgcolor: '#FF4FB9', height: '1.5px', opacity: account?.isHidden ? 1 : 0, position: 'absolute', rotate: '-45deg', transition: 'all 150ms ease-out', width: '28px' }} />
       </Grid>

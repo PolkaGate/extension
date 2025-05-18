@@ -13,6 +13,7 @@ import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
+import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
@@ -25,7 +26,7 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson(): React.ReactElement {
+export default function RestoreJson (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -132,7 +133,7 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     await batchRestore(encryptFile, password);
-    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now() })));
+    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null })));
 
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
@@ -158,14 +159,14 @@ export default function RestoreJson(): React.ReactElement {
       }
 
       await setStorage('profile', PROFILE_TAGS.ALL);
-      await navigate('/');
     } catch (error) {
       console.error(error);
       setIsPasswordError(true);
     } finally {
       setIsBusy(false);
+      switchToOrOpenTab('/', true);
     }
-  }, [file, requirePassword, navigate, password, handleKeyringPairsJson, handleRegularJson]);
+  }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson]);
 
   const onSelectDeselectAll = useCallback(() => {
     areAllSelected
@@ -287,7 +288,7 @@ export default function RestoreJson(): React.ReactElement {
           primaryBtnText={t('Restore')}
           secondaryBtnText={stepOne ? t('Cancel') : t('Back')}
           showChevron
-          style={{ flexDirection: 'row-reverse', m: '15px 0 0', width: '65%' }}
+          style={{ flexDirection: 'row-reverse', margin: '15px 0 0', width: '65%' }}
         />
       </Stack>
     </AdaptiveLayout>

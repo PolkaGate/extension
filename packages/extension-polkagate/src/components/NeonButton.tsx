@@ -4,9 +4,9 @@
 import type { Icon } from 'iconsax-react';
 
 import { Button, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 
-import { useIsExtensionPopup } from '../hooks';
+import { useIsExtensionPopup, useIsHovered } from '../hooks';
 
 interface Props {
   disabled?: boolean;
@@ -21,12 +21,10 @@ interface Props {
 
 export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, isBusy, onClick, style, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
   const isExtension = useIsExtensionPopup();
   const borderRadius = isExtension ? '12px' : '18px';
-
-  const [hovered, setHovered] = useState(false);
-
-  const toggleHover = useCallback(() => setHovered((isHovered) => !isHovered), []);
 
   const ButtonFontStyle = useMemo(() => ({
     color: hovered ? '#FF4FB9' : '#BEAAD8',
@@ -87,8 +85,7 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
         ? <EndIcon size={20} variant={hovered ? 'Bold' : 'Bulk'} />
         : undefined}
       onClick={onClick}
-      onMouseEnter={toggleHover}
-      onMouseLeave={toggleHover}
+      ref={containerRef}
       startIcon={StartIcon
         ? <StartIcon size={20} variant={hovered ? 'Bold' : 'Bulk'} />
         : undefined}

@@ -59,7 +59,7 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
             address={address}
             size={identiconSize}
           />}
-        <Stack justifyContent='flex-start' sx={{ overflowX: 'scroll', width: '100%' }}>
+        <Stack justifyContent='flex-start' sx={{ overflowX: 'auto', width: '100%' }}>
           {showName &&
             <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
               {inTitleCase

@@ -1,17 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-
 import { Grid, Stack, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
 import { ActionButton, ActionContext, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
-import { useAccountAssets, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { TEST_NETS } from '../../util/constants';
@@ -32,28 +31,16 @@ interface Props {
 
 function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, price, token, type }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
   const isTestNet = TEST_NETS.includes(genesisHash);
   const value = amountToHuman(balance.muln(price), decimal);
 
+  const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`), [genesisHash, navigate, type]);
+
   return (
-    <Grid
-      alignItems='center' container item justifyContent='space-between' key={key}
-      sx={{
-        ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
-        bgcolor: '#05091C',
-        borderBottom: '1px solid #1B133C',
-        borderBottomLeftRadius: isLast ? '14px' : 0,
-        borderBottomRightRadius: isLast ? '14px' : 0,
-        borderTopLeftRadius: isFirst ? '14px' : 0,
-        borderTopRightRadius: isFirst ? '14px' : 0,
-        cursor: 'pointer',
-        lineHeight: '25px',
-        p: '10px',
-        transition: 'all 250ms ease-out'
-      }}
-    >
+    <Grid alignItems='center' container item justifyContent='space-between' key={key} onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
       <Stack alignItems='center' direction='row' justifyContent='start'>
         <ChainLogo genesisHash={genesisHash} size={36} />
         <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
@@ -89,6 +76,8 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
 }
 
 export default function StakingPositions (): React.ReactElement {
+  useBackground('default');
+
   const { t } = useTranslation();
   const account = useSelectedAccount();
   const pricesInCurrency = usePrices();
@@ -142,7 +131,7 @@ export default function StakingPositions (): React.ReactElement {
             placeholder='🔍 Search Token'
             style={{ padding: '4%' }}
           />
-          <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'scroll', width: '92%' }}>
+          <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'auto', width: '92%' }}>
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
               {filteredToken?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }, index) => {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
@@ -181,7 +170,7 @@ export default function StakingPositions (): React.ReactElement {
           </VelvetBox>
           <Stack direction='row' justifyContent='center'>
             <ActionButton
-              StartIcon={AddCircle as Icon}
+              StartIcon={AddCircle}
               contentPlacement='center'
               onClick={onEarningOptions}
               style={{

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
@@ -32,7 +31,7 @@ interface AccountItemProps {
   setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function AccountItem({ address, index, name, selected, setOpenMenu }: AccountItemProps) {
+function AccountItem ({ address, index, name, selected, setOpenMenu }: AccountItemProps) {
   const gradientBackgroundStyle: React.CSSProperties = {
     background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
     borderRadius: '18px',
@@ -121,7 +120,7 @@ function AccountItem({ address, index, name, selected, setOpenMenu }: AccountIte
   );
 }
 
-function AccountsOptions({ setOpenMenu }: AccountsOptionProps): React.ReactElement {
+function AccountsOptions ({ setOpenMenu }: AccountsOptionProps): React.ReactElement {
   const { accounts } = useContext(AccountContext);
 
   const [searchedAccounts, setSearchedAccounts] = useState<AccountJson[]>();
@@ -157,7 +156,7 @@ function AccountsOptions({ setOpenMenu }: AccountsOptionProps): React.ReactEleme
           placeholder='🔍 Search Accounts'
         />
       </Grid>
-      <Grid container item justifyContent='center' sx={{ alignContent: 'flex-start', display: 'flex', height: '320px', maxHeight: '320px', overflow: 'scroll', pt: '8px', rowGap: '8px' }}>
+      <Grid container item justifyContent='center' sx={{ alignContent: 'flex-start', display: 'flex', height: '320px', maxHeight: '320px', overflow: 'hidden', overflowY: 'auto', pt: '8px', rowGap: '8px' }}>
         {accountsToShow.map(({ address, name, selected }, index) => (
           <AccountItem
             address={address}

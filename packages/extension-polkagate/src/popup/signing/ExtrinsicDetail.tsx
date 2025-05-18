@@ -48,7 +48,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
     });
   }, [request]);
 
-  const { decimal, token } = useChainInfo(signerPayload.genesisHash);
+  const { decimal, token } = useChainInfo(signerPayload.genesisHash, true);
 
   const docs = useMemo(() => {
     if (!data?.meta?.docs) {
@@ -116,7 +116,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
           <Typography color='#AA83DC' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, position: 'relative', width: '100%', textAlign: 'left', mb: '10px', pb: '5px' }} textTransform='uppercase' variant='S-1'>
             {t('Arguments')}
           </Typography>
-          <Grid container fontSize='11px' sx={{ overflow: 'scroll' }} textAlign='left'>
+          <Grid container fontSize='11px' sx={{ overflowY: 'auto' }} textAlign='left'>
             {data?.argsEntries.map((entry, index) => {
               const [key, _type] = entry; // destructuring to get the key and type from argsEntries
               const value = data.args[index]; // Accessing the corresponding value from args

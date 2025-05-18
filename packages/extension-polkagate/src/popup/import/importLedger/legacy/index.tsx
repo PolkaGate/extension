@@ -129,7 +129,7 @@ export default function LegacyApps ({ setMode }: Props): React.ReactElement {
         primaryBtnText={ledgerLocked ? t('Refresh') : t('Import')}
         secondaryBtnText={t('Back')}
         showChevron
-        style={{ flexDirection: 'row-reverse', m: '20px 0', width: '65%' }}
+        style={{ flexDirection: 'row-reverse', margin: '20px 0', width: '65%' }}
       />
     </Stack>
   );

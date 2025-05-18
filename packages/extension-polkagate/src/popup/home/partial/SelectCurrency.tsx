@@ -162,7 +162,7 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
           placeholder='🔍 Search currency'
         />
       </Grid>
-      <Grid container item justifyContent='center' sx={{ display: 'block', height: '290px', maxHeight: '290px', overflow: 'scroll', pt: '5px' }}>
+      <Grid container item justifyContent='center' sx={{ display: 'block', height: '290px', maxHeight: '290px', overflowY: 'auto', pt: '5px' }}>
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
@@ -239,31 +239,38 @@ function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
   return (
     <>
       {isExtension
-        ? <ExtensionPopup
-          TitleIcon={Hashtag}
-          handleClose={handleClose}
-          iconVariant='Linear'
-          openMenu={openMenu}
-          pt={60}
-          title={title}
-          titleAlignment='flex-start'
-          withoutBackground
-          withoutTopBorder
-        >
-          <Content
-            setOpenMenu={setOpenMenu}
-          />
-        </ExtensionPopup>
-        : <DraggableModal
-          onClose={handleClose}
-          open={openMenu}
-          style={{ minHeight: '400px', padding: '20px' }}
-          title={title}
-        >
-          <Content
-            setOpenMenu={setOpenMenu}
-          />
-        </DraggableModal>
+        ? (
+          <ExtensionPopup
+            TitleIcon={Hashtag}
+            handleClose={handleClose}
+            iconVariant='Linear'
+            openMenu={openMenu}
+            pt={60}
+            style={{
+              'div#container div#boxContainer': {
+                overflow: 'hidden'
+              }
+            }}
+            title={title}
+            titleAlignment='flex-start'
+            withoutBackground
+            withoutTopBorder
+          >
+            <Content
+              setOpenMenu={setOpenMenu}
+            />
+          </ExtensionPopup>)
+        : (
+          <DraggableModal
+            onClose={handleClose}
+            open={openMenu}
+            style={{ minHeight: '400px', padding: '20px' }}
+            title={title}
+          >
+            <Content
+              setOpenMenu={setOpenMenu}
+            />
+          </DraggableModal>)
       }
     </>
   );
