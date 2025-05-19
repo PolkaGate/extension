@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 
 import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Dialog, Grid, Link, Slide, Stack, styled, Typography } from '@mui/material';
+import { Container, Dialog, Grid, Link, Slide, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import Riot from '@polkadot/extension-polkagate/src/assets/icons/Riot';
@@ -19,9 +19,10 @@ import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
-import BlueGradient from '../staking styles/BlueGradient';
+import BlueGradient from '../stakingStyles/BlueGradient';
+import DetailGradientBox from '../stakingStyles/DetailGradientBox';
 import AccountsTable from './AccountsTable';
-import { ValidatorStakingInfo } from './NominatorsTable';
+import { StakingInfoStack } from './NominatorsTable';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
@@ -32,17 +33,6 @@ interface ValidatorDetailProps {
   handleClose: () => void;
   genesisHash: string;
 }
-
-const GradientBox = styled('div')(() => ({
-  backdropFilter: 'blur(10px)',
-  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(6, 10, 29, 0) 100%)',
-  borderRadius: '24px',
-  height: '150px',
-  left: 6,
-  position: 'absolute',
-  right: 6,
-  top: 8
-}));
 
 interface ValidatorIdSocialsProps {
   validatorDetail: ValidatorInformation;
@@ -173,7 +163,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
           </Grid>
           <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 }}>
             <BlueGradient style={{ top: '-120px' }} />
-            <GradientBox />
+            <DetailGradientBox />
             <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
               <ValidatorIdentityDetail
                 genesisHash={genesisHash}
@@ -181,10 +171,10 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
               />
               <GradientDivider style={{ mb: '12px' }} />
               <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
-                <ValidatorStakingInfo amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
-                <ValidatorStakingInfo text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
-                <ValidatorStakingInfo amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
-                <ValidatorStakingInfo text={validatorAPY ?? '--'} title={t('APY')} />
+                <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
+                <StakingInfoStack text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
+                <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
+                <StakingInfoStack text={validatorAPY ?? '--'} title={t('APY')} />
               </Container>
               <GradientDivider style={{ my: '12px' }} />
               <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>
