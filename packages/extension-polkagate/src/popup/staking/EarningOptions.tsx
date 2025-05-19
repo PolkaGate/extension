@@ -1,14 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
 
 import type { PositionInfo } from '../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { ActionContext, BackWithLabel, ChainLogo, FadeOnScroll, FormatBalance2, Motion, SearchField } from '../../components';
-import { useAccountAssets, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
+import { BN_ZERO } from '@polkadot/util';
+
+import { BackWithLabel, ChainLogo, FadeOnScroll, FormatBalance2, Motion, SearchField } from '../../components';
+import { useAccountAssets, useBackground, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS } from '../../util/constants';
@@ -16,14 +20,15 @@ import { fetchStaking } from '../../util/fetchStaking';
 import getChain from '../../util/getChain';
 import { sanitizeChainName } from '../../util/utils';
 import StakingInfo from './stakingInfo';
-import { BN_ZERO } from '@polkadot/util';
 
-export default function EarningOptions(): React.ReactElement {
+export default function EarningOptions (): React.ReactElement {
+  useBackground('default');
+
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
 
   const [rates, setRates] = useState<Record<string, number>>();
@@ -77,9 +82,7 @@ export default function EarningOptions(): React.ReactElement {
     setSelectedPosition(token);
   }, []);
 
-  const onBack = useCallback(() => {
-    onAction('/stakingIndex/');
-  }, [onAction]);
+  const onBack = useCallback(() => navigate('/') as void, [navigate]);
 
   return (
     <>

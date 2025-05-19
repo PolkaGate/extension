@@ -82,7 +82,7 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
 
   return (
     <VelvetBox style={style}>
-      <Container disableGutters ref={refContainer} sx={{ display: 'grid', height: isExtension ? 'inherit' : '150px', overflow: 'scroll', rowGap: '4px' }}>
+      <Container disableGutters ref={refContainer} sx={{ display: 'grid', height: isExtension ? 'inherit' : '150px', overflowY: 'auto', rowGap: '4px' }}>
         {!notReady && historyItems && Object.entries(historyItems).map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}

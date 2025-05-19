@@ -193,8 +193,8 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
               onClick={onModeSwitch}
             />
             {!isAdvancedMode
-              ? <Grid container sx={{ maxHeight: '264px', overflowY: 'scroll' }}>
-                <Grid container ref={ref} sx={{ maxHeight: `${window.innerHeight - 475}px`, minHeight: '50px', overflowY: 'scroll', pt: '10px', scrollBehavior: 'auto', scrollbarWidth: 'thin' }}>
+              ? <Grid container sx={{ maxHeight: '264px', overflowY: 'auto' }}>
+                <Grid container ref={ref} sx={{ maxHeight: `${window.innerHeight - 475}px`, minHeight: '50px', overflowY: 'auto', pt: '10px', scrollBehavior: 'auto', scrollbarWidth: 'thin' }}>
                   {!!Object.entries(addressList).length &&
                     <>
                       {Object.entries(addressList).map(([address, options]) => (

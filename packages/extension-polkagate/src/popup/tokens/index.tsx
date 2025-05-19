@@ -8,14 +8,14 @@ import type { BalancesInfo } from '../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, Trade } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
-import { useParams } from 'react-router';
+import React, { memo, useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';
-import { useAccountAssets, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
+import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';
+import { useAccountAssets, useBackground, useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useSelectedAccount, useTranslation } from '../../hooks';
 import { calcChange, calcPrice } from '../../hooks/useYouHave';
 import { windowOpen } from '../../messaging';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
@@ -85,9 +85,11 @@ const lockedReservedReducer = (state: LockedReservedState, action: Action): Lock
 };
 
 function Tokens (): React.ReactElement {
+  useBackground('default');
+
   const theme = useTheme();
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const { genesisHash, paramAssetId } = useParams<{ genesisHash: string; paramAssetId: string }>();
   const pricesInCurrency = usePrices();
   const account = useSelectedAccount();
@@ -107,7 +109,7 @@ function Tokens (): React.ReactElement {
 
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
-    , [accountAssets, genesisHash, paramAssetId]);
+  , [accountAssets, genesisHash, paramAssetId]);
 
   const transferable = useMemo(() => getValue('transferable', token as unknown as BalancesInfo), [token]);
   const lockedBalance = useMemo(() => getValue('locked balance', token as unknown as BalancesInfo), [token]);
@@ -248,9 +250,7 @@ function Tokens (): React.ReactElement {
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
-  const backHome = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
+  const backHome = useCallback(() => navigate('/') as void, [navigate]);
 
   return (
     <Motion variant='flip'>
@@ -259,9 +259,9 @@ function Tokens (): React.ReactElement {
         <BackWithLabel
           content={<BackButton logoInfo={logoInfo} token={token} />}
           onClick={backHome}
-          style={{ pb: 0 }}
+          style={{ height: '40px', pb: 0 }}
         />
-        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'scroll', pb: '60px', pt: '15px' }}>
+        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'auto', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
@@ -333,7 +333,7 @@ function Tokens (): React.ReactElement {
               token={token?.token}
             />
             <TokenStakingInfo
-              address={account?.address}
+              genesisHash={genesisHash}
               tokenDetail={token}
             />
           </Grid>

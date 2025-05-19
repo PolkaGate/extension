@@ -103,7 +103,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
           {t('action')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ height: ' 400px', overflow: 'scroll', p: '0 15px 50px' }}>
+      <Container disableGutters ref={refContainer} sx={{ height: ' 400px', overflow: 'hidden', overflowY: 'auto', p: '0 15px 50px' }}>
         {filteredAuthorizedDapps && Object.entries(filteredAuthorizedDapps).map(([url, info], index) => {
           const isIncluded = info.authorizedAccounts.find((address) => address === selectedAccount?.address);
 

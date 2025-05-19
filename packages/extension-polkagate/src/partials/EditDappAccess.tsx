@@ -45,6 +45,7 @@ export default function EditDappAccess({ access, setAccessToEdit, setRefresh }: 
           hasBanner={false}
           requestId={undefined}
           setRefresh={setRefresh}
+          style={{ px: '15px' }}
         />
       </Grid>
     </Motion>

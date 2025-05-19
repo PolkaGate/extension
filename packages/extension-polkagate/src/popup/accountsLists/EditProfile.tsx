@@ -124,7 +124,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
           <Typography color='#BEAAD8' variant='B-4'>
             {t('Select the addresses you’d like to include in {{profileLabel}} profile', { replace: { profileLabel: maybeNewName ?? profileLabel } })}
           </Typography>
-          <Stack direction='column' sx={{ height: '350px', mt: '25px', overflow: 'scroll', width: '100%' }}>
+          <Stack direction='column' sx={{ height: '350px', mt: '25px', overflowY: 'auto', width: '100%' }}>
             {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
               return (
                 <>

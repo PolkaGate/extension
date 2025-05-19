@@ -4,12 +4,16 @@
 import { Container, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { useIsDark, useTranslation } from '../hooks';
 
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
-})<{ hasError?: boolean }>(({ hasError, theme }) => ({
+})<{ hasError?: boolean; isBlueish?: boolean }>(({ hasError, isBlueish, theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+  },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
@@ -28,29 +32,25 @@ const StyledTextField = styled(TextField, {
       }
     },
     '&:hover': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#2D1E4A' : '#e5e7ed',
+      backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#222442' : '#2D1E4A' : '#e5e7ed',
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      borderColor: '#BEAAD833',
+      borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    backgroundColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EFF1F9',
-    borderColor: '#BEAAD833',
+    backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#2224424D' : '#1B133C' : '#EFF1F9',
+    borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
     borderRadius: '12px',
-    color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
+    color: hasError ? theme.palette.error.main : isBlueish ? '#809ACB' : theme.palette.text.secondary,
     height: '44px',
     marginTop: '5px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },
-
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
-  },
   '& input::placeholder': {
-    color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
+    color: hasError ? theme.palette.error.main : isBlueish ? '#809ACB' : theme.palette.text.secondary,
     ...theme.typography['B-4'],
     textAlign: 'left'
   },
@@ -66,11 +66,13 @@ interface Props {
   hasError?: boolean;
 }
 
-export default function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
+function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
+  const { pathname } = useLocation();
 
+  const isBlueish = pathname.includes('/solo/');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [focusing, setFocused] = useState<boolean>(false);
 
@@ -88,6 +90,10 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
     }
   }, [onEnterPress]);
 
+  const commonColor = isDark
+    ? isBlueish ? '#809ACB' : '#AA83DC'
+    : '#8F97B8';
+
   return (
     <Container disableGutters sx={style}>
       {title &&
@@ -103,11 +109,13 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
                 aria-label='toggle password visibility'
                 edge='end'
                 onClick={handleClickShowPassword}
-                sx={{ bgcolor: isDark ? '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
+                sx={{ bgcolor: isDark ? isBlueish ? '#222442' : '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
               >
                 {showPassword
-                  ? <EyeSlash color={isDark ? '#AA83DC' : '#8F97B8'} size='20' variant='Bulk' />
-                  : <Eye color={isDark ? '#AA83DC' : '#8F97B8'} size='20' variant='Bulk' />
+                  ? <EyeSlash
+                    color={commonColor} size='20' variant='Bulk'
+                  />
+                  : <Eye color={commonColor} size='20' variant='Bulk' />
                 }
               </IconButton>
             </InputAdornment>
@@ -115,7 +123,7 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
           startAdornment: (
             <InputAdornment position='start'>
               <Check
-                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : isDark ? '#AA83DC' : '#8299BD'}
+                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : commonColor}
                 size='22'
                 variant={focusing ? 'Bold' : 'Bulk'}
               />
@@ -125,6 +133,7 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
         autoFocus={focused}
         fullWidth
         hasError={hasError}
+        isBlueish={isBlueish}
         onBlur={toggle}
         onChange={onChange}
         onFocus={toggle}
@@ -141,3 +150,5 @@ export default function PasswordInput ({ focused = false, hasError = false, onEn
     </Container>
   );
 }
+
+export default React.memo(PasswordInput);

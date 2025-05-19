@@ -121,8 +121,9 @@ export default function SupportUs() {
       }
     });
 
+    //NO TIE ANYMORE IN NEW DESIGN
     addressWithMaxVotingPower && tieAccount(addressWithMaxVotingPower, POLKADOT_GENESIS_HASH).finally(() => {
-      setAddress(addressWithMaxVotingPower);
+      setAddress(addressWithMaxVotingPower);  
     }).catch(console.error);
   }, [accountsAssets]);
 

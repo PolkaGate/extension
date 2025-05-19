@@ -133,7 +133,7 @@ function UL({ note }: { note: string }) {
   const [title, description] = note.split(':');
 
   return (
-    <Grid columnGap='8px' container item>
+    <Grid columnGap='8px' container item sx={{ overflowWrap: 'anywhere' }}>
       <Box sx={{ bgcolor: '#FF4FB9', borderRadius: '1px', height: '8px', m: '6px', rotate: '45deg', width: '8px' }} />
       <Typography color='text.secondary' sx={{ maxWidth: 'calc(100% - 40px)', textAlign: 'left', textTransform: 'capitalize', width: 'fit-content' }} variant='B-2'>
         {title}{': '}
@@ -259,7 +259,7 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
     const usingVersion = window.localStorage.getItem('using_version') ?? '';
 
     const filteredChangelog = newVersion
-      ? changelog.filter(({ version }) => semver.gt(version, usingVersion))
+      ? changelog.filter(({ version }) => semver.gte(version, usingVersion))
       : [...changelog];
 
     const mergedChangelog = filteredChangelog.map((entry) => {
@@ -391,11 +391,11 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
           </Grid>
           <RedGradient style={{ top: '-130px' }} />
           <GradientDivider />
-          <Box sx={{ maxHeight: '440px', overflow: 'scroll', position: 'relative', width: '100%' }}>
+          <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
             {!isLoading &&
               <>
                 <Grid container item sx={{ pb: '5px', position: 'relative', zIndex: 1 }}>
-                  <Stack sx={{ height: '380px', overflowY: 'scroll', pt: '20px', rowGap: '20px', width: '100%' }}>
+                  <Stack sx={{ height: '380px', overflowY: 'auto', pt: '20px', rowGap: '20px', width: '100%' }}>
                     {newVersionsToShow?.map((change, index) => (
                       <NewVersionItem
                         item={change}

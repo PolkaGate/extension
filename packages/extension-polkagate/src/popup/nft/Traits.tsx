@@ -17,7 +17,7 @@ function Line (): ReactElement {
   return (
     <Divider
       orientation='horizontal' sx={{
-        background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', width: '301px', height: '1px'
+        background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '301px'
       }}
     />
   );
@@ -32,7 +32,7 @@ function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label
         </Typography>
         {React.isValidElement(value)
           ? value
-          : <Typography color='#EAEBF1' overflow='scroll' textAlign='right' variant='B-1' width='50%'>
+          : <Typography color='#EAEBF1' overflow='auto' textAlign='right' variant='B-1' width='50%'>
             {value}
           </Typography>
         }
@@ -64,7 +64,7 @@ function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label
   );
 }
 
-export default function Traits({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
+export default function Traits ({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
 
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
@@ -127,7 +127,7 @@ export default function Traits({ nft }: { nft: ItemInformation | undefined }): R
   }, [chainNameSymbol, nft]);
 
   return (
-    <Grid container item sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '18px', m: '10px', maxHeight: '370px', overflow: 'scroll', p: '10px 15px' }}>
+    <Grid container item sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '18px', m: '10px', maxHeight: '370px', overflowY: 'auto', p: '10px 15px' }}>
       {nft &&
         <Stack direction='column' width='100%'>
           {nft?.attributes?.map((attribute: Attribute) => {

@@ -88,7 +88,7 @@ function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactEl
   }, []);
 
   return (
-    <Grid container item sx={{ height: '100px', overflowY: 'scroll' }}>
+    <Grid container item sx={{ height: '100px', overflowY: 'auto' }}>
       {decoded?.method && txInfo?.map((info, index) => (
         <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: isBatchCall ? '40px' : '58px', mt: '10px', px: '10px' }}>
           <ShowTransactionSummary

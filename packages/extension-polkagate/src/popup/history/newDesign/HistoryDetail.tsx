@@ -43,7 +43,7 @@ const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), []);
+  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), [calls.length]);
 
   return (
     <>
@@ -236,7 +236,7 @@ function DetailCard ({ historyItem }: Props) {
   );
 }
 
-function Content ({ historyItem, style = {}}: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties}): React.ReactElement {
+function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties}): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -260,11 +260,11 @@ function Content ({ historyItem, style = {}}: { historyItem: TransactionDetail |
   const openExplorer = useCallback(() => window.open(link, '_blank'), [link]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 , ...style }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 , ...style }}>
       {historyItem &&
           <>
             <DetailHeader historyItem={historyItem} />
-            <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'scroll', pb: '65px' }}>
+            <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'auto', pb: '65px' }}>
               <DetailCard historyItem={historyItem} />
               <FadeOnScroll containerRef={containerRef} />
             </Grid>

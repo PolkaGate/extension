@@ -3,7 +3,7 @@
 
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, type SxProps, type Theme } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -20,9 +20,10 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   requestId: string | undefined;
   hasBanner: boolean;
+  style?: SxProps<Theme>;
 }
 
-export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, requestId, setRefresh }: Props) {
+export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, requestId, setRefresh, style }: Props) {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
@@ -104,7 +105,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
   }, [selectedAccounts, dappInfo?.id, requestId, setRefresh, closePopup]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1 }}>
+    <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1, ...style }}>
       <Grid container item sx={{ height: 'fit-content', pb: '10px' }}>
         <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
           <Grid alignItems='center' container item justifyContent='space-between' p='10px 15px'>
@@ -124,7 +125,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '215px', overflowY: 'scroll', p: '8px 12px', width: '100%' }}>
+          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '215px', overflowY: 'auto', p: '8px 12px', width: '100%' }}>
             {accountsToShow.map(({ address, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 

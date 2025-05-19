@@ -30,7 +30,7 @@ const assetsChains = createAssets();
  * @returns price : price of the token which the address is already switched to
  */
 export default function useTokenPrice2 (genesisHash: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
-  const { chainName: addressChainName, decimal, token } = useChainInfo(genesisHash);
+  const { chainName: addressChainName, decimal, token } = useChainInfo(genesisHash, true);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();
   const _chainName = assetChainName || addressChainName;

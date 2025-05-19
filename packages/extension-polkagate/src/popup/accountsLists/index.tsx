@@ -17,9 +17,9 @@ function AccountsLists (): React.ReactElement {
   const [profileLabelToDelete, setProfileLabelToDelete] = useState<string>();
 
   return (
-    <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+    <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
-      <Motion style={{ margin: '0 10px', padding: '0 5px' }} variant='slide'>
+      <Motion style={{ height: 'calc(100% - 50px)', margin: '0 10px', padding: '0 5px' }} variant='slide'>
         <HeaderSection
           mode={mode}
           setMode={setMode}

@@ -3,7 +3,9 @@
 
 import { Box, type SxProps, type Theme } from '@mui/material';
 import { ArrowCircleLeft } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useRef } from 'react';
+
+import { useIsHovered } from '../../hooks';
 
 interface DynamicBackButtonProps {
   onClick: () => void;
@@ -11,17 +13,15 @@ interface DynamicBackButtonProps {
 }
 
 function BackButton ({ onClick, style }: DynamicBackButtonProps) {
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const toggleHovered = useCallback(() => setHovered((isHovered) => !isHovered), []);
+  const refContainer = useRef(null);
+  const hovered = useIsHovered(refContainer);
 
   return (
     <Box
       alignItems='center'
       display='flex'
       onClick={onClick}
-      onMouseEnter={toggleHovered}
-      onMouseLeave={toggleHovered}
+      ref={refContainer}
       sx={{ cursor: 'pointer', width: 'fit-content', ...style }}
     >
       <ArrowCircleLeft color='#FF4FB9' size='24' variant={hovered ? 'Bold' : 'Bulk'} />

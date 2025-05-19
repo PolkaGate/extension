@@ -114,7 +114,7 @@ function History (): React.ReactElement {
           }}
           value={selectedChain}
         />}
-      <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '405px', mt: '10px', overflow: 'scroll', pb: '60px' }}>
+      <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '400px', mt: '10px', overflowY: 'auto', pb: '60px' }}>
         <HistoryBox
           historyItems={historyItemsToShow}
           notReady={!selectedChain}

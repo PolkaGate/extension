@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, type SxProps, type Theme, useTheme } from '@mui/material';
+import { Container, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
+import { useIsBlueish } from '../hooks';
+import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { ActionButton, GradientButton, GradientDivider, NeonButton } from '.';
 
 interface Props {
@@ -20,11 +22,12 @@ interface Props {
   primaryBtnText: string;
   secondaryBtnText: string;
   showChevron?: boolean;
-  style?: SxProps<Theme>;
+  style?: React.CSSProperties;
 }
 
 function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, showChevron, style }: Props): React.ReactElement {
   const theme = useTheme();
+  const isBlueish = useIsBlueish();
 
   const { primaryWidth, secondaryWidth } = useMemo(() => {
     const isVertical = direction === 'vertical';
@@ -52,6 +55,7 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
       {cancelButton
         ? <ActionButton
           contentPlacement='center'
+          isBlueish={isBlueish}
           onClick={onSecondaryClick}
           style={{ height: '44px', width: secondaryWidth }}
           text={secondaryBtnText}
@@ -64,19 +68,29 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
         />
       }
       {divider &&
-        <GradientDivider orientation='vertical' style={{ height: '90%', mx: '8px' }} />
+        <GradientDivider isBlueish={isBlueish} orientation='vertical' style={{ height: '90%', mx: '8px' }} />
       }
-      <GradientButton
-        disabled={disabled}
-        endIconNode={arrow
-          ? <ArrowForwardIosRoundedIcon sx={{ color: 'text.primary', fontSize: '13px', stroke: `${theme.palette.text.primary}`, strokeWidth: 1.1, zIndex: 10 }} />
-          : undefined}
-        isBusy={isBusy}
-        onClick={onPrimaryClick}
-        showChevron={showChevron}
-        style={{ flex: flexibleWidth ? 1 : 'none', height: '44px', width: primaryWidth }}
-        text={primaryBtnText}
-      />
+      {isBlueish
+        ? <StakingActionButton
+          disabled={disabled}
+          isBusy={isBusy}
+          onClick={onPrimaryClick}
+          startIcon
+          style={style}
+          text={primaryBtnText}
+        />
+        : <GradientButton
+          disabled={disabled}
+          endIconNode={arrow
+            ? <ArrowForwardIosRoundedIcon sx={{ color: 'text.primary', fontSize: '13px', stroke: `${theme.palette.text.primary}`, strokeWidth: 1.1, zIndex: 10 }} />
+            : undefined}
+          isBusy={isBusy}
+          onClick={onPrimaryClick}
+          showChevron={showChevron}
+          style={{ flex: flexibleWidth ? 1 : 'none', height: '44px', width: primaryWidth }}
+          text={primaryBtnText}
+        />
+      }
     </Container>
   );
 }
