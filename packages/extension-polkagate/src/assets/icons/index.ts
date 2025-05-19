@@ -16,7 +16,7 @@ export { default as crowdloanHomeBlack } from './crowdloanHomeBlack.svg';
 export { default as crowdloanHomeRed } from './crowdloanHomeRed.svg';
 export { default as crowdloanHomeWhite } from './crowdloanHomeWhite.svg';
 export { default as cubes } from './cubes.svg';
-export { default as emptyHistoryList } from './emptyHistoryList.svg';
+export { default as emptyList } from './emptyList.svg';
 export { default as EmptyWarning } from './EmptyWarning.svg';
 export { default as Gear } from './Gear.svg';
 export { default as ms } from './ms.svg';

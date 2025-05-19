@@ -7,7 +7,7 @@ import { Box, Container, Stack, Typography } from '@mui/material';
 import { Category, Key, Profile, Trash } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { emptyHistoryList } from '../assets/icons/index';
+import { emptyList } from '../assets/icons/index';
 import { ActionButton, ExtensionPopup, FadeOnScroll, MyTooltip, SearchField } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
@@ -27,7 +27,7 @@ function EmptyAccessList () {
     <Stack alignContent='center' direction='column'>
       <Box
         component='img'
-        src={emptyHistoryList as string}
+        src={emptyList as string}
         sx={{ m: '70px auto -10px' }}
       />
       <Typography color='#BEAAD8' sx={{ px: '40px' }} variant='B-2'>

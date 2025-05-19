@@ -8,7 +8,7 @@ import React, { memo, useRef } from 'react';
 
 import { useTranslation } from '../../hooks';
 import { COLUMN_WIDTH } from './consts';
-import EmptyHistoryBox from './EmptyHistoryBox';
+import EmptyListBox from './EmptyListBox';
 import HistoryItem from './HistoryItem';
 import HistoryLoading from './HistoryLoading';
 
@@ -54,7 +54,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
         </Typography>
         {
           !notReady && historyItems === null &&
-          <EmptyHistoryBox />
+          <EmptyListBox />
         }
         {
           !notReady && historyItems === undefined &&
