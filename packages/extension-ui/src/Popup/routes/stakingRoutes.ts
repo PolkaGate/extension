@@ -9,13 +9,13 @@ import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
 import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool-new';
-// import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
-// import PoolNominations from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations';
-// import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool/stake';
-// import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/createPool';
-// import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool';
 import PoolBondExtra from '@polkadot/extension-polkagate/src/popup/staking/pool-new/bondExtra';
 import PoolInfo from '@polkadot/extension-polkagate/src/popup/staking/pool-new/Info';
+// import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
+// import PoolNominations from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations';
+// import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/createPool';
+import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool-new/joinPool';
+import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/stake';
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/unstake';
 import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
 import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
@@ -46,16 +46,6 @@ export const STAKING_ROUTES: RouteConfig[] = [
   //   trigger: 'pool-create'
   // },
   // {
-  //   Component: JoinPool,
-  //   path: '/pool/join/:address',
-  //   trigger: 'pool-join'
-  // },
-  // {
-  //   Component: PoolStake,
-  //   path: '/pool/stake/:address',
-  //   trigger: 'pool-stake'
-  // },
-  // {
   //   Component: PoolInformation,
   //   path: '/pool/myPool/:address',
   //   trigger: 'pool-poolInformation'
@@ -65,6 +55,16 @@ export const STAKING_ROUTES: RouteConfig[] = [
   //   path: '/pool/nominations/:address',
   //   trigger: 'pool-nominations'
   // },
+  {
+    Component: JoinPool,
+    path: '/pool/:genesisHash/join',
+    trigger: 'pool-join'
+  },
+  {
+    Component: PoolStake,
+    path: '/pool/:genesisHash/stake',
+    trigger: 'pool-stake'
+  },
   {
     Component: PoolBondExtra,
     path: '/pool/:genesisHash/bondExtra',

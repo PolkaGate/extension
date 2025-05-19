@@ -3,8 +3,8 @@
 
 import type { Content } from '../../../partials/Review';
 
-import { Container, Grid } from '@mui/material';
-import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
+import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -19,6 +19,20 @@ import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
 import ToBeReleased from '../partial/ToBeReleased';
+
+const Back = () => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <>
+      <UserOctagon color={theme.palette.text.highlight} size='24' variant='Bold' />
+      <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
+        {t('solo staking')}
+      </Typography>
+    </>
+  );
+};
 
 export default function Solo (): React.ReactElement {
   useBackground('staking');
@@ -121,10 +135,10 @@ export default function Solo (): React.ReactElement {
         <UserDashboardHeader homeType='default' noSelection />
         <Motion variant='slide'>
           <BackWithLabel
+            content={<Back />}
             onClick={onBack}
             staking
             style={{ pb: 0 }}
-            text={t('solo staking')}
           />
           <StakingPortfolio
             buttons={[{
@@ -164,8 +178,7 @@ export default function Solo (): React.ReactElement {
               title={t('Rewards paid')}
               token={token ?? ''}
             />
-            {
-              redeemable &&
+            {redeemable &&
               <StakingInfoTile
                 Icon={Moneys}
                 buttonsArray={[{
@@ -179,10 +192,8 @@ export default function Solo (): React.ReactElement {
                 layoutDirection={layoutDirection}
                 title={t('Redeemable')}
                 token={token ?? ''}
-              />
-            }
-            {
-              unlockingAmount &&
+              />}
+            {unlockingAmount &&
               <StakingInfoTile
                 Icon={LockSlash}
                 buttonsArray={[{
@@ -197,8 +208,7 @@ export default function Solo (): React.ReactElement {
                 onExpand={toBeReleased?.length ? onExpand : undefined}
                 title={t('Unstaking')}
                 token={token ?? ''}
-              />
-            }
+              />}
           </Container>
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}

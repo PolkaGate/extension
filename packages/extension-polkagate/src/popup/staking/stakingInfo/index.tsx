@@ -1,15 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransitionProps } from '@mui/material/transitions';
 import type { PositionInfo } from '../../../util/types';
 
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import { Clock, Medal, WalletMoney } from 'iconsax-react';
 import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
-import { BN_ZERO, noop } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
 import { FormatBalance2, GradientButton } from '../../../components';
@@ -26,12 +26,13 @@ interface Props {
   selectedPosition: PositionInfo;
 }
 
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
 function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { availableBalance, decimal, genesisHash, tokenSymbol } = selectedPosition;
   const poolConsts = usePoolConst(genesisHash);
   const stakingConsts = useStakingConst(genesisHash);
@@ -39,6 +40,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
 
   const eraLength = remainingTime(poolConsts?.eraLength?.toNumber() ?? 0);
   const handleClose = useCallback(() => setSelectedPosition(undefined), [setSelectedPosition]);
+  const goStaking = useCallback(() => navigate('/pool/' + genesisHash + '/stake') as void, [genesisHash, navigate]);
 
   return (
     <Dialog
@@ -93,7 +95,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
               selectedPosition={selectedPosition}
             />
           </Grid>
-          <Box sx={{ height: '255px', overflow: 'scroll', position: 'relative', width: '100%', mt: '15px' }}>
+          <Box sx={{ height: '255px', mt: '15px', overflow: 'scroll', position: 'relative', width: '100%' }}>
             {(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond) &&
               <InfoRow
                 Icon={WalletMoney}
@@ -117,7 +119,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
           <GradientButton
             contentPlacement='center'
             disabled={false}
-            onClick={noop}
+            onClick={goStaking}
             style={{
               height: '44px',
               marginTop: '15px',
