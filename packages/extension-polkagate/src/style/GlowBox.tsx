@@ -89,17 +89,12 @@ interface Props {
   showTopBorder?: boolean;
   children: React.ReactNode;
   style?: SxProps<Theme>;
-  staking?: boolean;
 }
 
-function GlowBox ({ children, showTopBorder = true, staking = false, style }: Props): React.ReactElement {
+function GlowBox ({ children, showTopBorder = true, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
   const staking = useIsBlueish();
-
-  const stakingStyle = staking
-    ? { background: 'linear-gradient(90deg, #1D0939 0%, #3CC4FF 50.06%, rgba(29, 9, 57, 0) 100%)' }
-    : {};
 
   const stakingStyle = staking
     ? { background: 'linear-gradient(90deg, #1D0939 0%, #3CC4FF 50.06%, rgba(29, 9, 57, 0) 100%)' }

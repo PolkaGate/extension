@@ -107,7 +107,6 @@ export default function Stake () {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            staking
             style={{ pb: 0 }}
             text={t('Stake')}
           />

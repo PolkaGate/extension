@@ -217,7 +217,7 @@ export default function Unstake (): React.ReactElement {
             <StakingActionButton
               disabled={!unstakingValue || unstakingValue.isZero() || !!errorMessage || !api}
               onClick={onNext}
-              style={{ mt: '24px' }}
+              style={{ marginTop: '24px' }}
               text={t('Next')}
             />
           </Stack>
