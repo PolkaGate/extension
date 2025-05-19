@@ -9,6 +9,7 @@ import React, { useCallback } from 'react';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
+import PRadio from '../components/Radio';
 import { StakingInfoStack } from './NominatorsTable';
 import PoolDetail from './PoolDetail';
 
@@ -30,14 +31,23 @@ interface PoolInfoProp {
   poolInfo: PoolInfo;
   genesisHash: string | undefined;
   onDetailClick: () => void;
+  selectable?: boolean;
+  selected?: PoolInfo | undefined;
+  setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
 }
 
-const PoolItem = ({ genesisHash, onDetailClick, poolInfo }: PoolInfoProp) => {
+const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool }: PoolInfoProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const maybeCommission = poolInfo.bondedPool?.commission.current.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
   const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
+
+  const onSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedPool = JSON.parse(event.target.value) as PoolInfo;
+
+    setSelectedPool?.(selectedPool);
+  }, [setSelectedPool]);
 
   return (
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '8px', width: '100%' }}>
@@ -54,9 +64,13 @@ const PoolItem = ({ genesisHash, onDetailClick, poolInfo }: PoolInfoProp) => {
           <StakingInfoStack text={String(commission) + '%'} title={t('Commission')} />
           <StakingInfoStack text={poolInfo.bondedPool?.memberCounter.toString() ?? '0'} title={t('Members')} />
         </Container>
-        {/* <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
-          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} /> // it is available in the design onFigma but has no functionality
-        </IconButton> */}
+        {selectable &&
+          <PRadio
+            checked={selected?.poolId === poolInfo.poolId}
+            label={t('Add to staked amount')}
+            onChange={onSelect}
+            value={JSON.stringify(poolInfo)}
+          />}
       </Container>
     </Stack>
   );
@@ -65,9 +79,12 @@ const PoolItem = ({ genesisHash, onDetailClick, poolInfo }: PoolInfoProp) => {
 interface PoolsTableProp {
   genesisHash: string | undefined;
   poolsInformation: PoolInfo[];
+  selectable?: boolean;
+  selected?: PoolInfo | undefined;
+  setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
 }
 
-export default function PoolsTable ({ genesisHash, poolsInformation }: PoolsTableProp): React.ReactElement {
+export default function PoolsTable ({ genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
   const [poolDetail, setPoolDetail] = React.useState<PoolInfo | undefined>(undefined);
 
   const togglePoolDetail = useCallback((validatorInfo: PoolInfo | undefined) => () => {
@@ -76,13 +93,16 @@ export default function PoolsTable ({ genesisHash, poolsInformation }: PoolsTabl
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', mt: '15px', rowGap: '4px', width: '100%' }}>
+      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', rowGap: '4px', width: '100%' }}>
         {poolsInformation.map((poolInfo, index) => (
           <PoolItem
             genesisHash={genesisHash}
             key={index}
             onDetailClick={togglePoolDetail(poolInfo)}
             poolInfo={poolInfo}
+            selectable={selectable}
+            selected={selected}
+            setSelectedPool={setSelectedPool}
           />
         ))}
       </Stack>
