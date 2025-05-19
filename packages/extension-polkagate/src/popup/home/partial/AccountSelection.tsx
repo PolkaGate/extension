@@ -93,7 +93,7 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
         disableGutters
         onClick={onClick}
         sx={{
-          ':hover': { background: '#674394' },
+          ':hover': noSelection ? {} : { background: '#674394' },
           alignItems: 'center',
           background: isDark
             ? isInAccountLists

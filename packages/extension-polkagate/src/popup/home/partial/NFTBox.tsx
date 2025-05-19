@@ -187,7 +187,7 @@ function NFTBox () {
     <>
       {nfts
         ? <>
-          <Container disableGutters sx={{ bgcolor: isDark ? '#05091C' : '#F5F4FF', borderRadius: '14px', columnGap: '5px', display: 'flex', height: '259px', justifyContent: 'space-evenly', overflowX: 'scroll', py: '10px', width: '100%', px: isExtension ? 0 : '15px'  }}>
+          <Container disableGutters sx={{ bgcolor: isDark ? '#05091C' : '#F5F4FF', borderRadius: '14px', columnGap: '5px', display: 'flex', height: '259px', justifyContent: 'space-evenly', px: isExtension ? 0 : '15px', py: '10px', width: '100%' }}>
             {itemsToShow?.map((item, index) => (
               <NFTItem
                 index={index}
@@ -203,12 +203,13 @@ function NFTBox () {
               </Typography>
               <ArrowRight2 color='#BEAAD880' size='14' />
             </Grid>
-            : <ActionButton
-              contentPlacement='center'
-              onClick={openNft}
-              style={{ height: '44px', margin: '20px 5%', width: '90%' }}
-              text={t('See all')}
-            />
+            : (
+              <ActionButton
+                contentPlacement='center'
+                onClick={openNft}
+                style={{ height: '44px', margin: '20px 5%', width: '90%' }}
+                text={t('See all')}
+              />)
           }
         </>
         : <NoNftAlert />

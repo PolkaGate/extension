@@ -189,7 +189,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
         <StakingActionButton
           disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
           onClick={onApply}
-          style={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}
+          style={{ bottom: '15px', left: 0, padding: '0 15px', position: 'absolute', right: 0, width: '100%' }}
           text={t('Apply')}
         />
       </Stack>

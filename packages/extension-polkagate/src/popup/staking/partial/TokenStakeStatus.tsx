@@ -45,8 +45,8 @@ export default function TokenStakeStatus ({ amount, decimal, genesisHash, style,
           : (
             <Skeleton
               animation='wave'
-              height='18px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '55px' }}
+              height='14px'
+              sx={{ borderRadius: '50px', fontWeight: 600, transform: 'none', width: '80px' }}
               variant='text'
             />
           )

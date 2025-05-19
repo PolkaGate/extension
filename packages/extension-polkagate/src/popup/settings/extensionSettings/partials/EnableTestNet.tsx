@@ -34,6 +34,7 @@ export default function EnableTestNet(): React.ReactElement {
     setStorage('testnet_enabled', true).catch(console.error);
     accounts?.forEach(({ address, genesisHash }) => {
       if (genesisHash && TEST_NETS.includes(genesisHash)) {
+           //NO TIE ANYMORE IN NEW DESIGN
         tieAccount(address, null).catch(console.error);
       }
     });

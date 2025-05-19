@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
+//@ts-nocheck
 
 import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
@@ -161,9 +161,9 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
             <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'scroll', p: '10px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 }}>
             <BlueGradient style={{ top: '-120px' }} />
-            <DetailGradientBox />
+            <GradientBox />
             <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
               <ValidatorIdentityDetail
                 genesisHash={genesisHash}

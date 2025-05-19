@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
-import { Container, type SxProps, type Theme, useTheme } from '@mui/material';
+import { Container, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { useIsBlueish } from '../hooks';
@@ -22,7 +22,7 @@ interface Props {
   primaryBtnText: string;
   secondaryBtnText: string;
   showChevron?: boolean;
-  style?: SxProps<Theme>;
+  style?: React.CSSProperties;
 }
 
 function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, showChevron, style }: Props): React.ReactElement {

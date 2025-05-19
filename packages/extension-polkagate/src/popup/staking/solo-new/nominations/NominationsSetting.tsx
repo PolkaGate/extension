@@ -117,7 +117,7 @@ export default function NominationsSetting (): React.ReactElement {
       <UserDashboardHeader homeType='default' noSelection />
       <Motion variant='slide'>
         <NominationsBackButton style={{ mt: '8px' }} />
-        <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'scroll', px: '15px', width: '100%' }}>
+        <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
           {(stakingInfo.stakingAccount === undefined || nominatedValidatorsInformation === undefined) &&
             <Progress
               loaderSize={40}

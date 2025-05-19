@@ -105,7 +105,6 @@ export default function Restake (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            staking
             stepCounter={{ currentStep: 1, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Restake')}
@@ -126,6 +125,7 @@ export default function Restake (): React.ReactElement {
               }]}
               decimal={decimal}
               errorMessage={errorMessage}
+              focused
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
@@ -139,7 +139,7 @@ export default function Restake (): React.ReactElement {
             <StakingActionButton
               disabled={!rebondValue || rebondValue.isZero() || !!errorMessage || !api}
               onClick={onNext}
-              style={{ mt: '24px' }}
+              style={{ marginTop: '24px' }}
               text={t('Next')}
             />
           </Stack>

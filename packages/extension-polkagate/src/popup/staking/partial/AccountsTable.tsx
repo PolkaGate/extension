@@ -96,7 +96,7 @@ export default function AccountsTable ({ accounts, genesisHash, style, tableMaxH
           {t('Percent')}
         </Typography>
       </Container>
-      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: tableMaxHeight ?? '300px', overflowY: 'scroll', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: tableMaxHeight ?? '300px', overflowY: 'auto', width: '100%' }}>
         {accounts.map((account, index) => (
           <TableItem
             account={account}

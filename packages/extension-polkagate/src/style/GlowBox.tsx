@@ -4,7 +4,7 @@
 import { Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
-import { useIsDark, useIsExtensionPopup } from '../hooks';
+import { useIsBlueish, useIsDark, useIsExtensionPopup } from '../hooks';
 import { GradientBorder, GradientDivider } from '.';
 
 const GlowBoxContainer = styled(Container)(() => ({
@@ -95,6 +95,11 @@ interface Props {
 function GlowBox ({ children, showTopBorder = true, staking = false, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
+  const staking = useIsBlueish();
+
+  const stakingStyle = staking
+    ? { background: 'linear-gradient(90deg, #1D0939 0%, #3CC4FF 50.06%, rgba(29, 9, 57, 0) 100%)' }
+    : {};
 
   const stakingStyle = staking
     ? { background: 'linear-gradient(90deg, #1D0939 0%, #3CC4FF 50.06%, rgba(29, 9, 57, 0) 100%)' }

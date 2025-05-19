@@ -53,6 +53,7 @@ const NetworkList = React.memo(function NetworkList({ address, chains, selectedC
       return;
     }
 
+        //NO TIE ANYMORE IN NEW DESIGN
     tieAccount(address, net.value as HexString).catch(console.error);
     setSelectedChainName(net.text);
   }, [address, isTestnetDisabled, setAnchorEl, setSelectedChainName]);

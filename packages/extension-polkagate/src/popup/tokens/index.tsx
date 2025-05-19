@@ -256,7 +256,7 @@ function Tokens (): React.ReactElement {
           onClick={backHome}
           style={{ height: '40px', pb: 0 }}
         />
-        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'scroll', pb: '60px', pt: '15px' }}>
+        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'auto', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />

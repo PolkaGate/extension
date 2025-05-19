@@ -130,7 +130,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
 
   return (
     <>
-      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', maxHeight: '360px', my: '15px', overflow: 'scroll', p: '8px', ...style }}>
+      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', maxHeight: '360px', my: '15px', overflowY: 'auto', p: '8px', ...style }}>
         {reasonsToShow.map(([reason, amount], index) => {
           const noDivider = reasonsToShow.length === index + 1;
 

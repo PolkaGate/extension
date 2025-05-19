@@ -85,7 +85,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
     <Grid
       alignItems='center'
       container item
-      sx={{ alignItems: 'flex-start', bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', p: '4px', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
+      sx={{ bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', p: '4px', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
     >
       <Container
         disableGutters

@@ -5,10 +5,11 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { BeatLoader } from 'react-spinners';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
@@ -24,16 +25,21 @@ type RewardDestinationType = 'Others' | 'Staked' | undefined;
 interface OptionBoxProps {
   setRewardDestinationType: React.Dispatch<React.SetStateAction<RewardDestinationType>>;
   rewardDestinationType: RewardDestinationType;
+  disabled: boolean;
 }
 
-const OptionBox = ({ rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
+const OptionBox = ({ disabled, rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
   const { t } = useTranslation();
 
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) {
+      return;
+    }
+
     const value = event.target.value as RewardDestinationType;
 
     setRewardDestinationType(value);
-  }, [setRewardDestinationType]);
+  }, [disabled, setRewardDestinationType]);
 
   return (
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', padding: '12px', rowGap: '18px', width: '100%' }}>
@@ -63,9 +69,10 @@ interface SpecificAccountOptionProps {
   showOption: boolean;
   onNext: () => void;
   ED: BN | undefined;
+  disabled: boolean;
 }
 
-const SpecificAccountOption = ({ ED, genesisHash, onNext, setSpecificAccount, showOption, specificAccount }: SpecificAccountOptionProps) => {
+const SpecificAccountOption = ({ ED, disabled, genesisHash, onNext, setSpecificAccount, showOption, specificAccount }: SpecificAccountOptionProps) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -86,8 +93,9 @@ const SpecificAccountOption = ({ ED, genesisHash, onNext, setSpecificAccount, sh
         </Typography>
       </Container>
       <StakingActionButton
+        disabled={disabled}
         onClick={onNext}
-        style={{ mt: '10px' }}
+        style={{ marginTop: '10px' }}
         text={t('Next')}
       />
     </Stack>
@@ -107,7 +115,7 @@ const SetToStaked = ({ onNext, showOption }: { onNext: () => void; showOption: b
       </Container>
       <StakingActionButton
         onClick={onNext}
-        style={{ mt: '10px' }}
+        style={{ marginTop: '10px' }}
         text={t('Next')}
       />
     </Stack>
@@ -119,6 +127,7 @@ export default function Settings (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const theme = useTheme();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
@@ -150,10 +159,10 @@ export default function Settings (): React.ReactElement {
 
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
 
-    if (destinationType === 'account') {
-      return 'Others';
-    } else {
+    if (destinationType === 'Staked') {
       return 'Staked';
+    } else {
+      return 'Others';
     }
   }, [stakingInfo.stakingAccount]);
 
@@ -185,21 +194,22 @@ export default function Settings (): React.ReactElement {
     return undefined;
   }, [stashId]);
 
-  const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount), [makePayee, rewardDestinationType, specificAccount]);
+  const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount ?? rewardDestinationAddress ?? stashId), [makePayee, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId]);
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
   const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
+  const nextDisabled = useMemo(() => rewardDestinationType === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount), [rewardDestinationAddress, rewardDestinationType, specificAccount]);
 
   const transactionInformation = useMemo(() => {
     return [{
-      content: rewardDestinationType === 'Others' ? specificAccount : 'staked',
+      content: rewardDestinationType === 'Others' ? (specificAccount ?? rewardDestinationAddress ?? stashId) : 'staked',
       title: t('Reward destination')
     },
     {
       content: estimatedFee2,
       title: t('Fee')
     }];
-  }, [estimatedFee2, rewardDestinationType, specificAccount, t]);
+  }, [estimatedFee2, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId, t]);
   const tx = useMemo(() => {
     return rewardDestination && setPayee
       ? setPayee(rewardDestination)
@@ -228,28 +238,34 @@ export default function Settings (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            staking
             stepCounter={{ currentStep: 1, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Settings')}
           />
           <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px', rowGap: '18px' }}>
             <OptionBox
+              disabled={rewardDestinationType === undefined}
               rewardDestinationType={rewardDestinationType}
               setRewardDestinationType={setRewardDestinationType}
             />
-            <SpecificAccountOption
-              ED={ED}
-              genesisHash={genesisHash}
-              onNext={onNext}
-              setSpecificAccount={setSpecificAccount}
-              showOption={rewardDestinationType === 'Others'}
-              specificAccount={specificAccount ?? rewardDestinationAddress}
-            />
-            <SetToStaked
-              onNext={onNext}
-              showOption={changeToStake}
-            />
+            {rewardDestinationType === undefined
+              ? <BeatLoader color={theme.palette.text.highlight} cssOverride={{ alignSelf: 'center', marginTop: '20px' }} loading size={15} speedMultiplier={0.6} />
+              : <>
+                <SpecificAccountOption
+                  ED={ED}
+                  disabled={nextDisabled}
+                  genesisHash={genesisHash}
+                  onNext={onNext}
+                  setSpecificAccount={setSpecificAccount}
+                  showOption={rewardDestinationType === 'Others'}
+                  specificAccount={specificAccount ?? rewardDestinationAddress}
+                />
+                <SetToStaked
+                  onNext={onNext}
+                  showOption={changeToStake}
+                />
+              </>
+            }
           </Stack>
         </Motion>
       </Grid>

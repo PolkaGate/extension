@@ -117,7 +117,7 @@ export default function AccountDetails(): React.ReactElement {
 
   const _onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
-
+    //NO TIE ANYMORE IN NEW DESIGN
     address && tieAccount(address, availableGenesisHash as HexString).catch(console.error);
   }, [address]);
 

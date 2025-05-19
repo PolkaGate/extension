@@ -6,7 +6,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { Proxy, TxResult } from '../util/types';
 
-import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
@@ -60,7 +60,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 interface Props {
   api: ApiPromise | undefined;
   from: string | undefined;
-  style?: SxProps<Theme>;
+  style?: React.CSSProperties;
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   handleTxResult: (txResult: TxResult) => void;
   proxies: Proxy[] | undefined;

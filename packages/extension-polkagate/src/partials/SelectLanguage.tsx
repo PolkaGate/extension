@@ -55,7 +55,7 @@ const LanguageSelect = React.memo(
     }, [options]);
 
     return (
-      <Grid container item justifyContent='center' sx={{ maxHeight: '380px', overflow: 'scroll' }}>
+      <Grid container item justifyContent='center' sx={{ maxHeight: '380px', overflowY: 'auto' }}>
         {options.map(({ text, value }, index) => (
           <>
             <ListItem className={selectedLanguage === value ? 'selected' : ''} container item key={value} onClick={handleLanguageSelect(value as string)}>

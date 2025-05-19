@@ -141,7 +141,6 @@ export default function Unstake (): React.ReactElement {
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
-            staking
             stepCounter={{ currentStep: 1, totalSteps: 2 }}
             style={{ pb: 0 }}
             text={t('Unstake')}
@@ -162,6 +161,7 @@ export default function Unstake (): React.ReactElement {
               }]}
               decimal={decimal}
               errorMessage={errorMessage}
+              focused
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '18px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
@@ -175,7 +175,7 @@ export default function Unstake (): React.ReactElement {
             <StakingActionButton
               disabled={!unstakingValue || unstakingValue.isZero() || !!errorMessage || !api}
               onClick={onNext}
-              style={{ mt: '24px' }}
+              style={{ marginTop: '24px' }}
               text={t('Next')}
             />
           </Stack>

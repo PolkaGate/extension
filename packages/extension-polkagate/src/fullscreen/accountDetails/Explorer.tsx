@@ -5,18 +5,14 @@ import { Avatar, Link } from '@mui/material';
 import React, { memo } from 'react';
 
 import { subscanTransparent } from '../../assets/icons';
-import { useChainInfo } from '../../hooks';
 
 interface Props {
   address: string | undefined;
-  genesisHash: string | undefined;
 }
 
-function Explorer ({ address, genesisHash }: Props): React.ReactElement {
-  const { chainName } = useChainInfo(genesisHash, true);
-
+function Explorer ({ address }: Props): React.ReactElement {
   return (
-    <Link alignItems='center' href={`https://${chainName}.subscan.io/account/${String(address)}`} justifyContent='center' rel='noreferrer' sx={{ bgcolor: '#FF4FB91A', borderRadius: '128px', display: 'flex', height: '32px', position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', width: '32px' }} target='_blank'>
+    <Link alignItems='center' href={`https://portfolio.subscan.io/account/${String(address)}`} justifyContent='center' rel='noreferrer' sx={{ bgcolor: '#FF4FB91A', borderRadius: '128px', display: 'flex', height: '32px', position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', width: '32px' }} target='_blank'>
       <Avatar
         src={subscanTransparent as string}
         sx={{

@@ -46,7 +46,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
         <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
           {t('My Accounts')}
         </Typography>
-        <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflow: 'scroll', rowGap: '12px' }}>
+        <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflowY: 'auto', rowGap: '12px' }}>
           {accounts.map(({ address }) => {
             const formatted = getFormattedAddress(address, chain, chain?.ss58Format ?? 0);
             const checked = formatted === specificAccount;
@@ -61,6 +61,9 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
                     identiconSize={24}
                     style={{
                       color: checked ? '#3988FF' : 'text.primary',
+                      'div div#socials': {
+                        mt: 0
+                      },
                       fontSize: '12px',
                       fontWeight: 500,
                       variant: 'B-4'
@@ -113,9 +116,10 @@ export default function ChooseAccount ({ genesisHash, setSpecificAccount, specif
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
         <Identity2
           address={specificAccount}
+          addressStyle={{ color: '#809ACB', fontSize: '12px', fontWeight: 500 }}
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
-          style={{ variant: 'B-2' }}
+          style={{ addressVariant: 'B-4', 'div div#socials': { mt: 0 }, variant: 'B-2' }}
           withShortAddress
         />
         <ArrowCircleDown color={theme.palette.text.highlight} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />

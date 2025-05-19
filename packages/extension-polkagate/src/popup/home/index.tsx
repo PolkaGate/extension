@@ -76,7 +76,7 @@ export default function Home (): React.ReactElement {
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
           <UserDashboardHeader />
           <Portfolio />
-          <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflow: 'scroll' }}>
+          <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflowY: 'auto' }}>
             <AssetsBox />
             <Version style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
             <FadeOnScroll containerRef={refContainer} />

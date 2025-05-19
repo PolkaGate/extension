@@ -51,7 +51,7 @@ function ExtensionSettings (): React.ReactElement {
         </Stack>
         <Motion variant='slide'>
           <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#F5F4FF', borderRadius: '14px', p: '4px', my: '15px' }}>
-            <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '373px', overflow: 'scroll' }}>
+            <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '14px', height: '373px', overflowY: 'auto' }}>
               {pathname === '/settings-extension/' && <Main />}
               {pathname === '/settings-extension/chains' && <Chains />}
               {pathname === '/settings-extension/password' && <ManagePassword />}

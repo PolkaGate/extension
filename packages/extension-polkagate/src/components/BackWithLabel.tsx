@@ -5,11 +5,11 @@ import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui
 import { ArrowCircleLeft } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
-import { useIsHovered, useTranslation } from '../hooks';
+import { useIsBlueish, useIsHovered, useTranslation } from '../hooks';
 
 export interface StepCounterType { currentStep: number; totalSteps: number }
 
-export const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
+const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', gap: '4px', justifyContent: 'center', m: 0, width: 'fit-content' }}>
       {Array.from({ length: stepCounter.totalSteps }).map((_, index) => {
@@ -18,7 +18,7 @@ export const StepCounter = ({ stepCounter }: { stepCounter: StepCounterType }) =
         return (
           <div
             key={index}
-            style={{ backgroundColor: isActive ? '#596AFF' : '#3E4165', borderRadius: '999px', height: '10px', transform: isActive ? 'scale(1.2)' : 'scale(0.8)', transition: 'transform 250ms ease', width: '10px' }}
+            style={{ backgroundColor: isActive ? '#596AFF' : '#3E4165', borderRadius: '999px', height: '10px', transform: isActive ? 'scale(1.263)' : 'scale(0.758)', transition: 'transform 250ms ease', width: '10px' }}
           />
         );
       })}
@@ -32,13 +32,13 @@ interface DynamicBackButtonProps {
   onClick: () => void;
   style?: SxProps<Theme>;
   stepCounter?: StepCounterType;
-  staking?: boolean;
 }
 
-function BackWithLabel ({ content, onClick, staking = false, stepCounter, style, text }: DynamicBackButtonProps) {
+function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
+  const staking = useIsBlueish();
 
   const renderContent = useMemo(() => {
     if (content) {

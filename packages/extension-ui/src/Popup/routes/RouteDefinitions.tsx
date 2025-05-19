@@ -98,13 +98,11 @@ const ROOT_ROUTES: RouteConfig[] = [
   },
   {
     Component: Home,
-    exact: true,
     path: '/',
     trigger: 'accounts'
   },
   {
     Component: AccountsLists,
-    exact: true,
     path: '/accounts',
     trigger: 'accounts-list'
   },
