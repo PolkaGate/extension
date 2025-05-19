@@ -64,7 +64,7 @@ function HistoryFs (): React.ReactElement {
     const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
 
     if (savedSelectedChain && flattenedHistories[0]?.chain?.genesisHash !== savedSelectedChain) {
-      return undefined;
+      return null;
     }
 
     const result = flattenedHistories.map((item) => {
