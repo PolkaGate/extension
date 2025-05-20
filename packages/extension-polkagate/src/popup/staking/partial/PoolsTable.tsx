@@ -5,7 +5,7 @@ import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
@@ -43,6 +43,8 @@ const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, 
   const maybeCommission = poolInfo.bondedPool?.commission.current.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
   const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
+  const isSelected = useMemo(() => selected?.poolId === poolInfo.poolId, [poolInfo.poolId, selected?.poolId]);
+
   const onSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedPool = JSON.parse(event.target.value) as PoolInfo;
 
@@ -50,12 +52,15 @@ const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, 
   }, [setSelectedPool]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '8px', width: '100%' }}>
+    <Stack direction='column' sx={{ bgcolor: isSelected ? '#1C1D38' : '#110F2A', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
         <PoolStashIdentity poolInfo={poolInfo} />
-        <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
-          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
-        </IconButton>
+        {selectable &&
+          <PRadio
+            checked={isSelected}
+            onChange={onSelect}
+            value={JSON.stringify(poolInfo)}
+          />}
       </Container>
       <GradientDivider style={{ my: '4px' }} />
       <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -64,13 +69,9 @@ const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, 
           <StakingInfoStack text={String(commission) + '%'} title={t('Commission')} />
           <StakingInfoStack text={poolInfo.bondedPool?.memberCounter.toString() ?? '0'} title={t('Members')} />
         </Container>
-        {selectable &&
-          <PRadio
-            checked={selected?.poolId === poolInfo.poolId}
-            label={t('Add to staked amount')}
-            onChange={onSelect}
-            value={JSON.stringify(poolInfo)}
-          />}
+        <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
+          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
+        </IconButton>
       </Container>
     </Stack>
   );

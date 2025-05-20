@@ -89,6 +89,8 @@ export default function ChoosePool ({ filter, onNext, searchedQuery, selectedPoo
           <PoolsTable
             genesisHash={genesisHash}
             poolsInformation={poolsToShow}
+            selectable
+            selected={selectedPool}
             setSelectedPool={setSelectedPool}
           />
         }
