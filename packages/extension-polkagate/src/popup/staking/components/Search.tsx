@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { alpha, Box, InputBase, styled, useTheme } from '@mui/material';
+import { alpha, Box, InputBase, styled, type Theme, useTheme } from '@mui/material';
 import { SearchNormal1 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -24,7 +24,7 @@ const SearchContainer = styled('div')(({ theme }) => ({
   width: '100%'
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+const StyledInputBase = styled(InputBase)(({ noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; }) => ({
   '& .MuiInputBase-input': {
     '&::placeholder': {
       color: theme.palette.text.highlight,
@@ -37,30 +37,72 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     width: '100%'
   },
   color: theme.palette.text.primary,
-  width: 'calc(100% - 16px)'
+  width: noSearchIcon ? '100%' : 'calc(100% - 16px)'
 }));
+
+interface LimitsConfig {
+  number?: boolean;
+  alphabet?: boolean;
+  alphanumeric?: boolean;
+}
 
 interface SearchProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
   style?: React.CSSProperties;
+  noSearchIcon?: boolean;
+  limits?: LimitsConfig;
 }
 
-export default function Search ({ onSearch, placeholder, style }: SearchProps) {
+export default function Search ({ limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  const validateInput = useCallback((value: string): boolean => {
+    if (!limits) {
+      return true;
+    }
+
+    // Check which validation is required
+    // If only one validation type is enabled, apply that validation
+    const activeValidations = Object.values(limits).filter(Boolean).length;
+
+    if (activeValidations === 1) {
+      // Number validation
+      if (limits.number === true) {
+        return /^[0-9]*$/.test(value) || value === '';
+      }
+
+      // Alphabet validation
+      if (limits.alphabet === true) {
+        return /^[a-zA-Z]*$/.test(value) || value === '';
+      }
+
+      // Alphanumeric validation
+      if (limits.alphanumeric === true) {
+        return /^[a-zA-Z0-9]*$/.test(value) || value === '';
+      }
+    }
+
+    return true;
+  }, [limits]);
+
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
 
-    setSearchQuery(query);
+    const isValid = validateInput(query);
 
-    if (onSearch) {
-      onSearch(query);
+    if (isValid) {
+      setSearchQuery(query);
+
+      if (onSearch) {
+        onSearch(query);
+      }
     }
-  }, [onSearch]);
+    // If invalid, don't update the search query
+  }, [onSearch, validateInput]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && onSearch) {
@@ -71,12 +113,14 @@ export default function Search ({ onSearch, placeholder, style }: SearchProps) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', width: '118px', ...style }}>
       <SearchContainer>
-        <SearchNormal1 color={theme.palette.text.highlight} size={16} />
+        {!noSearchIcon && <SearchNormal1 color={theme.palette.text.highlight} size={16} />}
         <StyledInputBase
           inputProps={{ 'aria-label': 'search' }}
+          noSearchIcon={noSearchIcon}
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
           placeholder={placeholder ?? t('Search')}
+          theme={theme}
           value={searchQuery}
         />
       </SearchContainer>
