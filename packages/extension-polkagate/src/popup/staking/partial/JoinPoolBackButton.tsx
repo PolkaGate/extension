@@ -17,9 +17,10 @@ interface Props {
   onBack: () => void;
   noFilter?: boolean;
   dispatchFilter: React.Dispatch<PoolFilterAction>;
+  genesisHash: string | undefined;
 }
 
-export default function JoinPoolBackButton ({ dispatchFilter, noFilter, onBack, onSearch, stepCounter, style }: Props) {
+export default function JoinPoolBackButton ({ dispatchFilter, genesisHash, noFilter, onBack, onSearch, stepCounter, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef(null);
@@ -51,6 +52,7 @@ export default function JoinPoolBackButton ({ dispatchFilter, noFilter, onBack, 
       </Container>
       <PoolFilter
         dispatchFilter={dispatchFilter}
+        genesisHash={genesisHash}
         openMenu={openMenu}
         setOpenMenu={setOpenMenu}
       />
