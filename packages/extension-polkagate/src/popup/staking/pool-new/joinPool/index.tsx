@@ -48,6 +48,7 @@ export default function JoinPool () {
         <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
           <JoinPoolBackButton
             dispatchFilter={dispatchFilter}
+            filter={filter}
             genesisHash={genesisHash}
             onBack={onBack}
             onSearch={onSearch}

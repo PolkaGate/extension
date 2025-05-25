@@ -24,7 +24,7 @@ const SearchContainer = styled('div')(({ theme }) => ({
   width: '100%'
 }));
 
-const StyledInputBase = styled(InputBase)(({ noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; }) => ({
+const StyledInputBase = styled(InputBase)(({ inputColor, noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; inputColor: string | undefined; }) => ({
   '& .MuiInputBase-input': {
     '&::placeholder': {
       color: theme.palette.text.highlight,
@@ -36,7 +36,7 @@ const StyledInputBase = styled(InputBase)(({ noSearchIcon, theme }: { noSearchIc
     paddingRight: 0,
     width: '100%'
   },
-  color: theme.palette.text.primary,
+  color: inputColor ?? theme.palette.text.primary,
   width: noSearchIcon ? '100%' : 'calc(100% - 16px)'
 }));
 
@@ -52,9 +52,10 @@ interface SearchProps {
   style?: React.CSSProperties;
   noSearchIcon?: boolean;
   limits?: LimitsConfig;
+  inputColor?: string;
 }
 
-export default function Search ({ limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
+export default function Search ({ inputColor, limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -115,6 +116,7 @@ export default function Search ({ limits, noSearchIcon = false, onSearch, placeh
       <SearchContainer>
         {!noSearchIcon && <SearchNormal1 color={theme.palette.text.highlight} size={16} />}
         <StyledInputBase
+          inputColor={inputColor}
           inputProps={{ 'aria-label': 'search' }}
           noSearchIcon={noSearchIcon}
           onChange={handleSearch}

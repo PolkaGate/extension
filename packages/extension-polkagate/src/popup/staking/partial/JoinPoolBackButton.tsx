@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PoolFilterAction, PoolFilterState } from './PoolFilter';
+
 import { alpha, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, Setting4 } from 'iconsax-react';
 import React, { useCallback, useRef, useState } from 'react';
@@ -8,7 +10,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { StepCounter, type StepCounterType } from '../../../components/BackWithLabel';
 import { useIsHovered, useTranslation } from '../../../hooks';
 import Search from '../components/Search';
-import PoolFilter, { type PoolFilterAction } from './PoolFilter';
+import PoolFilter from './PoolFilter';
 
 interface Props {
   style?: SxProps<Theme>;
@@ -18,9 +20,10 @@ interface Props {
   noFilter?: boolean;
   dispatchFilter: React.Dispatch<PoolFilterAction>;
   genesisHash: string | undefined;
+  filter: PoolFilterState;
 }
 
-export default function JoinPoolBackButton ({ dispatchFilter, genesisHash, noFilter, onBack, onSearch, stepCounter, style }: Props) {
+export default function JoinPoolBackButton ({ dispatchFilter, filter, genesisHash, noFilter, onBack, onSearch, stepCounter, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef(null);
@@ -52,6 +55,7 @@ export default function JoinPoolBackButton ({ dispatchFilter, genesisHash, noFil
       </Container>
       <PoolFilter
         dispatchFilter={dispatchFilter}
+        filter={filter}
         genesisHash={genesisHash}
         openMenu={openMenu}
         setOpenMenu={setOpenMenu}

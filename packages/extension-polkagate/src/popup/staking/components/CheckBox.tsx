@@ -37,7 +37,6 @@ export default function CustomCheckbox ({ checked, onChange }: { checked: boolea
       }
       onChange={onChange}
       sx={{
-        '& .MuiSvgIcon-root': { display: 'none' },
         '&.Mui-checked': {
           color: 'transparent'
         },
