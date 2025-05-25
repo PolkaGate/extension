@@ -13,6 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { FadeOnScroll } from '../../../../components';
 import { usePools2, useTranslation } from '../../../../hooks';
+import { PREFERRED_POOL_NAME } from '../../../../util/constants';
 import { type PoolFilterState, SORTED_BY } from '../../partial/PoolFilter';
 import PoolsTable from '../../partial/PoolsTable';
 import Progress from '../../partial/Progress';
@@ -129,6 +130,15 @@ export default function ChoosePool ({ filter, onNext, searchedQuery, selectedPoo
 
     if (sortFunction) {
       filtered = [...filtered].sort(sortFunction);
+    }
+
+    // 🚀 Bring "PolkaGate" pool to top
+    const index = filtered.findIndex((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME.toLowerCase()));
+
+    if (index !== -1) {
+      const [polkagatePool] = filtered.splice(index, 1);
+
+      filtered.unshift(polkagatePool);
     }
 
     return filtered;
