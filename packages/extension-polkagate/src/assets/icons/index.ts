@@ -44,3 +44,4 @@ export { default as subscan } from './subscan.svg';
 export { default as subscanTransparent } from './subscanTransparent.svg';
 export { default as text } from './text.svg';
 export { default as upload } from './upload.png';
+export { default as VerifiedTag } from './VerifiedTag.svg';
