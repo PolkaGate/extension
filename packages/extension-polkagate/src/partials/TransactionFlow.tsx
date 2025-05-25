@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { StepCounterType } from '../components/BackWithLabel';
-import type { Proxy, ProxyTypes, TxInfo } from '../util/types';
+import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
@@ -26,6 +26,7 @@ export interface TransactionFlowProps {
   stepCounter: StepCounterType;
   proxyTypeFilter: ProxyTypes[] | undefined;
   formatted: string | undefined;
+  pool: PoolInfo | undefined;
 }
 
 export enum TRANSACTION_FLOW_STEPS {
@@ -34,7 +35,7 @@ export enum TRANSACTION_FLOW_STEPS {
   CONFIRMATION
 }
 
-export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
@@ -85,6 +86,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
           <Review
             closeReview={closeReview}
             genesisHash={genesisHash}
+            pool={pool}
             proxyTypeFilter={proxyTypeFilter}
             selectedProxy={selectedProxy}
             setFlowStep={setFlowStep}

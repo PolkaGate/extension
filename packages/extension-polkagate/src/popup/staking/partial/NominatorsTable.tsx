@@ -48,10 +48,11 @@ interface StakingInfoStackProps {
   token?: string | undefined;
   title: string;
   text?: string | undefined;
-  amount?: string | BN | Compact<INumber> | null | undefined
+  amount?: string | BN | Compact<INumber> | null | undefined;
+  secondaryColor?: string;
 }
 
-export const StakingInfoStack = ({ amount, decimal, text, title, token }: StakingInfoStackProps) => {
+export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) => {
   const theme = useTheme();
 
   return (
@@ -71,7 +72,7 @@ export const StakingInfoStack = ({ amount, decimal, text, title, token }: Stakin
           value={amount}
         />}
       {text &&
-        <Typography color='text.primary' textAlign='left' variant='B-4' width='fit-content'>
+        <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
           {text}
         </Typography>}
       <Typography color='text.highlight' textAlign='left' variant='B-4'>

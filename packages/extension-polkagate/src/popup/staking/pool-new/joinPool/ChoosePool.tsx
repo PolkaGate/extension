@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { UsePools } from '../../../../hooks/usePools2';
 import type { PoolInfo } from '../../../../util/types';
 
 import { LinearProgress, Stack } from '@mui/material';
@@ -12,7 +13,7 @@ import { useParams } from 'react-router';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FadeOnScroll } from '../../../../components';
-import { usePools2, useTranslation } from '../../../../hooks';
+import { useTranslation } from '../../../../hooks';
 import { PREFERRED_POOL_NAME } from '../../../../util/constants';
 import { type PoolFilterState, SORTED_BY } from '../../partial/PoolFilter';
 import PoolsTable from '../../partial/PoolsTable';
@@ -25,7 +26,7 @@ const getCommissionPercentage = (pool: PoolInfo) => {
     return 0;
   }
 
-  const rawCommission = pool.bondedPool.commission.current.value[0];
+  const rawCommission = pool.bondedPool.commission?.current?.value?.[0];
   const commission = Number(rawCommission) / (10 ** 7);
 
   return commission < 1 ? 0 : commission;
@@ -81,13 +82,15 @@ interface Props {
   setSelectedPool: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
   searchedQuery?: string;
   filter: PoolFilterState;
+  pools: UsePools;
 }
 
-export default function ChoosePool ({ filter, onNext, searchedQuery, selectedPool, setSelectedPool }: Props) {
+export default function ChoosePool ({ filter, onNext, pools, searchedQuery, selectedPool, setSelectedPool }: Props) {
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const refContainer = useRef(null);
-  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools2(genesisHash);
+
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = pools;
 
   const poolsToShow = useMemo(() => {
     if (!incrementalPools) {
@@ -118,7 +121,7 @@ export default function ChoosePool ({ filter, onNext, searchedQuery, selectedPoo
           return false;
         }
 
-        const maybeCommission = bondedPool?.commission.current.isSome ? bondedPool.commission.current.value[0] : 0;
+        const maybeCommission = bondedPool?.commission?.current?.isSome ? bondedPool.commission.current.value[0] : 0;
         const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
         return commission <= (filter.commissionThreshold ?? 100);

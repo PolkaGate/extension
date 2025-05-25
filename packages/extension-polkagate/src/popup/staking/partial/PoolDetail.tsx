@@ -200,7 +200,7 @@ export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: Po
   const [collapse, dispatchCollapse] = useReducer(collapseReducer, { Ids: false, Members: false, Rewards: false, Roles: false });
 
   const commission = useMemo(() => {
-    const maybeCommission = poolDetail?.bondedPool?.commission.current.isSome ? poolDetail.bondedPool.commission.current.value[0] : 0;
+    const maybeCommission = poolDetail?.bondedPool?.commission?.current?.isSome ? poolDetail.bondedPool.commission.current.value[0] : 0;
 
     return Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
   }, [poolDetail?.bondedPool?.commission]);

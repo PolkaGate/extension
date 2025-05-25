@@ -34,7 +34,7 @@ const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBat
     }
   })?.filter((f) => f !== undefined);
 
-interface UsePools {
+export interface UsePools {
   incrementalPools: PoolInfo[] | null | undefined;
   numberOfFetchedPools: number;
   totalNumberOfPools: number | undefined;

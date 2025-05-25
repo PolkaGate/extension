@@ -4,18 +4,19 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { Proxy, ProxyTypes, TxInfo } from '../util/types';
+import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 import type { TRANSACTION_FLOW_STEPS } from './TransactionFlow';
 
-import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { InfoCircle } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { type BN, isBn } from '@polkadot/util';
+import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
 import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip, SignArea3 } from '../components';
 import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
+import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
 import { toShortAddress } from '../util/utils';
@@ -36,13 +37,31 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
       </Typography>
       <GradientDivider />
       <PolkaGateIdenticon address={selectedAccount?.address ?? ''} size={48} style={{ margin: 'auto' }} />
-      <Typography color='text.primary' sx={{ textAlign: 'center', width: '100%' }} variant='B-3'>
+      <Typography color='text.primary' sx={{ maxWidth: '220px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', width: '100%' }} variant='B-3'>
         {selectedAccount?.name}
       </Typography>
       <Typography color='text.highlight' sx={{ mt: '-10px', textAlign: 'center', width: '100%' }} variant='B-1'>
         {toShortAddress(formatted ?? selectedAccount?.address, 8)}
       </Typography>
     </Stack>
+  );
+};
+
+const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
+  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
+      <PolkaGateIdenticon address={selectedAccount?.address ?? ''} size={36} style={{ margin: 0 }} />
+      <Stack direction='column' sx={{ alignItems: 'flex-start', gap: '8px' }}>
+        <Typography color='text.primary' sx={{ maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', width: 'fit-content' }} variant='B-3'>
+          {selectedAccount?.name}
+        </Typography>
+        <Typography color='text.highlight' sx={{ mt: '-10px', width: 'fit-content' }} variant='B-1'>
+          {toShortAddress(formatted ?? selectedAccount?.address, 8)}
+        </Typography>
+      </Stack>
+    </Container>
   );
 };
 
@@ -147,18 +166,34 @@ export interface ReviewProps {
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transactionInformation: Content[];
+  pool: PoolInfo | undefined;
 }
 
-export default function Review ({ closeReview, genesisHash, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
   return (
     <Stack direction='column' sx={{ height: '500px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
-      <AccountBox
-        genesisHash={genesisHash}
-        selectedAccount={selectedAccount}
-      />
+      {pool
+        ? (
+          <RowAccountBox
+            genesisHash={genesisHash}
+            selectedAccount={selectedAccount}
+          />)
+        : (
+          <AccountBox
+            genesisHash={genesisHash}
+            selectedAccount={selectedAccount}
+          />)}
+      {pool &&
+        <PoolItem
+          genesisHash={genesisHash}
+          joiningStatus
+          onDetailClick={noop}
+          poolInfo={pool}
+        />
+      }
       <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'scroll', width: '100%' }}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem

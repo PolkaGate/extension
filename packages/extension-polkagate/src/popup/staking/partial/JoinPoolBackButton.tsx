@@ -42,7 +42,7 @@ export default function JoinPoolBackButton ({ dispatchFilter, filter, genesisHas
             {t('Join pool')}
           </Typography>
         </Container>
-        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', width: 'fit-content' }}>
+        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, width: 'fit-content' }}>
           {!noFilter &&
             <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px' }}>
               <Search onSearch={onSearch} />

@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
-import type { BalancesInfo, MyPoolInfo } from '../util/types';
+import type { BalancesInfo, MyPoolInfo, PoolStakingConsts, StakingConsts } from '../util/types';
 import type { SessionIfo, UnstakingType } from './useSoloStakingInfo';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -90,6 +90,14 @@ const getAvailableToStake = (balances: BalancesInfo | undefined, pool: MyPoolInf
   return bnMax(BN_ZERO, _availableToStake);
 };
 
+export interface PoolStakingInfo {
+  availableBalanceToStake: BN | undefined;
+  pool: MyPoolInfo | null | undefined;
+  poolStakingConsts: PoolStakingConsts | null | undefined;
+  sessionInfo: UnstakingType | undefined;
+  stakingConsts: StakingConsts | null | undefined;
+}
+
 /**
  * Custom hook that provides solo staking information for a given address
  *
@@ -98,7 +106,7 @@ const getAvailableToStake = (balances: BalancesInfo | undefined, pool: MyPoolInf
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>) {
+export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash, refresh, setRefresh);
   const pool = usePool2(address, genesisHash);

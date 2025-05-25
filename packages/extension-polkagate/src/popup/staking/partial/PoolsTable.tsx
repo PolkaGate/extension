@@ -34,13 +34,14 @@ interface PoolInfoProp {
   selectable?: boolean;
   selected?: PoolInfo | undefined;
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
+  joiningStatus?: boolean;
 }
 
-const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool }: PoolInfoProp) => {
+export const PoolItem = ({ genesisHash, joiningStatus, onDetailClick, poolInfo, selectable, selected, setSelectedPool }: PoolInfoProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const maybeCommission = poolInfo.bondedPool?.commission.current.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
+  const maybeCommission = poolInfo.bondedPool?.commission?.current?.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
   const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
   const isSelected = useMemo(() => selected?.poolId === poolInfo.poolId, [poolInfo.poolId, selected?.poolId]);
@@ -68,10 +69,13 @@ const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, 
           <StakingInfoStack amount={poolInfo.bondedPool?.points} decimal={decimal} title={t('Staked')} token={token} />
           <StakingInfoStack text={String(commission) + '%'} title={t('Commission')} />
           <StakingInfoStack text={poolInfo.bondedPool?.memberCounter.toString() ?? '0'} title={t('Members')} />
+          {joiningStatus &&
+            <StakingInfoStack secondaryColor='#3988FF' text={t('Joining')} title={t('Status')} />
+          }
         </Container>
-        <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
+        {!joiningStatus && <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
           <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
-        </IconButton>
+        </IconButton>}
       </Container>
     </Stack>
   );
