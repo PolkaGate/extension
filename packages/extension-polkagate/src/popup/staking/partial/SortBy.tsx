@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
+import CheckIcon from '@mui/icons-material/Check';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { ClickAwayListener, Container, Grid, Popover, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
@@ -19,7 +20,6 @@ const DropContentContainer = styled(Grid)(() => ({
   columnGap: '5px',
   flexWrap: 'nowrap',
   margin: 'auto',
-  marginTop: '4px',
   maxHeight: '400px',
   minWidth: '197px',
   overflow: 'hidden',
@@ -47,9 +47,12 @@ function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
   }, [label, setSortBy]);
 
   return (
-    <Typography color={isSelected ? 'text.primary' : 'text.highlight'} onClick={onClick} ref={refContainer} sx={{ bgcolor: hovered ? '#6743944D' : 'transparent', borderRadius: '10px', cursor: 'pointer', p: '10px', textAlign: 'left', width: '100%' }}>
-      {t(label)}
-    </Typography>
+    <Container disableGutters onClick={onClick} ref={refContainer} sx={{ bgcolor: hovered ? '#222540A6' : 'transparent', borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px', width: '100%' }}>
+      <Typography color={isSelected ? '#3988FF' : hovered ? 'text.primary' : 'text.highlight'} variant='B-2'>
+        {t(label)}
+      </Typography>
+      <CheckIcon sx={{ bgcolor: '#3988FF', borderRadius: '999px', color: '#fff', fontSize: '16px', fontWeight: 900, height: '20px', transition: 'all 100ms ease-out', visibility: isSelected ? 'visible' : 'hidden', width: '20px' }} />
+    </Container>
   );
 }
 
@@ -77,7 +80,8 @@ function DropContent ({ containerRef, open, setSortBy, sortBy }: DropContentProp
         paper: {
           sx: {
             background: 'none',
-            backgroundImage: 'none'
+            backgroundImage: 'none',
+            borderRadius: '12px'
           }
         }
       }}
