@@ -13,7 +13,6 @@ import { useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import BlueGradient from '../style/BlueGradient';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
-import BlueGradient from '../style/BlueGradient';
 
 export interface ExtensionPopupProps {
   TitleIcon?: Icon;
@@ -41,7 +40,7 @@ export interface ExtensionPopupProps {
   RightItem?: React.ReactNode;
 }
 
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 

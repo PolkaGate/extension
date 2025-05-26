@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { alpha, Box, InputBase, styled, type Theme, useTheme } from '@mui/material';
+import { alpha, Box, InputBase, styled, type SxProps, type Theme, useTheme } from '@mui/material';
 import { SearchNormal1 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -49,17 +49,18 @@ interface LimitsConfig {
 interface SearchProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
-  style?: React.CSSProperties;
+  style?: SxProps<Theme>;
   noSearchIcon?: boolean;
   limits?: LimitsConfig;
   inputColor?: string;
+  defaultValue?: string;
 }
 
-export default function Search ({ inputColor, limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
+export default function Search ({ defaultValue, inputColor, limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(defaultValue ?? '');
 
   const validateInput = useCallback((value: string): boolean => {
     if (!limits) {

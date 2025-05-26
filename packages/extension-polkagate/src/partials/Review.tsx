@@ -31,7 +31,7 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
       <Typography color='text.highlight' sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
         {t('Account')}
       </Typography>
@@ -194,7 +194,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
           poolInfo={pool}
         />
       }
-      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'scroll', width: '100%' }}>
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem
             content={content}

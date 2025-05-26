@@ -65,7 +65,7 @@ export default function BondExtra (): React.ReactElement {
   }, [bondAmount, estimatedFee2, staked, t]);
 
   const errorMessage = useMemo(() => {
-    if (!bondAmount || !stakingInfo.availableBalanceToStake || !staked || !api) {
+    if (!bondAmount || !stakingInfo.availableBalanceToStake || !staked) {
       return undefined;
     }
 
@@ -82,7 +82,7 @@ export default function BondExtra (): React.ReactElement {
     }
 
     return undefined;
-  }, [api, bondAmount, staked, stakingInfo.availableBalanceToStake, t]);
+  }, [bondAmount, staked, stakingInfo.availableBalanceToStake, t]);
 
   const onMaxValue = useMemo(() => {
     if (!stakingInfo.pool || !formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts || !staked || staked.isZero()) {
