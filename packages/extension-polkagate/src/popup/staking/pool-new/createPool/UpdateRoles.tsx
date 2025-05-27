@@ -51,7 +51,6 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
       handleClose={handleClose}
       iconColor={theme.palette.text.highlight}
       iconSize={26}
-      isBlueish
       openMenu={openMenu}
       style={{ '> div#container': { pt: '10px' } }}
       title={t('Update roles')}

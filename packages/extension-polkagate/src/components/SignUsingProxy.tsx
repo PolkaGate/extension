@@ -158,7 +158,6 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
       handleClose={onClosePopup}
       iconColor={theme.palette.text.highlight}
       iconSize={25}
-      isBlueish
       maxHeight='450px'
       openMenu={openMenu}
       title={t('Select Proxy')}
