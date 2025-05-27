@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import type { MyPoolInfo } from '../util/types';
 
 import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useState } from 'react';

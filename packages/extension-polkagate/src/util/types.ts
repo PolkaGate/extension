@@ -461,7 +461,7 @@ export interface MyPoolInfo extends PoolInfo {
   token?: string;
   decimal?: number;
   date?: number;
-  poolMembers: {
+  poolMembers?: {
     accountId: string;
     member: {
       points: number,

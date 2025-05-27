@@ -449,7 +449,7 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                 >
                   <PoolMembers
                     genesisHash={genesisHash}
-                    members={poolDetail.poolMembers}
+                    members={poolDetail.poolMembers ?? []}
                     totalStaked={poolDetail.bondedPool?.points.toString() ?? '0'}
                   />
                 </CollapseSection>
