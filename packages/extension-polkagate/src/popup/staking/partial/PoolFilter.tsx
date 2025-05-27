@@ -10,10 +10,11 @@ import React, { useCallback, useEffect } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { VerifiedTag } from '../../../assets/icons/index';
-import { DecisionButtons, ExtensionPopup, GradientDivider, GradientSwitch } from '../../../components';
+import { DecisionButtons, ExtensionPopup, GradientDivider } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePoolConst, useTranslation } from '../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
+import MySwitch from '../../settings/extensionSettings/components/Switch';
 import CheckBox from '../components/CheckBox';
 import Search from '../components/Search';
 import SortBy from './SortBy';
@@ -158,7 +159,10 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
     });
   }, [decimal, filter.commissionThreshold, filter.isVerified, filter.membersThreshold, filter.stakedThreshold]);
 
-  const toggleVerifiedStash = useCallback(() => setJustVerifiedStash((prev) => !prev), []);
+  const toggleVerifiedStash = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setJustVerifiedStash(checked);
+  }, []);
+
   const onApply = useCallback(() => {
     const commissionThreshold = commissionSetting.checked ? Number(commissionSetting.threshold) : undefined;
     const stakedThreshold = stakedSetting.checked ? amountToMachine(stakedSetting.threshold, decimal) : BN_ZERO;
@@ -211,10 +215,7 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
           <Typography color='text.primary' sx={{ textAlign: 'left', width: 'calc(100% - 75px)' }} variant='B-2'>
             {t('Pool creator has verified identity')}
           </Typography>
-          <GradientSwitch
-            checked={justVerifiedStash}
-            onChange={toggleVerifiedStash}
-          />
+          <MySwitch checked={justVerifiedStash} onChange={toggleVerifiedStash} />
         </Container>
         <GradientDivider style={{ my: '14px' }} />
         <FilterItem
