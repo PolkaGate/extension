@@ -199,7 +199,7 @@ export default function Unstake (): React.ReactElement {
             />
             <StakeAmountInput
               buttonsArray={[{
-                buttonName: t('All'),
+                buttonName: t('Max'),
                 value: onMaxValue
               }]}
               decimal={decimal}

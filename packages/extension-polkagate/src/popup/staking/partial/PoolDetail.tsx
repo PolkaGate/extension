@@ -137,13 +137,13 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
   return (
     <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px', gap: '12px', p: '12px', width: '100%' }}>
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
-        <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='50%'>
+        <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
           {t('Identity')}
         </Typography>
         <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
           {t('Staked')}
         </Typography>
-        <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='15%'>
+        <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='25%'>
           {t('Percent')}
         </Typography>
       </Container>
@@ -159,7 +159,7 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
                   genesisHash={genesisHash ?? ''}
                   identiconSize={18}
                   showShortAddress
-                  style={{ variant: 'B-4', width: '50%' }}
+                  style={{ variant: 'B-4', width: '40%' }}
                 />
                 <FormatBalance2
                   decimals={[decimal ?? 0]}
@@ -168,7 +168,7 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
                   tokens={[token ?? '']}
                   value={isHexToBn(member.member.points.toString())}
                 />
-                <Typography color='text.primary' textAlign='right' variant='B-4' width='15%'>
+                <Typography color='text.primary' variant='B-4' width='25%'>
                   {percentage}%
                 </Typography>
               </Container>
@@ -187,9 +187,10 @@ interface CollapseSectionProp {
   children: React.ReactNode;
   onClick: () => void;
   notShow?: boolean;
+  sideText?: string;
 }
 
-const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, title }: CollapseSectionProp) => {
+const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, sideText, title }: CollapseSectionProp) => {
   const theme = useTheme();
 
   return (
@@ -200,6 +201,12 @@ const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, title }:
           {title}
         </Typography>
         <ArrowDown2 color={open ? '#596AFF' : theme.palette.text.highlight} size='17' style={{ rotate: open ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
+        {sideText &&
+          <Grid container item sx={{ alignItems: 'center', justifyContent: 'flex-end' }} xs>
+            <Typography color='text.highlight' sx={{ bgcolor: '#809ACB33', borderRadius: '8px', p: '2px 3px' }} variant='B-4'>
+              {sideText}
+            </Typography>
+          </Grid>}
       </Container>
       <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px' }}>
         {children}
@@ -406,6 +413,7 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                   notShow={!comprehension}
                   onClick={handleCollapses('Members')}
                   open={collapse['Members']}
+                  sideText={poolDetail.bondedPool?.memberCounter.toString()}
                   title={t('Members')}
                 >
                   <PoolMembers
