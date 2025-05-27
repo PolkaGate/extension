@@ -49,14 +49,24 @@ export default function Info (): React.ReactElement {
   const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const getValue = useCallback((value: number | undefined) => {
+    if (value === undefined) {
+      return '-';
+    }
+
+    return value === -1
+      ? t('unlimited')
+      : value;
+  }, [t]);
+
   const stakingStats = useMemo(() => ([
     { label: t('Min {{token}} to join a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minJoinBond },
     { label: t('Min {{token}} to create a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minCreationBond },
     { label: t('Number of existing pools'), value: stakingInfo.poolStakingConsts?.lastPoolId.toString() },
-    { label: t('Max possible pools'), value: stakingInfo.poolStakingConsts?.maxPools },
-    { label: t('Max possible pool members'), value: stakingInfo.poolStakingConsts?.maxPoolMembers },
-    { label: t('Max pool members per pool'), value: stakingInfo.poolStakingConsts?.maxPoolMembersPerPool === -1 ? t('unlimited') : stakingInfo.poolStakingConsts?.maxPoolMembersPerPool }
-  ]), [stakingInfo.poolStakingConsts?.lastPoolId, stakingInfo.poolStakingConsts?.maxPoolMembers, stakingInfo.poolStakingConsts?.maxPoolMembersPerPool, stakingInfo.poolStakingConsts?.maxPools, stakingInfo.poolStakingConsts?.minCreationBond, stakingInfo.poolStakingConsts?.minJoinBond, t, token]);
+    { label: t('Max possible pools'), value: getValue(stakingInfo.poolStakingConsts?.maxPools) },
+    { label: t('Max possible pool members'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembers) },
+    { label: t('Max pool members per pool'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembersPerPool) }
+  ]), [getValue, stakingInfo.poolStakingConsts?.lastPoolId, stakingInfo.poolStakingConsts?.maxPoolMembers, stakingInfo.poolStakingConsts?.maxPoolMembersPerPool, stakingInfo.poolStakingConsts?.maxPools, stakingInfo.poolStakingConsts?.minCreationBond, stakingInfo.poolStakingConsts?.minJoinBond, t, token]);
 
   const onBack = useCallback(() => navigate('/pool/' + genesisHash) as void, [genesisHash, navigate]);
 
