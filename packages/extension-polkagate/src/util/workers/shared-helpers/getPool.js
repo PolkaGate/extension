@@ -71,14 +71,13 @@ export async function getPool (genesisHash, stakerAddress, port) {
     return;
   }
 
-  const [metadata, bondedPools, myClaimable, pendingRewards, rewardIdBalance, stashIdAccount, allPoolMembers] = await Promise.all([
+  const [metadata, bondedPools, myClaimable, pendingRewards, rewardIdBalance, stashIdAccount] = await Promise.all([
     api.query['nominationPools']['metadata'](poolId),
     api.query['nominationPools']['bondedPools'](poolId),
     api.call['nominationPoolsApi']['pendingRewards'](stakerAddress),
     api.query['nominationPools']['rewardPools'](poolId),
     api.query['system']['account'](accounts.rewardId),
-    api.derive.staking.account(accounts.stashId),
-    api.query['nominationPools']?.['poolMembers'].entries()
+    api.derive.staking.account(accounts.stashId)
   ]);
 
   const ED = /** @type {unknown} */ (api.consts['balances']['existentialDeposit']);
@@ -90,24 +89,8 @@ export async function getPool (genesisHash, stakerAddress, port) {
   const rewardIdFreeBalance = new BN(rewardIdBalancePrimitive?.data.free ?? 0);
   const poolRewardClaimable = rewardIdBalance ? bnMax(BN_ZERO, rewardIdFreeBalance.sub(/** @type {BN} */ (ED))) : BN_ZERO;
 
-  const poolMembers = allPoolMembers.map((poolMember) => {
-    const array = /** @type {string[]} */(poolMember[0].toHuman());
-    const accountId = array[0];
-    const info = /** @type {PoolMember} */(poolMember[1].toPrimitive());
-
-    if (poolId === info.poolId) {
-      return {
-        accountId,
-        member: info
-      };
-    }
-
-    return undefined;
-  }).filter((item) => !!item);
-
-  console.log('poolMembers:', poolMembers);
-
-  poolMembers?.length >= 2 && poolMembers.sort((a, b) => b.member.points - a.member.points);
+  /** @type {{ accountId: string; member: PoolMember; }[]} */
+  let poolMembers = [];
 
   const poolInfo = {
     accounts,
@@ -127,7 +110,30 @@ export async function getPool (genesisHash, stakerAddress, port) {
     token
   };
 
-  closeWebsockets(connections);
+  port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(poolInfo) }));
+
+  const allPoolMembers = await api.query['nominationPools']['poolMembers'].entries();
+
+  poolMembers = allPoolMembers.map((poolMember) => {
+    const array = /** @type {string[]} */(poolMember[0].toHuman());
+    const accountId = array[0];
+    const info = /** @type {PoolMember} */(poolMember[1].toPrimitive());
+
+    if (poolId === info.poolId) {
+      return {
+        accountId,
+        member: info
+      };
+    }
+
+    return undefined;
+  }).filter((item) => !!item);
+
+  poolMembers?.length >= 2 && poolMembers.sort((a, b) => b.member.points - a.member.points);
+
+  poolInfo.poolMembers = poolMembers;
 
   port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(poolInfo) }));
+
+  closeWebsockets(connections);
 }
