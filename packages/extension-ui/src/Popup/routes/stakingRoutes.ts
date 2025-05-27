@@ -10,10 +10,8 @@ import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
 import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool-new';
 import PoolBondExtra from '@polkadot/extension-polkagate/src/popup/staking/pool-new/bondExtra';
+import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool-new/createPool';
 import PoolInfo from '@polkadot/extension-polkagate/src/popup/staking/pool-new/Info';
-// import PoolInformation from '@polkadot/extension-polkagate/src/popup/staking/pool/myPool';
-// import PoolNominations from '@polkadot/extension-polkagate/src/popup/staking/pool/nominations';
-// import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/createPool';
 import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool-new/joinPool';
 import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/stake';
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/unstake';
@@ -40,21 +38,11 @@ export const STAKING_ROUTES: RouteConfig[] = [
     trigger: 'staking-index-options'
   },
   // POOL STAKING ROUTE
-  // {
-  //   Component: CreatePool,
-  //   path: '/pool/create/:address',
-  //   trigger: 'pool-create'
-  // },
-  // {
-  //   Component: PoolInformation,
-  //   path: '/pool/myPool/:address',
-  //   trigger: 'pool-poolInformation'
-  // },
-  // {
-  //   Component: PoolNominations,
-  //   path: '/pool/nominations/:address',
-  //   trigger: 'pool-nominations'
-  // },
+  {
+    Component: CreatePool,
+    path: '/pool/:genesisHash/create',
+    trigger: 'pool-create'
+  },
   {
     Component: JoinPool,
     path: '/pool/:genesisHash/join',
