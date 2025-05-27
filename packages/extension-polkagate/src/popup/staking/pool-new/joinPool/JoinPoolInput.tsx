@@ -14,8 +14,8 @@ import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { amountToMachine } from '../../../../util/utils';
-import ChosePool from '../../partial/ChosePool';
 import FeeValue from '../../partial/FeeValue';
+import SelectedPool from '../../partial/SelectedPool';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
 import TokenStakeStatus from '../../partial/TokenStakeStatus';
@@ -69,7 +69,7 @@ export default function JoinPoolInput ({ bondAmount, errorMessage, estimatedFee2
         text={t('Available to stake')}
         token={token}
       />
-      <ChosePool
+      <SelectedPool
         onClick={onBack}
         poolName={selectedPool?.metadata ?? ''}
         poolStashAddress={selectedPool?.stashIdAccount?.accountId.toString()}

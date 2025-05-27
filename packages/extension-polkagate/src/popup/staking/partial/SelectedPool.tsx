@@ -15,7 +15,7 @@ export interface Props {
   onClick: () => void;
 }
 
-export default function ChosePool ({ onClick, poolName, poolStashAddress, style, text }: Props): React.ReactElement {
+export default function SelectedPool ({ onClick, poolName, poolStashAddress, style, text }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
