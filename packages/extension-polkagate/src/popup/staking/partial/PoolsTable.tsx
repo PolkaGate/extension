@@ -5,7 +5,7 @@ import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Box, Container, IconButton, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { logoPink } from '@polkadot/extension-polkagate/src/assets/logos/index';
 
@@ -52,6 +52,8 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const [isHovered, setIsHovered] = useState(false);
+
   const maybeCommission = poolInfo.bondedPool?.commission?.current?.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
   const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
 
@@ -63,13 +65,33 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
     setSelectedPool?.(selectedPool);
   }, [setSelectedPool]);
 
+  const handleContainerClick = useCallback(() => {
+    if (!isSelected) {
+      const syntheticEvent = {
+        target: {
+          value: JSON.stringify(poolInfo)
+        }
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      onSelect(syntheticEvent);
+    }
+  }, [isSelected, onSelect, poolInfo]);
+
   return (
     <Stack direction='column' sx={{ bgcolor: isSelected ? '#1C1D38' : '#110F2A', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%' }}>
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
+      <Container
+        disableGutters
+        onClick={handleContainerClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}
+      >
         <PoolStashIdentity poolInfo={poolInfo} />
         {selectable &&
           <PRadio
             checked={isSelected}
+            circleSize={20}
+            isHovered={isHovered}
             onChange={onSelect}
             value={JSON.stringify(poolInfo)}
           />}
