@@ -49,7 +49,6 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
   return (
     <>
       <MyTooltip
-        color='#1c498a'
         content={tooltip}
         notShow={!tooltip}
         placement='top'
