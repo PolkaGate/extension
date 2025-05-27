@@ -5,7 +5,7 @@ import type { TransitionProps } from '@mui/material/transitions';
 import type { Compact } from '@polkadot/types';
 import type { INumber } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
-import type { PoolInfo } from '../../../util/types';
+import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, Flag, FlashCircle, People } from 'iconsax-react';
@@ -13,12 +13,12 @@ import React, { useCallback, useMemo, useReducer } from 'react';
 
 import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
 
-import { Identity2 } from '../../../components';
+import { FormatBalance2, Identity2 } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { toShortAddress } from '../../../util/utils';
+import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Email, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
@@ -42,7 +42,7 @@ interface StakingInfoStackWithIconProps {
 
 const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', m: 0, width: 'fit-content' }}>
       {Icon}
       <StakingInfoStack amount={amount} decimal={decimal} text={text} title={title} token={token} />
     </Container>
@@ -117,6 +117,69 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
   );
 };
 
+interface PoolMembersProps {
+  members: {
+    accountId: string;
+    member: {
+      points: number;
+      poolId: number;
+    };
+  }[];
+  genesisHash: string | undefined;
+  totalStaked: BN;
+}
+
+const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  return (
+    <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px', gap: '12px', p: '12px', width: '100%' }}>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='50%'>
+          {t('Identity')}
+        </Typography>
+        <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
+          {t('Staked')}
+        </Typography>
+        <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='15%'>
+          {t('Percent')}
+        </Typography>
+      </Container>
+      <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
+        {members.map((member) => {
+          const percentage = ((isHexToBn(member.member.points.toString()).div(isHexToBn(totalStaked.toString()))).muln(100)).toString();
+
+          return (
+            <>
+              <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+                <Identity2
+                  address={member.accountId}
+                  genesisHash={genesisHash ?? ''}
+                  identiconSize={18}
+                  showShortAddress
+                  style={{ variant: 'B-4', width: '50%' }}
+                />
+                <FormatBalance2
+                  decimals={[decimal ?? 0]}
+                  style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
+                  tokenColor={theme.palette.text.highlight}
+                  tokens={[token ?? '']}
+                  value={isHexToBn(member.member.points.toString())}
+                />
+                <Typography color='text.primary' textAlign='right' variant='B-4' width='15%'>
+                  {percentage}%
+                </Typography>
+              </Container>
+            </>
+          );
+        })}
+      </Stack>
+    </Stack>
+  );
+};
+
 interface CollapseSectionProp {
   title: string;
   TitleIcon: React.ReactNode;
@@ -130,7 +193,7 @@ const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, title }:
   const theme = useTheme();
 
   return (
-    <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: '#060518', borderRadius: '14px', display: notShow ? 'none' : 'inherit', p: '4px' }}>
+    <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: '#060518', borderRadius: '14px', display: notShow ? 'none' : 'block', p: '4px' }}>
       <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px', p: '8px 14px 11px' }}>
         {TitleIcon}
         <Typography color={open ? '#596AFF' : theme.palette.text.primary} sx={{ transition: 'all 150ms ease-out', width: 'fit-content' }} variant='B-2'>
@@ -183,7 +246,7 @@ const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
 };
 
 interface PoolDetailProps {
-  poolDetail: PoolInfo | undefined;
+  poolDetail: MyPoolInfo | undefined;
   handleClose: () => void;
   genesisHash: string | undefined;
   comprehension?: boolean; // if it is true all the information will be shown in the table
@@ -345,7 +408,11 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                   open={collapse['Members']}
                   title={t('Members')}
                 >
-                  <></>
+                  <PoolMembers
+                    genesisHash={genesisHash}
+                    members={poolDetail.poolMembers}
+                    totalStaked={poolDetail.bondedPool?.points as unknown as BN}
+                  />
                 </CollapseSection>
                 <CollapseSection
                   TitleIcon={<BuyCrypto color={collapse['Rewards'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}

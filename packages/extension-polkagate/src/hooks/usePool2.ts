@@ -3,41 +3,39 @@
 
 import type { MyPoolInfo } from '../util/types';
 
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 
 import { FetchingContext, WorkerContext } from '../components';
 import { isHexToBn } from '../util/utils';
 import { useFormatted3 } from '.';
+
+const MY_POOL_STORAGE_KEY = 'MyPool';
+const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 
 interface WorkerMessage {
   functionName?: string;
   results?: string;
 }
 
-// export default function usePool2 (address?: AccountId | string, id?: number, refresh?: boolean, pool?: MyPoolInfo): MyPoolInfo | null | undefined {
-export default function usePool2 (address: string | undefined, genesisHash: string | undefined): MyPoolInfo | null | undefined {
+export default function usePool2 (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
 
-  // const { decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
   const isFetching = useContext(FetchingContext);
 
-  // const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>();
-  const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>();
-  const [waiting, setWaiting] = useState<boolean>();
+  const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>(undefined);
+  const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>(undefined);
 
   const fetchPoolInformation = useCallback(() => {
     if (!worker || !genesisHash || !formatted) {
       return;
     }
 
-    const functionName = 'getPool';
-
-    worker.postMessage({ functionName, parameters: { genesisHash, stakerAddress: formatted } });
+    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted } });
   }, [formatted, genesisHash, worker]);
 
   const handleWorkerMessages = useCallback(() => {
-    if (!worker) {
+    if (!worker || !formatted) {
       return;
     }
 
@@ -55,7 +53,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       }
 
       /** reset isFetching */
-      isFetching.fetching[String(formatted)]['getPool'] = false;
+      isFetching.fetching[String(formatted)][MY_POOL_SHARED_WORKER_KEY] = false;
       isFetching.set(isFetching.fetching);
 
       if (!results) {
@@ -64,7 +62,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         return;
       }
 
-      if (functionName === 'getPool') {
+      if (functionName === MY_POOL_SHARED_WORKER_KEY) {
         const receivedMessage = JSON.parse(results) as MyPoolInfo;
 
         /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
@@ -78,6 +76,17 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
 
         console.log('*** My pool info from worker is:', receivedMessage);
 
+        // save my pool to local storage
+        chrome.storage.local.get(MY_POOL_STORAGE_KEY, (res) => {
+          const last = res?.[MY_POOL_STORAGE_KEY] || {};
+
+          receivedMessage.date = Date.now();
+          last[formatted] = receivedMessage;
+
+          // eslint-disable-next-line no-void
+          void chrome.storage.local.set({ [MY_POOL_STORAGE_KEY]: last });
+        });
+
         setNewPool(receivedMessage);
       }
     };
@@ -89,88 +98,10 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     };
   }, [formatted, isFetching, worker]);
 
-  // const getPoolInfo = useCallback((endpoint: string, stakerAddress: AccountId | string, id: number | undefined = undefined) => {
-  //   const getPoolWorker: Worker = new Worker(new URL('../util/workers/getPool.js', import.meta.url));
-
-  //   getPoolWorker.postMessage({ endpoint, id, stakerAddress });
-
-  //   getPoolWorker.onerror = (err) => {
-  //     console.log(err);
-  //   };
-
-  //   getPoolWorker.onmessage = (e: MessageEvent<any>) => {
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  //     const info: string = e.data;
-
-  //     if (!info) {
-  //       setNewPool(null);
-
-  //       /** reset isFetching */
-  //       isFetching.fetching[String(stakerAddress)].getPool = false;
-  //       isFetching.set(isFetching.fetching);
-
-  //       chrome.storage.local.get('MyPools', (res) => {
-  //         const k = `${stakerAddress}`;
-  //         const mySavedPools = res?.MyPools || {};
-
-  //         mySavedPools[k] = null; // to remove old saved pool, even set empty for not already pool staked account
-
-  //         // eslint-disable-next-line no-void
-  //         void chrome.storage.local.set({ MyPools: mySavedPools });
-  //       });
-
-  //       getPoolWorker.terminate();
-
-  //       return;
-  //     }
-
-  //     const parsedInfo = JSON.parse(info) as MyPoolInfo;
-
-  //     /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
-  //     if (parsedInfo.member) {
-  //       parsedInfo.member.points = isHexToBn(parsedInfo.member.points).toString();
-  //     }
-
-  //     parsedInfo.bondedPool.points = isHexToBn(parsedInfo.bondedPool.points).toString();
-  //     parsedInfo.stashIdAccount.stakingLedger.active = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.active).toString();
-  //     parsedInfo.stashIdAccount.stakingLedger.total = isHexToBn(parsedInfo.stashIdAccount.stakingLedger.total).toString();
-
-  //     console.log('*** My pool info from worker is:', parsedInfo);
-
-  //     currentToken === parsedInfo.token && setNewPool(parsedInfo);
-
-  //     /** reset isFetching */
-  //     if (isFetching.fetching[String(stakerAddress)]) {
-  //       isFetching.fetching[String(stakerAddress)].getPool = false;
-  //       isFetching.set(isFetching.fetching);
-  //     }
-
-  //     /** save my pool to local storage if it is not fetched by id, note, a pool to join is fetched by Id*/
-  //     !id && chrome.storage.local.get('MyPools', (res) => {
-  //       const k = `${stakerAddress}`;
-  //       const last = res?.MyPools || {};
-
-  //       parsedInfo.date = Date.now();
-  //       last[k] = parsedInfo;
-
-  //       // eslint-disable-next-line no-void
-  //       void chrome.storage.local.set({ MyPools: last });
-  //     });
-
-  //     getPoolWorker.terminate();
-  //   };
-  // }, [currentToken, isFetching]);
-
   useEffect(() => {
     if (!formatted) {
       return;
     }
-
-    // if (id) { /** do not save pool in local storage when pool is fetched via id, which is used in join pool page */
-    //   getPoolInfo(endpoint, formatted, id);
-
-    //   return;
-    // }
 
     if (!isFetching.fetching[String(formatted)]?.['getPool']) {
       if (!isFetching.fetching[String(formatted)]) {
@@ -184,49 +115,40 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       handleWorkerMessages();
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
-      setWaiting(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetching.fetching[String(formatted)]?.['length'], formatted, fetchPoolInformation]);
 
-  // useEffect(() => {
-  //   refresh && console.log('refreshing ...');
-  //   endpoint && endpoint !== AUTO_MODE.value && refresh && formatted && getPoolInfo(endpoint, formatted, id);
-  // }, [endpoint, formatted, getPoolInfo, id, refresh]);
+  useEffect(() => {
+    if (refresh && setRefresh) {
+      console.log('refreshing ...');
 
-  // useEffect(() => {
-  //   if (!formatted) {
-  //     return;
-  //   }
+      fetchPoolInformation();
+      handleWorkerMessages();
+      setRefresh(false);
+    }
+  }, [fetchPoolInformation, handleWorkerMessages, refresh, setRefresh]);
 
-  //   /** load pool from storage */
-  //   chrome.storage.local.get('MyPools', (res) => {
-  //     console.log('MyPools in local storage:', res);
+  useEffect(() => {
+    if (!formatted) {
+      return;
+    }
 
-  //     if (res?.MyPools?.[formatted] !== undefined) {
-  //       setSavedPool(res.MyPools[formatted]);
+    /** load pool from storage */
+    chrome.storage.local.get(MY_POOL_STORAGE_KEY, (res) => {
+      console.log('MyPools in local storage:', res);
 
-  //       return;
-  //     }
+      const myPool = res?.[MY_POOL_STORAGE_KEY]?.[formatted] as MyPoolInfo | null | undefined;
 
-  //     setSavedPool(undefined);
-  //   });
-  // }, [formatted]);
+      if (myPool !== undefined) {
+        setSavedPool(myPool);
 
-  // useEffect(() => {
-  //   if (!formatted || !waiting) {
-  //     return;
-  //   }
+        return;
+      }
 
-  //   chrome.storage.onChanged.addListener((changes, namespace) => {
-  //     for (const [key, { newValue }] of Object.entries(changes)) {
-  //       if (key === 'MyPools' && namespace === 'local') {
-  //         setSavedPool(newValue[formatted]);
-  //         setWaiting(false);
-  //       }
-  //     }
-  //   });
-  // }, [formatted, waiting]);
+      setSavedPool(undefined);
+    });
+  }, [formatted]);
 
-  return newPool;
+  return newPool ?? savedPool;
 }

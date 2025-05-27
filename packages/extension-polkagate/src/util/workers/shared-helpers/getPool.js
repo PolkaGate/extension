@@ -22,7 +22,6 @@ import { closeWebsockets, fastestEndpoint, getChainEndpointsFromGenesisHash } fr
  * @typedef {Object} PoolMember
  * @property {number} poolId - The pool id
  * @property {number} points - The staked amount
- * @property {string} unbondingEras - aaa
  */
 
 /**
@@ -72,13 +71,14 @@ export async function getPool (genesisHash, stakerAddress, port) {
     return;
   }
 
-  const [metadata, bondedPools, myClaimable, pendingRewards, rewardIdBalance, stashIdAccount] = await Promise.all([
+  const [metadata, bondedPools, myClaimable, pendingRewards, rewardIdBalance, stashIdAccount, allPoolMembers] = await Promise.all([
     api.query['nominationPools']['metadata'](poolId),
     api.query['nominationPools']['bondedPools'](poolId),
     api.call['nominationPoolsApi']['pendingRewards'](stakerAddress),
     api.query['nominationPools']['rewardPools'](poolId),
     api.query['system']['account'](accounts.rewardId),
-    api.derive.staking.account(accounts.stashId)
+    api.derive.staking.account(accounts.stashId),
+    api.query['nominationPools']?.['poolMembers'].entries()
   ]);
 
   const ED = /** @type {unknown} */ (api.consts['balances']['existentialDeposit']);
@@ -90,6 +90,25 @@ export async function getPool (genesisHash, stakerAddress, port) {
   const rewardIdFreeBalance = new BN(rewardIdBalancePrimitive?.data.free ?? 0);
   const poolRewardClaimable = rewardIdBalance ? bnMax(BN_ZERO, rewardIdFreeBalance.sub(/** @type {BN} */ (ED))) : BN_ZERO;
 
+  const poolMembers = allPoolMembers.map((poolMember) => {
+    const array = /** @type {string[]} */(poolMember[0].toHuman());
+    const accountId = array[0];
+    const info = /** @type {PoolMember} */(poolMember[1].toPrimitive());
+
+    if (poolId === info.poolId) {
+      return {
+        accountId,
+        member: info
+      };
+    }
+
+    return undefined;
+  }).filter((item) => !!item);
+
+  console.log('poolMembers:', poolMembers);
+
+  poolMembers?.length >= 2 && poolMembers.sort((a, b) => b.member.points - a.member.points);
+
   const poolInfo = {
     accounts,
     bondedPool: unwrappedBondedPool,
@@ -100,6 +119,7 @@ export async function getPool (genesisHash, stakerAddress, port) {
       : hexToString(metadata.toHex()),
     myClaimable: Number(myClaimable ?? '0'),
     poolId,
+    poolMembers,
     rewardClaimable: Number(poolRewardClaimable),
     rewardIdBalance: rewardIdBalancePrimitive?.data,
     rewardPool,
