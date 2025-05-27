@@ -4,41 +4,31 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { Proxy, ProxyItem } from '../../util/types';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Warning } from '../../components';
-import { useAccount, useChainInfo, useFullscreen, useInfo, useTranslation } from '../../hooks';
+import { useAccount, useChainInfo, useFullscreen, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { PROXY_CHAINS } from '../../util/constants';
+import { EmptyListBox } from '../components';
 import HomeLayout from '../components/layout';
 import AddProxy from './AddProxy';
 import Manage from './Manage';
-import Review from './Review';
-
-export const STEPS = {
-  ADD_PROXY: 3,
-  CHECK: 0,
-  CONFIRM: 6,
-  MANAGE: 2,
-  PROXY: 100,
-  REVIEW: 4,
-  SIGN_QR: 200,
-  UNSUPPORTED: 1,
-  WAIT_SCREEN: 5
-};
+import TransactionFlow from './TransactionFlow';
+import { STEPS } from './types';
 
 function ManageProxies (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
   const account = useAccount(address);
   const { api, chain, decimal, token } = useChainInfo(genesisHash);
 
-  const [step, setStep] = useState<number>(STEPS.CHECK);
+  useUpdateSelectedAccount(address);
+
+  const [step, setStep] = useState(STEPS.CHECK);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
   const [depositedValue, setDepositedValue] = useState<BN | null | undefined>();
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
@@ -102,64 +92,55 @@ function ManageProxies (): React.ReactElement {
   return (
     <HomeLayout childrenStyle={{ marginLeft: '25px' }}>
       <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
-        {t('Proxy Management') }
+        {t('Proxy Management')}
       </Typography>
       <Typography color='text.secondary' sx={{ m: '10px 0 20px' }} variant='B-4'>
         {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
       </Typography>
       <Grid container item sx={{ display: 'block', position: 'relative' }}>
         {step === STEPS.UNSUPPORTED &&
-            <Grid alignItems='center' container direction='column' display='block' item>
-              <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 30px'>
-                {t('Proxy Management')}
-              </Typography>
-              <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '500px' }}>
-                <Warning
-                  fontWeight={500}
-                  isBelowInput
-                  theme={theme}
-                >
-                  {t('The chosen blockchain does not support proxy management.')}
-                </Warning>
-              </Grid>
-            </Grid>
+          <EmptyListBox
+            style={{ marginTop: '20px' }}
+            text={t('The chosen blockchain does not support proxy management.')}
+          />
         }
         {step === STEPS.MANAGE &&
-            <Manage
-              api={api}
-              chain={chain}
-              decimal={decimal}
-              depositedValue={depositedValue}
-              isDisabledAddProxyButton={!!isDisabledAddProxyButton}
-              newDepositValue={newDepositValue}
-              proxyItems={proxyItems}
-              setNewDepositedValue={setNewDepositedValue}
-              setProxyItems={setProxyItems}
-              setStep={setStep}
-              token={token}
-            />
+          <Manage
+            api={api}
+            chain={chain}
+            decimal={decimal}
+            depositedValue={depositedValue}
+            isDisabledAddProxyButton={!!isDisabledAddProxyButton}
+            newDepositValue={newDepositValue}
+            proxyItems={proxyItems}
+            setNewDepositedValue={setNewDepositedValue}
+            setProxyItems={setProxyItems}
+            setStep={setStep}
+            token={token}
+          />
         }
         {step === STEPS.ADD_PROXY &&
-            <AddProxy
-              chain={chain as any}
-              proxiedAddress={address}
-              proxyItems={proxyItems}
-              setProxyItems={setProxyItems}
-              setStep={setStep}
-            />
+          <AddProxy
+            chain={chain}
+            proxiedAddress={address}
+            proxyItems={proxyItems}
+            setProxyItems={setProxyItems}
+            setStep={setStep}
+            step={step}
+          />
         }
-        {[STEPS.REVIEW, STEPS.PROXY, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.SIGN_QR].includes(step) &&
-            <Review
-              address={address}
-              api={api}
-              chain={chain as any}
-              depositedValue={BN_ZERO}
-              newDepositValue={newDepositValue}
-              proxyItems={proxyItems}
-              setRefresh={setRefresh}
-              setStep={setStep}
-              step={step}
-            />
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRMATION, STEPS.SIGN_QR].includes(step) &&
+          <TransactionFlow
+            address={address}
+            api={api}
+            chain={chain}
+            depositedValue={BN_ZERO}
+            newDepositValue={newDepositValue}
+            proxyItems={proxyItems}
+            setRefresh={setRefresh}
+            setStep={setStep}
+            step={step}
+          />
         }
       </Grid>
     </HomeLayout>

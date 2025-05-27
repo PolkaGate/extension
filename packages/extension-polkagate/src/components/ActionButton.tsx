@@ -26,7 +26,7 @@ interface Props {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBusy, isBlueish, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
@@ -50,7 +50,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
     borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
-    padding: '6px 24px',
+    padding: '10px 24px',
     transition: 'all 250ms ease-out',
     ...ButtonFontStyle
   };

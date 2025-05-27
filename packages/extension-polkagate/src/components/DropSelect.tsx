@@ -54,10 +54,10 @@ interface Props {
   defaultValue?: string | number;
   disabled?: boolean;
   displayContentType?: 'icon' | 'logo' | 'text' | 'account' | 'iconOption';
+  dropContentStyle?: React.CSSProperties;
   onChange?: (value: number | string) => void;
   options: AdvancedDropdownOption[];
   style?: React.CSSProperties;
-  dropContentStyle?: React.CSSProperties;
   scrollTextOnOverflow?: boolean;
   showCheckAsIcon?: boolean;
   simpleArrow?: boolean;

@@ -27,7 +27,7 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
       Array.from({ length }).map((index) => (
         <Grid
           alignItems='center'
-          columnGap='15px' container item key={index} sx={{
+          columnGap='15px' container item key={index as number} sx={{
             background: '#05091C',
             bgcolor: '#05091C',
             border: '1px solid #2D1E4A',

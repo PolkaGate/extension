@@ -1,22 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ProxyItem } from '../../../util/types';
 
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import { Divider, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { Checkbox2, Identity, Identity2, Label2, Progress } from '../../../components';
+import { Checkbox2 } from '../../../components';
 import { useTranslation } from '../../../components/translate';
-import useAccountSelectedChain from '@polkadot/extension-polkagate/hooks/useAccountSelectedChain';
-import ProxyAccountInfo from './ProxyAccountInfo';
+import { EmptyListBox } from '../../components';
 import LoadingProxies from './LoadingProxies';
+import ProxyAccountInfo from './ProxyAccountInfo';
 
 interface Props {
   api: ApiPromise | undefined;
@@ -29,7 +26,7 @@ interface Props {
   labelAlignment?: 'left' | 'center' | 'right';
 }
 
-export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
+export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment, proxyItems, status = 'Editable', style, tableLabel }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   // const genesisHash = useAccountSelectedChain()
@@ -67,7 +64,7 @@ export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment,
 
   return (
     <Grid alignItems='start' container gap='10px' item sx={{ mt: '10px', width: '100%', ...style }}>
-      {proxyItems?.map((proxyItem, index) => {
+      {proxyItems?.filter(({ status }) => status !== 'new').map((proxyItem, index) => {
         return (
           <ProxyAccountInfo
             handleDelete={_handleDelete}
@@ -80,12 +77,10 @@ export default function ProxyTableFL({ api, chain, handleDelete, labelAlignment,
         <LoadingProxies />
       }
       {proxyItems === null &&
-        <Grid display='inline-flex' m='auto' py='30px'>
-          <FontAwesomeIcon fontSize={22} icon={faExclamationTriangle} />
-          <Typography fontSize='14px' fontWeight={400} lineHeight='20px' pl='8px'>
-            {t('No proxies found.')}
-          </Typography>
-        </Grid>
+        <EmptyListBox
+          style={{ marginTop: '20px' }}
+          text={t('No proxies found.')}
+        />
       }
     </Grid>
   );

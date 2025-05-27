@@ -4,8 +4,8 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
+import type { TransactionFlowStep } from '../util/constants';
 import type { Proxy, ProxyTypes, TxInfo } from '../util/types';
-import type { TRANSACTION_FLOW_STEPS } from './TransactionFlow';
 
 import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { InfoCircle } from 'iconsax-react';
@@ -139,7 +139,7 @@ export interface ReviewProps {
   closeReview: () => void;
   genesisHash: string;
   proxyTypeFilter: ProxyTypes[] | undefined;
-  setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   selectedProxy: Proxy | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;

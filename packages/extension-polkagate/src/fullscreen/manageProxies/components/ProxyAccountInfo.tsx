@@ -9,18 +9,20 @@ import React, { useCallback, useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
+import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { GlowCheckbox, Identity2 } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 
 interface Props {
-  style?: SxProps<Theme>;
-  proxyItem: ProxyItem;
   handleDelete: (proxyItem: ProxyItem) => void;
+  showCheck?: boolean;
+  proxyItem: ProxyItem;
+  style?: SxProps<Theme>;
 }
 
-function Info({ label, value }: { label: string; value: string; }): React.ReactElement {
+function Info ({ label, value }: { label: string; value: string; }): React.ReactElement {
   return (
     <Stack columnGap='5px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', lineHeight: '24px', px: '5px' }}>
       <Typography color='#AA83DC' variant='B-1'>
@@ -33,7 +35,7 @@ function Info({ label, value }: { label: string; value: string; }): React.ReactE
   );
 }
 
-export default function ProxyAccountInfo({ handleDelete, proxyItem }: Props): React.ReactElement {
+export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck = true, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const genesisHash = useAccountSelectedChain(proxyItem.proxy.delegate);
 
@@ -58,7 +60,8 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem }: Props): Re
         minWidth: '379px',
         p: '0 5px 0 20px',
         position: 'relative',
-        width: 'fit-content'
+        width: 'fit-content',
+        ...style
       }}
     >
       <PolkaGateIdenticon
@@ -81,7 +84,7 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem }: Props): Re
         <Stack columnGap='5px' direction='row'>
           <Info
             label={t('Type')}
-            value={proxyItem.proxy.proxyType}
+            value={toTitleCase(proxyItem.proxy.proxyType) ?? ''}
           />
           <Info
             label={t('Address')}
@@ -89,11 +92,14 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem }: Props): Re
           />
         </Stack>
       </Stack>
-      <GlowCheckbox
-        changeState={handleCheck}
-        checked={selected}
-        style={{ left: '350px', position: 'absolute', top: '8px' }}
-      />
+      {
+        showCheck &&
+        <GlowCheckbox
+          changeState={handleCheck}
+          checked={selected}
+          style={{ left: '350px', position: 'absolute', top: '8px' }}
+        />
+      }
     </Grid>
   );
 }

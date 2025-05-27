@@ -13,11 +13,11 @@ import { BeatLoader } from 'react-spinners';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { useTranslation } from '../hooks';
-import { TRANSACTION_FLOW_STEPS } from '../partials/TransactionFlow';
+import { useIsBlueish, useTranslation } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { signAndSend } from '../util/api';
-import { MyTooltip, PasswordInput } from '.';
+import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
+import { DecisionButtons, GradientButton, MyTooltip, PasswordInput } from '.';
 
 interface UseProxyProps {
   proxies: Proxy[] | undefined;
@@ -60,16 +60,19 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 interface Props {
   api: ApiPromise | undefined;
   from: string | undefined;
-  style?: React.CSSProperties;
-  preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   handleTxResult: (txResult: TxResult) => void;
-  proxies: Proxy[] | undefined;
-  setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  onCancel: () => void;
   onUseProxy: (() => void) | undefined;
+  preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
+  proxies: Proxy[] | undefined;
+  setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
+  style?: React.CSSProperties;
+  withCancel: boolean | undefined
 }
 
-export default function SignUsingPassword ({ api, from, handleTxResult, onUseProxy, preparedTransaction, proxies, setFlowStep, style }: Props) {
+export default function SignUsingPassword ({ api, from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, style, withCancel }: Props) {
   const { t } = useTranslation();
+  const isBlueish = useIsBlueish();
 
   const [password, setPassword] = useState<string | undefined>(undefined);
   const [hasError, setHasError] = useState<boolean>(false);
@@ -124,14 +127,37 @@ export default function SignUsingPassword ({ api, from, handleTxResult, onUsePro
         onPassChange={onChangePassword}
         style={{ margin: '6px 0 30px' }}
       />
-      <StakingActionButton
-        disabled={!password || hasError}
-        isBusy={isBusy}
-        onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
-        startIcon
-        style={style}
-        text={t('Confirm')}
-      />
+      {withCancel
+        ? <DecisionButtons
+          cancelButton
+          direction='vertical'
+          isBusy={isBusy}
+          onPrimaryClick={onConfirm}
+          onSecondaryClick={onCancel}
+          primaryBtnText={t('Confirm')}
+          secondaryBtnText={t('Cancel')}
+          style={{ width: '100%' }}
+        />
+        : <>
+          {isBlueish
+            ? <StakingActionButton
+              disabled={!password || hasError}
+              isBusy={isBusy}
+              onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
+              startIcon
+              style={style}
+              text={t('Confirm')}
+            />
+            : <GradientButton
+              disabled={!password || hasError}
+              isBusy={isBusy}
+              onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
+              style={style}
+              text={t('Confirm')}
+            />
+          }
+        </>
+      }
     </Stack>
   );
 }

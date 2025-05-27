@@ -163,6 +163,8 @@ export { default as useTransactionState } from './useTransactionState';
 export { default as useTranslation } from './useTranslation';
 export { default as useUnstakingAmount } from './useUnstakingAmount';
 export { default as useUnSupportedNetwork } from './useUnSupportedNetwork';
+export { default as useUpdateAccountSelectedChain } from './useUpdateAccountSelectedChain';
+export { default as useUpdateSelectedAccount } from './useUpdateSelectedAccount';
 export { default as useValidatorApy } from './useValidatorApy';
 export { default as useValidators } from './useValidators';
 export { default as useValidatorsIdentities } from './useValidatorsIdentities';

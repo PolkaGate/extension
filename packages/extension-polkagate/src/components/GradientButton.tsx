@@ -67,7 +67,8 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
     paddingInline: '24px',
     position: 'relative',
     transition: 'all 250ms ease-out',
-    width: '345px',
+    width: '100%',
+    // width: '345px',
     ...style
   } as SxProps<Theme>;
 

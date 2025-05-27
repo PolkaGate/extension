@@ -6,28 +6,21 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
 import type { ProxyItem } from '../../util/types';
 
-import { AddRounded as AddRoundedIcon } from '@mui/icons-material';
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { AddCircle, Firstline } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ActionContext, ChainLogo, FormatBalance2, GradientButton, ShowBalance, TwoButtons } from '../../components';
+import { ChainLogo, FormatBalance2, GradientButton, ShowBalance } from '../../components';
 import { useTranslation } from '../../hooks';
-import { noop } from '../../util/utils';
 import ProxyTableFL from './components/ProxyTableFL';
-import { STEPS } from '.';
-
-interface AddProxyButton {
-  onClick?: () => void;
-  disabled?: boolean;
-}
+import { STEPS } from './types';
 
 interface Props {
   api: ApiPromise | undefined;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep: React.Dispatch<React.SetStateAction<string>>;
   isDisabledAddProxyButton: boolean;
   proxyItems: ProxyItem[] | null | undefined;
   chain: Chain | null | undefined;
@@ -41,8 +34,6 @@ interface Props {
 
 export default function Manage ({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const onAction = useContext(ActionContext);
 
   const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
@@ -60,20 +51,14 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
 
     if (olds > 0) {
       return setNewDepositedValue(proxyDepositFactor.muln(olds + toAdds).add(proxyDepositBase));
-    } else if (toAdds > 0) {
-      return setNewDepositedValue(proxyDepositFactor.muln(toAdds).add(proxyDepositBase));
-    } else {
-      return setNewDepositedValue(BN_ZERO);
     }
+
+    if (toAdds > 0) {
+      return setNewDepositedValue(proxyDepositFactor.muln(toAdds).add(proxyDepositBase));
+    }
+
+    return setNewDepositedValue(BN_ZERO);
   }, [confirmDisabled, proxyDepositBase, proxyDepositFactor, proxyItems, setNewDepositedValue]);
-
-  const toReview = useCallback(() => {
-    setStep(STEPS.REVIEW);
-  }, [setStep]);
-
-  const onCancel = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
 
   const toAddProxy = useCallback(() => {
     isDisabledAddProxyButton === false && setStep(STEPS.ADD_PROXY);
@@ -139,7 +124,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
           </Typography>
           {newDepositValue && depositedValue &&
             <>
-              <Typography color='#AA83DC' variant='B-1' px='8px'>
+              <Typography color='#AA83DC' px='8px' variant='B-1'>
                 {'-->'}
               </Typography>
               <Typography color='#EAEBF1' variant='B-1'>
@@ -163,7 +148,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
       />
       {
         !!toBeDeletedProxies?.length &&
-        <Stack alignItems= 'end' direction='row' justifyContent='space-between' sx={{ bottom: '0', position: 'absolute', width: '100%' }}>
+        <Stack alignItems='end' direction='row' justifyContent='space-between' sx={{ bottom: '0', position: 'absolute', width: '100%' }}>
           <Stack alignItems='center' columnGap='10px' direction='row'>
             <Firstline color='#674394' size='18px' variant='Bold' />
             <Typography color='#EAEBF1' variant='B-2'>
@@ -173,7 +158,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
               {`/ ${proxyItems?.length} selected`}
             </Typography>
             <Typography color='#AA83DC' variant='H-4'>
-             X
+              X
             </Typography>
           </Stack>
           <GradientButton

@@ -89,7 +89,7 @@ interface Props extends RadioProps {
   value: unknown;
 }
 
-export default function PRadio({ checked, columnGap, label, onChange, props, value }: Props) {
+export default function PRadio ({ checked, columnGap, label, onChange, props, value }: Props) {
   return (
     <Stack columnGap={columnGap} direction='row' sx={{ alignItems: 'center' }}>
       <Radio

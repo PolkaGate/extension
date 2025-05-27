@@ -10,18 +10,20 @@ import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index'
 export interface DraggableModalProps {
   blurBackdrop?: boolean;
   children: React.ReactElement;
-  maxHeight?: number;
-  noDivider?: boolean;
   dividerStyle?: React.CSSProperties;
+  draggable?: boolean;
+  maxHeight?: number;
   minHeight?: number;
+  noDivider?: boolean;
   open: boolean;
   onClose: () => void
   style?: React.CSSProperties;
   title?: string;
   width?: number;
+  RightItem?: React.ReactNode;
 }
 
-export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal({ RightItem, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -47,7 +49,7 @@ export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, m
   }, [onClose]);
 
   const handleMouseMove = useCallback((e: { clientX: number; clientY: number; }) => {
-    if (isDragging) {
+    if (isDragging && draggable) {
       const dx = e.clientX - dragStartPosition.x;
       const dy = e.clientY - dragStartPosition.y;
 
@@ -57,7 +59,7 @@ export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, m
       }));
       setDragStartPosition({ x: e.clientX, y: e.clientY });
     }
-  }, [dragStartPosition, isDragging]);
+  }, [draggable, dragStartPosition, isDragging]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -123,9 +125,14 @@ export function DraggableModal ({ blurBackdrop = true, children, dividerStyle, m
           >
             <Close sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
           </IconButton>
-          <Typography color='#EAEBF1' sx={{ textAlign: 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+          <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
             {title}
           </Typography>
+          {RightItem &&
+            <Grid alignItems='center' container item sx={{ position: 'absolute', right: '15px', top: '25px', width: 'fit-content', zIndex: 2 }}>
+              {RightItem}
+            </Grid>
+          }
         </Grid>
         {
           !noDivider &&

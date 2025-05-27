@@ -29,7 +29,7 @@ export default function Solo (): React.ReactElement {
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  
+
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);

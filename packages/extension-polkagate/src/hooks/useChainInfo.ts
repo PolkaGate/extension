@@ -37,14 +37,23 @@ interface ChainInfo {
  */
 export default function useChainInfo (genesisHash: string | null | undefined, noApi = false): ChainInfo {
   const chain = useMetadata(genesisHash, true);
+
   const api = useApi2(noApi ? undefined : genesisHash);
   const chainInfo = selectableNetworks.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash[0] === genesisHash);
 
-  return {
-    api,
-    chain,
-    chainName: sanitizeChainName(chainInfo?.displayName),
-    decimal: chainInfo?.decimals[0],
-    token: chainInfo?.symbols[0]
-  };
+  const chainName = sanitizeChainName(chainInfo?.displayName);
+  const decimal = chainInfo?.decimals?.[0];
+  const token = chainInfo?.symbols?.[0];
+
+  if (!genesisHash) {
+    return {
+      api: undefined,
+      chain: undefined,
+      chainName: undefined,
+      decimal: undefined,
+      token: undefined
+    };
+  }
+
+  return { api, chain, chainName, decimal, token };
 }

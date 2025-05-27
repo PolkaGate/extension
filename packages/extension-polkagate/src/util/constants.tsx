@@ -274,3 +274,17 @@ export enum ExtensionPopups {
   FORGET,
   DAPPS
 }
+
+export const TRANSACTION_FLOW_STEPS = {
+  CONFIRMATION: 'confirmation',
+  REVIEW: 'review',
+  WAIT_SCREEN: 'wait_screen'
+} as const;
+
+export const NEW_STEPS = {
+  ...TRANSACTION_FLOW_STEPS,
+  NEW: 'new'
+} as const;
+
+export type TransactionFlowStep = typeof TRANSACTION_FLOW_STEPS[keyof typeof TRANSACTION_FLOW_STEPS];
+export type NEW_STEP = typeof NEW_STEPS[keyof typeof NEW_STEPS];
