@@ -3,16 +3,19 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
+import type { BN } from '@polkadot/util';
+
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Award, BuyCrypto, Graph, LockSlash, Moneys, People, Strongbox2, Timer } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { BN, noop } from '@polkadot/util';
+import { noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
+import { isHexToBn } from '../../../util/utils';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
@@ -68,11 +71,11 @@ export default function Pool (): React.ReactElement {
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
   , [accountAssets, genesisHash]);
-  const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : new BN(stakingInfo.pool?.member?.points ?? 0), [stakingInfo.pool]);
+  const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
   const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
-  const rewards = useMemo(() => stakingInfo.pool === undefined ? undefined : new BN(stakingInfo.pool?.myClaimable ?? 0), [stakingInfo.pool]);
+  const rewards = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
 
   const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
   const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount > 2 ? 'row' : 'column', [StakingInfoTileCount]);

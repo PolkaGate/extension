@@ -9,11 +9,11 @@ import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, Flag, FlashCircle, People } from 'iconsax-react';
-import React, { useCallback, useMemo, useReducer } from 'react';
+import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 
 import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
 
-import { FormatBalance2, Identity2 } from '../../../components';
+import { FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useTranslation } from '../../../hooks';
@@ -126,56 +126,87 @@ interface PoolMembersProps {
     };
   }[];
   genesisHash: string | undefined;
-  totalStaked: BN;
+  totalStaked: string;
 }
 
 const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const containerRef = useRef(null);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px', gap: '12px', p: '12px', width: '100%' }}>
-      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
-        <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
-          {t('Identity')}
-        </Typography>
-        <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
-          {t('Staked')}
-        </Typography>
-        <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='25%'>
-          {t('Percent')}
-        </Typography>
-      </Container>
-      <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
-        {members.map((member) => {
-          const percentage = ((isHexToBn(member.member.points.toString()).div(isHexToBn(totalStaked.toString()))).muln(100)).toString();
+    <>
+      <Stack direction='column' ref={containerRef} sx={{ bgcolor: '#222540A6', borderRadius: '10px', gap: '12px', maxHeight: '220px', overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
+        <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
+            {t('Identity')}
+          </Typography>
+          <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
+            {t('Staked')}
+          </Typography>
+          <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='25%'>
+            {t('Percent')}
+          </Typography>
+        </Container>
+        <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
+          {members.map((member) => {
+            const percentage = (Number(member.member.points.toString()) / Number(totalStaked)) * 100;
+            // const percentage = ((isHexToBn(member.member.points.toString()).div(isHexToBn(totalStaked.toString()))).muln(100)).toString();
 
-          return (
-            <>
-              <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
-                <Identity2
-                  address={member.accountId}
-                  genesisHash={genesisHash ?? ''}
-                  identiconSize={18}
-                  showShortAddress
-                  style={{ variant: 'B-4', width: '40%' }}
-                />
-                <FormatBalance2
-                  decimals={[decimal ?? 0]}
-                  style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
-                  tokenColor={theme.palette.text.highlight}
-                  tokens={[token ?? '']}
-                  value={isHexToBn(member.member.points.toString())}
-                />
-                <Typography color='text.primary' variant='B-4' width='25%'>
-                  {percentage}%
-                </Typography>
-              </Container>
-            </>
-          );
-        })}
+            return (
+              <>
+                <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+                  <Identity2
+                    address={member.accountId}
+                    genesisHash={genesisHash ?? ''}
+                    identiconSize={18}
+                    showShortAddress
+                    style={{ variant: 'B-4', width: '40%' }}
+                  />
+                  <FormatBalance2
+                    decimals={[decimal ?? 0]}
+                    style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
+                    tokenColor={theme.palette.text.highlight}
+                    tokens={[token ?? '']}
+                    value={isHexToBn(member.member.points.toString())}
+                  />
+                  <Typography color='text.primary' variant='B-4' width='25%'>
+                    {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
+                  </Typography>
+                </Container>
+              </>
+            );
+          })}
+        </Stack>
       </Stack>
+      <FadeOnScroll containerRef={containerRef} height='40px' ratio={0.075} />
+    </>
+  );
+};
+
+interface PoolRewardProps {
+  genesisHash: string | undefined;
+  totalPoolReward: string;
+}
+
+const PoolReward = ({ genesisHash, totalPoolReward }: PoolRewardProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  return (
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', gap: '18px', p: '12px', width: '100%' }}>
+      <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
+        {t('Pool Claimable Reward')}
+      </Typography>
+      <FormatBalance2
+        decimals={[decimal ?? 0]}
+        style={{ ...theme.typography['B-4'] }}
+        tokenColor={theme.palette.text.highlight}
+        tokens={[token ?? '']}
+        value={isHexToBn(totalPoolReward)}
+      />
     </Stack>
   );
 };
@@ -208,7 +239,7 @@ const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, sideText
             </Typography>
           </Grid>}
       </Container>
-      <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px' }}>
+      <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px', position: 'relative' }}>
         {children}
       </Stack>
     </Collapse>
@@ -419,7 +450,7 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                   <PoolMembers
                     genesisHash={genesisHash}
                     members={poolDetail.poolMembers}
-                    totalStaked={poolDetail.bondedPool?.points as unknown as BN}
+                    totalStaked={poolDetail.bondedPool?.points.toString() ?? '0'}
                   />
                 </CollapseSection>
                 <CollapseSection
@@ -429,7 +460,10 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                   open={collapse['Rewards']}
                   title={t('Rewards')}
                 >
-                  <></>
+                  <PoolReward
+                    genesisHash={genesisHash}
+                    totalPoolReward={poolDetail.rewardClaimable?.toString() ?? '0'}
+                  />
                 </CollapseSection>
               </Stack>
             </Stack>
