@@ -58,7 +58,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       isFetching.fetching[String(formatted)][MY_POOL_SHARED_WORKER_KEY] = false;
       isFetching.set(isFetching.fetching);
 
-      if (!results) {
+      if (!results || results === 'null') {
         setNewPool(null);
 
         return;
