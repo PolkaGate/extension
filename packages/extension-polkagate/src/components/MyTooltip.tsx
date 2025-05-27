@@ -29,7 +29,7 @@ interface Props {
 const MyTooltip = ({ children, color, content, notShow = false, placement = 'bottom' }: Props) => {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
-  const _color = color || (isBlueish ? '#1c498a' : '#674394');
+  const _color = color || (isBlueish ? '#3D476A' : '#674394');
 
   return (
     <Tooltip
