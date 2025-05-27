@@ -4,8 +4,10 @@
 import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Container, IconButton, Stack, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
+
+import { logoPink } from '@polkadot/extension-polkagate/src/assets/logos/index';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
@@ -14,12 +16,21 @@ import { StakingInfoStack } from './NominatorsTable';
 import PoolDetail from './PoolDetail';
 
 const PoolStashIdentity = ({ poolInfo }: { poolInfo: PoolInfo }) => {
+  const isPolkagate = poolInfo.metadata?.toLocaleLowerCase().includes('polkagate');
+
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row' }}>
-      <PolkaGateIdenticon
-        address={poolInfo.stashIdAccount?.accountId.toString() ?? ''}
-        size={24}
-      />
+      {isPolkagate
+        ? <Box
+          component='img'
+          src={logoPink as string}
+          sx={{ height: 24, width: 24 }}
+        />
+        : <PolkaGateIdenticon
+          address={poolInfo.stashIdAccount?.accountId.toString() ?? ''}
+          size={24}
+        />
+      }
       <Typography color='text.primary' sx={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
         {poolInfo.metadata}
       </Typography>
