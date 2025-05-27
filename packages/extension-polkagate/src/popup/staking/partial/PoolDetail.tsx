@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 import type { PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
+import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, Flag, FlashCircle, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useReducer } from 'react';
 
 import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
@@ -24,6 +24,7 @@ import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
 import DetailGradientBox from '../stakingStyles/DetailGradientBox';
 import { StakingInfoStack } from './NominatorsTable';
+import Progress from './Progress';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
@@ -36,6 +37,7 @@ interface StakingInfoStackWithIconProps {
   title: string;
   token?: string | undefined;
   text?: string | undefined;
+  onClick?: () => void;
 }
 
 const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
@@ -121,13 +123,14 @@ interface CollapseSectionProp {
   open: boolean;
   children: React.ReactNode;
   onClick: () => void;
+  notShow?: boolean;
 }
 
-const CollapseSection = ({ TitleIcon, children, onClick, open, title }: CollapseSectionProp) => {
+const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, title }: CollapseSectionProp) => {
   const theme = useTheme();
 
   return (
-    <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: '#060518', borderRadius: '14px', p: '4px' }}>
+    <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: '#060518', borderRadius: '14px', display: notShow ? 'none' : 'inherit', p: '4px' }}>
       <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px', p: '8px 14px 11px' }}>
         {TitleIcon}
         <Typography color={open ? '#596AFF' : theme.palette.text.primary} sx={{ transition: 'all 150ms ease-out', width: 'fit-content' }} variant='B-2'>
@@ -183,11 +186,13 @@ interface PoolDetailProps {
   poolDetail: PoolInfo | undefined;
   handleClose: () => void;
   genesisHash: string | undefined;
+  comprehension?: boolean; // if it is true all the information will be shown in the table
+  openMenu?: boolean;
 }
 
 type CollapseState = Record<string, boolean>;
 
-export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: PoolDetailProps): React.ReactElement {
+export default function PoolDetail ({ comprehension, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -239,8 +244,14 @@ export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: Po
         }
       }}
       fullScreen
-      open={!!poolDetail}
+      open={Boolean(poolDetail || openMenu)}
     >
+      {!poolDetail &&
+        <Progress
+          loaderSize={40}
+          text={t('Loading pool information')}
+        />
+      }
       {poolDetail &&
         <Container disableGutters sx={{ height: '100%', width: '100%' }}>
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
@@ -255,7 +266,7 @@ export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: Po
                 poolDetail={poolDetail}
               />
               <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
+              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: comprehension ? 'flex-start' : 'space-between', p: '0 12px 0 10px', rowGap: '8px' }}>
                 <StakingInfoStackWithIcon
                   Icon={<SnowFlake color={theme.palette.text.highlight} size='18' />}
                   amount={poolDetail.bondedPool?.points}
@@ -273,6 +284,19 @@ export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: Po
                   text={poolDetail.bondedPool?.memberCounter.toString()}
                   title={t('Members')}
                 />
+                {comprehension &&
+                  <StakingInfoStackWithIcon
+                    Icon={<Flag color={theme.palette.text.highlight} size='24' variant='Bulk' />}
+                    text={poolDetail.bondedPool?.state?.toString() ?? ''}
+                    title={t('Status')}
+                  />}
+                {comprehension &&
+                  <StakingInfoStackWithIcon
+                    Icon={<BuyCrypto color={theme.palette.text.highlight} size='24' variant='Bulk' />}
+                    onClick={handleCollapses('Rewards')}
+                    text={t('More info')}
+                    title={t('Rewards')}
+                  />}
               </Container>
               <GradientDivider style={{ m: '12px 0 7px' }} />
               <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
@@ -316,6 +340,7 @@ export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: Po
                 </CollapseSection>
                 <CollapseSection
                   TitleIcon={<People color={collapse['Members'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
+                  notShow={!comprehension}
                   onClick={handleCollapses('Members')}
                   open={collapse['Members']}
                   title={t('Members')}
@@ -324,6 +349,7 @@ export default function PoolDetail ({ genesisHash, handleClose, poolDetail }: Po
                 </CollapseSection>
                 <CollapseSection
                   TitleIcon={<BuyCrypto color={collapse['Rewards'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
+                  notShow={!comprehension}
                   onClick={handleCollapses('Rewards')}
                   open={collapse['Rewards']}
                   title={t('Rewards')}

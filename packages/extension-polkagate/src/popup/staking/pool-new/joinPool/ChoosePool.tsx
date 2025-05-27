@@ -161,6 +161,7 @@ export default function ChoosePool ({ filter, onNext, pools, searchedQuery, sele
         }
         {incrementalPools && poolsToShow && poolsToShow.length > 0 &&
           <PoolsTable
+            comprehension={false}
             genesisHash={genesisHash}
             poolsInformation={poolsToShow}
             selectable

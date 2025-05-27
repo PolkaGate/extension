@@ -34,10 +34,10 @@ interface PoolInfoProp {
   selectable?: boolean;
   selected?: PoolInfo | undefined;
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
-  joiningStatus?: boolean;
+  status?: string;
 }
 
-export const PoolItem = ({ genesisHash, joiningStatus, onDetailClick, poolInfo, selectable, selected, setSelectedPool }: PoolInfoProp) => {
+export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, status }: PoolInfoProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -69,11 +69,11 @@ export const PoolItem = ({ genesisHash, joiningStatus, onDetailClick, poolInfo, 
           <StakingInfoStack amount={poolInfo.bondedPool?.points} decimal={decimal} title={t('Staked')} token={token} />
           <StakingInfoStack text={String(commission) + '%'} title={t('Commission')} />
           <StakingInfoStack text={poolInfo.bondedPool?.memberCounter.toString() ?? '0'} title={t('Members')} />
-          {joiningStatus &&
-            <StakingInfoStack secondaryColor='#3988FF' text={t('Joining')} title={t('Status')} />
+          {status &&
+            <StakingInfoStack secondaryColor='#3988FF' text={status} title={t('Status')} />
           }
         </Container>
-        {!joiningStatus && <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
+        {!status && <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
           <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
         </IconButton>}
       </Container>
@@ -87,9 +87,11 @@ interface PoolsTableProp {
   selectable?: boolean;
   selected?: PoolInfo | undefined;
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
+  comprehension?: boolean; // if it is true all the information will be shown in the table
+
 }
 
-export default function PoolsTable ({ genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
+export default function PoolsTable ({ comprehension, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
   const [poolDetail, setPoolDetail] = React.useState<PoolInfo | undefined>(undefined);
 
   const togglePoolDetail = useCallback((validatorInfo: PoolInfo | undefined) => () => {
@@ -112,6 +114,7 @@ export default function PoolsTable ({ genesisHash, poolsInformation, selectable,
         ))}
       </Stack>
       <PoolDetail
+        comprehension={comprehension}
         genesisHash={genesisHash}
         handleClose={togglePoolDetail(undefined)}
         poolDetail={poolDetail}

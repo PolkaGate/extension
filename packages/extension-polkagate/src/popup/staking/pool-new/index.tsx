@@ -74,7 +74,7 @@ export default function Pool (): React.ReactElement {
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const rewards = useMemo(() => stakingInfo.pool === undefined ? undefined : new BN(stakingInfo.pool?.myClaimable ?? 0), [stakingInfo.pool]);
 
-  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
+  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
   const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount > 2 ? 'row' : 'column', [StakingInfoTileCount]);
 
   const estimatedFee2 = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, redeem, param ?? [0]);
@@ -124,7 +124,6 @@ export default function Pool (): React.ReactElement {
           <BackWithLabel
             content={<Back />}
             onClick={onBack}
-            staking
             style={{ pb: 0 }}
           />
           <StakingPortfolio
@@ -198,6 +197,7 @@ export default function Pool (): React.ReactElement {
       </Grid>
       <StakingMenu
         genesisHash={genesisHash ?? ''}
+        pool={stakingInfo.pool}
         type='pool'
       />
       <ToBeReleased

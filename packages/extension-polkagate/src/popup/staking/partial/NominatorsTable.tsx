@@ -8,6 +8,7 @@ import type { ValidatorInformation } from '../../../hooks/useValidatorsInformati
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { ArrowRight2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
 import { FormatBalance2 } from '../../../components';
@@ -50,9 +51,10 @@ interface StakingInfoStackProps {
   text?: string | undefined;
   amount?: string | BN | Compact<INumber> | null | undefined;
   secondaryColor?: string;
+  onClick?: () => void;
 }
 
-export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) => {
+export const StakingInfoStack = ({ amount, decimal, onClick, secondaryColor, text, title, token }: StakingInfoStackProps) => {
   const theme = useTheme();
 
   return (
@@ -72,9 +74,14 @@ export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title,
           value={amount}
         />}
       {text &&
-        <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
-          {text}
-        </Typography>}
+        <Container disableGutters sx={{ cursor: onClick ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', width: 'fit-content' }}>
+          <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
+            {text}
+          </Typography>
+          {onClick &&
+            <ArrowRight2 color={theme.palette.text.highlight} onClick={onClick} size='12' />
+          }
+        </Container>}
       <Typography color='text.highlight' textAlign='left' variant='B-4'>
         {title}
       </Typography>
@@ -101,7 +108,7 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
         </IconButton>
       </Container>
       <GradientDivider style={{ my: '4px' }} />
-      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
           <StakingInfoStack amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
           <StakingInfoStack text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
@@ -121,7 +128,7 @@ interface NominatorsTableProp {
   validatorsInformation: ValidatorInformation[];
 }
 
-export default function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+export default function NominatorsTable({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {

@@ -170,12 +170,15 @@ export interface ReviewProps {
 }
 
 export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+  const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
+  const isRow = !!pool?.bondedPool?.state;
+
   return (
     <Stack direction='column' sx={{ height: '500px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
-      {pool
+      {isRow
         ? (
           <RowAccountBox
             genesisHash={genesisHash}
@@ -189,9 +192,9 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
       {pool &&
         <PoolItem
           genesisHash={genesisHash}
-          joiningStatus
           onDetailClick={noop}
           poolInfo={pool}
+          status={isRow ? t('Joining') : t('Creating')}
         />
       }
       <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%' }}>

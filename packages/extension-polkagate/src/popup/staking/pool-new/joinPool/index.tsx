@@ -66,7 +66,7 @@ export default function JoinPool () {
   }, [bondAmount, estimatedFee2, t]);
 
   const errorMessage = useMemo(() => {
-    if (!bondAmount || !stakingInfo.availableBalanceToStake || !api) {
+    if (!bondAmount || !stakingInfo.availableBalanceToStake) {
       return undefined;
     }
 
@@ -83,7 +83,7 @@ export default function JoinPool () {
     }
 
     return undefined;
-  }, [api, bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minJoinBond, t]);
+  }, [bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minJoinBond, t]);
 
   const onSearch = useCallback((query: string) => setSearchedQuery(query), []);
   const onNext = useCallback(() => setStep(step + 1), [step]);
@@ -106,21 +106,20 @@ export default function JoinPool () {
   });
 
   return transactionFlow || (
-    <>
-      <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
-        <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
-          <JoinPoolBackButton
-            dispatchFilter={dispatchFilter}
-            filter={filter}
-            genesisHash={genesisHash}
-            noFilter={step === POOL_STEPS.CONFIG}
-            onBack={onBack}
-            onSearch={onSearch}
-            stepCounter={{ currentStep: step === POOL_STEPS.CHOOSE_POOL ? 1 : 2, totalSteps: 3 }}
-            style={{ mb: '15px' }}
-          />
-          {step === POOL_STEPS.CHOOSE_POOL &&
+    <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
+      <UserDashboardHeader homeType='default' noSelection />
+      <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
+        <JoinPoolBackButton
+          dispatchFilter={dispatchFilter}
+          filter={filter}
+          genesisHash={genesisHash}
+          noFilter={step === POOL_STEPS.CONFIG}
+          onBack={onBack}
+          onSearch={onSearch}
+          stepCounter={{ currentStep: step === POOL_STEPS.CHOOSE_POOL ? 1 : 2, totalSteps: 3 }}
+          style={{ mb: '15px' }}
+        />
+        {step === POOL_STEPS.CHOOSE_POOL &&
             <ChoosePool
               filter={filter}
               onNext={onNext}
@@ -129,8 +128,8 @@ export default function JoinPool () {
               selectedPool={selectedPool}
               setSelectedPool={setSelectedPool}
             />
-          }
-          {step === POOL_STEPS.CONFIG &&
+        }
+        {step === POOL_STEPS.CONFIG &&
             <JoinPoolInput
               bondAmount={bondAmount}
               errorMessage={errorMessage}
@@ -143,9 +142,8 @@ export default function JoinPool () {
               setBondAmount={setBondAmount}
               stakingInfo={stakingInfo}
             />
-          }
-        </Motion>
-      </Grid>
-    </>
+        }
+      </Motion>
+    </Grid>
   );
 }
