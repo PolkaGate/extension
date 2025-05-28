@@ -106,7 +106,7 @@ export default function BondExtra (): React.ReactElement {
   const onBack = useCallback(() => navigate('/pool/' + genesisHash) as void, [genesisHash, navigate]);
 
   const transactionFlow = useTransactionFlow({
-    backPathTitle: t('Unstaking'),
+    backPathTitle: t('Stake more'),
     closeReview,
     formatted,
     genesisHash: genesisHash ?? '',

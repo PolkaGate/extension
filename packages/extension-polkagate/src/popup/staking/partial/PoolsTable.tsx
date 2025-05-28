@@ -120,11 +120,11 @@ interface PoolsTableProp {
   selectable?: boolean;
   selected?: PoolInfo | undefined;
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
-  comprehension?: boolean; // if it is true all the information will be shown in the table
+  comprehensive?: boolean; // if it is true all the information will be shown in the table
 
 }
 
-export default function PoolsTable ({ comprehension, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
+export default function PoolsTable ({ comprehensive, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
   const [poolDetail, setPoolDetail] = React.useState<PoolInfo | undefined>(undefined);
 
   const togglePoolDetail = useCallback((validatorInfo: PoolInfo | undefined) => () => {
@@ -147,7 +147,7 @@ export default function PoolsTable ({ comprehension, genesisHash, poolsInformati
         ))}
       </Stack>
       <PoolDetail
-        comprehension={comprehension}
+        comprehensive={comprehensive}
         genesisHash={genesisHash}
         handleClose={togglePoolDetail(undefined)}
         poolDetail={poolDetail}

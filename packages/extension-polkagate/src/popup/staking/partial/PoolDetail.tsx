@@ -11,8 +11,7 @@ import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useT
 import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, Flag, FlashCircle, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 
-import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
-
+import Subscan from '../../../assets/icons/Subscan';
 import { FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
@@ -40,11 +39,11 @@ interface StakingInfoStackWithIconProps {
   onClick?: () => void;
 }
 
-const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
+const StakingInfoStackWithIcon = ({ Icon, amount, decimal, onClick, text, title, token }: StakingInfoStackWithIconProps) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', m: 0, width: 'fit-content' }}>
       {Icon}
-      <StakingInfoStack amount={amount} decimal={decimal} text={text} title={title} token={token} />
+      <StakingInfoStack amount={amount} decimal={decimal} onClick={onClick} text={text} title={title} token={token} />
     </Container>
   );
 };
@@ -150,12 +149,12 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
           </Typography>
         </Container>
         <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
-          {members.map((member) => {
+          {members.map((member, index) => {
             const percentage = (Number(member.member.points.toString()) / Number(totalStaked)) * 100;
             // const percentage = ((isHexToBn(member.member.points.toString()).div(isHexToBn(totalStaked.toString()))).muln(100)).toString();
 
             return (
-              <>
+              <React.Fragment key={index}>
                 <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
                   <Identity2
                     address={member.accountId}
@@ -175,7 +174,8 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
                   </Typography>
                 </Container>
-              </>
+                {members.length > index + 1 && <GradientDivider isBlueish />}
+              </React.Fragment>
             );
           })}
         </Stack>
@@ -287,13 +287,13 @@ interface PoolDetailProps {
   poolDetail: MyPoolInfo | undefined;
   handleClose: () => void;
   genesisHash: string | undefined;
-  comprehension?: boolean; // if it is true all the information will be shown in the table
+  comprehensive?: boolean; // if it is true all the information will be shown in the table
   openMenu?: boolean;
 }
 
 type CollapseState = Record<string, boolean>;
 
-export default function PoolDetail ({ comprehension, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
+export default function PoolDetail ({ comprehensive, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -367,7 +367,7 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                 poolDetail={poolDetail}
               />
               <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: comprehension ? 'flex-start' : 'space-between', p: '0 12px 0 10px', rowGap: '8px' }}>
+              <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: comprehensive ? '12px' : '4px', justifyContent: comprehensive ? 'flex-start' : 'space-between', p: '0 12px 0 10px' }}>
                 <StakingInfoStackWithIcon
                   Icon={<SnowFlake color={theme.palette.text.highlight} size='18' />}
                   amount={poolDetail.bondedPool?.points}
@@ -385,13 +385,13 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                   text={poolDetail.bondedPool?.memberCounter.toString()}
                   title={t('Members')}
                 />
-                {comprehension &&
+                {comprehensive &&
                   <StakingInfoStackWithIcon
                     Icon={<Flag color={theme.palette.text.highlight} size='24' variant='Bulk' />}
                     text={poolDetail.bondedPool?.state?.toString() ?? ''}
                     title={t('Status')}
                   />}
-                {comprehension &&
+                {comprehensive &&
                   <StakingInfoStackWithIcon
                     Icon={<BuyCrypto color={theme.palette.text.highlight} size='24' variant='Bulk' />}
                     onClick={handleCollapses('Rewards')}
@@ -413,7 +413,7 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
 
                       return (
                         <>
-                          <RoleItem address={value} genesisHash={genesisHash} key={index} role={key} />
+                          <RoleItem address={value} genesisHash={genesisHash} role={key} />
                           {!noDivider && <GradientDivider style={{ my: '8px' }} />}
                         </>
                       );
@@ -431,17 +431,17 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                       const noDivider = Object.entries(ids).length === index + 1;
 
                       return (
-                        <>
+                        <React.Fragment key={key}>
                           <RoleItem address={value} genesisHash={genesisHash} key={index} role={key} />
                           {!noDivider && <GradientDivider style={{ my: '8px' }} />}
-                        </>
+                        </React.Fragment>
                       );
                     })}
                   </Stack>
                 </CollapseSection>
                 <CollapseSection
                   TitleIcon={<People color={collapse['Members'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
-                  notShow={!comprehension}
+                  notShow={!comprehensive}
                   onClick={handleCollapses('Members')}
                   open={collapse['Members']}
                   sideText={poolDetail.bondedPool?.memberCounter.toString()}
@@ -455,7 +455,7 @@ export default function PoolDetail ({ comprehension, genesisHash, handleClose, o
                 </CollapseSection>
                 <CollapseSection
                   TitleIcon={<BuyCrypto color={collapse['Rewards'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
-                  notShow={!comprehension}
+                  notShow={!comprehensive}
                   onClick={handleCollapses('Rewards')}
                   open={collapse['Rewards']}
                   title={t('Rewards')}

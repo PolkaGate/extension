@@ -176,7 +176,7 @@ function StakingMenu ({ genesisHash, pool, type }: Props): React.ReactElement {
         </Grid>
       </Container>
       <PoolDetail
-        comprehension
+        comprehensive
         genesisHash={genesisHash}
         handleClose={togglePoolDetail}
         openMenu={openPopup}
