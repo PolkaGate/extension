@@ -48,9 +48,19 @@ export default function usePools2 (genesisHash: string | undefined): UsePools {
   const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
 
   useEffect(() => {
-    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
-    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
-    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
+    const handleTotalPools = (res) => setTotalNumberOfPools(res.detail);
+    const handleFetchedPools = (res) => setNumberOfFetchedPools(res.detail);
+    const handleIncrementalPools = (res) => setIncrementalPools(res.detail);
+
+    window.addEventListener('totalNumberOfPools', handleTotalPools);
+    window.addEventListener('numberOfFetchedPools', handleFetchedPools);
+    window.addEventListener('incrementalPools', handleIncrementalPools);
+
+    return () => {
+      window.removeEventListener('totalNumberOfPools', handleTotalPools);
+      window.removeEventListener('numberOfFetchedPools', handleFetchedPools);
+      window.removeEventListener('incrementalPools', handleIncrementalPools);
+    };
   }, []);
 
   const getPools = useCallback(async (api: ApiPromise) => {

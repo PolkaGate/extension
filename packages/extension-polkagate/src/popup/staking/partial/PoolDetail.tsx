@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, Flag, FlashCircle, People } from 'iconsax-react';
+import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 
 import Subscan from '../../../assets/icons/Subscan';
@@ -37,14 +37,13 @@ interface StakingInfoStackWithIconProps {
   title: string;
   token?: string | undefined;
   text?: string | undefined;
-  onClick?: () => void;
 }
 
-const StakingInfoStackWithIcon = ({ Icon, amount, decimal, onClick, text, title, token }: StakingInfoStackWithIconProps) => {
+const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', m: 0, width: 'fit-content' }}>
       {Icon}
-      <StakingInfoStack amount={amount} decimal={decimal} onClick={onClick} text={text} title={title} token={token} />
+      <StakingInfoStack amount={amount} decimal={decimal} text={text} title={title} token={token} />
     </Container>
   );
 };
@@ -77,7 +76,26 @@ interface PoolIdentityDetailProps {
 }
 
 const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps) => {
+  const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
+
+  const poolStatus = useMemo(() => {
+    const status = poolDetail.bondedPool?.state as string | undefined;
+
+    return status === 'Open'
+      ? t('pool')
+      : status === 'Destroying'
+        ? t('destroying')
+        : t('blocked');
+  }, [poolDetail.bondedPool?.state, t]);
+
+  const { bgcolor, textColor } = useMemo(() => {
+    const status = poolDetail.bondedPool?.state as string | undefined;
+
+    return status === 'Open'
+      ? { bgcolor: 'rgba(128, 154, 203, 0.15)', textColor: 'rgba(128, 154, 203, 1)' }
+      : { bgcolor: 'rgba(255, 79, 185, 0.15)', textColor: 'rgba(255, 79, 185, 1)' };
+  }, [poolDetail.bondedPool?.state]);
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
@@ -107,6 +125,9 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
         <Grid container item justifyContent='center' sx={{ columnGap: '4px', my: '6px' }}>
           <Typography color='text.primary' variant='B-2'>
             {poolDetail.metadata}
+            <Typography color={textColor} sx={{ bgcolor, borderRadius: '10px', ml: '6px', p: '4px 6px' }} textTransform='uppercase' variant='B-5'>
+              {poolStatus}
+            </Typography>
           </Typography>
         </Grid>
         <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
@@ -320,8 +341,8 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
   }), [poolDetail]);
 
   const ids = useMemo(() => ({
-    'reward ID': poolDetail?.stashIdAccount?.rewardDestination?.toString(), // TODO: reward ID is wrong
-    'stash ID': poolDetail?.stashIdAccount?.stashId.toString()
+    'reward ID': poolDetail?.accounts?.rewardId.toString(),
+    'stash ID': poolDetail?.accounts?.stashId.toString()
   }), [poolDetail]);
 
   const handleCollapses = useCallback((type: string) => () => dispatchCollapse({ type }), []);
@@ -368,7 +389,7 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
                 poolDetail={poolDetail}
               />
               <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: comprehensive ? '12px' : '4px', justifyContent: comprehensive ? 'flex-start' : 'space-between', p: '0 12px 0 10px' }}>
+              <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
                 <StakingInfoStackWithIcon
                   Icon={<SnowFlake color={theme.palette.text.highlight} size='18' />}
                   amount={poolDetail.bondedPool?.points}
@@ -386,19 +407,6 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
                   text={poolDetail.bondedPool?.memberCounter.toString()}
                   title={t('Members')}
                 />
-                {comprehensive &&
-                  <StakingInfoStackWithIcon
-                    Icon={<Flag color={theme.palette.text.highlight} size='24' variant='Bulk' />}
-                    text={poolDetail.bondedPool?.state?.toString() ?? ''}
-                    title={t('Status')}
-                  />}
-                {comprehensive &&
-                  <StakingInfoStackWithIcon
-                    Icon={<BuyCrypto color={theme.palette.text.highlight} size='24' variant='Bulk' />}
-                    onClick={handleCollapses('Rewards')}
-                    text={t('More info')}
-                    title={t('Rewards')}
-                  />}
               </Container>
               <GradientDivider style={{ m: '12px 0 7px' }} />
               <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
