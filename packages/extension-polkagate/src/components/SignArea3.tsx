@@ -27,8 +27,8 @@ import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
 import { getSubstrateAddress, noop } from '../util/utils';
 import SignUsingPassword from './SignUsingPassword';
-import { ExtensionPopup, SignUsingProxy } from '.';
 import SignWithLedger from './SignWithLedger';
+import { ExtensionPopup, SignUsingProxy } from '.';
 
 type AlertHandler = {
   alertText: string;
@@ -56,7 +56,7 @@ const SignUsingQR = ({ handleClose, onSignature, openMenu, payload, signerPayloa
       iconColor={theme.palette.text.highlight}
       iconSize={25}
       openMenu={openMenu}
-      title={t('Select Proxy')}
+      title={t('Sign with QR-Code')}
     >
       <Qr
         address={signerPayload?.address ?? ''}
@@ -289,13 +289,12 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
 
   return (
     <>
-      {
-        noPrivateKeyAccount && !isLedger &&
+      {noPrivateKeyAccount && !isLedger &&
         <ChooseSigningButton
           alertHandler={alertHandler}
         />
       }
-      { isLedger &&
+      {isLedger &&
         <SignWithLedger
           address={address}
           api={api}
@@ -309,8 +308,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
           signerPayload={signerPayload}
         />
       }
-      {
-        (selectedProxy || !noPrivateKeyAccount) &&
+      {(selectedProxy || !noPrivateKeyAccount) &&
         <SignUsingPassword
           api={api}
           from={from}
