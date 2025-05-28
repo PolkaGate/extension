@@ -74,12 +74,12 @@ export const StakingInfoStack = ({ amount, decimal, onClick, secondaryColor, tex
           value={amount}
         />}
       {text &&
-        <Container disableGutters sx={{ cursor: onClick ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', m: 0, width: 'fit-content' }}>
+        <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', cursor: onClick ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', m: 0, width: 'fit-content' }}>
           <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
             {text}
           </Typography>
           {onClick &&
-            <ArrowRight2 color={theme.palette.text.highlight} onClick={onClick} size='12' />
+            <ArrowRight2 color={theme.palette.text.highlight} size='12' />
           }
         </Container>}
       <Typography color='text.highlight' textAlign='left' variant='B-4'>
