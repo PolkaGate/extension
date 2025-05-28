@@ -144,7 +144,7 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
           <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
             {t('Staked')}
           </Typography>
-          <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='25%'>
+          <Typography color='text.highlight' letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='25%'>
             {t('Percent')}
           </Typography>
         </Container>
@@ -170,7 +170,7 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
                     tokens={[token ?? '']}
                     value={isHexToBn(member.member.points.toString())}
                   />
-                  <Typography color='text.primary' variant='B-4' width='25%'>
+                  <Typography color='text.primary' textAlign='right' variant='B-4' width='25%'>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
                   </Typography>
                 </Container>
