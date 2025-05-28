@@ -177,7 +177,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
   const isRow = !!pool?.bondedPool?.state;
 
   return (
-    <Stack direction='column' sx={{ height: '500px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
+    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
       {isRow
         ? (
           <RowAccountBox
