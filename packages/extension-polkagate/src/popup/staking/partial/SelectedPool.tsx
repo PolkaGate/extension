@@ -1,42 +1,33 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import type { PoolInfo } from '@polkadot/extension-polkagate/src/util/types';
+
+import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Refresh } from 'iconsax-react';
 import React from 'react';
 
-import { logoPink } from '@polkadot/extension-polkagate/src/assets/logos/index';
-
-import { PolkaGateIdenticon } from '../../../style';
+import { PoolIdenticon } from './PoolIdenticon';
 
 export interface Props {
-  poolStashAddress: string | undefined;
-  poolName: string | undefined;
+  selectedPool: PoolInfo | undefined
   text: string;
   style?: SxProps<Theme>;
   onClick: () => void;
 }
 
-export default function SelectedPool ({ onClick, poolName, poolStashAddress, style, text }: Props): React.ReactElement {
+export default function SelectedPool ({ onClick, selectedPool, style, text }: Props): React.ReactElement {
   const theme = useTheme();
-  const isPolkagate = poolName?.toLocaleLowerCase().includes('polkagate');
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', gap: '10px', p: '8.5px 10px', width: '100%', ...style }}>
-      { isPolkagate
-        ? <Box
-          component='img'
-          src={logoPink as string}
-          sx={{ height: 36, width: 36 }}
-        />
-        : <PolkaGateIdenticon
-          address={poolStashAddress ?? ''}
-          size={36}
-        />
-      }
+      <PoolIdenticon
+        poolInfo={selectedPool}
+        size={36}
+      />
       <Stack direction='column' sx={{ display: 'flex', flexDirection: 'column', width: 'calc(100% - 70px)' }}>
         <Typography color='text.primary' sx={{ maxWidth: '210px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }} variant='B-2'>
-          {poolName}
+          {selectedPool?.metadata || ''}
         </Typography>
         <Typography color='text.highlight' variant='B-4' width='fit-content'>
           {text}

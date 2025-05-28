@@ -16,13 +16,14 @@ import { FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useTranslation } from '../../../hooks';
-import { GradientDivider, PolkaGateIdenticon } from '../../../style';
+import { GradientDivider } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Email, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
 import DetailGradientBox from '../stakingStyles/DetailGradientBox';
 import { StakingInfoStack } from './NominatorsTable';
+import { PoolIdenticon } from './PoolIdenticon';
 import Progress from './Progress';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
@@ -83,8 +84,8 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
       <Container disableGutters sx={{ alignItems: 'flex-start', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <PoolStashIdSocials poolDetail={poolDetail} />
         <Grid container item sx={{ border: '8px solid #00000033', borderRadius: '999px', height: 'fit-content', width: 'fit-content' }}>
-          <PolkaGateIdenticon
-            address={poolDetail.stashIdAccount?.accountId.toString() ?? ''}
+          <PoolIdenticon
+            poolInfo={poolDetail}
             size={48}
           />
         </Grid>

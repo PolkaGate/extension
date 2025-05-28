@@ -71,8 +71,7 @@ export default function JoinPoolInput ({ bondAmount, errorMessage, estimatedFee2
       />
       <SelectedPool
         onClick={onBack}
-        poolName={selectedPool?.metadata ?? ''}
-        poolStashAddress={selectedPool?.stashIdAccount?.accountId.toString()}
+        selectedPool={selectedPool}
         text={t('Selected Pool')}
       />
       <StakeAmountInput
