@@ -74,7 +74,8 @@ export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title,
       {text &&
         <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
           {text}
-        </Typography>}
+        </Typography>
+      }
       <Typography color='text.highlight' textAlign='left' variant='B-4'>
         {title}
       </Typography>

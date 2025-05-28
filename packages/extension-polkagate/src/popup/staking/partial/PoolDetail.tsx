@@ -41,7 +41,7 @@ interface StakingInfoStackWithIconProps {
 
 const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', m: 0, width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, width: 'fit-content' }}>
       {Icon}
       <StakingInfoStack amount={amount} decimal={decimal} text={text} title={title} token={token} />
     </Container>
