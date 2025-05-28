@@ -48,19 +48,19 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
 };
 
 const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
-
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
-      <PolkaGateIdenticon address={selectedAccount?.address ?? ''} size={36} style={{ margin: 0 }} />
-      <Stack direction='column' sx={{ alignItems: 'flex-start', gap: '8px' }}>
-        <Typography color='text.primary' sx={{ maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', width: 'fit-content' }} variant='B-3'>
-          {selectedAccount?.name}
-        </Typography>
-        <Typography color='text.highlight' sx={{ mt: '-10px', width: 'fit-content' }} variant='B-1'>
-          {toShortAddress(formatted ?? selectedAccount?.address, 8)}
-        </Typography>
-      </Stack>
+      <Identity2
+        address={selectedAccount?.address}
+        addressStyle={{ color: 'text.highlight' }}
+        charsCount={12}
+        columnGap= '5px'
+        genesisHash={genesisHash ?? ''}
+        identiconSize={36}
+        showShortAddress
+        style={{ addressVariant: 'B-4', variant: 'B-3' }}
+        withShortAddress
+      />
     </Container>
   );
 };
