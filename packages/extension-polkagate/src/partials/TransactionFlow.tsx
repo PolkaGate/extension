@@ -13,7 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { isBn } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../components';
-import { useBackground } from '../hooks';
+import { useBackground, useTranslation } from '../hooks';
 import Confirmation2 from './Confirmation2';
 import Review from './Review';
 import { UserDashboardHeader, WaitScreen2 } from '.';
@@ -38,6 +38,7 @@ export enum TRANSACTION_FLOW_STEPS {
 
 export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
+  const { t } = useTranslation();
 
   const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
@@ -83,7 +84,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
           onClick={closeReview}
           stepCounter={stepCounter}
           style={{ pb: 0 }}
-          text={backPathTitle}
+          text={flowStep === TRANSACTION_FLOW_STEPS.REVIEW ? t('Review') : backPathTitle}
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
