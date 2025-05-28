@@ -43,15 +43,16 @@ const ValidatorIdentity = ({ validatorInfo }: ValidatorIdentityProp) => {
   );
 };
 
-interface ValidatorStakingInfoProps {
+interface StakingInfoStackProps {
   decimal?: number | undefined;
   token?: string | undefined;
   title: string;
   text?: string | undefined;
-  amount?: string | BN | Compact<INumber> | null | undefined
+  amount?: string | BN | Compact<INumber> | null | undefined;
+  secondaryColor?: string;
 }
 
-export const ValidatorStakingInfo = ({ amount, decimal, text, title, token }: ValidatorStakingInfoProps) => {
+export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) => {
   const theme = useTheme();
 
   return (
@@ -71,9 +72,10 @@ export const ValidatorStakingInfo = ({ amount, decimal, text, title, token }: Va
           value={amount}
         />}
       {text &&
-        <Typography color='text.primary' textAlign='left' variant='B-4' width='fit-content'>
+        <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
           {text}
-        </Typography>}
+        </Typography>
+      }
       <Typography color='text.highlight' textAlign='left' variant='B-4'>
         {title}
       </Typography>
@@ -102,10 +104,10 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
       <GradientDivider style={{ my: '4px' }} />
       <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-          <ValidatorStakingInfo amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
-          <ValidatorStakingInfo text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
+          <StakingInfoStack amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
+          <StakingInfoStack text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
           {/* @ts-ignore */}
-          <ValidatorStakingInfo text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
+          <StakingInfoStack text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
         </Container>
         {/* <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
           <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} /> // it is available in the design onFigma but has no functionality

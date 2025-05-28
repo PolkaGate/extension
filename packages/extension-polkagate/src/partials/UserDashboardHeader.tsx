@@ -63,10 +63,19 @@ function UserDashboardHeader ({ genesisHash, homeType, noSelection = false, sign
       <Grid columnGap='6px' container item width='fit-content'>
         <Grid container item width='fit-content'>
           <HomeButton type={homeType || (isConnectedDapp.length ? 'default' : 'active')} />
-          {!noSelection && <ConnectedDapp />}
+          {
+            !noSelection &&
+            <ConnectedDapp />
+          }
         </Grid>
-        {!(signerInformation?.selectedProxy && genesisHash) && <AccountSelection noSelection={noSelection} />} {/** Should not display the selected account while the selected proxy account is being shown. */}
-        {signerInformation?.selectedProxy && genesisHash && <SelectedProxy genesisHash={genesisHash} signerInformation={signerInformation} />}
+        {
+          !(signerInformation?.selectedProxy && genesisHash) && !noSelection &&
+          <AccountSelection noSelection={noSelection} /> /** Should not display the selected account while the selected proxy account is being shown. */
+        }
+        {
+          signerInformation?.selectedProxy && genesisHash &&
+          <SelectedProxy genesisHash={genesisHash} signerInformation={signerInformation} />
+        }
       </Grid>
       <FullscreenModeButton />
     </Container>

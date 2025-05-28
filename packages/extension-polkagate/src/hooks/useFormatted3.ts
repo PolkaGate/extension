@@ -17,7 +17,7 @@ export default function useFormatted (address: AccountId | string | undefined, g
       return String(formatted);
     }
 
-    if (!chain) {
+    if (!chain || !address) {
       return;
     }
 

@@ -14,7 +14,7 @@ import { BN_ZERO, bnMax } from '@polkadot/util';
 import { isHexToBn } from '../util/utils';
 import { useBalances2, useChainInfo, useCurrentEraIndex2, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
-interface SessionIfo {
+export interface SessionIfo {
   eraLength: number; // Length of an era in blocks
   eraProgress: number; // Current progress within the era
   currentEra: number; // Current era number
@@ -25,9 +25,10 @@ export interface DateAmount {
   amount: BN; // Amount to be released
 }
 
-interface UnstakingType {
+export interface UnstakingType {
   toBeReleased: DateAmount[] | undefined; // Array of amounts with release dates
   unlockingAmount: BN | undefined; // Total amount in the unlocking process
+  redeemAmount?: BN | undefined; // Total amount that is done with the unlocking process
 }
 
 export interface SoloStakingInfo {

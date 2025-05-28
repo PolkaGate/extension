@@ -9,7 +9,7 @@ import { Box, Container, Dialog, Grid, Slide, type SxProps, type Theme, Typograp
 import { ArrowCircleLeft, type Icon } from 'iconsax-react';
 import React from 'react';
 
-import { useTranslation } from '../hooks';
+import { useIsBlueish, useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import BlueGradient from '../style/BlueGradient';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
@@ -21,7 +21,6 @@ export interface ExtensionPopupProps {
   iconSize?: number;
   iconColor?: string;
   iconVariant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone' | undefined;
-  isBlueish?: boolean;
   maxHeight?: string;
   onBack?: () => void;
   openMenu: boolean;
@@ -44,8 +43,9 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-function ExtensionPopup ({ RightItem, TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, isBlueish, maxHeight = '440px', onBack, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
+function ExtensionPopup ({ RightItem, TitleIcon, children, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
+  const isBlueish = useIsBlueish();
 
   return (
     <Dialog

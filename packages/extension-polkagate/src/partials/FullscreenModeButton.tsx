@@ -4,11 +4,11 @@
 import { Box, Grid, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Maximize4 } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useLocation } from 'react-router';
 
-import { Tooltip } from '../components';
-import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
+import { MyTooltip } from '../components';
+import { useIsBlueish, useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
 import { windowOpen } from '../messaging';
 
 interface Props {
@@ -23,8 +23,7 @@ function FullscreenModeButton ({ url }: Props) {
   const hovered = useIsHovered(buttonContainer);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
-
-  const onStakingPages = useMemo(() => pathname.includes('pool') || pathname.includes('solo'), [pathname]);
+  const isBlueish = useIsBlueish();
 
   const onClick = useCallback(() => {
     if (url) {
@@ -63,7 +62,9 @@ function FullscreenModeButton ({ url }: Props) {
   };
 
   return (
-    <>
+    <MyTooltip
+      content={t('Fullscreen')}
+    >
       <Box
         onClick={onClick as unknown as () => void}
         ref={buttonContainer}
@@ -77,11 +78,10 @@ function FullscreenModeButton ({ url }: Props) {
           width: '30px'
         }}
       >
-        <Maximize4 color={hovered ? '#EAEBF1' : onStakingPages ? theme.palette.text.highlight : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
+        <Maximize4 color={hovered ? '#EAEBF1' : isBlueish ? theme.palette.text.highlight : isDark ? '#AA83DC' : '#291443'} size={18} style={{ zIndex: 5 }} variant='Linear' />
         <Grid sx={gradientBackgroundStyle} />
       </Box>
-      <Tooltip content={t('Fullscreen')} targetRef={buttonContainer} />
-    </>
+    </MyTooltip>
   );
 }
 

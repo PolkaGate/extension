@@ -6,7 +6,7 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useIsBlueish, useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 
 import { AccountContext, ScrollingTextBox } from '../../../components';
 import useIsDark from '../../../hooks/useIsDark';
@@ -66,6 +66,7 @@ interface Props {
 function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
+  const isBlueish = useIsBlueish();
   const { accounts } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -127,7 +128,12 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
         />
         {!noSelection &&
           <ArrowDown2
-            color={isDark ? isInAccountLists ? '#05091C' : '#AA83DC' : '#8F97B8'}
+            color={isDark
+              ? isInAccountLists
+                ? '#05091C'
+                : isBlueish ? '#596AFF' : '#AA83DC'
+              : '#8F97B8'
+            }
             size='18'
             style={{ transform: isInAccountLists ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }}
             variant='Bold'

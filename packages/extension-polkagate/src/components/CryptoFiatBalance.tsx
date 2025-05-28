@@ -8,6 +8,7 @@ import type { BN } from '@polkadot/util';
 import { Grid, Skeleton, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
+import { useIsBlueish } from '../hooks';
 import { FormatBalance2, FormatPrice } from '.';
 
 type FormatPriceProps = ComponentProps<typeof FormatPrice>;
@@ -35,9 +36,12 @@ function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): Re
 
 export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
   const theme = useTheme();
+  const isBlueish = useIsBlueish();
 
   const isDark = theme.palette.mode === 'dark';
-  const balanceColor = isDark ? '#BEAAD8' : '#291443';
+  const balanceColor = isDark
+    ? isBlueish ? theme.palette.text.primary : '#BEAAD8'
+    : '#291443';
   const priceColor = isDark ? '#BEAAD8' : '#8F97B8';
 
   const balanceStyle = {

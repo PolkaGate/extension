@@ -5,7 +5,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { StepCounterType } from '../components/BackWithLabel';
 import type { Content } from '../partials/Review';
-import type { ProxyTypes } from '../util/types';
+import type { PoolInfo, ProxyTypes } from '../util/types';
 
 import React from 'react';
 
@@ -21,9 +21,10 @@ interface UseTransactionFlowProps {
   stepCounter: StepCounterType;
   proxyTypeFilter?: ProxyTypes[] | undefined;
   formatted: string | undefined;
+  pool?: PoolInfo | undefined;
 }
 
-export default function useTransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, proxyTypeFilter, review, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, review, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }
@@ -34,6 +35,7 @@ export default function useTransactionFlow ({ backPathTitle, closeReview, format
       closeReview={closeReview}
       formatted={formatted}
       genesisHash={genesisHash}
+      pool={pool}
       proxyTypeFilter={proxyTypeFilter}
       stepCounter={stepCounter}
       transaction={tx}

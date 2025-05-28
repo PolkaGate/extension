@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
+import type { PoolInfo } from '../../../util/types';
 
 import { Container, Grid, styled, useTheme } from '@mui/material';
 import { AddSquare, Book, Discover, Menu, Setting2, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import { MyTooltip } from '@polkadot/extension-polkagate/src/components/index';
-
-import { useTranslation } from '../../../components/translate';
-import { useIsHovered } from '../../../hooks';
+import { MyTooltip } from '../../../components';
+import { useIsHovered, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
+import PoolDetail from './PoolDetail';
 
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
@@ -25,19 +25,6 @@ const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => (
   position: 'absolute',
   zIndex: -1
 }));
-
-// const SelectedItemBackground = styled('div')(({ hovered }: { hovered: boolean }) => ({
-//   background: '#FF4FB9',
-//   filter: 'blur(14px)',
-//   height: '15px',
-//   opacity: hovered ? 1 : 0,
-//   position: 'absolute',
-//   right: 0,
-//   top: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   transition: 'all 250ms ease-out',
-//   width: '15px'
-// }));
 
 interface MenuItemProps {
   ButtonIcon: Icon;
@@ -62,7 +49,6 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
   return (
     <>
       <MyTooltip
-        color='#1c498a'
         content={tooltip}
         notShow={!tooltip}
         placement='top'
@@ -94,7 +80,7 @@ const PAGES_CONFIG = {
   pool: [
     { icon: UserOctagon, tooltip: 'Staking Home', url: '/pool/genesisHash' },
     { icon: AddSquare, tooltip: 'Stake More', url: '/pool/genesisHash/bondExtra' },
-    { icon: Menu, tooltip: 'Pool Info', url: '/pool/genesisHash/poolInfo' },
+    { icon: Menu, tooltip: 'Pool Info', url: '/pool/detail' },
     { icon: Book, tooltip: 'Info', url: '/pool/genesisHash/info' }
   ] as MenuItemConfig[],
   solo: [
@@ -109,9 +95,10 @@ const PAGES_CONFIG = {
 interface Props {
   type: 'solo' | 'pool';
   genesisHash: string;
+  pool?: PoolInfo | null;
 }
 
-function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
+function StakingMenu ({ genesisHash, pool, type }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -120,6 +107,7 @@ function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
 
   const [leftPosition, setLeftPosition] = useState<number | null>(null);
   const [currentMenu, setCurrentMenu] = useState<string>();
+  const [openPopup, setOpenPopup] = useState<boolean>(false);
 
   const pageConfig = PAGES_CONFIG[type] || [];
 
@@ -136,10 +124,22 @@ function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
     return () => clearTimeout(timeout);
   }, [pathname, state?.previousUrl]);
 
+  const togglePoolDetail = useCallback(() => setOpenPopup((isOpen) => !isOpen), []);
+
   const handleMenuClick = useCallback((input: string) => () => {
+    if (input === currentMenu) {
+      return;
+    }
+
+    if (input === '/pool/detail') {
+      pool && togglePoolDetail();
+
+      return;
+    }
+
     navigate(input) as void;
     setCurrentMenu(input);
-  }, [navigate]);
+  }, [currentMenu, navigate, pool, togglePoolDetail]);
 
   const selectionLineStyle = useMemo(() => ({
     background: 'linear-gradient(90deg, transparent 9.75%, #596AFF 52.71%, transparent 95.13%)',
@@ -147,33 +147,42 @@ function StakingMenu ({ genesisHash, type }: Props): React.ReactElement {
     height: '2px',
     position: 'relative',
     top: '2px',
-    transform: `translateX(${leftPosition ? leftPosition - 56 : 7}px)`,
+    transform: `translateX(${leftPosition ? leftPosition - (type === 'solo' ? 56 : 80) : 7}px)`,
     transition: 'transform 0.3s ease-in-out',
     width: '48px'
-  }), [leftPosition]);
+  }), [leftPosition, type]);
 
   return (
-    <Container disableGutters sx={{ bottom: '15px', mx: type === 'solo' ? '45px' : '15px', position: 'fixed', width: `calc(100% - ${type === 'solo' ? '90px' : '30px'})`, zIndex: 1 }}>
-      {leftPosition && <GradientDivider style={selectionLineStyle} />}
-      <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
-        {pageConfig.map(({ icon: ButtonIcon, tooltip, url }, index) => {
-          const path = url.replace('genesisHash', genesisHash);
+    <>
+      <Container disableGutters sx={{ bottom: '15px', mx: type === 'solo' ? '45px' : '70px', position: 'fixed', width: `calc(100% - ${type === 'solo' ? '90px' : '140px'})`, zIndex: 1 }}>
+        {leftPosition && <GradientDivider style={selectionLineStyle} />}
+        <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
+          {pageConfig.map(({ icon: ButtonIcon, tooltip, url }, index) => {
+            const path = url.replace('genesisHash', genesisHash);
 
-          return (
-            <MenuItem
-              ButtonIcon={ButtonIcon}
-              isSelected={currentMenu === path}
-              key={index}
-              onClick={handleMenuClick(path)}
-              setLeftPosition={setLeftPosition}
-              tooltip={t(tooltip)}
-              withBorder={pageConfig.length - 1 !== index}
-            />
-          );
-        })}
-        <MenuBackground mode={theme.palette.mode} />
-      </Grid>
-    </Container>
+            return (
+              <MenuItem
+                ButtonIcon={ButtonIcon}
+                isSelected={currentMenu === path}
+                key={index}
+                onClick={handleMenuClick(path)}
+                setLeftPosition={setLeftPosition}
+                tooltip={t(tooltip)}
+                withBorder={pageConfig.length - 1 !== index}
+              />
+            );
+          })}
+          <MenuBackground mode={theme.palette.mode} />
+        </Grid>
+      </Container>
+      <PoolDetail
+        comprehensive
+        genesisHash={genesisHash}
+        handleClose={togglePoolDetail}
+        openMenu={openPopup}
+        poolDetail={openPopup ? pool ?? undefined : undefined}
+      />
+    </>
   );
 }
 

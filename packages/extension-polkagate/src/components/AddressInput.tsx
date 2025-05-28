@@ -18,7 +18,7 @@ import ShortAddress from './ShortAddress';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][];
-  label: string;
+  label?: string;
   style?: SxProps<Theme>;
   chain?: Chain | null;
   address: string | null | undefined;
@@ -104,10 +104,11 @@ export default function AddressInput ({ addWithQr = false, address, allAddresses
 
   return (
     <>
-      <Stack direction='column' rowGap='5px' justifyContent='start' ref={containerRef} sx={{ position: 'relative', ...style }}>
-        <Typography color='#EAEBF1' variant='B-1' sx={{ textAlign: 'left' }}>
-          {label}
-        </Typography>
+      <Stack direction='column' justifyContent='start' ref={containerRef} rowGap='5px' sx={{ position: 'relative', ...style }}>
+        {label &&
+          <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-1'>
+            {label}
+          </Typography>}
         <Autocomplete
           componentsProps={{
             paper: {
@@ -139,29 +140,6 @@ export default function AddressInput ({ addWithQr = false, address, allAddresses
               {...params}
               InputProps={{
                 ...params.InputProps,
-                style: {
-                  color: `${invalidAddress ? '#FF4FB9' : '#BEAAD8'}`, // Applies to input text AND placeholder
-                  fontFamily: 'Inter',
-                  fontSize: '12px',
-                  fontWeight: 500
-                },
-                startAdornment: (
-                  <InputAdornment position='start'>
-
-                    {enteredAddress && !invalidAddress
-                      ? <PolkaGateIdenticon
-                        address={enteredAddress}
-                        size={18}
-                      />
-                      : <Hashtag
-                        color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : '#AA83DC'}
-                        size='18'
-                        style={{ cursor: 'pointer', margin: '0 2px 0' }}
-                        variant='Bulk'
-                      />
-                    }
-                  </InputAdornment>
-                ),
                 endAdornment: (
                   <InputAdornment position='end' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
                     {addWithQr && !disabled &&
@@ -175,34 +153,55 @@ export default function AddressInput ({ addWithQr = false, address, allAddresses
                     }
                     {/* icon={enteredAddress || address ? faXmarkCircle : faPaste} */}
                   </InputAdornment>
-                )
+                ),
+                startAdornment: (
+                  <InputAdornment position='start'>
+
+                    {enteredAddress && !invalidAddress
+                      ? (
+                        <PolkaGateIdenticon
+                          address={enteredAddress}
+                          size={18}
+                        />)
+                      : (
+                        <Hashtag
+                          color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : '#AA83DC'}
+                          size='18'
+                          style={{ cursor: 'pointer', margin: '0 2px 0' }}
+                          variant='Bulk'
+                        />)
+                    }
+                  </InputAdornment>
+                ),
+                style: {
+                  color: `${invalidAddress ? '#FF4FB9' : '#BEAAD8'}`, // Applies to input text AND placeholder
+                  fontFamily: 'Inter',
+                  fontSize: '12px',
+                  fontWeight: 500
+                }
               }}
               onChange={handleInputAddress}
               placeholder={placeHolder ?? t('Enter your account ID')}
               sx={{
+                '&:hover': {
+                  bgcolor: '#2D1E4A'
+                },
                 '> div.MuiOutlinedInput-root': {
-                  '> fieldset':
-                  {
-                    border: 'none'
-                  },
-                  '> input.MuiAutocomplete-input':
-                  {
-                    border: 'none',
-                    p: 0,
+                  '> fieldset': { border: 'none' },
+                  '> input.MuiAutocomplete-input': {
                     '&::placeholder': {
                       fontFamily: 'Inter',
                       fontSize: '12px',
                       fontWeight: 500
-                    }
+                    },
+                    border: 'none',
+                    p: 0
                   },
                   border: 'none',
                   height: '100%',
                   p: '0 3px 0 5px'
                 },
                 bgcolor: '#1B133CB2',
-                '&:hover': {
-                  bgcolor: '#2D1E4A'
-                },
                 border: '1px solid',
                 borderColor: `${invalidAddress ? 'warning.main' : focus ? 'action.focus' : '#BEAAD833'}`,
                 borderRadius: '12px',
@@ -236,7 +235,7 @@ export default function AddressInput ({ addWithQr = false, address, allAddresses
           sx={{ border: 'none', height: '44px', p: 0 }}
         />
         {invalidAddress &&
-          <Typography color='warning.main' variant='B-1' sx={{ textAlign: 'left' }}>
+          <Typography color='warning.main' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Invalid address')}
           </Typography>
         }

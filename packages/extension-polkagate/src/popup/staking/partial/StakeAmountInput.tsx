@@ -28,7 +28,7 @@ const StyledButton = styled(Grid)(() => ({
   borderRadius: '12px',
   cursor: 'pointer',
   justifyContent: 'center',
-  padding: '3px 10px',
+  padding: '1px 10px',
   width: 'fit-content'
 }));
 
@@ -88,11 +88,12 @@ const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme 
     fontWeight: 500,
     textAlign: 'left'
   },
+  padding: '4px',
   transition: 'all 150ms ease-out'
 }));
 
 interface Props {
-  style: SxProps<Theme>;
+  style?: SxProps<Theme>;
   title?: string;
   titleInColor?: string;
   buttonsArray?: AmountButtonInputProps[];
