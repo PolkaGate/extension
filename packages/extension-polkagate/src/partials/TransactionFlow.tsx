@@ -13,6 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { isBn } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../components';
+import { useBackground } from '../hooks';
 import Confirmation2 from './Confirmation2';
 import Review from './Review';
 import { UserDashboardHeader, WaitScreen2 } from '.';
@@ -36,6 +37,8 @@ export enum TRANSACTION_FLOW_STEPS {
 }
 
 export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+  useBackground('staking');
+
   const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
