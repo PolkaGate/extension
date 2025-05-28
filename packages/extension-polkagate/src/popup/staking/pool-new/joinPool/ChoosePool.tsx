@@ -100,7 +100,7 @@ export default function ChoosePool ({ filter, onNext, pools, searchedQuery, sele
     let filtered = incrementalPools;
 
     if (searchedQuery) {
-      filtered = filtered.filter((pool) => pool.metadata?.includes(searchedQuery));
+      filtered = filtered.filter((pool) => pool.metadata?.toLowerCase().includes(searchedQuery.toLowerCase()));
     }
 
     if (filter.isVerified) {
@@ -161,7 +161,7 @@ export default function ChoosePool ({ filter, onNext, pools, searchedQuery, sele
         }
         {incrementalPools && poolsToShow && poolsToShow.length > 0 &&
           <PoolsTable
-            comprehension={false}
+            comprehensive={false}
             genesisHash={genesisHash}
             poolsInformation={poolsToShow}
             selectable
