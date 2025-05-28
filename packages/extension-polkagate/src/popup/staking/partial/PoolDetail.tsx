@@ -4,18 +4,20 @@
 import type { TransitionProps } from '@mui/material/transitions';
 import type { Compact } from '@polkadot/types';
 import type { INumber } from '@polkadot/types/types';
-import type { BN } from '@polkadot/util';
 import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
+import { type BN, BN_ZERO } from '@polkadot/util';
+
 import Subscan from '../../../assets/icons/Subscan';
-import { FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
+import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Email, Web, XIcon } from '../../settings/icons';
@@ -217,17 +219,27 @@ const PoolReward = ({ genesisHash, totalPoolReward }: PoolRewardProps) => {
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const price = useTokenPriceBySymbol(token ?? '', genesisHash ?? '');
+  const fiatBalance = useMemo(() => calcPrice(price.price, isHexToBn(totalPoolReward) ?? BN_ZERO, decimal ?? 0), [decimal, price?.price, totalPoolReward]);
+
   return (
     <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', gap: '18px', p: '12px', width: '100%' }}>
       <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
         {t('Pool Claimable Reward')}
       </Typography>
-      <FormatBalance2
-        decimals={[decimal ?? 0]}
-        style={{ ...theme.typography['B-4'] }}
-        tokenColor={theme.palette.text.highlight}
-        tokens={[token ?? '']}
-        value={isHexToBn(totalPoolReward)}
+      <CryptoFiatBalance
+        cryptoBalance={isHexToBn(totalPoolReward)}
+        cryptoProps={{ style: { ...theme.typography['B-4'] }, tokenColor: theme.palette.text.highlight }}
+        decimal={decimal ?? 0}
+        fiatBalance={fiatBalance}
+        fiatProps={{ decimalColor: theme.palette.text.primary }}
+        style={{
+          alignItems: 'start',
+          rowGap: 0,
+          textAlign: 'left',
+          width: '100%'
+        }}
+        token={token ?? ''}
       />
     </Stack>
   );

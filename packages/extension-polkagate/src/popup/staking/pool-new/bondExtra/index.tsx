@@ -142,8 +142,8 @@ export default function BondExtra (): React.ReactElement {
                 value: onMaxValue
               }]}
               decimal={decimal}
-              focused
               errorMessage={errorMessage}
+              focused
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
               title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
