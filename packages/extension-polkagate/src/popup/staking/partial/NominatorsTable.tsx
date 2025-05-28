@@ -8,7 +8,6 @@ import type { ValidatorInformation } from '../../../hooks/useValidatorsInformati
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowRight2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
 import { FormatBalance2 } from '../../../components';
@@ -51,10 +50,9 @@ interface StakingInfoStackProps {
   text?: string | undefined;
   amount?: string | BN | Compact<INumber> | null | undefined;
   secondaryColor?: string;
-  onClick?: () => void;
 }
 
-export const StakingInfoStack = ({ amount, decimal, onClick, secondaryColor, text, title, token }: StakingInfoStackProps) => {
+export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) => {
   const theme = useTheme();
 
   return (
@@ -74,14 +72,9 @@ export const StakingInfoStack = ({ amount, decimal, onClick, secondaryColor, tex
           value={amount}
         />}
       {text &&
-        <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', cursor: onClick ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', m: 0, width: 'fit-content' }}>
-          <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
-            {text}
-          </Typography>
-          {onClick &&
-            <ArrowRight2 color={theme.palette.text.highlight} size='12' />
-          }
-        </Container>}
+        <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
+          {text}
+        </Typography>}
       <Typography color='text.highlight' textAlign='left' variant='B-4'>
         {title}
       </Typography>
@@ -128,7 +121,7 @@ interface NominatorsTableProp {
   validatorsInformation: ValidatorInformation[];
 }
 
-export default function NominatorsTable({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+export default function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
