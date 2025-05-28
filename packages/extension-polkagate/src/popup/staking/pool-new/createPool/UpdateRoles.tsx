@@ -66,7 +66,6 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
             </Typography>
           </Container>
           <AddressInput
-            addWithQr
             address={roles.nominator}
             placeHolder={t('Enter Nominator address')}
             setAddress={nominatorChangeHandler}
@@ -81,7 +80,6 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
             </Typography>
           </Container>
           <AddressInput
-            addWithQr
             address={roles.bouncer}
             placeHolder={t('Enter Bouncer address')}
             setAddress={bouncerChangeHandler}
