@@ -65,24 +65,14 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, pool: MyPoolInfo 
  * Calculates the balance available for staking
  *
  * @param balances - Account balance information
- * @param stakingAccount - User's staking account information
- * @param unlockingAmount - Amount currently in the unlocking process
  * @returns The amount available to stake, or undefined if required data is missing
  */
-const getAvailableToStake = (balances: BalancesInfo | undefined, pool: MyPoolInfo | null | undefined, sessionInfo: UnstakingType | undefined) => {
-  if (!balances || !pool || !sessionInfo) {
+const getAvailableToStake = (balances: BalancesInfo | undefined) => {
+  if (!balances?.freeBalance) {
     return undefined;
   }
 
-  const staked = new BN(pool?.member?.points ?? 0);
-  const redeemable = sessionInfo.redeemAmount ?? BN_ZERO;
-  const unlockingAmount = sessionInfo.unlockingAmount ?? BN_ZERO;
-
-  if (!balances?.freeBalance || !staked || (!sessionInfo.unlockingAmount && !sessionInfo.redeemAmount)) {
-    return undefined;
-  }
-
-  const _availableToStake = balances.freeBalance.sub(staked).sub(unlockingAmount).sub(redeemable || BN_ZERO);
+  const _availableToStake = balances.freeBalance;
 
   // the reserved balance can be considered here as the amount which can be staked as well in solo,
   // but since pooled balance are migrating to the reserved balance. and also the pallet has issue to accept reserved,
@@ -136,7 +126,7 @@ export default function usePoolStakingInfo (address: string | undefined, genesis
     fetchSessionInfo().catch(console.error);
   }, [fetchSessionInfo, pool]);
 
-  const availableBalanceToStake = getAvailableToStake(balances, pool, sessionInfo);
+  const availableBalanceToStake = getAvailableToStake(balances);
 
   return {
     availableBalanceToStake,
