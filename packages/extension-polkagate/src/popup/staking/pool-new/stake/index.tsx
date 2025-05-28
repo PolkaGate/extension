@@ -103,7 +103,7 @@ export default function Stake () {
   return (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
+        <UserDashboardHeader homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

@@ -114,7 +114,7 @@ export default function NominationsSetting (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noSelection />
+      <UserDashboardHeader homeType='default' />
       <Motion variant='slide'>
         <NominationsBackButton style={{ mt: '8px' }} />
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>

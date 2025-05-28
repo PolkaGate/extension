@@ -103,7 +103,7 @@ export default function BondExtra (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noSelection />
+      <UserDashboardHeader homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}

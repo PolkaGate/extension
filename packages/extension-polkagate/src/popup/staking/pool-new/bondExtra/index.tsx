@@ -119,7 +119,7 @@ export default function BondExtra (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
+        <UserDashboardHeader homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
@@ -142,6 +142,7 @@ export default function BondExtra (): React.ReactElement {
                 value: onMaxValue
               }]}
               decimal={decimal}
+              focused
               errorMessage={errorMessage}
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
