@@ -12,12 +12,13 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useAccount, useChainInfo, useFullscreen, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { PROXY_CHAINS } from '../../util/constants';
-import { EmptyListBox } from '../components';
+import { NotSupportedBox } from '../components';
 import HomeLayout from '../components/layout';
 import AddProxy from './AddProxy';
+import { STEPS } from './consts';
 import Manage from './Manage';
 import TransactionFlow from './TransactionFlow';
-import { STEPS } from './types';
+import { type ProxyFlowStep } from './types';
 
 function ManageProxies (): React.ReactElement {
   useFullscreen();
@@ -28,7 +29,7 @@ function ManageProxies (): React.ReactElement {
 
   useUpdateSelectedAccount(address);
 
-  const [step, setStep] = useState(STEPS.CHECK);
+  const [step, setStep] = useState<ProxyFlowStep>(STEPS.CHECK);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
   const [depositedValue, setDepositedValue] = useState<BN | null | undefined>();
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
@@ -95,16 +96,16 @@ function ManageProxies (): React.ReactElement {
         {t('Proxy Management')}
       </Typography>
       <Typography color='text.secondary' sx={{ m: '10px 0 20px' }} variant='B-4'>
-        {t('You can add new proxies or remove existing ones for the account here. Keep in mind that you need to reserve a deposit to have proxies.')}
+        {t('You can add new proxies or remove existing ones for the selected account. Keep in mind that a deposit is required to maintain proxies.')}
       </Typography>
       <Grid container item sx={{ display: 'block', position: 'relative' }}>
         {step === STEPS.UNSUPPORTED &&
-          <EmptyListBox
-            style={{ marginTop: '20px' }}
+          <NotSupportedBox
+            style={{ height: '500px', marginTop: '20px' }}
             text={t('The chosen blockchain does not support proxy management.')}
           />
         }
-        {step === STEPS.MANAGE &&
+        {step !== STEPS.UNSUPPORTED &&
           <Manage
             api={api}
             chain={chain}
@@ -134,7 +135,7 @@ function ManageProxies (): React.ReactElement {
             address={address}
             api={api}
             chain={chain}
-            depositedValue={BN_ZERO}
+            depositedValue={depositedValue ?? BN_ZERO}
             newDepositValue={newDepositValue}
             proxyItems={proxyItems}
             setRefresh={setRefresh}

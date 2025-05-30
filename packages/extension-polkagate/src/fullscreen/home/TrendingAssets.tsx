@@ -171,7 +171,7 @@ function TrendingAssets (): React.ReactElement {
               );
             })}
         </motion.div>
-        <FadeOnScrollHorizontal containerRef={refContainer} style={{ height: refContainer.current?.offsetHeight}} width='130px' />
+        <FadeOnScrollHorizontal containerRef={refContainer} style={{ height: refContainer.current?.offsetHeight }} width='130px' />
       </Stack>
     </VelvetBox>
   );

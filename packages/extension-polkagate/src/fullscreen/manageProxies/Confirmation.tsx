@@ -1,38 +1,237 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { BN } from '@polkadot/util';
-import type { ProxyItem, TxInfo } from '../../util/types';
+import type { TransactionDetail } from '../../util/types';
 
-import { Avatar, Divider, Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { CloseCircle, TickCircle } from 'iconsax-react';
+import React, { useCallback, useMemo } from 'react';
+
+import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { subscan } from '../../assets/icons';
-import { DisplayInfo, GradientButton, Identity2, Motion, ShortAddress, ShowBalance } from '../../components';
-import { useChainName, useTranslation } from '../../hooks';
-import FailSuccessIcon from '../../popup/history/partials/FailSuccessIcon';
-import { GlowBox, VelvetBox } from '../../style';
+import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../components';
+import { useChainInfo, useIsBlueish, useTranslation } from '../../hooks';
+import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
+import { GlowBox, GradientDivider, VelvetBox } from '../../style';
+import { toTitleCase } from '../../util';
+import { amountToHuman, countDecimalPlaces, toShortAddress } from '../../util/utils';
 
-interface Props {
-  address: string | undefined;
-  txInfo: TxInfo;
-  handleClose: () => void;
-  depositAmount: BN;
-  proxyItems: ProxyItem[];
+const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
+  <Avatar
+    src={subscan as string}
+    sx={{ height: size, width: size, zIndex: 2 }}
+  />
+);
+
+interface AmountProps {
+  amount: string | undefined;
+  genesisHash: string | undefined;
 }
 
-const SubScanIcon = () => {
+const Amount = ({ amount, genesisHash }: AmountProps) => {
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const amountInHuman = amountToHuman((amount ?? '0'), decimal);
+
+  const [integerPart, decimalPart] = amountInHuman.split('.');
+
+  const decimalToShow = useMemo(() => {
+    if (decimalPart) {
+      const countDecimal = countDecimalPlaces(Number('0.' + decimalPart));
+      const toCut = countDecimal > 4 ? 4 : countDecimal;
+
+      return `.${decimalPart.slice(0, toCut)}`;
+    } else {
+      return '.00';
+    }
+  }, [decimalPart]);
+
   return (
-    <Avatar
-      src={subscan as string}
-      sx={{ height: '13px', width: '13px' }}
-    />
+    <Stack alignItems='flex-end' direction='row' py='4px'>
+      <Typography color='text.primary' lineHeight='normal' variant='H-1'>
+        {integerPart}
+      </Typography>
+      <Typography color='text.secondary' variant='H-3'>
+        {decimalToShow}
+      </Typography>
+      <Typography color='text.secondary' pl='3px' variant='H-3'>
+        {token}
+      </Typography>
+    </Stack>
   );
 };
 
-export default function Confirmation ({ address, depositAmount, handleClose, proxyItems, txInfo }: Props): React.ReactElement {
+interface ProxyAccountsProps {
+  accounts: string[];
+  genesisHash: string;
+}
+
+const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
+  return (
+    <Grid alignItems='center' container direction='row' item justifyContent='center' margin='10px 0 15px' width= '90%'>
+      {accounts?.map((acc, index) => (
+        <Identity2
+          address={acc}
+          genesisHash={genesisHash}
+          identiconSize={16}
+          key={index}
+          nameStyle={{ textAlign: 'center' }}
+          showShortAddress
+          style={{ bgcolor: '#C6AECC26', borderRadius: '9px', color: '#AA83DC', m: '3px', padding: '4px 8px 4px 4px', variant: 'B-2' }}
+        />
+      ))}
+    </Grid>
+  );
+};
+
+interface HeaderProps {
+  genesisHash: string | undefined;
+  transactionDetail: TransactionDetail;
+}
+
+const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
   const { t } = useTranslation();
-  const chainName = useChainName(address);
+
+  const { accounts, amount, description, success } = transactionDetail;
+
+  return (
+    <GlowBox style={{ m: 0, width: '100%' }}>
+      <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
+        <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
+          {success
+            ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+            : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          }
+        </Grid>
+        <Typography color='#AA83DC' pt='8px' textTransform='capitalize' variant='B-2'>
+          {
+            description && success
+              ? description
+              : success ? t('Completed') : t('Failed')
+          }
+        </Typography>
+        {
+          accounts && genesisHash
+            ? <>
+              {
+                accounts.length > 1
+                  ? <ProxyAccounts
+                    accounts={accounts}
+                    genesisHash={genesisHash}
+                  />
+                  : <Identity2
+                    address={accounts[0]}
+                    addressStyle={{ color: '#AA83DC' }}
+                    charsCount={12}
+                    genesisHash={genesisHash}
+                    nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
+                    noIdenticon
+                    showShortAddress
+                    style={{ addressVariant: 'B-1', padding: '10px 0 18px', variant: 'B-3' }}
+                    withShortAddress
+                  />
+              }
+            </>
+            : <Amount
+              amount={amount}
+              genesisHash={genesisHash}
+            />
+        }
+      </Stack>
+    </GlowBox>
+  );
+};
+
+interface DetailProps {
+  genesisHash: string | undefined;
+  isBlueish?: boolean;
+  transactionDetail: TransactionDetail;
+}
+
+const Detail = ({ genesisHash, isBlueish, transactionDetail }: DetailProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const mainEntries = useMemo(() => {
+    const fieldsToDisplay = ['amount', 'deposit', 'fee', 'block', 'txHash'];
+
+    return Object.entries(transactionDetail).filter(([key, value]) => fieldsToDisplay.includes(key) && value !== undefined && value !== null);
+  }, [transactionDetail]);
+
+  const extraEntries = useMemo(() => {
+    if (transactionDetail.extra && typeof transactionDetail.extra === 'object') {
+      return Object.entries(transactionDetail.extra).filter(([_, value]) => value !== undefined && value !== null);
+    }
+
+    return [];
+  }, [transactionDetail]);
+
+  const entriesToRender = [...extraEntries, ...mainEntries].filter(([_, content]) => content !== null && content !== undefined);
+
+  return (
+    <VelvetBox>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', p: '12px 18px' }}>
+        {entriesToRender.map(([key, content], index) => {
+          const withDivider = entriesToRender.length > index + 1;
+          const isHash = key === 'txHash';
+          const isBlock = key === 'block';
+          const isBalance = ['amount', 'deposit', 'fee'].includes(key);
+
+          const color = isBlock ? 'text.primary' : isBlueish ? 'text.highlight' : 'text.secondary';
+
+          return (
+            <React.Fragment key={key}>
+              <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} textTransform='capitalize' variant='B-1' width='fit-content'>
+                  {toTitleCase(t(key === 'txHash' ? 'transaction id' : key))}
+                </Typography>
+                <Typography color={color} sx={{ bgcolor: isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                  {isHash
+                    ? toShortAddress(String(content), 6)
+                    : isBalance
+                      ? (
+                        <FormatBalance2
+                          decimalPoint={4}
+                          decimals={[decimal ?? 0]}
+                          style={{
+                            color: isBlueish ? theme.palette.text.highlight : '#AA83DC',
+                            fontFamily: 'Inter',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            width: 'max-content'
+                          }}
+                          tokens={[token ?? '']}
+                          value={content as string}
+                        />)
+                      : content
+                  }
+                </Typography>
+              </Container>
+              {
+                withDivider &&
+                <GradientDivider style={{ my: '5px' }} />
+              }
+            </React.Fragment>
+          );
+        })}
+      </Stack>
+    </VelvetBox>
+  );
+};
+
+interface ButtonsProps {
+  address: string;
+  isBlueish: boolean;
+  genesisHash: string | undefined;
+  goToHistory?: () => void;
+  backToHome?: () => void;
+}
+
+function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
+  const { t } = useTranslation();
+  const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;
@@ -40,87 +239,80 @@ export default function Confirmation ({ address, depositAmount, handleClose, pro
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);
 
-  const fee = txInfo.api.createType('Balance', txInfo.fee);
+  return (
+    <Stack direction='column' sx={{ gap: '8px', zIndex: 1 }}>
+      {
+        goToHistory &&
+        <NeonButton
+          contentPlacement='center'
+          onClick={goToHistory}
+          style={{
+            height: '44px',
+            width: '345px'
+          }}
+          text={t('History')}
+        />
+      }
+      {
+        backToHome &&
+        <ActionButton
+          contentPlacement='center'
+          onClick={backToHome}
+          style={{
+            height: '44px',
+            width: '345px'
+          }}
+          text={t('Staking Home')}
+          variant='text'
+        />
+      }
+      <>
+        {isBlueish
+          ? <StakingActionButton
+            onClick={goToExplorer}
+            startIcon={<SubScanIcon />}
+            text={t('View on Explorer')}
+          />
+          : <GradientButton
+            onClick={goToExplorer}
+            startIconNode={
+              <Avatar
+                src={getLogo('subscan')}
+                sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
+                variant='square'
+              />
+            }
+            style={{ bottom: '17px', position: 'absolute', width: '88%', zIndex: 1 }}
+            text={t('View on Explorer')}
+          />
+        }
+      </>
+    </Stack>
+  );
+}
+
+interface Props {
+  address: string;
+  transactionDetail: TransactionDetail;
+  genesisHash: string | undefined;
+  goToHistory?: () => void;
+  backToHome?: () => void;
+}
+
+export default function Confirmation ({ address, backToHome, genesisHash, goToHistory, transactionDetail }: Props) {
+  const isBlueish = useIsBlueish();
 
   return (
-    <Motion>
-      <GlowBox style={{ m: 0, width: '100%' }}>
-        <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
-          <FailSuccessIcon
-            style={{ fontSize: '87px', margin: `${txInfo?.failureText ? 15 : 20}px auto`, textAlign: 'center', width: 'fit-content' }}
-            success={txInfo.success}
-          />
-          {txInfo?.failureText &&
-              <Typography color='#FF4FB9' sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: '2', display: '-webkit-box', mb: '15px', overflow: 'hidden', textOverflow: 'ellipsis' }} textAlign='center' variant='B-4' width='92%'>
-                {txInfo.failureText}
-              </Typography>
-          }
-          {/* <AccountWithProxyInConfirmation
-              txInfo={txInfo}
-            /> */}
-        </Stack>
-      </GlowBox>
-      <VelvetBox>
-        <Grid alignItems='center' container item justifyContent='center' pt='8px'>
-          {proxyItems.map(({ proxy, status }, index) => {
-            return (
-              <Grid alignItems='end' container justifyContent='center' key={index} sx={{ m: 'auto', pt: '5px', width: '90%' }}>
-                <Typography fontSize='16px' fontWeight={400} lineHeight='23px' maxWidth='45%' overflow='hidden' pl='5px' textOverflow='ellipsis' whiteSpace='nowrap'>
-                  {status === 'new'
-                    ? t('Added')
-                    : t('Removed')}
-                </Typography>
-                <Identity2
-                  address={proxy.delegate}
-                  genesisHash={txInfo?.chain?.genesisHash ?? ''}
-                  showShortAddress
-                  withShortAddress
-                />
-              </Grid>);
-          })}
-          <Divider sx={{ bgcolor: 'secondary.main', height: '2px', mt: '5px', width: '240px' }} />
-        </Grid>
-        <DisplayInfo caption={t('Fee:')} value={fee?.toHuman() ?? '00.00'} />
-        <Grid container item justifyContent='center' sx={{ pt: '10px' }}>
-          <Typography fontSize='16px' fontWeight={400} lineHeight='23px'>
-            {t('Deposit amount:')}
-          </Typography>
-          <Grid item lineHeight='22px' pl='5px'>
-            <ShowBalance
-              api={txInfo.api}
-              balance={depositAmount}
-              decimalPoint={4}
-              height={22}
-            />
-          </Grid>
-        </Grid>
-        {txInfo?.txHash &&
-            <Grid alignItems='center' container fontSize='16px' fontWeight={400} justifyContent='center' pt='8px'>
-              <Grid container item width='fit-content'>
-                <Typography pr='5px'>{t('Hash')}:</Typography>
-              </Grid>
-              <Grid container item width='fit-content'>
-                <ShortAddress
-                  address={txInfo.txHash}
-                  charsCount={6}
-                  showCopy
-                  style={{ fontSize: '16px' }}
-                />
-              </Grid>
-            </Grid>
-        }
-      </VelvetBox>
-      <GradientButton
-        contentPlacement='center'
-        onClick={goToExplorer}
-        startIconNode={<SubScanIcon />}
-        style={{
-          borderRadius: '18px',
-          height: '40px',
-          width: '100%'
-        }}
-        text={t('View On Explorer')}
+    <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
+      <Header genesisHash={genesisHash} transactionDetail={transactionDetail} />
+      <Detail genesisHash={genesisHash} isBlueish={isBlueish} transactionDetail={transactionDetail} />
+      <Buttons
+        address={address}
+        backToHome={backToHome}
+        genesisHash={genesisHash}
+        goToHistory={goToHistory}
+        isBlueish={isBlueish}
       />
-    </Motion>
+    </Stack>
   );
 }

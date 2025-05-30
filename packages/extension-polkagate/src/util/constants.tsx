@@ -3,8 +3,6 @@
 
 import type { ProxyTypes } from './types';
 
-/* eslint-disable header/header */
-
 export const EXTENSION_NAME = 'PolkaGate';
 export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
@@ -155,13 +153,19 @@ export const STAKING_ACTIONS = ['Solo Staking', 'Pool Staking'];
 export const STATES_NEEDS_MESSAGE = ['withdrawUnbound', 'unstake', 'stopNominating', 'tuneUp'];
 export const CONFIRMING_STATE = ['fail', 'success', 'confirming'];
 
-const PROXY_TYPE_POLKADOT = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'Governance', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_ASSET_HUBS = ['Any', 'NonTransfer', 'CancelProxy', 'Assets', 'AssetOwner', 'AssetManager', 'Collator'];
-const PROXY_TYPE_PASEO = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
+const PROXY_TYPE_POLKADOT = ['Any', 'CancelProxy', 'Governance', 'NominationPools', 'NonTransfer', 'Staking'];
+const PROXY_TYPE_KUSAMA = [...PROXY_TYPE_POLKADOT, 'Society'];
+const PROXY_TYPE_WESTEND = [...PROXY_TYPE_POLKADOT, 'SudoBalances'];
+const PROXY_TYPE_ASSET_HUBS = ['Any', 'Assets', 'AssetManager', 'AssetOwner', 'CancelProxy', 'Collator', 'NonTransfer'];
+const PROXY_TYPE_PASEO = [...PROXY_TYPE_POLKADOT];
 
-export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND, AssetHubs: PROXY_TYPE_ASSET_HUBS, Paseo: PROXY_TYPE_PASEO };
+export const CHAIN_PROXY_TYPES = {
+  AssetHubs: PROXY_TYPE_ASSET_HUBS,
+  Kusama: PROXY_TYPE_KUSAMA,
+  Paseo: PROXY_TYPE_PASEO,
+  Polkadot: PROXY_TYPE_POLKADOT,
+  Westend: PROXY_TYPE_WESTEND
+};
 
 export const VOTE_MAP = {
   AYE: 1,
@@ -244,7 +248,7 @@ export const PROFILE_COLORS = [
   { light: '#ACE894', dark: '#D81B60' },
   { light: '#F5D5ED', dark: '#2B4162' },
   { light: '#EBCFB2', dark: '#9D8189' },
-  { light: '#FCF0CC', dark: '#5F4842' },
+  { light: '#FCF0CC', dark: '#5F4842' }
 ];
 
 export const PROFILE_TAGS = {

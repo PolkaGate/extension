@@ -18,7 +18,7 @@ interface ChooseAccountMenuProps {
   genesisHash?: string | undefined;
   open: boolean;
   handleClose: () => void;
-  setAddress: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
+  setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
 }
 
 export default function AccountListModal ({ genesisHash, handleClose, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
@@ -32,7 +32,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
   const [appliedAddress, setAppliedAddress] = useState<string>();
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
-    const formatted = useFormatted3(maybeSelected, genesisHash)
+  const formatted = useFormatted3(maybeSelected, genesisHash);
 
   const _handleClose = useCallback(() => {
     setMayBeSelected(undefined);

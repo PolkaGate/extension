@@ -48,7 +48,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
       {
         Icon: Data,
         text: t('Manage proxies'),
-        value: `/fullscreenProxyManagement/${genesisHash}/${address}`
+        value: `/proxyManagement/${genesisHash}/${address}`
       },
       {
         Icon: Shield,

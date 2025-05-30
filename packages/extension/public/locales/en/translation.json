@@ -1558,5 +1558,22 @@
   "The reward amount will be automatically added to your staked amount.": "",
   "Stake more": "",
   "Address": "",
-  "Delete {{count}} prox{{ending}}": ""
+  "Delete {{count}} prox{{ending}}": "",
+  "Select account": "",
+  "This account is already added as a {{proxyType}} proxy.": "",
+  "An account cannot be its own proxy.": "",
+  "block(s)": "",
+  "In process": "",
+  "The chosen blockchain does not support this function.": "",
+  "Proxy added": "",
+  "Proxy removed": "",
+  "You can add new proxies or remove existing ones for the selected account. Keep in mind that a deposit is required to maintain proxies.": "",
+  "Remove {{count}} prox{{ending}}": "",
+  "You are adding {{count}} prox{{iesOrY}}": "",
+  "Are you sure you want to remove {{count}} prox{{iesOrY}}?": "",
+  "Prox{{iesOrY}} removed": "",
+  "{{count}} prox{{iesOrY}}": "",
+  "Please wait a few seconds and don’t close the {{container}}": "",
+  "extension": "",
+  "window": ""
 }

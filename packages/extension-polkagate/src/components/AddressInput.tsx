@@ -14,6 +14,7 @@ import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import isValidAddress from '../util/validateAddress';
 
 interface Props {
+  allAddresses?: [string, string | null, string | undefined][]// todo : remove
   address: string | null | undefined;
   addWithQr?: boolean;
   chain?: Chain | null;

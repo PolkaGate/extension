@@ -78,7 +78,7 @@ export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck =
             style={{ color: '#EAEBF1', variant: 'B-1' }}
           />
           <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', px: '4px' }} variant='B-5'>
-            {proxyItem.proxy.delay} ms
+            {proxyItem.proxy.delay * 6} sec
           </Typography>
         </Stack>
         <Stack columnGap='5px' direction='row'>

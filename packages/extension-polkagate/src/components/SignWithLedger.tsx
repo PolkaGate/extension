@@ -53,7 +53,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
   }, [api, from, handleTxResult, preparedTransaction, setFlowStep]);
 
   return (
-    <Grid container item sx={{ bottom: '0', position: 'absolute', width: '92%' }}>
+    <Grid container item sx={{ bottom: '10px', position: 'absolute', width: '92%' }}>
       {
         account?.isGeneric || account?.isMigration
           ? <LedgerSignGeneric

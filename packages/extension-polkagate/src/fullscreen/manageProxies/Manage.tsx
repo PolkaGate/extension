@@ -13,14 +13,15 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ChainLogo, FormatBalance2, GradientButton, ShowBalance } from '../../components';
+import { ChainLogo, GradientButton, ShowBalance, ShowBalance4 } from '../../components';
 import { useTranslation } from '../../hooks';
-import ProxyTableFL from './components/ProxyTableFL';
-import { STEPS } from './types';
+import ProxyList from './components/ProxyList';
+import { type ProxyFlowStep } from './types';
+import { STEPS } from './consts';
 
 interface Props {
   api: ApiPromise | undefined;
-  setStep: React.Dispatch<React.SetStateAction<string>>;
+  setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   isDisabledAddProxyButton: boolean;
   proxyItems: ProxyItem[] | null | undefined;
   chain: Chain | null | undefined;
@@ -108,18 +109,18 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
           }}
           text={t('Add proxy')}
         />
-        <Stack columnGap={1} direction='row'>
+        <Stack alignItems='center' columnGap={1} direction='row'>
           <Typography color='#AA83DC' variant='B-1'>
             {t('Deposit')}
           </Typography>
           <ChainLogo genesisHash={chain?.genesisHash} size={18} />
           <Typography color='#EAEBF1' variant='B-1'>
             {decimal && token &&
-              <FormatBalance2
+              <ShowBalance4
+                balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
                 decimalPoint={FLOATING_POINT_DIGIT}
-                decimals={[decimal]}
-                tokens={[token]}
-                value={depositedValue ?? newDepositValue ?? BN_ZERO}
+                genesisHash={chain?.genesisHash}
+                skeletonStyle={{ backgroundColor: '#946CC840' }}
               />}
           </Typography>
           {newDepositValue && depositedValue &&
@@ -140,9 +141,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
           }
         </Stack>
       </Stack>
-      <ProxyTableFL
-        api={api}
-        chain={chain}
+      <ProxyList
         handleDelete={handleDelete}
         proxyItems={proxyItems}
       />
@@ -170,7 +169,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
               height: '40px',
               width: '377px'
             }}
-            text={t('Delete {{count}} prox{{ending}}', { replace: { count: toBeDeletedProxies?.length, ending: toBeDeletedProxies?.length && toBeDeletedProxies.length > 1 ? 'ies' : 'y' } })}
+            text={t('Remove {{count}} prox{{ending}}', { replace: { count: toBeDeletedProxies?.length, ending: toBeDeletedProxies?.length && toBeDeletedProxies.length > 1 ? 'ies' : 'y' } })}
           />
         </Stack>
       }

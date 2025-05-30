@@ -52,7 +52,7 @@ const Menus = ({ address, handleClose, setDisplayPopup }: {
   }, [address, handleClose, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
-    address && chain && onAction(`/fullscreenProxyManagement/${address}`);
+    address && chain && onAction(`/proxyManagement/${address}`);
   }, [address, chain, onAction]);
 
   const onManageId = useCallback(() => {

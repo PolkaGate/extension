@@ -58,7 +58,7 @@ function AccountIconsFs({ accountInfo, address }: AddressDetailsProps): React.Re
   }, [address, chain]);
 
   const openManageProxy = useCallback(() => {
-    address && chain && onAction(`/fullscreenProxyManagement/${address}`);
+    address && chain && onAction(`/proxyManagement/${address}`);
   }, [address, chain, onAction]);
 
   return (

@@ -37,8 +37,8 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   },
   {
     Component: FullScreenManageProxies,
-    path: '/fullscreenProxyManagement/:genesisHash/:address/',
-    trigger: 'fullscreen-proxy-management'
+    path: '/proxyManagement/:genesisHash/:address/',
+    trigger: 'proxy-management'
   },
   {
     Component: ReferendumPost,

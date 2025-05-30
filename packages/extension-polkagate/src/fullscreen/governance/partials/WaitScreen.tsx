@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { inProcess } from '@polkadot/extension-polkagate/src/assets/gif/index';
+import { LoaderGif } from '@polkadot/extension-polkagate/src/components/index';
 
 import { useTranslation } from '../../../hooks';
 
@@ -47,7 +47,9 @@ function WaitScreen ({ defaultText }: Props): React.ReactElement {
       <Typography align='center' color='#EAEBF1' mt='25px' variant='B-3'>
         {text}
       </Typography>
-      <Box component='img' src={inProcess as string} sx={{ alignSelf: 'center', width: '250px' }} />
+      <LoaderGif
+        style={{ alignSelf: 'center', width: '250px' }}
+      />
       <Typography align='center' color='#BEAAD8' variant='B-4'>
         {t('Please wait a few seconds and don’t close the window.')}
       </Typography>

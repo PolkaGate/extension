@@ -5,26 +5,25 @@ import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
-import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../util/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { BN_ZERO, noop } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
-import { CanPayErrorAlert, ChainLogo, SelectedProxy, ShowBalance, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useChainInfo, useEstimatedFee, useFormatted3, useTranslation } from '../../hooks';
-import { FLOATING_POINT_DIGIT, PROXY_TYPE } from '../../util/constants';
+import { SelectedProxy } from '../../components';
+import { useEstimatedFee2, useTranslation } from '../../hooks';
+import { WaitScreen2 } from '../../partials';
 import { DraggableModal } from '../components/DraggableModal';
-import WaitScreen from '../governance/partials/WaitScreen';
-import ProxyAccountInfo from './components/ProxyAccountInfo';
 import Confirmation from './Confirmation';
-import { STEPS } from './types';
+import { STEPS } from './consts';
+import Review from './Review';
+import { type ProxyFlowStep } from './types';
 
 interface Props {
   address: string | undefined;
   api: ApiPromise | undefined;
-  setStep: React.Dispatch<React.SetStateAction<string>>;
+  setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   proxyItems: ProxyItem[] | null | undefined;
   chain: Chain | null | undefined;
   depositedValue: BN | null | undefined;
@@ -33,39 +32,9 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function DisplayValue (
-  { balance, decimal, genesisHash, label, token }: {
-    label: string;
-    genesisHash: string | undefined;
-    balance: BN | undefined;
-    decimal: number | undefined;
-    token: string | undefined;
-  }): React.ReactElement {
-  return (
-    <Stack direction='row' justifyContent='space-between'>
-      <Typography color='#AA83DC' variant='B-1'>
-        {label}
-      </Typography>
-      <Stack alignItems='center' columnGap={1} direction='row'>
-        <ChainLogo genesisHash={genesisHash} size={18} />
-        <Typography color='#EAEBF1' variant='B-1'>
-          {decimal && token &&
-            <ShowBalance
-              balance={balance}
-              decimal={decimal}
-              decimalPoint={FLOATING_POINT_DIGIT}
-              token={token}
-            />}
-        </Typography>
-      </Stack>
-    </Stack>
-  );
-}
-
 function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted3(address, chain?.genesisHash);
-  const { decimal, token } = useChainInfo(chain?.genesisHash, true);
+  const genesisHash = chain?.genesisHash;
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -102,46 +71,18 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
 
     if (depositedValue === null) {
       return newDepositValue;
-    } else if (depositedValue.gte(newDepositValue)) {
-      return BN_ZERO;
-    } else {
-      return newDepositValue.sub(depositedValue);
     }
+
+    if (depositedValue.gte(newDepositValue)) {
+      return BN_ZERO;
+    }
+
+    return newDepositValue.sub(depositedValue);
   }, [depositedValue, newDepositValue]);
 
   const removeProxy = api?.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
   const addProxy = api?.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
   const batchAll = api?.tx['utility']['batchAll'];
-
-  const changedItems = useMemo(() => proxyItems?.filter(({ status }) => status !== 'current'), [proxyItems]);
-
-  const { mode, reviewText } = useMemo(() => {
-    const settingProxy = proxyItems?.every(({ status }) => status === 'new');
-
-    if (settingProxy) {
-      return {
-        mode: 'adding proxy(ies)',
-        reviewText: `You are adding ${proxyItems && proxyItems.length > 1 ? `${proxyItems.length} proxies` : 'a proxy'}`
-      };
-    }
-
-    const clearingProxy = proxyItems?.every(({ status }) => status === 'remove');
-
-    if (clearingProxy) {
-      return {
-        mode: 'clearing proxy(ies)',
-        reviewText: `You are clearing your ${proxyItems && proxyItems?.length > 1 ? 'proxies' : 'proxy'}`
-      };
-    }
-
-    const toAdds = proxyItems?.filter(({ status }) => status === 'new').length;
-    const toRemoves = proxyItems?.filter(({ status }) => status === 'remove').length;
-
-    return {
-      mode: 'managing proxy(ies)',
-      reviewText: `You are ${toAdds && toAdds > 0 ? `adding ${toAdds} ${toRemoves && toRemoves > 0 ? ' and' : ''}` : ''} ${toRemoves && toRemoves > 0 ? `removing ${toRemoves}` : ''} ${(toAdds ?? 0) + (toRemoves ?? 0) > 1 ? 'proxies' : 'proxy'}`
-    };
-  }, [proxyItems]);
 
   const call = useMemo(() => {
     if (!removeProxy || !addProxy || !batchAll) {
@@ -153,6 +94,8 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     proxyItems?.forEach(({ proxy, status }) => {
       const { delay, delegate, proxyType } = proxy;
 
+      // TODO: we will add one proxy but delete in batch
+
       status === 'remove' && temp.push(removeProxy(delegate, proxyType, delay));
       status === 'new' && temp.push(addProxy(delegate, proxyType, delay));
     });
@@ -162,23 +105,87 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       : temp[0];
   }, [addProxy, batchAll, proxyItems, removeProxy]);
 
-  const estimatedFee = useEstimatedFee(address, chain?.genesisHash, call);
-
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, estimatedFee, depositToPay);
+  const fee = useEstimatedFee2(genesisHash, address, call);
 
   const backToManage = useCallback(() => {
     setStep(STEPS.MANAGE);
   }, [setStep]);
 
   const handleClose = useCallback(() => {
-    setRefresh(true);
-    setStep(STEPS.CHECK);
-  }, [setRefresh, setStep]);
+    if (step === STEPS.CONFIRMATION) {
+      setRefresh(true);
+      setStep(STEPS.CHECK);
+    } else {
+      backToManage();
+    }
+  }, [backToManage, setRefresh, setStep, step]);
+
+  const transactionDetail = useMemo(() => {
+    if (!proxyItems?.length) {
+      return;
+    }
+
+    const newProxy = proxyItems.find((item) => item.status === 'new');
+    const removingProxy = proxyItems.filter((item) => item.status === 'remove');
+
+    if (newProxy) {
+      const { delegate, proxyType } = newProxy.proxy;
+
+      return {
+        accounts: [delegate],
+        deposit: depositToPay,
+        description: t('Proxy added'),
+        extra:
+        {
+          type: proxyType
+        },
+        fee,
+        proxyItems,
+        ...txInfo
+      } as TransactionDetail;
+    }
+
+    if (removingProxy?.length) {
+      const delegates = removingProxy.map(({ proxy: { delegate } }) => delegate);
+
+      return {
+        accounts: delegates,
+        deposit: depositToPay,
+        description: t('Prox{{iesOrY}} removed', { replace: { iesOrY: removingProxy.length > 1 ? 'ies' : 'y' } }),
+        extra:
+        {
+          removed: t('{{count}} prox{{iesOrY}}', { replace: { count: removingProxy.length, iesOrY: removingProxy.length > 1 ? 'ies' : 'y' } }),
+        },
+        fee,
+        proxyItems,
+        ...txInfo
+      } as TransactionDetail;
+    }
+
+    return undefined;
+  }, [proxyItems, depositToPay, t, fee, txInfo]);
+
+  const extraHeight = useMemo(() => {
+    const basedHeight = 75;
+    const newProxies = proxyItems?.filter(({ status }) => status === 'new');
+
+    if (newProxies?.length) {
+      return 0;
+    }
+
+    const removingProxies = proxyItems?.filter(({ status }) => status === 'remove');
+
+    if (removingProxies?.length) {
+      return removingProxies.length > 2 ? 2 * basedHeight : removingProxies.length === 2 ? basedHeight : 0;
+    }
+
+    return 0;
+  }, [proxyItems]);
 
   return (
     <DraggableModal
       RightItem={
-        selectedProxy && chain?.genesisHash &&
+        selectedProxy && genesisHash &&
         <SelectedProxy
           genesisHash={chain.genesisHash}
           signerInformation={{
@@ -188,9 +195,9 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
         />
       }
       noDivider
-      onClose={backToManage}
+      onClose={handleClose}
       open={step !== STEPS.CHECK}
-      style={{ backgroundColor: '#1B133C', minHeight: step === STEPS.WAIT_SCREEN ? '320px' : '540px', padding: '20px 15px 10px' }}
+      style={{ backgroundColor: '#1B133C', minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${540 + extraHeight}px`, padding: '20px 15px 10px' }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
           ? t('Review')
@@ -201,72 +208,31 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     >
       <>
         {[STEPS.REVIEW, STEPS.SIGN_QR].includes(step) &&
-          <>
-            <Grid container direction='column' item justifyContent='center'>
-              {feeAndDeposit.isAbleToPay === false &&
-                <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
-              }
-              <Typography color='#BEAAD8' my='15px' textAlign='center' variant='B-4'>
-                {reviewText}
-              </Typography>
-              {
-                changedItems?.[0] &&
-                <ProxyAccountInfo
-                  handleDelete={noop}
-                  proxyItem={changedItems?.[0]}
-                  showCheck={false}
-                  style={{ width: '100%' }}
-                />}
-              <Stack columnGap='10px' sx={{ bgcolor: '#05091C', borderRadius: '14px', marginTop: '15px', padding: '10px 15px' }}>
-                <DisplayValue
-                  balance={depositToPay}
-                  decimal={decimal}
-                  genesisHash={chain?.genesisHash}
-                  label={t('Deposit')}
-                  token={token}
-                />
-                <Box sx={{ background: ' linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', m: '10px 0 5px', width: '34s' }} />
-                <DisplayValue
-                  balance={estimatedFee}
-                  decimal={decimal}
-                  genesisHash={chain?.genesisHash}
-                  label={t('Fee')}
-                  token={token}
-                />
-              </Stack>
-            </Grid>
-            {
-              call &&
-              <SignArea3
-                address={address}
-                genesisHash={chain?.genesisHash}
-                maybeApi={undefined}
-                onClose={backToManage}
-                proxyTypeFilter={PROXY_TYPE.GENERAL}
-                selectedProxy={selectedProxy}
-                setFlowStep={setStep}
-                setSelectedProxy={setSelectedProxy}
-                setShowProxySelection={setShowProxySelection}
-                setTxInfo={setTxInfo}
-                showProxySelection={showProxySelection}
-                transaction={call}
-                withCancel
-              />}
-            {/*            disabled={!depositToPay || feeAndDeposit.isAbleToPay !== true || !changedItems || changedItems.length === 0}          */}
-          </>
+          <Review
+            address={address}
+            call={call}
+            depositToPay={depositToPay}
+            fee={fee}
+            genesisHash={chain?.genesisHash}
+            proxyItems={proxyItems}
+            selectedProxy={selectedProxy}
+            setSelectedProxy={setSelectedProxy}
+            setShowProxySelection={setShowProxySelection}
+            setStep={setStep}
+            setTxInfo={setTxInfo}
+            showProxySelection={showProxySelection}
+          />
         }
         {
           step === STEPS.WAIT_SCREEN &&
-          <WaitScreen />
+          <WaitScreen2 />
         }
         {
-          step === STEPS.CONFIRMATION && txInfo && newDepositValue && changedItems &&
+          step === STEPS.CONFIRMATION && transactionDetail &&
           <Confirmation
-            address={address}
-            depositAmount={newDepositValue}
-            handleClose={handleClose}
-            proxyItems={changedItems}
-            txInfo={txInfo}
+            address={address ?? ''}
+            genesisHash={genesisHash}
+            transactionDetail={transactionDetail}
           />
         }
       </>

@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Proxy } from '../util/types';
-
 import CachedIcon from '@mui/icons-material/Cached';
 import { Container, IconButton, Typography } from '@mui/material';
 import { Data } from 'iconsax-react';

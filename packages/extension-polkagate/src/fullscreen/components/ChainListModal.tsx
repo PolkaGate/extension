@@ -88,7 +88,9 @@ export default function ChainListModal ({ handleClose, open }: ChooseAccountMenu
           <Stack ref={refContainer} style={{ maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {chainsToList.map(({ text, value }, index) => (
               <Grid
-                alignItems='center' container item justifyContent='space-between' key={value} onClick={() => setMayBeSelected(value)} sx={{
+                alignItems='center'
+                // eslint-disable-next-line react/jsx-no-bind
+                container item justifyContent='space-between' key={index} onClick={() => setMayBeSelected(String(value))} sx={{
                   '&:hover': { bgcolor: '#6743944D' },
                   borderRadius: '12px',
                   lineHeight: '55px',

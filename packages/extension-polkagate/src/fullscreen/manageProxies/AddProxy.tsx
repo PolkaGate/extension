@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Icon } from 'iconsax-react';
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { DropdownOption, ProxyItem } from '../../util/types';
+import type { AdvancedDropdownOption, ProxyItem, ProxyTypes } from '../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
-import { Clock, Data2, Warning2 } from 'iconsax-react';
+import { Clock, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AddressInput, DecisionButtons, DropSelect, MyTextField } from '../../components';
@@ -14,10 +15,11 @@ import { toTitleCase } from '../../util';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import { sanitizeChainName } from '../../util/utils';
 import { DraggableModal } from '../components/DraggableModal';
-import { STEPS } from './types';
+import { PROXY_ICONS, STEPS } from './consts';
+import { type ProxyFlowStep } from './types';
 
 interface Props {
-  setStep: React.Dispatch<React.SetStateAction<string>>;
+  setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   step: string;
   chain: Chain | null | undefined;
   proxiedAddress: string | undefined;
@@ -25,7 +27,7 @@ interface Props {
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
 }
 
-export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyItems, setStep, step }: Props): React.ReactElement {
+export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted3(proxiedAddress, chain?.genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress);
@@ -40,7 +42,8 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
   const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
   const PROXY_TYPE = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
 
-  const proxyTypeOptions = PROXY_TYPE.map((type: string): DropdownOption => ({
+  const proxyTypeOptions = PROXY_TYPE.map((type: string): AdvancedDropdownOption => ({
+    Icon: PROXY_ICONS[type as ProxyTypes] as Icon,
     text: toTitleCase(type) ?? '',
     value: type
   }));
@@ -72,9 +75,12 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
     setProxyType(value);
   }, []);
 
-  const onBack = useCallback(() => {
+  const onCancel = useCallback(() => {
+    // remove new proxy from list if canceled
+    proxyItems?.length && setProxyItems([...proxyItems.filter(({ status }) => status !== 'new')]);
+
     setStep(STEPS.MANAGE);
-  }, [setStep]);
+  }, [proxyItems, setProxyItems, setStep]);
 
   const onAddProxy = useCallback(() => {
     if (!proxyAddress || duplicateProxy || myselfAsProxy) {
@@ -97,7 +103,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
   return (
     <DraggableModal
       noDivider
-      onClose={onBack}
+      onClose={onCancel}
       open={step === STEPS.ADD_PROXY}
       style={{ backgroundColor: '#1B133C', minHeight: '478px', padding: '20px 15px 10px' }}
       title={t('Add proxy')}
@@ -124,31 +130,33 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
           </Stack>
         }
         <Stack columnGap='20px' direction='row' sx={{ mt: '25px', width: '100%' }}>
-          <Stack direction='column' justifyContent='start' rowGap='3px' sx={{ width: '50%' }}>
+          <Stack direction='column' justifyContent='start' rowGap='3px' sx={{ width: '52%' }}>
             <Typography color='#EAEBF1' sx={{ mb: '3px', width: 'fit-content' }} variant='B-1'>
               {t('Proxy type')}
             </Typography>
             <DropSelect
-              Icon={Data2}
+              Icon={(proxyTypeOptions.find(({ value }) => value === proxyType)?.Icon ?? proxyTypeOptions[0].Icon) as Icon}
+              contentDropWidth={300}
               displayContentType='icon'
               onChange={selectProxyType}
               options={proxyTypeOptions}
+              showCheckAsIcon
               style={{
                 height: '44px'
               }}
-              value={proxyType || proxyTypeOptions[0].value}
+              value={proxyType ?? proxyTypeOptions[0].value}
             />
           </Stack>
           <Stack alignItems='end' columnGap='8px' direction='row' justifyContent='start' sx={{ width: '40%' }}>
             <MyTextField
               Icon={Clock}
               iconSize={18}
-              onEnterPress={onDelayChange}
+              onEnterPress={onAddProxy}
               onTextChange={onDelayChange}
               placeholder={'0'}
               title={t('Delay')}
             />
-            <Typography color='#BEAAD8' variant='B-4' sx={{ marginBottom: '13px' }}>
+            <Typography color='#BEAAD8' sx={{ marginBottom: '13px' }} variant='B-4'>
               {t('block(s)')}
             </Typography>
           </Stack>
@@ -158,7 +166,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setProxyIt
           direction='vertical'
           disabled={!proxyAddress || duplicateProxy || myselfAsProxy}
           onPrimaryClick={onAddProxy}
-          onSecondaryClick={onBack}
+          onSecondaryClick={onCancel}
           primaryBtnText={t('Next')}
           secondaryBtnText={t('Cancel')}
           style={{

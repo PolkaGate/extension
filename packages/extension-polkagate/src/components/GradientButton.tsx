@@ -1,14 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, type Icon } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { loader } from '../assets/gif';
 import { useIsDark, useIsExtensionPopup } from '../hooks';
+import { LoaderGif } from '.';
 
 /**
  * Props for the GradientButton component.
@@ -122,23 +122,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
       {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
       {startIconNode && startIconNode}
       {isBusy
-        ? <Box
-          component='img'
-          src={loader as string}
-          sx={{
-            animation: 'spin 1.5s linear infinite',
-            height: '42px',
-            zIndex: 2,
-            '@keyframes spin': {
-              '0%': {
-                transform: 'rotate(0deg)'
-              },
-              '100%': {
-                transform: 'rotate(360deg)'
-              }
-            }
-          }}
-        />
+        ? <LoaderGif />
         : <>
           <Typography color={isDark ? '#FFFFFF' : '#EAEBF1'} sx={{ pl: contentPlacement === 'center' ? 0 : '10px', pr: '2px', width: 'fit-content', zIndex: 10, ...(showChevron ? textStyle : {}) }} variant='B-2'>
             {text}

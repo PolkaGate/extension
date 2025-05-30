@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Skeleton, Stack } from '@mui/material';
+import { Avatar, Grid, Skeleton, Stack } from '@mui/material';
 import React, { } from 'react';
 
 import { logoWhiteTransparent } from '@polkadot/extension-polkagate/src/assets/logos/index';
@@ -11,11 +11,11 @@ interface Props {
   length?: number;
 }
 
-function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
+function MySkeleton ({ bgcolor, height = 12, style = {}, width }: { bgcolor: string, height?: number, style?: React.CSSProperties, width: number }): React.ReactElement {
   return (<Skeleton
     animation='wave'
-    height={12}
-    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
+    height={height}
+    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px`, ...style }}
   />);
 }
 
@@ -23,59 +23,62 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
   const isDark = useIsDark();
 
   return (
-    <>{
-      Array.from({ length }).map((index) => (
-        <Grid
-          alignItems='center'
-          columnGap='15px' container item key={index as number} sx={{
-            background: '#05091C',
-            bgcolor: '#05091C',
-            border: '1px solid #2D1E4A',
-            borderRadius: '14px',
-            height: '90px',
-            maxWidth: '400px',
-            minWidth: '379px',
-            p: '0 5px 0 20px',
-            position: 'relative',
-            width: 'fit-content'
-          }}
-        >
-          <Box
-            component='img'
-            src={logoWhiteTransparent as string}
-            sx={{
-              bgcolor: isDark ? '#292247' : '#CFD5F0',
-              borderRadius: '999px',
-              filter: isDark ? 'brightness(0.4)' : 'brightness(0.9)',
-              height: '36px',
-              p: '4px',
-              width: '36px'
+    <>
+      {
+        Array.from({ length }).map((index) => (
+          <Grid
+            alignItems='center'
+            columnGap='15px' container item key={index as number} sx={{
+              background: '#05091C',
+              bgcolor: '#05091C',
+              borderRadius: '14px',
+              height: '90px',
+              maxWidth: '400px',
+              minWidth: '379px',
+              p: '0 5px 0 20px',
+              position: 'relative',
+              width: 'fit-content'
             }}
-          />
-          <Stack direction='column' rowGap='4px'>
-            <Stack alignItems='center' columnGap='8px' direction='row'>
-              <MySkeleton
-                bgcolor={isDark ? '#946CC840' : '#99A1C440'}
-                width={100}
-              />
-              <MySkeleton
-                bgcolor={isDark ? '#BEAAD826' : '#99A1C440'}
-                width={25}
-              />
+          >
+            <MySkeleton
+              bgcolor={isDark ? '#946CC840' : '#99A1C440'}
+              height ={18}
+              style={{ borderRadius: '6px', position: 'absolute', top: '8px', right: '8px' }}
+              width={18}
+            />
+            <Avatar
+              src={logoWhiteTransparent as string}
+              sx={{
+                '& img': {
+                  filter: isDark ? 'brightness(0.3)' : 'brightness(0.9)'
+                },
+                bgcolor: isDark ? '#292247' : '#CFD5F0',
+                borderRadius: '999px',
+                height: '36px',
+                p: '4px',
+                width: '36px'
+              }}
+            />
+            <Stack direction='column' rowGap='4px'>
+              <Stack alignItems='center' columnGap='8px' direction='row'>
+                <MySkeleton
+                  bgcolor={isDark ? '#946CC840' : '#99A1C440'}
+                  width={144}
+                />
+              </Stack>
+              <Stack columnGap='5px' direction='row'>
+                <MySkeleton
+                  bgcolor={isDark ? '#946CC826' : '#99A1C440'}
+                  width={74}
+                />
+                <MySkeleton
+                  bgcolor={isDark ? '#946CC826' : '#99A1C440'}
+                  width={74}
+                />
+              </Stack>
             </Stack>
-            <Stack columnGap='5px' direction='row'>
-              <MySkeleton
-                bgcolor={isDark ? '#946CC840' : '#99A1C440'}
-                width={120}
-              />
-              <MySkeleton
-                bgcolor={isDark ? '#946CC840' : '#99A1C440'}
-                width={160}
-              />
-            </Stack>
-          </Stack>
-        </Grid>
-      ))
-    } </>
+          </Grid>
+        ))
+      } </>
   );
 }

@@ -103,9 +103,9 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
                 size={18}
               />
             }
-            {displayContentType === 'iconOption' &&
+            {displayContentType === 'iconOption' && selectedOption?.Icon &&
               <>
-                {selectedOption?.Icon}
+                {selectedOption.Icon as React.JSX.Element}
               </>
             }
             {displayContentType === 'icon' && Icon &&
