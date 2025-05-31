@@ -121,8 +121,8 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyI
           withSelect
         />
         {(duplicateProxy || myselfAsProxy) &&
-          <Stack alignItems='center' columnGap='4px' direction='row'>
-            <Warning2 color='#FF4FB9' size='24px' variant='Bold' />
+          <Stack alignItems='center' columnGap='4px' direction='row' paddingTop='2px'>
+            <Warning2 color='#FF4FB9' size='18px' variant='Bold' />
             <Typography color='#FF4FB9' variant='B-4'>
               {duplicateProxy && t('This account is already added as a {{proxyType}} proxy.', { replace: { proxyType } })}
               {myselfAsProxy && t('An account cannot be its own proxy.')}
