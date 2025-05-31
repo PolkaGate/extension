@@ -151,6 +151,7 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyI
             <MyTextField
               Icon={Clock}
               iconSize={18}
+              inputType='number'
               onEnterPress={onAddProxy}
               onTextChange={onDelayChange}
               placeholder={'0'}
