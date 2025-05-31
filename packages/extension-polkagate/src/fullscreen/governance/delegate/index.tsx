@@ -299,7 +299,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your delegating status...')}
-            showCube
           />
         }
         {step === STEPS.INDEX &&

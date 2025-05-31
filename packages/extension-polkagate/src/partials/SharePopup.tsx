@@ -17,15 +17,18 @@ interface Props {
   popupProps?: Partial<ExtensionPopupProps>;
   modalProps?: Partial<DraggableModalProps>;
   title?: string | undefined;
+  RightItem?: React.ReactNode;
+
 }
 
-function SharePopup ({ children, modalProps, modalStyle, onClose, open, popupProps, title }: Props): React.ReactElement {
+function SharePopup ({ RightItem, children, modalProps, modalStyle, onClose, open, popupProps, title }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
 
   return (
     <>  {
       isExtension
         ? <ExtensionPopup
+          RightItem={RightItem}
           handleClose={onClose}
           { ...popupProps}
           openMenu={open}
@@ -34,6 +37,7 @@ function SharePopup ({ children, modalProps, modalStyle, onClose, open, popupPro
           {children}
         </ExtensionPopup>
         : <DraggableModal
+          RightItem={RightItem}
           onClose={onClose}
           open={open}
           {...modalProps}

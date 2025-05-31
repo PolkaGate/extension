@@ -12,10 +12,10 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { useAccount } from '../hooks';
-import { TRANSACTION_FLOW_STEPS } from '../partials/TransactionFlow';
 import LedgerSign from '../popup/signing/ledger/LedgerSign';
 import LedgerSignGeneric from '../popup/signing/ledger/LedgerSignGeneric';
 import { send } from '../util/api';
+import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 
 interface Props {
   address: string | undefined;
@@ -27,7 +27,7 @@ interface Props {
   payload: GenericExtrinsicPayload | undefined;
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   signerPayload: SignerPayloadJSON | undefined;
-  setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
 }
 
 export default function SignWithLedger ({ address, api, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload }: Props) {
@@ -53,7 +53,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
   }, [api, from, handleTxResult, preparedTransaction, setFlowStep]);
 
   return (
-    <Grid container item sx={{ bottom: '0', position: 'absolute', width: '92%' }}>
+    <Grid container item sx={{ bottom: '10px', position: 'absolute', width: '92%' }}>
       {
         account?.isGeneric || account?.isMigration
           ? <LedgerSignGeneric

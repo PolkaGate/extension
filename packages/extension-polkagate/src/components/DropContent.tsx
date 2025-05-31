@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
 import type { AdvancedDropdownOption } from '../util/types';
 
 import { Avatar, Grid, Popover, styled, Typography } from '@mui/material';
@@ -45,7 +44,7 @@ const ContentDisplayContainer = styled(Grid)(({ isSelectedItem, style }: { isSel
 }));
 
 interface ContentDisplayProps {
-  Icon?: Icon | React.JSX.Element;
+  Icon?: React.ElementType | React.JSX.Element;
   onChange?: (value: number | string) => void;
   setSelectedValue: React.Dispatch<React.SetStateAction<string | number | undefined>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -108,8 +107,10 @@ function LogoContentDisplay ({ Icon, logoType, onChange, selectedValue, setOpen,
         return Icon;
       }
 
-      if (typeof Icon === 'function') {
-        return <Icon color='#BEAAD8' size='18' variant='Bulk' />;
+      if (typeof Icon === 'function' || typeof Icon === 'object') {
+        const Component = Icon as React.ElementType;
+
+        return <Component color='#BEAAD8' size='18' variant='Bulk' />;
       }
     }
 
@@ -119,7 +120,15 @@ function LogoContentDisplay ({ Icon, logoType, onChange, selectedValue, setOpen,
   return (
     <ContentDisplayContainer container isSelectedItem={isSelectedItem} item onClick={handleClick} style={{ justifyContent: 'space-between' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '5px', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'nowrap' }} xs>
-        {renderLogo()}
+        {
+          showCheckAsIcon && isSelectedItem
+            ? <GlowCheck
+              show={isSelectedItem}
+              size='15px'
+              timeout={250}
+            />
+            : renderLogo()
+        }
         <Typography color={isSelectedItem ? '#FF4FB9' : 'text.primary'} textTransform='capitalize' variant='B-2'>
           {text}
         </Typography>
@@ -165,7 +174,7 @@ function TextContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValu
 interface DropContentProps {
   contentDropWidth: number | undefined;
   containerRef: React.RefObject<HTMLDivElement>;
-  Icon?: Icon;
+  Icon: React.ElementType | JSX.Element | undefined;
   displayContentType?: 'logo' | 'text' | 'icon' | 'account' | 'iconOption';
   options: AdvancedDropdownOption[];
   open: boolean;
@@ -221,7 +230,7 @@ function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType,
                   />)
                 : (
                   <LogoContentDisplay
-                    Icon={Icon ?? IconOption}
+                    Icon={IconOption ?? Icon}
                     key={index}
                     logoType={displayContentType}
                     onChange={onChange}

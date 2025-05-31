@@ -66,7 +66,7 @@ function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChain
   const onAccountChange = useCallback((selectedAddress: string) => {
     switch (page) {
       case 'proxyManagement':
-        return onAction(`/fullscreenProxyManagement/${selectedAddress}`);
+        return onAction(`/proxyManagement/${selectedAddress}`);
       case 'governance':
         return onAction(`/governance/${selectedAddress}/${`${topMenu ?? ''}`}/${postId ?? ''}`);
       case 'manageIdentity':

@@ -20,15 +20,15 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useProxies, useTranslation } from '../hooks';
-import { TRANSACTION_FLOW_STEPS } from '../partials/TransactionFlow';
 import Qr from '../popup/signing/Request/Qr';
 import { CMD_MORTAL } from '../popup/signing/types';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
+import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import { getSubstrateAddress, noop } from '../util/utils';
 import SignUsingPassword from './SignUsingPassword';
-import { ExtensionPopup, SignUsingProxy } from '.';
 import SignWithLedger from './SignWithLedger';
+import { ExtensionPopup, SignUsingProxy } from '.';
 
 type AlertHandler = {
   alertText: string;
@@ -104,11 +104,12 @@ interface Props {
   proxyTypeFilter: ProxyTypes[] | undefined;
   genesisHash: string | null | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
-  setFlowStep: React.Dispatch<React.SetStateAction<TRANSACTION_FLOW_STEPS>>;
+  setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   selectedProxy: Proxy | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   showProxySelection: boolean;
+  withCancel?: boolean;
 }
 
 /**
@@ -117,7 +118,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction }: Props): React.ReactElement<Props> {
+export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -266,8 +267,6 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
       };
 
       setTxInfo({ ...info, api, chain } as TxInfo);
-
-      // saveAsHistory(String(from), info as any);
     } catch (e) {
       console.log('error:', e);
     }
@@ -315,10 +314,12 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
           api={api}
           from={from}
           handleTxResult={handleTxResult}
+          onCancel={onClose}
           onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
           preparedTransaction={preparedTransaction}
           proxies={proxies}
           setFlowStep={setFlowStep}
+          withCancel={withCancel}
         />
       }
       <SignUsingProxy

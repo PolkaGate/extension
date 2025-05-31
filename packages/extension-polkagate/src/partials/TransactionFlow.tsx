@@ -13,6 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { isBn } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../components';
+import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import Confirmation2 from './Confirmation2';
 import Review from './Review';
 import { UserDashboardHeader, WaitScreen2 } from '.';
@@ -28,14 +29,8 @@ export interface TransactionFlowProps {
   formatted: string | undefined;
 }
 
-export enum TRANSACTION_FLOW_STEPS {
-  REVIEW,
-  WAIT_SCREEN,
-  CONFIRMATION
-}
-
 export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
-  const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
+  const [flowStep, setFlowStep] = useState<TransactionFlowStep>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
@@ -71,7 +66,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
         noSelection
         signerInformation={{
           onClick: onOpenProxySelection,
-          selectedProxy
+          selectedProxyAddress: selectedProxy?.delegate
         }}
       />
       <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>

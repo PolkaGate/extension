@@ -23,6 +23,7 @@ interface Props {
   accountInfo?: DeriveAccountInfo | null;
   address?: string | AccountId;
   direction?: 'row' | 'column';
+  charsCount?: number;
   genesisHash: string;
   identiconSize?: number;
   identiconStyle?: string;
@@ -36,12 +37,13 @@ interface Props {
   showShortAddress?: boolean;
   showSocial?: boolean;
   addressStyle?: SxProps<Theme> | CSSProperties;
+  nameStyle?: SxProps<Theme> | CSSProperties;
   style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -130,7 +132,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
                 {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
             </Grid>
-            : <Typography textAlign='left' variant={style?.variant}>
+            : <Typography sx={{ ...nameStyle }} textAlign='left' variant={style?.variant}>
               {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
               {_accountInfo?.identity?.display && !subIdOnly
                 ? _accountInfo?.identity.displayParent
@@ -154,7 +156,7 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
               }
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress && isValidAddress(String(_formatted))
-                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
+                  ? <ShortAddress address={_formatted} charsCount={charsCount} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
                   : t('Unknown')
                 : ''
               }
@@ -162,13 +164,13 @@ function Identity2 ({ accountInfo, address, addressStyle, direction = 'column', 
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
+              <ShortAddress address={_formatted} charsCount={charsCount} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
             </Grid>
           }
         </Grid>
         {withShortAddress && direction === 'row' &&
           <Grid container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', mt: '3%', px: '5px', width: 'fit-content' }}>
-            <ShortAddress address={_formatted} charsCount={6} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
+            <ShortAddress address={_formatted} charsCount={charsCount} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', ...addressStyle }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
           </Grid>
         }
         {_showSocial && _accountInfo?.identity?.email &&

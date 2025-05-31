@@ -6,14 +6,14 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { Divider, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import AccountDropDown from '@polkadot/extension-polkagate/src/fullscreen/home/AccountDropDown';
-import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
-import { AccountContext, Identity2 } from '../../components';
+import { Identity2 } from '../../components';
+import { useUpdateSelectedAccount } from '../../hooks';
 
 interface Props {
   account: AccountWithChildren;
@@ -26,26 +26,21 @@ interface Props {
 }
 
 function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
-  const { accounts } = useContext(AccountContext);
   const navigate = useNavigate();
 
-  const onClick = useCallback(() => {
+  const [appliedAddress, setAppliedAddress] = useState<string>();
+
+  useUpdateSelectedAccount(appliedAddress, false, () => navigate('/'));
+
+  const _onClick = useCallback(() => {
     const address = account?.address;
 
     if (!address) {
       return;
     }
 
-    // update account as selected to be consistent with extension
-    const accountToUnselect = accounts.find(({ address: accountAddress, selected }) => selected && address !== accountAddress);
-
-    Promise.all([
-      updateMeta(address, JSON.stringify({ selected: true })),
-      ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
-    ])
-      .catch(console.error)
-      .finally(() => navigate('/'));
-  }, [account?.address, accounts, navigate]);
+    setAppliedAddress(address);
+  }, [account?.address]);
 
   return (
     <motion.div
@@ -57,9 +52,9 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ borderRadius: '12px', m: '5px 8px 5px 15px', minHeight: '36px', position: 'relative', width: '100%' }}>
           {
             isSelected && !isInSettingMode &&
-            <Divider orientation='vertical' sx={{ background: '#FF4FB9', height: '24px', left: '-13px', position: 'absolute', width: '3px' }} />
+           <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
           }
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '80%' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '80%' }}>
             <PolkaGateIdenticon
               address={account.address}
               size={isInSettingMode ? 18 : 24}

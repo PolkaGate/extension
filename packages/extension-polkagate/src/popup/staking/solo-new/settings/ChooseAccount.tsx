@@ -37,12 +37,13 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
       handleClose={handleClose}
       iconColor={theme.palette.text.highlight}
       iconSize={26}
+      maxHeight='460px'
       openMenu={openMenu}
       title={t('Accounts')}
       withoutBackground
       withoutTopBorder
     >
-      <Stack direction='column' sx={{ height: '440px', position: 'relative', rowGap: '24px', width: '100%' }}>
+      <Stack direction='column' sx={{ height: '460px', position: 'relative', rowGap: '24px', width: '100%' }}>
         <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
           {t('My Accounts')}
         </Typography>

@@ -28,7 +28,7 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
       <Grid alignItems='center' container item sx={{ columnGap: '8px', flexWrap: 'nowrap', width: 'fit-content' }}>
         <Grid alignContent='center' container item justifyContent='center' sx={{ bgcolor: stakeType === 'solo' ? '#3D476A' : '#596AFF', borderRadius: 999, height: '36px', minWidth: '36px', width: '36px' }}>
           {stakeType === 'solo'
-            ? <SnowFlake color={theme.palette.text.highlight} size='20' />
+            ? <SnowFlake color={theme.palette.text.highlight} size='18' />
             : <Ice size='28' />
           }
         </Grid>
