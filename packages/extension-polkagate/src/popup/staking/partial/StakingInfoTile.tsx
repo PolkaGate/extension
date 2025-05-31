@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import type { BN } from '@polkadot/util';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
@@ -18,26 +20,15 @@ interface TileActionButtonProps {
   isRow?: boolean;
 }
 
-function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
 
   return (
     <>
-      <MyTooltip
-        color='#1c498a'
-        content={text}
-        notShow={!noText}
-        placement='top'
-      >
-        <Grid
-          alignItems='center'
-          container
-          item
-          justifyContent='center'
-          onClick={onClick}
-          ref={containerRef}
+      <MyTooltip color='#1c498a' content={text} notShow={!noText} placement='top'>
+        <Grid alignItems='center' container item justifyContent='center' onClick={onClick} ref={containerRef}
           sx={{
             ':hover': { bgcolor: theme.palette.text.highlight, borderColor: 'transparent' },
             bgcolor: '#110F2A',
@@ -82,13 +73,10 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
   }
 
   return (
-    <Grid
-      alignItems='center'
-      container item
+    <Grid alignItems='center' container item
       sx={{ bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', p: '4px', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
     >
-      <Container
-        disableGutters
+      <Container disableGutters
         sx={{
           alignItems: layoutDirection === 'row' ? 'flex-start' : 'center',
           display: 'flex',
@@ -101,10 +89,8 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: layoutDirection === 'row' ? '100%' : 'fit-content' }}>
           <Icon color={theme.palette.text.highlight} size='20' variant='Bulk' />
-          {
-            layoutDirection === 'row' && onExpand &&
-            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />
-          }
+          {layoutDirection === 'row' && onExpand &&
+            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
           <Typography color='text.highlight' sx={{ textWrap: 'nowrap' }} variant='B-1'>
@@ -130,8 +116,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         />
       </Container>
       {buttonsArray.length > 0 &&
-        <Container
-          disableGutters
+        <Container disableGutters
           sx={{
             alignItems: 'center',
             bgcolor: layoutDirection === 'row' ? '#060518' : 'none',
