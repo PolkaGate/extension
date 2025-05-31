@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { CanPayErrorAlert, ChainLogo, ShowBalance, SignArea3 } from '../../components';
+import { CanPayErrorAlert, ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useFormatted3, useTranslation } from '../../hooks';
 import { FLOATING_POINT_DIGIT, PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
@@ -113,35 +113,37 @@ function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, se
         <Typography color='#BEAAD8' my='15px' textAlign='center' variant='B-4'>
           {reviewText}
         </Typography>
-        <Grid container item ref={refContainer} sx={{ borderRadius: '14px', maxHeight: '250px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
-          {changingItems.map((item, index) => {
-            const isFirst = index === 0;
-            const isLast = index === changingItems.length - 1;
+        <Stack direction='column' sx={{ height: 'fit-content', position: 'relative' }}>
+          <Grid container item ref={refContainer} sx={{ height: 'fit-content', maxHeight: '250px', overflow: 'hidden', overflowY: 'auto' }}>
+            {changingItems.map((item, index) => {
+              const isFirst = index === 0;
+              const isLast = index === changingItems.length - 1;
 
-            return (
-              <ProxyAccountInfo
-                handleDelete={noop}
-                key={index}
-                proxyItem={item}
-                showCheck={false}
-                style={{
-                  ...(
-                    changingItems.length > 1
-                      ? {
-                        border: 'none',
-                        borderBottom: !isLast ? '1px solid #1B133C' : 'none',
-                        borderRadius: isFirst ? '14px 14px 0 0' : isLast ? ' 0 0 14px 14px' : '0',
-                        height: '75px'
-                      }
-                      : {}
-                  ),
-                  width: '100%'
-                }}
-              />
-            );
-          })}
-          {/* <FadeOnScroll containerRef={refContainer} /> */}
-        </Grid>
+              return (
+                <ProxyAccountInfo
+                  handleDelete={noop}
+                  key={index}
+                  proxyItem={item}
+                  showCheck={false}
+                  style={{
+                    ...(
+                      changingItems.length > 1
+                        ? {
+                          border: 'none',
+                          borderBottom: !isLast ? '1px solid #1B133C' : 'none',
+                          borderRadius: isFirst ? '14px 14px 0 0' : isLast ? ' 0 0 14px 14px' : '0',
+                          height: '75px'
+                        }
+                        : {}
+                    ),
+                    width: '100%'
+                  }}
+                />
+              );
+            })}
+          </Grid>
+          <FadeOnScroll containerRef={refContainer} height='25px' ratio={0.3} />
+        </Stack>
         <Stack columnGap='10px' sx={{ bgcolor: '#05091C', borderRadius: '14px', marginTop: '15px', padding: '10px 15px' }}>
           <DisplayValue
             balance={depositToPay}
