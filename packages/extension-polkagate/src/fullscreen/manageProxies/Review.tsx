@@ -113,7 +113,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, se
         <Typography color='#BEAAD8' my='15px' textAlign='center' variant='B-4'>
           {reviewText}
         </Typography>
-        <Grid container item ref={refContainer} sx={{ maxHeight: '250px', overflow: 'hidden', overflowY: 'scroll', position: 'relative' }}>
+        <Grid container item ref={refContainer} sx={{ borderRadius: '14px', maxHeight: '250px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
           {changingItems.map((item, index) => {
             const isFirst = index === 0;
             const isLast = index === changingItems.length - 1;
@@ -140,8 +140,8 @@ function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, se
               />
             );
           })}
+          {/* <FadeOnScroll containerRef={refContainer} /> */}
         </Grid>
-        <FadeOnScroll containerRef={refContainer} />
         <Stack columnGap='10px' sx={{ bgcolor: '#05091C', borderRadius: '14px', marginTop: '15px', padding: '10px 15px' }}>
           <DisplayValue
             balance={depositToPay}
