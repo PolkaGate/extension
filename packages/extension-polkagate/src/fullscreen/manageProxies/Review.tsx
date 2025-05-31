@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { CanPayErrorAlert, ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } from '../../components';
+import { CanPayErrorAlert, ChainLogo, ShowBalance, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useFormatted3, useTranslation } from '../../hooks';
 import { FLOATING_POINT_DIGIT, PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
