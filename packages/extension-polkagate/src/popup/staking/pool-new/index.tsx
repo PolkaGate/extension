@@ -6,11 +6,9 @@
 import type { BN } from '@polkadot/util';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { Award, BuyCrypto, Graph, LockSlash, Moneys, People, Strongbox2, Timer } from 'iconsax-react';
+import { BuyCrypto, LockSlash, Moneys, People, Strongbox2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-
-import { noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../hooks';
@@ -20,6 +18,7 @@ import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
+import StakingRewardTile from '../partial/StakingRewardTile';
 import ToBeReleased from '../partial/ToBeReleased';
 
 const Back = () => {
@@ -141,26 +140,10 @@ export default function Pool (): React.ReactElement {
             type='pool'
           />
           <Container disableGutters sx={{ display: 'flex', flexDirection: layoutDirection, gap: '4px', mt: '20px', px: '15px', width: '100%' }}>
-            <StakingInfoTile
-              Icon={Award}
-              buttonsArray={[
-                {
-                  Icon: Timer,
-                  onClick: noop,
-                  text: t('Pending Rewards')
-                },
-                {
-                  Icon: Graph,
-                  onClick: noop,
-                  text: t('Chart')
-                }
-              ]}
-              cryptoAmount={rewards}
-              decimal={decimal ?? 0}
-              fiatAmount={0}
+            <StakingRewardTile
+              genesisHash={genesisHash}
               layoutDirection={layoutDirection}
-              title={t('Rewards paid')}
-              token={token ?? ''}
+              reward={rewards}
             />
             {redeemable &&
               <StakingInfoTile
