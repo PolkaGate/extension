@@ -3,7 +3,7 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
-import { Data, Edit, LogoutCurve, Setting4, Shield, User } from 'iconsax-react';
+import { Data, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
