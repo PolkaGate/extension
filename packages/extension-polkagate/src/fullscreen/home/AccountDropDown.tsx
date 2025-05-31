@@ -50,11 +50,11 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
         text: t('Manage proxies'),
         value: `/proxyManagement/${genesisHash}/${address}`
       },
-      {
-        Icon: Shield,
-        text: t('Social recovery'),
-        value: `/socialRecovery/${address}/false`
-      }
+      // {
+      //   Icon: Shield,
+      //   text: t('Social recovery'),
+      //   value: `/socialRecovery/${address}/false`
+      // }
     ];
   }, [address, genesisHash, t]);
 
