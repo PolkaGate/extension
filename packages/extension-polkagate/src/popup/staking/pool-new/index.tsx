@@ -35,6 +35,12 @@ const Back = () => {
   );
 };
 
+export enum Review {
+  Reward = 'reward',
+  None = 'None',
+  Withdraw = 'Withdraw'
+}
+
 export default function Pool (): React.ReactElement {
   useBackground('staking');
 
@@ -48,9 +54,10 @@ export default function Pool (): React.ReactElement {
   const accountAssets = useAccountAssets(selectedAccount?.address);
 
   const redeem = api?.tx['nominationPools']['withdrawUnbonded'];
+  const claimPayout = api?.tx['nominationPools']['claimPayout'];
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
-  const [review, setReview] = useState<boolean>(false);
+  const [review, setReview] = useState<Review>(Review.None);
   const [param, setParam] = useState<[string, number] | null | undefined>(null);
 
   useEffect(() => {
@@ -74,16 +81,16 @@ export default function Pool (): React.ReactElement {
   const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
-  const rewards = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
+  const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
 
-  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
+  const StakingInfoTileCount = [redeemable, myClaimable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
   const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount > 2 ? 'row' : 'column', [StakingInfoTileCount]);
 
-  const estimatedFee2 = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, redeem, param ?? [0]);
+  const estimatedFee2 = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, review === Review.Reward ? claimPayout : redeem, review === Review.Reward ? undefined : param ?? [0]);
 
   const transactionInformation = useMemo(() => {
     return [{
-      content: redeemable,
+      content: review === Review.Reward ? myClaimable : redeemable,
       title: t('Amount'),
       withLogo: true
     },
@@ -91,28 +98,46 @@ export default function Pool (): React.ReactElement {
       content: estimatedFee2,
       title: t('Fee')
     },
-    {
-      content: redeemable && asset ? (asset.availableBalance).add(redeemable) : undefined,
-      description: t('Available balance after redeemable withdrawal'),
-      title: t('Available balance after'),
-      withLogo: true
-    }];
-  }, [asset, estimatedFee2, redeemable, t]);
-  const tx = useMemo(() => redeem && param ? redeem(...param) : undefined, [redeem, param]);
+    (review === Review.Reward
+      ? {
+        content: myClaimable && asset ? (asset.availableBalance).add(myClaimable) : undefined,
+        description: t('Available balance after claim rewards'),
+        title: t('Available balance after'),
+        withLogo: true
+      }
+      : {
+        content: redeemable && asset ? (asset.availableBalance).add(redeemable) : undefined,
+        description: t('Available balance after redeemable withdrawal'),
+        title: t('Available balance after'),
+        withLogo: true
+      })];
+  }, [asset, estimatedFee2, redeemable, review, myClaimable, t]);
+  const tx = useMemo(() => {
+    if (review === Review.None) {
+      return undefined;
+    } else if (review === Review.Reward && claimPayout) {
+      return claimPayout();
+    } else if (review === Review.Withdraw && redeem && param) {
+      return redeem(...param);
+    } else {
+      return undefined;
+    }
+  }, [review, claimPayout, redeem, param]);
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
-  const onWithdraw = useCallback(() => setReview(true), []);
-  const closeReview = useCallback(() => setReview(false), []);
+  const onWithdraw = useCallback(() => setReview(Review.Withdraw), []);
+  const onClaimReward = useCallback(() => setReview(Review.Reward), []);
+  const closeReview = useCallback(() => setReview(Review.None), []);
   const onUnstake = useCallback(() => navigate('/pool/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
 
   const transactionFlow = useTransactionFlow({
-    backPathTitle: t('Withdraw redeemable'),
+    backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
     formatted,
     genesisHash: genesisHash ?? '',
-    review,
+    review: review !== Review.None,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
     tx
@@ -142,8 +167,10 @@ export default function Pool (): React.ReactElement {
           <Container disableGutters sx={{ display: 'flex', flexDirection: layoutDirection, gap: '4px', mt: '20px', px: '15px', width: '100%' }}>
             <StakingRewardTile
               genesisHash={genesisHash}
+              isDisabled={!claimPayout}
               layoutDirection={layoutDirection}
-              reward={rewards}
+              onClaimReward={onClaimReward}
+              reward={myClaimable}
             />
             {redeemable &&
               <StakingInfoTile

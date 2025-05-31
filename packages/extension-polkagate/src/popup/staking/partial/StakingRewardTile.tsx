@@ -4,7 +4,7 @@
 import type { BN } from '@polkadot/util';
 
 import { Box, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import { Award, Graph, MedalStar, Timer } from 'iconsax-react';
+import { Award, Chart21, Graph, MedalStar, Timer } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { BN_ZERO, noop } from '@polkadot/util';
@@ -43,23 +43,34 @@ const Badge = () => {
   );
 };
 
+const ChartButton = () => {
+  return (
+    <Grid container item sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '999px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', p: '6px', position: 'absolute', right: '16px', top: '16px', width: 'fit-content' }}>
+      <Chart21 color='#0094FF' size='15' variant='Bulk' />
+    </Grid>
+  );
+};
+
 interface FlatRewardTileProps {
   reward: BN | undefined;
   rewardInCurrency: number | undefined;
   decimal: number | undefined;
   token: string | undefined;
+  onClaimReward: () => void;
+  disabled?: boolean;
 }
 
-const FlatRewardTile = ({ decimal, reward, rewardInCurrency, token }: FlatRewardTileProps) => {
+const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurrency, token }: FlatRewardTileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const isDisabled = useMemo(() => reward === undefined || reward.isZero() || rewardInCurrency === undefined || rewardInCurrency === 0, [reward, rewardInCurrency]);
+  const isDisabled = useMemo(() => disabled || reward === undefined || reward.isZero() || rewardInCurrency === undefined || rewardInCurrency === 0, [disabled, reward, rewardInCurrency]);
 
   return (
     <Stack direction='column' sx={{ borderRadius: '14px', height: '170px', overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
       <Badge />
+      <ChartButton />
       <Stack direction='column' sx={{ p: '4px', zIndex: 10 }}>
         <Stack direction='column' sx={{ pl: '14px', pt: '16px', rowGap: '4px', zIndex: 10 }}>
           <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
@@ -128,7 +139,7 @@ const FlatRewardTile = ({ decimal, reward, rewardInCurrency, token }: FlatReward
           <StakingActionButton
             buttonFontStyle={{ ...theme.typography['B-4'] }}
             disabled={isDisabled}
-            onClick={noop}
+            onClick={onClaimReward}
             startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
             style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
             text={t('Claim rewards')}
@@ -143,9 +154,11 @@ interface Props {
   layoutDirection?: 'row' | 'column';
   genesisHash: string | undefined;
   reward: BN | undefined;
+  onClaimReward: () => void;
+  isDisabled?: boolean;
 }
 
-export default function StakingRewardTile ({ genesisHash, layoutDirection, reward }: Props) {
+export default function StakingRewardTile ({ genesisHash, isDisabled, layoutDirection, onClaimReward, reward }: Props) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
@@ -166,7 +179,7 @@ export default function StakingRewardTile ({ genesisHash, layoutDirection, rewar
         buttonsArray={[
           {
             Icon: Timer,
-            onClick: noop,
+            onClick: onClaimReward,
             text: t('Pending Rewards')
           },
           {
@@ -187,6 +200,8 @@ export default function StakingRewardTile ({ genesisHash, layoutDirection, rewar
     return (
       <FlatRewardTile
         decimal={decimal}
+        disabled={isDisabled}
+        onClaimReward={onClaimReward}
         reward={reward}
         rewardInCurrency={rewardInCurrency}
         token={token}
