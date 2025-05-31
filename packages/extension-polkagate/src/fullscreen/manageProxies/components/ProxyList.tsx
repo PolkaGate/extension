@@ -24,7 +24,7 @@ export default function ProxyList ({ handleDelete, proxyItems, style }: Props): 
   const isDeleting = proxyItems?.find(({ status }) => status === 'remove');
 
   return (
-    <Grid alignItems='start' container gap='10px' item sx={{ maxHeight: isDeleting ? '464px' : '600px', mt: '10px', overflowY: 'scroll', width: '100%', ...style }}>
+    <Grid alignItems='start' container gap='10px' item sx={{ maxHeight: isDeleting ? '464px' : '600px', mt: '10px', overflow: 'hidden', overflowY: 'scroll', width: '100%', ...style }}>
       {proxyItems?.filter(({ status }) => status !== 'new').map((proxyItem, index) => {
         return (
           <ProxyAccountInfo

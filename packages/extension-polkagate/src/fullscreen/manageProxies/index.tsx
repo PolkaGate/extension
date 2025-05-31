@@ -91,7 +91,7 @@ function ManageProxies (): React.ReactElement {
   }, [address, api, chain?.genesisHash, fetchProxies, fetching, proxyItems, refresh]);
 
   return (
-    <HomeLayout childrenStyle={{ marginLeft: '25px' }}>
+    <HomeLayout childrenStyle={{ paddingLeft: '25px' }}>
       <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
         {t('Proxy Management')}
       </Typography>

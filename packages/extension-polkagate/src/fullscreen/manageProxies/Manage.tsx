@@ -16,8 +16,8 @@ import { BN_ZERO } from '@polkadot/util';
 import { ChainLogo, GradientButton, ShowBalance, ShowBalance4 } from '../../components';
 import { useTranslation } from '../../hooks';
 import ProxyList from './components/ProxyList';
-import { type ProxyFlowStep } from './types';
 import { STEPS } from './consts';
+import { type ProxyFlowStep } from './types';
 
 interface Props {
   api: ApiPromise | undefined;
