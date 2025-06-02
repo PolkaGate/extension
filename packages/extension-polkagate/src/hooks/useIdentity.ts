@@ -20,6 +20,7 @@ export default function useIdentity(genesisHash: string | undefined, formatted: 
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
   const { peopleChain } = usePeopleChain(undefined, genesisHash);
+
   const api = useApiWithChain2(peopleChain);
 
   const getIdentityOf = useCallback(async (accountId: string) => {
@@ -27,8 +28,8 @@ export default function useIdentity(genesisHash: string | undefined, formatted: 
       return;
     }
 
-    const i = await api.query['identity']['identityOf'](accountId) as any;
-    const id = i.isSome ? i.unwrap()[0] as PalletIdentityRegistration : null;
+    const i = await api.query['identity']['identityOf'](accountId);
+    const id = i.isSome ? i.unwrap() as PalletIdentityRegistration : null;
 
     return id?.info
       ? {

@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
 import { ms, msGreen, msWarning } from '../assets/icons';
-import { useAccountName, useChainInfo, useFormatted2, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChainInfo, useFormatted3, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
 import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
@@ -52,7 +52,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, column
   const bgColor = !isDark ? '#CCD2EA' : undefined;
 
   const accountName = useAccountName(address);
-  const _formatted = useFormatted2(address, undefined, chain)?.toString();
+  const _formatted = useFormatted3(address, genesisHash);
   const msData = useMerkleScience(_formatted, chain);
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose || '');
@@ -96,18 +96,20 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, column
         {!noIdenticon &&
           <Grid item m='auto 0' pr='5px' width='fit-content'>
             {identiconStyle === 'polkagate'
-              ? <PolkaGateIdenticon
-                address={String(_formatted || address)}
-                size={identiconSize}
-              />
-              : <Identicon
-                iconTheme={chain?.icon ?? 'polkadot'}
-                isSubId={!!_accountInfo?.identity?.displayParent}
-                judgement={_judgement}
-                prefix={chain?.ss58Format ?? 42}
-                size={identiconSize}
-                value={_formatted || address}
-              />}
+              ? (
+                <PolkaGateIdenticon
+                  address={String(_formatted || address)}
+                  size={identiconSize}
+                />)
+              : (
+                <Identicon
+                  iconTheme={chain?.icon ?? 'polkadot'}
+                  isSubId={!!_accountInfo?.identity?.displayParent}
+                  judgement={_judgement}
+                  prefix={chain?.ss58Format ?? 42}
+                  size={identiconSize}
+                  value={_formatted || address}
+                />)}
           </Grid>
         }
         <Grid container direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
