@@ -124,7 +124,6 @@ export default function Pool (): React.ReactElement {
     }
   }, [review, claimPayout, redeem, param]);
 
-  const onRewardChart = useCallback(() => navigate('/stakingReward/' + genesisHash + '/pool') as void, [genesisHash, navigate]);
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
   const onWithdraw = useCallback(() => setReview(Review.Withdraw), []);
@@ -172,8 +171,8 @@ export default function Pool (): React.ReactElement {
               isDisabled={!claimPayout}
               layoutDirection={layoutDirection}
               onClaimReward={onClaimReward}
-              onRewardChart={onRewardChart}
               reward={myClaimable}
+              type='pool'
             />
             {redeemable &&
               <StakingInfoTile

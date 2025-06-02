@@ -583,6 +583,7 @@ export interface RewardInfo {
 }
 
 export interface SubscanClaimedRewardInfo {
+  validator_stash?: string;
   era: number,
   pool_id: number,
   account_display: { address: string },

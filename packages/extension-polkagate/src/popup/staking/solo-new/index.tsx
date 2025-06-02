@@ -4,7 +4,7 @@
 import type { Content } from '../../../partials/Review';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade, UserOctagon } from 'iconsax-react';
+import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer1, Trade, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -20,6 +20,7 @@ import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
+import StakingRewardTile from '../partial/StakingRewardTile';
 import ToBeReleased from '../partial/ToBeReleased';
 
 const Back = () => {
@@ -163,26 +164,14 @@ export default function Solo (): React.ReactElement {
             type='solo'
           />
           <Container disableGutters sx={{ display: 'flex', flexDirection: layoutDirection, gap: '4px', mt: '20px', px: '15px', width: '100%' }}>
-            <StakingInfoTile
-              Icon={Award}
-              buttonsArray={[
-                {
-                  Icon: Timer,
-                  onClick: noop,
-                  text: t('Pending Rewards')
-                },
-                {
-                  Icon: Graph,
-                  onClick: noop,
-                  text: t('Chart')
-                }
-              ]}
-              cryptoAmount={rewards}
-              decimal={decimal ?? 0}
-              fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
+            <StakingRewardTile
+              address={stakingInfo.rewardDestinationAddress}
+              genesisHash={genesisHash}
+              isDisabled={true}
               layoutDirection={layoutDirection}
-              title={t('Rewards paid')}
-              token={token ?? ''}
+              onClaimReward={noop}
+              reward={rewards}
+              type='solo'
             />
             {redeemable &&
               <StakingInfoTile
