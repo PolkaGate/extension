@@ -1577,5 +1577,14 @@
   "Loading pools": "",
   "It is less than the minimum amount to join a pool.": "",
   "Joining Pool": "",
-  "Chose Pool": ""
+  "Chose Pool": "",
+  "Sign with QR-Code": "",
+  "Loading proxy accounts": "",
+  "pool": "",
+  "destroying": "",
+  "blocked": "",
+  "Claim rewards": "",
+  "Available balance after claim rewards": "",
+  "Selected Pool": "",
+  "Loading rewards": ""
 }

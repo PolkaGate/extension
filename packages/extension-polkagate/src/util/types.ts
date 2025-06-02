@@ -595,6 +595,7 @@ export interface SubscanClaimedRewardInfo {
 }
 
 export interface ClaimedRewardInfo {
+  address: string;
   era: number;
   amount: BN;
   date?: string;
