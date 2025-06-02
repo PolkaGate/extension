@@ -73,7 +73,7 @@ interface DropContentProps {
   initialAccountList: AccountsOrder[] | undefined
 }
 
-function DropContent ({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
+function CustomizedDropDown ({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -178,7 +178,7 @@ function ProfilesDropDown ({ mode, setMode, style }: Props) {
           }
         </Grid>
       </ClickAwayListener>
-      <DropContent
+      <CustomizedDropDown
         containerRef={containerRef}
         initialAccountList={initialAccountList}
         open={open}

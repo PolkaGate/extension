@@ -6,6 +6,7 @@
  * */
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
+import type { FormatBalanceProps } from './FormatBalance2';
 
 import { Grid, Skeleton } from '@mui/material';
 import React from 'react';
@@ -21,9 +22,10 @@ export interface Props {
   height?: number;
   skeletonWidth?: number;
   skeletonStyle?: React.CSSProperties;
+  balanceProps?: Partial<FormatBalanceProps>
 }
 
-export default function ShowBalance4 ({ balance, decimalPoint, genesisHash, height = 12, skeletonStyle = {} }: Props): React.ReactElement<Props> {
+export default function ShowBalance4({ balance, balanceProps, decimalPoint, genesisHash, height = 12, skeletonStyle = {} }: Props): React.ReactElement<Props> {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const adaptiveDecimalPoint = balance && decimal && (String(balance).length >= decimal - 1 ? 2 : 4);
   const _decimalPoint = decimalPoint || adaptiveDecimalPoint || FLOATING_POINT_DIGIT;
@@ -41,6 +43,7 @@ export default function ShowBalance4 ({ balance, decimalPoint, genesisHash, heig
           decimals={[decimal]}
           tokens={[token]}
           value={balance}
+          {...balanceProps}
         />
       }
     </Grid>

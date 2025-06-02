@@ -8,7 +8,7 @@ import { AccountContext } from '../components';
 import { updateMeta } from '../messaging';
 import useAccountSelectedChain from './useAccountSelectedChain';
 
-export default function useUpdateSelectedAccount(address: string | undefined, changeUrl = false, onClose?: () => void): void {
+export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const { accounts } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();

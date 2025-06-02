@@ -87,7 +87,7 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   },
   {
     Component: Send,
-    path: '/send/:address/:assetId', // full-screen send page
+    path: '/send/:genesisHash/:address/:assetId',
     trigger: 'send'
   },
   {

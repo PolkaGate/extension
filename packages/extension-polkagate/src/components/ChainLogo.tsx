@@ -5,7 +5,7 @@
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Box, useTheme } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';

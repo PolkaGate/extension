@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';

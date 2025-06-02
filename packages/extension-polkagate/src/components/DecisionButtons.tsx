@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ActionButtonProps } from './ActionButton';
+
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
@@ -21,11 +23,12 @@ interface Props {
   onSecondaryClick: () => void;
   primaryBtnText: string;
   secondaryBtnText: string;
+  secondaryButtonProps?: Partial<ActionButtonProps>
   showChevron?: boolean;
   style?: React.CSSProperties;
 }
 
-function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, showChevron, style }: Props): React.ReactElement {
+function DecisionButtons({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, secondaryButtonProps, showChevron, style }: Props): React.ReactElement {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 
@@ -59,9 +62,11 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
           onClick={onSecondaryClick}
           style={{ height: '44px', width: secondaryWidth }}
           text={secondaryBtnText}
+          {...secondaryButtonProps}
         />
         : <NeonButton
           contentPlacement='center'
+          disabled={secondaryDisabled}
           onClick={onSecondaryClick}
           style={{ height: '44px', width: secondaryWidth }}
           text={secondaryBtnText}

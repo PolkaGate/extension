@@ -16,7 +16,7 @@ import { FLOATING_POINT_DIGIT } from '../util/constants';
 import { Dots } from '.';
 
 type LabelPost = string | React.ReactNode
-interface Props {
+export interface FormatBalanceProps {
   decimals: number[],
   tokens: string[],
   children?: React.ReactNode;
@@ -76,7 +76,7 @@ function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | strin
   return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint, tokenColor);
 }
 
-function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokenColor, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
+function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokenColor, tokens, value, valueFormatted, withCurrency, withSi }: FormatBalanceProps): React.ReactElement<FormatBalanceProps> {
   const { t } = useTranslation();
   const { isHideNumbers } = useIsHideNumbers();
 

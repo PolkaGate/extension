@@ -19,7 +19,7 @@ interface Props {
   addWithQr?: boolean;
   chain?: Chain | null;
   disabled?: boolean;
-  label: string;
+  label?: string;
   placeHolder?: string;
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   style?: SxProps<Theme>;

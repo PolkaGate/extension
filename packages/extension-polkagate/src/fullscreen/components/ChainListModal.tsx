@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
+
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -14,10 +16,12 @@ import { DraggableModal } from './DraggableModal';
 
 interface ChooseAccountMenuProps {
   open: boolean;
+  externalOptions?: DropdownOption[];
+  setGenesisHash?: React.Dispatch<React.SetStateAction<string | undefined>>
   handleClose: () => void;
 }
 
-export default function ChainListModal ({ handleClose, open }: ChooseAccountMenuProps): React.ReactElement {
+export default function ChainListModal ({ externalOptions, handleClose, open, setGenesisHash }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedChains = useSelectedChains();
   const allChains = useGenesisHashOptions(false);
@@ -39,12 +43,19 @@ export default function ChainListModal ({ handleClose, open }: ChooseAccountMenu
   useUpdateAccountSelectedChain(selectedAccount?.address, appliedGenesis, true, _handleClose);
 
   const onApply = useCallback(() => {
+    if (setGenesisHash) {
+      setGenesisHash(maybeSelected);
+      _handleClose();
+
+      return;
+    }
+
     if (!maybeSelected || !selectedAccount?.address) {
       return _handleClose();
     }
 
     selectedAccount && setAppliedGenesis(maybeSelected);
-  }, [maybeSelected, selectedAccount, _handleClose]);
+  }, [setGenesisHash, maybeSelected, selectedAccount, _handleClose]);
 
   const onSearch = useCallback((keyword: string) => {
     setSearchKeyword(keyword);
@@ -55,8 +66,8 @@ export default function ChainListModal ({ handleClose, open }: ChooseAccountMenu
       return [];
     }
 
-    return allChains.filter(({ value }) => selectedChains.includes(String(value)));
-  }, [allChains, selectedChains]);
+    return externalOptions ?? allChains.filter(({ value }) => selectedChains.includes(String(value)));
+  }, [allChains, externalOptions, selectedChains]);
 
   const chainsToList = useMemo(() => {
     if (!selectedChainsToList) {
@@ -98,7 +109,7 @@ export default function ChainListModal ({ handleClose, open }: ChooseAccountMenu
                 }}
               >
                 <Stack alignItems='center' direction='row'>
-                  <ChainLogo genesisHash={value as string} size={24} />
+                  <ChainLogo chainName={text} genesisHash={value as string} size={24} />
                   <Typography color='#EAEBF1' ml='8px' variant='B-1'>
                     {text}
                   </Typography>

@@ -5,11 +5,12 @@ import { Box, Grid, Link, Stack, Typography } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, Setting } from 'iconsax-react';
 import React from 'react';
 
+import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { logoTransparent, polkagateVector } from '../../../assets/logos';
-import { useManifest, useTranslation } from '../../../hooks';
+import { useManifest, useSelectedAccount, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
 import Language from './Language';
 import MenuButton from './MenuButton';
@@ -33,6 +34,8 @@ function Shining(): React.ReactElement {
 function MainMenuColumn (): React.ReactElement {
   const { t } = useTranslation();
   const version = useManifest()?.version;
+  const selectedAccount = useSelectedAccount();
+  const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
 
   return (
     <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px' }}>
@@ -56,6 +59,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={ArrowCircleRight2}
+        path={`/send/${selectedGenesisHash}/${selectedAccount?.address}/0`}
         text={t('Send')}
       />
       <MenuButton

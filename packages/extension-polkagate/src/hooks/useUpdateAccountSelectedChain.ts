@@ -7,6 +7,18 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { updateStorage } from '../util';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from './useAccountSelectedChain';
 
+/**
+ * Updates the selected chain for a given account address in storage and optionally changes the URL.
+ *
+ * This custom hook updates the selected chain's genesis hash for a specified account address in localStorage.
+ * If `changeUrl` is true, it modifies the current URL to reflect the new selected chain.
+ * After updating, it calls an optional `onClose` callback if provided.
+ *
+ * @param {string | undefined} address - The account address for which to update the selected chain.
+ * @param {string | undefined} genesisHash - The genesis hash of the selected chain.
+ * @param {boolean} changeUrl - Whether to change the URL after updating the selected chain.
+ * @param {() => void} [onClose] - Optional callback to execute after updating and changing the URL.
+ */
 export default function useUpdateAccountSelectedChain (address: string | undefined, genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();

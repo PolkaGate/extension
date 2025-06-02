@@ -1575,5 +1575,22 @@
   "{{count}} prox{{iesOrY}}": "",
   "Please wait a few seconds and don’t close the {{container}}": "",
   "extension": "",
-  "window": ""
+  "window": "",
+  "Send funds": "",
+  "Recipient address": "",
+  "Recipient": "",
+  "Select your account": "",
+  "your": "",
+  "Unknown chain": "",
+  "Select your account and chain": "",
+  "Select your chain": "",
+  "Enter the recipient's address and its chain": "",
+  "Select recipient chain": "",
+  "recipient": "",
+  "Please wait a little bit while we are updating balances, and try again later!": "",
+  "Amount will exceed transferable balance!": "",
+  "Input transfer amount": "",
+  "Enter amount": "",
+  "Min": "",
+  "Summary": ""
 }
