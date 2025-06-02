@@ -5,12 +5,12 @@ import type { ClaimedRewardInfo } from '../../util/types';
 
 import { Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ArrowLeft2, ArrowRight2 } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useNavigate, useParams } from 'react-router';
 
-import { AssetLogo, BackWithLabel, FormatBalance2, Identity2, Motion } from '../../components';
-import { useBackground, useChainInfo, usePoolRewards, usePoolStakingInfo, useSelectedAccount, useTranslation } from '../../hooks';
+import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion } from '../../components';
+import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useStakingRewards3, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
 import Progress from './partial/Progress';
@@ -59,11 +59,13 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const handleExpand = useCallback(() => onExpand((alreadyExpanded) => alreadyExpanded ? undefined : JSON.stringify(reward)), [onExpand, reward]);
+  const handleExpand = useCallback(() => {
+    onExpand((alreadyExpanded) => alreadyExpanded === JSON.stringify(reward) ? undefined : JSON.stringify(reward));
+  }, [onExpand, reward]);
 
   return (
     <Collapse collapsedSize='44px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block', p: '4px' }}>
-      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', width: '100%' }}>
+      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', pt: isExpanded ? '12px' : '8px', transition: 'all 150ms ease-out', width: '100%' }}>
         <Typography color='text.primary' textAlign='left' variant='B-2' width='40%'>
           {new Date(reward.timeStamp * 1000).toDateString()}
         </Typography>
@@ -96,7 +98,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           style={{
             color: theme.palette.text.primary,
             variant: 'B-1',
-            width: '210px'
+            width: '200px'
           }}
           withShortAddress
         />
@@ -116,7 +118,7 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand }
   const { t } = useTranslation();
 
   return (
-    <Stack direction='column' sx={{ pt: '10px', width: '100%' }}>
+    <Stack direction='column' sx={{ gap: '4px', pb: '60px', pt: '10px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb: '8px', px: '12px', width: '100%' }}>
         <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='S-1' width='45%'>
           {t('Date')}
@@ -150,12 +152,13 @@ export default function StakingReward () {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const selectedAccount = useSelectedAccount();
   const { genesisHash, type } = useParams<{ genesisHash: string; type: string }>();
 
   const poolStakingInfo = usePoolStakingInfo(selectedAccount?.address, type === 'pool' ? genesisHash : undefined);
-  // const soloStakingInfo = useSoloStakingInfo(selectedAccount?.address, type === 'solo' ? genesisHash : undefined);
-  const poolRewardInfo = usePoolRewards(selectedAccount?.address, genesisHash);
+  const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, type as 'solo' | 'pool');
 
   const onBack = useCallback(() => navigate('/' + type + '/' + genesisHash) as void, [genesisHash, navigate, type]);
 
@@ -169,31 +172,37 @@ export default function StakingReward () {
             style={{ pb: 0 }}
             text={t('Received Rewards')}
           />
-          <Stack direction='column' sx={{ p: '15px', width: '100%' }}>
-            {poolRewardInfo.descSortedRewards === undefined &&
+          <Stack direction='column' ref={containerRef} sx={{ height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
+            {(rewardInfo.status === 'loading' || !rewardInfo.descSortedRewards) &&
               <Progress text={t('Loading rewards')} />
             }
-            {poolRewardInfo.descSortedRewards &&
+            {rewardInfo.status === 'ready' && rewardInfo.descSortedRewards &&
               <>
                 <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '10px 5px', pb: '5px', width: '100%' }}>
                   <RewardChartHeader
-                    dateInterval={poolRewardInfo.dateInterval}
+                    dateInterval={rewardInfo.dateInterval}
                     genesisHash={genesisHash}
-                    onNextPeriod={poolRewardInfo.onNextPeriod}
-                    onPreviousPeriod={poolRewardInfo.onPreviousPeriod}
+                    onNextPeriod={rewardInfo.onNextPeriod}
+                    onPreviousPeriod={rewardInfo.onPreviousPeriod}
                   />
                   <Grid container item>
-                    <Bar data={poolRewardInfo.chartData} options={poolRewardInfo.chartOptions} />
+                    <Bar data={rewardInfo.chartData} options={rewardInfo.chartOptions} />
                   </Grid>
                 </Stack>
                 <RewardChartTable
-                  descSortedRewards={poolRewardInfo.descSortedRewards}
-                  expanded={poolRewardInfo.detail}
+                  descSortedRewards={rewardInfo.descSortedRewards}
+                  expanded={rewardInfo.detail}
                   genesisHash={genesisHash}
-                  onExpand={poolRewardInfo.expand}
+                  onExpand={rewardInfo.expand}
                 />
               </>
             }
+            {rewardInfo.status === 'error' &&
+              <Typography color='text.primary' pt='40px' variant='B-2'>
+                {t('No rewards found')}
+              </Typography>
+            }
+            <FadeOnScroll containerRef={containerRef} height='75px' ratio={0.8} />
           </Stack>
         </Motion>
       </Grid>
