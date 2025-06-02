@@ -124,6 +124,7 @@ export default function Pool (): React.ReactElement {
     }
   }, [review, claimPayout, redeem, param]);
 
+  const onRewardChart = useCallback(() => navigate('/stakingReward/' + genesisHash + '/pool') as void, [genesisHash, navigate]);
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
   const onWithdraw = useCallback(() => setReview(Review.Withdraw), []);
@@ -166,10 +167,12 @@ export default function Pool (): React.ReactElement {
           />
           <Container disableGutters sx={{ display: 'flex', flexDirection: layoutDirection, gap: '4px', mt: '20px', px: '15px', width: '100%' }}>
             <StakingRewardTile
+              address={selectedAccount?.address}
               genesisHash={genesisHash}
               isDisabled={!claimPayout}
               layoutDirection={layoutDirection}
               onClaimReward={onClaimReward}
+              onRewardChart={onRewardChart}
               reward={myClaimable}
             />
             {redeemable &&

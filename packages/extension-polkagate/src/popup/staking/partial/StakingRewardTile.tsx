@@ -7,11 +7,11 @@ import { Box, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mu
 import { Award, Chart21, Graph, MedalStar, Timer } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { BN_ZERO, noop } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { Thunder } from '../../../assets/gif';
 import { FormatBalance2, FormatPrice } from '../../../components';
-import { useChainInfo, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
+import { useChainInfo, usePoolRewards, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { Background } from '../../../style';
 import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
@@ -43,9 +43,9 @@ const Badge = () => {
   );
 };
 
-const ChartButton = () => {
+const ChartButton = ({ onRewardChart }: { onRewardChart: () => void }) => {
   return (
-    <Grid container item sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '999px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', p: '6px', position: 'absolute', right: '16px', top: '16px', width: 'fit-content' }}>
+    <Grid container item onClick={onRewardChart} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '999px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', p: '6px', position: 'absolute', right: '16px', top: '16px', width: 'fit-content', zIndex: 2 }}>
       <Chart21 color='#0094FF' size='15' variant='Bulk' />
     </Grid>
   );
@@ -53,14 +53,17 @@ const ChartButton = () => {
 
 interface FlatRewardTileProps {
   reward: BN | undefined;
+  totalClaimedReward: BN | undefined;
   rewardInCurrency: number | undefined;
+  totalClaimedRewardInCurrency: number | undefined;
   decimal: number | undefined;
   token: string | undefined;
   onClaimReward: () => void;
+  onRewardChart: () => void;
   disabled?: boolean;
 }
 
-const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurrency, token }: FlatRewardTileProps) => {
+const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, reward, rewardInCurrency, token, totalClaimedReward, totalClaimedRewardInCurrency }: FlatRewardTileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -70,9 +73,9 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurr
     <Stack direction='column' sx={{ borderRadius: '14px', height: '170px', overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
       <Badge />
-      <ChartButton />
-      <Stack direction='column' sx={{ p: '4px', zIndex: 10 }}>
-        <Stack direction='column' sx={{ pl: '14px', pt: '16px', rowGap: '4px', zIndex: 10 }}>
+      <ChartButton onRewardChart={onRewardChart} />
+      <Stack direction='column' sx={{ p: '4px', zIndex: 1 }}>
+        <Stack direction='column' sx={{ pl: '14px', pt: '16px', rowGap: '4px', zIndex: 1 }}>
           <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
             <Award color='#3988FF' size='20' variant='Bulk' />
             <Typography color='text.highlight' variant='B-2'>
@@ -80,7 +83,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurr
             </Typography>
           </Container>
           <Grid container item>
-            {reward === undefined
+            {totalClaimedRewardInCurrency === undefined
               ? (
                 <Skeleton
                   animation='wave'
@@ -97,14 +100,14 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurr
                   fontSize='40px'
                   fontWeight={400}
                   height={40}
-                  num={rewardInCurrency}
+                  num={totalClaimedRewardInCurrency}
                   width='fit-content'
                   withSmallDecimal
                 />)
             }
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-start' sx={{ m: '-3px 0 6px' }}>
-            {reward === undefined
+            {totalClaimedReward === undefined
               ? (
                 <Skeleton
                   animation='wave'
@@ -124,12 +127,13 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurr
                     width: 'max-content'
                   }}
                   tokens={[token ?? '']}
-                  value={reward}
+                  value={totalClaimedReward}
                 />)}
           </Grid>
         </Stack>
         <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
           <ColumnAmounts
+            color={theme.palette.text.highlight}
             cryptoAmount={reward ?? BN_ZERO}
             decimal={decimal ?? 0}
             fiatAmount={rewardInCurrency ?? 0}
@@ -151,18 +155,21 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, reward, rewardInCurr
 };
 
 interface Props {
+  address: string | undefined;
   layoutDirection?: 'row' | 'column';
   genesisHash: string | undefined;
   reward: BN | undefined;
   onClaimReward: () => void;
+  onRewardChart: () => void;
   isDisabled?: boolean;
 }
 
-export default function StakingRewardTile ({ genesisHash, isDisabled, layoutDirection, onClaimReward, reward }: Props) {
+export default function StakingRewardTile ({ address, genesisHash, isDisabled, layoutDirection, onClaimReward, onRewardChart, reward }: Props) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
+  const { totalClaimedReward } = usePoolRewards(address, genesisHash);
 
   const rewardInCurrency = useMemo(() => {
     if (!reward || !pricesInCurrency || !tokenPrice || !decimal) {
@@ -171,6 +178,14 @@ export default function StakingRewardTile ({ genesisHash, isDisabled, layoutDire
 
     return calcPrice(tokenPrice.price, reward, decimal);
   }, [decimal, tokenPrice, pricesInCurrency, reward]);
+
+  const totalClaimedRewardInCurrency = useMemo(() => {
+    if (!totalClaimedReward || !pricesInCurrency || !tokenPrice || !decimal) {
+      return undefined;
+    }
+
+    return calcPrice(tokenPrice.price, totalClaimedReward, decimal);
+  }, [decimal, tokenPrice, pricesInCurrency, totalClaimedReward]);
 
   if (layoutDirection === 'row') {
     return (
@@ -184,7 +199,7 @@ export default function StakingRewardTile ({ genesisHash, isDisabled, layoutDire
           },
           {
             Icon: Graph,
-            onClick: noop,
+            onClick: onRewardChart,
             text: t('Chart')
           }
         ]}
@@ -202,9 +217,12 @@ export default function StakingRewardTile ({ genesisHash, isDisabled, layoutDire
         decimal={decimal}
         disabled={isDisabled}
         onClaimReward={onClaimReward}
+        onRewardChart={onRewardChart}
         reward={reward}
         rewardInCurrency={rewardInCurrency}
         token={token}
+        totalClaimedReward={totalClaimedReward}
+        totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
       />
     );
   }
