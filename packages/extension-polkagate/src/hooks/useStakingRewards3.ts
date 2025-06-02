@@ -6,11 +6,12 @@ import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../util/types'
 
 import { useTheme } from '@mui/material';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { getNominationPoolsClaimedRewards } from '../util/api';
+import getRewardsSlashes from '../util/api/getRewardsSlashes';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../util/constants';
 import { amountToHuman } from '../util/utils';
 import useChainInfo from './useChainInfo';
@@ -37,9 +38,10 @@ interface usePoolRewardsProps {
   totalClaimedReward: BN | undefined;
   detail: string | undefined;
   expand: Dispatch<SetStateAction<string | undefined>>;
+  status: 'loading' | 'error' | 'ready';
 }
 
-export default function usePoolRewards (address: string | undefined, genesisHash: string | undefined): usePoolRewardsProps {
+export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool'): usePoolRewardsProps {
   const theme = useTheme();
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
 
@@ -57,18 +59,21 @@ export default function usePoolRewards (address: string | undefined, genesisHash
       return;
     }
 
-    getNominationPoolsClaimedRewards(chainName, String(address), MAX_HISTORY_RECORD_TO_SHOW)
+    (type === 'solo'
+      ? getRewardsSlashes(chainName, 0, MAX_HISTORY_RECORD_TO_SHOW, String(address))
+      : getNominationPoolsClaimedRewards(chainName, String(address), MAX_HISTORY_RECORD_TO_SHOW))
       .then((r) => {
         const list = r?.data.list as SubscanClaimedRewardInfo[];
         let totalClaimedRewardAmount = BN_ZERO;
 
         const claimedRewardsFromSubscan: ClaimedRewardInfo[] | undefined = list?.map((i: SubscanClaimedRewardInfo): ClaimedRewardInfo => {
           const amount = new BN(i.amount);
+          const address = (type === 'solo' ? i.validator_stash : i.account_display.address) ?? '';
 
           totalClaimedRewardAmount = totalClaimedRewardAmount.add(amount);
 
           return {
-            address: i.account_display.address,
+            address,
             amount,
             era: i.era,
             event: i.event_id,
@@ -76,7 +81,7 @@ export default function usePoolRewards (address: string | undefined, genesisHash
           } as ClaimedRewardInfo;
         });
 
-        if (claimedRewardsFromSubscan.length) {
+        if (claimedRewardsFromSubscan?.length) {
           setTotalClaimedReward(totalClaimedRewardAmount);
 
           return setClaimedRewardsInfo(claimedRewardsFromSubscan);
@@ -84,7 +89,7 @@ export default function usePoolRewards (address: string | undefined, genesisHash
           return setClaimedRewardsInfo(null);
         }
       }).catch(console.error);
-  }, [chainName, address]);
+  }, [chainName, address, type]);
 
   const formateDate = useCallback((date: number) => new Date(date * 1000).toLocaleDateString('en-US', dateOptions), [dateOptions]);
 
@@ -350,6 +355,16 @@ export default function usePoolRewards (address: string | undefined, genesisHash
     dataToShow && pageIndex !== (dataToShow.length - 1) && setPageIndex(pageIndex + 1);
   }, [dataToShow, pageIndex]);
 
+  const status = useMemo((): 'loading' | 'error' | 'ready' => {
+    if (claimedRewardsInfo === undefined) {
+      return 'loading';
+    } else if (claimedRewardsInfo === null) {
+      return 'error';
+    } else {
+      return 'ready';
+    }
+  }, [claimedRewardsInfo]);
+
   return {
     chartData,
     chartOptions,
@@ -359,6 +374,7 @@ export default function usePoolRewards (address: string | undefined, genesisHash
     expand,
     onNextPeriod,
     onPreviousPeriod,
+    status,
     totalClaimedReward
   };
 }
