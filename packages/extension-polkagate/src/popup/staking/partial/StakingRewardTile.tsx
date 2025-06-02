@@ -5,13 +5,14 @@ import type { BN } from '@polkadot/util';
 
 import { Box, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { Award, Chart21, Graph, MedalStar, Timer } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 
 import { BN_ZERO } from '@polkadot/util';
 
 import { Thunder } from '../../../assets/gif';
 import { FormatBalance2, FormatPrice } from '../../../components';
-import { useChainInfo, usePoolRewards, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
+import { useChainInfo, usePrices, useStakingRewards3, useTokenPrice2, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { Background } from '../../../style';
 import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
@@ -79,7 +80,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
           <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
             <Award color='#3988FF' size='20' variant='Bulk' />
             <Typography color='text.highlight' variant='B-2'>
-              {t('Balance')}
+              {t('Earned')}
             </Typography>
           </Container>
           <Grid container item>
@@ -160,16 +161,17 @@ interface Props {
   genesisHash: string | undefined;
   reward: BN | undefined;
   onClaimReward: () => void;
-  onRewardChart: () => void;
   isDisabled?: boolean;
+  type: 'solo' | 'pool';
 }
 
-export default function StakingRewardTile ({ address, genesisHash, isDisabled, layoutDirection, onClaimReward, onRewardChart, reward }: Props) {
+export default function StakingRewardTile ({ address, genesisHash, isDisabled, layoutDirection, onClaimReward, reward, type }: Props) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
-  const { totalClaimedReward } = usePoolRewards(address, genesisHash);
+  const { totalClaimedReward } = useStakingRewards3(address, genesisHash, type);
 
   const rewardInCurrency = useMemo(() => {
     if (!reward || !pricesInCurrency || !tokenPrice || !decimal) {
@@ -186,6 +188,8 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
 
     return calcPrice(tokenPrice.price, totalClaimedReward, decimal);
   }, [decimal, tokenPrice, pricesInCurrency, totalClaimedReward]);
+
+  const onRewardChart = useCallback(() => navigate('/stakingReward/' + genesisHash + '/' + type) as void, [genesisHash, navigate, type]);
 
   if (layoutDirection === 'row') {
     return (
