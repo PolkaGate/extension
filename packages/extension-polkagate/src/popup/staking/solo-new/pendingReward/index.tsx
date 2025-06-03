@@ -76,10 +76,11 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
   return (
     <Grid container item sx={{ position: 'relative' }}>
       <Stack direction='column' ref={containerRef} sx={{ gap: '2px', height: TABLE_HEIGHT, maxHeight: TABLE_HEIGHT, overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
-        {!expandedRewards && Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
-          <Skeleton animation='wave' height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', my: '5px', transform: 'none', width: '100%' }} />
-        ))}
-        {expandedRewards && !expandedRewards.length &&
+        {expandedRewards === undefined &&
+          Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
+            <Skeleton animation='wave' height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', my: '5px', transform: 'none', width: '100%' }} />
+          ))}
+        {expandedRewards && expandedRewards.length === 0 &&
           <Grid container justifyContent='center' sx={{ mt: '70px' }}>
             <Typography color='text.highlight' variant='B-2'>
               {t('No pending rewards found!')}
