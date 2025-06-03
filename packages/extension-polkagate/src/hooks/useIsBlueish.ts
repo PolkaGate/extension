@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 
 export default function useIsBlueish (): boolean {
   const { pathname } = useLocation();
-  const isBlueish = pathname.includes('/solo/') || pathname.includes('/pool/') || pathname.includes('stakingReward');
+  const isBlueish = pathname.includes('/solo/') || pathname.includes('/pool/') || pathname.includes('stakingReward') || pathname.includes('pendingReward');
 
   return isBlueish;
 }

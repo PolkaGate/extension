@@ -191,7 +191,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
             </Typography>
           </Container>}
         {proxies === undefined &&
-          <Progress loaderSize={40} text={t('Loading proxy accounts')} />
+          <Progress text={t('Loading proxy accounts')} />
         }
         <StakingActionButton
           disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}

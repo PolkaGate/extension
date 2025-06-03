@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { BN } from '@polkadot/util';
 import type { Content } from '../../../partials/Review';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
@@ -11,7 +12,6 @@ import { useNavigate, useParams } from 'react-router';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
-import { type BN, noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
@@ -123,6 +123,7 @@ export default function Solo (): React.ReactElement {
   const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
   const onUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
+  const onClaimReward = useCallback(() => navigate('/solo/' + genesisHash + '/pendingReward') as void, [navigate, genesisHash]);
   const onWithdraw = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
 
@@ -167,9 +168,9 @@ export default function Solo (): React.ReactElement {
             <StakingRewardTile
               address={stakingInfo.rewardDestinationAddress}
               genesisHash={genesisHash}
-              isDisabled={true}
+              isDisabled={!rewards || rewards.isZero()}
               layoutDirection={layoutDirection}
-              onClaimReward={noop}
+              onClaimReward={onClaimReward}
               reward={rewards}
               type='solo'
             />
