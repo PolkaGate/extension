@@ -3,6 +3,7 @@
 
 // @ts-nocheck
 
+export { default as Badge } from './Badge.gif';
 export { default as celebration } from './Celebration.gif';
 export { default as check } from './check.gif';
 export { default as exportAccountsGif } from './exportAccountsGif.gif';
