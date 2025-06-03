@@ -59,7 +59,7 @@ export default function Unstake (): React.ReactElement {
   }, [stakingInfo.stakingConsts]);
 
   const tx = useMemo(() => {
-    if (unlockingLen === undefined || maxUnlockingChunks === undefined || !poolWithdrawUnbonded || !batchAll || !unbonded || !formatted) {
+    if (unlockingLen === undefined || maxUnlockingChunks === undefined || !poolWithdrawUnbonded || !batchAll || !unbonded || !formatted || !unstakingValue) {
       return undefined;
     }
 
@@ -146,7 +146,7 @@ export default function Unstake (): React.ReactElement {
       const partial = staked.sub(stakingInfo.poolStakingConsts.minCreateBond);
 
       // If there's nothing above the minimum, return '0'
-      return partial.isZero() ? '0' : partial.toString();
+      return partial.lten(0) ? '0' : partial.toString();
     }
 
     // Case 3: If user is NOT the pool owner, the user is able to unstake the full amount
