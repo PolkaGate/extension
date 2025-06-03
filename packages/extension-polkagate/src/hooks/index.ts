@@ -111,6 +111,7 @@ export { default as useNotifyOnChainChange } from './useNotifyOnChainChange';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePendingRewards } from './usePendingRewards';
 export { default as usePendingRewards2 } from './usePendingRewards2';
+export { default as usePendingRewards3 } from './usePendingRewards3';
 export { default as usePeopleChain } from './usePeopleChain';
 export { default as usePool } from './usePool';
 export { default as usePoolBalances } from './usePoolBalances';
