@@ -15,9 +15,11 @@ interface ColumnAmountsProps {
   decimal: number;
   color?: string;
   placement?: 'left' | 'right';
+  priceSecondColor?: string;
+  balanceColor?: string;
 }
 
-export const ColumnAmounts = memo(function ColumnAmounts ({ color, cryptoAmount, decimal, fiatAmount, placement = 'left', token }: ColumnAmountsProps) {
+export const ColumnAmounts = memo(function ColumnAmounts ({ balanceColor, color, cryptoAmount, decimal, fiatAmount, placement = 'left', priceSecondColor, token }: ColumnAmountsProps) {
   const theme = useTheme();
 
   const contentPlacement = placement === 'left' ? 'flex-start' : 'flex-end';
@@ -26,7 +28,7 @@ export const ColumnAmounts = memo(function ColumnAmounts ({ color, cryptoAmount,
     <Grid alignItems={contentPlacement} container direction='column' item width='fit-content'>
       <FormatPrice
         commify
-        decimalColor={theme.palette.text.secondary}
+        decimalColor={priceSecondColor ?? theme.palette.text.secondary}
         dotStyle='normal'
         fontFamily='Inter'
         fontSize='14px'
@@ -41,7 +43,7 @@ export const ColumnAmounts = memo(function ColumnAmounts ({ color, cryptoAmount,
         decimalPoint={2}
         decimals={[decimal]}
         style={{
-          color: color || '#BEAAD8',
+          color: balanceColor || color || '#BEAAD8',
           fontFamily: 'Inter',
           fontSize: '12px',
           fontWeight: 500,

@@ -28,7 +28,7 @@ ChartJS.register(
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 const DAYS_TO_SHOW = 10;
 
-interface usePoolRewardsProps {
+interface useStakingRewardsProps {
   chartData: ChartData<'bar', string[] | undefined, string>;
   dateInterval: string | undefined;
   descSortedRewards: ClaimedRewardInfo[] | undefined;
@@ -41,7 +41,7 @@ interface usePoolRewardsProps {
   status: 'loading' | 'error' | 'ready';
 }
 
-export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool'): usePoolRewardsProps {
+export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool'): useStakingRewardsProps {
   const theme = useTheme();
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
 

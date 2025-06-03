@@ -134,11 +134,13 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
         </Stack>
         <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
           <ColumnAmounts
-            color={theme.palette.text.highlight}
+            balanceColor={theme.palette.text.highlight}
+            color={theme.palette.text.primary}
             cryptoAmount={reward ?? BN_ZERO}
             decimal={decimal ?? 0}
             fiatAmount={rewardInCurrency ?? 0}
             placement='left'
+            priceSecondColor={theme.palette.text.highlight}
             token={token ?? ''}
           />
           <StakingActionButton
