@@ -10,6 +10,13 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.36.4',
+    notes: [
+      'Fix Ledger Signing Issue: Resolved an issue with Ledger signing to ensure a smoother user experience',
+      'Upcoming UI Redesign: PolkaGate is getting a fresh new look—stay tuned for exciting updates!'
+    ]
+  },
+  {
     version: '0.36.3',
     notes: [
       'Upgrade Ledger dependencies: Update the Ledger dependencies to the latest versions for improved performance and security.',
