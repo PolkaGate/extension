@@ -41,7 +41,7 @@ export default function JoinPool () {
   const [filter, dispatchFilter] = useReducer(poolFilterReducer, INITIAL_POOL_FILTER_STATE);
   const [step, setStep] = useState(POOL_STEPS.CHOOSE_POOL);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>(undefined);
-  const [bondAmount, setBondAmount] = useState<BN>(BN_ZERO);
+  const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
 
   const tx = useMemo(() => {
     if (!join || !bondAmount || !selectedPool) {
@@ -88,9 +88,12 @@ export default function JoinPool () {
   const onSearch = useCallback((query: string) => setSearchedQuery(query), []);
   const onNext = useCallback(() => setStep(step + 1), [step]);
   const onBack = useCallback(() => {
-    step > POOL_STEPS.CHOOSE_POOL
-      ? setStep(step - 1)
-      : navigate('/pool/' + genesisHash + '/stake') as void;
+    if (step > POOL_STEPS.CHOOSE_POOL) {
+      setStep(step - 1);
+      setBondAmount(undefined);
+    } else {
+      navigate('/pool/' + genesisHash + '/stake') as void;
+    }
   }, [genesisHash, navigate, step]);
 
   const transactionFlow = useTransactionFlow({

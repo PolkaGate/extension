@@ -29,8 +29,8 @@ interface Props {
   estimatedFee2: Balance | undefined;
   stakingInfo: PoolStakingInfo;
   formatted: string | undefined;
-  setBondAmount: React.Dispatch<React.SetStateAction<BN>>;
-  bondAmount: BN;
+  setBondAmount: React.Dispatch<React.SetStateAction<BN | undefined>>;
+  bondAmount: BN | undefined;
 }
 
 export default function JoinPoolInput ({ bondAmount, errorMessage, estimatedFee2, formatted, genesisHash, onBack, onNext, selectedPool, setBondAmount, stakingInfo }: Props): React.ReactNode {
