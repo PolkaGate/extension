@@ -83,8 +83,8 @@ export default function Pool (): React.ReactElement {
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
 
-  const StakingInfoTileCount = [redeemable, myClaimable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
-  const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount > 2 ? 'row' : 'column', [StakingInfoTileCount]);
+  const StakingInfoTileCount = [redeemable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // equals and bigger than 1 means the tiles must be displayed in a row
+  const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount >= 1 ? 'row' : 'column', [StakingInfoTileCount]);
 
   const estimatedFee2 = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, review === Review.Reward ? claimPayout : redeem, review === Review.Reward ? undefined : param ?? [0]);
 
@@ -174,7 +174,7 @@ export default function Pool (): React.ReactElement {
               reward={myClaimable}
               type='pool'
             />
-            {redeemable &&
+            {(redeemable?.isZero?.() === false || layoutDirection === 'row') &&
               <StakingInfoTile
                 Icon={Moneys}
                 buttonsArray={[{
@@ -189,7 +189,7 @@ export default function Pool (): React.ReactElement {
                 title={t('Redeemable')}
                 token={token ?? ''}
               />}
-            {unlockingAmount &&
+            {(unlockingAmount?.isZero?.() === false || layoutDirection === 'row') &&
               <StakingInfoTile
                 Icon={LockSlash}
                 cryptoAmount={unlockingAmount}

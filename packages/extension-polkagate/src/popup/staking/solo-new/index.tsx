@@ -87,14 +87,8 @@ export default function Solo (): React.ReactElement {
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
 
-  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
-  const layoutDirection = useMemo((): 'row' | 'column' => {
-    if (StakingInfoTileCount > 2) {
-      return 'row';
-    } else {
-      return 'column';
-    }
-  }, [StakingInfoTileCount]);
+  const StakingInfoTileCount = [redeemable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // equals and bigger than 1 means the tiles must be displayed in a row
+  const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount >= 1 ? 'row' : 'column', [StakingInfoTileCount]);
 
   const estimatedFee2 = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
 
@@ -174,7 +168,7 @@ export default function Solo (): React.ReactElement {
               reward={rewards}
               type='solo'
             />
-            {redeemable &&
+            {(redeemable?.isZero?.() === false || layoutDirection === 'row') &&
               <StakingInfoTile
                 Icon={Moneys}
                 buttonsArray={[{
@@ -189,7 +183,7 @@ export default function Solo (): React.ReactElement {
                 title={t('Redeemable')}
                 token={token ?? ''}
               />}
-            {unlockingAmount &&
+            {(unlockingAmount?.isZero?.() === false || layoutDirection === 'row') &&
               <StakingInfoTile
                 Icon={LockSlash}
                 buttonsArray={[{

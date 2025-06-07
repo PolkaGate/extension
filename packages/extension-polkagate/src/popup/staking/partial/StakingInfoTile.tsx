@@ -68,12 +68,8 @@ export interface Props {
 export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, layoutDirection = 'column', onExpand, title, token }: Props): React.ReactElement {
   const theme = useTheme();
 
-  if (cryptoAmount?.isZero()) {
-    return <></>;
-  }
-
   return (
-    <Grid alignItems='center' container item
+    <Grid alignItems={layoutDirection === 'row' ? 'flex-start' : 'center'} container item
       sx={{ bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', p: '4px', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
     >
       <Container disableGutters
