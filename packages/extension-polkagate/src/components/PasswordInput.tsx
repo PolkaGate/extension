@@ -3,10 +3,9 @@
 
 import { Container, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { useIsDark, useTranslation } from '../hooks';
+import { useIsBlueish, useIsDark, useTranslation } from '../hooks';
 
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
@@ -43,14 +42,14 @@ const StyledTextField = styled(TextField, {
     backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#2224424D' : '#1B133C' : '#EFF1F9',
     borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
     borderRadius: '12px',
-    color: hasError ? theme.palette.error.main : isBlueish ? '#809ACB' : theme.palette.text.secondary,
+    color: hasError ? theme.palette.error.main : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
     height: '44px',
     marginTop: '5px',
     transition: 'all 150ms ease-out',
     width: '100%'
   },
   '& input::placeholder': {
-    color: hasError ? theme.palette.error.main : isBlueish ? '#809ACB' : theme.palette.text.secondary,
+    color: hasError ? theme.palette.error.main : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
     ...theme.typography['B-4'],
     textAlign: 'left'
   },
@@ -70,9 +69,8 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
-  const { pathname } = useLocation();
+  const isBlueish = useIsBlueish();
 
-  const isBlueish = pathname.includes('/solo/');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [focusing, setFocused] = useState<boolean>(false);
 
@@ -90,9 +88,9 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
     }
   }, [onEnterPress]);
 
-  const commonColor = isDark
-    ? isBlueish ? '#809ACB' : '#AA83DC'
-    : '#8F97B8';
+  const commonColor = useMemo(() => isDark
+    ? isBlueish ? theme.palette.text.highlight : '#AA83DC'
+    : '#8F97B8', [isBlueish, isDark, theme.palette.text.highlight]);
 
   return (
     <Container disableGutters sx={style}>
@@ -112,9 +110,7 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
                 sx={{ bgcolor: isDark ? isBlueish ? '#222442' : '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
               >
                 {showPassword
-                  ? <EyeSlash
-                    color={commonColor} size='20' variant='Bulk'
-                  />
+                  ? <EyeSlash color={commonColor} size='20' variant='Bulk' />
                   : <Eye color={commonColor} size='20' variant='Bulk' />
                 }
               </IconButton>
