@@ -87,6 +87,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
             genesisHash={genesisHash ?? ''}
             noIdenticon
             showShortAddress
+            style={{ width: '230px' }}
           />
           <Grid container flexDirection='row' item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
             <Typography color='txt.highlight' variant='B-1'>
