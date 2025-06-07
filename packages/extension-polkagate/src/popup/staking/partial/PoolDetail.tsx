@@ -32,6 +32,16 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
+const unwrapRewardAccount = (rewardDestination: string | undefined) => {
+  try {
+    const parsed = rewardDestination && JSON.parse(rewardDestination);
+
+    return parsed?.account;
+  } catch {
+    return undefined;
+  }
+};
+
 interface StakingInfoStackWithIconProps {
   Icon: React.ReactNode;
   amount?: string | BN | Compact<INumber> | null | undefined;
@@ -353,8 +363,8 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
   }), [poolDetail]);
 
   const ids = useMemo(() => ({
-    'reward ID': poolDetail?.accounts?.rewardId.toString(),
-    'stash ID': poolDetail?.accounts?.stashId.toString()
+    'reward ID': poolDetail?.accounts?.rewardId.toString() ?? unwrapRewardAccount(poolDetail?.stashIdAccount?.rewardDestination?.toString()),
+    'stash ID': poolDetail?.accounts?.stashId.toString() ?? poolDetail?.stashIdAccount?.accountId.toString()
   }), [poolDetail]);
 
   const handleCollapses = useCallback((type: string) => () => dispatchCollapse({ type }), []);
