@@ -34,12 +34,12 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
   return (
     <ExtensionPopup
       TitleIcon={UserOctagon}
+      darkBackground
       handleClose={handleClose}
       iconColor={theme.palette.text.highlight}
       iconSize={26}
       openMenu={openMenu}
       title={t('Accounts')}
-      withoutBackground
       withoutTopBorder
     >
       <Stack direction='column' sx={{ height: '440px', position: 'relative', rowGap: '24px', width: '100%' }}>

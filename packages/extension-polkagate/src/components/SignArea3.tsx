@@ -52,6 +52,7 @@ const SignUsingQR = ({ handleClose, onSignature, openMenu, payload, signerPayloa
   return (
     <ExtensionPopup
       TitleIcon={ScanBarcode}
+      darkBackground
       handleClose={handleClose}
       iconColor={theme.palette.text.highlight}
       iconSize={25}

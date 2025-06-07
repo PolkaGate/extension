@@ -111,7 +111,7 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
             <>
               {
                 isBlueish
-                  ? <BlueGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />
+                  ? <BlueGradient style={{ top: `${-120 + (pt ?? 0)}px` }} />
                   : <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />
               }
             </>

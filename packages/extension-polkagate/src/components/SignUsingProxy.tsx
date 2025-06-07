@@ -160,6 +160,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
     <ExtensionPopup
       RightItem={<ResetSelection onReset={onReset} />}
       TitleIcon={Data}
+      darkBackground
       handleClose={onClosePopup}
       iconColor={theme.palette.text.highlight}
       iconSize={25}

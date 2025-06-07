@@ -27,6 +27,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
   return (
     <ExtensionPopup
       TitleIcon={LockSlash}
+      darkBackground
       handleClose={handleClose}
       iconSize={22}
       openMenu={openMenu}
@@ -41,7 +42,6 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
         justifyContent: 'flex-end'
       }}
       title={t('Unstaking')}
-      withoutBackground
       withoutTopBorder
     >
       <Container disableGutters sx={{ maxHeight: '360px', mb: '15px', overflowY: 'auto', p: '8px' }}>
