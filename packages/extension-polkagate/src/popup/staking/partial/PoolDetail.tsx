@@ -97,7 +97,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
   const { chainName } = useChainInfo(genesisHash, true);
 
   const poolStatus = useMemo(() => {
-    const status = poolDetail.bondedPool?.state as string | undefined;
+    const status = poolDetail.bondedPool?.state.toString();
 
     return status === 'Open'
       ? t('pool')
@@ -107,7 +107,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
   }, [poolDetail.bondedPool?.state, t]);
 
   const { bgcolor, textColor } = useMemo(() => {
-    const status = poolDetail.bondedPool?.state as string | undefined;
+    const status = poolDetail.bondedPool?.state.toString();
 
     return status === 'Open'
       ? { bgcolor: 'rgba(128, 154, 203, 0.15)', textColor: 'rgba(128, 154, 203, 1)' }
