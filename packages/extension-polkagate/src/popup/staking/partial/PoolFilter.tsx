@@ -193,11 +193,11 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
 
   return (
     <ExtensionPopup
+      darkBackground
       handleClose={handleClose}
       maxHeight='446px'
       openMenu={openMenu}
       title={t('Filters')}
-      withoutBackground
       withoutTopBorder
     >
       <Stack direction='column' sx={{ height: '340px', position: 'relative', width: '100%' }}>

@@ -48,13 +48,13 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
   return (
     <ExtensionPopup
       TitleIcon={Mirror}
+      darkBackground
       handleClose={handleClose}
       iconColor={theme.palette.text.highlight}
       iconSize={26}
       openMenu={openMenu}
       style={{ '> div#container': { pt: '10px' } }}
       title={t('Update roles')}
-      withoutBackground
       withoutTopBorder
     >
       <Stack direction='column' sx={{ gap: '8px', height: '440px', position: 'relative', pt: '25px', width: '100%' }}>
