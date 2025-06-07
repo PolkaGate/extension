@@ -132,7 +132,7 @@ export default function UpdateRoles ({ address, roles, setRoles }: Props) {
             {t('Update roles')}
           </Typography>
         </Typography>
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#2224424D', border: '1px solid #2E2B52', borderRadius: '12px', display: 'flex', gap: '6px', mr: '10px', p: '10px', width: 'calc(100% - 15px)' }}>
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#2224424D', border: '1px solid #2E2B52', borderRadius: '12px', display: 'flex', gap: '6px', mr: '10px', p: '10px', width: 'calc(100% - 10px)' }}>
           <PolkaGateIdenticon
             address={address}
             size={24}

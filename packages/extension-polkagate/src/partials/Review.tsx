@@ -174,7 +174,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
-  const isRow = !!pool?.bondedPool?.state;
+  const isRow = useMemo(() => (pool?.bondedPool?.state?.toString() !== 'Creating'), [pool?.bondedPool?.state]);
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
@@ -195,6 +195,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
           onDetailClick={noop}
           poolInfo={pool}
           status={isRow ? t('Joining') : t('Creating')}
+          style={{ marginTop: '8px' }}
         />
       }
       <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%' }}>

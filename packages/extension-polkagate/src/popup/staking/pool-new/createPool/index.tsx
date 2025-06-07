@@ -10,7 +10,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { BN_ZERO } from '@polkadot/util';
+import { BN_FIVE, BN_ZERO } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
@@ -24,13 +24,13 @@ import UpdateRoles, { type RolesState, updateRoleReducer } from './UpdateRoles';
 interface PoolNameBoxProp {
   onInputChange: (input: string) => void;
   initName: string;
-  enteredValue: string;
+  enteredValue: string | undefined;
 }
 
 const PoolNameBox = ({ enteredValue, initName, onInputChange }: PoolNameBoxProp) => {
   const { t } = useTranslation();
 
-  return (
+  return useMemo(() =>
     <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', gap: '12px', p: '15px' }}>
       <Typography color='text.primary' textAlign='left' variant='B-1'>
         {t('Pool Name')}
@@ -43,7 +43,7 @@ const PoolNameBox = ({ enteredValue, initName, onInputChange }: PoolNameBoxProp)
         style={{ '> div': { backgroundColor: '#2224424D', border: '1px solid #2E2B52', borderRadius: '12px', height: 'fit-content', p: '6px' }, width: '100%' }}
       />
     </Stack>
-  );
+  , [enteredValue, initName, onInputChange, t]);
 };
 
 export default function CreatePool () {
@@ -61,12 +61,20 @@ export default function CreatePool () {
   const batch = api?.tx['utility']['batch'];
   const setMetadata = api?.tx['nominationPools']['setMetadata'];
 
+  const poolId = useMemo(() => {
+    if (!stakingInfo.poolStakingConsts?.lastPoolId) {
+      return undefined;
+    } else {
+      return stakingInfo.poolStakingConsts.lastPoolId.addn(1);
+    }
+  }, [stakingInfo.poolStakingConsts?.lastPoolId]);
+
   const initName = useMemo(() => {
     const initialName = 'PolkaGate - ';
-    const lastPoolId = stakingInfo.poolStakingConsts?.lastPoolId ? stakingInfo.poolStakingConsts.lastPoolId.toNumber() + 1 : undefined;
+    const lastPoolId = poolId?.toString() ?? undefined;
 
     return initialName + lastPoolId;
-  }, [stakingInfo.poolStakingConsts?.lastPoolId]);
+  }, [poolId]);
 
   const INITIAL_POOL_FILTER_STATE: RolesState = useMemo(() => ({
     bouncer: formatted ?? selectedAccount?.address,
@@ -76,8 +84,8 @@ export default function CreatePool () {
   }), [formatted, selectedAccount?.address]);
 
   const [review, setReview] = useState<boolean>(false);
-  const [poolMetadata, setPoolMetadata] = useState<string>(initName);
-  const [bondAmount, setBondAmount] = useState<BN>(BN_ZERO);
+  const [poolMetadata, setPoolMetadata] = useState<string | undefined>(undefined);
+  const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
   const [roles, setRoles] = useReducer(updateRoleReducer, INITIAL_POOL_FILTER_STATE);
 
   useEffect(() => {
@@ -107,17 +115,17 @@ export default function CreatePool () {
   }, [bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minCreationBond, t]);
 
   const tx = useMemo(() => {
-    if (!create || !bondAmount || !setMetadata || !batch || !stakingInfo.poolStakingConsts) {
+    if (!create || !bondAmount || !setMetadata || !batch || !poolId) {
       return undefined;
     }
 
     return batch([
       create(bondAmount, roles.root, roles.nominator, roles.bouncer),
-      setMetadata(stakingInfo.poolStakingConsts.lastPoolId.addn(1), poolMetadata)
+      setMetadata(poolId, poolMetadata || initName)
     ]);
-  }, [batch, bondAmount, create, poolMetadata, roles.bouncer, roles.nominator, roles.root, setMetadata, stakingInfo.poolStakingConsts]);
+  }, [batch, bondAmount, create, initName, poolId, poolMetadata, roles.bouncer, roles.nominator, roles.root, setMetadata]);
 
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? setMetadata?.(initName));
+  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? setMetadata?.(BN_FIVE, initName));
 
   const transactionInformation = useMemo(() => {
     return [{
@@ -159,10 +167,10 @@ export default function CreatePool () {
       },
       state: 'Creating' as unknown as PalletNominationPoolsPoolState
     },
-    metadata: poolMetadata,
-    poolId: stakingInfo.poolStakingConsts?.lastPoolId?.addn(1) ?? BN_ZERO,
+    metadata: poolMetadata || initName,
+    poolId,
     rewardPool: null
-  }) as unknown as PoolInfo, [bondAmount, poolMetadata, roles.bouncer, roles.depositor, roles.nominator, roles.root, stakingInfo.poolStakingConsts?.lastPoolId]);
+  }) as unknown as PoolInfo, [bondAmount, roles.bouncer, roles.depositor, roles.nominator, roles.root, poolMetadata, initName, poolId]);
 
   const onInputAmountChange = useCallback((value: string | null | undefined) => {
     const valueAsBN = value ? amountToMachine(value, decimal) : BN_ZERO;
@@ -172,11 +180,15 @@ export default function CreatePool () {
 
   const onInputChange = useCallback((input: string) => setPoolMetadata(input), []);
   const onBack = useCallback(() => navigate('/pool/' + genesisHash + '/stake') as void, [genesisHash, navigate]);
-  const toggleReview = useCallback(() => setReview((onReview) => !onReview), []);
+  const openReview = useCallback(() => setReview(true), []);
+  const closeReview = useCallback(() => {
+    setReview((onReview) => !onReview);
+    setBondAmount(undefined);
+  }, []);
 
   const transactionFlow = useTransactionFlow({
     backPathTitle: t('Creating Pool'),
-    closeReview: toggleReview,
+    closeReview,
     formatted,
     genesisHash: genesisHash ?? '',
     pool: poolToCreate,
@@ -196,9 +208,9 @@ export default function CreatePool () {
           style={{ pb: 0 }}
           text={t('Create pool')}
         />
-        <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', px: '15px' }}>
+        <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', position: 'relative', px: '15px' }}>
           <PoolNameBox
-            enteredValue={poolMetadata !== initName ? poolMetadata : ''}
+            enteredValue={poolMetadata}
             initName={initName}
             onInputChange={onInputChange}
           />
@@ -224,13 +236,13 @@ export default function CreatePool () {
             roles={roles}
             setRoles={setRoles}
           />
-          <StakingActionButton
-            disabled={!bondAmount || bondAmount.isZero() || !!errorMessage || !api}
-            onClick={toggleReview}
-            style={{ marginTop: '30px' }}
-            text={t('Next')}
-          />
         </Stack>
+        <StakingActionButton
+          disabled={!bondAmount || bondAmount.isZero() || !!errorMessage || !api || !poolId}
+          onClick={openReview}
+          style={{ bottom: '18px', left: '15px', position: 'absolute' }}
+          text={t('Next')}
+        />
       </Motion>
     </Grid>
   );

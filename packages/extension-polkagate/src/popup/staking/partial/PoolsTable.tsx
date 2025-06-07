@@ -5,9 +5,9 @@ import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsHovered, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
 import PRadio from '../components/Radio';
 import { StakingInfoStack } from './NominatorsTable';
@@ -36,13 +36,14 @@ interface PoolInfoProp {
   selected?: PoolInfo | undefined;
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
   status?: string;
+  style?: React.CSSProperties;
 }
 
-export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, status }: PoolInfoProp) => {
+export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, status, style }: PoolInfoProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
-
-  const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef(null);
+  const isHovered = useIsHovered(containerRef);
 
   const maybeCommission = poolInfo.bondedPool?.commission?.current?.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
   const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
@@ -68,12 +69,11 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
   }, [isSelected, onSelect, poolInfo]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: isSelected ? '#1C1D38' : '#110F2A', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%' }}>
+    <Stack direction='column' sx={{ bgcolor: isSelected ? '#1C1D38' : '#110F2A', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
       <Container
         disableGutters
         onClick={handleContainerClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        ref={containerRef}
         sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}
       >
         <PoolStashIdentity poolInfo={poolInfo} />
