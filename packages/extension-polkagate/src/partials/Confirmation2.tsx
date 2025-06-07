@@ -171,33 +171,35 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
   }, [address, chainName]);
 
   return (
-    <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0' }}>
+    <Stack direction='column' sx={{ gap: '8px', height: 'calc(100% - 34px)', p: '15px 15px 0' }}>
       <ConfirmationHeader genesisHash={genesisHash} transactionDetail={transactionDetail} />
       <ConfirmationDetail genesisHash={genesisHash} transactionDetail={transactionDetail} />
-      <NeonButton
-        contentPlacement='center'
-        onClick={goToHistory}
-        style={{
-          height: '44px',
-          width: '345px'
-        }}
-        text={t('History')}
-      />
-      <ActionButton
-        contentPlacement='center'
-        onClick={backToStakingHome}
-        style={{
-          height: '44px',
-          width: '345px'
-        }}
-        text={t('Staking Home')}
-        variant='text'
-      />
-      <StakingActionButton
-        onClick={goToExplorer}
-        startIcon={<SubScanIcon />}
-        text={t('View On Explorer')}
-      />
+      <Stack direction='column' sx={{ alignItems: 'center', bottom: '15px', gap: '8px', height: '150px', left: 0, position: 'absolute', width: '100%' }}>
+        <NeonButton
+          contentPlacement='center'
+          onClick={goToHistory}
+          style={{
+            height: '44px',
+            width: '345px'
+          }}
+          text={t('History')}
+        />
+        <ActionButton
+          contentPlacement='center'
+          onClick={backToStakingHome}
+          style={{
+            height: '44px',
+            width: '345px'
+          }}
+          text={t('Staking Home')}
+          variant='text'
+        />
+        <StakingActionButton
+          onClick={goToExplorer}
+          startIcon={<SubScanIcon />}
+          text={t('View On Explorer')}
+        />
+      </Stack>
     </Stack>
   );
 }
