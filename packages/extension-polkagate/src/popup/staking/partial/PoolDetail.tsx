@@ -34,9 +34,14 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
 
 const unwrapRewardAccount = (rewardDestination: string | undefined) => {
   try {
-    const parsed = rewardDestination && JSON.parse(rewardDestination);
+    const parsed = rewardDestination ? JSON.parse(rewardDestination) as unknown : undefined;
 
-    return parsed?.account;
+    if (parsed && typeof parsed === 'object' && parsed !== null && 'account' in parsed) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return (parsed as { account?: string }).account;
+    }
+
+    return undefined;
   } catch {
     return undefined;
   }
