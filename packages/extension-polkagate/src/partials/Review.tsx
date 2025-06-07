@@ -174,7 +174,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 
-  const isRow = useMemo(() => (pool?.bondedPool?.state?.toString() !== 'Creating'), [pool?.bondedPool?.state]);
+  const isRow = useMemo(() => (pool && pool?.bondedPool?.state?.toString() !== 'Creating'), [pool]);
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
