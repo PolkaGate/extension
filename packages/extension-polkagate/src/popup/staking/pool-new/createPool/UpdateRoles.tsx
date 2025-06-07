@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowCircleRight2, Mirror } from 'iconsax-react';
+import { ArrowCircleLeft2, ArrowCircleRight2, Mirror } from 'iconsax-react';
 import React, { type SetStateAction, useCallback, useState } from 'react';
 
 import { AddressInput, ExtensionPopup } from '../../../../components';
@@ -74,7 +74,7 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
         </Stack>
         <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '12px 15px' }}>
           <Container disableGutters sx={{ display: 'flex', gap: '6px' }}>
-            <ArrowCircleRight2 color={theme.palette.text.highlight} size='22' variant='Bulk' />
+            <ArrowCircleLeft2 color={theme.palette.text.highlight} size='22' variant='Bulk' />
             <Typography color='text.primary' variant='B-1'>
               {t('Bouncer')}
             </Typography>
