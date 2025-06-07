@@ -201,7 +201,7 @@ export default function CreatePool () {
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
-      <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
+      <Motion style={{ height: 'calc(100% - 55px)' }} variant='slide'>
         <BackWithLabel
           onClick={onBack}
           stepCounter={{ currentStep: 1, totalSteps: 2 }}
