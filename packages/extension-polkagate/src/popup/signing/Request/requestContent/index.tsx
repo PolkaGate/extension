@@ -8,7 +8,7 @@ import type { AnyJson } from '@polkadot/types/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
 import { ArrowCircleRight } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '../../../../components/translate';
 import { toTitleCase } from '../../../../util';
@@ -31,7 +31,7 @@ interface Props {
   decoded: Decoded;
 }
 
-function ShowTransactionSummary({ genesisHash, info }: ShowTransactionSummaryProps): React.ReactElement<Props> {
+function ShowTransactionSummary ({ genesisHash, info }: ShowTransactionSummaryProps): React.ReactElement<Props> {
   const action = `${info?.section}_${info?.method}`;
 
   switch (action) {
@@ -55,7 +55,7 @@ function ShowTransactionSummary({ genesisHash, info }: ShowTransactionSummaryPro
           <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
             {info?.section}
           </Typography>
-          <Typography color='#EAEBF1' fontSize='13px' variant='B-3'>
+          <Typography color='#EAEBF1' fontSize='13px' variant='B-3' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '150px' }}>
             {toTitleCase(info?.method)}
           </Typography>
         </Stack>
@@ -63,7 +63,7 @@ function ShowTransactionSummary({ genesisHash, info }: ShowTransactionSummaryPro
   }
 }
 
-function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
+function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isBatchCall = decoded.method?.method.includes('batch');
 
