@@ -93,9 +93,10 @@ interface ContentItemProps extends Content {
   decimal?: number;
   token?: string;
   genesisHash: string;
+  noDivider?: boolean;
 }
 
-const ContentItem = ({ content, decimal, description, genesisHash, title, token, withLogo }: ContentItemProps) => {
+const ContentItem = ({ content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) => {
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
 
   return (
@@ -149,7 +150,7 @@ const ContentItem = ({ content, decimal, description, genesisHash, title, token,
           }
         </Stack>
       </Stack>
-      <GradientDivider />
+      {!noDivider && <GradientDivider />}
     </>
   );
 };
@@ -189,12 +190,12 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
             genesisHash={genesisHash}
             selectedAccount={selectedAccount}
           />)}
-      {pool &&
+      {pool && isRow &&
         <PoolItem
           genesisHash={genesisHash}
           onDetailClick={noop}
           poolInfo={pool}
-          status={isRow ? t('Joining') : t('Creating')}
+          status={t('Joining')}
           style={{ marginTop: '8px' }}
         />
       }
@@ -206,12 +207,22 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
             description={description}
             genesisHash={genesisHash}
             key={index}
+            noDivider={pool && !isRow}
             title={title}
             token={token}
             withLogo={withLogo}
           />
         ))}
       </Grid>
+      {pool && !isRow &&
+        <PoolItem
+          genesisHash={genesisHash}
+          onDetailClick={noop}
+          poolInfo={pool}
+          status={t('Creating')}
+          style={{ marginTop: '14px' }}
+        />
+      }
       <SignArea3
         address={selectedAccount?.address}
         genesisHash={genesisHash}

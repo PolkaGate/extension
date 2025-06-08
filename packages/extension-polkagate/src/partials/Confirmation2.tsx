@@ -89,7 +89,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
   ]), [t, transactionDetail.amount, transactionDetail.block, transactionDetail.fee, transactionDetail.txHash]);
 
   return (
-    <VelvetBox>
+    <VelvetBox noGlowBall>
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', p: '12px 18px' }}>
         {listItem.map(({ content, title }, index) => {
           const withDivider = listItem.length > index + 1;
@@ -186,6 +186,7 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
         />
         <ActionButton
           contentPlacement='center'
+          isBlueish
           onClick={backToStakingHome}
           style={{
             height: '44px',

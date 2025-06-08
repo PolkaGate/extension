@@ -129,15 +129,10 @@ export default function CreatePool () {
 
   const transactionInformation = useMemo(() => {
     return [{
-      content: bondAmount,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
       content: estimatedFee2,
       title: t('Fee')
     }];
-  }, [bondAmount, estimatedFee2, t]);
+  }, [estimatedFee2, t]);
 
   const onMaxValue = useMemo(() => {
     if (!formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts) {
