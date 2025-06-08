@@ -173,7 +173,7 @@ export default function StakingReward () {
             text={t('Received Rewards')}
           />
           <Stack direction='column' ref={containerRef} sx={{ height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
-            {(rewardInfo.status === 'loading' || !rewardInfo.descSortedRewards) &&
+            {rewardInfo.status === 'loading' &&
               <Progress text={t('Loading rewards')} />
             }
             {rewardInfo.status === 'ready' && rewardInfo.descSortedRewards &&
