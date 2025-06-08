@@ -27,11 +27,12 @@ interface Props {
 }
 
 function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
-  return <Skeleton
-    animation='wave'
-    height={12}
-    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
-  />;
+  return (
+    <Skeleton
+      animation='wave'
+      height={12}
+      sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
+    />);
 }
 
 export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
