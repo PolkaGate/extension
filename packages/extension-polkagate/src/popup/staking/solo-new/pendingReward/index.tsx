@@ -63,6 +63,17 @@ interface RewardsTableProp {
   eraToDate: (era: number) => string | undefined;
 }
 
+const StyledSkeleton = () => {
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', my: '4px' }}>
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '6px', display: 'inline-block', transform: 'none', width: SKELETON_HEIGHT }} />
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '8px', display: 'inline-block', transform: 'none', width: '85px' }} />
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '8px', display: 'inline-block', transform: 'none', width: '150px' }} />
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '8px', display: 'inline-block', transform: 'none', width: '50px' }} />
+    </Container>
+  );
+};
+
 const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selectedToPayout }: RewardsTableProp) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -78,7 +89,7 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
       <Stack direction='column' ref={containerRef} sx={{ gap: '2px', height: TABLE_HEIGHT, maxHeight: TABLE_HEIGHT, overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
         {expandedRewards === undefined &&
           Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
-            <Skeleton animation='wave' height={SKELETON_HEIGHT} key={index} sx={{ display: 'inline-block', my: '5px', transform: 'none', width: '100%' }} />
+            <StyledSkeleton key={index} />
           ))}
         {expandedRewards && expandedRewards.length === 0 &&
           <Grid container justifyContent='center' sx={{ mt: '70px' }}>
@@ -211,19 +222,6 @@ export default function SoloPendingReward () {
 
     setExpandedRewards(rewardsArray);
   }, [pendingRewards]);
-
-  // const totalPending = useMemo(() => {
-  //   if (!pendingRewards) {
-  //     return BN_ZERO;
-  //   }
-
-  //   const validatorRewards = Object.values(pendingRewards || {});
-  //   const pageRewards = validatorRewards.map((item) => Object.values(item || {})).flat();
-
-  //   const total = pageRewards.reduce((sum: BN, [_, value]: [number, BN]) => sum.add(value), BN_ZERO);
-
-  //   return total;
-  // }, [pendingRewards]);
 
   const eraToDate = useCallback((era: number): string | undefined => {
     if (!(currentBlock && historyDepth && era && forcing && progress && progress.sessionLength.gt(BN_ONE))) {
