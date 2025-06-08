@@ -4,7 +4,7 @@
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { BN} from '@polkadot/util';
+import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -195,7 +195,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
 
   const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-  const rewards = useStakingRewards2(chainName, stakingAccount);
+  const rewards = useStakingRewards2(chainName, stakingAccount); // total reward
   const stakingConsts = useStakingConsts2(genesisHash);
 
   // Fetch session and unstaking information

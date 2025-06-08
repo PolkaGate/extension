@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Grid, Typography, useTheme } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
@@ -19,9 +19,10 @@ interface TileActionButtonProps {
   noText?: boolean;
   isRow?: boolean;
   isDisabled?: boolean;
+  style?: SxProps<Theme>;
 }
 
-export function TileActionButton ({ Icon, isDisabled = false, isRow = false, noText = false, onClick, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton ({ Icon, isDisabled = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
@@ -39,7 +40,8 @@ export function TileActionButton ({ Icon, isDisabled = false, isRow = false, noT
             cursor: isDisabled ? 'default' : 'pointer',
             flexWrap: 'nowrap',
             p: '4px 7px',
-            transition: 'all 150ms ease-out'
+            transition: 'all 150ms ease-out',
+            ...style
           }}
           xs
         >

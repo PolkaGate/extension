@@ -60,7 +60,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     }
 
     (type === 'solo'
-      ? getRewardsSlashes(chainName, 0, MAX_HISTORY_RECORD_TO_SHOW, String(address))
+      ? getRewardsSlashes(chainName, String(address), 'claimed')
       : getNominationPoolsClaimedRewards(chainName, String(address), MAX_HISTORY_RECORD_TO_SHOW))
       .then((r) => {
         const list = r?.data.list as SubscanClaimedRewardInfo[];
@@ -127,7 +127,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
 
       temp[relatedDateIndex].amount = temp[relatedDateIndex].amount.add(item.amount);
       temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
-      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal);
+      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal, 2);
     });
 
     for (let j = 0; j < temp.length; j++) {

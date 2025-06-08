@@ -17,7 +17,7 @@ import { calcPrice } from '../../../hooks/useYouHave';
 import { Background } from '../../../style';
 import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
 import StakingActionButton from './StakingActionButton';
-import StakingInfoTile from './StakingInfoTile';
+import StakingInfoTile, { TileActionButton } from './StakingInfoTile';
 
 const ThunderBackground = () => {
   return (
@@ -52,6 +52,74 @@ const ChartButton = ({ onRewardChart }: { onRewardChart: () => void }) => {
   );
 };
 
+interface PoolClaimRewardProps {
+  reward: BN | undefined;
+  rewardInCurrency: number | undefined;
+  decimal: number | undefined;
+  token: string | undefined;
+  onClaimReward: () => void;
+  disabled?: boolean;
+
+}
+
+const PoolClaimReward = ({ decimal, disabled, onClaimReward, reward, rewardInCurrency, token }: PoolClaimRewardProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  const isDisabled = useMemo(() => disabled || reward === undefined || reward.isZero() || rewardInCurrency === undefined || rewardInCurrency === 0, [disabled, reward, rewardInCurrency]);
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
+      <ColumnAmounts
+        balanceColor={theme.palette.text.highlight}
+        color={theme.palette.text.primary}
+        cryptoAmount={reward ?? BN_ZERO}
+        decimal={decimal ?? 0}
+        fiatAmount={rewardInCurrency ?? 0}
+        placement='left'
+        priceSecondColor={theme.palette.text.highlight}
+        token={token ?? ''}
+      />
+      <StakingActionButton
+        buttonFontStyle={{ ...theme.typography['B-4'] }}
+        disabled={isDisabled}
+        onClick={onClaimReward}
+        startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
+        style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
+        text={t('Claim rewards')}
+      />
+    </Container>
+  );
+};
+
+interface SoloRewardProps {
+  onRewardChart: () => void;
+  onClaimReward: () => void;
+}
+
+const SoloReward = ({ onClaimReward, onRewardChart }: SoloRewardProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bottom: '20px', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'flex-end', position: 'absolute', pr: '25px', pt: '15px', width: '100%', zIndex: 10 }}>
+      <TileActionButton
+        Icon={Timer}
+        noText
+        onClick={onRewardChart}
+        style={{ borderRadius: '999px', maxWidth: '30px' }}
+        text={t('Pending Rewards')}
+      />
+      <TileActionButton
+        Icon={Chart21}
+        noText
+        onClick={onClaimReward}
+        style={{ borderRadius: '999px', maxWidth: '30px' }}
+        text={t('Chart')}
+      />
+    </Container>
+  );
+};
+
 interface FlatRewardTileProps {
   reward: BN | undefined;
   totalClaimedReward: BN | undefined;
@@ -62,20 +130,19 @@ interface FlatRewardTileProps {
   onClaimReward: () => void;
   onRewardChart: () => void;
   disabled?: boolean;
+  type: 'solo' | 'pool';
 }
 
-const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, reward, rewardInCurrency, token, totalClaimedReward, totalClaimedRewardInCurrency }: FlatRewardTileProps) => {
+const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, reward, rewardInCurrency, token, totalClaimedReward, totalClaimedRewardInCurrency, type }: FlatRewardTileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
-
-  const isDisabled = useMemo(() => disabled || reward === undefined || reward.isZero() || rewardInCurrency === undefined || rewardInCurrency === 0, [disabled, reward, rewardInCurrency]);
 
   return (
     <Stack direction='column' sx={{ borderRadius: '14px', height: '170px', overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
       <Badge />
-      <ChartButton onRewardChart={onRewardChart} />
-      <Stack direction='column' sx={{ p: '4px', zIndex: 1 }}>
+      {type === 'pool' && <ChartButton onRewardChart={onRewardChart} />}
+      <Stack direction='column' sx={{ my: type === 'solo' ? 'auto' : 0, p: '4px', zIndex: 1 }}>
         <Stack direction='column' sx={{ pl: '14px', pt: '16px', rowGap: '4px', zIndex: 1 }}>
           <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
             <Award color='#3988FF' size='20' variant='Bulk' />
@@ -132,26 +199,22 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                 />)}
           </Grid>
         </Stack>
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
-          <ColumnAmounts
-            balanceColor={theme.palette.text.highlight}
-            color={theme.palette.text.primary}
-            cryptoAmount={reward ?? BN_ZERO}
-            decimal={decimal ?? 0}
-            fiatAmount={rewardInCurrency ?? 0}
-            placement='left'
-            priceSecondColor={theme.palette.text.highlight}
-            token={token ?? ''}
-          />
-          <StakingActionButton
-            buttonFontStyle={{ ...theme.typography['B-4'] }}
-            disabled={isDisabled}
-            onClick={onClaimReward}
-            startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
-            style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
-            text={t('Claim rewards')}
-          />
-        </Container>
+        {type === 'pool'
+          ? (
+            <PoolClaimReward
+              decimal={decimal}
+              disabled={disabled}
+              onClaimReward={onClaimReward}
+              reward={reward}
+              rewardInCurrency={rewardInCurrency}
+              token={token}
+            />)
+          : (
+            <SoloReward
+              onClaimReward={onClaimReward}
+              onRewardChart={onRewardChart}
+            />)
+        }
       </Stack>
     </Stack>
   );
@@ -229,6 +292,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
         token={token}
         totalClaimedReward={totalClaimedReward}
         totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
+        type={type}
       />
     );
   }
