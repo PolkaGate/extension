@@ -97,7 +97,7 @@ export default function JoinPoolInput ({ bondAmount, errorMessage, estimatedFee2
       <StakingActionButton
         disabled={!bondAmount || bondAmount.isZero() || !!errorMessage || !api}
         onClick={onNext}
-        style={{ bottom: '15px', position: 'absolute' }}
+        style={{ bottom: '15px', position: 'absolute', width: '345px' }}
         text={t('Next')}
       />
     </Stack>

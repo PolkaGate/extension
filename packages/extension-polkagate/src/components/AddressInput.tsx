@@ -19,7 +19,7 @@ interface Props {
   addWithQr?: boolean;
   chain?: Chain | null;
   disabled?: boolean;
-  label: string;
+  label?: string;
   placeHolder?: string;
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   style?: SxProps<Theme>;
@@ -81,35 +81,12 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
   return (
     <>
       <Stack direction='column' justifyContent='start' ref={containerRef} rowGap='5px' sx={{ position: 'relative', ...style }}>
-        <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-1'>
-          {label}
-        </Typography>
+        {label &&
+          <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-1'>
+            {label}
+          </Typography>}
         <TextField
-          autoComplete='off'
           InputProps={{
-            style: {
-              color: `${invalidAddress ? '#FF4FB9' : '#BEAAD8'}`, // Applies to input text AND placeholder
-              fontFamily: 'Inter',
-              fontSize: '12px',
-              fontWeight: 500
-            },
-            startAdornment: (
-              <InputAdornment position='start'>
-
-                {enteredAddress && !invalidAddress
-                  ? <PolkaGateIdenticon
-                    address={enteredAddress}
-                    size={18}
-                  />
-                  : <Hashtag
-                    color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : '#AA83DC'}
-                    size='18'
-                    style={{ cursor: 'pointer', margin: '0 2px 0' }}
-                    variant='Bulk'
-                  />
-                }
-              </InputAdornment>
-            ),
             endAdornment: (
               <InputAdornment position='end' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
                 {addWithQr && !disabled &&
@@ -129,12 +106,40 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
                 }
                 {/* icon={enteredAddress || address ? faXmarkCircle : faPaste} */}
               </InputAdornment>
-            )
+            ),
+            startAdornment: (
+              <InputAdornment position='start'>
+
+                {enteredAddress && !invalidAddress
+                  ? (
+                    <PolkaGateIdenticon
+                      address={enteredAddress}
+                      size={18}
+                    />)
+                  : <Hashtag
+                    color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : '#AA83DC'}
+                    size='18'
+                    style={{ cursor: 'pointer', margin: '0 2px 0' }}
+                    variant='Bulk'
+                  />
+                }
+              </InputAdornment>
+            ),
+            style: {
+              color: `${invalidAddress ? '#FF4FB9' : '#BEAAD8'}`, // Applies to input text AND placeholder
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              fontWeight: 500
+            }
           }}
+          autoComplete='off'
           onChange={handleInputAddress}
           onFocus={() => setFocus(true)}
           placeholder={placeHolder ?? t('Enter your account ID')}
           sx={{
+            '&:hover': {
+              bgcolor: '#2D1E4A'
+            },
             '> div.MuiOutlinedInput-root': {
               '> fieldset':
               {
@@ -142,22 +147,19 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
               },
               '> input.MuiAutocomplete-input':
               {
-                border: 'none',
-                p: 0,
                 '&::placeholder': {
                   fontFamily: 'Inter',
                   fontSize: '12px',
                   fontWeight: 500
-                }
+                },
+                border: 'none',
+                p: 0
               },
               border: 'none',
               height: '100%',
               p: '0 3px 0 5px'
             },
             bgcolor: '#1B133CB2',
-            '&:hover': {
-              bgcolor: '#2D1E4A'
-            },
             border: '1px solid',
             borderColor: `${invalidAddress ? 'warning.main' : focus ? 'action.focus' : '#BEAAD833'}`,
             borderRadius: '12px',

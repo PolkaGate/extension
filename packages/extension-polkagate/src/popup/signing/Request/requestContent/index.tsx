@@ -8,7 +8,7 @@ import type { AnyJson } from '@polkadot/types/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
 import { ArrowCircleRight } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useTranslation } from '../../../../components/translate';
 import { toTitleCase } from '../../../../util';

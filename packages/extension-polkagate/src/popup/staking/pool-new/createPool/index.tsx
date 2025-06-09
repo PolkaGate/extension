@@ -235,7 +235,7 @@ export default function CreatePool () {
         <StakingActionButton
           disabled={!bondAmount || bondAmount.isZero() || !!errorMessage || !api || !poolId}
           onClick={openReview}
-          style={{ bottom: '18px', left: '15px', position: 'absolute' }}
+          style={{ bottom: '18px', left: '15px', position: 'absolute', width: '345px' }}
           text={t('Next')}
         />
       </Motion>
