@@ -68,7 +68,7 @@ export default function SendFund(): React.ReactElement {
 
     if (ref.current && ref.current !== chain) {
       history.push({
-        pathname: `/send/${address}`
+        pathname: `/send/${address}/0`
       });
       setInputs(undefined);
       setStep(STEPS.INDEX); // to return back to index when change is changed on review of confirm page!
