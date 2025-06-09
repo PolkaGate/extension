@@ -48,7 +48,7 @@ export default function AccountSetting({ address, setDisplayPopup }: Props): Rea
   }, [address, account, setDisplayPopup]);
 
   const onManageProxies = useCallback(() => {
-    address && !proxyDisable && onAction(`/fullscreenProxyManagement/${address}`);
+    address && !proxyDisable && onAction(`/proxyManagement/${address}`);
   }, [address, onAction, proxyDisable]);
 
   const onManageIdentity = useCallback(() => {

@@ -1,8 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
+
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util/storage';
 
 import { Motion } from '../../../components';
 import { useAccountAssets } from '../../../hooks';
@@ -18,6 +21,10 @@ function RightColumn (): React.ReactElement {
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
   , [accountAssets, genesisHash, paramAssetId]);
+
+  useEffect(() => {
+    address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
+  }, [address, genesisHash]);
 
   return (
     <Motion style={{ display: 'block', height: '100%', overflow: 'hidden', position: 'relative', width: ' 523px' }} variant='flip'>

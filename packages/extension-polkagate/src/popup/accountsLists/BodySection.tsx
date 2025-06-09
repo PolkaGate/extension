@@ -5,7 +5,7 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types
 
 import { Box, Container, Stack } from '@mui/material';
 import { AddCircle, Trash } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -55,6 +55,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
   const isProfileDropDownOpen = mode === PROFILE_MODE.DROP_DOWN;
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
+  const [searchKeyword, setSearchKeyword] = useState<string>();
 
   useEffect(() => {
     setCategorizedAccounts(initialCategorizedAccounts);
@@ -67,7 +68,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
   }, [flatAccounts.length, onAction]);
 
   const onSearch = useCallback((keyword: string) => {
-    console.log(keyword);
+    setSearchKeyword(keyword);
   }, []);
 
   const onCreateClick = useCallback(() => {
@@ -82,6 +83,27 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
     setShowDeleteConfirmation(label);
   }, [setShowDeleteConfirmation]);
 
+  const filteredCategorizedAccounts = useMemo(() => {
+    if (!searchKeyword) {
+      return categorizedAccounts;
+    }
+
+    const keywordLower = searchKeyword.toLowerCase();
+
+    return Object.entries(categorizedAccounts).reduce((acc, [label, accounts]) => {
+      const filteredAccounts = accounts.filter(({ account }) =>
+        account.name?.toLowerCase().includes(keywordLower) ||
+          account.address.toLowerCase().includes(keywordLower)
+      );
+
+      if (filteredAccounts.length > 0) {
+        acc[label] = filteredAccounts;
+      }
+
+      return acc;
+    }, {} as Record<string, AccountsOrder[]>);
+  }, [categorizedAccounts, searchKeyword]);
+
   return (
     <>
       {isProfileDropDownOpen &&
@@ -94,9 +116,9 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
         />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
-            {Object.keys(categorizedAccounts).length > 0 && (
+            {Object.keys(filteredCategorizedAccounts).length > 0 && (
               <>
-                {Object.entries(categorizedAccounts).map(([label, accounts], profileIndex) => {
+                {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
                   return (
                     <>
                       {accounts.map((account, accIndex) => {

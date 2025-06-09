@@ -10,12 +10,13 @@ import React, { useCallback, useContext, useMemo, useRef, useState } from 'react
 import { noop } from '@polkadot/util';
 
 import { useTranslation } from '../hooks';
+import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
 import Progress from '../popup/staking/partial/Progress';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util/utils';
-import { AccountContext, ExtensionPopup, FadeOnScroll, Identity2 } from '.';
+import { AccountContext, FadeOnScroll, Identity2 } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const theme = useTheme();
@@ -120,7 +121,7 @@ interface Props {
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
+export default function SignUsingProxy({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const refContainer = useRef(null);
@@ -157,17 +158,23 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
   }, [handleClose, onReset]);
 
   return (
-    <ExtensionPopup
+    <SharePopup
       RightItem={<ResetSelection onReset={onReset} />}
-      TitleIcon={Data}
-      darkBackground
-      handleClose={onClosePopup}
-      iconColor={theme.palette.text.highlight}
-      iconSize={25}
-      maxHeight='450px'
-      openMenu={openMenu}
+      modalProps={{
+        dividerStyle: { margin: '5px 0 0' }
+      }}
+      modalStyle={{ minHeight: '200px' }}
+      onClose={onClosePopup}
+      open={openMenu}
+      popupProps={{
+        TitleIcon: Data,
+        iconColor: theme.palette.text.highlight,
+        iconSize: 25,
+        isBlueish: true,
+        maxHeight: '450px',
+        withoutTopBorder: true
+      }}
       title={t('Select Proxy')}
-      withoutTopBorder
     >
       <Stack direction='column' sx={{ height: '450px', position: 'relative', width: '100%' }}>
         <Typography color='text.highlight' sx={{ px: '15%', width: '100%' }} variant='B-4'>
@@ -202,6 +209,6 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
           text={t('Apply')}
         />
       </Stack>
-    </ExtensionPopup>
+    </SharePopup>
   );
 }

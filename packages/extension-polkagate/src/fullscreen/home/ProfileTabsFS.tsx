@@ -51,7 +51,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
   );
 }
 
-function ProfileTabsFS (): React.ReactElement {
+function ProfileTabsFS ({ width = '535px' }: { width?: string }): React.ReactElement {
   const initialAccountList = useAccountsOrder();
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -110,16 +110,16 @@ function ProfileTabsFS (): React.ReactElement {
   }, []);
 
   return (
-    <Stack alignItems='center' direction='row' sx={{ position: 'relative', width: '535px' }}>
+    <Stack alignItems='center' direction='row' sx={{ position: 'relative', width }}>
       {
         showLeftArrow &&
-        <Box justifyContent='start' sx={{ background: 'linear-gradient(90deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', left: '-25px', width: '69px' }}>
+        <Box justifyContent='start' sx={{ background: 'linear-gradient(90deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', left: '0px', width: '40px' }}>
           <ArrowCircleLeft
             color={hovered === 'left' ? '#FF4FB9' : '#EAEBF1'}
             onClick={onClickLeftArrow}
             onMouseEnter={() => setIsHovered('left')}
-            onMouseLeave={() => setIsHovered('')} 
-            size='24' style={{ cursor: 'pointer', marginLeft: '30%' }} variant='Bold'
+            onMouseLeave={() => setIsHovered('')}
+            size='24' style={{ cursor: 'pointer' }} variant='Bold'
           />
         </Box>
       }
@@ -134,13 +134,13 @@ function ProfileTabsFS (): React.ReactElement {
         }
       </Stack>
       {showRightArrow &&
-        <Box justifyContent='end' sx={{ background: 'linear-gradient(0deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', right: '-25px', width: '69px' }}>
+        <Box justifyContent='end' sx={{ background: 'linear-gradient(270deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', right: '-7px', width: '40px' }}>
           <ArrowCircleRight
             color={hovered === 'right' ? '#FF4FB9' : '#EAEBF1'}
             onClick={onClickRightArrow}
             onMouseEnter={() => setIsHovered('right')}
-            onMouseLeave={() => setIsHovered('')} 
-            size='24' style={{ cursor: 'pointer', marginRight: '30%' }} variant='Bold'
+            onMouseLeave={() => setIsHovered('')}
+            size='24' style={{ cursor: 'pointer' }} variant='Bold'
           />
         </Box>
       }

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 /**
  * @description  this component is used to show an account's balance
  * */
@@ -12,6 +11,7 @@ import type { BN } from '@polkadot/util';
 import { Grid, Skeleton } from '@mui/material';
 import React from 'react';
 
+import { useIsDark } from '../hooks';
 import { FLOATING_POINT_DIGIT } from '../util/constants';
 import FormatBalance from './FormatBalance';
 import { FormatBalance2 } from '.';
@@ -27,7 +27,9 @@ export interface Props {
   withCurrency?: boolean;
 }
 
-export default function ShowBalance({ api, balance, decimal = undefined, decimalPoint, height = 20, skeletonWidth = 90, token = undefined, withCurrency = true }: Props): React.ReactElement<Props> {
+export default function ShowBalance ({ api, balance, decimal = undefined, decimalPoint, height = 15, skeletonWidth = 90, token = undefined, withCurrency = true }: Props): React.ReactElement<Props> {
+  const isDark = useIsDark();
+
   return (
     <Grid alignItems='center' container justifyContent='center' width='fit-content'>
       {
@@ -35,7 +37,7 @@ export default function ShowBalance({ api, balance, decimal = undefined, decimal
           ? <Skeleton
             animation='wave'
             height={height}
-            sx={{ borderRadius: '14px', display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
+            sx={{ bgcolor: isDark ? '#946CC826' : '#99A1C459', borderRadius: '50px', display: 'inline-block', transform: 'none', width: `${skeletonWidth}px` }}
           />
           : decimal && token
             ? <FormatBalance2

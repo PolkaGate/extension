@@ -55,7 +55,8 @@ function SearchField ({ focused = false, onInputChange, placeholder, style }: Pr
   return (
     <Container disableGutters sx={style}>
       <StyledTextField
-        autoFocus={focused}
+        autoComplete='off'
+        autoFocus={focused} 
         fullWidth
         height={style?.height as string}
         onChange={onChange}

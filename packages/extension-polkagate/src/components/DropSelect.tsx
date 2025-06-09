@@ -54,10 +54,10 @@ interface Props {
   defaultValue?: string | number;
   disabled?: boolean;
   displayContentType?: 'icon' | 'logo' | 'text' | 'account' | 'iconOption';
+  dropContentStyle?: React.CSSProperties;
   onChange?: (value: number | string) => void;
   options: AdvancedDropdownOption[];
   style?: React.CSSProperties;
-  dropContentStyle?: React.CSSProperties;
   scrollTextOnOverflow?: boolean;
   showCheckAsIcon?: boolean;
   simpleArrow?: boolean;
@@ -103,9 +103,9 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
                 size={18}
               />
             }
-            {displayContentType === 'iconOption' &&
+            {displayContentType === 'iconOption' && selectedOption?.Icon &&
               <>
-                {selectedOption?.Icon}
+                {selectedOption.Icon as React.JSX.Element}
               </>
             }
             {displayContentType === 'icon' && Icon &&

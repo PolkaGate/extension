@@ -7,6 +7,7 @@ import React from 'react';
 import { useIsOnline } from '@polkadot/extension-polkagate/src/hooks/index';
 
 import { HomeAccountDropDown } from '../../../components';
+import { AccountChainSelect } from '..';
 import CurrencySelection from './CurrencySelection';
 import HideNumbers from './HideNumbers';
 import InternetConnection from './InternetConnection';
@@ -18,7 +19,7 @@ function MyDivider (): React.ReactElement {
       sx={{
         background: 'linear-gradient(180deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
         height: '24px',
-        mx: '4px',
+        mx: '5px',
         width: '1px'
       }}
     />
@@ -29,18 +30,17 @@ function TopRightActions (): React.ReactElement {
   const isOnline = useIsOnline();
 
   return (
-    <Stack alignItems='center' columnGap='7px' direction='row' sx={{ position: 'absolute', right: 0, top: '5px' }}>
-      {!isOnline &&
-        <>
-          <InternetConnection />
-          <MyDivider />
-        </>
-      }
+    <Stack alignItems='center' columnGap='7px' direction='row' sx={{ position: 'absolute', right: 0, top: '7px' }}>
+      <AccountChainSelect />
+      <MyDivider />
       <HideNumbers />
       <MyDivider />
       <CurrencySelection />
       <MyDivider />
-      <Notifications />
+      {isOnline
+        ? <Notifications />
+        : <InternetConnection />
+      }
       <MyDivider />
       <HomeAccountDropDown
         style={{

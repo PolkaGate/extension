@@ -50,7 +50,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
     borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
     boxShadow: 'unset',
     justifyContent: 'flex-start',
-    padding: '6px 24px',
+    padding: '10px 24px',
     transition: 'all 250ms ease-out',
     ...ButtonFontStyle
   };

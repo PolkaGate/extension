@@ -4,6 +4,7 @@
 // @ts-nocheck
 export { default as baseEffect } from './baseEffect.svg';
 export { default as endpointUrlPng } from './endpoint.png';
+export { default as fullscreenBackground } from './fullscreenBackground.svg';
 export { default as homeBackgroundEffect } from './homeBackground.svg';
 export { default as ledgerErrorImage } from './ledgerErrorImage.svg';
 export { default as modalEffect } from './modalEffect.svg';

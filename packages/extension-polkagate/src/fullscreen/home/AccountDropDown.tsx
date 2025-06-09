@@ -3,10 +3,11 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
-import { Data, Edit, LogoutCurve, Setting4, Shield, User } from 'iconsax-react';
+import { Data, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
+import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import RemoveAccount from './RemoveAccount';
@@ -28,6 +29,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
+  const genesisHash = useAccountSelectedChain(address);
 
   const [hovered, setHovered] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -46,15 +48,15 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
       {
         Icon: Data,
         text: t('Manage proxies'),
-        value: `/fullscreenProxyManagement/${address}`
+        value: `/proxyManagement/${genesisHash}/${address}`
       },
-      {
-        Icon: Shield,
-        text: t('Social recovery'),
-        value: `/socialRecovery/${address}/false`
-      }
+      // {
+      //   Icon: Shield,
+      //   text: t('Social recovery'),
+      //   value: `/socialRecovery/${address}/false`
+      // }
     ];
-  }, [address, t]);
+  }, [address, genesisHash, t]);
 
   const extraFullscreenOptions = useMemo(() => {
     return [

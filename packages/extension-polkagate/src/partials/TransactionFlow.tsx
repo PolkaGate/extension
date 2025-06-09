@@ -14,6 +14,7 @@ import { isBn } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../components';
 import { useBackground, useTranslation } from '../hooks';
+import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import Confirmation2 from './Confirmation2';
 import Review from './Review';
 import { UserDashboardHeader, WaitScreen2 } from '.';
@@ -27,20 +28,13 @@ export interface TransactionFlowProps {
   stepCounter: StepCounterType;
   proxyTypeFilter: ProxyTypes[] | undefined;
   formatted: string | undefined;
-  pool: PoolInfo | undefined;
-}
-
-export enum TRANSACTION_FLOW_STEPS {
-  REVIEW,
-  WAIT_SCREEN,
-  CONFIRMATION
 }
 
 export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
-  const [flowStep, setFlowStep] = useState<TRANSACTION_FLOW_STEPS>(TRANSACTION_FLOW_STEPS.REVIEW);
+  const [flowStep, setFlowStep] = useState<TransactionFlowStep>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
@@ -76,7 +70,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
         noSelection
         signerInformation={{
           onClick: onOpenProxySelection,
-          selectedProxy
+          selectedProxyAddress: selectedProxy?.delegate
         }}
       />
       <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>

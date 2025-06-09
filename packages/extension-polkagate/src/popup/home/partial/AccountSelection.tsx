@@ -89,44 +89,43 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
   const isInAccountLists = location?.pathname === '/accounts';
 
   return (
-    <>
-      <Container
-        disableGutters
-        onClick={onClick}
-        sx={{
-          ':hover': noSelection ? {} : { background: '#674394' },
-          alignItems: 'center',
-          background: isDark
-            ? isInAccountLists
-              ? '#FF4FB9'
-              : '#BFA1FF26'
-            : '#FFFFFF8C',
-          borderRadius: '10px',
-          columnGap: '5px',
-          cursor: noSelection ? 'default' : 'pointer',
-          display: 'flex',
-          justifyContent: 'space-between',
-          p: '2px',
-          pr: noSelection ? '8px' : '2px',
-          transition: 'all 250ms ease-out',
-          width: 'fit-content'
+    <Container
+      disableGutters
+      onClick={onClick}
+      sx={{
+        ':hover': noSelection ? {} : { background: '#674394' },
+        alignItems: 'center',
+        background: isDark
+          ? isInAccountLists
+            ? '#FF4FB9'
+            : '#BFA1FF26'
+          : '#FFFFFF8C',
+        borderRadius: '10px',
+        columnGap: '5px',
+        cursor: noSelection ? 'default' : 'pointer',
+        display: 'flex',
+        justifyContent: 'space-between',
+        p: '2px',
+        pr: noSelection ? '8px' : '2px',
+        transition: 'all 250ms ease-out',
+        width: 'fit-content'
+      }}
+    >
+      <AccountsIcon
+        accountsLength={accounts.length}
+        address={selectedAccount?.address}
+        isInAccountLists={isInAccountLists}
+        noSelection={noSelection}
+      />
+      <ScrollingTextBox
+        text={selectedAccount?.name ?? ''}
+        textStyle={{
+          color: isInAccountLists ? '#05091C' : 'text.primary',
+          ...theme.typography['B-2']
         }}
-      >
-        <AccountsIcon
-          accountsLength={accounts.length}
-          address={selectedAccount?.address}
-          isInAccountLists={isInAccountLists}
-          noSelection={noSelection}
-        />
-        <ScrollingTextBox
-          text={selectedAccount?.name ?? ''}
-          textStyle={{
-            color: isInAccountLists ? '#05091C' : 'text.primary',
-            ...theme.typography['B-2']
-          }}
-          width={noSelection ? 120 : 65}
-        />
-        {!noSelection &&
+        width={noSelection ? 120 : 65}
+      />
+      {!noSelection &&
           <ArrowDown2
             color={isDark
               ? isInAccountLists
@@ -138,8 +137,7 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
             style={{ transform: isInAccountLists ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }}
             variant='Bold'
           />}
-      </Container>
-    </>
+    </Container>
   );
 }
 

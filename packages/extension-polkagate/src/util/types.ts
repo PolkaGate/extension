@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { Icon } from 'iconsax-react';
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
@@ -152,24 +153,28 @@ export interface TxResult {
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
+  accounts?: string[];
   action: string; // send, solo staking, pool staking, convictionvoting, ...
   amount?: string;
   chain?: Chain | null;
-  decimal?: number;
+  description?: string; // a short description which can be replace with 'Completed' text on success
+  calls?: string[];
+  class?: number;
+  conviction?: string;
   date: number;
+  decimal?: number;
+  delegatee?: string;
+  deposit?: string;
   from: NameAddress;
+  nominators?: string[];
+  poolId?: string;
+  refId?: number;
   subAction?: string; // bond_extra, unbound, nominate, vote, unvote, unlock, ...
   to?: NameAddress;
   token?: string;
   throughProxy?: NameAddress; // not available in subscan (can be removed)
-  refId?: number;
   voteType?: number;
-  class?: number;
-  conviction?: string;
-  poolId?: string;
-  nominators?: string[];
-  calls?: string[];
-  delegatee?: string;
+  extra?: Record<string, string>
 }
 
 export interface TxInfo extends TransactionDetail {
@@ -877,7 +882,7 @@ export interface SoloSettings {
 }
 
 export interface AdvancedDropdownOption extends DropdownOption {
-  Icon?: React.JSX.Element;
+  Icon?: React.JSX.Element | Icon;
   count?: number;
 }
 

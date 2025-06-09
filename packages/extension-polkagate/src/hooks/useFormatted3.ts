@@ -24,9 +24,11 @@ export default function useFormatted (address: AccountId | string | undefined, g
     const prefix: number = chain.ss58Format;
 
     try {
-      const publicKey = decodeAddress(address);
+      if (address && prefix !== undefined) {
+        const publicKey = decodeAddress(address);
 
-      return encodeAddress(publicKey, prefix);
+        return encodeAddress(publicKey, prefix);
+      }
     } catch (error) {
       console.error(error);
     }

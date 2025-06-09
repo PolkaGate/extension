@@ -50,6 +50,17 @@ const StyledTextField = styled(TextField, {
   '& input': {
     autocomplete: 'off'
   },
+  '& input[type=number]': {
+    MozAppearance: 'textfield',
+    '&::-webkit-outer-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    },
+    '&::-webkit-inner-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    }
+  },
   '& input::placeholder': {
     color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
     ...theme.typography['B-4'],
@@ -62,6 +73,7 @@ interface Props {
   Icon?: Icon;
   focused?: boolean;
   iconSize?: number;
+  inputType?: string;
   onEnterPress?: () => void;
   onTextChange: (text: string) => void;
   placeholder?: string;
@@ -69,7 +81,7 @@ interface Props {
   title?: string;
 }
 
-export default function MyTextField ({ Icon, focused = false, iconSize = 22, onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, focused = false, iconSize = 22, inputType = 'text', onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -114,7 +126,7 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, onE
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         theme={theme}
-        type='text'
+        type={inputType}
       />
     </Grid>
   );

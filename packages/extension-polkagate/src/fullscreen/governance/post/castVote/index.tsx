@@ -186,7 +186,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your voting status...')}
-            showCube
           />
         }
         {step === STEPS.INDEX &&

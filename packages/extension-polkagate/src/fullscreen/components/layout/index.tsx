@@ -4,7 +4,7 @@
 import { Container, Grid } from '@mui/material';
 import React from 'react';
 
-import { homeBackgroundEffect } from '../../../assets/img';
+import { fullscreenBackground } from '../../../assets/img';
 import Bread from './Bread';
 import MainMenuColumn from './MainMenuColumn';
 import TopRightActions from './TopRightActions';
@@ -23,7 +23,7 @@ function HomeLayout ({ children, childrenStyle = {}, style = {} }: Props): React
         <Grid
           container item position='relative'
           sx={{
-            backgroundImage: `url(${homeBackgroundEffect})`,
+            backgroundImage: `url(${fullscreenBackground})`,
             backgroundRepeat: 'no-repeat',
             borderRadius: '32px',
             display: 'block',

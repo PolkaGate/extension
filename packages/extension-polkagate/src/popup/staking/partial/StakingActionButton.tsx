@@ -62,7 +62,7 @@ export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy
     overflow: 'hidden',
     padding: '6px 24px',
     transition: 'all 250ms ease-out',
-    width: '345px',
+    // width: '345px',
     ...ButtonFontStyle
   };
 

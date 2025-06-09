@@ -1,15 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { loader } from '../assets/gif';
-import { Motion } from '../components';
-import { useTranslation } from '../hooks';
+import { LoaderGif, Motion } from '../components';
+import { useIsExtensionPopup, useTranslation } from '../hooks';
 
 function WaitScreen2 (): React.ReactElement {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
+
   const [text, setText] = useState<string>(t('We are working on your transaction.'));
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
@@ -40,29 +41,13 @@ function WaitScreen2 (): React.ReactElement {
 
   return (
     <Motion variant='slide'>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '15px', p: '32px' }}>
-        <Box
-          component='img'
-          src={loader as string}
-          sx={{
-            '@keyframes spin': {
-              '0%': {
-                transform: 'rotate(0deg)'
-              },
-              '100%': {
-                transform: 'rotate(360deg)'
-              }
-            },
-            animation: 'spin 1.5s linear infinite',
-            height: '42px',
-            zIndex: 2
-          }}
-        />
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '15px', p: '32px' }}>
+        <LoaderGif />
         <Typography color='text.primary' variant='B-3'>
           {text}
         </Typography>
-        <Typography color='text.highlight' pt='6px' variant='B-1' width='80%'>
-          {t('Please wait a few seconds and don’t close the extension')}
+        <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} pt='6px' variant='B-1' width='80%'>
+          {t('Please wait a few seconds and don’t close the {{container}}', { replace: { container: isExtension ? t('extension') : t('window') } })}
         </Typography>
       </Stack>
     </Motion>

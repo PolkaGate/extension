@@ -202,7 +202,7 @@ export default function Settings (): React.ReactElement {
 
   const transactionInformation = useMemo(() => {
     return [{
-      content: rewardDestinationType === 'Others' ? (specificAccount ?? rewardDestinationAddress ?? stashId) : 'staked',
+      content: rewardDestinationType === 'Others' ? (specificAccount ?? rewardDestinationAddress ?? stashId) : 'Staked',
       title: t('Reward destination')
     },
     {

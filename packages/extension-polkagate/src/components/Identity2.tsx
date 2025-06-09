@@ -26,6 +26,7 @@ interface Props {
   charsCount?: number;
   columnGap?: string;
   direction?: 'row' | 'column';
+  charsCount?: number;
   genesisHash: string;
   identiconSize?: number;
   identiconStyle?: string;
@@ -38,12 +39,14 @@ interface Props {
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
+  addressStyle?: SxProps<Theme> | CSSProperties;
+  nameStyle?: SxProps<Theme> | CSSProperties;
   style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, columnGap, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = 'polkagate', inParentheses = false, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -92,7 +95,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, column
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ maxWidth: '100%', width: 'fit-content', ...style }}>
-      <Grid alignItems='center' columnGap={columnGap} container item xs={showChainLogo ? 11 : 12}>
+      <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
         {!noIdenticon &&
           <Grid item m='auto 0' pr='5px' width='fit-content'>
             {identiconStyle === 'polkagate'
@@ -134,7 +137,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, column
                 {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
             </Grid>
-            : <Typography textAlign='left' variant={style?.variant}>
+            : <Typography sx={{ ...nameStyle }} textAlign='left' variant={style?.variant}>
               {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
               {_accountInfo?.identity?.display && !subIdOnly
                 ? _accountInfo?.identity.displayParent
@@ -158,7 +161,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, column
               }
               {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
                 ? showShortAddress && isValidAddress(String(_formatted))
-                  ? <ShortAddress address={_formatted} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
+                  ? <ShortAddress address={_formatted} charsCount={charsCount} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
                   : t('Unknown')
                 : ''
               }
