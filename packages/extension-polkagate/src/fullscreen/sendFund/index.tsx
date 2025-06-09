@@ -61,7 +61,7 @@ export default function SendFund(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    /** To remove assetId from the url when chain has changed */
+    /** To reset assetId to default value when chain has changed */
     if (!chain) {
       return;
     }
