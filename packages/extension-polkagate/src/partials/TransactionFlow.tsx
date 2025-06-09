@@ -28,6 +28,7 @@ export interface TransactionFlowProps {
   stepCounter: StepCounterType;
   proxyTypeFilter: ProxyTypes[] | undefined;
   formatted: string | undefined;
+  pool: PoolInfo | undefined;
 }
 
 export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {

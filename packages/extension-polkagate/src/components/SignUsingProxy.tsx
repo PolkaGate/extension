@@ -121,7 +121,7 @@ interface Props {
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function SignUsingProxy({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
+export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const refContainer = useRef(null);
@@ -170,7 +170,6 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
         TitleIcon: Data,
         iconColor: theme.palette.text.highlight,
         iconSize: 25,
-        isBlueish: true,
         maxHeight: '450px',
         withoutTopBorder: true
       }}
