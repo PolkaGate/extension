@@ -27,11 +27,11 @@ export interface TransactionFlowProps {
   backPathTitle: string;
   stepCounter: StepCounterType;
   proxyTypeFilter: ProxyTypes[] | undefined;
-  formatted: string | undefined;
+  address: string | undefined;
   pool: PoolInfo | undefined;
 }
 
-export default function TransactionFlow ({ backPathTitle, closeReview, formatted, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ address, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -101,7 +101,7 @@ export default function TransactionFlow ({ backPathTitle, closeReview, formatted
         }
         {flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
           <Confirmation2
-            address={formatted ?? ''}
+            address={address ?? ''}
             genesisHash={genesisHash}
             transactionDetail={transactionDetail}
           />

@@ -11,9 +11,10 @@ import { useLocation, useNavigate } from 'react-router';
 import { subscan } from '../assets/icons';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
 import { useChainInfo, useTranslation } from '../hooks';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../hooks/useAccountSelectedChain';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
-import { toTitleCase } from '../util';
+import { toTitleCase, updateStorage } from '../util';
 import { amountToHuman, countDecimalPlaces, toShortAddress } from '../util/utils';
 
 interface SubProps {
@@ -162,7 +163,11 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
 
   const stakingType = pathname.includes('pool') ? '/pool/' : '/solo/';
 
-  const goToHistory = useCallback(() => navigate('/history') as void, [navigate]);
+  const goToHistory = useCallback(() => {
+    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+      .finally(() => navigate('/history') as void)
+      .catch(console.error);
+  }, [address, genesisHash, navigate]);
   const backToStakingHome = useCallback(() => navigate(stakingType + genesisHash) as void, [genesisHash, navigate, stakingType]);
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;
@@ -198,6 +203,7 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
         <StakingActionButton
           onClick={goToExplorer}
           startIcon={<SubScanIcon />}
+          style={{ width: '345px' }}
           text={t('View On Explorer')}
         />
       </Stack>

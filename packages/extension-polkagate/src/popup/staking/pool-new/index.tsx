@@ -133,9 +133,9 @@ export default function Pool (): React.ReactElement {
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review: review !== Review.None,
     stepCounter: { currentStep: 2, totalSteps: 2 },

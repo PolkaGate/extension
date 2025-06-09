@@ -182,9 +182,9 @@ export default function CreatePool () {
   }, []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Creating Pool'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     pool: poolToCreate,
     review,

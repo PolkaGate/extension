@@ -97,9 +97,9 @@ export default function JoinPool () {
   }, [genesisHash, navigate, step]);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Joining Pool'),
     closeReview: onBack,
-    formatted,
     genesisHash: genesisHash ?? '',
     pool: selectedPool,
     review: step === POOL_STEPS.REVIEW,

@@ -312,9 +312,9 @@ export default function SoloPendingReward () {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Payout rewards'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

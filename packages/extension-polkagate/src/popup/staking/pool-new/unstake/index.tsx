@@ -167,9 +167,9 @@ export default function Unstake (): React.ReactElement {
   const onBack = useCallback(() => navigate('/pool/' + genesisHash) as void, [genesisHash, navigate]);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Unstaking'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },

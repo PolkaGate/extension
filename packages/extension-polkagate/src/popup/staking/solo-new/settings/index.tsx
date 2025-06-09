@@ -221,9 +221,9 @@ export default function Settings (): React.ReactElement {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Settings'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
