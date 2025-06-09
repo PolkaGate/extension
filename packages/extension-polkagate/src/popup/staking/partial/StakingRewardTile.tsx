@@ -105,14 +105,14 @@ const SoloReward = ({ onClaimReward, onRewardChart }: SoloRewardProps) => {
       <TileActionButton
         Icon={Timer}
         noText
-        onClick={onRewardChart}
+        onClick={onClaimReward}
         style={{ borderRadius: '999px', maxWidth: '30px' }}
         text={t('Pending Rewards')}
       />
       <TileActionButton
         Icon={Chart21}
         noText
-        onClick={onClaimReward}
+        onClick={onRewardChart}
         style={{ borderRadius: '999px', maxWidth: '30px' }}
         text={t('Chart')}
       />
