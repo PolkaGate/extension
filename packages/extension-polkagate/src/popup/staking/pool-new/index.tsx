@@ -36,7 +36,7 @@ const Back = () => {
 };
 
 export enum Review {
-  Reward = 'reward',
+  Reward = 'Reward',
   None = 'None',
   Withdraw = 'Withdraw'
 }
