@@ -359,8 +359,8 @@ export default function SoloPendingReward () {
               onSelect={onSelect}
               selectedToPayout={selectedToPayout}
             />
-            <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-              <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+            <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+              <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: '100px' }}>
                 <Typography color='text.highlight' variant='B-4'>
                   {t('Selected')}:
                 </Typography>
@@ -368,7 +368,7 @@ export default function SoloPendingReward () {
                   {selectedToPayout.length ?? 0}
                 </Typography>
               </Container>
-              <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '200px' }}>
+              <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, maxWidth: '235px', width: '100%' }}>
                 <Typography color='text.highlight' variant='B-4'>
                   {t('Total')}:
                 </Typography>
