@@ -61,14 +61,14 @@ export default function SendFund(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    /** To remove assetId from the url when chain has changed */
+    /** To reset assetId to default value when chain has changed */
     if (!chain) {
       return;
     }
 
     if (ref.current && ref.current !== chain) {
       history.push({
-        pathname: `/send/${address}`
+        pathname: `/send/${address}/0`
       });
       setInputs(undefined);
       setStep(STEPS.INDEX); // to return back to index when change is changed on review of confirm page!
