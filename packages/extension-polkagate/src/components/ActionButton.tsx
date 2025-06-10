@@ -45,7 +45,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       background: isDark ? isBlueish ? '#2E2948' : '#674394' : '#EFF1F9',
       transition: 'all 250ms ease-out'
     },
-    background: isDark ? isBlueish ? 'transparent' : '#2D1E4A' : '#FFFFFF',
+    background: isDark ? isBlueish ? '#809ACB26' : '#2D1E4A' : '#FFFFFF',
     border: isBlueish ? '1px solid #2E2948' : 'none',
     borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
     boxShadow: 'unset',
