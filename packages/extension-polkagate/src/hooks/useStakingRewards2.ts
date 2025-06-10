@@ -13,22 +13,17 @@ import { useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward (chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
-    console.log('address is null in getting get Staking Rewards ');
+    console.log('address is null in getting get Staking Total Rewards ');
 
     return null;
   }
 
-  console.log(`Getting Staking Reward from subscan  on ${chainName} for ${String(address)} ... `);
+  console.log(`Getting Staking Total Reward from subscan  on ${chainName} for ${String(address)} ... `);
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + '.api.subscan.io/api/scan/staking_history',
-        {
-          address,
-          page: 0,
-          row: 20
-        })
+      postData('https://' + chainName + '.api.subscan.io/api/scan/total_reward', { address })
         .then((data: { message: string; data: { sum: string; }; }) => {
           if (data.message === 'Success') {
             const reward = data.data.sum;
@@ -40,7 +35,7 @@ export async function getStakingReward (chainName: string, address: AccountId | 
           }
         });
     } catch (error) {
-      console.log('something went wrong while getting get Staking Rewards ', error);
+      console.log('something went wrong while getting get Staking Total Rewards ', error);
       resolve(null);
     }
   });

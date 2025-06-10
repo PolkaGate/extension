@@ -65,9 +65,10 @@ const Smoother = styled('div')(() => ({
 interface Props {
   style?: React.CSSProperties;
   type?: 'default' | 'staking';
+  imageStyle?: React.CSSProperties;
 }
 
-function Background ({ style, type = 'default' }: Props): React.ReactNode {
+function Background ({ imageStyle, style, type = 'default' }: Props): React.ReactNode {
   const theme = useTheme();
   const isDark = useIsDark();
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -84,6 +85,7 @@ function Background ({ style, type = 'default' }: Props): React.ReactNode {
           component='img'
           onLoad={onLoad}
           src={(isDark ? backgroundLogoDarkMode : backgroundLogoLightMode) as string}
+          style={imageStyle}
           sx={{
             opacity: imageLoaded ? 1 : 0,
             transition: 'opacity 4s ease-in-out',

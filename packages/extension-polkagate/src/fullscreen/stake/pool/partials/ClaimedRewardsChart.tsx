@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 /**
  * @description to show claimed rewards chart
  * */
@@ -45,7 +44,7 @@ interface Props {
   address?: string;
 }
 
-export default function ClaimedRewardsChart({ address }: Props): React.ReactElement {
+export default function ClaimedRewardsChart ({ address }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chainName, decimal, token } = useInfo(address);
@@ -220,6 +219,7 @@ export default function ClaimedRewardsChart({ address }: Props): React.ReactElem
       const list = r?.data.list as SubscanClaimedRewardInfo[];
       const claimedRewardsFromSubscan: ClaimedRewardInfo[] | undefined = list?.map((i: SubscanClaimedRewardInfo): ClaimedRewardInfo => {
         return {
+          address: i?.account_display?.address ?? '',
           amount: new BN(i.amount),
           era: i.era,
           event: i.event_id,

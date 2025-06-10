@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { type BN } from '@polkadot/util';
@@ -26,12 +26,23 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#2D1E4A4D', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', p: '10px', width: '100%', ...style }}>
       <Grid alignItems='center' container item sx={{ columnGap: '8px', flexWrap: 'nowrap', width: 'fit-content' }}>
-        <Grid alignContent='center' container item justifyContent='center' sx={{ bgcolor: stakeType === 'solo' ? '#3D476A' : '#596AFF', borderRadius: 999, height: '36px', minWidth: '36px', width: '36px' }}>
+        <Box
+          sx={{
+            alignItems: 'center',
+            bgcolor: stakeType === 'solo' ? '#3D476A' : '#596AFF',
+            borderRadius: '50%',
+            display: 'flex',
+            height: 36,
+            justifyContent: 'center',
+            minWidth: 36,
+            width: 36
+          }}
+        >
           {stakeType === 'solo'
-            ? <SnowFlake color={theme.palette.text.highlight} size='18' />
-            : <Ice size='28' />
+            ? <SnowFlake color={theme.palette.text.highlight} size='20' />
+            : <Ice size='24' style={{ justifyContent: 'center' }} />
           }
-        </Grid>
+        </Box>
         <Container disableGutters sx={{ display: 'flex', flexDirection: 'column' }}>
           {availableAmount
             ? (

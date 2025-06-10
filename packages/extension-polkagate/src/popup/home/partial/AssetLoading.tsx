@@ -75,7 +75,7 @@ function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
 
 function AssetLoading ({ itemsCount = 4, noDrawer = false }: { itemsCount?: number; noDrawer?: boolean; }) {
   return (
-    <div style={{ display: 'grid', marginTop: '5px', position: 'relative', rowGap: '10px', zIndex: 1 }}>
+    <div style={{ display: 'grid', position: 'relative', rowGap: '10px', zIndex: 1 }}>
       {Array.from({ length: itemsCount }).map((_, index) => (
         <Loading key={index} noDrawer={noDrawer} />
       ))}

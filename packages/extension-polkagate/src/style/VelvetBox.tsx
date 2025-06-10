@@ -22,9 +22,10 @@ const GlowBall = styled('div')({
 interface VelvetBoxProp {
   children: React.ReactNode;
   style?: React.CSSProperties;
+  noGlowBall?: boolean;
 }
 
-function VelvetBox ({ children, style = {} }: VelvetBoxProp) {
+function VelvetBox ({ children, noGlowBall = false, style = {} }: VelvetBoxProp) {
   const isDark = useIsDark();
 
   return (
@@ -42,7 +43,7 @@ function VelvetBox ({ children, style = {} }: VelvetBoxProp) {
       <div style={{ position: 'relative', width: '100%', zIndex: 1 }}>
         {children}
       </div>
-      <GlowBall />
+      {!noGlowBall && <GlowBall />}
     </Container>
   );
 }

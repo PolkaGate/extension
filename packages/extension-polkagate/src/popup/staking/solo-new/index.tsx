@@ -1,17 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { BN } from '@polkadot/util';
 import type { Content } from '../../../partials/Review';
 
-import { Container, Grid } from '@mui/material';
-import { Award, BuyCrypto, Graph, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
+import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer1, Trade, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
-import { type BN, noop } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
@@ -20,7 +20,22 @@ import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
+import StakingRewardTile from '../partial/StakingRewardTile';
 import ToBeReleased from '../partial/ToBeReleased';
+
+const Back = () => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <>
+      <UserOctagon color={theme.palette.text.highlight} size='24' variant='Bold' />
+      <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
+        {t('solo staking')}
+      </Typography>
+    </>
+  );
+};
 
 export default function Solo (): React.ReactElement {
   useBackground('staking');
@@ -72,14 +87,8 @@ export default function Solo (): React.ReactElement {
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
 
-  const StakingInfoTileCount = [redeemable, rewards, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // bigger than 2 means the tile must be displayed in a row
-  const layoutDirection = useMemo((): 'row' | 'column' => {
-    if (StakingInfoTileCount > 2) {
-      return 'row';
-    } else {
-      return 'column';
-    }
-  }, [StakingInfoTileCount]);
+  const StakingInfoTileCount = [redeemable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // equals and bigger than 1 means the tiles must be displayed in a row
+  const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount >= 1 ? 'row' : 'column', [StakingInfoTileCount]);
 
   const estimatedFee2 = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
 
@@ -108,13 +117,14 @@ export default function Solo (): React.ReactElement {
   const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
   const onUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
+  const onClaimReward = useCallback(() => navigate('/solo/' + genesisHash + '/pendingReward') as void, [navigate, genesisHash]);
   const onWithdraw = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
@@ -125,12 +135,12 @@ export default function Solo (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
+        <UserDashboardHeader homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
+            content={<Back />}
             onClick={onBack}
             style={{ pb: 0 }}
-            text={t('solo staking')}
           />
           <StakingPortfolio
             buttons={[{
@@ -149,29 +159,16 @@ export default function Solo (): React.ReactElement {
             type='solo'
           />
           <Container disableGutters sx={{ display: 'flex', flexDirection: layoutDirection, gap: '4px', mt: '20px', px: '15px', width: '100%' }}>
-            <StakingInfoTile
-              Icon={Award}
-              buttonsArray={[
-                {
-                  Icon: Timer,
-                  onClick: noop,
-                  text: t('Pending Rewards')
-                },
-                {
-                  Icon: Graph,
-                  onClick: noop,
-                  text: t('Chart')
-                }
-              ]}
-              cryptoAmount={rewards}
-              decimal={decimal ?? 0}
-              fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
+            <StakingRewardTile
+              address={stakingInfo.rewardDestinationAddress}
+              genesisHash={genesisHash}
+              isDisabled={!rewards || rewards.isZero()}
               layoutDirection={layoutDirection}
-              title={t('Rewards paid')}
-              token={token ?? ''}
+              onClaimReward={onClaimReward}
+              reward={rewards}
+              type='solo'
             />
-            {
-              redeemable &&
+            {(redeemable?.isZero?.() === false || layoutDirection === 'row') &&
               <StakingInfoTile
                 Icon={Moneys}
                 buttonsArray={[{
@@ -185,10 +182,8 @@ export default function Solo (): React.ReactElement {
                 layoutDirection={layoutDirection}
                 title={t('Redeemable')}
                 token={token ?? ''}
-              />
-            }
-            {
-              unlockingAmount &&
+              />}
+            {(unlockingAmount?.isZero?.() === false || layoutDirection === 'row') &&
               <StakingInfoTile
                 Icon={LockSlash}
                 buttonsArray={[{
@@ -203,8 +198,7 @@ export default function Solo (): React.ReactElement {
                 onExpand={toBeReleased?.length ? onExpand : undefined}
                 title={t('Unstaking')}
                 token={token ?? ''}
-              />
-            }
+              />}
           </Container>
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}

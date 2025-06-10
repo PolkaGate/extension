@@ -1,5 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -29,11 +30,11 @@ export default function useAccountsInfo(api: ApiPromise | undefined, chain: Chai
   const getAccountsInfo = useCallback(() => {
     try {
       setFetching(true);
-      _api && _api.query.identity.identityOf.entries().then((ids) => {
+      _api?.query.identity.identityOf.entries().then((ids) => {
         console.log(`${ids?.length} accountsInfo fetched from ${chain?.name ?? ''}`);
 
         const fetchedAccountsInfo = ids.map(([key, value]) => {
-          const { info, judgements } = value.unwrap()[0] as PalletIdentityRegistration;
+          const { info, judgements } = value.unwrap() as PalletIdentityRegistration;
 
           return {
             accountId: encodeAddress('0x' + key.toString().slice(82), chain?.ss58Format),

@@ -15,7 +15,7 @@ import StakingActionButton from './StakingActionButton';
 interface Props {
   openMenu: boolean;
   handleClose: () => void;
-  onRestake: () => void;
+  onRestake?: () => void;
   toBeReleased: DateAmount[];
   token: string;
   decimal: number;
@@ -27,6 +27,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
   return (
     <ExtensionPopup
       TitleIcon={LockSlash}
+      darkBackground
       handleClose={handleClose}
       iconSize={22}
       openMenu={openMenu}
@@ -41,7 +42,6 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
         justifyContent: 'flex-end'
       }}
       title={t('Unstaking')}
-      withoutBackground
       withoutTopBorder
     >
       <Container disableGutters sx={{ maxHeight: '360px', mb: '15px', overflowY: 'auto', p: '8px' }}>
@@ -75,11 +75,12 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
             </>
           );
         })}
-        <StakingActionButton
-          onClick={onRestake}
-          style={{ marginTop: '35px', width: '337px' }}
-          text={t('Restake')}
-        />
+        {onRestake &&
+          <StakingActionButton
+            onClick={onRestake}
+            style={{ marginTop: '35px', width: '337px' }}
+            text={t('Restake')}
+          />}
       </Container>
     </ExtensionPopup>
   );

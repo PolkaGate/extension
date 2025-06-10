@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, Button, type SxProps, type Theme, useTheme } from '@mui/material';
 import React from 'react';
 
 import { loader } from '@polkadot/extension-polkagate/src/assets/gif/index';
@@ -11,11 +11,12 @@ interface Props {
   disabled?: boolean;
   isBusy?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-  style?: React.CSSProperties;
+  style?: SxProps<Theme>;
+  buttonFontStyle?: React.CSSProperties;
   text?: string;
 }
 
-export default function StakingActionButton ({ disabled, isBusy, onClick, startIcon, style = {}, text }: Props): React.ReactElement<Props> {
+export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy, onClick, startIcon, style = {}, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isButtonDisabled = disabled || isBusy;
@@ -26,8 +27,9 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
     justifyContent: 'center',
     position: 'relative',
     textTransform: 'none',
-    zIndex: 2
-  } as React.CSSProperties;
+    zIndex: 2,
+    ...buttonFontStyle
+  };
 
   const GeneralButtonStyle = {
     '&::before': {
@@ -50,7 +52,6 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
     '&:hover::before': {
       opacity: 1
     },
-
     background:
     isButtonDisabled
       ? 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)'
@@ -58,10 +59,8 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
     borderRadius: '12px',
     boxShadow: 'unset',
     height: '44px',
-    justifyContent: 'flex-start',
     overflow: 'hidden',
     padding: '6px 24px',
-    position: 'relative',
     transition: 'all 250ms ease-out',
     // width: '345px',
     ...ButtonFontStyle
@@ -84,28 +83,29 @@ export default function StakingActionButton ({ disabled, isBusy, onClick, startI
       disabled={isButtonDisabled}
       onClick={onClick}
       startIcon={startIcon}
-      sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style }}
+      sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style } as SxProps<Theme>}
       variant='contained'
     >
       {isBusy
-        ? <Box
-          component='img'
-          src={loader as string}
-          sx={{
-            '@keyframes spin': {
-              '0%': {
-                transform: 'rotate(0deg)'
+        ? (
+          <Box
+            component='img'
+            src={loader as string}
+            sx={{
+              '@keyframes spin': {
+                '0%': {
+                  transform: 'rotate(0deg)'
+                },
+                '100%': {
+                  transform: 'rotate(360deg)'
+                }
               },
-              '100%': {
-                transform: 'rotate(360deg)'
-              }
-            },
-            animation: 'spin 1.5s linear infinite',
-            height: '42px',
-            zIndex: 2
-          }}
-        />
-        : <span style={ButtonFontStyle}>
+              animation: 'spin 1.5s linear infinite',
+              height: '42px',
+              zIndex: 2
+            }}
+          />)
+        : <span style={ButtonFontStyle as React.CSSProperties}>
           {text}
         </span>
       }

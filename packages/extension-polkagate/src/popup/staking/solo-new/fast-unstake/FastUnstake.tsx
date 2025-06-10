@@ -167,9 +167,9 @@ export default function FastUnstake (): React.ReactElement {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
@@ -179,7 +179,7 @@ export default function FastUnstake (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader homeType='default' noSelection />
+      <UserDashboardHeader homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}

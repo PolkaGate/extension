@@ -221,9 +221,9 @@ export default function Settings (): React.ReactElement {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Settings'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
@@ -234,7 +234,7 @@ export default function Settings (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
+        <UserDashboardHeader homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

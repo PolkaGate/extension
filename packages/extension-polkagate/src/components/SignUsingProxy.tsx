@@ -5,17 +5,18 @@ import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data, Trash, Warning2 } from 'iconsax-react';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
 import { useTranslation } from '../hooks';
 import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
+import Progress from '../popup/staking/partial/Progress';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util/utils';
-import { AccountContext, Identity2 } from '.';
+import { AccountContext, FadeOnScroll, Identity2 } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const theme = useTheme();
@@ -48,7 +49,9 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
 
     const found = accounts.find((account) => account.address === getSubstrateAddress(proxy.proxy.delegate));
 
-    return found !== undefined;
+    const condition = Boolean(!found || found.isHardware || found.isQR || found.isExternal);
+
+    return !condition;
   }, [accounts, proxy]);
 
   const isChecked = useMemo(() => {
@@ -85,6 +88,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
             genesisHash={genesisHash ?? ''}
             noIdenticon
             showShortAddress
+            style={{ width: '230px' }}
           />
           <Grid container flexDirection='row' item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
             <Typography color='txt.highlight' variant='B-1'>
@@ -117,9 +121,10 @@ interface Props {
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function SignUsingProxy({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
+export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const refContainer = useRef(null);
 
   const [proxyItem, setProxyItem] = useState<Proxy | undefined>(selectedProxy);
 
@@ -165,7 +170,6 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
         TitleIcon: Data,
         iconColor: theme.palette.text.highlight,
         iconSize: 25,
-        isBlueish: true,
         maxHeight: '450px',
         withoutTopBorder: true
       }}
@@ -175,7 +179,7 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
         <Typography color='text.highlight' sx={{ px: '15%', width: '100%' }} variant='B-4'>
           {t('Choose a suitable proxy for the account to conduct the transaction on its behalf')}
         </Typography>
-        <Stack direction='column' sx={{ gap: '8px', mt: '25px' }}>
+        <Stack direction='column' ref={refContainer} sx={{ gap: '8px', maxHeight: '375px', mb: '70px', mt: '25px', overflow: 'hidden', overflowY: 'auto' }}>
           {proxyItems.map((item, index) => (
             <ProxiesItem
               genesisHash={genesisHash}
@@ -186,6 +190,7 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
             />
           ))}
         </Stack>
+        <FadeOnScroll containerRef={refContainer} height='70px' ratio={0.2} style={{ bottom: '58px' }} />
         {noProxyAvailable &&
           <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center', mt: '90px' }}>
             <Warning2 color='#FF4FB9' size='22' style={{ height: 'fit-content' }} variant='Bold' />
@@ -193,6 +198,9 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
               {t('No proxy available')}
             </Typography>
           </Container>}
+        {proxies === undefined &&
+          <Progress text={t('Loading proxy accounts')} />
+        }
         <StakingActionButton
           disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
           onClick={onApply}

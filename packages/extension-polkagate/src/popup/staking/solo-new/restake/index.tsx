@@ -88,9 +88,9 @@ export default function Restake (): React.ReactElement {
   }, []);
 
   const transactionFlow = useTransactionFlow({
-    backPathTitle: t('Restaking'),
+    address: selectedAccount?.address,
+    backPathTitle: t('Re-staking'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
@@ -101,7 +101,7 @@ export default function Restake (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
+        <UserDashboardHeader homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

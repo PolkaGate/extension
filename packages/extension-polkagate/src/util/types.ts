@@ -466,6 +466,13 @@ export interface MyPoolInfo extends PoolInfo {
   token?: string;
   decimal?: number;
   date?: number;
+  poolMembers?: {
+    accountId: string;
+    member: {
+      points: number,
+      poolId: number;
+    };
+  }[];
 }
 
 export interface PoolAccounts {
@@ -581,6 +588,7 @@ export interface RewardInfo {
 }
 
 export interface SubscanClaimedRewardInfo {
+  validator_stash?: string;
   era: number,
   pool_id: number,
   account_display: { address: string },
@@ -593,6 +601,7 @@ export interface SubscanClaimedRewardInfo {
 }
 
 export interface ClaimedRewardInfo {
+  address: string;
   era: number;
   amount: BN;
   date?: string;

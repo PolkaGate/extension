@@ -1,11 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { BN } from '@polkadot/util';
+/* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Grid, Typography, useTheme } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
+
+import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, MyTooltip } from '../../../components';
 import { useIsHovered } from '../../../hooks';
@@ -16,44 +18,36 @@ interface TileActionButtonProps {
   onClick: () => void;
   noText?: boolean;
   isRow?: boolean;
+  isDisabled?: boolean;
+  style?: SxProps<Theme>;
 }
 
-function TileActionButton ({ Icon, isRow = false, noText = false, onClick, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton ({ Icon, isDisabled = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
 
   return (
     <>
-      <MyTooltip
-        color='#1c498a'
-        content={text}
-        notShow={!noText}
-        placement='top'
-      >
-        <Grid
-          alignItems='center'
-          container
-          item
-          justifyContent='center'
-          onClick={onClick}
-          ref={containerRef}
+      <MyTooltip color='#1c498a' content={text} notShow={!noText} placement='top'>
+        <Grid alignItems='center' container item justifyContent='center' onClick={isDisabled ? noop : onClick} ref={containerRef}
           sx={{
-            ':hover': { bgcolor: theme.palette.text.highlight, borderColor: 'transparent' },
+            ':hover': isDisabled ? {} : { bgcolor: theme.palette.text.highlight, borderColor: 'transparent' },
             bgcolor: '#110F2A',
             border: isRow ? 'none' : '2px solid #060518',
             borderRadius: '11px',
             columnGap: '4px',
-            cursor: 'pointer',
+            cursor: isDisabled ? 'default' : 'pointer',
             flexWrap: 'nowrap',
             p: '4px 7px',
-            transition: 'all 150ms ease-out'
+            transition: 'all 150ms ease-out',
+            ...style
           }}
           xs
         >
-          <Icon color={hovered ? '#ffffff' : theme.palette.text.highlight} size='19' variant='Bulk' />
+          <Icon color={isDisabled ? '#674394' : hovered ? '#ffffff' : theme.palette.text.highlight} size='19' variant='Bulk' />
           {!noText &&
-            <Typography color={hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
+            <Typography color={isDisabled ? '#674394' : hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
               {text}
             </Typography>}
         </Grid>
@@ -77,18 +71,15 @@ export interface Props {
 export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, layoutDirection = 'column', onExpand, title, token }: Props): React.ReactElement {
   const theme = useTheme();
 
-  if (cryptoAmount?.isZero()) {
-    return <></>;
-  }
+  const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
+
+  const isDisabledColor = isDisabled ? '#674394' : theme.palette.text.highlight;
 
   return (
-    <Grid
-      alignItems='center'
-      container item
+    <Grid alignItems={layoutDirection === 'row' ? 'flex-start' : 'center'} container item
       sx={{ bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', p: '4px', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
     >
-      <Container
-        disableGutters
+      <Container disableGutters
         sx={{
           alignItems: layoutDirection === 'row' ? 'flex-start' : 'center',
           display: 'flex',
@@ -100,25 +91,23 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         }}
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: layoutDirection === 'row' ? '100%' : 'fit-content' }}>
-          <Icon color={theme.palette.text.highlight} size='20' variant='Bulk' />
-          {
-            layoutDirection === 'row' && onExpand &&
-            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />
-          }
+          <Icon color={isDisabledColor} size='20' variant='Bulk' />
+          {layoutDirection === 'row' && onExpand &&
+            <ArrowCircleDown color={isDisabledColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
-          <Typography color='text.highlight' sx={{ textWrap: 'nowrap' }} variant='B-1'>
+          <Typography color={isDisabledColor} sx={{ textWrap: 'nowrap' }} variant='B-1'>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
-            <ArrowCircleDown color={theme.palette.text.highlight} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={isDisabledColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
         </Grid>
         <CryptoFiatBalance
           cryptoBalance={cryptoAmount}
-          cryptoProps={{ style: { color: theme.palette.text.highlight } }}
+          cryptoProps={{ style: { color: isDisabledColor } }}
           decimal={decimal}
           fiatBalance={fiatAmount}
-          fiatProps={{ decimalColor: theme.palette.text.highlight }}
+          fiatProps={{ decimalColor: isDisabledColor, textColor: isDisabled ? '#674394' : theme.palette.text.primary }}
           skeletonColor='none'
           style={{
             alignItems: layoutDirection === 'row' ? 'start' : 'end',
@@ -130,8 +119,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         />
       </Container>
       {buttonsArray.length > 0 &&
-        <Container
-          disableGutters
+        <Container disableGutters
           sx={{
             alignItems: 'center',
             bgcolor: layoutDirection === 'row' ? '#060518' : 'none',
@@ -147,6 +135,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           {buttonsArray.map((button, index) => (
             <TileActionButton
               Icon={button.Icon}
+              isDisabled={isDisabled}
               isRow={layoutDirection === 'row'}
               key={index}
               noText={buttonsArray.length > 1 && layoutDirection === 'row'}
