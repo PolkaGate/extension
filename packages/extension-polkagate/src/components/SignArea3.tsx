@@ -26,7 +26,7 @@ import { getSubstrateAddress } from '../util/utils';
 import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
 import { SignUsingQR, type SignUsingQRProps } from './SignUsingQR';
 import SignWithLedger from './SignWithLedger';
-import { SignUsingProxy } from '.';
+import { GradientButton, SignUsingProxy } from '.';
 
 type AlertHandler = {
   alertText: string;
@@ -39,7 +39,7 @@ interface ChooseSigningButtonProps {
   alertHandler: AlertHandler;
 }
 
-const NoPrivateKeySigningButton = ({ alertHandler}: ChooseSigningButtonProps) => {
+const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) => {
   const isBlueish = useIsBlueish();
   const isExtension = useIsExtensionPopup();
 
@@ -50,17 +50,30 @@ const NoPrivateKeySigningButton = ({ alertHandler}: ChooseSigningButtonProps) =>
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex' }}>
-        <Warning2 color={isBlueish ? '#596AFF' : '#FFCE4F'} size={ isExtension ? 35 : 24 } style={{ height: 'fit-content' }} variant='Bold' />
+        <Warning2 color={isBlueish ? '#596AFF' : '#FFCE4F'} size={isExtension ? 35 : 24} style={{ height: 'fit-content' }} variant='Bold' />
         <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {alertHandler.alertText}
         </Typography>
       </Container>
-      <StakingActionButton
-        onClick={alertHandler.onClick}
-        startIcon={alertHandler.icon}
-        style={{ marginTop: '18px' }}
-        text={alertHandler.buttonText}
-      />
+      {
+        isBlueish
+          ? <StakingActionButton
+            onClick={alertHandler.onClick}
+            startIcon={alertHandler.icon}
+            style={{ marginTop: '18px' }}
+            text={alertHandler.buttonText}
+
+          />
+          : <GradientButton
+            contentPlacement='center'
+            onClick={alertHandler.onClick}
+            style={{
+              height: '44px',
+              marginTop: '18px'
+            }}
+            text={alertHandler.buttonText}
+          />
+      }
     </Stack>
   );
 };
@@ -92,7 +105,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+export default function SignArea3({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
