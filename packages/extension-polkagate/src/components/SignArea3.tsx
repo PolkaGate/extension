@@ -11,7 +11,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { ColorSwatch, Data, ScanBarcode, Warning2 } from 'iconsax-react';
+import { Data, ScanBarcode, Warning2 } from 'iconsax-react';
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -22,7 +22,7 @@ import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useIsBluei
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
-import { getSubstrateAddress, noop } from '../util/utils';
+import { getSubstrateAddress } from '../util/utils';
 import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
 import { SignUsingQR, type SignUsingQRProps } from './SignUsingQR';
 import SignWithLedger from './SignWithLedger';
