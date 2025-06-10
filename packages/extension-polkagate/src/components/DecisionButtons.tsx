@@ -84,7 +84,7 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
           isBusy={isBusy}
           onClick={onPrimaryClick}
           startIcon
-          style={style}
+          style={{ flex: flexibleWidth ? 1 : 'none', width: primaryWidth, ...style }}
           text={primaryBtnText}
         />
         : <GradientButton

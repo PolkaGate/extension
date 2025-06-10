@@ -105,7 +105,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+export default function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
