@@ -2,16 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
+import type { Inputs } from '../types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, Popover, Stack, styled, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import useUpdateAccountSelectedAsset from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedAsset';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import { noop } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
-import { useAccountAssets, useIsHovered, useTranslation } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useIsHovered, useTranslation } from '../../../hooks';
 
 const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
   background: '#05091C',
@@ -109,31 +111,44 @@ interface Props {
   address: string | undefined;
   assetId: string | undefined;
   genesisHash: string | undefined;
+  inputs: Inputs | undefined;
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function SelectToken ({ address, assetId, genesisHash }: Props): React.ReactElement {
+export default function SelectToken ({ address, assetId, genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const accountAssets = useAccountAssets(address);
+  const { chainName } = useChainInfo(genesisHash, true);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
   const [selectedAsset, setSelectedAsset] = useState<string>();
 
   useUpdateAccountSelectedAsset(address, genesisHash, selectedAsset, true);
 
-  const accountAssetsOnCurrentChain = useMemo(() =>
-    accountAssets
-      ?.filter((asset) =>
-        asset.genesisHash === genesisHash)
-  , [accountAssets, genesisHash]);
+  const accountAssetsOnCurrentChain = useMemo(() => accountAssets?.filter((asset) => asset.genesisHash === genesisHash), [accountAssets, genesisHash]);
 
-  const token = useMemo(() =>
-    accountAssetsOnCurrentChain?.find((asset) => String(asset.assetId) === assetId)?.token,
-  [accountAssetsOnCurrentChain, assetId]);
+  useEffect(() => {
+    if (!chainName) {
+      return;
+    }
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+    const asset = accountAssetsOnCurrentChain?.find((asset) => String(asset.assetId) === String(assetId));
 
-  const onToggleChainSelection = useCallback(() => {
+    if (asset) {
+      const { decimal, token } = asset;
+
+      token && setInputs((prev) => ({
+        ...(prev || {}),
+        decimal,
+        token
+      }));
+    }
+  }, [accountAssetsOnCurrentChain, assetId, chainName, setInputs]);
+
+  const logoInfo = useMemo(() => inputs?.token && getLogo2(genesisHash, inputs.token), [genesisHash, inputs?.token]);
+
+  const onToggleTokenSelection = useCallback(() => {
     setOpenTokenList(!openTokenList);
   }, [openTokenList]);
 
@@ -144,20 +159,22 @@ export default function SelectToken ({ address, assetId, genesisHash }: Props): 
   return (
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
-        <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' ref={containerRef} width='150px'>
+        <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' onClick={accountAssetsOnCurrentChain?.length ? onToggleTokenSelection : noop} ref={containerRef} sx={{ cursor: accountAssetsOnCurrentChain?.length ? 'pointer' : 'default' }} width='150px'>
           <Stack alignItems='end' direction='row' justifyContent='start'>
-            <AssetLogo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+            {logoInfo &&
+              <AssetLogo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+            }
             <Stack alignItems='center' direction='column' justifyContent='start' ml='7px' width='80%'>
               <Typography color='#AA83DC' sx={{ textAlign: 'left', width: '100%' }} variant='B-4'>
                 {t('Token')}
               </Typography>
               <Typography sx={{ textAlign: 'left', width: '100%' }} variant='B-2'>
-                {token ?? 'DOT'}
+                {inputs?.token ?? 'Unit'}
               </Typography>
             </Stack>
           </Stack>
           {!!accountAssetsOnCurrentChain?.length &&
-            <Box onClick={onToggleChainSelection} sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', transition: 'all 250ms ease-out', display: 'flex', height: '40px', justifyContent: 'center', width: '40px' }}>
+            <Box sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', transition: 'all 250ms ease-out', display: 'flex', height: '40px', justifyContent: 'center', width: '40px' }}>
               <ExpandMore sx={{ color: '#AA83DC', fontSize: '20px' }} />
             </Box>}
         </Stack>

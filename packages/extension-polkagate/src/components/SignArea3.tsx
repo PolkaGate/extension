@@ -3,15 +3,14 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
-import type { GenericExtrinsicPayload } from '@polkadot/types/extrinsic';
-import type { ExtrinsicPayload, Header } from '@polkadot/types/interfaces';
+import type { Header } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
 import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
-import { Container, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ColorSwatch, Data, ScanBarcode, Warning2 } from 'iconsax-react';
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -19,16 +18,15 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useProxies, useTranslation } from '../hooks';
-import Qr from '../popup/signing/Request/Qr';
-import { CMD_MORTAL } from '../popup/signing/types';
+import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useIsBlueish, useIsExtensionPopup, useProxies, useTranslation } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import { getSubstrateAddress, noop } from '../util/utils';
-import SignUsingPassword from './SignUsingPassword';
+import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
+import { SignUsingQR, type SignUsingQRProps } from './SignUsingQR';
 import SignWithLedger from './SignWithLedger';
-import { ExtensionPopup, SignUsingProxy } from '.';
+import { SignUsingProxy } from '.';
 
 type AlertHandler = {
   alertText: string;
@@ -37,53 +35,23 @@ type AlertHandler = {
   onClick: () => void;
 } | undefined;
 
-interface SignUsingQRProps {
-  handleClose: () => void;
-  openMenu: boolean;
-  onSignature: ({ signature }: { signature: HexString; }) => void;
-  payload: GenericExtrinsicPayload | undefined;
-  signerPayload: SignerPayloadJSON | undefined;
-}
-
-const SignUsingQR = ({ handleClose, onSignature, openMenu, payload, signerPayload }: SignUsingQRProps) => {
-  const theme = useTheme();
-  const { t } = useTranslation();
-
-  return (
-    <ExtensionPopup
-      TitleIcon={ScanBarcode}
-      darkBackground
-      handleClose={handleClose}
-      iconColor={theme.palette.text.highlight}
-      iconSize={25}
-      openMenu={openMenu}
-      title={t('Sign with QR-Code')}
-    >
-      <Qr
-        address={signerPayload?.address ?? ''}
-        cmd={CMD_MORTAL}
-        genesisHash={signerPayload?.genesisHash ?? ''}
-        onSignature={onSignature}
-        payload={payload as ExtrinsicPayload}
-      />
-    </ExtensionPopup>
-  );
-};
-
-interface SignUsingPasswordProps {
+interface ChooseSigningButtonProps {
   alertHandler: AlertHandler;
 }
 
-const ChooseSigningButton = ({ alertHandler }: SignUsingPasswordProps) => {
+const NoPrivateKeySigningButton = ({ alertHandler}: ChooseSigningButtonProps) => {
+  const isBlueish = useIsBlueish();
+  const isExtension = useIsExtensionPopup();
+
   if (!alertHandler) {
     return null;
   }
 
   return (
-    <Stack direction='column' sx={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}>
-      <Container disableGutters sx={{ columnGap: '8px', display: 'flex' }}>
-        <Warning2 color='#596AFF' size='35' style={{ height: 'fit-content' }} variant='Bold' />
-        <Typography color='text.highlight' textAlign='left' variant='B-4'>
+    <Stack direction='column' sx={{ width: '100%' }}>
+      <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex' }}>
+        <Warning2 color={isBlueish ? '#596AFF' : '#FFCE4F'} size={ isExtension ? 35 : 24 } style={{ height: 'fit-content' }} variant='Bold' />
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {alertHandler.alertText}
         </Typography>
       </Container>
@@ -99,17 +67,22 @@ const ChooseSigningButton = ({ alertHandler }: SignUsingPasswordProps) => {
 
 interface Props {
   address: string | undefined;
-  onClose: () => void
-  maybeApi?: ApiPromise;
-  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
-  proxyTypeFilter: ProxyTypes[] | undefined;
+  direction?: 'horizontal' | 'vertical';
   genesisHash: string | null | undefined;
+  ledgerStyle?: React.CSSProperties;
+  maybeApi?: ApiPromise;
+  onClose: () => void
+  proxyTypeFilter: ProxyTypes[] | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   selectedProxy: Proxy | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   showProxySelection: boolean;
+  signUsingPasswordProps?: Partial<SignUsingPasswordProps>;
+  signUsingQRProps?: Partial<SignUsingQRProps>;
+  style?: React.CSSProperties;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   withCancel?: boolean;
 }
 
@@ -119,7 +92,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, withCancel }: Props): React.ReactElement<Props> {
+export default function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -157,7 +130,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
   }, [api, formatted, selectedProxy, transaction]);
 
   const signerPayload = useMemo(() => {
-    if (!api || !preparedTransaction || !lastHeader || !rawNonce) {
+    if (!api || !preparedTransaction || !lastHeader || rawNonce === undefined) {
       return;
     }
 
@@ -215,15 +188,6 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
 
   const alertHandler = useMemo((): AlertHandler => {
-    if (isLedger) {
-      return {
-        alertText: t('This is a ledger account. To complete this transaction, use your ledger.'),
-        buttonText: t('Use Ledger'),
-        icon: <ColorSwatch color={theme.palette.text.primary} size={18} variant='Bold' />,
-        onClick: noop
-      };
-    }
-
     if (showQrSign) {
       return {
         alertText: t('This is a QR-attached account. To complete this transaction, you need to use your QR-signer.'),
@@ -243,7 +207,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
     }
 
     return undefined;
-  }, [isLedger, showQrSign, showUseProxy, t, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+  }, [showQrSign, showUseProxy, t, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
@@ -289,38 +253,43 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
 
   return (
     <>
-      {noPrivateKeyAccount && !isLedger &&
-        <ChooseSigningButton
-          alertHandler={alertHandler}
-        />
-      }
-      {isLedger &&
-        <SignWithLedger
-          address={address}
-          api={api}
-          from={from}
-          handleTxResult={handleTxResult}
-          onSecondaryClick={onClose}
-          onSignature={onSignature}
-          payload={payload}
-          preparedTransaction={preparedTransaction}
-          setFlowStep={setFlowStep}
-          signerPayload={signerPayload}
-        />
-      }
-      {(selectedProxy || !noPrivateKeyAccount) &&
-        <SignUsingPassword
-          api={api}
-          from={from}
-          handleTxResult={handleTxResult}
-          onCancel={onClose}
-          onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
-          preparedTransaction={preparedTransaction}
-          proxies={proxies}
-          setFlowStep={setFlowStep}
-          withCancel={withCancel}
-        />
-      }
+      <Grid container item sx={{ bottom: '13px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%', ...style }}>
+        {!selectedProxy && noPrivateKeyAccount && !isLedger &&
+          <NoPrivateKeySigningButton
+            alertHandler={alertHandler}
+          />
+        }
+        {isLedger &&
+          <SignWithLedger
+            address={address}
+            api={api}
+            from={from}
+            handleTxResult={handleTxResult}
+            onSecondaryClick={onClose}
+            onSignature={onSignature}
+            payload={payload}
+            preparedTransaction={preparedTransaction}
+            setFlowStep={setFlowStep}
+            signerPayload={signerPayload}
+            style={ledgerStyle}
+          />
+        }
+        {(selectedProxy || !noPrivateKeyAccount) &&
+          <SignUsingPassword
+            api={api}
+            direction={direction}
+            from={from}
+            handleTxResult={handleTxResult}
+            onCancel={onClose}
+            onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
+            preparedTransaction={preparedTransaction}
+            proxies={proxies}
+            setFlowStep={setFlowStep}
+            withCancel={withCancel}
+            {...signUsingPasswordProps}
+          />
+        }
+      </Grid>
       <SignUsingProxy
         genesisHash={genesisHash}
         handleClose={toggleSelectProxy}
@@ -336,6 +305,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
         openMenu={showQR}
         payload={payload}
         signerPayload={signerPayload}
+        {...signUsingQRProps}
       />
     </>
   );

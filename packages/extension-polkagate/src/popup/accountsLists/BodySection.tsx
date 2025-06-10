@@ -112,7 +112,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
       <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
         <SearchField
           onInputChange={onSearch}
-          placeholder='🔍 Search Accounts'
+          placeholder='🔍 Search accounts'
         />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>

@@ -117,6 +117,50 @@ export function formatDecimal (_number: number | string, decimalDigit = FLOATING
 }
 
 /**
+ * Converts a number in scientific notation to a non-exponential string representation.
+ *
+ * - Handles both positive and negative numbers.
+ * - Converts the number to a string without using exponential notation.
+ *
+ * @param {number} num - The number to convert.
+ * @returns {string} The non-exponential string representation of the number.
+ *
+ * @example
+ * toNonExponential(1.23e5); // "123000"
+ * toNonExponential(-4.56e-3); // "-0.00456"
+ * toNonExponential(1000); // "1000"
+ */
+function toNonExponential (num: number): string {
+  const data = String(num).split(/[eE]/);
+
+  if (data.length === 1) {
+    return data[0];
+  }
+
+  let z = ''; const sign = num < 0 ? '-' : '';
+  const str = data[0].replace('.', '');
+  let mag = Number(data[1]) + 1;
+
+  if (mag < 0) {
+    z = sign + '0.';
+
+    while (mag++) {
+      z += '0';
+    }
+
+    return z + str.replace(/^-/, '');
+  }
+
+  mag -= str.length;
+
+  while (mag--) {
+    z += '0';
+  }
+
+  return sign + str + z;
+}
+
+/**
  * Converts a raw amount to a human-readable format by adjusting for decimals.
  *
  * - Removes any commas from the input amount.
@@ -144,7 +188,12 @@ export function amountToHuman (_amount: string | number | BN | bigint | Compact<
 
   const x = 10 ** _decimals;
 
-  return formatDecimal(Number(_amount) / x, decimalDigits, commify);
+  const rawValue = Number(_amount) / x;
+
+  // convert scientific notation to decimal string before formatting
+  const normalized = toNonExponential(rawValue);
+
+  return formatDecimal(normalized, decimalDigits, commify);
 }
 
 /**

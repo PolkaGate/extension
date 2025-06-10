@@ -6,6 +6,8 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 import { Container, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import Progress from '@polkadot/extension-polkagate/src/popup/staking/partial/Progress';
+
 import { FadeOnScroll, GradientButton, SearchField } from '../../components';
 import { useCategorizedAccountsInProfiles, useFormatted3, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -102,58 +104,65 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
         <ProfileTabsFS width='99%' />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '345px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
-            {Object.keys(filteredCategorizedAccounts).length > 0 && (
-              <>
-                {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
-                  return (
-                    <>
-                      {accounts.map((account, accIndex) => {
-                        const isFirstProfile = profileIndex === 0;
-                        const isFirstAccount = accIndex === 0;
-                        const isLast = accIndex === accounts.length - 1;
+            {
+              Object.keys(filteredCategorizedAccounts).length > 0
+                ? <>
+                  {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
+                    return (
+                      <>
+                        {accounts.map((account, accIndex) => {
+                          const isFirstProfile = profileIndex === 0;
+                          const isFirstAccount = accIndex === 0;
+                          const isLast = accIndex === accounts.length - 1;
 
-                        return (
-                          <React.Fragment key={account.account.address}>
-                            {isFirstAccount &&
+                          return (
+                            <React.Fragment key={account.account.address}>
+                              {isFirstAccount &&
                               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
                                 <AccountProfileLabel
                                   label={label}
                                 />
                               </Stack>
-                            }
-                            <AccountRowSimple
-                              account={account.account}
-                              handleSelect={setMayBeSelected}
-                              isFirstAccount={isFirstAccount}
-                              isFirstProfile={isFirstProfile}
-                              isLast={isLast}
-                              isSelected={account.account.address === selectedAccount?.address}
-                              maybeSelected={maybeSelected}
-                            />
-                          </React.Fragment>
-                        );
-                      })}
-                    </>
-                  );
-                })}
-              </>
-            )}
+                              }
+                              <AccountRowSimple
+                                account={account.account}
+                                handleSelect={setMayBeSelected}
+                                isFirstAccount={isFirstAccount}
+                                isFirstProfile={isFirstProfile}
+                                isLast={isLast}
+                                isSelected={account.account.address === selectedAccount?.address}
+                                maybeSelected={maybeSelected}
+                              />
+                            </React.Fragment>
+                          );
+                        })}
+                      </>
+                    );
+                  })}
+                </>
+                : <Progress
+                  text={t('Loading, please wait ...')}
+                />
+            }
           </Stack>
           <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
         </VelvetBox>
-        <GradientButton
-          contentPlacement='center'
-          disabled={!maybeSelected}
-          onClick={onApply}
-          style={{
-            bottom: '10px',
-            height: '44px',
-            margin: '0 1%',
-            position: 'absolute',
-            width: '98%'
-          }}
-          text={t('Apply')}
-        />
+        {
+          !!Object.keys(filteredCategorizedAccounts).length &&
+          <GradientButton
+            contentPlacement='center'
+            disabled={!maybeSelected}
+            onClick={onApply}
+            style={{
+              bottom: '10px',
+              height: '44px',
+              margin: '0 1%',
+              position: 'absolute',
+              width: '98%'
+            }}
+            text={t('Apply')}
+          />
+        }
       </Container>
     </DraggableModal>
   );

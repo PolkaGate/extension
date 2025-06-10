@@ -18,15 +18,16 @@ interface Props {
   isBusy?: boolean | undefined;
   onRefresh: () => void;
   onSignLedger: () => void;
-  onCancel: () => void
+  onCancel: () => void;
+  style?: React.CSSProperties;
 }
 
-function LedgerButtons ({ error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger }: Props): React.ReactElement<Props> {
+function LedgerButtons ({ error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger, style = {} }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
   return (
-    <Grid container sx={{ bottom: 0, position: 'absolute' }}>
+    <Grid container sx={{ bottom: 0, position: 'absolute', ...style }}>
       {!!ledgerWarning &&
         <LedgerErrorMessage error={ledgerWarning} />
       }

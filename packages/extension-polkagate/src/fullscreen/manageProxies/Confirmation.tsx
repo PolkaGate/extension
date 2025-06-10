@@ -4,18 +4,20 @@
 import type { TransactionDetail } from '../../util/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { CloseCircle, TickCircle } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { subscan } from '../../assets/icons';
 import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../components';
-import { useChainInfo, useIsBlueish, useTranslation } from '../../hooks';
+import { useChainInfo, useCurrency, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
 import { toTitleCase } from '../../util';
-import { amountToHuman, countDecimalPlaces, toShortAddress } from '../../util/utils';
+import { amountToHuman, countDecimalPlaces, isValidAddress, toShortAddress } from '../../util/utils';
+import { DraggableModal } from '../components/DraggableModal';
 
 const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
   <Avatar
@@ -27,13 +29,18 @@ const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
 interface AmountProps {
   amount: string | undefined;
   genesisHash: string | undefined;
+  token: string | undefined;
 }
 
-const Amount = ({ amount, genesisHash }: AmountProps) => {
-  const { decimal, token } = useChainInfo(genesisHash, true);
+const Amount = ({ amount, genesisHash, token }: AmountProps) => {
+  const { decimal, token: nativeToken } = useChainInfo(genesisHash, true);
+  const _token = token ?? nativeToken;
+  const price = useTokenPriceBySymbol(token, genesisHash);
+  const currency = useCurrency();
 
   const amountInHuman = amountToHuman((amount ?? '0'), decimal);
 
+  const value = ((price.price ?? 0) * parseFloat(amountInHuman)).toFixed(2);
   const [integerPart, decimalPart] = amountInHuman.split('.');
 
   const decimalToShow = useMemo(() => {
@@ -48,15 +55,20 @@ const Amount = ({ amount, genesisHash }: AmountProps) => {
   }, [decimalPart]);
 
   return (
-    <Stack alignItems='flex-end' direction='row' py='4px'>
-      <Typography color='text.primary' lineHeight='normal' variant='H-1'>
-        {integerPart}
-      </Typography>
-      <Typography color='text.secondary' variant='H-3'>
-        {decimalToShow}
-      </Typography>
-      <Typography color='text.secondary' pl='3px' variant='H-3'>
-        {token}
+    <Stack alignItems='center' direction='column' py='4px'>
+      <Stack alignItems='flex-end' direction='row'>
+        <Typography color='text.primary' lineHeight='normal' variant='H-1'>
+          {integerPart}
+        </Typography>
+        <Typography color='text.secondary' variant='H-3'>
+          {decimalToShow}
+        </Typography>
+        <Typography color='text.secondary' pl='3px' variant='H-3'>
+          {_token}
+        </Typography>
+      </Stack>
+      <Typography color='text.secondary' pl='3px' variant='B-4'>
+        {currency?.sign}{value}
       </Typography>
     </Stack>
   );
@@ -69,7 +81,7 @@ interface ProxyAccountsProps {
 
 const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
   return (
-    <Grid alignItems='center' container direction='row' item justifyContent='center' margin='10px 0 15px' width= '90%'>
+    <Grid alignItems='center' container direction='row' item justifyContent='center' margin='10px 0 15px' width='90%'>
       {accounts?.map((acc, index) => (
         <Identity2
           address={acc}
@@ -93,7 +105,7 @@ interface HeaderProps {
 const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
   const { t } = useTranslation();
 
-  const { accounts, amount, description, success } = transactionDetail;
+  const { accounts, amount, description, success, token } = transactionDetail;
 
   return (
     <GlowBox style={{ m: 0, width: '100%' }}>
@@ -104,7 +116,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
             : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
           }
         </Grid>
-        <Typography color='#AA83DC' pt='8px' textTransform='capitalize' variant='B-2'>
+        <Typography color='primary.main' pt='8px' textTransform='capitalize' variant='B-2'>
           {
             description && success
               ? description
@@ -128,7 +140,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
                     noIdenticon
                     showShortAddress
-                    style={{ addressVariant: 'B-1', padding: '10px 0 18px', variant: 'B-3' }}
+                    style={{ addressVariant: 'B-1', maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
                   />
               }
@@ -136,6 +148,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
             : <Amount
               amount={amount}
               genesisHash={genesisHash}
+              token={token}
             />
         }
       </Stack>
@@ -146,19 +159,23 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
 interface DetailProps {
   genesisHash: string | undefined;
   isBlueish?: boolean;
+  showDate: boolean | undefined;
   transactionDetail: TransactionDetail;
 }
 
-const Detail = ({ genesisHash, isBlueish, transactionDetail }: DetailProps) => {
+const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const mainEntries = useMemo(() => {
-    const fieldsToDisplay = ['amount', 'deposit', 'fee', 'block', 'txHash'];
+    const baseFields = ['amount', 'deposit', 'fee', 'block', 'txHash'];
+    const fieldsToDisplay = showDate ? ['date', ...baseFields] : baseFields;
 
-    return Object.entries(transactionDetail).filter(([key, value]) => fieldsToDisplay.includes(key) && value !== undefined && value !== null);
-  }, [transactionDetail]);
+    return fieldsToDisplay
+      .map((field) => [field, transactionDetail[field as keyof TransactionDetail]])
+      .filter(([_, value]) => value !== undefined && value !== null) as [string, any][];
+  }, [showDate, transactionDetail]);
 
   const extraEntries = useMemo(() => {
     if (transactionDetail.extra && typeof transactionDetail.extra === 'object') {
@@ -168,6 +185,18 @@ const Detail = ({ genesisHash, isBlueish, transactionDetail }: DetailProps) => {
     return [];
   }, [transactionDetail]);
 
+  const getContentTypeAndColor = useCallback((key: string, content: any) => {
+    const isHash = key === 'txHash';
+    const isBlock = key === 'block';
+    const isBalance = ['amount', 'deposit', 'fee'].includes(key);
+    const isAddress = isValidAddress(content as string);
+    const isFromAddress = key === 'from' && isAddress;
+    const isDate = showDate && key === 'date';
+    const color = (isBlock || isDate) ? 'text.primary' : isBlueish ? 'text.highlight' : 'text.secondary';
+
+    return { isHash, isBlock, isBalance, isAddress, isFromAddress, isDate, color };
+  }, [isBlueish, showDate]);
+
   const entriesToRender = [...extraEntries, ...mainEntries].filter(([_, content]) => content !== null && content !== undefined);
 
   return (
@@ -175,39 +204,51 @@ const Detail = ({ genesisHash, isBlueish, transactionDetail }: DetailProps) => {
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', p: '12px 18px' }}>
         {entriesToRender.map(([key, content], index) => {
           const withDivider = entriesToRender.length > index + 1;
-          const isHash = key === 'txHash';
-          const isBlock = key === 'block';
-          const isBalance = ['amount', 'deposit', 'fee'].includes(key);
-
-          const color = isBlock ? 'text.primary' : isBlueish ? 'text.highlight' : 'text.secondary';
+          const { color, isAddress, isBalance, isBlock, isDate, isFromAddress, isHash } = getContentTypeAndColor(key, content);
 
           return (
             <React.Fragment key={key}>
               <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} textTransform='capitalize' variant='B-1' width='fit-content'>
-                  {toTitleCase(t(key === 'txHash' ? 'transaction id' : key))}
+                  {key === 'txHash' ? t('Transaction ID') : toTitleCase(key)}
                 </Typography>
-                <Typography color={color} sx={{ bgcolor: isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
-                  {isHash
-                    ? toShortAddress(String(content), 6)
-                    : isBalance
-                      ? (
-                        <FormatBalance2
-                          decimalPoint={4}
-                          decimals={[decimal ?? 0]}
-                          style={{
-                            color: isBlueish ? theme.palette.text.highlight : '#AA83DC',
-                            fontFamily: 'Inter',
-                            fontSize: '13px',
-                            fontWeight: 500,
-                            width: 'max-content'
-                          }}
-                          tokens={[token ?? '']}
-                          value={content as string}
-                        />)
-                      : content
+                <Stack columnGap='3px' direction='row' justifyContent='end'>
+                  {
+                    isFromAddress &&
+                    <Identity2
+                      address={content as string}
+                      genesisHash={POLKADOT_GENESIS}
+                      identiconSize={18}
+                      showSocial={false}
+                      style={{ color: 'text.primary', variant: 'B-1' }}
+                      withShortAddress={false}
+                    />
                   }
-                </Typography>
+                  <Typography color={color} sx={{ bgcolor: isHash || isAddress ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                    {isBlock && '#'}
+                    {isHash || isAddress
+                      ? toShortAddress(String(content), 6)
+                      : isBalance
+                        ? (
+                          <FormatBalance2
+                            decimalPoint={4}
+                            decimals={[decimal ?? 0]}
+                            style={{
+                              color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
+                              fontFamily: 'Inter',
+                              fontSize: '13px',
+                              fontWeight: 500,
+                              width: 'max-content'
+                            }}
+                            tokens={[token ?? '']}
+                            value={content as string}
+                          />)
+                        : isDate
+                          ? new Date(content).toLocaleString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
+                          : content
+                    }
+                  </Typography>
+                </Stack>
               </Container>
               {
                 withDivider &&
@@ -229,7 +270,7 @@ interface ButtonsProps {
   backToHome?: () => void;
 }
 
-function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
+function Buttons({ address, backToHome, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
@@ -293,19 +334,33 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
 
 interface Props {
   address: string;
-  transactionDetail: TransactionDetail;
+  backToHome?: () => void;
   genesisHash: string | undefined;
   goToHistory?: () => void;
-  backToHome?: () => void;
+  isModal?: boolean;
+  onCloseModal?: () => void;
+  showDate?: boolean;
+  transactionDetail: TransactionDetail;
 }
 
-export default function Confirmation ({ address, backToHome, genesisHash, goToHistory, transactionDetail }: Props) {
+export default function Confirmation({ address, backToHome, genesisHash, goToHistory, isModal, onCloseModal, showDate, transactionDetail }: Props) {
   const isBlueish = useIsBlueish();
+  const { t } = useTranslation();
 
-  return (
+  const [openModal, setOpenModal] = useState(true);
+  const _onCloseModal = useCallback(() => {
+    setOpenModal(false);
+  }, []);
+
+  const Content = () => (
     <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
       <Header genesisHash={genesisHash} transactionDetail={transactionDetail} />
-      <Detail genesisHash={genesisHash} isBlueish={isBlueish} transactionDetail={transactionDetail} />
+      <Detail
+        genesisHash={genesisHash}
+        isBlueish={isBlueish}
+        showDate={showDate}
+        transactionDetail={transactionDetail}
+      />
       <Buttons
         address={address}
         backToHome={backToHome}
@@ -314,5 +369,23 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
         isBlueish={isBlueish}
       />
     </Stack>
+  );
+
+  return (
+    <>
+      {isModal
+        ? <DraggableModal
+          noDivider
+          onClose={onCloseModal ?? _onCloseModal}
+          open={openModal}
+          showBackIconAsClose
+          style={{ backgroundColor: '#1B133C', minHeight: '615px', padding: '20px 9px 10px' }}
+          title={transactionDetail.success ? t('Completed') : t('Failed')}
+        >
+          <Content />
+        </DraggableModal>
+        : <Content />
+      }
+    </>
   );
 }

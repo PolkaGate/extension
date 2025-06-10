@@ -3,9 +3,9 @@
 
 import type { DropdownOption } from '../../../util/types';
 
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowRight2 } from 'iconsax-react';
-import React, { type MouseEventHandler, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronRight } from '@mui/icons-material';
+import { Grid, Stack, Typography } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ActionButton, ActionContext, ChainLogo, SearchField } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
@@ -18,7 +18,6 @@ import MySwitch from './components/Switch';
 
 export default function Chains (): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
 
   const allChains = useGenesisHashOptions(false);
@@ -114,7 +113,7 @@ export default function Chains (): React.ReactElement {
     setSearchedChain([..._filtered]);
   }, [allChains]);
 
-  const chainEndpoints = useCallback((genesisHash: string): MouseEventHandler<SVGElement> => {
+  const chainEndpoints = useCallback((genesisHash: string) => {
     return () => onAction(`/endpoints/${genesisHash}`);
   }, [onAction]);
 
@@ -146,12 +145,20 @@ export default function Chains (): React.ReactElement {
               px: '7px'
             }}
           >
-            <Stack alignItems='center' direction='row'>
+            <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value as string)} sx={{ cursor: 'pointer' }}>
               <ChainLogo genesisHash={value as string} size={24} />
               <Typography color='#EAEBF1' ml='8px' variant='B-1'>
                 {text}
               </Typography>
-              <ArrowRight2 color={theme.palette.text.primary} onClick={chainEndpoints(value as string)} size='12' style={{ cursor: 'pointer' }} />
+              <ChevronRight sx={{
+                '.hoverable:hover &': {
+                  transform: 'translateX(5px)'
+                },
+                color: 'text.primary',
+                fontSize: '17px',
+                transition: 'transform 250ms ease-out'
+              }}
+              />
             </Stack>
             <MySwitch
               checked={selectedChains.has(value as string)}

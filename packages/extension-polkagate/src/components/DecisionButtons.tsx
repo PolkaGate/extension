@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ActionButtonProps } from './ActionButton';
+import type { GradientButtonProps } from './GradientButton';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Container, useTheme } from '@mui/material';
@@ -11,12 +12,13 @@ import { useIsBlueish } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { ActionButton, GradientButton, GradientDivider, NeonButton } from '.';
 
-interface Props {
+export interface DecisionButtonProps {
   arrow?: boolean;
   cancelButton?: boolean;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
   divider?: boolean;
+  dividerBackground?: string;
   flexibleWidth?: boolean;
   isBusy?: boolean | undefined;
   onPrimaryClick: () => unknown;
@@ -24,11 +26,13 @@ interface Props {
   primaryBtnText: string;
   secondaryBtnText: string;
   secondaryButtonProps?: Partial<ActionButtonProps>
+  primaryButtonProps?: Partial<GradientButtonProps>
   showChevron?: boolean;
   style?: React.CSSProperties;
+  dividerStyle?: React.CSSProperties;
 }
 
-function DecisionButtons({ arrow = false, cancelButton, direction, disabled, divider = false, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, secondaryBtnText, secondaryButtonProps, showChevron, style }: Props): React.ReactElement {
+function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, dividerStyle, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, primaryButtonProps, secondaryBtnText, secondaryButtonProps, showChevron, style }: DecisionButtonProps): React.ReactElement {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 
@@ -66,14 +70,13 @@ function DecisionButtons({ arrow = false, cancelButton, direction, disabled, div
         />
         : <NeonButton
           contentPlacement='center'
-          disabled={secondaryDisabled}
           onClick={onSecondaryClick}
           style={{ height: '44px', width: secondaryWidth }}
           text={secondaryBtnText}
         />
       }
       {divider &&
-        <GradientDivider isBlueish={isBlueish} orientation='vertical' style={{ height: '90%', mx: '8px' }} />
+        <GradientDivider isBlueish={isBlueish} orientation='vertical' style={{ height: '90%', mx: '8px', ...dividerStyle }} />
       }
       {isBlueish
         ? <StakingActionButton
@@ -94,6 +97,7 @@ function DecisionButtons({ arrow = false, cancelButton, direction, disabled, div
           showChevron={showChevron}
           style={{ flex: flexibleWidth ? 1 : 'none', height: '44px', width: primaryWidth }}
           text={primaryBtnText}
+          {...primaryButtonProps}
         />
       }
     </Container>

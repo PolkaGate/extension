@@ -1,92 +1,50 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SubmittableExtrinsicFunction } from '@polkadot/api/types';
-import type { AnyTuple } from '@polkadot/types/types';
+//@ts-nocheck
+import type { Proxy, TransactionDetail, TxInfo } from '@polkadot/extension-polkagate/util/types';
 
-import { Typography } from '@mui/material';
-import { getAllAssetsSymbols, getAssetDecimals, getAssetId, getAssetMultiLocation, getAssetsObject, getFeeAssets, getNativeAssets, getNativeAssets, getOtherAssets, getParaId, getRelayChainSymbol, getTNode, hasSupportForAsset, NODE_NAMES } from '@paraspell/sdk'
+import { Grid, Typography } from '@mui/material';
 import { ArrowLeft } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
+import { PROXY_TYPE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
-import { type BN } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { DecisionButtons } from '../../components';
-import { useBalances, useChain, useFullscreen, useTeleport, useTranslation } from '../../hooks';
-import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
+import { DecisionButtons, SignArea3 } from '../../components';
+import { useFullscreen, useTeleport, useTranslation } from '../../hooks';
+import { WaitScreen2 } from '../../partials';
 import HomeLayout from '../components/layout';
-import Step1Account from './Step1Account';
+import Confirmation from '../manageProxies/Confirmation';
+import StepsRow, { INPUT_STEPS } from './partials/StepsRow';
+import Step1Sender from './Step1Sender';
 import Step2Recipient from './Step2Recipient';
 import Step3Amount from './Step3Amount';
 import Step4Summary from './Step4Summary';
-import StepsRow, { INPUT_STEPS } from './StepsRow';
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROGRESS: 5,
-  PROXY: 100,
-  SIGN_QR: 200
-};
-
-export interface Inputs {
-  amount?: string | undefined;
-  call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined;
-  params?: unknown[] | (() => unknown[]);
-  recipientAddress?: string | undefined;
-  recipientGenesisHashOrParaId?: string | undefined;
-  totalFee?: BN;
-  recipientChainName?: string | undefined;
-}
-type StepsType = typeof STEPS[keyof typeof STEPS];
+import { type Inputs } from './types';
 
 export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
   const { address, assetId, genesisHash } = useParams<{ genesisHash: string, address: string, assetId: string }>();
-  const chain = useChain(address);
-  const ref = useRef(chain);
-  const navigate = useNavigate();
+  const ref = useRef(null);
   const teleportState = useTeleport(genesisHash);
+  const navigate = useNavigate();
 
-  const [refresh, setRefresh] = useState<boolean>(false);
-  const balances = useBalances(address, refresh, setRefresh, undefined, assetId);
-
-  const [step, setStep] = useState<StepsType>(STEPS.INDEX);
-  const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.ACCOUNT);
   const [inputs, setInputs] = useState<Inputs>();
+  const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.SENDER);
+  const [flowStep, setFlowStep] = useState<TransactionFlowStep>(TRANSACTION_FLOW_STEPS.REVIEW);
+  const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
+  const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
+  const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
-
-  useEffect(() => {
-    /** To remove assetId from the url when chain has changed */
-    if (!chain) {
-      return;
-    }
-
-    if (ref.current && ref.current !== chain) {
-      navigate(`/send/${address}`);
-      setInputs(undefined);
-      setStep(STEPS.INDEX); // to return back to index when change is changed on review of confirm page!
-    }
-
-    ref.current = chain;
-  }, [address, chain, navigate]);
-
-  const closeConfirmation = useCallback(() => {
-    setRefresh(true);
-    openOrFocusTab(`/accountfs/${address}/${assetId}`, true);
-  }, [address, assetId]);
 
   const onNext = useCallback(() => {
     setInputStep((prevStep) => prevStep + 1);
@@ -96,63 +54,154 @@ export default function SendFund (): React.ReactElement {
     setInputStep((prevStep) => prevStep - 1);
   }, []);
 
+  const onCloseModal = useCallback(() => {
+    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`);
+  }, [address, assetId, genesisHash, navigate]);
+
+  const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
+
+  const isLoading = useMemo(() =>
+    (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee))
+  , [inputStep, inputs, inputTransaction]);
+
   const buttonDisable = useMemo(() =>
-    (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientGenesisHashOrParaId === undefined)) ||
-    (inputStep === INPUT_STEPS.AMOUNT && !inputs?.amount) ||
-    (inputStep === INPUT_STEPS.SUMMARY && !!inputs?.totalFee)
-    , [inputStep, inputs?.amount, inputs?.recipientAddress, inputs?.recipientGenesisHashOrParaId, inputs?.totalFee]);
+    (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientChain === undefined)) ||
+    isLoading ||
+    (inputStep === INPUT_STEPS.SUMMARY && !!inputs?.fee)
+  , [inputStep, inputs, isLoading]);
+
+  const transactionDetail = useMemo(() => {
+    return {
+      amount: inputs?.amountAsBN,
+      description: t('Amount'),
+      extra: {
+        from: address,
+        to: inputs?.recipientAddress,
+        // eslint-disable-next-line sort-keys
+        recipientNetwork: inputs?.recipientChain?.text
+      },
+      fee: inputs?.fee,
+      ...txInfo
+    } as TransactionDetail;
+  }, [address, inputs, t, txInfo]);
 
   return (
-    <HomeLayout childrenStyle={{ paddingLeft: '25px', zIndex: 1 }}>
+    <HomeLayout
+      childrenStyle={{ paddingLeft: '25px', position: 'relative', zIndex: 1 }}
+      genesisHash={genesisHash}
+      selectedProxyAddress={selectedProxy?.delegate}
+      setShowProxySelection={setShowProxySelection}
+    >
       <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
         {t('Send funds')}
       </Typography>
       <StepsRow inputStep={inputStep} />
-      {
-        inputStep === INPUT_STEPS.ACCOUNT &&
-        <Step1Account />
-      }
-      {
-        inputStep === INPUT_STEPS.RECIPIENT &&
-        <Step2Recipient
-          assetId={assetId}
+      <Grid container item ref={ref} sx={{ width: 'fit-content' }}>
+        {
+          inputStep === INPUT_STEPS.SENDER &&
+          <Step1Sender
+            inputs={inputs}
+            setInputs={setInputs}
+          />
+        }
+        {
+          inputStep === INPUT_STEPS.RECIPIENT &&
+          <Step2Recipient
+            assetId={assetId}
+            genesisHash={genesisHash}
+            inputs={inputs}
+            setInputs={setInputs}
+            teleportState={teleportState}
+          />
+        }
+        {
+          inputStep === INPUT_STEPS.AMOUNT &&
+          <Step3Amount
+            inputs={inputs}
+            setInputs={setInputs}
+            teleportState={teleportState}
+          />
+        }
+        {
+          inputStep === INPUT_STEPS.SUMMARY &&
+          <Step4Summary
+            inputs={inputs}
+            teleportState={teleportState}
+          />
+        }
+      </Grid>
+      {inputStep !== INPUT_STEPS.SUMMARY
+        ? <DecisionButtons
+          cancelButton
+          direction='horizontal'
+          disabled={buttonDisable}
+          divider
+          dividerStyle={{
+            background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+            height: '32px'
+          }}
+          onPrimaryClick={onNext}
+          onSecondaryClick={onBack}
+          primaryBtnText={isLoading ? t('Processing, please wait ...') : t('Next')}
+          primaryButtonProps={{
+            style: { width: '85%' }
+          }}
+          secondaryBtnText={t('Back')}
+          secondaryButtonProps={{
+            StartIcon: ArrowLeft,
+            disabled: inputStep === INPUT_STEPS.SENDER,
+            iconVariant: 'Linear',
+            style: { width: '15%' }
+          }}
+          style={{ justifyContent: 'start', margin: '0', marginTop: '32px', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%', transition: 'all 250ms ease-out' }}
+        />
+        : inputTransaction &&
+        <SignArea3
+          address={address}
+          direction='horizontal'
           genesisHash={genesisHash}
-          setInputs={setInputs}
-          teleportState={teleportState}
+          ledgerStyle={{ position: 'unset' }}
+          onClose={onBack}
+          proxyTypeFilter={PROXY_TYPE.SEND_FUND}
+          selectedProxy={selectedProxy}
+          setFlowStep={setFlowStep}
+          setSelectedProxy={setSelectedProxy}
+          setShowProxySelection={setShowProxySelection}
+          setTxInfo={setTxInfo}
+          showProxySelection={showProxySelection}
+          signUsingPasswordProps={{
+            decisionButtonProps: {
+              primaryButtonProps: { style: { width: '148%' } },
+              secondaryButtonProps: {
+                StartIcon: ArrowLeft,
+                iconVariant: 'Linear',
+                text: t('Back')
+              }
+            }
+          }}
+          style={{ position: 'unset', width: '73%' }}
+          transaction={inputTransaction}
+          withCancel
         />
       }
       {
-        inputStep === INPUT_STEPS.AMOUNT &&
-        <Step3Amount
-          inputs={inputs}
-          setInputs={setInputs}
-          teleportState={teleportState}
+        flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
+        <WaitScreen2
+          isModal
+          setFlowStep={setFlowStep}
         />
       }
       {
-        inputStep === INPUT_STEPS.SUMMARY &&
-        <Step4Summary
-          inputs={inputs}
-          teleportState={teleportState}
+        flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION &&
+        <Confirmation
+          address={address ?? ''}
+          genesisHash={genesisHash}
+          isModal
+          onCloseModal={onCloseModal}
+          showDate
+          transactionDetail={transactionDetail}
         />
       }
-      <DecisionButtons
-        cancelButton
-        direction='horizontal'
-        disabled={buttonDisable}
-        divider
-        onPrimaryClick={onNext}
-        onSecondaryClick={onBack}
-        primaryBtnText={t('Next')}
-        secondaryBtnText={t('Back')}
-        secondaryButtonProps={{
-          StartIcon: ArrowLeft,
-          disabled: inputStep === INPUT_STEPS.ACCOUNT,
-          iconVariant: 'Linear',
-          style: { width: '15%' }
-        }}
-        style={{ justifyContent: 'start', margin: '0', marginTop: '32px', width: '79%' }}
-      />
     </HomeLayout>
   );
 }

@@ -4,7 +4,7 @@
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, Identity2 } from '../../components';
+import { ChainLogo, Identity2 } from '../../../components';
 
 interface Props {
   address: string | undefined;
@@ -17,11 +17,11 @@ export default function FromToBox ({ address, chainName, genesisHash, label }: P
   return (
     <Stack direction='column' justifyContent='space-between' sx={{ height: 'fit-content', width: '45%' }}>
       <Stack columnGap='5px' direction='row' justifyContent='start' sx={{ mt: '3px' }}>
-        <Typography color='primary.main' sx={{ bgcolor: '#1B133C', border: '1 solid, #2D1E4A', borderRadius: '6px', height: 'fit-content', px: '7px', textAlign: 'left' }} variant='B-1'>
+        <Typography color='primary.main' sx={{ bgcolor: '#1B133C', border: '1px solid #2D1E4A', borderRadius: '6px', height: 'fit-content', px: '7px', textAlign: 'left' }} variant='B-1'>
           {label}
         </Typography>
-        <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='start' sx={{ bgcolor: '#1B133C', border: '1 solid, #2D1E4A', borderRadius: '6px', height: 'fit-content', px: '7px', textAlign: 'left' }}>
-          <ChainLogo genesisHash={genesisHash} size={14} />
+        <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='start' sx={{ bgcolor: '#1B133C', border: '1px solid #2D1E4A', borderRadius: '6px', height: 'fit-content', px: '7px', textAlign: 'left' }}>
+          <ChainLogo chainName={chainName} size={14} />
           <Typography color='primary.main' variant='B-1'>
             {chainName}
           </Typography>
@@ -34,9 +34,9 @@ export default function FromToBox ({ address, chainName, genesisHash, label }: P
         genesisHash={genesisHash ?? ''}
         identiconSize={48}
         identiconStyle={{ marginRight: '7px' }}
-        nameStyle={{ color: 'text.primary' }}
+        nameStyle={{ color: 'text.primary', maxWidth: '190px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
         showShortAddress
-        style={{ marginTop: '15px', maxWidth: '77%', variant: 'B-3' }}
+        style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-3' }}
         withShortAddress
       />
     </Stack>

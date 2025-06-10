@@ -6,20 +6,10 @@ import React from 'react';
 
 import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useTranslation } from '../../hooks';
-
-export const STEPS = {
-  INDEX: 1,
-  REVIEW: 2,
-  WAIT_SCREEN: 3,
-  CONFIRM: 4,
-  PROGRESS: 5,
-  PROXY: 100,
-  SIGN_QR: 200
-};
+import { useTranslation } from '../../../hooks';
 
 export enum INPUT_STEPS {
-  ACCOUNT = 1,
+  SENDER = 1,
   RECIPIENT = 2,
   AMOUNT = 3,
   SUMMARY = 4
@@ -27,7 +17,7 @@ export enum INPUT_STEPS {
 
 const StepItem = ({ inputStep, label, num, withDivider = true }: { inputStep: number, num: number, label: string, withDivider?: boolean }) => (
   <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start'>
-    <Box sx={{ height: '32px', display: 'flex', width: '32px', alignItems: 'center', justifyContent: 'center', background: inputStep >= num ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#674394', borderRadius: '50%' }}>
+    <Box sx={{ alignItems: 'center', background: inputStep >= num ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#674394', border: '2px solid #2D1E4A', borderRadius: '50%', display: 'flex', height: '32px', justifyContent: 'center', width: '32px' }}>
       <Typography color={inputStep >= num ? '#EAEBF1' : '#AA83DC'} sx={{ textAlign: 'center' }} variant='B-3'>
         {num}
       </Typography>
@@ -37,7 +27,7 @@ const StepItem = ({ inputStep, label, num, withDivider = true }: { inputStep: nu
     </Typography>
     {
       withDivider &&
-      <Divider orientation='horizontal' sx={{ borderBottomWidth: 'thick', borderColor: '#67439466', mx: '8px', width: '16px' }} />
+      <Divider orientation='horizontal' sx={{ borderBottomWidth: 'thick', borderColor: '#67439466', borderRadius: '1024px', mx: '8px', width: '16px' }} />
     }  </Stack>
 );
 
@@ -48,7 +38,7 @@ export default function StepsRow ({ inputStep }: { inputStep: INPUT_STEPS }): Re
     <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ width: FULLSCREEN_WIDTH, my: '19px' }}>
       <StepItem
         inputStep={inputStep}
-        label={t('Account')}
+        label={t('Sender')}
         num={1}
       />
       <StepItem

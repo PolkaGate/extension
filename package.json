@@ -55,7 +55,7 @@
     "@mui/icons-material": "^5.15.18",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
-    "@paraspell/sdk": "^10.3.1",
+    "@paraspell/sdk-pjs": "^10.3.1",
     "@polkadot/api": "^15.9.1",
     "@polkadot/api-augment": "^15.9.1",
     "@polkadot/api-base": "^15.9.1",

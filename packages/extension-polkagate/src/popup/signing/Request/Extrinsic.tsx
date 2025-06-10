@@ -25,7 +25,7 @@ interface Decoded {
 }
 
 interface Props {
-  payload: ExtrinsicPayload;
+  payload: ExtrinsicPayload; 
   signerPayload: SignerPayloadJSON;
   url: string;
   onCancel: () => void;

@@ -136,7 +136,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
                 {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
             </Grid>
-            : <Typography sx={{ ...nameStyle }} textAlign='left' variant={style?.variant}>
+            : <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant}>
               {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
               {_accountInfo?.identity?.display && !subIdOnly
                 ? _accountInfo?.identity.displayParent
@@ -168,7 +168,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
-              <ShortAddress address={_formatted} charsCount={charsCount} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={addressStyle?.variant ?? style?.addressVariant ?? style?.variant ?? 'B-2'} />
+              <ShortAddress address={_formatted ?? address} charsCount={charsCount} inParentheses={inParentheses} style={{ fontSize: '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle }} variant={addressStyle?.variant ?? style?.addressVariant ?? style?.variant ?? 'B-2'} />
             </Grid>
           }
         </Grid>

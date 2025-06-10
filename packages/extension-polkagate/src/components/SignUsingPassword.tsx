@@ -5,6 +5,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { Proxy, TxResult } from '../util/types';
+import type { DecisionButtonProps } from './DecisionButtons';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
@@ -36,7 +37,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
     return (
       <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
         <MyTooltip
-          content={t('Checking if you have proxy accounts')}
+          content={t('Checking proxy accounts ...')}
           placement='top'
         >
           <Grid container item sx={{ alignItems: 'center', p: '4px', width: 'fit-content' }}>
@@ -57,8 +58,9 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
   );
 };
 
-interface Props {
+export interface SignUsingPasswordProps {
   api: ApiPromise | undefined;
+  direction?: 'horizontal' | 'vertical';
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void;
   onCancel: () => void;
@@ -66,11 +68,12 @@ interface Props {
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   proxies: Proxy[] | undefined;
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
+  decisionButtonProps?: Partial<DecisionButtonProps>
   style?: React.CSSProperties;
   withCancel: boolean | undefined
 }
 
-export default function SignUsingPassword ({ api, from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, style, withCancel }: Props) {
+export default function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -109,8 +112,10 @@ export default function SignUsingPassword ({ api, from, handleTxResult, onCancel
     }
   }, [api, from, handleTxResult, password, preparedTransaction, setFlowStep]);
 
+  const confirmText = !api ? t('Loading ...') : t('Confirm');
+
   return (
-    <Stack direction='column' sx={{ bottom: '15px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%' }}>
+    <Stack direction='column' sx={{ width: '100%' }}>
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 5px' }}>
         <Typography color='text.primary' variant='B-1'>
           {t('Password')}
@@ -130,13 +135,14 @@ export default function SignUsingPassword ({ api, from, handleTxResult, onCancel
       {withCancel
         ? <DecisionButtons
           cancelButton
-          direction='vertical'
+          direction={direction}
           isBusy={isBusy}
           onPrimaryClick={onConfirm}
           onSecondaryClick={onCancel}
-          primaryBtnText={t('Confirm')}
+          primaryBtnText={confirmText}
           secondaryBtnText={t('Cancel')}
           style={{ width: '100%' }}
+          {...decisionButtonProps}
         />
         : <>
           {isBlueish
@@ -146,14 +152,14 @@ export default function SignUsingPassword ({ api, from, handleTxResult, onCancel
               onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
               startIcon
               style={style}
-              text={t('Confirm')}
+              text={confirmText}
             />
             : <GradientButton
               disabled={!password || hasError}
               isBusy={isBusy}
               onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
               style={style}
-              text={t('Confirm')}
+              text={confirmText}
             />
           }
         </>

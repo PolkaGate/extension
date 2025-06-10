@@ -15,7 +15,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
 
   const savedSelectedChain = useAccountSelectedChain(address);
 
-  const changePath = useCallback(async (newAddress: string) => {
+  const updatePathWithNewAddress = useCallback((newAddress: string) => {
     const pathParts = location.pathname.split('/');
 
     // Validate expected path format
@@ -33,7 +33,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
 
     const newPath = pathParts.join('/');
 
-    return await navigate(newPath);
+    navigate(newPath);
   }, [location.pathname, navigate, savedSelectedChain]);
 
   const handleExit = useCallback(() => {
@@ -41,12 +41,17 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    changeUrl && changePath(address).then(() => {
-      onClose && onClose();
-    }).catch(console.error);
+    if (!changeUrl && !onClose) {
+      return;
+    }
 
-    onClose && onClose();
-  }, [address, changePath, changeUrl, onClose]);
+    if (changeUrl) {
+      updatePathWithNewAddress(address);
+      onClose && onClose();
+    } else {
+      onClose && onClose();
+    }
+  }, [address, updatePathWithNewAddress, changeUrl, onClose]);
 
   useEffect(() => {
     if (!address) {
@@ -71,9 +76,9 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
         .catch(console.error)
         .finally(handleExit);
     } else {
-      changeUrl && changePath(address).catch(console.error);
+      handleExit();
     }
-    // We intentionally use accounts.length instead of accounts to avoid unnecessary re-runs
+    // Using accounts.length here to avoid unnecessary re-renders due to deep object comparison
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts.length, address, changePath, changeUrl]);
+  }, [accounts.length, address, handleExit, changeUrl]);
 }

@@ -28,9 +28,10 @@ interface Props {
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   signerPayload: SignerPayloadJSON | undefined;
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
+  style?: React.CSSProperties;
 }
 
-export default function SignWithLedger ({ address, api, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload }: Props) {
+export default function SignWithLedger ({ address, api, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload, style }: Props) {
   const account = useAccount(address);
 
   const [error, setError] = useState<string | null>();
@@ -53,7 +54,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
   }, [api, from, handleTxResult, preparedTransaction, setFlowStep]);
 
   return (
-    <Grid container item sx={{ bottom: '10px', position: 'absolute', width: '92%' }}>
+    <Grid container item sx={{ width: '100%' }}>
       {
         account?.isGeneric || account?.isMigration
           ? <LedgerSignGeneric
@@ -63,6 +64,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
             onSignature={onLedgerGenericSignature}
             payload={signerPayload}
             setError={setError}
+            style={style}
           />
           : account &&
           <LedgerSign

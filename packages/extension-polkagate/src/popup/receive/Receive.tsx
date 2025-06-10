@@ -129,14 +129,14 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
         <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
           <ScanBarcode color='#AA83DC' size='24' variant='Bold' />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-            {t('Select chain')}
+            {t('Select network')}
           </Typography>
         </Grid>
         <Grid container item>
           <SearchField
             focused
             onInputChange={onSearch}
-            placeholder='🔍 Search Chain'
+            placeholder='🔍 Search networks'
           />
         </Grid>
         <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>

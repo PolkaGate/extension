@@ -13,7 +13,7 @@ import { LoaderGif } from '.';
 /**
  * Props for the GradientButton component.
  */
-export interface Props {
+export interface GradientButtonProps {
   EndIcon?: Icon;
   contentPlacement?: 'start' | 'center' | 'end';
   disabled?: boolean;
@@ -44,7 +44,7 @@ export interface Props {
  *
  * @returns {React.ReactElement} The rendered gradient button.
  */
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, style, text }: Props): React.ReactElement<Props> {
+export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, style, text }: GradientButtonProps): React.ReactElement<GradientButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
