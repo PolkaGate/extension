@@ -12,7 +12,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
-import { ColorSwatch, Data, ScanBarcode, Warning2 } from 'iconsax-react';
+import { Data, ScanBarcode, Warning2 } from 'iconsax-react';
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -25,17 +25,17 @@ import { CMD_MORTAL } from '../popup/signing/types';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
-import { getSubstrateAddress, noop } from '../util/utils';
+import { getSubstrateAddress } from '../util/utils';
 import SignUsingPassword from './SignUsingPassword';
 import SignWithLedger from './SignWithLedger';
 import { ExtensionPopup, SignUsingProxy } from '.';
 
-type AlertHandler = {
+interface AlertHandler {
   alertText: string;
   buttonText: string;
   icon: ReactNode;
   onClick: () => void;
-} | undefined;
+}
 
 interface SignUsingQRProps {
   handleClose: () => void;
@@ -71,7 +71,7 @@ const SignUsingQR = ({ handleClose, onSignature, openMenu, payload, signerPayloa
 };
 
 interface SignUsingPasswordProps {
-  alertHandler: AlertHandler;
+  alertHandler: AlertHandler | undefined;
 }
 
 const ChooseSigningButton = ({ alertHandler }: SignUsingPasswordProps) => {
@@ -214,16 +214,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
   const toggleSelectProxy = useCallback(() => setShowProxySelection((show) => !show), [setShowProxySelection]);
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
 
-  const alertHandler = useMemo((): AlertHandler => {
-    if (isLedger) {
-      return {
-        alertText: t('This is a ledger account. To complete this transaction, use your ledger.'),
-        buttonText: t('Use Ledger'),
-        icon: <ColorSwatch color={theme.palette.text.primary} size={18} variant='Bold' />,
-        onClick: noop
-      };
-    }
-
+  const alertHandler = useMemo((): AlertHandler | undefined => {
     if (showQrSign) {
       return {
         alertText: t('This is a QR-attached account. To complete this transaction, you need to use your QR-signer.'),
@@ -243,7 +234,7 @@ export default function SignArea3 ({ address, genesisHash, maybeApi, onClose, pr
     }
 
     return undefined;
-  }, [isLedger, showQrSign, showUseProxy, t, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+  }, [showQrSign, showUseProxy, t, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
