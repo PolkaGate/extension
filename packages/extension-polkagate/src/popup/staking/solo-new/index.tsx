@@ -16,6 +16,7 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtil
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
+import { getValue } from '../../account/util';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
@@ -78,6 +79,7 @@ export default function Solo (): React.ReactElement {
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
   , [accountAssets, genesisHash]);
+  const transferable = useMemo(() => getValue('transferable', asset), [asset]);
 
   const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
 
@@ -103,12 +105,12 @@ export default function Solo (): React.ReactElement {
       title: t('Fee')
     },
     {
-      content: redeemable && asset ? (asset.availableBalance).add(redeemable) : undefined,
+      content: redeemable && transferable ? transferable.add(redeemable) : undefined,
       description: t('Available balance after redeemable withdrawal'),
       title: t('Available balance after'),
       withLogo: true
     }];
-  }, [asset, estimatedFee2, redeemable, t]);
+  }, [estimatedFee2, redeemable, t, transferable]);
   const tx = useMemo(() => redeem?.(param), [redeem, param]);
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
