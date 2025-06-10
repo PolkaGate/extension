@@ -127,7 +127,10 @@ export default function useStakingRewards3 (address: string | undefined, genesis
 
       temp[relatedDateIndex].amount = temp[relatedDateIndex].amount.add(item.amount);
       temp[relatedDateIndex].timestamp = temp[relatedDateIndex].timestamp ?? new Date(item.timeStamp).getTime();
-      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal, 2);
+
+      const adaptiveDecimalPoint = temp[relatedDateIndex].amount && decimal && (String(temp[relatedDateIndex].amount).length >= decimal - 1 ? 2 : 4);
+
+      temp[relatedDateIndex].amountInHuman = amountToHuman(temp[relatedDateIndex].amount, decimal, adaptiveDecimalPoint);
     });
 
     for (let j = 0; j < temp.length; j++) {

@@ -59,6 +59,8 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, staked, s
   const tokenPrice = useTokenPrice2(genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const adaptiveDecimalPoint = useMemo(() => staked && decimal && (String(staked).length >= decimal - 1 ? 2 : 4), [decimal, staked]);
+
   const stakedInCurrency = useMemo(() => {
     if (!staked || !pricesInCurrency || !tokenPrice || !decimal) {
       return undefined;
@@ -105,7 +107,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, staked, s
             />)
           : (
             <FormatBalance2
-              decimalPoint={4}
+              decimalPoint={adaptiveDecimalPoint}
               decimals={[decimal ?? 0]}
               style={{
                 color: theme.palette.text.highlight,
