@@ -137,8 +137,10 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
   const theme = useTheme();
   const { t } = useTranslation();
 
+  const height = type === 'pool' ? '170px' : '140px';
+
   return (
-    <Stack direction='column' sx={{ borderRadius: '14px', height: '170px', overflow: 'hidden', position: 'relative' }}>
+    <Stack direction='column' sx={{ borderRadius: '14px', height, overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
       <Badge />
       {type === 'pool' && <ChartButton onRewardChart={onRewardChart} />}
