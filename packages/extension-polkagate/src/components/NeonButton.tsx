@@ -6,7 +6,7 @@ import type { Icon } from 'iconsax-react';
 import { Button, useTheme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
-import { useIsExtensionPopup, useIsHovered } from '../hooks';
+import { useIsBlueish, useIsExtensionPopup, useIsHovered } from '../hooks';
 
 interface Props {
   disabled?: boolean;
@@ -24,14 +24,15 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const isExtension = useIsExtensionPopup();
+  const isBlueish = useIsBlueish();
   const borderRadius = isExtension ? '12px' : '18px';
 
   const ButtonFontStyle = useMemo(() => ({
-    color: hovered ? '#FF4FB9' : '#BEAAD8',
+    color: hovered ? '#FF4FB9' : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
     ...theme.typography['B-2'],
     justifyContent: { center: 'center', end: 'flex-end', start: 'flex-start' }[contentPlacement],
     textTransform: 'none'
-  } as React.CSSProperties), [contentPlacement, hovered, theme.typography]);
+  } as React.CSSProperties), [contentPlacement, hovered, isBlueish, theme.palette.text.highlight, theme.palette.text.secondary, theme.typography]);
 
   const GeneralButtonStyle = {
     background: 'transparent',
@@ -50,7 +51,7 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
       marginRight: '10px'
     },
     '& .MuiButton-startIcon svg': {
-      color: hovered ? '#FF4FB9' : '#BEAAD8',
+      color: hovered ? '#FF4FB9' : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
       transition: 'all 250ms ease-out'
     }
   };
@@ -61,7 +62,7 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
       marginRight: 0
     },
     '& .MuiButton-endIcon svg': {
-      color: hovered ? '#FF4FB9' : '#BEAAD8',
+      color: hovered ? '#FF4FB9' : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
       transition: 'all 250ms ease-out'
     }
   };
@@ -72,11 +73,11 @@ export default function NeonButton ({ EndIcon, StartIcon, contentPlacement = 'st
     } else {
       return (
         <>
-          <span style={{ color: theme.palette.text.secondary, ...ButtonFontStyle }}>{text.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>{text.secondPart}</span>
+          <span style={{ color: isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary, ...ButtonFontStyle }}>{text.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>{text.secondPart}</span>
         </>
       );
     }
-  }, [ButtonFontStyle, text, theme.palette.text.primary, theme.palette.text.secondary]);
+  }, [ButtonFontStyle, isBlueish, text, theme.palette.text.highlight, theme.palette.text.primary, theme.palette.text.secondary]);
 
   return (
     <Button

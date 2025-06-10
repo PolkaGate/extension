@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 
 import type { Data } from '@polkadot/types';
 import type { PalletIdentityLegacyIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
@@ -191,7 +191,7 @@ export default function ManageIdentity(): React.ReactElement {
       api?.query.identity.identityOf(address)
         .then((id) => {
           if (!id.isEmpty) {
-            const { info, judgements } = id.unwrap()[0] as PalletIdentityRegistration;
+            const { info, judgements } = id.unwrap() as PalletIdentityRegistration;
 
             const idToSet: DeriveAccountRegistration | null = {
               discord: getRawValue(info.discord),

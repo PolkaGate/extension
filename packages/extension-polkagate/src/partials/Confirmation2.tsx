@@ -11,9 +11,10 @@ import { useLocation, useNavigate } from 'react-router';
 import { subscan } from '../assets/icons';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
 import { useChainInfo, useTranslation } from '../hooks';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../hooks/useAccountSelectedChain';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
-import { toTitleCase } from '../util';
+import { toTitleCase, updateStorage } from '../util';
 import { amountToHuman, countDecimalPlaces, toShortAddress } from '../util/utils';
 
 interface SubProps {
@@ -89,7 +90,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
   ]), [t, transactionDetail.amount, transactionDetail.block, transactionDetail.fee, transactionDetail.txHash]);
 
   return (
-    <VelvetBox>
+    <VelvetBox noGlowBall>
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', p: '12px 18px' }}>
         {listItem.map(({ content, title }, index) => {
           const withDivider = listItem.length > index + 1;
@@ -162,7 +163,11 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
 
   const stakingType = pathname.includes('pool') ? '/pool/' : '/solo/';
 
-  const goToHistory = useCallback(() => navigate('/history') as void, [navigate]);
+  const goToHistory = useCallback(() => {
+    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+      .finally(() => navigate('/history') as void)
+      .catch(console.error);
+  }, [address, genesisHash, navigate]);
   const backToStakingHome = useCallback(() => navigate(stakingType + genesisHash) as void, [genesisHash, navigate, stakingType]);
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;
@@ -171,33 +176,37 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
   }, [address, chainName]);
 
   return (
-    <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0' }}>
+    <Stack direction='column' sx={{ gap: '8px', height: 'calc(100% - 34px)', p: '15px 15px 0' }}>
       <ConfirmationHeader genesisHash={genesisHash} transactionDetail={transactionDetail} />
       <ConfirmationDetail genesisHash={genesisHash} transactionDetail={transactionDetail} />
-      <NeonButton
-        contentPlacement='center'
-        onClick={goToHistory}
-        style={{
-          height: '44px',
-          width: '345px'
-        }}
-        text={t('History')}
-      />
-      <ActionButton
-        contentPlacement='center'
-        onClick={backToStakingHome}
-        style={{
-          height: '44px',
-          width: '345px'
-        }}
-        text={t('Staking Home')}
-        variant='text'
-      />
-      <StakingActionButton
-        onClick={goToExplorer}
-        startIcon={<SubScanIcon />}
-        text={t('View On Explorer')}
-      />
+      <Stack direction='column' sx={{ alignItems: 'center', bottom: '15px', gap: '8px', height: '150px', left: 0, position: 'absolute', width: '100%' }}>
+        <NeonButton
+          contentPlacement='center'
+          onClick={goToHistory}
+          style={{
+            height: '44px',
+            width: '345px'
+          }}
+          text={t('History')}
+        />
+        <ActionButton
+          contentPlacement='center'
+          isBlueish
+          onClick={backToStakingHome}
+          style={{
+            height: '44px',
+            width: '345px'
+          }}
+          text={t('Staking Home')}
+          variant='text'
+        />
+        <StakingActionButton
+          onClick={goToExplorer}
+          startIcon={<SubScanIcon />}
+          style={{ width: '345px' }}
+          text={t('View On Explorer')}
+        />
+      </Stack>
     </Stack>
   );
 }

@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
 import { ms, msGreen, msWarning } from '../assets/icons';
-import { useAccountName, useChainInfo, useFormatted2, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChainInfo, useFormatted3, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
 import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
@@ -22,6 +22,9 @@ import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
 interface Props {
   accountInfo?: DeriveAccountInfo | null;
   address?: string | AccountId;
+  addressStyle?: SxProps<Theme> | CSSProperties;
+  charsCount?: number;
+  columnGap?: string;
   direction?: 'row' | 'column';
   charsCount?: number;
   genesisHash: string;
@@ -53,7 +56,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
   const bgColor = !isDark ? '#CCD2EA' : undefined;
 
   const accountName = useAccountName(address);
-  const _formatted = useFormatted2(address, undefined, chain)?.toString();
+  const _formatted = useFormatted3(address, genesisHash);
   const msData = useMerkleScience(_formatted, chain);
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose || '');

@@ -47,7 +47,7 @@ async function getAllValidatorsIdentities(endpoint, _accountIds) {
 
       const parsedInfo = info
         .map((i, index) => {
-          const id = i.isSome ? i.unwrap()[0] : undefined;
+          const id = i.isSome ? i.unwrap() : undefined;
 
           return id?.info
             ? {
@@ -106,7 +106,7 @@ async function getAllValidatorsIdentities(endpoint, _accountIds) {
           ));
 
       const parsedInfo = parentInfo.map((i, index) => {
-        const id = i.isSome ? i.unwrap()[0] : undefined;
+        const id = i.isSome ? i.unwrap() : undefined;
 
         return id?.info
           ? {

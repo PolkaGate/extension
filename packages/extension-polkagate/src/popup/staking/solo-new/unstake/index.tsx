@@ -124,9 +124,9 @@ export default function Unstake (): React.ReactElement {
   }, []);
 
   const transactionFlow = useTransactionFlow({
+    address: selectedAccount?.address,
     backPathTitle: t('Unstaking'),
     closeReview,
-    formatted,
     genesisHash: genesisHash ?? '',
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
@@ -137,7 +137,7 @@ export default function Unstake (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' noSelection />
+        <UserDashboardHeader homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

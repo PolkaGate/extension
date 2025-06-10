@@ -164,7 +164,7 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
       // Process results
       const processedBatch = currentBatch.map((validatorInfo, index) => {
         const identityOption = identityEntries[index];
-        const identity = !identityOption.isSome ? undefined : identityOption.unwrap()[0];
+        const identity = !identityOption.isSome ? undefined : identityOption.unwrap();
 
         return {
           ...validatorInfo,
@@ -287,7 +287,7 @@ async function processParentIdentities (api, accountSubInfo, validatorsInformati
           return validatorInfo;
         }
 
-        const parentIdentity = parentIdentityOption.unwrap()[0];
+        const parentIdentity = parentIdentityOption.unwrap();
         const parentDisplay = parentIdentity.info.display.isRaw
           ? hexToString(parentIdentity.info.display.asRaw.toHex())
           : '';
