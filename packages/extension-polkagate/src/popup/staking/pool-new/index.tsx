@@ -14,6 +14,7 @@ import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import { isHexToBn } from '../../../util/utils';
+import { getValue } from '../../account/util';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
@@ -74,9 +75,11 @@ export default function Pool (): React.ReactElement {
     }).catch(console.error);
   }, [api, formatted, param]);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+  const transferable = useMemo(() => {
+    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
+
+    return getValue('transferable', asset);
+  }, [accountAssets, genesisHash]);
   const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
   const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
@@ -100,18 +103,18 @@ export default function Pool (): React.ReactElement {
     },
     (review === Review.Reward
       ? {
-        content: myClaimable && asset ? (asset.availableBalance).add(myClaimable) : undefined,
+        content: myClaimable && transferable ? transferable.add(myClaimable) : undefined,
         description: t('Available balance after claim rewards'),
         title: t('Available balance after'),
         withLogo: true
       }
       : {
-        content: redeemable && asset ? (asset.availableBalance).add(redeemable) : undefined,
+        content: redeemable && transferable ? transferable.add(redeemable) : undefined,
         description: t('Available balance after redeemable withdrawal'),
         title: t('Available balance after'),
         withLogo: true
       })];
-  }, [asset, estimatedFee2, redeemable, review, myClaimable, t]);
+  }, [transferable, estimatedFee2, redeemable, review, myClaimable, t]);
   const tx = useMemo(() => {
     if (review === Review.None) {
       return undefined;

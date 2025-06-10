@@ -14,6 +14,7 @@ import { BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../
 import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { amountToHuman } from '../../../../util/utils';
+import { getValue } from '../../../account/util';
 import StakingActionButton from '../../partial/StakingActionButton';
 import StakingMenu from '../../partial/StakingMenu';
 
@@ -111,16 +112,18 @@ export default function FastUnstake (): React.ReactElement {
 
   const [review, setReview] = useState<boolean>(false);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+  const transferable = useMemo(() => {
+    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
+
+    return getValue('transferable', asset);
+  }, [accountAssets, genesisHash]);
 
   const fastUnstake = api?.tx['fastUnstake']['registerFastUnstake'];
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, fastUnstake?.());
 
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
-  const hasEnoughDeposit = fastUnstakeDeposit && estimatedFee && asset?.availableBalance
-    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(asset.availableBalance || BN_ZERO)
+  const hasEnoughDeposit = fastUnstakeDeposit && estimatedFee && transferable
+    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_ZERO)
     : undefined;
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
@@ -155,11 +158,11 @@ export default function FastUnstake (): React.ReactElement {
       title: t('Fee')
     },
     {
-      content: staked && asset ? (asset.availableBalance).add(staked as unknown as BN) : undefined,
+      content: staked && transferable ? transferable.add(staked as unknown as BN) : undefined,
       title: t('Available balance after'),
       withLogo: true
     }];
-  }, [asset, estimatedFee, staked, t]);
+  }, [transferable, estimatedFee, staked, t]);
   const tx = useMemo(() => fastUnstake?.(), [fastUnstake]);
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
