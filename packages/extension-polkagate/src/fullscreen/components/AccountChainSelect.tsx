@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
@@ -34,22 +36,22 @@ const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProp
             style={{ marginLeft: '4px' }}
           />)
         : (
-          <Grid container item justifyContent='space-around' sx={{ background: isDark ? '#2D1E4A' : '#CCD2EA', borderRadius: '9px', height: '26px', width: '26px' }}>
-            <Stack columnGap='2px' direction='row' sx={{ mt: '1px' }}>
-              <Box component='img' src={identiconPink as string} sx={{ height: '9.75px', width: '9.75px' }} />
-              <Box component='img' src={identiconBlue as string} sx={{ height: '9.75px', width: '9.75px' }} />
+          <Grid container item justifyContent='space-around' sx={{ background: isDark ? '#2D1E4A' : '#CCD2EA', borderRadius: '9px', display: 'grid', gap: '2px', height: 'fit-content', p: '2px', width: 'fit-content' }}>
+            <Stack columnGap='2px' direction='row'>
+              <Box component='img' src={identiconPink as string} sx={{ height: '9px', width: '9px' }} />
+              <Box component='img' src={identiconBlue as string} sx={{ height: '9px', width: '9px' }} />
             </Stack>
             <Grid
-              alignContent='center' container item justifyContent='center' sx={{
+              alignContent='center' container item justifyContent='center'
+              sx={{
                 background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
-                borderRadius: '1024px',
+                borderRadius: '999px',
                 color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',
                 fontSize: '12px',
                 fontWeight: 700,
                 height: '11px',
                 lineHeight: '11px',
-                m: '2px',
                 width: '100%'
               }}
             >
@@ -66,26 +68,26 @@ interface Props {
 
 enum MODAL_TO_OPEN {
   ACCOUNTS,
-  CHAINS
+  CHAINS,
+  NONE
 }
 
-function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement {
+export default function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
   const selectedAccount = useSelectedAccount();
   const genesisHash = useAccountSelectedChain(selectedAccount?.address);
 
-  const [modalToOpen, setModalToOpen] = React.useState<MODAL_TO_OPEN>();
+  const [modalToOpen, setModalToOpen] = React.useState<MODAL_TO_OPEN>(MODAL_TO_OPEN.NONE);
 
-  const onClick = useCallback((toOpen: MODAL_TO_OPEN) => {
+  const onClick = useCallback((toOpen: MODAL_TO_OPEN) => () => {
     setModalToOpen(toOpen);
   }, []);
 
   return (
     <>
-      <Container
-        disableGutters
+      <Container disableGutters
         sx={{
           ':hover': noSelection ? {} : { background: '#674394' },
           alignItems: 'center',
@@ -95,22 +97,25 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
           borderRadius: '10px',
           display: 'flex',
           justifyContent: 'space-between',
-          pl: '4px',
           pr: noSelection ? '8px' : '2px',
           transition: 'all 250ms ease-out',
           width: '145px'
         }}
       >
-        <Grid container direction='row' item onClick={() => onClick(MODAL_TO_OPEN.ACCOUNTS)} sx={{
-          alignItems: 'center',
-          columnGap: '5px',
-          cursor: noSelection ? 'default' : 'pointer',
-          flexWrap: 'nowrap',
-          height: '32px',
-          justifyContent: 'space-between',
-          transition: 'all 250ms ease-out',
-          width: '110px'
-        }}>
+        <Grid container direction='row' item onClick={onClick(MODAL_TO_OPEN.ACCOUNTS)}
+          sx={{
+            alignItems: 'center',
+            columnGap: '5px',
+            cursor: noSelection ? 'default' : 'pointer',
+            flexWrap: 'nowrap',
+            height: 'fit-content',
+            justifyContent: 'space-between',
+            p: '3px 4px',
+            pr: 0,
+            transition: 'all 250ms ease-out',
+            width: '110px'
+          }}
+        >
           <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ width: '79%' }}>
             <AccountsIcon
               accountsLength={accounts.length}
@@ -134,18 +139,18 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
               variant='Bold'
             />}
         </Grid>
-        <Box
-          onClick={() => onClick(MODAL_TO_OPEN.CHAINS)}
+        <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
           sx={{
             alignItems: 'center',
             bgcolor: isDark ? '#2D1E4A80' : '#CCD2EA',
-            borderRadius: '10px',
+            borderRadius: '8px',
             cursor: 'pointer',
             display: 'flex',
             height: '28px',
             justifyContent: 'center',
             width: '28px'
-          }}>
+          }}
+        >
           <ChainLogo
             genesisHash={genesisHash}
             size={20}
@@ -153,17 +158,13 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
         </Box>
       </Container>
       <AccountListModal
-        // eslint-disable-next-line react/jsx-no-bind
-        handleClose={() => setModalToOpen(undefined)}
+        handleClose={onClick(MODAL_TO_OPEN.NONE)}
         open={modalToOpen === MODAL_TO_OPEN.ACCOUNTS}
       />
       <ChainListModal
-        // eslint-disable-next-line react/jsx-no-bind
-        handleClose={() => setModalToOpen(undefined)}
+        handleClose={onClick(MODAL_TO_OPEN.NONE)}
         open={modalToOpen === MODAL_TO_OPEN.CHAINS}
       />
     </>
   );
 }
-
-export default AccountChainSelect;
