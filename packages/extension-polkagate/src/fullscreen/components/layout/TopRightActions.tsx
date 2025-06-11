@@ -6,7 +6,7 @@ import React from 'react';
 
 import { useIsOnline } from '@polkadot/extension-polkagate/src/hooks/index';
 
-import { HomeAccountDropDown } from '../../../components';
+import { HomeAccountDropDown, SelectedProxy } from '../../../components';
 import { AccountChainSelect } from '..';
 import CurrencySelection from './CurrencySelection';
 import HideNumbers from './HideNumbers';
@@ -26,12 +26,30 @@ function MyDivider (): React.ReactElement {
   );
 }
 
-function TopRightActions (): React.ReactElement {
+interface Props {
+  genesisHash?: string | undefined;
+  selectedProxyAddress?: string | undefined;
+  setShowProxySelection?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function TopRightActions({ genesisHash, selectedProxyAddress, setShowProxySelection }: Props): React.ReactElement {
   const isOnline = useIsOnline();
 
   return (
     <Stack alignItems='center' columnGap='7px' direction='row' sx={{ position: 'absolute', right: 0, top: '7px' }}>
-      <AccountChainSelect />
+      {
+        selectedProxyAddress && setShowProxySelection
+          ? <SelectedProxy
+            genesisHash={genesisHash}
+            signerInformation={{
+              onClick: () => setShowProxySelection(true),
+              selectedProxyAddress
+            }}
+            style={{ height: '32px', width: '140px' }}
+            textMaxWidth = '50px'
+          />
+          : <AccountChainSelect />
+      }
       <MyDivider />
       <HideNumbers />
       <MyDivider />

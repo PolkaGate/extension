@@ -20,7 +20,9 @@ function MenuButton ({ Icon, path, style = { marginBottom: '8px' }, text }: Prop
 
   const [hovered, setHovered] = useState(false);
 
-  const isSelected = pathname === path;
+  const getFirstSegment = (p: string | undefined) => p?.split('/')[1];
+  const isSelected = getFirstSegment(path) === getFirstSegment(pathname);
+
   const onClick = useCallback(() => {
     path && navigate(path);
   }, [navigate, path]);

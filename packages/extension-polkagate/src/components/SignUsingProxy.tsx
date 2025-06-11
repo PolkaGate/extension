@@ -9,23 +9,24 @@ import React, { useCallback, useContext, useMemo, useRef, useState } from 'react
 
 import { noop } from '@polkadot/util';
 
-import { useTranslation } from '../hooks';
+import { useIsBlueish, useTranslation } from '../hooks';
 import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
 import Progress from '../popup/staking/partial/Progress';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util/utils';
-import { AccountContext, FadeOnScroll, Identity2 } from '.';
+import { AccountContext, FadeOnScroll, GradientButton, Identity2 } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
-  const theme = useTheme();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isBlueish = useIsBlueish();
 
   return (
-    <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: '#809ACB26', borderRadius: '12px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px', width: 'fit-content' }}>
-      <Trash color={theme.palette.text.highlight} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
-      <Typography color='text.highlight' textAlign='left' variant='B-2'>
+    <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: isBlueish ? '#809ACB26' : '#BFA1FF26', borderRadius: '10px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px 7px', width: 'fit-content' }}>
+      <Trash color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
+      <Typography color={ isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-2'>
         {t('Reset')}
       </Typography>
     </Container>
@@ -41,6 +42,7 @@ interface ProxiesItemProps {
 
 const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: ProxiesItemProps) => {
   const { accounts } = useContext(AccountContext);
+  const isBlueish = useIsBlueish();
 
   const isAvailable = useMemo(() => {
     if (!proxy) {
@@ -76,7 +78,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
   }, [isAvailable, onSelect, proxy]);
 
   return (
-    <Container disableGutters onClick={handleSelect} sx={{ alignItems: 'center', bgcolor: '#05091C', border: '4px solid', borderColor: isChecked ? '#3988FF' : '#222442', borderRadius: '18px', cursor: isAvailable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
+    <Container disableGutters onClick={handleSelect} sx={{ alignItems: 'center', bgcolor: '#05091C', border: '4px solid', borderColor: isChecked ? isBlueish ? '#3988FF' : 'primary.main' : '#222442', borderRadius: '18px', cursor: isAvailable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', width: 'fit-content' }}>
         <PolkaGateIdenticon
           address={proxy.proxy.delegate}
@@ -125,6 +127,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
   const { t } = useTranslation();
   const theme = useTheme();
   const refContainer = useRef(null);
+  const isBlueish = useIsBlueish();
 
   const [proxyItem, setProxyItem] = useState<Proxy | undefined>(selectedProxy);
 
@@ -176,7 +179,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
       title={t('Select Proxy')}
     >
       <Stack direction='column' sx={{ height: '450px', position: 'relative', width: '100%' }}>
-        <Typography color='text.highlight' sx={{ px: '15%', width: '100%' }} variant='B-4'>
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ p: '10px 15% 0', width: '100%' }} variant='B-4'>
           {t('Choose a suitable proxy for the account to conduct the transaction on its behalf')}
         </Typography>
         <Stack direction='column' ref={refContainer} sx={{ gap: '8px', maxHeight: '375px', mb: '70px', mt: '25px', overflow: 'hidden', overflowY: 'auto' }}>
@@ -201,12 +204,26 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
         {proxies === undefined &&
           <Progress text={t('Loading proxy accounts')} />
         }
-        <StakingActionButton
-          disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
-          onClick={onApply}
-          style={{ bottom: '15px', left: 0, padding: '0 15px', position: 'absolute', right: 0, width: '100%' }}
-          text={t('Apply')}
-        />
+        {isBlueish
+          ? <StakingActionButton
+            disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
+            onClick={onApply}
+            style={{ bottom: '15px', left: 0, padding: '0 15px', position: 'absolute', right: 0, width: '100%' }}
+            text={t('Apply')}
+          />
+          : <GradientButton
+            contentPlacement='center'
+            disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
+            onClick={onApply}
+            style={{
+              bottom: '0',
+              height: '44px',
+              position: 'absolute',
+              width: '100%'
+            }}
+            text={t('Apply')}
+          />
+        }
       </Stack>
     </SharePopup>
   );

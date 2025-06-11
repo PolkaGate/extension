@@ -6,7 +6,7 @@ import type { Icon } from 'iconsax-react';
 import { Grid, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-const StyledTextField = styled(TextField, {
+const StyledTextFieldSmall = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError'
 })<{ hasError?: boolean }>(({ hasError, theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
@@ -69,6 +69,67 @@ const StyledTextField = styled(TextField, {
   transition: 'all 150ms ease-out'
 }));
 
+const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    '&.Mui-focused': {
+      '& fieldset.MuiOutlinedInput-notchedOutline': {
+        backgroundColor: 'unset',
+        border: 'unset',
+        transition: 'all 150ms ease-out'
+      }
+    },
+    '&:hover': {
+      background: 'transparent',
+      transition: 'all 150ms ease-out'
+    },
+    '&:hover fieldset': {
+      border: 'unset',
+      transition: 'all 150ms ease-out',
+      zIndex: 0
+    },
+    background: 'transparent',
+    border: 'unset',
+    color: theme.palette.primary.main,
+    fieldset: {
+      border: 'unset'
+    },
+    fontFamily: 'OdibeeSans',
+    fontSize: '30px',
+    fontWeight: 400,
+    height: height ?? '43px',
+    letterSpacing: '-0.19px',
+    lineHeight: '140%',
+    transition: 'all 150ms ease-out',
+    width: '100%'
+  },
+  '& .MuiInputBase-root.MuiInputBase-adornedStart': {
+    paddingLeft: 0
+  },
+  '& .MuiOutlinedInput-inputAdornedStart': {
+    paddingLeft: '0px !important'
+  },
+  '& input[type=number]': {
+    MozAppearance: 'textfield',
+    '&::-webkit-outer-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    },
+    '&::-webkit-inner-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    }
+  },
+  '& input::placeholder': {
+    alignItems: 'center',
+    color: theme.palette.primary.main,
+    fontFamily: 'OdibeeSans',
+    fontSize: '30px',
+    fontWeight: 400,
+    textAlign: 'left'
+  },
+  transition: 'all 150ms ease-out'
+}));
+
 interface Props {
   Icon?: Icon;
   focused?: boolean;
@@ -79,9 +140,12 @@ interface Props {
   placeholder?: string;
   style?: React.CSSProperties;
   title?: string;
+  mode?: 'small' | 'large';
+  inputValue?: string | number;
+  maxLength?: number;
 }
 
-export default function MyTextField ({ Icon, focused = false, iconSize = 22, inputType = 'text', onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -89,14 +153,23 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, inp
   const toggle = useCallback(() => setFocused((isFocused) => !isFocused), []);
 
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-    onTextChange(value ?? null);
-  }, [onTextChange]);
+    if (maxLength) {
+      if (value === '' || /^\d*\.?\d*$/.test(value)) {
+        onTextChange(value);
+      }
+    } else {
+      onTextChange(value ?? null);
+    }
+  }, [maxLength, onTextChange]);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && onEnterPress) {
       onEnterPress();
     }
   }, [onEnterPress]);
+
+  const TextFieldComponent = mode === 'small' ? StyledTextFieldSmall : StyledTextFieldLarge;
+  const _inputType = maxLength !== undefined && inputType === 'number' ? 'text' : inputType; // set input type to text if maxLength is defined and inputType is number to avoid browser validation issues
 
   return (
     <Grid container item sx={style}>
@@ -105,28 +178,34 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, inp
           {title}
         </Typography>
       }
-      <StyledTextField
+      <TextFieldComponent
         InputProps={{
           startAdornment: (
-            <InputAdornment position='start'>
-              {Icon && <Icon
-                color={focusing ? '#3988FF' : '#AA83DC'}
-                size={iconSize}
-                variant={focusing ? 'Bold' : 'Bulk'}
-              />}
+            <InputAdornment position='start' sx={{ marginRight: 0 }}>
+              {
+                Icon && <Icon
+                  color={focusing ? '#3988FF' : '#AA83DC'}
+                  size={iconSize}
+                  variant={focusing ? 'Bold' : 'Bulk'}
+                />
+              }
             </InputAdornment>
           )
         }}
         autoComplete='off'
         autoFocus={focused}
         fullWidth
+        inputProps={{
+          maxLength
+        }}
         onBlur={toggle}
         onChange={onChange}
         onFocus={toggle}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         theme={theme}
-        type={inputType}
+        type={_inputType}
+        value={inputValue}
       />
     </Grid>
   );

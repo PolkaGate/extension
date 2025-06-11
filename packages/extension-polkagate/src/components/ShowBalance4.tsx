@@ -6,31 +6,37 @@
  * */
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
+import type { FormatBalanceProps } from './FormatBalance2';
 
 import { Grid, Skeleton } from '@mui/material';
 import React from 'react';
 
 import { useChainInfo } from '../hooks';
-import { FLOATING_POINT_DIGIT } from '../util/constants';
 import { FormatBalance2 } from '.';
 
 export interface Props {
   balance: Balance | string | BN | null | undefined;
+  balanceProps?: Partial<FormatBalanceProps>
+  decimal?: number;
   decimalPoint?: number;
   genesisHash?: string | undefined;
   height?: number;
   skeletonWidth?: number;
   skeletonStyle?: React.CSSProperties;
+  token?: string;
 }
 
-export default function ShowBalance4 ({ balance, decimalPoint, genesisHash, height = 12, skeletonStyle = {} }: Props): React.ReactElement<Props> {
-  const { decimal, token } = useChainInfo(genesisHash, true);
-  const adaptiveDecimalPoint = balance && decimal && (String(balance).length >= decimal - 1 ? 2 : 4);
-  const _decimalPoint = decimalPoint || adaptiveDecimalPoint || FLOATING_POINT_DIGIT;
+export default function ShowBalance4 ({ balance, balanceProps, decimal, decimalPoint, genesisHash, height = 12, skeletonStyle = {}, token }: Props): React.ReactElement<Props> {
+  const { decimal: nativeAssetDecimal, token: nativeAssetToken } = useChainInfo(genesisHash, true);
+  const adaptiveDecimalPoint = balance && decimal ? (String(balance).length >= decimal - 1 ? 2 : 4) : undefined;
+  const _decimalPoint = decimalPoint || adaptiveDecimalPoint;
+
+  const _decimal = decimal || nativeAssetDecimal;
+  const _token = token || nativeAssetToken;
 
   return (
     <Grid alignItems='center' container justifyContent='center' width='fit-content'>
-      {!balance || !decimal || !token
+      {!balance || !_decimal || !_token
         ? <Skeleton
           animation='wave'
           height={height}
@@ -38,9 +44,10 @@ export default function ShowBalance4 ({ balance, decimalPoint, genesisHash, heig
         />
         : <FormatBalance2
           decimalPoint={_decimalPoint}
-          decimals={[decimal]}
-          tokens={[token]}
+          decimals={[_decimal]}
+          tokens={[_token]}
           value={balance}
+          {...balanceProps}
         />
       }
     </Grid>

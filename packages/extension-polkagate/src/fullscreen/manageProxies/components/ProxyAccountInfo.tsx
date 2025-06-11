@@ -75,7 +75,7 @@ export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck =
             genesisHash={genesisHash ?? POLKADOT_GENESIS}
             identiconSize={14}
             noIdenticon
-            style={{ color: '#EAEBF1', variant: 'B-1' }}
+            style={{ color: '#EAEBF1', maxWidth: '170px', overflow: 'hidden', textOverflow: 'ellipsis', variant: 'B-1' }}
           />
           <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', px: '4px' }} variant='B-5'>
             {proxyItem.proxy.delay * 6} sec

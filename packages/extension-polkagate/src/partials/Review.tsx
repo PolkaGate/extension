@@ -226,6 +226,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
       <SignArea3
         address={selectedAccount?.address}
         genesisHash={genesisHash}
+        ledgerStyle={{ position: 'unset' }}
         maybeApi={undefined}
         onClose={closeReview}
         proxyTypeFilter={proxyTypeFilter}
