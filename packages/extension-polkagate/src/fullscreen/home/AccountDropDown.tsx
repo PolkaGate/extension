@@ -8,6 +8,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import RemoveAccount from './RemoveAccount';
@@ -48,13 +49,8 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
       {
         Icon: Data,
         text: t('Manage proxies'),
-        value: `/proxyManagement/${genesisHash}/${address}`
-      },
-      // {
-      //   Icon: Shield,
-      //   text: t('Social recovery'),
-      //   value: `/socialRecovery/${address}/false`
-      // }
+        value: () => windowOpen(`/proxyManagement/${genesisHash}/${address}`)
+      }
     ];
   }, [address, genesisHash, t]);
 

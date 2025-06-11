@@ -8,11 +8,11 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 export interface Options {
+  Icon?: Icon;
+  isLine?: boolean;
   pathname?: string;
   text?: string;
   value?: string | number | (() => void);
-  Icon?: Icon;
-  isLine?: boolean;
 }
 
 interface Props {

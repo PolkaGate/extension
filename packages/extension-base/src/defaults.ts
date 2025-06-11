@@ -7,14 +7,15 @@ const START_WITH_PATH = [
   '/account/',
   '/accountfs/',
   '/addNewChain/',
+  '/derivefs/',
   '/import/',
   '/governance/',
   '/manageIdentity/',
+  '/nft/',
+  '/proxyManagement/',
   '/send/',
   '/stake/',
-  '/socialRecovery/',
-  '/nft/',
-  '/derivefs/'
+  '/socialRecovery/'
 ] as const;
 
 const ROOT_PATH = [

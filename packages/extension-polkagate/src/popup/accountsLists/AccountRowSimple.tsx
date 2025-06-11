@@ -49,12 +49,12 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
       transition={{ duration: 0.4 }}
     >
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: isLast ? '0 0 14px 14px' : 0, minHeight: '40px', mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? 0 : '2px', mx: '1px', width: '100%' }}>
-        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ borderRadius: '12px', m: '5px 8px 5px 15px', minHeight: '36px', position: 'relative', width: '100%' }}>
+        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ borderRadius: '12px', m: '5px 8px 5px 15px', minHeight: '36px', width: '100%' }}>
           {
             isSelected && !isInSettingMode &&
            <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
           }
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '80%', overflow: 'hidden' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', overflow: 'hidden', transition: 'all 250ms ease-out', width: '80%' }}>
             <PolkaGateIdenticon
               address={account.address}
               size={isInSettingMode ? 18 : 24}
@@ -62,8 +62,8 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
             <Identity2
               address={account?.address}
               genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
+              nameStyle={{ width: '230px' }}
               noIdenticon
-              // nameStyle={{ maxWidth: '90%'}}
               style={{ color: (isInSettingMode || isSelected) ? '#EAEBF1' : '#BEAAD8', variant: isInSettingMode ? 'B-4' : 'B-2' }}
             />
           </Stack>
