@@ -214,7 +214,7 @@ export default function StakingReward () {
       <StakingMenu
         genesisHash={genesisHash ?? ''}
         pool={poolStakingInfo.pool}
-        type={type as 'solo' | 'pool'}
+        type={_type} // Display the appropriate staking menu based on the normalized type
       />
     </>
   );
