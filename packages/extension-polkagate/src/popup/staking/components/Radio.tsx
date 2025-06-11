@@ -52,7 +52,16 @@ const Checked = styled('span')<{ checked: boolean; isBlueish: boolean; theme: Th
     width: size * 0.44
   },
   '&::before': {
-    border: `3px solid ${isBlueish ? '#3988FF' : '#DC45A0'}`,
+    background: isBlueish
+      ? 'transparent'
+      : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+    border: isBlueish ? '3px solid #3988FF' : 'none',
+    WebkitMask: isBlueish
+      ? 'none'
+      : 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+    WebkitMaskComposite: isBlueish ? 'none' : 'xor',
+    maskComposite: isBlueish ? 'none' : 'exclude',
+    backgroundClip: isBlueish ? 'none' : 'border-box',
     borderRadius: '999px',
     bottom: 0,
     content: '""',
@@ -113,7 +122,7 @@ export default function PRadio ({ boxStyle, checked, circleSize = 18, isHovered:
     >
       <Radio
         checked={checked}
-        checkedIcon={<Checked checked={!!checked} size={circleSize} theme={theme} />}
+        checkedIcon={<Checked checked={!!checked} isBlueish={isBlueish} size={circleSize} theme={theme} />}
         color='default'
         disableRipple
         icon={<UnChecked isBlueish={isBlueish} isHovered={isHovered} size={circleSize} />}
