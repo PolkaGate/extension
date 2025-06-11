@@ -256,6 +256,8 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     }
 
     getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+      console.log('savedAssets: ::::::::', JSON.stringify(savedAssets));
+
       if (!savedAssets || Object.keys(savedAssets).length === 0) {
         return;
       }

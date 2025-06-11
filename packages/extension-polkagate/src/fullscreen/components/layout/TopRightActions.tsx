@@ -32,14 +32,14 @@ interface Props {
   setShowProxySelection?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function TopRightActions({ genesisHash, selectedProxyAddress, setShowProxySelection }: Props): React.ReactElement {
+function TopRightActions ({ genesisHash, selectedProxyAddress, setShowProxySelection }: Props): React.ReactElement {
   const isOnline = useIsOnline();
 
   return (
     <Stack alignItems='center' columnGap='7px' direction='row' sx={{ position: 'absolute', right: 0, top: '7px' }}>
-      {
-        selectedProxyAddress && setShowProxySelection
-          ? <SelectedProxy
+      {selectedProxyAddress && setShowProxySelection
+        ? (
+          <SelectedProxy
             genesisHash={genesisHash}
             signerInformation={{
               onClick: () => setShowProxySelection(true),
@@ -47,8 +47,8 @@ function TopRightActions({ genesisHash, selectedProxyAddress, setShowProxySelect
             }}
             style={{ height: '32px', width: '140px' }}
             textMaxWidth = '50px'
-          />
-          : <AccountChainSelect />
+          />)
+        : <AccountChainSelect />
       }
       <MyDivider />
       <HideNumbers />
