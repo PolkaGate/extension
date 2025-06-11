@@ -26,8 +26,9 @@ interface UseProxyProps {
 }
 
 const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
-  const theme = useTheme();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isBlueish = useIsBlueish();
 
   if ((proxies && proxies.length === 0) || !onClick) {
     return null;
@@ -50,8 +51,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 
   return (
     <Grid container item onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '4px', width: 'fit-content' }}>
-      <Data color={theme.palette.text.highlight} size='12' />
-      <Typography color='text.highlight' variant='B-1'>
+      <Data color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='12' />
+      <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} variant='B-1'>
         {t('Use Proxy')}
       </Typography>
     </Grid>
