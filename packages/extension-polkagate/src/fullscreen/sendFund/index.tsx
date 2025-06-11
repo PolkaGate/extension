@@ -142,7 +142,7 @@ export default function SendFund (): React.ReactElement {
           }}
           onPrimaryClick={onNext}
           onSecondaryClick={onBack}
-          primaryBtnText={isLoading ? t('Processing, please wait ...') : t('Next')}
+          primaryBtnText={isLoading ? t('Preparing, please wait ...') : t('Next')}
           primaryButtonProps={{
             style: { width: '85%' }
           }}
