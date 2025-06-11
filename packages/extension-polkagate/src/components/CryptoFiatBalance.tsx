@@ -24,6 +24,7 @@ interface Props {
   style?: React.CSSProperties;
   whichFirst?: 'crypto' | 'fiat';
   skeletonColor?: string;
+  skeletonAlignment?: 'flex-start' | 'flex-end';
 }
 
 function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
@@ -35,7 +36,7 @@ function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): Re
     />);
 }
 
-export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
+export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonAlignment = 'flex-end', skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 
@@ -90,7 +91,7 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
   return (
     <Grid container direction='column' item sx={{ '> div.balance': { color: priceColor, ...theme.typography['S-2'] }, alignItems: 'start', rowGap: '6px', width: 'fit-content', ...style }}>
       {(!cryptoBalance || fiatBalance === undefined)
-        ? <Grid alignItems='flex-end' container direction='column' item sx={{ rowGap: '6px', width: '100%' }}>
+        ? <Grid alignItems={skeletonAlignment} container direction='column' item sx={{ rowGap: '6px', width: '100%' }}>
           <MySkeleton
             bgcolor={isDark ? skeletonColor ?? '#946CC826' : '#99A1C440'}
             width={70}

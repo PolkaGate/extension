@@ -101,6 +101,7 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
         {expandedRewards?.map((info, index) => {
           const [eraIndex, validator, _page, value] = info;
           const isChecked = isIncluded(info);
+          const adaptiveDecimalPoint = value && decimal && (String(value).length >= decimal - 1 ? 2 : 4);
 
           return (
             <>
@@ -114,7 +115,7 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
                   </Grid>
                   <Grid item>
                     <FormatBalance2
-                      decimalPoint={2}
+                      decimalPoint={adaptiveDecimalPoint}
                       decimals={[decimal ?? 0]}
                       style={{
                         color: theme.palette.text.primary,
@@ -252,6 +253,7 @@ export default function SoloPendingReward () {
 
     return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => sum.add((value)[3]), BN_ZERO);
   }, [selectedToPayout]);
+  const adaptiveDecimalPoint = totalSelectedPending && decimal && (String(totalSelectedPending).length >= decimal - 1 ? 2 : 4);
 
   const tx = useMemo(() => {
     if (!selectedToPayout || !payoutStakers || !batch) {
@@ -373,7 +375,7 @@ export default function SoloPendingReward () {
                   {t('Total')}:
                 </Typography>
                 <FormatBalance2
-                  decimalPoint={2}
+                  decimalPoint={adaptiveDecimalPoint}
                   decimals={[decimal ?? 0]}
                   style={{
                     color: theme.palette.text.primary,

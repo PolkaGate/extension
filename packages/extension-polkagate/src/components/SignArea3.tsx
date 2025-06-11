@@ -28,15 +28,15 @@ import { SignUsingQR, type SignUsingQRProps } from './SignUsingQR';
 import SignWithLedger from './SignWithLedger';
 import { GradientButton, SignUsingProxy } from '.';
 
-type AlertHandler = {
+interface AlertHandler {
   alertText: string;
   buttonText: string;
   icon: ReactNode;
   onClick: () => void;
-} | undefined;
+}
 
 interface ChooseSigningButtonProps {
-  alertHandler: AlertHandler;
+  alertHandler: AlertHandler | undefined;
 }
 
 const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) => {
@@ -57,22 +57,24 @@ const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) =
       </Container>
       {
         isBlueish
-          ? <StakingActionButton
-            onClick={alertHandler.onClick}
-            startIcon={alertHandler.icon}
-            style={{ marginTop: '18px' }}
-            text={alertHandler.buttonText}
+          ? (
+            <StakingActionButton
+              onClick={alertHandler.onClick}
+              startIcon={alertHandler.icon}
+              style={{ marginTop: '18px' }}
+              text={alertHandler.buttonText}
 
-          />
-          : <GradientButton
-            contentPlacement='center'
-            onClick={alertHandler.onClick}
-            style={{
-              height: '44px',
-              marginTop: '18px'
-            }}
-            text={alertHandler.buttonText}
-          />
+            />)
+          : (
+            <GradientButton
+              contentPlacement='center'
+              onClick={alertHandler.onClick}
+              style={{
+                height: '44px',
+                marginTop: '18px'
+              }}
+              text={alertHandler.buttonText}
+            />)
       }
     </Stack>
   );
@@ -200,7 +202,7 @@ export default function SignArea3 ({ address, direction, genesisHash, ledgerStyl
   const toggleSelectProxy = useCallback(() => setShowProxySelection((show) => !show), [setShowProxySelection]);
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
 
-  const alertHandler = useMemo((): AlertHandler => {
+  const alertHandler = useMemo((): AlertHandler | undefined => {
     if (showQrSign) {
       return {
         alertText: t('This is a QR-attached account. To complete this transaction, you need to use your QR-signer.'),
