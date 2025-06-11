@@ -30,7 +30,7 @@ export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
 
   useFullscreen();
-  const { address, assetId, genesisHash } = useParams<{ genesisHash: string, address: string, assetId: string }>();
+  const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const ref = useRef(null);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();

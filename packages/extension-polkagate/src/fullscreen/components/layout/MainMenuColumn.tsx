@@ -59,7 +59,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={ArrowCircleRight2}
-        path={`/send/${selectedGenesisHash}/${selectedAccount?.address}/0`}
+        path={`/send/${selectedAccount?.address}/${selectedGenesisHash}/0`}
         text={t('Send')}
       />
       <MenuButton

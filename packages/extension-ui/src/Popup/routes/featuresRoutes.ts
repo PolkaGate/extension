@@ -87,7 +87,7 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   },
   {
     Component: Send,
-    path: '/send/:genesisHash/:address/:assetId',
+    path: '/send/:address/:genesisHash/:assetId',
     trigger: 'send'
   },
   {

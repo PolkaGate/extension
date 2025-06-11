@@ -34,11 +34,11 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
     }
 
     if (genesisHash) {
-      pathParts[2] = genesisHash;
+      pathParts[3] = genesisHash;
     }
 
     if (address) {
-      pathParts[3] = address;
+      pathParts[2] = address;
     }
 
     const newPath = pathParts.join('/');

@@ -26,10 +26,10 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
     }
 
     if (savedSelectedChain) {
-      pathParts[2] = savedSelectedChain;
+      pathParts[3] = savedSelectedChain;
     }
 
-    pathParts[3] = newAddress;
+    pathParts[2] = newAddress;
 
     const newPath = pathParts.join('/');
 

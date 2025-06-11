@@ -147,7 +147,7 @@ function Tokens (): React.ReactElement {
   const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
 
   const toSendFund = useCallback(() => {
-    account?.address && windowOpen(`/send/${token?.genesisHash}/${account.address}/${paramAssetId}`).catch(console.error);
+    account?.address && windowOpen(`/send/${account.address}/${token?.genesisHash}/${paramAssetId}`).catch(console.error);
   }, [account?.address, paramAssetId, token?.genesisHash]);
 
   const displayPopup = useCallback((type: Type) => () => {

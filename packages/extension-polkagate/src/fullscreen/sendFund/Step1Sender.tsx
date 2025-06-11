@@ -22,7 +22,7 @@ interface Props {
 export default function Step1Sender ({ inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const { address, assetId, genesisHash } = useParams<{ genesisHash: string, address: string, assetId: string }>();
+  const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const { chainName } = useChainInfo(genesisHash);
 
   return (

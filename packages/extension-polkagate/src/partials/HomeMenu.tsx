@@ -124,7 +124,7 @@ function HomeMenu (): React.ReactElement {
 
   const handleMenuClick = useCallback((input: Pages) => () => {
     if (input === 'send') {
-      account && windowOpen(`/send/${lastSelectedAccountGenesisHash}/${account.address}/${assetId ?? 0}`).catch(console.error);
+      account && windowOpen(`/send/${account.address}/${lastSelectedAccountGenesisHash}/${assetId ?? 0}`).catch(console.error);
 
       return;
     }

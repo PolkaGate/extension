@@ -57,7 +57,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           <ActionBox
             Icon={ArrowCircleRight2}
             label={t('Send')}
-            path={`/send/${genesisHash}/${address}/${assetId}`}
+            path={`/send/${address}/${genesisHash}/${assetId}`}
           />
           <ActionBox
             Icon={ArrowCircleDown2}
