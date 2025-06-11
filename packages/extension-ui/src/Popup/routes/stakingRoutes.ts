@@ -41,7 +41,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
   },
   {
     Component: StakingReward,
-    path: '/stakingReward/:genesisHash/:type',
+    path: '/stakingReward/:address/:genesisHash/:type',
     trigger: 'staking-reward'
   },
   // POOL STAKING ROUTE

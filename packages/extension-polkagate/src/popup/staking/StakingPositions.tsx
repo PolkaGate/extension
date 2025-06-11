@@ -37,7 +37,7 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
   const isTestNet = TEST_NETS.includes(genesisHash);
   const value = amountToHuman(balance.muln(price), decimal);
 
-  const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`), [genesisHash, navigate, type]);
+  const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`) as void, [genesisHash, navigate, type]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' key={key} onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
@@ -56,7 +56,7 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
             </Typography>
           </Stack>
           {isTestNet &&
-            <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', p: '3px 5px', mt: '5px' }}>
+            <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', mt: '5px', p: '3px 5px' }}>
               <HierarchySquare3 color='#3988FF' size='14' variant='Bulk' />
               <Typography color='#3988FF' fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
                 {t('Testnet')}
@@ -90,9 +90,19 @@ export default function StakingPositions (): React.ReactElement {
   const positions = useMemo(() => accountAssets?.filter(({ pooledBalance, soloTotal }) => (soloTotal && !soloTotal.isZero()) || (pooledBalance && !pooledBalance.isZero())), [accountAssets]);
 
   const filteredToken = useMemo(() => {
-    return searchKeyWord
-      ? positions?.filter(({ token }) => token?.toLowerCase().includes(searchKeyWord))
-      : positions;
+    return (
+      searchKeyWord
+        ? positions?.filter(({ token }) => token?.toLowerCase().includes(searchKeyWord))
+        : positions
+    )?.sort((a, b) => {
+      if (a.pooledBalance && b.pooledBalance) {
+        return b.pooledBalance.cmp(a.pooledBalance);
+      } else if (a.soloTotal && b.soloTotal) {
+        return b.soloTotal.cmp(a.soloTotal);
+      } else {
+        return 0;
+      }
+    });
   }, [positions, searchKeyWord]);
 
   const onSearch = useCallback((keyword: string) => {
