@@ -20,10 +20,11 @@ interface Props {
   onSignature?: (signature: HexString, raw?: GenericExtrinsicPayload) => void;
   payload?: SignerPayloadJSON;
   setError: (value: string | null) => void;
-  onCancel: () => void
+  onCancel: () => void;
+  style?: React.CSSProperties;
 }
 
-function LedgerSignGeneric ({ account, error, onCancel, onSignature, payload, setError }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric ({ account, error, onCancel, onSignature, payload, setError, style }: Props): React.ReactElement<Props> {
   const { accountIndex, addressOffset, isGeneric } = account;
   const genesisHash = payload?.genesisHash;
   const { api } = useChainInfo(genesisHash);
@@ -89,6 +90,7 @@ function LedgerSignGeneric ({ account, error, onCancel, onSignature, payload, se
       onCancel={onCancel}
       onRefresh={onRefresh}
       onSignLedger={onSignLedger}
+      style={style}
     />
   );
 }

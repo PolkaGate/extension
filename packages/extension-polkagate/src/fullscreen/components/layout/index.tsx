@@ -12,10 +12,13 @@ import TopRightActions from './TopRightActions';
 interface Props {
   children?: React.ReactNode;
   childrenStyle?: React.CSSProperties;
+  genesisHash?: string | undefined;
+  selectedProxyAddress?: string | undefined;
+  setShowProxySelection?: React.Dispatch<React.SetStateAction<boolean>>
   style?: React.CSSProperties;
 }
 
-function HomeLayout ({ children, childrenStyle = {}, style = {} }: Props): React.ReactElement {
+function HomeLayout ({ children, childrenStyle = {}, genesisHash, selectedProxyAddress, setShowProxySelection, style = {} }: Props): React.ReactElement {
   return (
     <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
       <Grid alignItems='flex-start' columnGap='10px' container justifyContent='flex-end' sx={{ bgcolor: '#05091C', borderRadius: '24px', height: '788px', minWidth: '1440px', overflowX: 'auto', p: '12px', position: 'relative', width: '1440px' }} wrap='nowrap'>
@@ -30,7 +33,11 @@ function HomeLayout ({ children, childrenStyle = {}, style = {} }: Props): React
             width: '1100px'
           }}
         >
-          <TopRightActions />
+          <TopRightActions
+            genesisHash={genesisHash}
+            selectedProxyAddress={selectedProxyAddress}
+            setShowProxySelection={setShowProxySelection}
+          />
           <Bread />
           <Grid container item sx={{ ...childrenStyle }}>
             {children}

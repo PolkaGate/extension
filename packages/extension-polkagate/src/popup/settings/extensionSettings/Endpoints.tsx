@@ -34,7 +34,7 @@ const endpointManager = new EndpointManager2();
 
 type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
 
-function Endpoints(): React.ReactElement {
+function Endpoints (): React.ReactElement {
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const onAction = useContext(ActionContext);
@@ -120,14 +120,6 @@ function Endpoints(): React.ReactElement {
       <Grid container item sx={{ px: '15px' }}>
         <Grid container item sx={{ border: '4px solid #1b143c', borderRadius: '14px', my: '10px' }}>
           <Grid container height='420px' item sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflowY: 'auto' }}>
-            {/* <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px' }}>
-              <MySwitch
-                checked={false}
-                columnGap='8px'
-                label={t('Enable Connection')}
-                onChange={noop}
-              />
-            </Grid> */}
             <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px', mt: '4px' }}>
               <MySwitch
                 checked={isAutoMode}

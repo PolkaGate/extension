@@ -7,8 +7,13 @@ import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
 import { useCallback, useContext, useLayoutEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
-import { saveNewOrder } from '../fullscreen/home/partials/DraggableAccountList';
 import { getStorage } from '../util';
+
+export const saveNewOrder = (newOrder: AccountsOrder[]) => {
+  const addressOrder = newOrder.map(({ account }) => account.address);
+
+  chrome.storage.local.set({ addressOrder }).catch(console.error);
+};
 
 export default function useAccountsOrder (): AccountsOrder[] | undefined {
   const { accounts: flatAccounts, hierarchy } = useContext(AccountContext);

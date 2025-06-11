@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Close } from '@mui/icons-material';
+import { ChevronLeft, Close } from '@mui/icons-material';
 import { Box, Grid, IconButton, Modal, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -17,13 +17,14 @@ export interface DraggableModalProps {
   noDivider?: boolean;
   open: boolean;
   onClose: () => void
+  showBackIconAsClose?: boolean;
   style?: React.CSSProperties;
   title?: string;
   width?: number;
   RightItem?: React.ReactNode;
 }
 
-export function DraggableModal ({ RightItem, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noDivider, onClose, open, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal ({ RightItem, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -84,6 +85,8 @@ export function DraggableModal ({ RightItem, blurBackdrop = true, children, divi
     ...style
   };
 
+  const CLoseIcon = showBackIconAsClose ? ChevronLeft : Close;
+
   return (
     <Modal
       onClose={_onClose}
@@ -123,7 +126,7 @@ export function DraggableModal ({ RightItem, blurBackdrop = true, children, divi
               zIndex: 1
             }}
           >
-            <Close sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+            <CLoseIcon sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
           </IconButton>
           <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
             {title}

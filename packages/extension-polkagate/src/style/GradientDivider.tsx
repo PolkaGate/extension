@@ -8,7 +8,7 @@ import { useIsDark } from '../hooks';
 
 interface GradientDividerProps {
   orientation?: 'horizontal' | 'vertical';
-  isBlueish?:boolean;
+  isBlueish?: boolean;
   style?: SxProps<Theme>;
 }
 

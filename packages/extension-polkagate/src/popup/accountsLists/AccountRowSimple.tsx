@@ -54,7 +54,7 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
             isSelected && !isInSettingMode &&
            <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
           }
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '80%' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '80%', overflow: 'hidden' }}>
             <PolkaGateIdenticon
               address={account.address}
               size={isInSettingMode ? 18 : 24}
@@ -63,6 +63,7 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
               address={account?.address}
               genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
               noIdenticon
+              // nameStyle={{ maxWidth: '90%'}}
               style={{ color: (isInSettingMode || isSelected) ? '#EAEBF1' : '#BEAAD8', variant: isInSettingMode ? 'B-4' : 'B-2' }}
             />
           </Stack>

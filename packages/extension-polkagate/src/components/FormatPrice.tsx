@@ -66,11 +66,12 @@ export function nFormatter (num: number, decimalPoint: number) {
 
 const DecimalPart = ({ value, withCountUp }: { value: string | number, withCountUp: boolean | undefined }) => (
   withCountUp
-    ? <CountUp
-      duration={1}
-      end={Number(getDecimal(value))}
-      prefix={'.'}
-    />
+    ? (
+      <CountUp
+        duration={1}
+        end={Number(getDecimal(value))}
+        prefix={'.'}
+      />)
     : <>{`.${getDecimal(value)}`}</>
 );
 
@@ -79,7 +80,9 @@ export function formatDecimalWithCommas (_number: number | string, decimalDigit 
   const dotIndex = sNumber.indexOf('.');
 
   if (dotIndex < 0) {
-    return { decimalPart: '', integerPart: sNumber }; // No decimal part
+    const integerPart = sNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas for thousands
+
+    return { decimalPart: '', integerPart }; // No decimal part
   }
 
   let integerDigits = sNumber.slice(0, dotIndex);
@@ -164,14 +167,15 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
   return (
     <Grid item mt={mt} sx={{ height, ...style }} textAlign={textAlign}>
       {isHideNumbers && !ignoreHide
-        ? <Dots
-          color={textColor}
-          decimalColor={decimalColor}
-          preText={mayCurrencySign}
-          preTextFontSize={fontSize}
-          preTextFontWeight={fontWeight}
-          style={dotStyle}
-        />
+        ? (
+          <Dots
+            color={textColor}
+            decimalColor={decimalColor}
+            preText={mayCurrencySign}
+            preTextFontSize={fontSize}
+            preTextFontWeight={fontWeight}
+            style={dotStyle}
+          />)
         : total !== undefined
           ? <Stack alignItems='baseline' direction='row' width='fit-content'>
             <Typography
@@ -182,12 +186,13 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
               sx={{ color: textColor }}
             >
               {withCountUp
-                ? <CountUp
-                  decimals={_decimalPoint}
-                  duration={1}
-                  end={parseFloat(String(total))}
-                  prefix={sign || currency?.sign || ''}
-                />
+                ? (
+                  <CountUp
+                    decimals={_decimalPoint}
+                    duration={1}
+                    end={parseFloat(String(total))}
+                    prefix={sign || currency?.sign || ''}
+                  />)
                 : <>
                   {formattedTotal}
                 </>
@@ -208,12 +213,13 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
               </Typography>
             }
           </Stack>
-          : <Skeleton
-            animation='wave'
-            height={skeletonHeight}
-            sx={{ borderRadius: '14px', fontWeight: 'bold', transform: 'none', width }}
-            variant='text'
-          />
+          : (
+            <Skeleton
+              animation='wave'
+              height={skeletonHeight}
+              sx={{ borderRadius: '14px', fontWeight: 'bold', transform: 'none', width }}
+              variant='text'
+            />)
       }
     </Grid>
   );

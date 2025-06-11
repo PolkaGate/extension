@@ -10,13 +10,20 @@ import React, { useCallback, useContext } from 'react';
 import { ActionContext, MenuItem, SocialRecoveryIcon, VaadinIcon } from '../../../components';
 import { useInfo, useTranslation } from '../../../hooks';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../../../util/constants';
-import { POPUPS_NUMBER } from './AccountInformationForHome';
 import ProfileMenu from './ProfileMenu';
 
 interface Props {
   address: string | undefined;
   baseButton: React.ReactNode;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
+}
+
+export enum POPUPS_NUMBER {
+  DERIVE_ACCOUNT,
+  EXPORT_ACCOUNT,
+  FORGET_ACCOUNT,
+  RENAME,
+  MANAGE_PROFILE
 }
 
 const Menus = ({ address, handleClose, setDisplayPopup }: {

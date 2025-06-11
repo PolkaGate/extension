@@ -7,8 +7,9 @@ import type { INumber } from '@polkadot/types/types';
 import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowDown2, BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
+import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
+import { useNavigate } from 'react-router';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
 import { type BN, BN_ZERO } from '@polkadot/util';
@@ -95,6 +96,7 @@ interface PoolIdentityDetailProps {
 const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps) => {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
+  const navigate = useNavigate();
 
   const poolStatus = useMemo(() => {
     const status = poolDetail.bondedPool?.state.toString();
@@ -114,6 +116,11 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
       : { bgcolor: 'rgba(255, 79, 185, 0.15)', textColor: 'rgba(255, 79, 185, 1)' };
   }, [poolDetail.bondedPool?.state]);
 
+  // Navigate to the staking reward chart using the stash ID,
+  // since we're specifically interested in rewards associated with the stash id of the pool (i.e., pool rewards).
+  const stashId = poolDetail?.stashIdAccount?.accountId.toString() ?? '';
+  const onRewardChart = useCallback(() => navigate('/stakingReward/' + stashId + '/' + genesisHash + '/stash') as void, [genesisHash, navigate, stashId]);
+
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'flex-start', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -124,7 +131,8 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps
             size={48}
           />
         </Grid>
-        <Grid container item sx={{ justifyContent: 'flex-end', width: '32%' }}>
+        <Grid container item sx={{ gap: '4px', justifyContent: 'flex-end', width: '32%' }}>
+          <Chart21 color='#809ACB' onClick={onRewardChart} size='24' style={{ backgroundColor: '#FFFFFF1A', borderRadius: '999px', cursor: 'pointer', padding: '4px' }} variant='Bulk' />
           <Link
             href={`https://${chainName}.subscan.io/account/${poolDetail.stashIdAccount?.accountId.toString()}`}
             rel='noreferrer'

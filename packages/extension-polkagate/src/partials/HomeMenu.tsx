@@ -15,6 +15,7 @@ import { useIsHovered, useSelectedAccount } from '../hooks';
 import { windowOpen } from '../messaging';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
+import useAccountSelectedChain from '../hooks/useAccountSelectedChain';
 
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
@@ -90,6 +91,7 @@ function HomeMenu (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useSelectedAccount();
+  const lastSelectedAccountGenesisHash = useAccountSelectedChain(account?.address);
   const { assetId } = useParams<{ assetId: string }>();
 
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
@@ -122,7 +124,7 @@ function HomeMenu (): React.ReactElement {
 
   const handleMenuClick = useCallback((input: Pages) => () => {
     if (input === 'send') {
-      account && windowOpen(`/send/${account.address}/${assetId ?? 0}`).catch(console.error);
+      account && windowOpen(`/send/${account.address}/${lastSelectedAccountGenesisHash}/${assetId ?? 0}`).catch(console.error);
 
       return;
     }
@@ -140,7 +142,7 @@ function HomeMenu (): React.ReactElement {
     }
 
     navigate(`/${input}`, { state: { previousUrl: page } }) as void;
-  }, [account, assetId, navigate, page]);
+  }, [account, assetId, lastSelectedAccountGenesisHash, navigate, page]);
 
   const selectionLineStyle = useMemo(() => ({
     background: 'linear-gradient(263.83deg, rgba(255, 79, 185, 0) 9.75%, #FF4FB9 52.71%, rgba(255, 79, 185, 0) 95.13%)',

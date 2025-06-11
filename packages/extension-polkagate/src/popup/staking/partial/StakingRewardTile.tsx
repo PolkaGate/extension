@@ -256,7 +256,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
     return calcPrice(tokenPrice.price, totalClaimedReward, decimal);
   }, [decimal, tokenPrice, pricesInCurrency, totalClaimedReward]);
 
-  const onRewardChart = useCallback(() => navigate('/stakingReward/' + genesisHash + '/' + type) as void, [genesisHash, navigate, type]);
+  const onRewardChart = useCallback(() => address && navigate('/stakingReward/' + address + '/' + genesisHash + '/' + type) as void, [address, genesisHash, navigate, type]);
 
   if (layoutDirection === 'row') {
     return (

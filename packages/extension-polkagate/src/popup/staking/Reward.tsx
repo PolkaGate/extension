@@ -3,14 +3,15 @@
 
 import type { ClaimedRewardInfo } from '../../util/types';
 
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowDown2, ArrowLeft2, ArrowRight2 } from 'iconsax-react';
+import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useNavigate, useParams } from 'react-router';
 
 import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion } from '../../components';
-import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useStakingRewards3, useTranslation } from '../../hooks';
+import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewards3, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
 import Progress from './partial/Progress';
@@ -36,12 +37,12 @@ const RewardChartHeader = ({ dateInterval, genesisHash, onNextPeriod, onPrevious
           {token}
         </Typography>
       </Grid>
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: '140px' }}>
-        <ArrowLeft2 color={theme.palette.text.primary} onClick={onPreviousPeriod} size='18' style={{ cursor: 'pointer' }} />
+      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
+        <ChevronLeft onClick={onPreviousPeriod} sx={{ color: theme.palette.text.primary, cursor: 'pointer', fontSize: '24px' }} />
         <Typography color='text.highlight' variant='B-2'>
           {dateInterval}
         </Typography>
-        <ArrowRight2 color={theme.palette.text.primary} onClick={onNextPeriod} size='18' style={{ cursor: 'pointer' }} />
+        <ChevronRight onClick={onNextPeriod} sx={{ color: theme.palette.text.primary, cursor: 'pointer', fontSize: '24px' }} />
       </Container>
     </Container>
   );
@@ -154,13 +155,18 @@ export default function StakingReward () {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedAccount = useSelectedAccount();
-  const { genesisHash, type } = useParams<{ genesisHash: string; type: string }>();
+  const { address, genesisHash, type } = useParams<{ address: string; genesisHash: string; type: string }>();
 
-  const poolStakingInfo = usePoolStakingInfo(selectedAccount?.address, type === 'pool' ? genesisHash : undefined);
-  const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, type as 'solo' | 'pool');
+  const poolStakingInfo = usePoolStakingInfo(address, type === 'pool' ? genesisHash : undefined);
 
-  const onBack = useCallback(() => navigate('/' + type + '/' + genesisHash) as void, [genesisHash, navigate, type]);
+  // Fetch staking rewards based on the type; for pool rewards, we must explicitly pass 'solo' to the hook
+  const rewardInfo = useStakingRewards3(address, genesisHash, type === 'pool' ? 'pool' : 'solo');
+
+  // Normalize the type for navigation purposes; if the original type is not 'solo' (stash), treat it as 'pool'
+  const _type = type === 'solo' ? 'solo' : 'pool';
+
+  // Navigate back to the appropriate staking overview page based on the normalized type
+  const onBack = useCallback(() => navigate('/' + _type + '/' + genesisHash) as void, [genesisHash, navigate, _type]);
 
   return (
     <>
@@ -209,7 +215,7 @@ export default function StakingReward () {
       <StakingMenu
         genesisHash={genesisHash ?? ''}
         pool={poolStakingInfo.pool}
-        type={type as 'solo' | 'pool'}
+        type={_type} // Display the appropriate staking menu based on the normalized type
       />
     </>
   );

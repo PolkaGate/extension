@@ -10,7 +10,7 @@ import { noop } from '@polkadot/util';
 
 import { useIsDark, useIsExtensionPopup, useIsHovered } from '../hooks';
 
-interface Props {
+export interface ActionButtonProps {
   StartIcon?: Icon;
   iconVariant?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
@@ -26,7 +26,7 @@ interface Props {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: Props): React.ReactElement<Props> {
+export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);

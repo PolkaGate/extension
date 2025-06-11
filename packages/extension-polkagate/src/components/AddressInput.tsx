@@ -11,7 +11,7 @@ import AccountListModal from '../fullscreen/components/AccountListModal';
 import { useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addWatchOnlyFullScreen/QrScanner';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
-import isValidAddress from '../util/validateAddress';
+import { isValidAddress } from '../util/utils';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][]// todo : remove
@@ -24,9 +24,10 @@ interface Props {
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   style?: SxProps<Theme>;
   withSelect?: boolean;
+  setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function AddressInput ({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput ({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -37,8 +38,15 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
   const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
 
   useEffect(() => {
-    address && setEnteredAddress(address);
+    if (address) {
+      setEnteredAddress(address);
+      setInvalidAddress(false);
+    }
   }, [address]);
+
+  useEffect(() => {
+    setIsError && setIsError(invalidAddress);
+  }, [address, invalidAddress, setIsError]);
 
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
@@ -167,7 +175,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
           }}
           value={enteredAddress}
         />
-        {invalidAddress &&
+        {invalidAddress && !setIsError &&
           <Typography color='warning.main' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Invalid address')}
           </Typography>

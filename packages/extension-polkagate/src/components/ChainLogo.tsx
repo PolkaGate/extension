@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Box, useTheme } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';
@@ -25,6 +25,34 @@ interface Props {
   style?: React.CSSProperties;
 }
 
+function normalizeToWordSet (str: string): Set<string> {
+  // Split PascalCase or space-separated
+  const words = str
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // split camelCase
+    .split(/[\s_]+/) // split by space or underscore
+    .map((word) => word.toLowerCase())
+    .filter(Boolean);
+
+  return new Set(words);
+}
+
+function haveSameWords (str1: string, str2: string): boolean {
+  const set1 = normalizeToWordSet(str1);
+  const set2 = normalizeToWordSet(str2);
+
+  if (set1.size !== set2.size) {
+    return false;
+  }
+
+  for (const word of set1) {
+    if (!set2.has(word)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size = 25, style = {} }: Props): React.ReactElement<Props> {
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
@@ -33,11 +61,12 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
   const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
   const options = useContext(GenesisHashOptionsContext);
 
-  const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;
+  const foundChainName = options.find(({ text, value }) => value === genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
+
   const _chainName = sanitizeChainName(foundChainName || chainName);
   const _logo = logo || getLogo2(_chainName)?.logo;
 
-  const filter = isDarkLogo && isDark ? 'invert(1) brightness(2)' : '';
+  const filter = isDarkLogo && isDark ? 'invert(0.2) brightness(2)' : '';
 
   useEffect(() => {
     const img = imgRef.current;
