@@ -12,6 +12,7 @@ export default function getRewardsSlashes (chainName: string, address: string, f
     address,
     category: 'Reward',
     claimed_filter: filter,
+    is_stash: true,
     row: 100
   });
 }

@@ -19,13 +19,14 @@ import { getSubstrateAddress } from '../util/utils';
 import { AccountContext, FadeOnScroll, GradientButton, Identity2 } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
-  const theme = useTheme();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isBlueish = useIsBlueish();
 
   return (
-    <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: '#809ACB26', borderRadius: '12px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px', width: 'fit-content' }}>
-      <Trash color={theme.palette.text.highlight} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
-      <Typography color='text.highlight' textAlign='left' variant='B-2'>
+    <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: isBlueish ? '#809ACB26' : '#BFA1FF26', borderRadius: '10px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px 7px', width: 'fit-content' }}>
+      <Trash color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
+      <Typography color={ isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-2'>
         {t('Reset')}
       </Typography>
     </Container>
