@@ -37,7 +37,7 @@ const UnChecked = styled('span')<{ size: number; isBlueish: boolean; isHovered?:
   width: size
 }));
 
-const Checked = styled('span')<{ checked: boolean; theme: Theme; size: number }>(({ checked, size, theme }) => ({
+const Checked = styled('span')<{ checked: boolean; isBlueish: boolean; theme: Theme; size: number }>(({ checked, isBlueish, size, theme }) => ({
   '&::after': {
     backgroundColor: theme.palette.text.primary,
     borderRadius: '999px',
@@ -52,7 +52,7 @@ const Checked = styled('span')<{ checked: boolean; theme: Theme; size: number }>
     width: size * 0.44
   },
   '&::before': {
-    border: '3px solid #3988FF',
+    border: `3px solid ${isBlueish ? '#3988FF' : '#DC45A0'}`,
     borderRadius: '999px',
     bottom: 0,
     content: '""',

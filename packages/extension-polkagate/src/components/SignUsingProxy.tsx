@@ -78,7 +78,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
   }, [isAvailable, onSelect, proxy]);
 
   return (
-    <Container disableGutters onClick={handleSelect} sx={{ alignItems: 'center', bgcolor: '#05091C', border: '4px solid', borderColor: isChecked ? isBlueish ? '#3988FF' : 'primary.main' : '#222442', borderRadius: '18px', cursor: isAvailable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
+    <Container disableGutters onClick={handleSelect} sx={{ alignItems: 'center', bgcolor: '#05091C', border: '2px solid', borderColor: isChecked ? isBlueish ? '#3988FF' : 'menuIcon.hover' : '#222442', borderRadius: '18px', cursor: isAvailable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', width: 'fit-content' }}>
         <PolkaGateIdenticon
           address={proxy.proxy.delegate}
