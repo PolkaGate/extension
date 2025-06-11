@@ -95,7 +95,7 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
           borderRadius: '10px',
           display: 'flex',
           justifyContent: 'space-between',
-          pl: '2px',
+          pl: '4px',
           pr: noSelection ? '8px' : '2px',
           transition: 'all 250ms ease-out',
           width: '145px'
@@ -148,7 +148,7 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
           }}>
           <ChainLogo
             genesisHash={genesisHash}
-            size={18}
+            size={20}
           />
         </Box>
       </Container>
