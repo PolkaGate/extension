@@ -208,7 +208,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
           return (
             <React.Fragment key={key}>
-              <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
                 <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} textTransform='capitalize' variant='B-1' width='fit-content'>
                   {key === 'txHash' ? t('Transaction ID') : toTitleCase(key)}
                 </Typography>
@@ -343,7 +343,7 @@ interface Props {
   transactionDetail: TransactionDetail;
 }
 
-export default function Confirmation({ address, backToHome, genesisHash, goToHistory, isModal, onCloseModal, showDate, transactionDetail }: Props) {
+export default function Confirmation ({ address, backToHome, genesisHash, goToHistory, isModal, onCloseModal, showDate, transactionDetail }: Props) {
   const isBlueish = useIsBlueish();
   const { t } = useTranslation();
 
