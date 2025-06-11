@@ -35,12 +35,12 @@ export default function useUpdateAccountSelectedAsset (address: string | undefin
       return;
     }
 
-    if (genesisHash) {
-      pathParts[2] = genesisHash;
+    if (address) {
+      pathParts[2] = address;
     }
 
-    if (address) {
-      pathParts[3] = address;
+    if (genesisHash) {
+      pathParts[3] = genesisHash;
     }
 
     pathParts[4] = String(assetId);
