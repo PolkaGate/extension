@@ -95,7 +95,7 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
           borderRadius: '10px',
           display: 'flex',
           justifyContent: 'space-between',
-          p: '2px',
+          pl: '2px',
           pr: noSelection ? '8px' : '2px',
           transition: 'all 250ms ease-out',
           width: '145px'
@@ -111,19 +111,21 @@ function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement
           transition: 'all 250ms ease-out',
           width: '110px'
         }}>
-          <AccountsIcon
-            accountsLength={accounts.length}
-            address={selectedAccount?.address}
-            noSelection={noSelection}
-          />
-          <ScrollingTextBox
-            text={selectedAccount?.name ?? ''}
-            textStyle={{
-              color: 'text.primary',
-              ...theme.typography['B-2']
-            }}
-            width={noSelection ? 120 : 65}
-          />
+          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ width: '79%' }}>
+            <AccountsIcon
+              accountsLength={accounts.length}
+              address={selectedAccount?.address}
+              noSelection={noSelection}
+            />
+            <ScrollingTextBox
+              text={selectedAccount?.name ?? ''}
+              textStyle={{
+                color: 'text.primary',
+                ...theme.typography['B-2']
+              }}
+              width={noSelection ? 120 : 65}
+            />
+          </Stack>
           {!noSelection &&
             <ArrowDown2
               color={isDark ? '#AA83DC' : '#8F97B8'}
