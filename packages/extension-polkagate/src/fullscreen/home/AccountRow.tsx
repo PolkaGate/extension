@@ -16,9 +16,7 @@ import { AccountContext } from '../../components';
 import { Account } from '../components';
 import AccountDropDown from './AccountDropDown';
 
-function GoToAccountButton ({ address, defaultGenesisAndAssetId }: { address?: string, defaultGenesisAndAssetId: string | undefined}): React.ReactElement {
-  const { accounts } = useContext(AccountContext);
-  const navigate = useNavigate();
+function GoToAccountButton({ onClick }: { onClick: () => void }): React.ReactElement {
   const [chevronHovered, setChevronHovered] = useState<boolean>(false);
 
   const onMouseEnter = useCallback(() => {
@@ -29,7 +27,28 @@ function GoToAccountButton ({ address, defaultGenesisAndAssetId }: { address?: s
     setChevronHovered(false);
   }, []);
 
+  return (
+    <Grid
+      alignItems='center' container item justifyContent='center'
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeaveChevron}
+      sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', borderRadius: '10px', border: '3px solid #1B133C', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
+    >
+      <ChevronRight sx={{ color: chevronHovered ? '#EAEBF1' : '#AA83DC', fontSize: '28px' }} />
+    </Grid>
+  );
+}
+
+function AccountRow ({ account }: { account: AccountWithChildren }): React.ReactElement {
+  const { accounts } = useContext(AccountContext);
+  const navigate = useNavigate();
+
+  const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); // 'genesisHash/assetId'
+
   const goToAccountPage = useCallback(() => {
+    const address = account?.address;
+
     if (!address) {
       return;
     }
@@ -45,23 +64,7 @@ function GoToAccountButton ({ address, defaultGenesisAndAssetId }: { address?: s
       .finally(() => {
         navigate(`accountfs/${address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`);
       });
-  }, [accounts, address, defaultGenesisAndAssetId, navigate]);
-
-  return (
-    <Grid
-      alignItems='center' container item justifyContent='center'
-      onClick={goToAccountPage}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeaveChevron}
-      sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', borderRadius: '10px', border: '3px solid #1B133C', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
-    >
-      <ChevronRight sx={{ color: chevronHovered ? '#EAEBF1' : '#AA83DC', fontSize: '28px' }} />
-    </Grid>
-  );
-}
-
-function AccountRow ({ account }: { account: AccountWithChildren }): React.ReactElement {
-  const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); // 'genesisHash/assetId'
+  }, [account?.address, accounts, defaultGenesisAndAssetId, navigate]);
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ m: '2px 0 10px', width: '95%' }}>
@@ -72,6 +75,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
         />
         <Account
           account={account}
+          onClick ={goToAccountPage}
           setDefaultGenesisAndAssetId={setDefaultGenesisAndAssetId}
         />
       </Stack>
@@ -80,8 +84,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
           address={account?.address}
         />
         <GoToAccountButton
-          address={account?.address}
-          defaultGenesisAndAssetId={defaultGenesisAndAssetId}
+          onClick={goToAccountPage}
         />
       </Stack>
     </Stack>

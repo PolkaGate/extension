@@ -21,12 +21,13 @@ import { useAccountAssets, useCurrency, usePrices } from '../../hooks';
 
 interface Props{
   account: AccountWithChildren | undefined;
+  onClick: () => void;
   style?: React.CSSProperties;
   variant?: string;
   setDefaultGenesisAndAssetId?: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-function Account ({ account, setDefaultGenesisAndAssetId, style = {}, variant = 'B-2' }: Props): React.ReactElement {
+function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, variant = 'B-2' }: Props): React.ReactElement {
   const navigate = useNavigate();
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
@@ -132,6 +133,7 @@ function Account ({ account, setDefaultGenesisAndAssetId, style = {}, variant = 
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
         identiconSize={14}
         noIdenticon
+        onClick={onClick}
         style={{ color: '#BEAAD8', variant }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>
