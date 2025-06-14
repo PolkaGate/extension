@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-
 import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import semver from 'semver';

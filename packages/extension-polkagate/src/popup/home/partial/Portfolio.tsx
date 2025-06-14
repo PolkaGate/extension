@@ -33,12 +33,12 @@ function Portfolio (): React.ReactElement {
           <EyeIcon color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
         </Grid>
         <Currency />
-        <Grid container item>
+        <Grid alignItems= 'center' container item sx={{ height: '40px' }}>
           {youHave?.portfolio === undefined
             ? <Skeleton
               animation='wave'
               height='24px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
+              sx={{ bgcolor: '#BEAAD840', borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
               variant='text'
             />
             : <FormatPrice
