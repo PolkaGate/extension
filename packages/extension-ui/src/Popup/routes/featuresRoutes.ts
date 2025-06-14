@@ -8,7 +8,7 @@ import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance'
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
 import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
-import FullScreenManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
+import ManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
@@ -17,8 +17,8 @@ import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake
 import AuthList from '@polkadot/extension-polkagate/src/popup/authManagement';
 import CrowdLoans from '@polkadot/extension-polkagate/src/popup/crowdloans';
 import History from '@polkadot/extension-polkagate/src/popup/history/newDesign';
-import ManageProxies from '@polkadot/extension-polkagate/src/popup/manageProxies';
 
+// NOTE: the rule for paths is /urlName/:address/:genesisHash/blah blah
 export const FEATURE_ROUTES: RouteConfig[] = [
   {
     Component: AddNewChain,
@@ -36,8 +36,8 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     trigger: 'crowdloans'
   },
   {
-    Component: FullScreenManageProxies,
-    path: '/proxyManagement/:genesisHash/:address/',
+    Component: ManageProxies,
+    path: '/proxyManagement/:address/:genesisHash/',
     trigger: 'proxy-management'
   },
   {
@@ -59,11 +59,6 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: HistoryFs,
     path: '/historyfs',
     trigger: 'history-fullscreen'
-  },
-  {
-    Component: ManageProxies,
-    path: '/manageProxies/:address',
-    trigger: 'manageProxies'
   },
   {
     Component: ManageIdentity,

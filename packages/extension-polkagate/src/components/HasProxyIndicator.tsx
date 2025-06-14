@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import { KUSAMA_GENESIS, POLKADOT_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
 import { Data } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useChainInfo, useProxies, useSelectedAccount, useTranslation } from '../hooks';
 import { KUSAMA_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../util/constants';
@@ -21,21 +22,24 @@ function HasProxyIndicator ({ style = {} }: Props): React.ReactElement {
   const { api: westendApi } = useChainInfo(WESTEND_GENESIS_HASH);
   const { api: kusamaApi } = useChainInfo(KUSAMA_GENESIS_HASH);
   const { api: polkadotApi } = useChainInfo(POLKADOT_GENESIS);
+  const navigate = useNavigate();
 
   const westendProxies = useProxies(westendApi, account?.address);
   const kusamaProxies = useProxies(kusamaApi, account?.address);
   const polkadotProxies = useProxies(polkadotApi, account?.address);
 
-  const [recoverableTooltip, setRecoverable] = useState(
+  const [hasProxy, setHasProxy] = useState(
     {
       kusama: false,
       polkadot: false,
       westend: false
     });
 
+  const hasProxyOnRelay = Object.values(hasProxy).some(Boolean);
+
   useEffect((): void => {
     if (westendProxies?.length) {
-      setRecoverable((pre) => {
+      setHasProxy((pre) => {
         pre.westend = true;
 
         return pre;
@@ -43,7 +47,7 @@ function HasProxyIndicator ({ style = {} }: Props): React.ReactElement {
     }
 
     if (kusamaProxies?.length) {
-      setRecoverable((pre) => {
+      setHasProxy((pre) => {
         pre.kusama = true;
 
         return pre;
@@ -51,7 +55,7 @@ function HasProxyIndicator ({ style = {} }: Props): React.ReactElement {
     }
 
     if (polkadotProxies?.length) {
-      setRecoverable((pre) => {
+      setHasProxy((pre) => {
         pre.polkadot = true;
 
         return pre;
@@ -60,8 +64,15 @@ function HasProxyIndicator ({ style = {} }: Props): React.ReactElement {
   }, [kusamaProxies, polkadotProxies, westendProxies]);
 
   const onClick = useCallback((): void => {
-    // go to proxy settings page
-  }, []);
+    if (!hasProxyOnRelay) {
+      return;
+    }
+
+    const genesisHash = hasProxy?.polkadot ? POLKADOT_GENESIS : hasProxy?.kusama ? KUSAMA_GENESIS : WESTEND_GENESIS;
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    navigate(`/proxyManagement/${account?.address}/${genesisHash}`);
+  }, [account?.address, hasProxy, hasProxyOnRelay, navigate]);
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
@@ -85,10 +96,12 @@ function HasProxyIndicator ({ style = {} }: Props): React.ReactElement {
   return (
     <>
       {
-        (recoverableTooltip.polkadot || recoverableTooltip.kusama || recoverableTooltip.westend) &&
+        hasProxyOnRelay &&
         <MyTooltip content={t('Account has proxy on {{chains}}.',
-          { replace:
-        { chains: `${recoverableTooltip.polkadot ? 'Polkadot' : ''}${recoverableTooltip.kusama && recoverableTooltip.polkadot ? ', ' : ''}${recoverableTooltip.kusama ? 'Kusama' : ''}${recoverableTooltip.kusama && recoverableTooltip.westend ? ' and ' : ''}${recoverableTooltip.westend ? 'Westend' : ''}` } })}
+          {
+            replace:
+              { chains: `${hasProxy.polkadot ? 'Polkadot' : ''}${hasProxy.kusama && hasProxy.polkadot ? ', ' : ''}${hasProxy.kusama ? 'Kusama' : ''}${hasProxy.kusama && hasProxy.westend ? ' and ' : ''}${hasProxy.westend ? 'Westend' : ''}` }
+          })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
             <Data color='#AA83DC' size='20' variant='Bulk' />
