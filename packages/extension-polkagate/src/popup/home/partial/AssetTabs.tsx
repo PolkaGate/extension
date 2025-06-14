@@ -36,7 +36,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
 
     if (showChains === undefined) {
       setShowChains(tab === TAB.CHAINS);
-      setDisplayedText(tab === TAB.CHAINS ? t('Chains') : t('Tokens'));
+      setDisplayedText(tab === TAB.CHAINS ? t('Networks') : t('Tokens'));
     }
   }, [isActiveTab, showChains, t, tab]);
 
@@ -48,7 +48,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
           const newValue = !active;
 
           setTab?.(newValue ? TAB.CHAINS : TAB.TOKENS);
-          setDisplayedText(newValue ? t('Chains') : t('Tokens'));
+          setDisplayedText(newValue ? t('Networks') : t('Tokens'));
 
           return newValue;
         });
@@ -81,7 +81,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
           transition: 'all 250ms ease-out'
         }}
       />
-      <Typography color={isActiveTab ? 'text.primary' : 'secondary.main'} sx={{ opacity: textOpacity, paddingLeft: '4px', textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
+      <Typography color={isActiveTab ? 'text.primary' : 'secondary.main'} sx={{ minWidth: '65px', opacity: textOpacity, paddingLeft: '4px', textAlign: 'left', textTransform: 'capitalize', transition: 'opacity 0.3s ease-in-out, color 0.3s ease-in-out' }} variant='B-2'>
         {displayedText}
       </Typography>
       <UnfoldMoreIcon sx={{ color: isActiveTab ? 'text.primary' : 'secondary.main', fontSize: '15px' }} />
