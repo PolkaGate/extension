@@ -10,12 +10,12 @@ import { Container, Grid, Typography } from '@mui/material';
 import { Bezier, Data, type Icon, Image, LikeDislike, MedalStar, Paperclip2, People, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
+import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
 
-import { ExtensionPopup, GradientButton, GradientDivider } from '../../../components';
+import { GradientButton, GradientDivider } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import AssetLoading from '../../home/partial/AssetLoading';
 import { ColumnAmounts } from './ColumnAmounts';
@@ -96,7 +96,10 @@ function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: B
           </Grid>
         </Grid>
       </Grid>
-      {!noDivider && <GradientDivider style={{ my: '4px' }} />}
+      {
+        !noDivider &&
+        <GradientDivider style={{ my: '4px' }} />
+      }
     </>
   );
 }
@@ -148,7 +151,10 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
         })}
         {stillLoading &&
           <>
-            {reasonsToShow.length > 0 && <GradientDivider style={{ my: '4px' }} />}
+            {
+              reasonsToShow.length > 0 &&
+              <GradientDivider style={{ my: '4px' }} />
+            }
             <AssetLoading itemsCount={1} noDrawer />
           </>
         }
@@ -172,53 +178,40 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
 }
 
 export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
-  const isExtension = useIsExtensionPopup();
-
   return (
-    <>
-      {isExtension
-        ? <ExtensionPopup
-          TitleIcon={TitleIcon}
-          handleClose={handleClose}
-          iconSize={22}
-          openMenu={openMenu}
-          style={{
-            '> div#container': {
-              height: 'fit-content',
-              zIndex: 1
-            },
-            display: 'flex',
-            flexDirection: 'column',
-            flexWrap: 'wrap',
-            justifyContent: 'flex-end'
-          }}
-          title={title}
-        >
-          <Content
-            decimal={decimal}
-            handleClose={handleClose}
-            items={items}
-            price={price}
-            token={token}
-          />
-        </ExtensionPopup>
-        : <DraggableModal
-          noDivider
-          onClose={handleClose}
-          open={openMenu}
-          style={{ minHeight: 'fit-content', padding: '20px', zIndex: 1 }}
-          title={title}
-        >
-          <Content
-            decimal={decimal}
-            handleClose={handleClose}
-            items={items}
-            price={price}
-            style={{ margin: '20px 0' }}
-            token={token}
-          />
-        </DraggableModal>
-      }
-    </>
+    <SharePopup
+      modalProps={{
+        noDivider: true,
+        style: { minHeight: 'fit-content', padding: '20px', zIndex: 1 }
+      }}
+      modalStyle={{ minHeight: '200px' }}
+      onClose={handleClose}
+      open={openMenu}
+      popupProps={{
+        TitleIcon,
+        iconSize: 22,
+        iconVariant: 'Bulk',
+        style: {
+          '> div#container': {
+            height: 'fit-content',
+            paddingBottom: '15px',
+            zIndex: 1
+          },
+          display: 'flex',
+          flexDirection: 'column',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end'
+        }
+      }}
+      title={title}
+    >
+      <Content
+        decimal={decimal}
+        handleClose={handleClose}
+        items={items}
+        price={price}
+        token={token}
+      />
+    </SharePopup>
   );
 }
