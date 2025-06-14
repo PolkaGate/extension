@@ -21,8 +21,6 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const nonSelectedSquareColor = theme.palette.mode === 'dark' ? '#67439480' : '#cfd5ec';
-
   const [showChains, setShowChains] = useState<boolean | undefined>(undefined);
   const [textOpacity, setTextOpacity] = useState(1); // State to handle text opacity
   const [displayedText, setDisplayedText] = useState<string | undefined>(undefined); // State for displayed text
@@ -58,18 +56,15 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
     }
   }, [isActiveTab, setTab, t]);
 
-  const { color, secondaryColor } = useMemo(() => ({
-    color: showChains
-      ? isActiveTab
-        ? '#FF4FB9'
-        : '#AA83DC'
-      : nonSelectedSquareColor,
-    secondaryColor: !showChains
-      ? isActiveTab
-        ? '#FF4FB9'
-        : '#AA83DC'
-      : nonSelectedSquareColor
-  }), [isActiveTab, nonSelectedSquareColor, showChains]);
+  const { color, secondaryColor } = useMemo(() => {
+    const nonSelectedSquareColor = theme.palette.mode === 'dark' ? '#67439480' : '#cfd5ec';
+    const selectedSquareColor = isActiveTab ? '#FF4FB9' : '#AA83DC';
+
+    return {
+      color: showChains ? selectedSquareColor : nonSelectedSquareColor,
+      secondaryColor: !showChains ? selectedSquareColor : nonSelectedSquareColor
+    };
+  }, [isActiveTab, showChains, theme]);
 
   return (
     <Container disableGutters onClick={handleToggle} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', justifyContent: 'center', width: 'fit-content' }}>
@@ -114,7 +109,7 @@ function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
   const tabIndex = useMemo(() => !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
     ? TAB.CHAINS
     : TAB.NFTS
-  , [tab]);
+    , [tab]);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
     const selectedTab = value === TAB.NFTS

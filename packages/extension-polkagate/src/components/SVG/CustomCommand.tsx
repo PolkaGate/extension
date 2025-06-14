@@ -12,7 +12,7 @@ interface CustomCloseSquareProps {
   style?: React.CSSProperties;
 }
 
-export const CustomCommand: React.FC<CustomCloseSquareProps> = ({ className, color, onClick, secondaryColor, size = '48', style }) => (
+const CustomCommand: React.FC<CustomCloseSquareProps> = ({ className, color, onClick, secondaryColor, size = '48', style }) => (
   <svg
     className={className}
     height={size}
