@@ -100,7 +100,7 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
 
   const onMaxClick = useCallback(() => {
     if (!transferableBalance || !maxFee || !assetToTransfer) {
-      return setError(t('We’re updating balances—please wait a moment and try again shortly.'));
+      return setError(t('We’re updating your balance — please wait a moment and try again.'));
     }
 
     const isAvailableZero = transferableBalance.isZero();
