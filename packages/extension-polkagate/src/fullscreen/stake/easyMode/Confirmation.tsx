@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { NameAddress, TxInfo } from '../../../util/types';
 
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
@@ -43,7 +42,7 @@ const Account = ({ info, label }: { label: string, info: NameAddress }) => {
   );
 };
 
-export default function Confirmation({ handleDone, txInfo }: Props): React.ReactElement {
+export default function Confirmation ({ handleDone, txInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

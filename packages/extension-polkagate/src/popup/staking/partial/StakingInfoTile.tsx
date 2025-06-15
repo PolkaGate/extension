@@ -45,9 +45,9 @@ export function TileActionButton ({ Icon, isDisabled = false, isRow = false, noT
           }}
           xs
         >
-          <Icon color={isDisabled ? '#674394' : hovered ? '#ffffff' : theme.palette.text.highlight} size='19' variant='Bulk' />
+          <Icon color={isDisabled ? '#809acb8c' : hovered ? '#ffffff' : theme.palette.text.highlight} size='19' variant='Bulk' />
           {!noText &&
-            <Typography color={isDisabled ? '#674394' : hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
+            <Typography color={isDisabled ? '#809acb8c' : hovered ? '#ffffff' : 'text.highlight'} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
               {text}
             </Typography>}
         </Grid>
@@ -73,18 +73,18 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
 
-  const isDisabledColor = isDisabled ? '#674394' : theme.palette.text.highlight;
+  const isDisabledColor = isDisabled ? '#809acb8c' : theme.palette.text.highlight;
 
   return (
     <Grid alignItems={layoutDirection === 'row' ? 'flex-start' : 'center'} container item
-      sx={{ bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', p: '4px', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
+      sx={{ bgcolor: '#2D1E4A4D', borderRadius: '14px', minWidth: 'calc((100% - 8px) / 3)', overflow: 'hidden', p: '4px', position: 'relative', width: layoutDirection === 'row' ? 'fit-content' : '100%' }}
     >
       <Container disableGutters
         sx={{
           alignItems: layoutDirection === 'row' ? 'flex-start' : 'center',
           display: 'flex',
           flexDirection: layoutDirection === 'row' ? 'column' : 'row',
-          gap: '6px',
+          gap: '10px',
           justifyContent: layoutDirection === 'row' ? 'space-between' : 'flex-start',
           p: '8px',
           width: '100%'
@@ -107,7 +107,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           cryptoProps={{ style: { color: isDisabledColor } }}
           decimal={decimal}
           fiatBalance={fiatAmount}
-          fiatProps={{ decimalColor: isDisabledColor, textColor: isDisabled ? '#674394' : theme.palette.text.primary }}
+          fiatProps={{ decimalColor: isDisabledColor, textColor: isDisabled ? '#809acb8c' : theme.palette.text.primary }}
           skeletonAlignment='flex-start'
           skeletonColor='none'
           style={{
@@ -129,6 +129,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             gap: layoutDirection === 'row' ? '2px' : '4px',
             minWidth: '104px',
             ml: layoutDirection === 'row' ? 'auto' : '8px',
+            mt: '8px',
             p: '2px',
             width: 'fit-content'
           }}
@@ -145,6 +146,9 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             />
           ))}
         </Container>}
+      {isDisabled &&
+        <Grid container item sx={{ bgcolor: '#0802144D', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 10 }} />
+      }
     </Grid>
   );
 }
