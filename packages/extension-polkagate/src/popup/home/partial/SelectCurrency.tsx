@@ -8,9 +8,9 @@ import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/asse
 import { chainsPolkadotCircleSVG } from '@polkagate/apps-config/ui/logos/chains';
 import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { CurrencyContext, FadeOnScroll, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
+import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import SharePopup from '../../../partials/SharePopup';
@@ -127,7 +127,6 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
 
 const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
-  const containerRef = useRef(null);
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
 
@@ -162,7 +161,7 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
           placeholder='🔍 Search currency'
         />
       </Grid>
-      <Grid container item justifyContent='center' ref={containerRef} sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
+      <Grid container item justifyContent='center' sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
@@ -181,7 +180,6 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
             {t('Nothing found')}!
           </Typography>}
       </Grid>
-      <FadeOnScroll containerRef={containerRef} height='75px' ratio={0.1} />
     </Grid>
   );
 });
