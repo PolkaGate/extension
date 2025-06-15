@@ -24,7 +24,8 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
   margin: 'auto',
   marginTop: '4px',
   maxHeight: '300px',
-  overflowY: 'scroll',
+  overflow: 'hidden',
+  overflowY: 'auto',
   padding: '6px',
   rowGap: '4px',
   transition: 'all 250ms ease-out',
@@ -122,11 +123,12 @@ function LogoContentDisplay ({ Icon, logoType, onChange, selectedValue, setOpen,
       <Grid alignItems='center' container item sx={{ columnGap: '5px', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'nowrap' }} xs>
         {
           showCheckAsIcon && isSelectedItem
-            ? <GlowCheck
-              show={isSelectedItem}
-              size='15px'
-              timeout={250}
-            />
+            ? (
+              <GlowCheck
+                show={isSelectedItem}
+                size='15px'
+                timeout={250}
+              />)
             : renderLogo()
         }
         <Typography color={isSelectedItem ? '#FF4FB9' : 'text.primary'} textTransform='capitalize' variant='B-2'>
@@ -174,7 +176,7 @@ function TextContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValu
 interface DropContentProps {
   contentDropWidth: number | undefined;
   containerRef: React.RefObject<HTMLDivElement>;
-  Icon: React.ElementType | JSX.Element | undefined;
+  Icon: React.ElementType | React.JSX.Element | undefined;
   displayContentType?: 'logo' | 'text' | 'icon' | 'account' | 'iconOption';
   options: AdvancedDropdownOption[];
   open: boolean;
