@@ -140,9 +140,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
                     );
                   })}
                 </>
-                : <Progress
-                  text={t('Loading, please wait ...')}
-                />
+                : <Progress text={t('Loading, please wait ...')} />
             }
           </Stack>
           <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />

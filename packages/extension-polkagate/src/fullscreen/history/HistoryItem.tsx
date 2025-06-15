@@ -35,8 +35,8 @@ const TimeOfTX = ({ date, style = {} }: { date: number, style: React.CSSProperti
 
     const timePart = new Intl.DateTimeFormat('en-US', {
       hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+      hour12: true,
+      minute: '2-digit'
     }).format(date); // => "8:44 AM"
 
     return `${datePart.replace(/\//g, '.')}, ${timePart}`;

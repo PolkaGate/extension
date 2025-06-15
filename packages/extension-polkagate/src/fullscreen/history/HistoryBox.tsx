@@ -7,8 +7,8 @@ import { Container, Stack, Typography } from '@mui/material';
 import React, { memo, useRef } from 'react';
 
 import { useTranslation } from '../../hooks';
-import { COLUMN_WIDTH } from './consts';
 import EmptyListBox from '../components/EmptyListBox';
+import { COLUMN_WIDTH } from './consts';
 import HistoryItem from './HistoryItem';
 import HistoryLoading from './HistoryLoading';
 
@@ -40,7 +40,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
           {t('Status')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: '422px', maxHeight: '470px', overflow: 'scroll', position: 'relative', rowGap: '3px' }}>
+      <Container disableGutters ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: '422px', maxHeight: '470px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
         {
           !notReady && historyItems?.map((item, index) => (
             <HistoryItem

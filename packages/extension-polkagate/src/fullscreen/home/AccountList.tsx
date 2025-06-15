@@ -29,7 +29,7 @@ function AccountList (): React.ReactElement {
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
       <ProfileTabsFS />
       <VelvetBox style={{ marginTop: '5px' }}>
-        <Stack ref={scrollContainerRef} style={{ maxHeight: '595px', minHeight: '100px', overflowY: 'scroll', position: 'relative' }}>
+        <Stack ref={scrollContainerRef} style={{ maxHeight: '595px', minHeight: '100px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
           {Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => {
             const renderedAccounts = accounts?.map((account, accIndex) => {
               const isFirstProfile = profileIndex === 0;
@@ -60,7 +60,7 @@ function AccountList (): React.ReactElement {
                             : 0,
                       minHeight: '63px',
                       mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
-                      mx: '1px',
+                      px: '1px',
                       width: '100%'
                     }}
                   >

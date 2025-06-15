@@ -27,25 +27,27 @@ function SharePopup ({ RightItem, children, modalProps, modalStyle, onClose, ope
   return (
     <>  {
       isExtension
-        ? <ExtensionPopup
-          RightItem={RightItem}
-          handleClose={onClose}
-          { ...popupProps}
-          openMenu={open}
-          title={title}
-        >
-          {children}
-        </ExtensionPopup>
-        : <DraggableModal
-          RightItem={RightItem}
-          onClose={onClose}
-          open={open}
-          {...modalProps}
-          style={{ minHeight: '400px', padding: '20px', ...modalStyle }}
-          title={title}
-        >
-          {children}
-        </DraggableModal>
+        ? (
+          <ExtensionPopup
+            RightItem={RightItem}
+            handleClose={onClose}
+            {...popupProps}
+            openMenu={open}
+            title={title}
+          >
+            {children}
+          </ExtensionPopup>)
+        : (
+          <DraggableModal
+            RightItem={RightItem}
+            onClose={onClose}
+            open={open}
+            {...modalProps}
+            style={{ minHeight: '400px', padding: '20px', ...modalStyle }}
+            title={title}
+          >
+            {children}
+          </DraggableModal>)
     }
     </>
   );

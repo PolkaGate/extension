@@ -31,7 +31,7 @@ enum HOME_POPUP {
   EXPORT
 }
 
-function HomeAccountDropDown({ style }: Props) {
+function HomeAccountDropDown ({ style }: Props) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +88,7 @@ function HomeAccountDropDown({ style }: Props) {
         options={_options}
         setOpen={setOpen}
       />
-      { popup === HOME_POPUP.EXPORT &&
+      {popup === HOME_POPUP.EXPORT &&
         <ExportAllAccounts
           open={popup !== undefined}
           setPopup={setPopup}

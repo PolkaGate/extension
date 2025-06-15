@@ -74,7 +74,9 @@ export function DraggableModal ({ RightItem, blurBackdrop = true, children, divi
     border: isDarkMode ? '0.5px solid' : 'none',
     borderColor: '#FFFFFF0D',
     borderRadius: '32px',
-    cursor: isDragging ? 'grabbing' : 'grab',
+    cursor: draggable
+      ? isDragging ? 'grabbing' : 'grab'
+      : 'default',
     left: modalPosition.x,
     maxHeight: `${maxHeight}px`,
     minHeight: `${minHeight}px`,
