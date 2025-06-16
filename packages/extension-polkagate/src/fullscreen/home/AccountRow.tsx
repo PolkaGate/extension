@@ -16,7 +16,7 @@ import { AccountContext } from '../../components';
 import { Account } from '../components';
 import AccountDropDown from './AccountDropDown';
 
-function GoToAccountButton({ onClick }: { onClick: () => void }): React.ReactElement {
+function GoToAccountButton ({ onClick }: { onClick: () => void }): React.ReactElement {
   const [chevronHovered, setChevronHovered] = useState<boolean>(false);
 
   const onMouseEnter = useCallback(() => {
@@ -33,7 +33,7 @@ function GoToAccountButton({ onClick }: { onClick: () => void }): React.ReactEle
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeaveChevron}
-      sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', borderRadius: '10px', border: '3px solid #1B133C', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
+      sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '3px solid #1B133C', borderRadius: '10px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
     >
       <ChevronRight sx={{ color: chevronHovered ? '#EAEBF1' : '#AA83DC', fontSize: '28px' }} />
     </Grid>
@@ -62,7 +62,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
     ])
       .catch(console.error)
       .finally(() => {
-        navigate(`accountfs/${address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`);
+        navigate(`accountfs/${address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`) as void;
       });
   }, [account?.address, accounts, defaultGenesisAndAssetId, navigate]);
 
