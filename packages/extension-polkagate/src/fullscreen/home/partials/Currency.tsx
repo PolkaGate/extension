@@ -26,7 +26,7 @@ interface Props {
   minWidth?: string;
 }
 
-function Currency({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
+function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
   const theme = useTheme();
   const ref = useRef<DOMRect>();
 

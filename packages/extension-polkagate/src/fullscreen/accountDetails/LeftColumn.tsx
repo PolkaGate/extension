@@ -16,6 +16,7 @@ import { AccountContext, AccountVisibilityToggler, FadeOnScroll, Recoverability 
 import { useAccountProfile, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import { Account, AccountProfileLabel } from '../components';
+import AccountDropDown from '../home/AccountDropDown';
 
 export interface UnlockInformationType {
   classToUnlock: Lock[] | undefined;
@@ -35,7 +36,7 @@ export default function LeftColumn (): React.ReactElement {
     <VelvetBox style={{ height: 'fit-content', marginLeft: '15px', minHeight: '150px', width: ' 505px' }}>
       <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '172px', m: '40px auto 5px', position: 'relative', width: '497px' }}>
         <PolkaGateIdenticon
-          address={address ?? '' }
+          address={address ?? ''}
           size={64}
           style={{ left: '20px', position: 'absolute', top: '-35px' }}
         />
@@ -45,17 +46,23 @@ export default function LeftColumn (): React.ReactElement {
           variant='B-3'
         />
         <AccountProfileLabel label={profile ?? t('Unknown')} style={{ position: 'absolute', right: '8px', top: '0' }} />
-        <Stack columnGap='5px' direction='row' sx={{ bottom: '18px', left: '20px', position: 'absolute' }}>
-          <AccountVisibilityToggler
-            size={20}
-            style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px' }}
+        <Stack direction='row' justifyContent='space-between' sx={{ bottom: '18px', left: '20px', position: 'absolute', width: '94%' }}>
+          <Stack columnGap='5px' direction='row'>
+            <AccountVisibilityToggler
+              size={20}
+              style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '100%' }}
+            />
+            <Recoverability />
+            <HasProxyIndicator />
+          </Stack>
+          <AccountDropDown
+            address={account?.address}
+            style={{ borderWidth: '1px' }}
           />
-          <Recoverability />
-          <HasProxyIndicator />
         </Stack>
       </Stack>
       <Grid container item ref={refContainer} sx={{ maxHeight: '460px', overflow: 'hidden', overflowY: 'auto' }}>
-        <AssetsBox loadingItemsCount = {5} />
+        <AssetsBox loadingItemsCount={5} />
         <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} />
       </Grid>
     </VelvetBox>
