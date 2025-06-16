@@ -49,6 +49,7 @@ function AccountList (): React.ReactElement {
                 >
                   <Stack
                     direction='column'
+                    justifyContent='center'
                     sx={{
                       bgcolor: '#05091C',
                       borderRadius: justOneAccount
@@ -58,8 +59,8 @@ function AccountList (): React.ReactElement {
                           : isLast
                             ? '0 0 14px 14px'
                             : 0,
-                      minHeight: '63px',
                       mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
+                      pt: '5px',
                       px: '1px',
                       width: '100%'
                     }}
