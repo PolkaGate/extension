@@ -10,11 +10,10 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
-
-import { CurrencyContext, ExtensionPopup, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
+import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
-import { useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
+import SharePopup from '../../../partials/SharePopup';
 import { CRYPTO_AS_CURRENCY, CURRENCY_LIST } from '../../../util/currencyList';
 
 interface Props {
@@ -155,14 +154,14 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
   }, []);
 
   return (
-    <Grid container item justifyContent='center'>
+    <Grid container item justifyContent='center' sx={{ position: 'relative' }}>
       <Grid container item>
         <SearchField
           onInputChange={onSearch}
           placeholder='🔍 Search currency'
         />
       </Grid>
-      <Grid container item justifyContent='center' sx={{ display: 'block', height: '290px', maxHeight: '290px', overflowY: 'auto', pt: '5px' }}>
+      <Grid container item justifyContent='center' sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
@@ -219,9 +218,11 @@ function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateA
         disabled={currency === selectedCurrency}
         onClick={applyLanguageChange}
         style={{
+          bottom: '6px',
           height: '44px',
-          marginTop: '15px',
-          width: '345px'
+          position: 'absolute',
+          width: '345px',
+          zIndex: 10
         }}
         text={t('Apply')}
       />
@@ -231,48 +232,30 @@ function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateA
 
 function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const isExtension = useIsExtensionPopup();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
-  const title = t('Balance Display Currency');
 
   return (
-    <>
-      {isExtension
-        ? (
-          <ExtensionPopup
-            TitleIcon={Hashtag}
-            handleClose={handleClose}
-            iconVariant='Linear'
-            openMenu={openMenu}
-            pt={60}
-            style={{
-              'div#container div#boxContainer': {
-                overflow: 'hidden'
-              }
-            }}
-            title={title}
-            titleAlignment='flex-start'
-            withoutBackground
-            withoutTopBorder
-          >
-            <Content
-              setOpenMenu={setOpenMenu}
-            />
-          </ExtensionPopup>)
-        : (
-          <DraggableModal
-            onClose={handleClose}
-            open={openMenu}
-            style={{ minHeight: '400px', padding: '20px' }}
-            title={title}
-          >
-            <Content
-              setOpenMenu={setOpenMenu}
-            />
-          </DraggableModal>)
-      }
-    </>
+    <SharePopup
+      onClose={handleClose}
+      open={openMenu}
+      popupProps={{
+        TitleIcon: Hashtag,
+        iconVariant: 'Linear',
+        pt: 60,
+        style: {
+          'div#container div#boxContainer': {
+            overflow: 'hidden'
+          }
+        },
+        titleAlignment: 'flex-start',
+        withoutBackground: true,
+        withoutTopBorder: true
+      }}
+      title={t('Balance Display Currency')}
+    >
+      <Content setOpenMenu={setOpenMenu} />
+    </SharePopup>
   );
 }
 

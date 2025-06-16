@@ -112,14 +112,15 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
               <Icon color='#BEAAD8' size='18' variant='Bulk' />
             }
             {scrollTextOnOverflow && _contentDropWidth
-              ? <ScrollingTextBox
-                text={selectedValueText ?? defaultValueText ?? ''}
-                textStyle={{
-                  color: style?.color ?? 'text.secondary',
-                  ...theme.typography['B-4']
-                }}
-                width={Math.floor(_contentDropWidth * 0.6)}
-              />
+              ? (
+                <ScrollingTextBox
+                  text={selectedValueText ?? defaultValueText ?? ''}
+                  textStyle={{
+                    color: style?.color ?? 'text.secondary',
+                    ...theme.typography['B-4']
+                  }}
+                  width={Math.floor(_contentDropWidth * 0.6)}
+                />)
               : <Typography color={style?.color ?? 'text.secondary'} variant={textVariant ?? 'B-1'}>
                 {selectedValueText ?? defaultValueText}
               </Typography>

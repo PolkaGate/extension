@@ -228,7 +228,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
           {t('Info')}
         </Typography>
         <VelvetBox>
-          <Stack columnGap='5px' direction='row' sx={{ overflowX: 'scroll' }}>
+          <Stack columnGap='5px' direction='row' sx={{ overflowX: 'auto' }}>
             <TokenDetailBox
               Icon={Trade}
               amount={transferable}

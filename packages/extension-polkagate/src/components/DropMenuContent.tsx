@@ -18,7 +18,8 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
   marginTop: '4px',
   maxHeight: '300px',
   minWidth: '222px',
-  overflowY: 'scroll',
+  overflow: 'hidden',
+  overflowY: 'auto',
   padding: '6px',
   rowGap: '4px',
   transition: 'all 250ms ease-out',
@@ -69,11 +70,12 @@ function DropMenuContent ({ containerRef, contentDropWidth, open, options, setOp
             <>
               {option.isLine
                 ? <GradientDivider style={{ my: '3px' }} />
-                : <DropMenuRow
-                  key={index}
-                  option={option}
-                  setOpen={setOpen}
-                />
+                : (
+                  <DropMenuRow
+                    key={index}
+                    option={option}
+                    setOpen={setOpen}
+                  />)
               }
               {withDivider && !isLastOne &&
                 <GradientDivider style={{ my: '3px' }} />

@@ -6,36 +6,29 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
 import { AccountContext } from '../../components';
+import { useIsHovered } from '../../hooks';
 import { Account } from '../components';
 import AccountDropDown from './AccountDropDown';
 
 function GoToAccountButton ({ onClick }: { onClick: () => void }): React.ReactElement {
-  const [chevronHovered, setChevronHovered] = useState<boolean>(false);
-
-  const onMouseEnter = useCallback(() => {
-    setChevronHovered(true);
-  }, []);
-
-  const onMouseLeaveChevron = useCallback(() => {
-    setChevronHovered(false);
-  }, []);
+  const containerRef = useRef(null);
+  const isHovered = useIsHovered(containerRef);
 
   return (
     <Grid
       alignItems='center' container item justifyContent='center'
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeaveChevron}
-      sx={{ background: chevronHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '3px solid #1B133C', borderRadius: '10px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
+      ref={containerRef}
+      sx={{ background: isHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '3px solid #1B133C', borderRadius: '10px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
     >
-      <ChevronRight sx={{ color: chevronHovered ? '#EAEBF1' : '#AA83DC', fontSize: '28px' }} />
+      <ChevronRight sx={{ color: isHovered ? '#EAEBF1' : '#AA83DC', fontSize: '28px' }} />
     </Grid>
   );
 }

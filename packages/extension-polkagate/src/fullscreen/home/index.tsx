@@ -26,7 +26,7 @@ function HomePageFullScreen (): React.ReactElement {
     if (accountsInExtension && accountsInExtension?.length === 0) {
       notify(t('No accounts found!'), 'info');
 
-      navigate('/onboarding');
+      navigate('/onboarding') as void;
     }
   }, [accountsInExtension, notify, navigate, t]);
 
@@ -39,7 +39,7 @@ function HomePageFullScreen (): React.ReactElement {
         <TrendingAssets />
       </Stack>
       {/* Right column */}
-      <Stack direction='column' sx={{ height: 'inherit', mx: '8px', width: ' 541px', ml: '20px', position: 'relative' }}>
+      <Stack direction='column' sx={{ height: 'inherit', ml: '20px', mx: '8px', position: 'relative', width: ' 541px' }}>
         <AccountsAdd />
         <AccountList />
       </Stack>
