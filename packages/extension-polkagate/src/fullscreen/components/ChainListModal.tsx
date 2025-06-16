@@ -117,7 +117,7 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
                 >
                   <Stack alignItems='center' direction='row'>
                     <ChainLogo chainName={text} genesisHash={value as string} size={24} />
-                    <Typography color='#EAEBF1' ml='8px' variant='B-1'>
+                    <Typography color='#EAEBF1' ml='8px' sx={{ userSelect: 'none' }} variant='B-1'>
                       {toTitleCase(text)}
                     </Typography>
                   </Stack>
