@@ -124,20 +124,20 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
               />}
           </Typography>
           {newDepositValue && depositedValue &&
-            <>
-              <Typography color='#AA83DC' px='8px' variant='B-1'>
-                {'-->'}
+            <Stack columnGap= '3px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '10px', px: '5px' }}>
+              <Typography color='primary.main' variant='B-1'>
+                {newDepositValue && !newDepositValue.isZero() && (newDepositValue.gt(depositedValue) ? '+' : '-')}
               </Typography>
-              <Typography color='#EAEBF1' variant='B-1'>
+              <Typography color='primary.main' variant='B-1'>
                 <ShowBalance
-                  balance={newDepositValue}
+                  balance={newDepositValue && newDepositValue.isZero() ? BN_ZERO : newDepositValue.sub(depositedValue).abs()}
                   decimal={decimal}
                   decimalPoint={4}
                   height={22}
                   token={token}
                 />
               </Typography>
-            </>
+            </Stack>
           }
         </Stack>
       </Stack>

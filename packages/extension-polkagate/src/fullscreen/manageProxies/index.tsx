@@ -89,7 +89,7 @@ function ManageProxies (): React.ReactElement {
 
     fetchProxies(address, api);
   }, [address, api, chain?.genesisHash, fetchProxies, fetching, proxyItems, refresh]);
-
+  
   return (
     <HomeLayout childrenStyle={{ paddingLeft: '25px' }}>
       <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
@@ -125,6 +125,7 @@ function ManageProxies (): React.ReactElement {
             chain={chain}
             proxiedAddress={address}
             proxyItems={proxyItems}
+            setNewDepositedValue={setNewDepositedValue}
             setProxyItems={setProxyItems}
             setStep={setStep}
             step={step}

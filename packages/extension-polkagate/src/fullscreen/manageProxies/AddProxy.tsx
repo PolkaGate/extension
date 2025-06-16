@@ -3,6 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 import type { Chain } from '@polkadot/extension-chains/types';
+import type { BN } from '@polkadot/util';
 import type { AdvancedDropdownOption, ProxyItem, ProxyTypes } from '../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -25,9 +26,10 @@ interface Props {
   proxiedAddress: string | undefined;
   proxyItems: ProxyItem[] | null | undefined;
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
+  setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
 }
 
-export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep, step }: Props): React.ReactElement {
+export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep, step, setNewDepositedValue }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted3(proxiedAddress, chain?.genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress);
@@ -78,9 +80,10 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyI
   const onCancel = useCallback(() => {
     // remove new proxy from list if canceled
     proxyItems?.length && setProxyItems([...proxyItems.filter(({ status }) => status !== 'new')]);
+    setNewDepositedValue(undefined);
 
     setStep(STEPS.MANAGE);
-  }, [proxyItems, setProxyItems, setStep]);
+  }, [proxyItems, setNewDepositedValue, setProxyItems, setStep]);
 
   const onAddProxy = useCallback(() => {
     if (!proxyAddress || duplicateProxy || myselfAsProxy) {
