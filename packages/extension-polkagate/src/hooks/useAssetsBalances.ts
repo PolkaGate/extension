@@ -15,7 +15,7 @@ import { useLocation } from 'react-router-dom';
 
 import { BN, isObject } from '@polkadot/util';
 
-import { getStorage, setStorage, watchStorage } from '../components/Loading';
+import { getStorage, setStorage } from '../components/Loading';
 import { toCamelCase } from '../fullscreen/governance/utils/util';
 import { updateMetadata } from '../messaging';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
@@ -262,12 +262,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
       setFetchedAssets(savedAssets as SavedAssets);
     }).catch(console.error);
-
-    const unsubscribe = watchStorage(ASSETS_NAME_IN_STORAGE, setFetchedAssets, true);
-
-    return () => {
-      unsubscribe();
-    };
   }, [addresses]);
 
   const handleRequestCount = useCallback((functionName: string) => {
