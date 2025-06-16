@@ -12,6 +12,7 @@ import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
 import { useIsDark } from '../hooks';
+import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
@@ -66,7 +67,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
   const _chainName = sanitizeChainName(foundChainName || chainName);
   const _logo = logo || getLogo2(_chainName)?.logo;
 
-  const filter = isDarkLogo && isDark ? 'invert(0.2) brightness(2)' : '';
+  const filter = isDarkLogo && isDark && CHAINS_WITH_BLACK_LOGO.includes(_chainName) ? 'invert(0.2) brightness(2)' : '';
 
   useEffect(() => {
     const img = imgRef.current;
