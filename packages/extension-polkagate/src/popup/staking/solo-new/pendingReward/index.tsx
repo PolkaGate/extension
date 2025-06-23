@@ -18,7 +18,7 @@ import { blockToDate } from '../../../../util/utils';
 import CheckBox from '../../components/CheckBox';
 
 const TABLE_HEIGHT = 290;
-const SKELETON_HEIGHT = 25;
+const SKELETON_HEIGHT = 24;
 
 interface TableHeaderProp {
   checked: boolean;
@@ -67,9 +67,9 @@ const StyledSkeleton = () => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', my: '4px' }}>
       <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '6px', display: 'inline-block', transform: 'none', width: SKELETON_HEIGHT }} />
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '8px', display: 'inline-block', transform: 'none', width: '85px' }} />
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '8px', display: 'inline-block', transform: 'none', width: '150px' }} />
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '8px', display: 'inline-block', transform: 'none', width: '50px' }} />
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '50px', display: 'inline-block', transform: 'none', width: '85px' }} />
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '50px', display: 'inline-block', transform: 'none', width: '150px' }} />
+      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '50px', display: 'inline-block', transform: 'none', width: '50px' }} />
     </Container>
   );
 };
@@ -88,7 +88,7 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
     <Grid container item sx={{ position: 'relative' }}>
       <Stack direction='column' ref={containerRef} sx={{ gap: '2px', height: TABLE_HEIGHT, maxHeight: TABLE_HEIGHT, overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
         {expandedRewards === undefined &&
-          Array.from({ length: TABLE_HEIGHT / SKELETON_HEIGHT }).map((_, index) => (
+          Array.from({ length: 5 }).map((_, index) => (
             <StyledSkeleton key={index} />
           ))}
         {expandedRewards && expandedRewards.length === 0 &&
@@ -397,7 +397,7 @@ export default function SoloPendingReward () {
               onSecondaryClick={onBack}
               primaryBtnText={t('Next')}
               secondaryBtnText={t('Cancel')}
-              style={{ height: '44px', width: '100%' }}
+              style={{ height: '44px' }}
             />
           </Stack>
         </Motion>
