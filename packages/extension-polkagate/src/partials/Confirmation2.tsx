@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from 'react-router';
 
 import { subscan } from '../assets/icons';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
-import { useChainInfo, useTranslation } from '../hooks';
+import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../hooks/useAccountSelectedChain';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
@@ -24,6 +24,7 @@ interface SubProps {
 
 const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
   const { t } = useTranslation();
+  const isBlueish = useIsBlueish();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const amountInHuman = amountToHuman((transactionDetail?.amount ?? '0'), decimal);
@@ -50,7 +51,7 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
             : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
           }
         </Grid>
-        <Typography color='#AA83DC' pt='8px' textTransform='capitalize' variant='B-2'>
+        <Typography color= { isBlueish ? 'text.highlight' : 'primary.main'} pt='8px' textTransform='capitalize' variant='B-2'>
           {transactionDetail.success
             ? t('Completed')
             : t('Failed')
@@ -60,10 +61,10 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
           <Typography color='text.primary' lineHeight='normal' variant='H-1'>
             {integerPart}
           </Typography>
-          <Typography color='text.secondary' variant='H-3'>
+          <Typography color= { isBlueish ? 'text.highlight' : 'text.secondary'} variant='H-3'>
             {decimalToShow}
           </Typography>
-          <Typography color='text.secondary' pl='3px' variant='H-3'>
+          <Typography color= { isBlueish ? 'text.highlight' : 'text.secondary'} pl='3px' variant='H-3'>
             {token}
           </Typography>
         </Stack>
