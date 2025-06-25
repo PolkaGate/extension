@@ -1,10 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, useTheme } from '@mui/material';
-// @ts-ignore
-import { Circle, CubeGrid, WanderingCubes, Wordpress } from 'better-react-spinkit';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
+import { BeatLoader } from 'react-spinners';
+
+import { useIsBlueish } from '../hooks';
 
 interface Props {
   direction?: 'column' | 'row'
@@ -15,65 +16,26 @@ interface Props {
   pt?: number | string;
   size?: number;
   gridSize?: number;
-  type?: 'circle' | 'cubes' | 'grid' | 'wordpress';
+  type?: 'circle' | 'cubes' | 'grid' | 'wordpress' | 'beatLoader';
+  withEllipsis?: boolean;
+  style?: React.CSSProperties;
 }
 
-function Progress ({ direction = 'column', fontSize = 13, gridSize = 135, pt = '50px', size = 25, title, titlePaddingTop = 20, titlePaddingLeft = 0, type = 'circle' }: Props): React.ReactElement<Props> {
+function Progress ({ direction = 'column', size = 15, style = {}, title, type = 'beatLoader', withEllipsis = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const isBlueish = useIsBlueish();
 
   return (
-    <Grid
-      alignItems='center'
-      container
-      direction={direction}
-      justifyContent='center'
-      pt={pt}
-    >
-      {type === 'circle' &&
-        <Circle
-          color={theme.palette.primary.main}
-          scaleEnd={0.7}
-          scaleStart={0.4}
-          size={size}
-        />
-      }
-      {type === 'wordpress' &&
-        <Wordpress
-          color={theme.palette.primary.main}
-          size={size}
-        />
-      }
-      {type === 'cubes' &&
-        <WanderingCubes
-          color={theme.palette.primary.main}
-          cubeSize={9}
-          duration='2s'
-          size={size}
-          timingFunction='ease-in-out'
-        />
-      }
-      {type === 'grid' &&
-        <CubeGrid
-          col={3}
-          color={theme.palette.secondary.main}
-          row={3}
-          size={gridSize}
-          style={{ margin: 'auto', opacity: '0.4' }}
-        />
+    <Stack direction={direction} sx={{ alignItems: 'center', gap: '50px', justifyContent: 'center', mt: '50px', width: '100%', ...style }}>
+      {type === 'beatLoader' &&
+        <BeatLoader color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} cssOverride={{ alignSelf: 'center' }} loading size={size} speedMultiplier={0.6} />
       }
       {title &&
-        <Grid
-          item
-          sx={{
-            fontSize,
-            pl: `${titlePaddingLeft}px`,
-            pt: `${titlePaddingTop}px`
-          }}
-        >
-          {title}
-        </Grid>
+        <Typography color='text.primary' variant='B-3'>
+          {title}{withEllipsis && ' ...'}
+        </Typography>
       }
-    </Grid>
+    </Stack>
   );
 }
 

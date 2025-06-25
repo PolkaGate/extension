@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransitionProps } from '@mui/material/transitions';
 
 import { Box, Container, Dialog, Grid, Link, Slide, Stack, Typography } from '@mui/material';
@@ -418,11 +417,10 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
             }
           </Box>
           {isLoading &&
-            <>
-              <Progress
-                title={t('Loading')}
-              />
-            </>
+            <Progress
+              title={t('Loading, please wait')}
+              withEllipsis
+            />
           }
         </Grid>
       </Container>
