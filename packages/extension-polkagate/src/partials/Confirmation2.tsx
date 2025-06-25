@@ -3,12 +3,12 @@
 
 import type { TransactionDetail } from '../util/types';
 
-import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import { subscan } from '../assets/icons';
+import Subscan from '../assets/icons/Subscan';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
 import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../hooks/useAccountSelectedChain';
@@ -141,15 +141,6 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
   );
 };
 
-const SubScanIcon = () => {
-  return (
-    <Avatar
-      src={subscan as string}
-      sx={{ height: '13px', width: '13px' }}
-    />
-  );
-};
-
 interface Props {
   address: string;
   transactionDetail: TransactionDetail;
@@ -203,7 +194,11 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
         />
         <StakingActionButton
           onClick={goToExplorer}
-          startIcon={<SubScanIcon />}
+          startIcon={ <Subscan
+            color='#ffffff'
+            height = {13}
+            width = {13}
+          />}
           style={{ width: '345px' }}
           text={t('View On Explorer')}
         />
