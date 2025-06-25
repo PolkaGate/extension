@@ -50,7 +50,7 @@ export default function LeftColumn (): React.ReactElement {
           <Stack columnGap='5px' direction='row'>
             <AccountVisibilityToggler
               size={20}
-              style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '100%' }}
+              style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '100%', margin: 0 }}
             />
             <Recoverability />
             <HasProxyIndicator />

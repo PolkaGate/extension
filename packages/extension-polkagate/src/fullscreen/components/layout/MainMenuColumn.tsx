@@ -38,7 +38,7 @@ function MainMenuColumn (): React.ReactElement {
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
 
   return (
-    <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px' }}>
+    <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px', overflow: 'hidden' }}>
       <Shining />
       <Stack alignItems='center' direction='row' sx={{ mb: '20px', zIndex: 10 }}>
         <Box
