@@ -65,7 +65,10 @@ function AccountList (): React.ReactElement {
                       width: '100%'
                     }}
                   >
-                    {isFirstAccount && <AccountProfileLabel label={label} />}
+                    {
+                      isFirstAccount &&
+                      <AccountProfileLabel label={label} />
+                    }
                     <AccountRow account={account.account} />
                   </Stack>
                 </motion.div>

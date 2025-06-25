@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Avatar, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
@@ -12,13 +11,14 @@ interface Props {
   baseLogoSize?: string;
   baseLogoPosition?: string;
   logoRoundness?: string;
+  style: React.CSSProperties | undefined
 }
 
-export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%' }: Props): React.ReactElement {
+export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {} }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <Grid container sx={{ position: 'relative', width: 'fit-content' }}>
+    <Grid container sx={{ position: 'relative', width: 'fit-content', ...style }}>
       <Avatar
         src={asset}
         sx={{ borderRadius: logoRoundness, height: assetSize, width: assetSize }}

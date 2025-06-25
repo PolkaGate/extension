@@ -10,10 +10,11 @@ import { AlignBottom } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
+import { TOKENS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { AssetLogo, FadeOnScrollHorizontal } from '../../components';
-import { useCurrency, usePrices, useTranslation } from '../../hooks';
+import { useCurrency, useIsDark, usePrices, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 
 const ASSET_IN_A_ROW = 4;
@@ -57,6 +58,7 @@ function Move ({ direction, max, setMove }: { direction: Direction, max?: number
 
 const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }, ref) => {
   const currency = useCurrency();
+  const isDark = useIsDark();
 
   const [hoveredIndex, setHoveredIndex] = useState<boolean>(false);
 
@@ -87,7 +89,7 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }
         width: 'fit-content'
       }}
     >
-      <AssetLogo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ width: 'fit-content' }} />
+      <AssetLogo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ filter: isDark && TOKENS_WITH_BLACK_LOGO.includes(asset?.symbol ?? '') ? 'invert(0.2) brightness(2)' : '', width: 'fit-content' }} />
       <Typography color='#EAEBF1' sx={{ mt: '10px', textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
         {asset.symbol} / {currency?.code}
       </Typography>
