@@ -1630,7 +1630,7 @@
   "Enter Bouncer address": "",
   "All the roles (Depositor, Root, Nominator, and Bouncer) are set the following ID by default although you can update the Nominator and Bouncer by clicking": "",
   "pool staking": "",
-  "Available balance after claim rewards": "",
+  "Available balance after claiming rewards": "",
   "Loading pools": "",
   "It is less than the minimum amount to join a pool.": "",
   "Joining Pool": "",

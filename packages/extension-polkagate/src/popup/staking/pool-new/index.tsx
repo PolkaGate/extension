@@ -104,7 +104,7 @@ export default function Pool (): React.ReactElement {
     (review === Review.Reward
       ? {
         content: myClaimable && transferable ? transferable.add(myClaimable) : undefined,
-        description: t('Available balance after claim rewards'),
+        description: t('Available balance after claiming rewards'),
         title: t('Available balance after'),
         withLogo: true
       }
