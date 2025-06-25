@@ -3,12 +3,12 @@
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography } from '@mui/material';
+import { Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, Document, Hashtag, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import AccountListModal from '../fullscreen/components/AccountListModal';
-import { useTranslation } from '../hooks';
+import { useIsBlueish, useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addWatchOnlyFullScreen/QrScanner';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { isValidAddress } from '../util/utils';
@@ -30,6 +30,8 @@ interface Props {
 export default function AddressInput ({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
+  const isBlueish = useIsBlueish();
+  const theme = useTheme();
 
   const [focus, setFocus] = useState<boolean>(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
@@ -92,7 +94,8 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
         {label &&
           <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-1'>
             {label}
-          </Typography>}
+          </Typography>
+        }
         <TextField
           InputProps={{
             endAdornment: (
@@ -117,7 +120,6 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
             ),
             startAdornment: (
               <InputAdornment position='start'>
-
                 {enteredAddress && !invalidAddress
                   ? (
                     <PolkaGateIdenticon
@@ -134,7 +136,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
               </InputAdornment>
             ),
             style: {
-              color: `${invalidAddress ? '#FF4FB9' : '#BEAAD8'}`, // Applies to input text AND placeholder
+              color: `${invalidAddress ? theme.palette.error.main : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary}`, // Applies to input text AND placeholder
               fontFamily: 'Inter',
               fontSize: '12px',
               fontWeight: 500
