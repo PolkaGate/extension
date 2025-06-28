@@ -20,9 +20,9 @@ function GradientBorder ({ style, type }: GradientBorderProps): React.ReactEleme
       background: type === 'pinkish'
         ? isDark
           ? isExtension
-            ? 'linear-gradient(90deg, #1D0939 0%, #E74FCF 50.06%, rgba(29, 9, 57, 0) 100%)'
-            : 'linear-gradient(90deg, #280849 0%, #E74FCF 50.06%, rgba(40, 8, 73, 0) 100%)'
-          : 'linear-gradient(90deg, rgba(217, 204, 242, 0) 0%, #CFB1FF 50.06%, rgba(217, 204, 242, 0) 100%)'
+            ? 'linear-gradient(90deg, transparent 0%, #E74FCF 50.06%, transparent 100%)'
+            : 'linear-gradient(90deg, transparent 0%, #E74FCF 50.06%, transparent 100%)'
+          : 'linear-gradient(90deg, transparent 0%, #CFB1FF 50.06%, transparent 100%)'
         : 'linear-gradient(178deg, transparent 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, transparent 72.53%)',
       height: '2px',
       justifySelf: 'center',
