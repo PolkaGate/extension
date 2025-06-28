@@ -19,7 +19,7 @@ interface Props {
   open: boolean;
 }
 
-function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
+function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -102,21 +102,23 @@ function RemoveAccount({ open, setPopup }: Props): React.ReactElement {
               style={{ borderRadius: '14px', mt: '5px' }}
             />}
           {account && account.isExternal
-            ? <GlowCheckbox
-              changeState={toggleAcknowledge}
-              checked={acknowledged}
-              disabled={isBusy}
-              label={t('I want to remove this account')}
-              style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
-            />
-            : <PasswordInput
-              focused
-              hasError={isPasswordWrong}
-              onEnterPress={onRemove}
-              onPassChange={onPassChange}
-              style={{ marginTop: '45px' }}
-              title={t('Your Password')}
-            />
+            ? (
+              <GlowCheckbox
+                changeState={toggleAcknowledge}
+                checked={acknowledged}
+                disabled={isBusy}
+                label={t('I want to remove this account')}
+                style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
+              />)
+            : (
+              <PasswordInput
+                focused
+                hasError={isPasswordWrong}
+                onEnterPress={onRemove}
+                onPassChange={onPassChange}
+                style={{ marginTop: '45px' }}
+                title={t('Your Password')}
+              />)
           }
           <DecisionButtons
             direction='vertical'

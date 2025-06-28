@@ -51,7 +51,7 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
             : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
           }
         </Grid>
-        <Typography color= { isBlueish ? 'text.highlight' : 'primary.main'} pt='8px' textTransform='capitalize' variant='B-2'>
+        <Typography color= {isBlueish ? 'text.highlight' : 'primary.main'} pt='8px' textTransform='capitalize' variant='B-2'>
           {transactionDetail.success
             ? t('Completed')
             : t('Failed')
@@ -194,11 +194,12 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
         />
         <StakingActionButton
           onClick={goToExplorer}
-          startIcon={ <Subscan
-            color='#ffffff'
-            height = {13}
-            width = {13}
-          />}
+          startIcon={
+            <Subscan
+              color='#ffffff'
+              height = {13}
+              width = {13}
+            />}
           style={{ width: '345px' }}
           text={t('View On Explorer')}
         />
