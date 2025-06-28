@@ -6,7 +6,7 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { Divider, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import AccountDropDown from '@polkadot/extension-polkagate/src/fullscreen/home/AccountDropDown';
@@ -25,12 +25,17 @@ interface Props {
   isLast?: boolean;
 }
 
+const MAX_ACCOUNT_NAME_WIDTH = 255;
+const OFFSET = 30;
+
 function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
   const navigate = useNavigate();
 
   const [appliedAddress, setAppliedAddress] = useState<string>();
 
-  useUpdateSelectedAccount(appliedAddress, false, () => navigate('/'));
+  useUpdateSelectedAccount(appliedAddress, false, () => navigate('/') as void);
+
+  const identiconSize = useMemo(() => isInSettingMode ? 18 : 24, [isInSettingMode]);
 
   const _onClick = useCallback(() => {
     const address = account?.address;
@@ -54,15 +59,15 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
             isSelected && !isInSettingMode &&
            <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
           }
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', overflow: 'hidden', transition: 'all 250ms ease-out', width: '80%' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', maxWidth: `${MAX_ACCOUNT_NAME_WIDTH}px`, overflow: 'hidden', transition: 'all 250ms ease-out', width: 'fit-content' }}>
             <PolkaGateIdenticon
               address={account.address}
-              size={isInSettingMode ? 18 : 24}
+              size={identiconSize}
             />
             <Identity2
               address={account?.address}
               genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
-              nameStyle={{ width: '230px' }}
+              nameStyle={{ width: `${MAX_ACCOUNT_NAME_WIDTH - OFFSET}px` }}
               noIdenticon
               style={{ color: (isInSettingMode || isSelected) ? '#EAEBF1' : '#BEAAD8', variant: isInSettingMode ? 'B-4' : 'B-2' }}
             />
