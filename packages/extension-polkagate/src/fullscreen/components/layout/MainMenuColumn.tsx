@@ -15,7 +15,7 @@ import NeedHelp from '../../onboarding/NeedHelp';
 import Language from './Language';
 import MenuButton from './MenuButton';
 
-function Shining(): React.ReactElement {
+function Shining (): React.ReactElement {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', position: 'absolute', top: '-100px', width: '100%' }}>
       <Box sx={{
@@ -38,7 +38,7 @@ function MainMenuColumn (): React.ReactElement {
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
 
   return (
-    <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px', overflow: 'hidden' }}>
+    <Grid alignContent='start' container item sx={{ height: '760px', overflow: 'hidden', position: 'relative', width: '196px' }}>
       <Shining />
       <Stack alignItems='center' direction='row' sx={{ mb: '20px', zIndex: 10 }}>
         <Box
@@ -68,6 +68,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
+        path={'/fullscreen-stake/solo/' + selectedGenesisHash}
         text={t('Staking')}
       />
       <MenuButton

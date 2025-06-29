@@ -43,7 +43,7 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
   }, [decimalPart]);
 
   return (
-    <GlowBox style={{ m: 0, width: '100%' }}>
+    <GlowBox isBlueish style={{ m: 0, width: '100%' }}>
       <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
         <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
           {transactionDetail.success
