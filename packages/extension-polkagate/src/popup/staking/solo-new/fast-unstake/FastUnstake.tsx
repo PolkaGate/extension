@@ -182,7 +182,7 @@ export default function FastUnstake (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}

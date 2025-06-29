@@ -137,7 +137,7 @@ export default function Unstake (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
