@@ -8,6 +8,7 @@ const START_WITH_PATH = [
   '/accountfs/',
   '/addNewChain/',
   '/derivefs/',
+  '/fullscreen-stake/',
   '/import/',
   '/governance/',
   '/manageIdentity/',
