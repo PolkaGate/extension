@@ -4,8 +4,8 @@
 import type { RouteConfig } from './RouteDefinitions';
 
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
+import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo';
-import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
 import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool-new';
@@ -139,7 +139,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
   },
   {
     Component: PoolFS,
-    path: '/poolfs/:address',
+    path: '/fullscreen-stake/pool/:genesisHash',
     trigger: 'pool-staking-fullscreen'
   },
   {
