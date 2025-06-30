@@ -37,9 +37,9 @@ const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: strin
   );
 };
 
-const StakingIcon = ({ type }: { type: 'solo' | 'pool'; }) => {
+const StakingIcon = ({ isFullScreen, type }: { isFullScreen: boolean; type: 'solo' | 'pool'; }) => {
   return (
-    <Grid container item sx={{ bottom: 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
+    <Grid container item sx={{ bottom: isFullScreen ? '10px' : 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
         : <Ice asPortfolio size='32' />
@@ -132,8 +132,8 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
           ? (
             <Skeleton
               animation='wave'
-              height={isFullScreen ? '40px' : '30px'}
-              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', mt: '5px', transform: 'none', width: '100%' }}
+              height='30px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', m: isFullScreen ? '13px 0 5px' : '5px 0 0', maxWidth: '245px', transform: 'none', width: '100%' }}
               variant='text'
             />)
           : (
@@ -151,7 +151,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
             />)
         }
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-start' sx={{ bgcolor: staked && isFullScreen ? '#AA83DC26' : 'transparent', borderRadius: '9px', m: '-3px 0 6px', p: staked && isFullScreen ? '2px 4px' : 0, width: staked && isFullScreen ? 'fit-content' : '100%' }}>
+      <Grid alignItems='center' container item justifyContent='flex-start' sx={{ m: '-3px 0 6px', width: staked && isFullScreen ? 'fit-content' : '100%' }}>
         {staked === undefined
           ? (
             <Skeleton
@@ -165,10 +165,13 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
               decimalPoint={adaptiveDecimalPoint}
               decimals={[decimal ?? 0]}
               style={{
+                backgroundColor: isFullScreen ? '#AA83DC26' : 'transparent',
+                borderRadius: '9px',
                 color: textColor,
                 fontFamily: 'Inter',
                 fontSize: isFullScreen ? '13px' : '12px',
                 fontWeight: 500,
+                padding: isFullScreen ? '3px 4px 1px' : 0,
                 width: 'max-content'
               }}
               tokens={[token ?? '']}
@@ -176,7 +179,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
             />)}
       </Grid>
       <Buttons buttons={buttons} isFullScreen={isFullScreen} />
-      <StakingIcon type={type} />
+      <StakingIcon isFullScreen={isFullScreen} type={type} />
     </GlowBox>
   );
 }

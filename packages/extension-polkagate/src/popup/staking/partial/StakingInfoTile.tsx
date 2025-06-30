@@ -86,8 +86,8 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
           ? (
             <Skeleton
               animation='wave'
-              height='30px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '105px', transform: 'none', width: '100%' }}
+              height='24px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '105px', my: '4px', transform: 'none', width: '100%' }}
               variant='text'
             />)
           : (
