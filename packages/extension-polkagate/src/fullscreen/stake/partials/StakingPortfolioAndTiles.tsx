@@ -1,0 +1,146 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { Balance } from '@polkadot/types/interfaces';
+import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
+
+import { Container, Grid } from '@mui/material';
+import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer, Trade, Wallet } from 'iconsax-react';
+import React from 'react';
+
+import { type BN, noop } from '@polkadot/util';
+
+import { useChainInfo, useTranslation } from '../../../hooks';
+import StakingInfoTile from '../../../popup/staking/partial/StakingInfoTile';
+import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
+import { GlowBall } from '../../../style/VelvetBox';
+import { amountToHuman } from '../../../util/utils';
+
+interface TileBoxProps {
+  genesisHash: string | undefined;
+  redeemable: Balance | BN | undefined;
+  toBeReleased: DateAmount[] | undefined;
+  unlockingAmount: BN | undefined;
+  rewards: BN | undefined;
+  tokenPrice: number;
+  availableBalanceToStake: BN | undefined;
+}
+
+const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, toBeReleased, tokenPrice, unlockingAmount }: TileBoxProps) => {
+  const { t } = useTranslation();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  return (
+    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '18px', display: 'flex', flexDirection: 'row', gap: '5px', overflow: 'hidden', p: '4px', position: 'relative' }} xs>
+      <GlowBall />
+      <StakingInfoTile
+        Icon={Moneys}
+        buttonsArray={[{
+          Icon: Timer,
+          onClick: noop,
+          text: t('Pending Rewards')
+        }]}
+        cryptoAmount={rewards}
+        decimal={decimal ?? 0}
+        fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
+        isFullScreen
+        layoutDirection='row'
+        style={{ minWidth: '146px', width: '146px' }}
+        title={t('Rewards paid')}
+        token={token ?? ''}
+      />
+      <StakingInfoTile
+        Icon={Moneys}
+        buttonsArray={[{
+          Icon: Strongbox2,
+          onClick: noop,
+          text: t('Withdraw')
+        }]}
+        cryptoAmount={redeemable}
+        decimal={decimal ?? 0}
+        fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
+        isFullScreen
+        layoutDirection='row'
+        style={{ minWidth: '146px', width: '146px' }}
+        title={t('Redeemable')}
+        token={token ?? ''}
+      />
+      <StakingInfoTile
+        Icon={LockSlash}
+        buttonsArray={[{
+          Icon: Trade,
+          onClick: noop,
+          text: t('Restake')
+        }]}
+        cryptoAmount={unlockingAmount}
+        decimal={decimal ?? 0}
+        fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
+        isFullScreen
+        layoutDirection='row'
+        onExpand={toBeReleased?.length ? noop : undefined}
+        style={{ minWidth: '146px', width: '146px' }}
+        title={t('Unstaking')}
+        token={token ?? ''}
+      />
+      <StakingInfoTile
+        Icon={Wallet}
+        buttonsArray={[{
+          Icon: Wallet,
+          onClick: noop,
+          text: t('Stake')
+        }]}
+        cryptoAmount={availableBalanceToStake}
+        decimal={decimal ?? 0}
+        fiatAmount={availableBalanceToStake && decimal ? (Number(amountToHuman(availableBalanceToStake, decimal)) * tokenPrice) : 0}
+        isFullScreen
+        layoutDirection='row'
+        style={{ minWidth: '194px', width: '194px' }}
+        title={t('Available to Stake')}
+        token={token ?? ''}
+      />
+    </Grid>
+  );
+};
+
+interface Props {
+  genesisHash: string | undefined;
+  type: 'solo' | 'pool';
+  staked: BN | undefined;
+  redeemable: Balance | BN | undefined;
+  toBeReleased: DateAmount[] | undefined;
+  unlockingAmount: BN | undefined;
+  rewards: BN | undefined;
+  availableBalanceToStake: BN | undefined;
+  tokenPrice: number;
+}
+
+export default function StakingPortfolioAndTiles ({ availableBalanceToStake, genesisHash, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
+  const { t } = useTranslation();
+
+  return (
+    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
+      <StakingPortfolio
+        buttons={[{
+          Icon: BuyCrypto,
+          onClick: noop,
+          text: t('Unstake')
+        }]}
+        genesisHash={genesisHash as unknown as string}
+        isFullScreen
+        onInfo={noop}
+        staked={staked as unknown as BN}
+        style={{ gap: '8px', margin: 0, width: '400px' }}
+        type={type}
+      />
+      <TileBox
+        availableBalanceToStake={availableBalanceToStake}
+        genesisHash={genesisHash}
+        redeemable={redeemable}
+        rewards={rewards}
+        toBeReleased={toBeReleased}
+        tokenPrice={tokenPrice}
+        unlockingAmount={unlockingAmount}
+      />
+    </Container>
+  );
+}
