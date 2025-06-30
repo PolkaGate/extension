@@ -3,7 +3,7 @@
 
 import type { FilterAction, FilterState, SortAction, SortState } from '../utils/types';
 
-import { Grid, Popover, Typography } from '@mui/material';
+import { Grid, Popover, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, DocumentFilter, Filter, Sort } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
@@ -21,6 +21,7 @@ interface Props {
 
 const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, filters, sort }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const onFilters = useCallback((filter: keyof FilterState) => () => {
     dispatchFilter({ filter });
@@ -42,30 +43,35 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
           changeState={onFilters('collections')}
           checked={filters.collections}
           label={t('Collections')}
+          labelStyle={{ ...theme.typography['B-2'] }}
           style={{ marginTop: '15px' }}
         />
         <GlowCheckbox
           changeState={onFilters('nft')}
           checked={filters.nft}
           label={t('NFTs')}
+          labelStyle={{ ...theme.typography['B-2'] }}
           style={{ marginTop: '15px' }}
         />
         <GlowCheckbox
           changeState={onFilters('unique')}
           checked={filters.unique}
           label={t('Uniques')}
+          labelStyle={{ ...theme.typography['B-2'] }}
           style={{ marginTop: '15px' }}
         />
         <GlowCheckbox
           changeState={onFilters('kusama')}
           checked={filters.kusama}
           label={t('Kusama Asset Hub')}
+          labelStyle={{ ...theme.typography['B-2'] }}
           style={{ marginTop: '15px' }}
         />
         <GlowCheckbox
           changeState={onFilters('polkadot')}
           checked={filters.polkadot}
           label={t('Polkadot Asset Hub')}
+          labelStyle={{ ...theme.typography['B-2'] }}
           style={{ marginTop: '15px' }}
         />
       </Grid>
@@ -117,7 +123,7 @@ function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): Re
         <Typography color='#AA83DC' variant='B-4'>
           {t('Filter/Sort')}
         </Typography>
-        <ArrowDown2 color={open ? '#AA83DC' : '#FFF'} size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
+        <ArrowDown2 color={open ? '#FFF' : '#AA83DC' } size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
       </Grid>
       <Popover
         anchorEl={anchorEl}
