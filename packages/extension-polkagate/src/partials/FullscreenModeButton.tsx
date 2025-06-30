@@ -9,8 +9,8 @@ import { useLocation } from 'react-router';
 
 import { MyTooltip } from '../components';
 import { useIsBlueish, useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
-import { windowOpen } from '../messaging';
 import useAccountSelectedChain from '../hooks/useAccountSelectedChain';
+import { windowOpen } from '../messaging';
 
 interface Props {
   url?: string;
