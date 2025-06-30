@@ -181,7 +181,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: isRow ? '100%' : 'fit-content' }}>
           <Icon color={isDisabledColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
           {isRow && onExpand &&
-            <ArrowCircleDown color={isDisabledColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: '-4px', marginTop: '-4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={isDisabledColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
           <Typography color={isDisabledColor} sx={{ textWrap: 'nowrap' }} variant='B-1'>
