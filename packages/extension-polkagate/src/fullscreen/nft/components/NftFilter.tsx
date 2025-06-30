@@ -4,7 +4,7 @@
 import type { FilterAction, FilterState, SortAction, SortState } from '../utils/types';
 
 import { Grid, Popover, Typography } from '@mui/material';
-import { DocumentFilter, Filter, Sort } from 'iconsax-react';
+import { ArrowDown, ArrowDown2, DocumentFilter, Filter, Sort } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
 import { GlowCheckbox, GradientDivider } from '@polkadot/extension-polkagate/src/components/index';
@@ -113,10 +113,11 @@ function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): Re
   return (
     <>
       <Grid alignItems= 'center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
-        <DocumentFilter color='#674394' size='18px' variant='Bold' />
+        <DocumentFilter color='#AA83DC' size='18px' variant='Bulk' />
         <Typography color='#AA83DC' variant='B-4'>
           {t('Filter/Sort')}
         </Typography>
+        <ArrowDown2 color={open ? '#AA83DC' : '#FFF'} size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
       </Grid>
       <Popover
         anchorEl={anchorEl}
