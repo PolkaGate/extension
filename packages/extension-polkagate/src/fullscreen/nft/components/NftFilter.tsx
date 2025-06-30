@@ -4,7 +4,7 @@
 import type { FilterAction, FilterState, SortAction, SortState } from '../utils/types';
 
 import { Grid, Popover, Typography } from '@mui/material';
-import { ArrowDown, ArrowDown2, DocumentFilter, Filter, Sort } from 'iconsax-react';
+import { ArrowDown2, DocumentFilter, Filter, Sort } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
 import { GlowCheckbox, GradientDivider } from '@polkadot/extension-polkagate/src/components/index';
