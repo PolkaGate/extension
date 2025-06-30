@@ -1,14 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { FilterAction, FilterState, SortAction, SortState } from '../utils/types';
 
-import { FilterAltOutlined as FilterIcon, FilterList as FilterListIcon, ImportExport as ImportExportIcon } from '@mui/icons-material';
-import { Divider, FormControl, FormControlLabel, Grid, Popover, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
+import { Grid, Popover, Typography } from '@mui/material';
+import { DocumentFilter, Filter, Sort } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
-import Checkbox2 from '../../../components/Checkbox2';
+import { GlowCheckbox, GradientDivider } from '@polkadot/extension-polkagate/src/components/index';
+import PRadio from '@polkadot/extension-polkagate/src/popup/staking/components/Radio';
+
 import { useTranslation } from '../../../hooks';
 
 interface Props {
@@ -18,9 +19,8 @@ interface Props {
   sort: SortState;
 }
 
-const Filters = React.memo(function Filters({ dispatchFilter, dispatchSort, filters, sort }: Props) {
+const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, filters, sort }: Props) {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const onFilters = useCallback((filter: keyof FilterState) => () => {
     dispatchFilter({ filter });
@@ -33,74 +33,69 @@ const Filters = React.memo(function Filters({ dispatchFilter, dispatchSort, filt
   return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', maxWidth: '300px', p: '10px 20px', width: 'max-content' }}>
       <Grid alignItems='center' container item>
-        <FilterListIcon sx={{ color: 'secondary.light', height: '25px', mr: '10px', width: '25px' }} />
-        <Typography fontSize='16px' fontWeight={400}>
+        <Filter color= '#674394' size= '20px' style={{ marginRight: '10px' }} />
+        <Typography color='text.secondary' variant='B-4'>
           {t('Filters')}
         </Typography>
-        <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-        <Checkbox2
+        <GradientDivider style={{ my: '3px' }} />
+        <GlowCheckbox
+          changeState={onFilters('collections')}
           checked={filters.collections}
-          iconStyle={{ marginRight: '6px', width: '20px' }}
           label={t('Collections')}
-          labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-          onChange={onFilters('collections')}
-          style={{ mt: '15px', width: '100%' }}
+          style={{ marginTop: '15px' }}
         />
-        <Checkbox2
+        <GlowCheckbox
+          changeState={onFilters('nft')}
           checked={filters.nft}
-          iconStyle={{ marginRight: '6px', width: '20px' }}
           label={t('NFTs')}
-          labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-          onChange={onFilters('nft')}
-          style={{ mt: '15px', width: '100%' }}
+          style={{ marginTop: '15px' }}
         />
-        <Checkbox2
+        <GlowCheckbox
+          changeState={onFilters('unique')}
           checked={filters.unique}
-          iconStyle={{ marginRight: '6px', width: '20px' }}
           label={t('Uniques')}
-          labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-          onChange={onFilters('unique')}
-          style={{ mt: '15px', width: '100%' }}
+          style={{ marginTop: '15px' }}
         />
-        <Checkbox2
+        <GlowCheckbox
+          changeState={onFilters('kusama')}
           checked={filters.kusama}
-          iconStyle={{ marginRight: '6px', width: '20px' }}
           label={t('Kusama Asset Hub')}
-          labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-          onChange={onFilters('kusama')}
-          style={{ mt: '15px', width: '100%' }}
+          style={{ marginTop: '15px' }}
         />
-        <Checkbox2
+        <GlowCheckbox
+          changeState={onFilters('polkadot')}
           checked={filters.polkadot}
-          iconStyle={{ marginRight: '6px', width: '20px' }}
           label={t('Polkadot Asset Hub')}
-          labelStyle={{ fontSize: '16px', fontWeight: 400 }}
-          onChange={onFilters('polkadot')}
-          style={{ mt: '15px', width: '100%' }}
+          style={{ marginTop: '15px' }}
         />
       </Grid>
       <Grid alignItems='center' container item mt='15px'>
-        <ImportExportIcon sx={{ color: 'secondary.light', height: '30px', mr: '10px', width: '30px' }} />
-        <Typography fontSize='16px' fontWeight={400}>
+        <Sort color= '#674394' size= '20px' style={{ marginRight: '10px' }} />
+        <Typography color='text.secondary' variant='B-4'>
           {t('Sort')}
         </Typography>
-        <Divider sx={{ bgcolor: 'divider', height: '2px', mt: '5px', width: '100%' }} />
-        <FormControl fullWidth>
-          <RadioGroup
-            aria-labelledby='sort-price'
-            name='sort-price'
-          >
-            <FormControlLabel checked={sort.highPrice} control={<Radio style={{ color: theme.palette.secondary.main }} />} label={t('Price: High to Low')} onClick={onSort('highPrice', 'lowPrice')} slotProps={{ typography: { fontWeight: 400 } }} value='highPrice' />
-            <FormControlLabel checked={sort.lowPrice} control={<Radio style={{ color: theme.palette.secondary.main }} />} label={t('Price: Low to High')} onClick={onSort('lowPrice', 'highPrice')} slotProps={{ typography: { fontWeight: 400 } }} value='lowPrice' />
-          </RadioGroup>
-        </FormControl>
+        <GradientDivider style={{ my: '3px' }} />
+        <PRadio
+          boxStyle={{ marginTop: '15px' }}
+          checked={sort.highPrice}
+          label={t('Price: high to low')}
+          onChange={onSort('highPrice', 'lowPrice')}
+          value='highPrice'
+        />
+        <PRadio
+          boxStyle={{ marginTop: '15px' }}
+          checked={sort.lowPrice}
+          label={t('Price: low to high')}
+          onChange={onSort('lowPrice', 'highPrice')}
+          value='lowPrice'
+        />
       </Grid>
     </Grid>
   );
 });
 
-function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
-  const theme = useTheme();
+function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
+  const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -117,13 +112,13 @@ function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): Rea
 
   return (
     <>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', height: 'fit-content', p: 0, width: 'fit-content' }}>
-        <FilterIcon sx={{ color: 'secondary.light', cursor: 'pointer', height: '30px', width: '30px' }} />
+      <Grid alignItems= 'center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
+        <DocumentFilter color='#674394' size='18px' variant='Bold' />
+        <Typography color='#AA83DC' variant='B-4'>
+          {t('Filter/Sort')}
+        </Typography>
       </Grid>
       <Popover
-        PaperProps={{
-          sx: { backgroundImage: 'none', bgcolor: 'background.paper', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'transparent', borderRadius: '7px', boxShadow: theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '0px 0px 25px 0px rgba(0, 0, 0, 0.50)' }
-        }}
         anchorEl={anchorEl}
         anchorOrigin={{
           horizontal: 'right',
@@ -132,9 +127,20 @@ function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): Rea
         id={id}
         onClose={handleClose}
         open={open}
+        slotProps={{
+          paper: {
+            sx: {
+              background: '#05091C',
+              border: '4px solid',
+              borderColor: '#1B133C',
+              borderRadius: '12px',
+              transition: 'all 250ms ease-out'
+            }
+          }
+        }}
         sx={{ mt: '5px' }}
         transformOrigin={{
-          horizontal: 'right',
+          horizontal: 'left',
           vertical: 'top'
         }}
       >

@@ -4,8 +4,7 @@
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from './utils/types';
 
-import { faGem } from '@fortawesome/free-solid-svg-icons';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -13,9 +12,7 @@ import NftManager from '../../class/nftManager';
 import { Warning } from '../../components';
 import { useApiWithChain2, useFullscreen, useTranslation } from '../../hooks';
 import { getAssetHubByChainName } from '../../hooks/useReferendum';
-import FullScreenHeader from '../governance/FullScreenHeader';
-import Bread from '../partials/Bread';
-import { Title } from '../sendFund/InputPage';
+import HomeLayout from '../components/layout';
 import Filters from './components/Filters';
 import NftList from './components/NftList';
 import { SUPPORTED_NFT_CHAINS } from './utils/constants';
@@ -96,49 +93,49 @@ function NFT (): React.ReactElement {
   }, [address, nfts]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader noChainSwitch page='nft' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Bread />
-          <Title
-            height='100px'
-            icon={faGem}
-            padding='0px'
-            text={t('NFT Album')}
-          />
-          {step === STEPS.UNSUPPORTED &&
-            <Grid alignItems='center' container direction='column' display='block' item>
-              <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', pt: '50px', width: '70%' }}>
-                <Warning
-                  fontSize='16px'
-                  fontWeight={500}
-                  isBelowInput
-                  theme={theme}
-                >
-                  {t('The chosen blockchain does not support NFTs/Uniques.')}
-                </Warning>
-              </Grid>
-            </Grid>
-          }
-          {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
-            <>
-              <Typography fontSize='14px' fontWeight={400}>
-                {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
-              </Typography>
-              <Filters
-                items={nfts}
-                setItemsToShow={setItemsToShow}
-              />
-              <NftList
-                apis={apis}
-                nfts={itemsToShow}
-              />
-            </>
-          }
+    <HomeLayout
+      childrenStyle={{ paddingLeft: '25px', position: 'relative', zIndex: 1 }}
+    >
+      <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start' sx={{ width: '100%' }}>
+        <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase' }} variant='H-2'>
+          {t('NFT Album')}
+        </Typography>
+        {!!itemsToShow?.length &&
+          <Typography color='warning.main' sx={{ bgcolor: '#FF4FB926', borderRadius: '12px', height: '25px', minWidth: '38px', textAlign: 'center' }} variant='B-3'>
+            {itemsToShow?.length}
+          </Typography>
+        }
+      </Stack>
+      {step === STEPS.UNSUPPORTED &&
+        <Grid alignItems='center' container direction='column' display='block' item>
+          <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', pt: '50px', width: '70%' }}>
+            <Warning
+              fontSize='16px'
+              fontWeight={500}
+              isBelowInput
+              theme={theme}
+            >
+              {t('The chosen blockchain does not support NFTs/Uniques.')}
+            </Warning>
+          </Grid>
         </Grid>
-      </Grid>
-    </Grid>
+      }
+      {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
+        <>
+          <Typography color='text.secondary' variant='B-4' sx={{ mt: '7px' }}>
+            {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
+          </Typography>
+          <Filters
+            items={nfts}
+            setItemsToShow={setItemsToShow}
+          />
+          <NftList
+            apis={apis}
+            nfts={itemsToShow}
+          />
+        </>
+      }
+    </HomeLayout>
   );
 }
 

@@ -3,14 +3,16 @@
 
 import type { ItemInformation } from '../../fullscreen/nft/utils/types';
 
-import { Grid, type SxProps,Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, Typography } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
-import { ShowBalance } from '../../components';
+import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+
+import { AssetLogo, ShowBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import { amountToMachine } from '../../util/utils';
 
-function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?:SxProps}) {
+function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?: SxProps }) {
   const { t } = useTranslation();
   const { genesisHash, price } = nft;
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -19,20 +21,26 @@ function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?:SxProps})
 
   const priceAsBN = useMemo(() => convertedAmount ? amountToMachine(String(convertedAmount), decimal) : null, [convertedAmount, decimal]);
   const notListed = price === null;
+  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
 
   return (
-    <Grid alignItems='center' container item sx={{...style}}>
+    <Grid alignItems='center' container item sx={{ ...style }}>
       {price &&
-        <ShowBalance
-          balance={priceAsBN}
-          decimal={decimal}
-          decimalPoint={3}
-          token={token}
-          withCurrency
-        />
+        <Stack alignItems='center' columnGap='2px' direction='row'>
+          <AssetLogo assetSize='12px' baseTokenSize='24px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+          <Typography textAlign='left' variant='B-1'>
+            <ShowBalance
+              balance={priceAsBN}
+              decimal={decimal}
+              decimalPoint={3}
+              token={token}
+              withCurrency={false}
+            />
+          </Typography>
+        </Stack>
       }
       {notListed &&
-        <Typography fontSize='14px' fontWeight={500} textAlign='left'>
+        <Typography textAlign='left' variant='B-1'>
           {t('Not listed')}
         </Typography>
       }

@@ -42,7 +42,7 @@ export default function About ({ nft }: { nft: ItemInformation | undefined }): R
         <Stack direction='column' width='100%'>
           <Stack alignItems='start' columnGap='15px' direction='row' sx={{ pt: '15px' }} width='100%'>
             <Box component='img' src={text as string} sx={{ mt: '10px' }} />
-            <Typography color='#EAEBF1' sx={{ '> p': { m: 0 }, width: '100%' }} textAlign='justify' variant='B-5'>
+            <Typography color='#EAEBF1' sx={{ '> p': { m: 0 }, maxHeight: '258px', overflow: 'scroll', width: '100%' }} textAlign='justify' variant='B-5'>
               <ReactMarkdown
                 components={{
                   a: ({ _node, ...props }) => <a style={{ color: '#AA83DC' }} {...props} />

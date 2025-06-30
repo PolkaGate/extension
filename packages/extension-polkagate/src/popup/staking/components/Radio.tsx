@@ -12,7 +12,7 @@ import useIsBlueish from '@polkadot/extension-polkagate/src/hooks/useIsBlueish';
 
 const UnChecked = styled('span')<{ size: number; isBlueish: boolean; isHovered?: boolean }>(({ isBlueish, isHovered, size }) => ({
   '&::after': {
-    backgroundColor: '#809ACB',
+    backgroundColor: isBlueish ? '#809ACB' : '#FFF',
     borderRadius: '999px',
     content: isHovered ? '""' : 'none',
     height: size * 0.6,
@@ -52,21 +52,21 @@ const Checked = styled('span')<{ checked: boolean; isBlueish: boolean; theme: Th
     width: size * 0.44
   },
   '&::before': {
-    background: isBlueish
-      ? 'transparent'
-      : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
-    border: isBlueish ? '3px solid #3988FF' : 'none',
     WebkitMask: isBlueish
       ? 'none'
       : 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
     WebkitMaskComposite: isBlueish ? 'none' : 'xor',
-    maskComposite: isBlueish ? 'none' : 'exclude',
+    background: isBlueish
+      ? 'transparent'
+      : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
     backgroundClip: isBlueish ? 'none' : 'border-box',
+    border: isBlueish ? '3px solid #3988FF' : 'none',
     borderRadius: '999px',
     bottom: 0,
     content: '""',
     height: '100%',
     left: 0,
+    maskComposite: isBlueish ? 'none' : 'exclude',
     opacity: checked ? 1 : 0,
     padding: '2px',
     position: 'absolute',
@@ -85,7 +85,7 @@ const Checked = styled('span')<{ checked: boolean; isBlueish: boolean; theme: Th
 }));
 
 interface Props extends RadioProps {
-  boxStyle?: SxProps<Theme>;
+  boxStyle?: React.CSSProperties;
   checked?: boolean;
   circleSize?: number;
   label?: string;
@@ -96,7 +96,7 @@ interface Props extends RadioProps {
   isHovered?: boolean;
 }
 
-export default function PRadio ({ boxStyle, checked, circleSize = 18, isHovered: isHoveredProp, labeStyle, label, onChange, props, value }: Props) {
+export default function PRadio ({ boxStyle = {}, checked, circleSize = 18, isHovered: isHoveredProp, labeStyle, label, onChange, props, value }: Props) {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
   const [internalHovered, setInternalHovered] = useState(false);
@@ -118,22 +118,25 @@ export default function PRadio ({ boxStyle, checked, circleSize = 18, isHovered:
           setInternalHovered(false);
         }
       }}
-      sx={{ alignItems: 'center', columnGap: label ? '12px' : 0, ...boxStyle }}
+      sx={{ alignItems: 'center', cursor: 'pointer' }}
     >
-      <Radio
-        checked={checked}
-        checkedIcon={<Checked checked={!!checked} isBlueish={isBlueish} size={circleSize} theme={theme} />}
-        color='default'
-        disableRipple
-        icon={<UnChecked isBlueish={isBlueish} isHovered={isHovered} size={circleSize} />}
-        onChange={onChange}
-        style={{ margin: 0, padding: 0 }}
-        value={value}
-        {...props}
-      />
-      <Typography color={checked ? 'text.highlight' : 'text.primary'} sx={labeStyle} variant='B-2'>
-        {label}
-      </Typography>
+      <label htmlFor={`custom-radio_${label}`} style={{ alignItems: 'center', columnGap: label ? '12px' : 0, display: 'flex', ...boxStyle }}>
+        <Radio
+          checked={checked}
+          checkedIcon={<Checked checked={!!checked} isBlueish={isBlueish} size={circleSize} theme={theme} />}
+          color='default'
+          disableRipple
+          icon={<UnChecked isBlueish={isBlueish} isHovered={isHovered} size={circleSize} />}
+          inputProps={{ id: `custom-radio_${label}` }}
+          onChange={onChange}
+          style={{ margin: 0, padding: 0 }}
+          value={value}
+          {...props}
+        />
+        <Typography color={checked ? isBlueish ? 'text.highlight' : 'text.secondary' : 'text.primary'} sx={labeStyle} variant='B-2'>
+          {label}
+        </Typography>
+      </label>
     </Stack>
   );
 }

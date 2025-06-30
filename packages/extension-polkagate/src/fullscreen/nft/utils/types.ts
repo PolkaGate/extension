@@ -132,8 +132,6 @@ export interface FilterAction {
 }
 
 export interface SortState {
-  // newest: boolean;
-  // oldest: boolean;
   lowPrice: boolean;
   highPrice: boolean;
 }

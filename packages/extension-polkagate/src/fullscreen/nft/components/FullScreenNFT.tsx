@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { FullscreenNftModalProps } from '../utils/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
@@ -11,7 +10,7 @@ import React, { useCallback, useEffect } from 'react';
 const MAX_SIZE = '1080px';
 const MAX_FRAME_SIZE = '910px';
 
-export default function FullScreenNFT({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
+export default function FullScreenNFT ({ iFrame, onClose, open, source }: FullscreenNftModalProps): React.ReactElement {
   const theme = useTheme();
 
   // Listen to fullscreen change events to track exit from fullscreen mode

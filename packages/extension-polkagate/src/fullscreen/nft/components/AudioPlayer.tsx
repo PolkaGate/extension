@@ -62,7 +62,7 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
   }, []);
 
   return (
-    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '8px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', mx: '5px' }}>
+    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '8px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
       <audio
         ref={audioRef}
         src={audioUrl ?? undefined}
@@ -70,7 +70,7 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
       <Grid alignItems='center' container item sx={{ m: '5px' }}>
         <IconButton
           onClick={togglePlayPause}
-          sx={{ width: 'fit-content', p: '5px' }}
+          sx={{ p: '5px', width: 'fit-content' }}
         >
           {isPlaying
             ? <PauseCircle color='#AA83DC' size='18' variant='Bold' />
@@ -89,8 +89,8 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
                 width: 8
               },
               color: '#AA83DC',
-              py:'5px',
               height: '2px',
+              py: '5px',
               width: '100%'
             }}
             value={currentTime}
