@@ -97,16 +97,28 @@ function LeftCol ({ gifSource, info, setShowFullscreen }: {
           {t('Collection name')}
         </Typography>
         <Typography color='#EAEBF1' sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
-          {info.collectionName ?? info.collectionId ?? t('Not in a collection')}
+          {info.collectionName || (info.isCollection && info.name) || info.collectionId || t('Not in a collection')}
         </Typography>
         <GradientDivider style={{ margin: '15px 0' }} />
-        <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
-          {t('Price')}
-        </Typography>
-        <NftPrice
-          nft={info}
-          style={{ justifyContent: 'start', mt: '1px' }}
-        />
+        {info.isCollection
+          ? <>
+            <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
+              {t('Items')}
+            </Typography>
+            <Typography color='#EAEBF1' sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
+              {info.items}
+            </Typography>
+          </>
+          : <>
+            <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
+              {t('Price')}
+            </Typography>
+            <NftPrice
+              nft={info}
+              style={{ justifyContent: 'start', mt: '1px' }}
+            />
+          </>
+        }
       </Stack>
       <GradientButton
         StartIcon={Maximize4}
@@ -214,11 +226,15 @@ function NftDetails ({ gifHash, gifSource, info }: { gifHash: string | undefined
             label={t('Collection ID')}
             value={info.collectionId || 'Unknown'}
           />
+          {
+            info.itemId !== undefined &&
           <ItemInfo
             label={t('NFT ID')}
             value={info.itemId || 'Unknown'}
           />
-          {info.creator && info.genesisHash &&
+          }
+          {
+            info.creator && info.genesisHash &&
             <>
               <AccountRow
                 address={info.creator}
@@ -379,6 +395,7 @@ export function NftPopup ({ info, onClose, setShowFullscreen }: Props): React.Re
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
+  console.log(info);
   useEffect(() => {
     const getUniqueGif = async () => {
       if (info.isNft || !info.mediaUri) {
