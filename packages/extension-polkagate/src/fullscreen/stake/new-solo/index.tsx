@@ -11,6 +11,8 @@ import { useAccountAssets, usePrices, useSelectedAccount, useSoloStakingInfo } f
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
+import { StakingPopUps, useStakingPopups } from '../util/utils';
+import Info from './Info';
 
 export default function SoloFullScreen (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
@@ -18,6 +20,7 @@ export default function SoloFullScreen (): React.ReactElement {
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const pricesInCurrency = usePrices();
+  const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
@@ -32,21 +35,30 @@ export default function SoloFullScreen (): React.ReactElement {
   const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
 
   return (
-    <HomeLayout>
-      <Stack columnGap='8px' direction='column' sx={{ height: '685px' }}>
-        <StakingIcon type='solo' />
-        <StakingPortfolioAndTiles
-          availableBalanceToStake={stakingInfo.availableBalanceToStake}
-          genesisHash={genesisHash}
-          redeemable={redeemable}
-          rewards={rewards}
-          staked={staked}
-          toBeReleased={toBeReleased}
-          tokenPrice={tokenPrice}
-          type='solo'
-          unlockingAmount={unlockingAmount}
-        />
-      </Stack>
-    </HomeLayout>
+    <>
+      <HomeLayout>
+        <Stack columnGap='8px' direction='column' sx={{ height: '685px' }}>
+          <StakingIcon type='solo' />
+          <StakingPortfolioAndTiles
+            availableBalanceToStake={stakingInfo.availableBalanceToStake}
+            genesisHash={genesisHash}
+            popupOpener={popupOpener}
+            redeemable={redeemable}
+            rewards={rewards}
+            staked={staked}
+            toBeReleased={toBeReleased}
+            tokenPrice={tokenPrice}
+            type='solo'
+            unlockingAmount={unlockingAmount}
+          />
+        </Stack>
+      </HomeLayout>
+      <Info
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        open={stakingPopup === StakingPopUps.INFO}
+        stakingInfo={stakingInfo}
+      />
+    </>
   );
 }
