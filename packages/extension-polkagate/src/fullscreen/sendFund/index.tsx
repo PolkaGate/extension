@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 import type { Proxy, TransactionDetail, TxInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { Grid, Typography } from '@mui/material';
@@ -55,7 +55,7 @@ export default function SendFund (): React.ReactElement {
   }, []);
 
   const onCloseModal = useCallback(() => {
-    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`);
+    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
   }, [address, assetId, genesisHash, navigate]);
 
   const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
@@ -131,30 +131,31 @@ export default function SendFund (): React.ReactElement {
         }
       </Grid>
       {inputStep !== INPUT_STEPS.SUMMARY
-        ? <DecisionButtons
-          cancelButton
-          direction='horizontal'
-          disabled={buttonDisable}
-          divider
-          dividerStyle={{
-            background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
-            height: '32px'
-          }}
-          onPrimaryClick={onNext}
-          onSecondaryClick={onBack}
-          primaryBtnText={isLoading ? t('Preparing, please wait ...') : t('Next')}
-          primaryButtonProps={{
-            style: { width: '85%' }
-          }}
-          secondaryBtnText={t('Back')}
-          secondaryButtonProps={{
-            StartIcon: ArrowLeft,
-            disabled: inputStep === INPUT_STEPS.SENDER,
-            iconVariant: 'Linear',
-            style: { width: '15%' }
-          }}
-          style={{ justifyContent: 'start', margin: '0', marginTop: '32px', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%', transition: 'all 250ms ease-out' }}
-        />
+        ? (
+          <DecisionButtons
+            cancelButton
+            direction='horizontal'
+            disabled={buttonDisable}
+            divider
+            dividerStyle={{
+              background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+              height: '32px'
+            }}
+            onPrimaryClick={onNext}
+            onSecondaryClick={onBack}
+            primaryBtnText={isLoading ? t('Preparing, please wait ...') : t('Next')}
+            primaryButtonProps={{
+              style: { width: '85%' }
+            }}
+            secondaryBtnText={t('Back')}
+            secondaryButtonProps={{
+              StartIcon: ArrowLeft,
+              disabled: inputStep === INPUT_STEPS.SENDER,
+              iconVariant: 'Linear',
+              style: { width: '15%' }
+            }}
+            style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
+          />)
         : inputTransaction &&
         <SignArea3
           address={address}

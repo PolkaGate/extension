@@ -1,6 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Icon } from 'iconsax-react';
+import type { BN } from '@polkadot/util';
+
 import { useCallback, useState } from 'react';
 
 export enum StakingPopUps {
@@ -27,4 +30,11 @@ export function useStakingPopups () {
   const popupCloser: PopupCloser = useCallback(() => setStakingPopup(StakingPopUps.NONE), []);
 
   return { popupCloser, popupOpener, stakingPopup };
+}
+
+export interface Stats {
+  value: number | string | BN | undefined;
+  label: string;
+  InfoIcon?: Icon;
+  withLogo?: boolean;
 }
