@@ -5,16 +5,17 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid } from '@mui/material';
-import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer, Trade, Wallet } from 'iconsax-react';
-import React from 'react';
+import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade, Wallet } from 'iconsax-react';
+import React, { useMemo } from 'react';
 
-import { type BN, noop } from '@polkadot/util';
+import { type BN } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
 import StakingInfoTile from '../../../popup/staking/partial/StakingInfoTile';
 import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
 import { GlowBall } from '../../../style/VelvetBox';
 import { amountToHuman } from '../../../util/utils';
+import { type PopupOpener, StakingPopUps } from '../util/utils';
 
 interface TileBoxProps {
   genesisHash: string | undefined;
@@ -24,11 +25,15 @@ interface TileBoxProps {
   rewards: BN | undefined;
   tokenPrice: number;
   availableBalanceToStake: BN | undefined;
+  type: 'solo' | 'pool';
+  popupOpener: PopupOpener;
 }
 
-const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, toBeReleased, tokenPrice, unlockingAmount }: TileBoxProps) => {
+const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const isPoolStaking = useMemo(() => type === 'pool', [type]);
 
   return (
     <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '18px', display: 'flex', flexDirection: 'row', gap: '5px', overflow: 'hidden', p: '4px', position: 'relative' }} xs>
@@ -37,8 +42,8 @@ const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, to
         Icon={Moneys}
         buttonsArray={[{
           Icon: Timer,
-          onClick: noop,
-          text: t('Pending Rewards')
+          onClick: isPoolStaking ? popupOpener(StakingPopUps.CLAIM_REWARDS) : popupOpener(StakingPopUps.PENDING_REWARDS),
+          text: isPoolStaking ? t('Rewards') : t('Pending Rewards')
         }]}
         cryptoAmount={rewards}
         decimal={decimal ?? 0}
@@ -46,14 +51,14 @@ const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, to
         isFullScreen
         layoutDirection='row'
         style={{ minWidth: '146px', width: '146px' }}
-        title={t('Rewards paid')}
+        title={isPoolStaking ? t('Claim Rewards') : t('Rewards paid')}
         token={token ?? ''}
       />
       <StakingInfoTile
         Icon={Moneys}
         buttonsArray={[{
           Icon: Strongbox2,
-          onClick: noop,
+          onClick: popupOpener(StakingPopUps.WITHDRAW),
           text: t('Withdraw')
         }]}
         cryptoAmount={redeemable}
@@ -69,7 +74,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, to
         Icon={LockSlash}
         buttonsArray={[{
           Icon: Trade,
-          onClick: noop,
+          onClick: popupOpener(StakingPopUps.RESTAKE),
           text: t('Restake')
         }]}
         cryptoAmount={unlockingAmount}
@@ -77,7 +82,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, to
         fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
         isFullScreen
         layoutDirection='row'
-        onExpand={toBeReleased?.length ? noop : undefined}
+        onExpand={toBeReleased?.length ? popupOpener(StakingPopUps.UNLOCKING) : undefined}
         style={{ minWidth: '146px', width: '146px' }}
         title={t('Unstaking')}
         token={token ?? ''}
@@ -86,7 +91,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, redeemable, rewards, to
         Icon={Wallet}
         buttonsArray={[{
           Icon: Wallet,
-          onClick: noop,
+          onClick: popupOpener(StakingPopUps.STAKE),
           text: t('Stake')
         }]}
         cryptoAmount={availableBalanceToStake}
@@ -112,22 +117,32 @@ interface Props {
   rewards: BN | undefined;
   availableBalanceToStake: BN | undefined;
   tokenPrice: number;
+  popupOpener: PopupOpener;
 }
 
-export default function StakingPortfolioAndTiles ({ availableBalanceToStake, genesisHash, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
+export default function StakingPortfolioAndTiles ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
 
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
       <StakingPortfolio
-        buttons={[{
-          Icon: BuyCrypto,
-          onClick: noop,
-          text: t('Unstake')
-        }]}
+        buttons={[
+          {
+            Icon: BuyCrypto,
+            onClick: popupOpener(StakingPopUps.UNSTAKE),
+            text: t('Unstake')
+          },
+          ...(type === 'solo'
+            ? [{
+              Icon: Timer1,
+              onClick: popupOpener(StakingPopUps.FAST_UNSTAKE),
+              text: t('Fast Unstake')
+            }]
+            : [])
+        ]}
         genesisHash={genesisHash as unknown as string}
         isFullScreen
-        onInfo={noop}
+        onInfo={popupOpener(StakingPopUps.INFO)}
         staked={staked as unknown as BN}
         style={{ gap: '8px', margin: 0, width: '400px' }}
         type={type}
@@ -135,10 +150,12 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, gen
       <TileBox
         availableBalanceToStake={availableBalanceToStake}
         genesisHash={genesisHash}
+        popupOpener={popupOpener}
         redeemable={redeemable}
         rewards={rewards}
         toBeReleased={toBeReleased}
         tokenPrice={tokenPrice}
+        type={type}
         unlockingAmount={unlockingAmount}
       />
     </Container>
