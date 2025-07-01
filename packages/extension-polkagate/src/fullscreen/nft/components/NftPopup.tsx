@@ -53,10 +53,12 @@ function AccountRow ({ address, genesisHash, label }: { label: string, address: 
   );
 }
 
-function LeftCol ({ gifSource, info, setShowFullscreen }: { gifSource: string | null | undefined, info: ItemInformation; setShowFullscreen: React.Dispatch<React.SetStateAction<{
-  iFrame: boolean;
-  source: string | null | undefined;
-} | undefined>> }): React.ReactElement<{ info: ItemInformation; }> {
+function LeftCol ({ gifSource, info, setShowFullscreen }: {
+  gifSource: string | null | undefined, info: ItemInformation; setShowFullscreen: React.Dispatch<React.SetStateAction<{
+    iFrame: boolean;
+    source: string | null | undefined;
+  } | undefined>>
+}): React.ReactElement<{ info: ItemInformation; }> {
   const { t } = useTranslation();
 
   const { iFrame, source } = useMemo(() => {
@@ -95,7 +97,7 @@ function LeftCol ({ gifSource, info, setShowFullscreen }: { gifSource: string | 
           {t('Collection name')}
         </Typography>
         <Typography color='#EAEBF1' sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
-          { info.collectionName ?? info.collectionId ?? t('Not in a collection')}
+          {info.collectionName ?? info.collectionId ?? t('Not in a collection')}
         </Typography>
         <GradientDivider style={{ margin: '15px 0' }} />
         <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
@@ -172,7 +174,7 @@ function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label
   );
 }
 
-function NftDetails ({ gifHash, gifSource, info }: {gifHash: string | undefined, gifSource: string | null | undefined, info: ItemInformation; }): React.ReactElement<{ info: ItemInformation; }> {
+function NftDetails ({ gifHash, gifSource, info }: { gifHash: string | undefined, gifSource: string | null | undefined, info: ItemInformation; }): React.ReactElement<{ info: ItemInformation; }> {
   const { t } = useTranslation();
 
   const chainNameSymbol = useMemo(() => {
@@ -294,7 +296,7 @@ function NftDetails ({ gifHash, gifSource, info }: {gifHash: string | undefined,
   );
 }
 
-function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | null | undefined, gifHash: string | undefined, info: ItemInformation; onClose: () => void;}): React.ReactElement<Props> {
+function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | null | undefined, gifHash: string | undefined, info: ItemInformation; onClose: () => void; }): React.ReactElement<Props> {
   const isDark = useIsDark();
   const { t } = useTranslation();
 
@@ -331,7 +333,7 @@ function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | 
             <ChevronLeft sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
           </IconButton>
           <Typography color='#EAEBF1' sx={{ ml: '53px', textAlign: 'center', textTransform: 'uppercase', width: '80%' }} variant='H-2'>
-            {info.name}
+            {info.name ?? t('unknown')}
           </Typography>
         </Stack>
         <Typography color='#EAEBF1' sx={{ '> p': { m: 0 }, maxHeight: '120px', mt: '30px', overflow: 'scroll', px: '20px', width: '100%' }} textAlign='justify' variant='B-5'>
@@ -342,7 +344,7 @@ function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | 
             }}
             linkTarget='_blank'
           >
-            {String(info.description)}
+            {String(info.description ?? t('No description!'))}
           </ReactMarkdown>
         </Typography>
       </Grid>
