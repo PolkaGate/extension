@@ -47,7 +47,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ m: '2px 0 10px', width: '98%' }}>
-      <Stack alignItems='center' direction='row' justifyContent='flex-start' sx={{ m: '2px 10px', width: 'fit-content' }}>
+      <Stack alignItems='center' direction='row' justifyContent='flex-start' sx={{ m: '2px 10px', overflow: 'hidden', width: '80%' }}>
         <PolkaGateIdenticon
           address={account.address}
           size={36}

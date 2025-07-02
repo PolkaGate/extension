@@ -132,14 +132,15 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
   }, [account, navigate]);
 
   return (
-    <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: 'fit-content', ...style }}>
+    <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: '100%', ...style }}>
       <Identity2
         address={account?.address}
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
         identiconSize={14}
+        nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis'}}
         noIdenticon
         onClick={onClick}
-        style={{ color: '#BEAAD8', variant }}
+        style={{ color: '#BEAAD8', variant, width: '100%' }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>
         {/* Curve */}
