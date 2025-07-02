@@ -167,10 +167,11 @@ export interface ReviewProps {
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transactionInformation: Content[];
-  pool: PoolInfo | undefined;
+  pool?: PoolInfo | undefined;
+  showAccountBox?: boolean;
 }
 
-export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
@@ -179,7 +180,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
-      {isRow
+      {showAccountBox && (isRow
         ? (
           <RowAccountBox
             genesisHash={genesisHash}
@@ -189,7 +190,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
           <AccountBox
             genesisHash={genesisHash}
             selectedAccount={selectedAccount}
-          />)}
+          />))}
       {pool && isRow &&
         <PoolItem
           genesisHash={genesisHash}
