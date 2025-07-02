@@ -3,6 +3,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { KeyringPair } from '@polkadot/keyring/types';
+import type { Content } from '../../partials/Review';
 import type { Proxy, TxResult } from '../types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,9 +16,8 @@ import { Review } from '../../popup/staking/pool-new';
 import { DATE_OPTIONS } from '../constants';
 import { amountToHuman, amountToMachine, isHexToBn } from '../utils';
 import { signAndSend } from './';
-import type { Content } from '../../partials/Review';
 
-export async function createPool(
+export async function createPool (
   api: ApiPromise,
   depositor: string | null,
   signer: KeyringPair,
@@ -76,7 +76,7 @@ export const useUnstakingPool = (
   const isPoolOwner = useMemo(() =>
     String(formatted) === String(stakingInfo.pool?.bondedPool?.roles?.root) ||
     String(formatted) === String(stakingInfo.pool?.bondedPool?.roles?.depositor)
-    , [formatted, stakingInfo.pool?.bondedPool?.roles?.depositor, stakingInfo.pool?.bondedPool?.roles?.root]);
+  , [formatted, stakingInfo.pool?.bondedPool?.roles?.depositor, stakingInfo.pool?.bondedPool?.roles?.root]);
   const poolState = useMemo(() => String(stakingInfo.pool?.bondedPool?.state), [stakingInfo.pool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(stakingInfo.pool?.bondedPool?.memberCounter), [stakingInfo.pool?.bondedPool?.memberCounter]);
 
@@ -535,6 +535,84 @@ export const useWithdrawSolo = (
   return {
     asset,
     redeemable,
+    transactionInformation,
+    tx
+  };
+};
+
+export const useBondExtraSolo = (
+  address: string | undefined,
+  genesisHash: string | undefined
+) => {
+  const { t } = useTranslation();
+
+  const stakingInfo = useSoloStakingInfo(address, genesisHash);
+  const { api, decimal } = useChainInfo(genesisHash);
+  const formatted = useFormatted3(address, genesisHash);
+
+  const bondExtra = api?.tx['staking']['bondExtra'];
+
+  const [bondExtraValue, setBondExtraValue] = useState<BN | null | undefined>();
+
+  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, bondExtra, [bondExtraValue]);
+
+  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
+
+  const errorMessage = useMemo(() => {
+    if (!bondExtraValue || bondExtraValue.isZero() || !stakingInfo.availableBalanceToStake || !api) {
+      return undefined;
+    }
+
+    if (stakingInfo.availableBalanceToStake.isZero()) {
+      return t('Not enough amount to stake more.');
+    }
+
+    if (bondExtraValue.gt(stakingInfo.availableBalanceToStake)) {
+      return t('It is more than the available balance to stake.');
+    }
+
+    return undefined;
+  }, [api, bondExtraValue, stakingInfo.availableBalanceToStake, t]);
+  const transactionInformation: Content[] = useMemo(() => {
+    return [{
+      content: bondExtraValue,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee,
+      title: t('Fee')
+    },
+    {
+      content: staked && bondExtraValue ? (staked as unknown as BN).add(bondExtraValue) : undefined,
+      title: t('Total Stake After'),
+      withLogo: true
+    }];
+  }, [bondExtraValue, estimatedFee, staked, t]);
+  const tx = useMemo(() => bondExtra?.(bondExtraValue), [bondExtra, bondExtraValue]);
+
+  const onInputChange = useCallback((value: string | null | undefined) => {
+    const valueAsBN = value ? amountToMachine(value, decimal) : null;
+
+    setBondExtraValue(valueAsBN);
+  }, [decimal]);
+
+  const onMaxValue = useMemo(() => {
+    if (!stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts?.existentialDeposit) {
+      return '0';
+    }
+
+    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+  }, [stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
+
+  return {
+    availableBalanceToStake: stakingInfo.availableBalanceToStake,
+    bondExtraValue,
+    errorMessage,
+    estimatedFee,
+    onInputChange,
+    onMaxValue,
+    setBondExtraValue,
     transactionInformation,
     tx
   };
