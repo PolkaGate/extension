@@ -10,7 +10,7 @@ import EnableCamera from './partials/EnableCamera';
 import EnableTestNet from './partials/EnableTestNet';
 import Language from './partials/Language';
 
-function Main(): React.ReactElement {
+function Main (): React.ReactElement {
   return (
     <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', p: '10px' }}>
       <EnableTestNet />
