@@ -15,8 +15,9 @@ import { Review } from '../../popup/staking/pool-new';
 import { DATE_OPTIONS } from '../constants';
 import { amountToHuman, amountToMachine, isHexToBn } from '../utils';
 import { signAndSend } from './';
+import type { Content } from '../../partials/Review';
 
-export async function createPool (
+export async function createPool(
   api: ApiPromise,
   depositor: string | null,
   signer: KeyringPair,
@@ -75,7 +76,7 @@ export const useUnstakingPool = (
   const isPoolOwner = useMemo(() =>
     String(formatted) === String(stakingInfo.pool?.bondedPool?.roles?.root) ||
     String(formatted) === String(stakingInfo.pool?.bondedPool?.roles?.depositor)
-  , [formatted, stakingInfo.pool?.bondedPool?.roles?.depositor, stakingInfo.pool?.bondedPool?.roles?.root]);
+    , [formatted, stakingInfo.pool?.bondedPool?.roles?.depositor, stakingInfo.pool?.bondedPool?.roles?.root]);
   const poolState = useMemo(() => String(stakingInfo.pool?.bondedPool?.state), [stakingInfo.pool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(stakingInfo.pool?.bondedPool?.memberCounter), [stakingInfo.pool?.bondedPool?.memberCounter]);
 
@@ -468,6 +469,71 @@ export const useWithdrawClaimPool = (
   return {
     claimPayout,
     myClaimable,
+    redeemable,
+    transactionInformation,
+    tx
+  };
+};
+
+export const useWithdrawSolo = (
+  address: string | undefined,
+  genesisHash: string | undefined,
+  review = false
+) => {
+  const { t } = useTranslation();
+
+  const stakingInfo = useSoloStakingInfo(address, genesisHash);
+  const { api } = useChainInfo(genesisHash);
+  const formatted = useFormatted3(address, genesisHash);
+  const accountAssets = useAccountAssets(address);
+
+  const redeem = api?.tx['staking']['withdrawUnbonded'];
+
+  const [param, setParam] = useState<number | null | undefined>(null);
+
+  const asset = useMemo(() =>
+    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
+  , [accountAssets, genesisHash]);
+  const transferable = useMemo(() => getValue('transferable', asset), [asset]);
+  const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
+
+  useEffect(() => {
+    if (!api || param !== null || !formatted) {
+      return;
+    }
+
+    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
+      const spanCount = optSpans.isEmpty
+        ? 0
+        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
+
+      setParam(spanCount as unknown as number);
+    }).catch(console.error);
+  }, [api, formatted, param]);
+
+  const estimatedFee = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
+
+  const transactionInformation: Content[] = useMemo(() => {
+    return [{
+      content: redeemable,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee,
+      title: t('Fee')
+    },
+    {
+      content: redeemable && transferable ? transferable.add(redeemable) : undefined,
+      description: t('Available balance after redeemable withdrawal'),
+      title: t('Available balance after'),
+      withLogo: true
+    }];
+  }, [estimatedFee, redeemable, t, transferable]);
+  const tx = useMemo(() => redeem?.(param), [redeem, param]);
+
+  return {
+    asset,
     redeemable,
     transactionInformation,
     tx

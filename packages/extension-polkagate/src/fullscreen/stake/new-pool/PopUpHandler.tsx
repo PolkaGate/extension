@@ -8,9 +8,9 @@ import React from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, StakingPopUps } from '../util/utils';
-import Withdraw from '../Withdraw';
 import Info from './Info';
 import Unstake from './unstake';
+import Withdraw from './withdraw';
 
 interface Props {
   address: string | undefined;

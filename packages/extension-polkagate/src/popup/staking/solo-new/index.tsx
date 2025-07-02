@@ -2,21 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
-import type { Content } from '../../../partials/Review';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer1, Trade, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
-import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
-import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
-
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../../../hooks/useAccountSelectedChain';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
-import { getValue } from '../../account/util';
+import { useWithdrawSolo } from '../../../util/api/staking';
+import { updateStorage } from '../../../util/index';
+import { amountToHuman } from '../../../util/numberUtils';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
@@ -47,71 +45,30 @@ export default function Solo (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
-  const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
+  const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);
-  const [param, setParam] = useState<number | null | undefined>(null);
 
-  const redeem = api?.tx['staking']['withdrawUnbonded'];
+  const { asset,
+    redeemable,
+    transactionInformation,
+    tx } = useWithdrawSolo(selectedAccount?.address, genesisHash, review);
 
   useEffect(() => {
     selectedAccount?.address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: genesisHash }).catch(console.error);
   }, [genesisHash, selectedAccount?.address]);
 
-  useEffect(() => {
-    if (!api || param !== null || !formatted) {
-      return;
-    }
-
-    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
-      const spanCount = optSpans.isEmpty
-        ? 0
-        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
-
-      setParam(spanCount as unknown as number);
-    }).catch(console.error);
-  }, [api, formatted, param]);
-
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
-  const transferable = useMemo(() => getValue('transferable', asset), [asset]);
-
   const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
-  const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
 
   const StakingInfoTileCount = [redeemable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // equals and bigger than 1 means the tiles must be displayed in a row
   const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount >= 1 ? 'row' : 'column', [StakingInfoTileCount]);
-
-  const estimatedFee2 = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
-
-  const transactionInformation: Content[] = useMemo(() => {
-    return [{
-      content: redeemable,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    },
-    {
-      content: redeemable && transferable ? transferable.add(redeemable) : undefined,
-      description: t('Available balance after redeemable withdrawal'),
-      title: t('Available balance after'),
-      withLogo: true
-    }];
-  }, [estimatedFee2, redeemable, t, transferable]);
-  const tx = useMemo(() => redeem?.(param), [redeem, param]);
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);

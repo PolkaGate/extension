@@ -10,6 +10,7 @@ import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils
 import Info from './Info';
 import Restake from './restake';
 import Unstake from './unstake';
+import Withdraw from './withdraw';
 
 interface Props {
   address: string | undefined;
@@ -53,6 +54,12 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
         onRestake={onRestake}
         open={stakingPopup === StakingPopUps.UNLOCKING}
         toBeReleased={toBeReleased}
+      />
+      <Withdraw
+        address={address}
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        open={stakingPopup === StakingPopUps.WITHDRAW}
       />
     </>
   );
