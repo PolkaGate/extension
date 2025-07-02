@@ -22,9 +22,10 @@ export interface DraggableModalProps {
   title?: string;
   width?: number;
   RightItem?: React.ReactNode;
+  noCloseButton?: boolean;
 }
 
-export function DraggableModal ({ RightItem, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal ({ RightItem, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton = false, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -124,6 +125,7 @@ export function DraggableModal ({ RightItem, blurBackdrop = true, children, divi
               height: '36px',
               left: '20px',
               position: 'absolute',
+              visibility: noCloseButton ? 'hidden' : 'visible',
               width: '36px',
               zIndex: 1
             }}
