@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
-import { noop, type BN } from '@polkadot/util';
 
 import { useCallback, useState } from 'react';
+
+import { type BN, noop } from '@polkadot/util';
 
 import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
 
