@@ -8,6 +8,7 @@ import React from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, StakingPopUps } from '../util/utils';
+import Withdraw from '../Withdraw';
 import Info from './Info';
 import Unstake from './unstake';
 
@@ -40,6 +41,12 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
         onClose={popupCloser}
         open={stakingPopup === StakingPopUps.UNLOCKING}
         toBeReleased={toBeReleased}
+      />
+      <Withdraw
+        address={address}
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        open={stakingPopup === StakingPopUps.WITHDRAW}
       />
     </>
   );
