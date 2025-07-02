@@ -91,8 +91,8 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         Icon={Wallet}
         buttonsArray={[{
           Icon: Wallet,
-          onClick: popupOpener(StakingPopUps.STAKE),
-          text: t('Stake')
+          onClick: popupOpener(StakingPopUps.BOND_EXTRA),
+          text: t('Stake more')
         }]}
         cryptoAmount={availableBalanceToStake}
         decimal={decimal ?? 0}

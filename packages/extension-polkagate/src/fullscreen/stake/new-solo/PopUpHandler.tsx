@@ -11,6 +11,7 @@ import Info from './Info';
 import Restake from './restake';
 import Unstake from './unstake';
 import Withdraw from './withdraw';
+import BondExtra from './bondExtra';
 
 interface Props {
   address: string | undefined;
@@ -60,6 +61,12 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
         genesisHash={genesisHash}
         onClose={popupCloser}
         open={stakingPopup === StakingPopUps.WITHDRAW}
+      />
+      <BondExtra
+        address={address}
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        open={stakingPopup === StakingPopUps.BOND_EXTRA}
       />
     </>
   );

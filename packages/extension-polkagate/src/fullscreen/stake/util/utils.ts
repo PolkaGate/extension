@@ -15,6 +15,7 @@ export enum StakingPopUps {
   WITHDRAW,
   RESTAKE,
   UNSTAKE,
+  BOND_EXTRA,
   STAKE,
   FAST_UNSTAKE,
   CLAIM_REWARDS,
