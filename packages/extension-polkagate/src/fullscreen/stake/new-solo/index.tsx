@@ -13,6 +13,7 @@ import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
 import { StakingPopUps, useStakingPopups } from '../util/utils';
 import Info from './Info';
+import Unstake from './unstake';
 
 export default function SoloFullScreen (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
@@ -58,6 +59,12 @@ export default function SoloFullScreen (): React.ReactElement {
         onClose={popupCloser}
         open={stakingPopup === StakingPopUps.INFO}
         stakingInfo={stakingInfo}
+      />
+      <Unstake
+        address={selectedAccount?.address}
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        open={stakingPopup === StakingPopUps.UNSTAKE}
       />
     </>
   );
