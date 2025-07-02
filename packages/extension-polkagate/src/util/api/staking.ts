@@ -5,13 +5,15 @@ import type { ApiPromise } from '@polkadot/api';
 import type { KeyringPair } from '@polkadot/keyring/types';
 import type { Proxy, TxResult } from '../types';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSoloStakingInfo, useTranslation } from '../../hooks';
+import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSoloStakingInfo, useTranslation } from '../../hooks';
+import { getValue } from '../../popup/account/util';
+import { Review } from '../../popup/staking/pool-new';
 import { DATE_OPTIONS } from '../constants';
-import { amountToHuman, amountToMachine } from '../utils';
+import { amountToHuman, amountToMachine, isHexToBn } from '../utils';
 import { signAndSend } from './';
 
 export async function createPool (
@@ -383,5 +385,91 @@ export const useRestakeSolo = (
     transactionInformation,
     tx,
     unlockingAmount
+  };
+};
+
+export const useWithdrawClaimPool = (
+  address: string | undefined,
+  genesisHash: string | undefined,
+  review: Review
+) => {
+  const { t } = useTranslation();
+
+  const formatted = useFormatted3(address, genesisHash);
+  const { api } = useChainInfo(genesisHash);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
+  const accountAssets = useAccountAssets(address);
+
+  const redeem = api?.tx['nominationPools']['withdrawUnbonded'];
+  const claimPayout = api?.tx['nominationPools']['claimPayout'];
+
+  const [param, setParam] = useState<[string, number] | null | undefined>(null);
+
+  const transferable = useMemo(() => {
+    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
+
+    return getValue('transferable', asset);
+  }, [accountAssets, genesisHash]);
+  const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
+  const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
+
+  useEffect(() => {
+    if (!api || param !== null || !formatted) {
+      return;
+    }
+
+    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
+      const spanCount = optSpans.isEmpty
+        ? 0
+        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
+
+      setParam([formatted, spanCount]);
+    }).catch(console.error);
+  }, [api, formatted, param]);
+
+  const estimatedFee = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, review === Review.Reward ? claimPayout : redeem, review === Review.Reward ? undefined : param ?? [0]);
+
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: review === Review.Reward ? myClaimable : redeemable,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee,
+      title: t('Fee')
+    },
+    (review === Review.Reward
+      ? {
+        content: myClaimable && transferable ? transferable.add(myClaimable) : undefined,
+        description: t('Available balance after claiming rewards'),
+        title: t('Available balance after'),
+        withLogo: true
+      }
+      : {
+        content: redeemable && transferable ? transferable.add(redeemable) : undefined,
+        description: t('Available balance after redeemable withdrawal'),
+        title: t('Available balance after'),
+        withLogo: true
+      })];
+  }, [transferable, estimatedFee, redeemable, review, myClaimable, t]);
+  const tx = useMemo(() => {
+    if (review === Review.None) {
+      return undefined;
+    } else if (review === Review.Reward && claimPayout) {
+      return claimPayout();
+    } else if (review === Review.Withdraw && redeem && param) {
+      return redeem(...param);
+    } else {
+      return undefined;
+    }
+  }, [review, claimPayout, redeem, param]);
+
+  return {
+    claimPayout,
+    myClaimable,
+    redeemable,
+    transactionInformation,
+    tx
   };
 };

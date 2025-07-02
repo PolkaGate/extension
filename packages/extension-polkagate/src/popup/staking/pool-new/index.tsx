@@ -7,14 +7,14 @@ import type { BN } from '@polkadot/util';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, LockSlash, Moneys, People, Strongbox2 } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
+import { useWithdrawClaimPool } from '../../../util/api/staking';
 import { isHexToBn } from '../../../util/utils';
-import { getValue } from '../../account/util';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
@@ -49,83 +49,24 @@ export default function Pool (): React.ReactElement {
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const { api, decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
   const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
-
-  const redeem = api?.tx['nominationPools']['withdrawUnbonded'];
-  const claimPayout = api?.tx['nominationPools']['claimPayout'];
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<Review>(Review.None);
-  const [param, setParam] = useState<[string, number] | null | undefined>(null);
 
-  useEffect(() => {
-    if (!api || param !== null || !formatted) {
-      return;
-    }
+  const { claimPayout,
+    myClaimable,
+    redeemable,
+    transactionInformation,
+    tx } = useWithdrawClaimPool(selectedAccount?.address, genesisHash, review);
 
-    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
-      const spanCount = optSpans.isEmpty
-        ? 0
-        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
-
-      setParam([formatted, spanCount]);
-    }).catch(console.error);
-  }, [api, formatted, param]);
-
-  const transferable = useMemo(() => {
-    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
-
-    return getValue('transferable', asset);
-  }, [accountAssets, genesisHash]);
   const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
-  const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
-  const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
 
   const StakingInfoTileCount = [redeemable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // equals and bigger than 1 means the tiles must be displayed in a row
   const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount >= 1 ? 'row' : 'column', [StakingInfoTileCount]);
-
-  const estimatedFee2 = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, review === Review.Reward ? claimPayout : redeem, review === Review.Reward ? undefined : param ?? [0]);
-
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: review === Review.Reward ? myClaimable : redeemable,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    },
-    (review === Review.Reward
-      ? {
-        content: myClaimable && transferable ? transferable.add(myClaimable) : undefined,
-        description: t('Available balance after claiming rewards'),
-        title: t('Available balance after'),
-        withLogo: true
-      }
-      : {
-        content: redeemable && transferable ? transferable.add(redeemable) : undefined,
-        description: t('Available balance after redeemable withdrawal'),
-        title: t('Available balance after'),
-        withLogo: true
-      })];
-  }, [transferable, estimatedFee2, redeemable, review, myClaimable, t]);
-  const tx = useMemo(() => {
-    if (review === Review.None) {
-      return undefined;
-    } else if (review === Review.Reward && claimPayout) {
-      return claimPayout();
-    } else if (review === Review.Withdraw && redeem && param) {
-      return redeem(...param);
-    } else {
-      return undefined;
-    }
-  }, [review, claimPayout, redeem, param]);
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
