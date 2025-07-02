@@ -10,9 +10,8 @@ import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
-import { StakingPopUps, useStakingPopups } from '../util/utils';
-import Info from './Info';
-import Unstake from './unstake';
+import { useStakingPopups } from '../util/utils';
+import PopUpHandler from './PopUpHandler';
 
 export default function PoolFullScreen (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
@@ -53,17 +52,12 @@ export default function PoolFullScreen (): React.ReactElement {
           />
         </Stack>
       </HomeLayout>
-      <Info
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.INFO}
-        stakingInfo={stakingInfo}
-      />
-      <Unstake
+      <PopUpHandler
         address={selectedAccount?.address}
         genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.UNSTAKE}
+        popupCloser={popupCloser}
+        stakingInfo={stakingInfo}
+        stakingPopup={stakingPopup}
       />
     </>
   );
