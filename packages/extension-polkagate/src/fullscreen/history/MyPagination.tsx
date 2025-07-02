@@ -11,7 +11,7 @@ interface Props {
   count: number;
 }
 
-function MyPagination({ count, page, setPage }: Props): React.ReactElement {
+function MyPagination ({ count, page, setPage }: Props): React.ReactElement {
   return (
     <Pagination
       color='primary'

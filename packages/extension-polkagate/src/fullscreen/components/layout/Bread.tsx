@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, Clock, Data, Home } from 'iconsax-react';
+import { ArrowCircleRight2, Clock, Data, Home, Triangle } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -38,13 +38,16 @@ function Breadcrumbs (): React.ReactElement {
   }, [navigate]);
 
   const showHome = useMemo(() => {
-    return !pathname.includes('/historyfs') && !pathname.includes('/proxyManagement') && !pathname.includes('/send');
+    const excludedPaths = ['/historyfs', '/proxyManagement', '/send', '/nft'];
+
+    return !excludedPaths.some((path) => pathname.includes(path));
   }, [pathname]);
 
   const breadcrumbMap = useMemo(() => [
     { check: (path: string) => path.includes('/historyfs'), icon: Clock, label: t('History') },
     { check: (path: string) => path.includes('/proxyManagement'), icon: Data, label: t('Proxy Management') },
-    { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') }
+    { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
+    { check: (path: string) => path.includes('/nft'), icon: Triangle, label: t('NFT') }
   ], [t]);
 
   const matchedBreadcrumb = useMemo(() => breadcrumbMap.find(({ check }) => check(pathname)), [breadcrumbMap, pathname]);

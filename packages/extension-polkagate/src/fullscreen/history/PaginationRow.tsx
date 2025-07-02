@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
+import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
 import { Stack, Typography } from '@mui/material';
 import { Firstline } from 'iconsax-react';
@@ -11,28 +12,27 @@ import { DropSelect } from '../../components';
 import { useTranslation } from '../../hooks';
 import MyPagination from './MyPagination';
 
-const DEFAULT_ITEMS_PER_PAGE = 8;
-
 interface Props {
-  count: number;
+  options: DropdownOption[];
   itemsPerPage: string | number;
   page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
   setItemsPerPagePage: React.Dispatch<React.SetStateAction<number | string>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  totalItems: number;
 }
 
-function PaginationRow ({ count, itemsPerPage, page, setItemsPerPagePage, setPage }: Props): React.ReactElement {
+function PaginationRow ({ itemsPerPage, options, page, setItemsPerPagePage, setPage, totalItems }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _itemsPerPage = Number(itemsPerPage);
-  const paginationCount = Math.ceil(count / _itemsPerPage);
+  const paginationCount = Math.ceil(totalItems / _itemsPerPage);
 
   return (
-    <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '56px', p: '12px' }}>
+    <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '56px', p: '12px', width: '100%' }}>
       <Stack columnGap='5px' direction='row'>
         <Firstline color='#674394' size='18px' variant='Bold' />
         <Typography color='#AA83DC' variant='B-4'>
-          {`${(page - 1) * _itemsPerPage + 1} - ${Math.min(page * _itemsPerPage, count)} of ${count} items`}
+          {`${(page - 1) * _itemsPerPage + 1} - ${Math.min(page * _itemsPerPage, totalItems)} of ${totalItems} items`}
         </Typography>
       </Stack>
       {
@@ -49,7 +49,7 @@ function PaginationRow ({ count, itemsPerPage, page, setItemsPerPagePage, setPag
         </Typography>
         <DropSelect
           contentDropWidth={50}
-          defaultValue={DEFAULT_ITEMS_PER_PAGE}
+          defaultValue={options[0].value}
           displayContentType='text'
           dropContentStyle={{
             fontSize: '12px',
@@ -57,7 +57,7 @@ function PaginationRow ({ count, itemsPerPage, page, setItemsPerPagePage, setPag
             padding: '4px 6px'
           }}
           onChange={setItemsPerPagePage}
-          options={[{ text: `${DEFAULT_ITEMS_PER_PAGE}`, value: DEFAULT_ITEMS_PER_PAGE }, { text: '10', value: 10 }, { text: '20', value: 20 }, { text: '50', value: 50 }]}
+          options={options}
           showCheckAsIcon={false}
           simpleArrow
           style={{
@@ -66,7 +66,8 @@ function PaginationRow ({ count, itemsPerPage, page, setItemsPerPagePage, setPag
             columnGap: 0,
             margin: 0,
             minWidth: 'fit-content',
-            padding: 0
+            padding: 0,
+            paddingLeft: '10px'
           }}
           textVariant={'B-4' as Variant}
           value={itemsPerPage}

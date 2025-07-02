@@ -4,7 +4,7 @@
 import { Container, styled, TextField, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme }) => ({
+const StyledTextField = styled(TextField)<{ height?: string, placeholderStyle?: React.CSSProperties }>(({ height, placeholderStyle, theme }) => ({
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& fieldset.MuiOutlinedInput-notchedOutline': {
@@ -33,7 +33,8 @@ const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme 
   },
   '& input::placeholder': {
     color: theme.palette.text.secondary,
-    ...theme.typography['B-4']
+    ...theme.typography['B-4'],
+    ...placeholderStyle
   },
   transition: 'all 150ms ease-out'
 }));
@@ -43,9 +44,10 @@ interface Props {
   style?: React.CSSProperties;
   focused?: boolean;
   placeholder: string;
+  placeholderStyle?: React.CSSProperties;
 }
 
-function SearchField ({ focused = false, onInputChange, placeholder, style }: Props) {
+function SearchField ({ focused = false, onInputChange, placeholder, placeholderStyle, style }: Props) {
   const theme = useTheme();
 
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,11 +58,12 @@ function SearchField ({ focused = false, onInputChange, placeholder, style }: Pr
     <Container disableGutters sx={style}>
       <StyledTextField
         autoComplete='off'
-        autoFocus={focused} 
+        autoFocus={focused}
         fullWidth
         height={style?.height as string}
         onChange={onChange}
         placeholder={placeholder}
+        placeholderStyle={placeholderStyle}
         theme={theme}
         type='text'
       />

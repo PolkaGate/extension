@@ -1642,5 +1642,9 @@
   "Preparing, please wait ...": "",
   "We’re updating your balance — please wait a moment and try again.": "",
   "Networks": "",
-  "Loading, please wait": ""
+  "Loading, please wait": "",
+  "NFT": "",
+  "Price: high to low": "",
+  "Price: low to high": "",
+  "Filter/Sort": ""
 }

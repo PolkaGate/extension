@@ -95,6 +95,13 @@ function HistoryFs (): React.ReactElement {
     setCount(0);
   }, [tab, savedSelectedChain, selectedAccount]);
 
+  const options = [
+    { text: '8', value: 8 },
+    { text: '10', value: 10 },
+    { text: '20', value: 20 },
+    { text: '50', value: 50 }
+  ];
+
   return (
     <HomeLayout>
       <Typography color='text.primary' sx={{ ml: '25px', textTransform: 'uppercase' }} variant='H-2'>
@@ -116,11 +123,12 @@ function HistoryFs (): React.ReactElement {
           notReady={!savedSelectedChain}
         />
         <PaginationRow
-          count={count}
           itemsPerPage={itemsPerPage}
+          options={options}
           page={page}
           setItemsPerPagePage={setItemsPerPagePage}
           setPage={setPage}
+          totalItems={count}
         />
       </VelvetBox>
     </HomeLayout>

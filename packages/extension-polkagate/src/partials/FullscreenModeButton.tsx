@@ -9,6 +9,7 @@ import { useLocation } from 'react-router';
 
 import { MyTooltip } from '../components';
 import { useIsBlueish, useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';
+import useAccountSelectedChain from '../hooks/useAccountSelectedChain';
 import { windowOpen } from '../messaging';
 
 interface Props {
@@ -23,6 +24,7 @@ function FullscreenModeButton ({ url }: Props) {
   const hovered = useIsHovered(buttonContainer);
   const { pathname } = useLocation();
   const account = useSelectedAccount();
+  const maybeSelectedGenesishash = useAccountSelectedChain(account?.address);
   const isBlueish = useIsBlueish();
 
   const onClick = useCallback(() => {
@@ -31,7 +33,7 @@ function FullscreenModeButton ({ url }: Props) {
     }
 
     if (account && pathname.includes('token')) {
-      return windowOpen(`/accountfs/${account.address}/${POLKADOT_GENESIS}/0`).catch(console.error);
+      return windowOpen(`/accountfs/${account.address}/${maybeSelectedGenesishash ?? POLKADOT_GENESIS}/0`).catch(console.error);
     }
 
     if (pathname.includes('history')) {
@@ -39,7 +41,7 @@ function FullscreenModeButton ({ url }: Props) {
     }
 
     return windowOpen('/').catch(console.error);
-  }, [account, pathname, url]);
+  }, [account, maybeSelectedGenesishash, pathname, url]);
 
   const gradientBackgroundStyle = {
     '&::after': {

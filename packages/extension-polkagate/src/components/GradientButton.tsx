@@ -22,6 +22,7 @@ export interface GradientButtonProps {
   showChevron?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   StartIcon?: Icon;
+  startIconVariant?: 'Bulk' | 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'TwoTone' | undefined;
   startIconSize?: number;
   startIconNode?: React.ReactNode;
   text: string;
@@ -44,7 +45,7 @@ export interface GradientButtonProps {
  *
  * @returns {React.ReactElement} The rendered gradient button.
  */
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, style, text }: GradientButtonProps): React.ReactElement<GradientButtonProps> {
+export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, startIconVariant = 'Bulk', style, text }: GradientButtonProps): React.ReactElement<GradientButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
@@ -119,7 +120,7 @@ export default function GradientButton ({ EndIcon, StartIcon, contentPlacement =
 
   return (
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
-      {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
+      {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant={startIconVariant} />}
       {startIconNode && startIconNode}
       {isBusy
         ? <LoaderGif />
