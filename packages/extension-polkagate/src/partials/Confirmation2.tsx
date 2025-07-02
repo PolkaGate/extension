@@ -194,11 +194,12 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
         />
         <StakingActionButton
           onClick={goToExplorer}
-          startIcon={ <Subscan
-            color='#ffffff'
-            height = {13}
-            width = {13}
-          />}
+          startIcon={
+            <Subscan
+              color='#ffffff'
+              height = {13}
+              width = {13}
+            />}
           style={{ width: '345px' }}
           text={t('View On Explorer')}
         />

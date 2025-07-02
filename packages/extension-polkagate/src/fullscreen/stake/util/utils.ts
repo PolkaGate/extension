@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
-import type { BN } from '@polkadot/util';
+import { noop, type BN } from '@polkadot/util';
 
 import { useCallback, useState } from 'react';
+
+import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
 
 export enum StakingPopUps {
   NONE,
@@ -37,4 +39,44 @@ export interface Stats {
   label: string;
   InfoIcon?: Icon;
   withLogo?: boolean;
+}
+
+export const FULLSCREEN_STAKING_TX_FLOW = {
+  ...TRANSACTION_FLOW_STEPS,
+  NONE: 'none'
+};
+
+export type FullScreenTransactionFlow = typeof FULLSCREEN_STAKING_TX_FLOW[keyof typeof FULLSCREEN_STAKING_TX_FLOW];
+
+interface CloseBehavior {
+  showCloseIcon?: boolean;
+  onClose: () => void;
+}
+
+export function getCloseBehavior (
+  flowStep: FullScreenTransactionFlow,
+  handleClosePopup: () => void,
+  setFlowStep: (step: FullScreenTransactionFlow) => void
+): CloseBehavior {
+  switch (flowStep) {
+    case FULLSCREEN_STAKING_TX_FLOW.NONE:
+    case FULLSCREEN_STAKING_TX_FLOW.CONFIRMATION:
+      return {
+        onClose: handleClosePopup,
+        showCloseIcon: true
+      };
+
+    case FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN:
+      return {
+        onClose: noop,
+        showCloseIcon: undefined
+      };
+
+    case FULLSCREEN_STAKING_TX_FLOW.REVIEW:
+    default:
+      return {
+        onClose: () => setFlowStep(FULLSCREEN_STAKING_TX_FLOW.NONE),
+        showCloseIcon: false
+      };
+  }
 }
