@@ -58,6 +58,7 @@ export default function PoolFullScreen (): React.ReactElement {
         popupCloser={popupCloser}
         stakingInfo={stakingInfo}
         stakingPopup={stakingPopup}
+        toBeReleased={toBeReleased}
       />
     </>
   );

@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
+import type { DateAmount, SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { type PopupCloser, StakingPopUps } from '../util/utils';
+import ToBeReleased from '../ToBeReleased';
+import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import Info from './Info';
 import Restake from './restake';
 import Unstake from './unstake';
@@ -14,11 +15,18 @@ interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
   stakingPopup: StakingPopUps;
+  popupOpener: PopupOpener;
   popupCloser: PopupCloser;
   stakingInfo: SoloStakingInfo;
+  toBeReleased: DateAmount[] | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup }: Props): React.ReactElement {
+function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement {
+  const onRestake = useCallback(() => {
+    popupCloser();
+    popupOpener(StakingPopUps.RESTAKE);
+  }, [popupCloser, popupOpener]);
+
   return (
     <>
       <Info
@@ -38,6 +46,13 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
         genesisHash={genesisHash}
         onClose={popupCloser}
         open={stakingPopup === StakingPopUps.RESTAKE}
+      />
+      <ToBeReleased
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        onRestake={onRestake}
+        open={stakingPopup === StakingPopUps.UNLOCKING}
+        toBeReleased={toBeReleased}
       />
     </>
   );

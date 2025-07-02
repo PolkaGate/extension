@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
+import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import React from 'react';
 
+import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, StakingPopUps } from '../util/utils';
 import Info from './Info';
 import Unstake from './unstake';
@@ -15,9 +17,10 @@ interface Props {
   stakingPopup: StakingPopUps;
   popupCloser: PopupCloser;
   stakingInfo: PoolStakingInfo;
+  toBeReleased: DateAmount[] | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup }: Props): React.ReactElement {
+function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement {
   return (
     <>
       <Info
@@ -31,6 +34,12 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
         genesisHash={genesisHash}
         onClose={popupCloser}
         open={stakingPopup === StakingPopUps.UNSTAKE}
+      />
+      <ToBeReleased
+        genesisHash={genesisHash}
+        onClose={popupCloser}
+        open={stakingPopup === StakingPopUps.UNLOCKING}
+        toBeReleased={toBeReleased}
       />
     </>
   );

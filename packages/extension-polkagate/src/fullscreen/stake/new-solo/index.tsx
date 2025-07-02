@@ -57,8 +57,10 @@ export default function SoloFullScreen (): React.ReactElement {
         address={selectedAccount?.address}
         genesisHash={genesisHash}
         popupCloser={popupCloser}
+        popupOpener={popupOpener}
         stakingInfo={stakingInfo}
         stakingPopup={stakingPopup}
+        toBeReleased={toBeReleased}
       />
     </>
   );
