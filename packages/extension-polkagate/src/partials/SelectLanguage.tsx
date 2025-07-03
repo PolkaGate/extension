@@ -5,13 +5,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Box, Fade, Grid, styled, Typography } from '@mui/material';
 import * as flags from 'country-flag-icons/string/3x2';
 import { Translate } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import uiSetting from '@polkadot/ui-settings';
 
-import { ExtensionPopup, GradientButton, SettingsContext } from '../components';
+import { ExtensionPopup, GradientButton } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
-import { useIsExtensionPopup, useTranslation } from '../hooks';
+import { useIsExtensionPopup, useSelectedLanguage, useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
 import { ExtensionPopups } from '../util/constants';
 import { getLanguageOptions, type LanguageOptions } from '../util/getLanguageOptions';
@@ -84,36 +84,30 @@ const LanguageSelect = React.memo(
 
 function Content ({ setPopup }: { setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>; }): React.ReactElement {
   const { t } = useTranslation();
-  const settings = useContext(SettingsContext);
+  const languageTicker = useSelectedLanguage();
 
-  const [selectedLanguage, setSelectedLanguage] = useState<string | undefined>();
+  const [maybeSelectedLanguage, setSelectedLanguage] = useState<string | undefined>();
 
   const options = useMemo(() => getLanguageOptions(), []);
-
-  useEffect(() => {
-    if (selectedLanguage === undefined) {
-      setSelectedLanguage(settings.i18nLang !== 'default' ? settings.i18nLang : options[0].value as string);
-    }
-  }, [options, selectedLanguage, settings.i18nLang]);
 
   const handleLanguageSelect = useCallback((lang: string) => () => setSelectedLanguage(lang), []);
   const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   const applyLanguageChange = useCallback(() => {
-    selectedLanguage && uiSetting.set({ i18nLang: selectedLanguage });
+    maybeSelectedLanguage && uiSetting.set({ i18nLang: maybeSelectedLanguage });
     handleClose();
-  }, [selectedLanguage, handleClose]);
+  }, [maybeSelectedLanguage, handleClose]);
 
   return (
     <Grid container item justifyContent='center' sx={{ position: 'relative', py: '5px', zIndex: 1 }}>
       <LanguageSelect
         handleLanguageSelect={handleLanguageSelect}
         options={options}
-        selectedLanguage={selectedLanguage}
+        selectedLanguage={maybeSelectedLanguage ?? languageTicker}
       />
       <GradientButton
         contentPlacement='center'
-        disabled={settings.i18nLang === selectedLanguage}
+        disabled={!maybeSelectedLanguage || languageTicker === maybeSelectedLanguage}
         onClick={applyLanguageChange}
         style={{
           height: '44px',

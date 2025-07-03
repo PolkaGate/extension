@@ -13,7 +13,7 @@ import { exportAccount, exportAccounts } from '../../../messaging';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import MySnackbar from '../extensionSettings/components/MySnackbar';
-import MySwitch from '../extensionSettings/components/Switch';
+import MySwitch from '../../../components/MySwitch';
 
 /**
  * AccountSettings component allows users to export their accounts as encrypted JSON files.

@@ -10,7 +10,7 @@ import * as React from 'react';
 
 import useIsBlueish from '@polkadot/extension-polkagate/src/hooks/useIsBlueish';
 
-import useIsDark from '../../../../hooks/useIsDark';
+import useIsDark from '../hooks/useIsDark';
 
 interface Props extends SwitchProps {
   columnGap?: string;
@@ -32,7 +32,7 @@ const MySwitch = ({ checked, columnGap, label, onChange, ...props }: Props) => {
         onChange={onChange}
         {...props}
       />
-      <Typography variant='B-1'>
+      <Typography sx={{ cursor: 'pointer' }} variant='B-1'>
         {label}
       </Typography>
     </Stack>
@@ -58,7 +58,7 @@ const StyledSwitch = styled(Switch)<{ isDark: boolean, isBlueish: boolean }>(({ 
     : isDark
       ? '#6743944D'
       : '#CCD2EA'
-  }`,
+    }`,
   borderRadius: '109.71px',
   cursor: 'pointer',
   height: '24px',

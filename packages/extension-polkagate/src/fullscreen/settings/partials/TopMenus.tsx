@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import { Check, I3Dcube, Trade } from 'iconsax-react';
+import { Category, Check, UserOctagon } from 'iconsax-react';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { GradientDivider } from '@polkadot/extension-polkagate/src/style/index';
 
 import { useTranslation } from '../../../hooks';
-import TopMenuItem from './components/TopMenuItem';
+import TopMenuItem from './TopMenuItem';
 
 function TopMenus (): React.ReactElement {
   const { t } = useTranslation();
@@ -21,31 +21,31 @@ function TopMenus (): React.ReactElement {
     border: 'none',
     height: '2px',
     position: 'relative',
-    top: '2px',
+    top: '5px',
     transform: `translateX(${position && ref.current ? position.left - ref.current.getBoundingClientRect().left : 7}px)`,
     transition: 'transform 0.3s ease-in-out',
     width: `${position?.width ? position?.width + 24 : 0}px`
   }), [position]);
 
   return (
-    <Stack direction='column' rowGap='2px'>
+    <Stack direction='column' rowGap='2px' sx={{ width: '100%' }}>
       <Stack columnGap='20px' direction='row' ml='5px' mt='12px' ref={ref}>
         <TopMenuItem
-          Icon={Trade}
-          label={t('Main')}
+          Icon={Category}
+          label={t('Extension settings')}
           path=''
           setPosition={setPosition}
         />
         <TopMenuItem
-          Icon={I3Dcube}
-          label={t('Networks')}
-          path='chains'
+          Icon={UserOctagon}
+          label={t('Account Settings')}
+          path='account'
           setPosition={setPosition}
         />
         <TopMenuItem
           Icon={Check}
-          label={t('Password')}
-          path='password'
+          label={t('About PolkaGate')}
+          path='about'
           setPosition={setPosition}
         />
       </Stack>

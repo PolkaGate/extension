@@ -5,13 +5,13 @@ import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { useSelectedLanguage } from '@polkadot/extension-polkagate/src/hooks/index';
+import useSelectedLanguage from '@polkadot/extension-polkagate/src/hooks/useSelectedLanguage';
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
 
-import { useTranslation } from '../../../../components/translate';
-import useIsDark from '../../../../hooks/useIsDark';
-import SelectLanguage from '../../../../partials/SelectLanguage';
-import { ExtensionPopups } from '../../../../util/constants';
+import { useTranslation } from '../../../components/translate';
+import useIsDark from '../../../hooks/useIsDark';
+import SelectLanguage from '../../../partials/SelectLanguage';
+import { ExtensionPopups } from '../../../util/constants';
 
 export default function Language (): React.ReactElement {
   const { t } = useTranslation();
@@ -33,16 +33,27 @@ export default function Language (): React.ReactElement {
   return (
     <>
       <Stack direction='column'>
-        <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
-          {t('LANGUAGE')}
+        <Typography color='text.primary' fontSize='22px' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4' >
+          {t('Language')}
         </Typography>
-        <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center', mt: '5px' }}>
+        <Stack
+          columnGap='10px' direction='row' sx={{ ':hover': { background: '#2D1E4A' },
+            alignItems: 'center',
+            bgcolor: '#1B133CB2',
+            border: '1px solid #BEAAD833',
+            borderRadius: '12px',
+            height: '44px',
+            mt: '5px',
+            px: '8px',
+            transition: 'all 250ms ease-out',
+            width: '454px' }}
+        >
           <Translate color={isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-          <Stack columnGap='5px' direction='row' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer' }}>
-            <Typography variant='B-1'>
+          <Stack columnGap='5px' direction='row' justifyContent= 'space-between' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', width: '100%' }}>
+            <Typography color= '#BEAAD8' variant='B-4'>
               {language}
             </Typography>
-            <ArrowDown2 color={isDark ? '#EAEBF1' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
+            <ArrowDown2 color={isDark ? '#AA83DC' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
           </Stack>
         </Stack>
       </Stack>

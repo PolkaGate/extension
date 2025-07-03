@@ -14,7 +14,7 @@ import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 import DotIndicator from './components/DotIndicator';
 import PRadio from './components/Radio';
-import MySwitch from './components/Switch';
+import MySwitch from '../../../components/MySwitch';
 
 const BackButton = ({ genesisHash }: { genesisHash: string | undefined; }) => {
   const chain = useMetadata(genesisHash, true);

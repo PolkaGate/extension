@@ -11,6 +11,7 @@ import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageI
 import ManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
+import Settings from '@polkadot/extension-polkagate/src/fullscreen/settings';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen/stake/pool/commonTasks/manageValidators';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
@@ -84,6 +85,10 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: Send,
     path: '/send/:address/:genesisHash/:assetId',
     trigger: 'send'
+  },
+  {
+    Component: Settings,
+    path: '/settingsfs/*'
   },
   {
     Component: SocialRecovery,
