@@ -35,8 +35,8 @@ function TopMenuItem({ Icon, label, path, setPosition }: Props): React.ReactElem
   }, [isSelected, setPosition]);
 
   return (
-    <Stack columnGap='4px' direction='row' onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer' }}>
-      <Icon color={isDark ? (isSelected ? '#FF4FB9' : '#AA83DC') : (isSelected ? '#FF4FB9' : '#8F97B8')} onClick={noop} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
+    <Stack alignItems= 'center' columnGap='4px' direction='row' onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer' }}>
+      <Icon color={isDark ? (isSelected ? '#FF4FB9' : '#AA83DC') : (isSelected ? '#FF4FB9' : '#8F97B8')} onClick={noop} size='18' style={{ cursor: 'pointer' }} variant='Bold' />
       <Typography color={isDark ? (isSelected ? '#FF4FB9' : '#EAEBF1') : (isSelected ? '#291443' : '#8F97B8')} variant='B-2'>
         {label}
       </Typography>

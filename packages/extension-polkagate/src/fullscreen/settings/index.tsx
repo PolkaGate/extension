@@ -11,7 +11,7 @@ import HomeLayout from '../components/layout';
 import TopMenus from './partials/TopMenus';
 import ExtensionSettings from './ExtensionSettings';
 
-export default function Settings(): React.ReactElement {
+export default function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 

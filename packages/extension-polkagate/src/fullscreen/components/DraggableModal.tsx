@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, Close } from '@mui/icons-material';
-import { Box, Grid, IconButton, Modal, Typography, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, Modal, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
@@ -20,11 +20,12 @@ export interface DraggableModalProps {
   showBackIconAsClose?: boolean;
   style?: React.CSSProperties;
   title?: string;
+  TitleLogo: React.ReactNode;
   width?: number;
   RightItem?: React.ReactNode;
 }
 
-export function DraggableModal ({ RightItem, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -130,9 +131,15 @@ export function DraggableModal ({ RightItem, blurBackdrop = true, children, divi
           >
             <CLoseIcon sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
           </IconButton>
-          <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
-            {title}
-          </Typography>
+          <Stack alignItems='center' direction='row' justifyContent='center' sx={{ width: '100%' }}>
+            {TitleLogo &&
+              <span style={{ margin: '0px 5px 0 41px' }}>
+                {TitleLogo}
+              </span>}
+            <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+              {title}
+            </Typography>
+          </Stack>
           {RightItem &&
             <Grid alignItems='center' container item sx={{ position: 'absolute', right: '15px', top: '25px', width: 'fit-content', zIndex: 2 }}>
               {RightItem}

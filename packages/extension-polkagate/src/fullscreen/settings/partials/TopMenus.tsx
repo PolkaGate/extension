@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import { Category, Check, UserOctagon } from 'iconsax-react';
+import { Check, MouseCircle, UserOctagon } from 'iconsax-react';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { GradientDivider } from '@polkadot/extension-polkagate/src/style/index';
@@ -31,7 +31,7 @@ function TopMenus (): React.ReactElement {
     <Stack direction='column' rowGap='2px' sx={{ width: '100%' }}>
       <Stack columnGap='20px' direction='row' ml='5px' mt='12px' ref={ref}>
         <TopMenuItem
-          Icon={Category}
+          Icon={MouseCircle}
           label={t('Extension settings')}
           path=''
           setPosition={setPosition}

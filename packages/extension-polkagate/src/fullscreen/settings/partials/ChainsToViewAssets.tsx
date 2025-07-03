@@ -13,8 +13,9 @@ import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/
 import { ChainLogo, MySwitch, SearchField } from '../../../components';
 import { useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { getStorage, setStorage } from '../../../util';
+import Endpoints from './Endpoints';
 
-interface ItemProps{
+interface ItemProps {
   isLast: boolean;
   isSelected: boolean;
   text: string;
@@ -70,6 +71,7 @@ function ChainsToViewAssets (): React.ReactElement {
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
   const [initialChains, setInitialChains] = useState<Set<string>>(new Set());
   const [showEndpoints, setShowEndpoints] = useState<string>();
+
   const selectedChainsRef = useRef(selectedChains);
 
   useEffect(() => {
@@ -162,7 +164,11 @@ function ChainsToViewAssets (): React.ReactElement {
     return () => setShowEndpoints(genesisHash);
   }, []);
 
-  console.log(showEndpoints)
+  const onCloseEndpoints = useCallback(() => {
+    setShowEndpoints(undefined);
+  }, []);
+
+  console.log(showEndpoints);
   // const onAddNewChain = useCallback(() => {
   //   windowOpen('/addNewChain/').catch(console.error);
   // }, []);
@@ -187,12 +193,19 @@ function ChainsToViewAssets (): React.ReactElement {
             isLast={chainsToList.length - 1 === index}
             isSelected={selectedChains.has(value as string)}
             key={index}
-            onSelect={ onChainSelect}
-            text= {text}
-            value ={String(value)}
+            onSelect={onChainSelect}
+            text={text}
+            value={String(value)}
           />
         ))}
       </Grid>
+      {showEndpoints &&
+        <Endpoints
+          genesisHash={showEndpoints}
+          onClose={onCloseEndpoints}
+          open={Boolean(showEndpoints)}
+        />
+      }
     </Stack>
   );
 }

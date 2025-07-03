@@ -26,6 +26,7 @@ interface ChainInfo {
   chain: Chain | null | undefined;
   chainName: string | undefined;
   decimal: number | undefined;
+  displayName?: string;
   token: string | undefined;
 }
 
@@ -53,10 +54,11 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
         chain: undefined,
         chainName: undefined,
         decimal: undefined,
+        displayName: undefined,
         token: undefined
       };
     }
 
-    return { api, chain, chainName, decimal, token };
+    return { api, chain, chainName, decimal, displayName: chainInfo?.displayName, token };
   }, [api, chain, genesisHash]);
 }
