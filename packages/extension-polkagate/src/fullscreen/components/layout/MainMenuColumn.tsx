@@ -76,6 +76,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={Setting}
+        path='/settingsfs/'
         text={t('Settings')}
       />
       <MenuButton
