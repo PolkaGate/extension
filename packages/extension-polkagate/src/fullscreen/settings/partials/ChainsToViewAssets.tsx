@@ -17,14 +17,14 @@ import Endpoints from './Endpoints';
 
 interface ItemProps {
   isLast: boolean;
-  isSelected: boolean;
+  isEnabled: boolean;
   text: string;
   value: string;
-  onSelect: (value: string) => void
-  chainEndpoints: (value: string) => () => void
+  onSelect: ((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void);
+  chainEndpoints: (value: string) => () => void;
 }
 
-function Item ({ chainEndpoints, isLast, isSelected, onSelect, text, value }: ItemProps): React.ReactElement {
+function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: ItemProps): React.ReactElement {
   return (
     <Grid
       alignItems='center' container item justifyContent='space-between' key={value} sx={{
@@ -40,23 +40,23 @@ function Item ({ chainEndpoints, isLast, isSelected, onSelect, text, value }: It
     >
       <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value)} sx={{ cursor: 'pointer' }}>
         <ChainLogo genesisHash={value} size={24} />
-        <Typography color={isSelected ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
+        <Typography color={isEnabled ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
           {text}
         </Typography>
         <ChevronRight sx={{
           '.hoverable:hover &': {
             transform: 'translateX(5px)'
           },
-          color: isSelected ? 'text.primary' : 'primary.main',
+          color: isEnabled ? 'text.primary' : 'primary.main',
           fontSize: '17px',
           transition: 'transform 250ms ease-out'
         }}
         />
       </Stack>
       <MySwitch
-        checked={isSelected}
-        // eslint-disable-next-line react/jsx-no-bind
-        onChange={() => onSelect(value)}
+        checked={isEnabled}
+        onChange={onSelect}
+        value={value}
       />
     </Grid>
 
@@ -70,7 +70,7 @@ function ChainsToViewAssets (): React.ReactElement {
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
   const [initialChains, setInitialChains] = useState<Set<string>>(new Set());
-  const [showEndpoints, setShowEndpoints] = useState<string>();
+  const [chainToShowEndpoints, setShowEndpoints] = useState<string>();
 
   const selectedChainsRef = useRef(selectedChains);
 
@@ -135,19 +135,25 @@ function ChainsToViewAssets (): React.ReactElement {
     initialChains?.size && setSelectedChains(initialChains);
   }, [initialChains]);
 
-  const onChainSelect = useCallback((value: string) => {
+  const applyChainSelect = useCallback((value: string, checked: boolean) => {
     setSelectedChains((prevChains) => {
       const updatedChains = new Set(prevChains);
 
-      if (updatedChains.has(value)) {
-        updatedChains.delete(value);
-      } else {
+      if (checked) {
         updatedChains.add(value);
+      } else {
+        updatedChains.delete(value);
       }
 
       return updatedChains;
     });
   }, []);
+
+  const onChainSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    const value = event.target.value;
+
+    applyChainSelect(value, checked);
+  }, [applyChainSelect]);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
@@ -168,7 +174,6 @@ function ChainsToViewAssets (): React.ReactElement {
     setShowEndpoints(undefined);
   }, []);
 
-  console.log(showEndpoints);
   // const onAddNewChain = useCallback(() => {
   //   windowOpen('/addNewChain/').catch(console.error);
   // }, []);
@@ -190,8 +195,8 @@ function ChainsToViewAssets (): React.ReactElement {
         {chainsToList.map(({ text, value }, index) => (
           <Item
             chainEndpoints={chainEndpoints}
+            isEnabled={selectedChains.has(value as string)}
             isLast={chainsToList.length - 1 === index}
-            isSelected={selectedChains.has(value as string)}
             key={index}
             onSelect={onChainSelect}
             text={text}
@@ -199,11 +204,13 @@ function ChainsToViewAssets (): React.ReactElement {
           />
         ))}
       </Grid>
-      {showEndpoints &&
+      {chainToShowEndpoints &&
         <Endpoints
-          genesisHash={showEndpoints}
+          genesisHash={chainToShowEndpoints}
+          isEnabled={selectedChains.has(chainToShowEndpoints)}
           onClose={onCloseEndpoints}
-          open={Boolean(showEndpoints)}
+          onEnableChain={applyChainSelect}
+          open={Boolean(chainToShowEndpoints)}
         />
       }
     </Stack>

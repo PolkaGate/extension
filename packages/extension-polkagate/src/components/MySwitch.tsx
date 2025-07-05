@@ -15,14 +15,15 @@ import useIsDark from '../hooks/useIsDark';
 interface Props extends SwitchProps {
   columnGap?: string;
   label?: string;
+  style?: React.CSSProperties;
 }
 
-const MySwitch = ({ checked, columnGap, label, onChange, ...props }: Props) => {
+const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }: Props) => {
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
   return (
-    <Stack columnGap={columnGap} component='label' direction='row'>
+    <Stack columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
         checked={checked}
         disableRipple
@@ -58,7 +59,7 @@ const StyledSwitch = styled(Switch)<{ isDark: boolean, isBlueish: boolean }>(({ 
     : isDark
       ? '#6743944D'
       : '#CCD2EA'
-    }`,
+  }`,
   borderRadius: '109.71px',
   cursor: 'pointer',
   height: '24px',

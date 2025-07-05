@@ -4,7 +4,7 @@
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ChainLogo, DecisionButtons } from '@polkadot/extension-polkagate/src/components/index';
+import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
 import EndpointManager2 from '../../../class/endpointManager2';
 import MySwitch from '../../../components/MySwitch';
@@ -21,17 +21,22 @@ type EndpointsDelay = { name: string, delay: number | null | undefined, value: s
 
 interface Props {
   genesisHash: string;
+  isEnabled: boolean;
   open: boolean;
   onClose: () => void;
+  onEnableChain: (value: string, checked: boolean) => void;
 }
 
-function Endpoints ({ genesisHash, onClose, open }: Props): React.ReactElement {
+function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const refContainer = useRef(null);
+
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
   const { endpoint } = useEndpoint2(genesisHash);
   const endpointOptions = useEndpoints(genesisHash);
 
+  const [mayBeEnabled, setMayBeEnable] = useState<boolean>(isEnabled);
   const [maybeNewEndpoint, setMaybeNewEndpoint] = useState<string | undefined>();
   const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
 
@@ -41,21 +46,26 @@ function Endpoints ({ genesisHash, onClose, open }: Props): React.ReactElement {
     setMaybeNewEndpoint((prev) => prev === AUTO_MODE.value && event.target.value === AUTO_MODE.value ? undefined : event.target.value);
   }, []);
 
+  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
+    setMayBeEnable(checked);
+  }, []);
+
   const onApply = useCallback((): void => {
-    if (!maybeNewEndpoint || !genesisHash) {
-      return;
+    onEnableChain(genesisHash, mayBeEnabled);
+
+    if (maybeNewEndpoint) {
+      const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
+
+      endpointManager.set(genesisHash, {
+        checkForNewOne,
+        endpoint: maybeNewEndpoint,
+        isAuto: maybeNewEndpoint === AUTO_MODE.value,
+        timestamp: Date.now()
+      });
     }
 
-    const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
-
-    endpointManager.set(genesisHash, {
-      checkForNewOne,
-      endpoint: maybeNewEndpoint,
-      isAuto: maybeNewEndpoint === AUTO_MODE.value,
-      timestamp: Date.now()
-    });
     onClose();
-  }, [genesisHash, maybeNewEndpoint, onClose]);
+  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain]);
 
   const endpoints = useMemo(() => {
     if (!endpointOptions.length) {
@@ -112,6 +122,17 @@ function Endpoints ({ genesisHash, onClose, open }: Props): React.ReactElement {
     onClose();
   }, [onClose]);
 
+  const isDisabledApply = useMemo(() => {
+    const noEndpointChange = !maybeNewEndpoint || (endpoint === maybeNewEndpoint && !isAutoMode);
+    const noEnableChange = mayBeEnabled === isEnabled;
+
+    return noEndpointChange && noEnableChange;
+  }, [endpoint, isAutoMode, isEnabled, mayBeEnabled, maybeNewEndpoint]);
+
+  const filteredEndpoints = useMemo(() => {
+    return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
+  }, [endpointsDelay]);
+
   return (
     <DraggableModal
       TitleLogo={<ChainLogo genesisHash={genesisHash} showSquare size={36} />}
@@ -122,27 +143,31 @@ function Endpoints ({ genesisHash, onClose, open }: Props): React.ReactElement {
       title={displayName}
     >
       <Stack direction='column'>
-        <Grid container height='420px' item sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflowY: 'auto' }}>
-          <Grid alignItems='center' container item justifyContent='flex-start' py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '60px', px: '10px', mt: '4px' }}>
-            <MySwitch
-              checked={isAutoMode}
-              columnGap='8px'
-              label={t('Auto Mode')}
-              onChange={onChangeEndpoint}
-              value={AUTO_MODE.value}
-            />
-            <Grid item sx={{ mt: '-5px' }}>
-              <Typography color='#674394' variant='B-5'>
-                {t('Automatically select the highest-performing remote node.')}
-              </Typography>
-            </Grid>
-          </Grid>
-          {endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client')).map(({ delay, name, value }, index) => (
-            <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: index === 0 ? '100px' : '73px', px: '10px', flexWrap: 'nowrap', mt: '4px' }}>
-              {index === 0 &&
+        <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflowY: 'scroll', position: 'relative' }}>
+          <MySwitch
+            checked={mayBeEnabled}
+            columnGap='8px'
+            label={t('Enable Network')}
+            onChange={onEnableNetwork}
+            style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', padding: '0 15px', width: '100%' }}
+            value={mayBeEnabled}
+          />
+          <MySwitch
+            checked={isAutoMode}
+            columnGap='8px'
+            label={t('Auto Node Selection')}
+            onChange={onChangeEndpoint}
+            style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', margin: '8px 0', padding: '0 15px', width: '100%' }}
+            value={AUTO_MODE.value}
+          />
+          {filteredEndpoints?.map(({ delay, name, value }, index) => (
+            <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: '#05091C', borderRadius: index === 0 ? '14px 14px 0 0' : index === filteredEndpoints.length - 1 ? '0 0 14px 14px' : 0, flexWrap: 'nowrap', height: index === 0 ? '100px' : '73px', mt: '2px', px: '10px' }}>
+              {
+                index === 0 &&
                 <Typography color='#7956A5' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ p: '8px' }}>
                   {t('NODES')}
-                </Typography>}
+                </Typography>
+              }
               <Stack alignItems='center' columnGap='10px' direction='row'>
                 <PRadio
                   checked={maybeNewEndpoint === value}
@@ -160,12 +185,12 @@ function Endpoints ({ genesisHash, onClose, open }: Props): React.ReactElement {
               </Grid>
             </Grid>
           ))}
-
+          <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} style={{ borderRadius: '14px', justifySelf: 'center', position: 'sticky', width: '100%' }} />
         </Grid>
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={!maybeNewEndpoint || (endpoint === maybeNewEndpoint && !isAutoMode)}
+          disabled={isDisabledApply}
           onPrimaryClick={onApply}
           onSecondaryClick={_onClose}
           primaryBtnText={t('Apply')}

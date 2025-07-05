@@ -63,6 +63,7 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
           address={address}
           iconTheme={iconTheme}
           size={18}
+          style={{ display: 'flex' }}
         />
         <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-4'>
           {label}
