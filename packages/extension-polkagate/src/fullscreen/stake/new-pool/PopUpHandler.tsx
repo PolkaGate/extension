@@ -31,7 +31,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
         <Info
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={stakingPopup === StakingPopUps.INFO}
           stakingInfo={stakingInfo}
         />);
 
@@ -41,7 +40,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={stakingPopup === StakingPopUps.UNSTAKE}
         />);
 
     case StakingPopUps.UNLOCKING:
@@ -50,7 +48,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
         <ToBeReleased
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={stakingPopup === StakingPopUps.UNLOCKING}
           toBeReleased={toBeReleased}
         />);
 
@@ -60,7 +57,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={stakingPopup === StakingPopUps.WITHDRAW}
         />);
 
     default:

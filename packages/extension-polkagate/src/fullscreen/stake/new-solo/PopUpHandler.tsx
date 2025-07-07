@@ -39,7 +39,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
         <Info
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={true}
           stakingInfo={stakingInfo}
         />
       );
@@ -50,7 +49,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={true}
         />
       );
 
@@ -60,7 +58,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={true}
         />
       );
 
@@ -70,7 +67,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           genesisHash={genesisHash}
           onClose={popupCloser}
           onRestake={onRestake}
-          open={true}
           toBeReleased={toBeReleased}
         />
       );
@@ -81,7 +77,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={true}
         />
       );
 
@@ -91,7 +86,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={true}
         />
       );
 
@@ -101,7 +95,6 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
-          open={true}
         />
       );
 

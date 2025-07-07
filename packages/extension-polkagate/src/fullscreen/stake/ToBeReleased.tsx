@@ -15,11 +15,10 @@ interface Props {
   genesisHash: string | undefined;
   onClose: () => void;
   onRestake?: () => void;
-  open: boolean;
   toBeReleased: DateAmount[] | undefined;
 }
 
-export default function ToBeReleased ({ genesisHash, onClose, onRestake, open, toBeReleased }: Props) {
+export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeReleased }: Props) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash);
 
@@ -28,7 +27,7 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, open, t
       maxHeight={475}
       minHeight={475}
       onClose={onClose}
-      open={open}
+      open
       title={t('Unstaking')}
     >
       <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>

@@ -17,10 +17,9 @@ interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
   onClose: () => void;
-  open: boolean;
 }
 
-export default function Withdraw ({ address, genesisHash, onClose, open }: Props): React.ReactElement {
+export default function Withdraw ({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { transactionInformation, tx } = useWithdrawClaimPool(address, genesisHash, Review.Withdraw);
@@ -53,7 +52,7 @@ export default function Withdraw ({ address, genesisHash, onClose, open }: Props
       minHeight={605}
       noCloseButton={showCloseIcon === undefined}
       onClose={handler}
-      open={open}
+      open
       showBackIconAsClose={!showCloseIcon}
       title={t('Withdraw redeemable')}
     >

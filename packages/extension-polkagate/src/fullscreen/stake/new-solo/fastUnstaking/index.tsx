@@ -19,10 +19,9 @@ interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
   onClose: () => void;
-  open: boolean;
 }
 
-export default function FastUnstaking ({ address, genesisHash, onClose, open }: Props): React.ReactElement {
+export default function FastUnstaking ({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { checkDone,
@@ -71,7 +70,7 @@ export default function FastUnstaking ({ address, genesisHash, onClose, open }: 
       minHeight={POPUP_HEIGHT}
       noCloseButton={showCloseIcon === undefined}
       onClose={handler}
-      open={open}
+      open
       showBackIconAsClose={!showCloseIcon}
       title={t('Fast Unstake')}
     >

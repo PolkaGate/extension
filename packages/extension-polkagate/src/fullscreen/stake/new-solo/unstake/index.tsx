@@ -21,10 +21,9 @@ interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
   onClose: () => void;
-  open: boolean;
 }
 
-function Unstake ({ address, genesisHash, onClose, open }: Props) {
+function Unstake ({ address, genesisHash, onClose }: Props) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
@@ -71,7 +70,7 @@ function Unstake ({ address, genesisHash, onClose, open }: Props) {
       minHeight={605}
       noCloseButton={showCloseIcon === undefined}
       onClose={handler}
-      open={open}
+      open
       showBackIconAsClose={!showCloseIcon}
       title={t('Unstaking')}
     >

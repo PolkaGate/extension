@@ -17,10 +17,9 @@ interface Props {
   genesisHash: string | undefined;
   stakingInfo: PoolStakingInfo;
   onClose: PopupCloser;
-  open: boolean;
 }
 
-export default function Info ({ genesisHash, onClose, open, stakingInfo }: Props): React.ReactElement {
+export default function Info ({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -49,7 +48,7 @@ export default function Info ({ genesisHash, onClose, open, stakingInfo }: Props
       maxHeight={610}
       minHeight={610}
       onClose={onClose}
-      open={open}
+      open
       title={t('On-chain staking info')}
       width={520}
     >

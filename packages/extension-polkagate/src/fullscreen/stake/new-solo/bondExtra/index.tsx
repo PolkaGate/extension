@@ -20,10 +20,9 @@ interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
   onClose: () => void;
-  open: boolean;
 }
 
-export default function BondExtra ({ address, genesisHash, onClose, open }: Props) {
+export default function BondExtra ({ address, genesisHash, onClose }: Props) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
@@ -70,7 +69,7 @@ export default function BondExtra ({ address, genesisHash, onClose, open }: Prop
       minHeight={605}
       noCloseButton={showCloseIcon === undefined}
       onClose={handler}
-      open={open}
+      open
       showBackIconAsClose={!showCloseIcon}
       title={t('Unstaking')}
     >
