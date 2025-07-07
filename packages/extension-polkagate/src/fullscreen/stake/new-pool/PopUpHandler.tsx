@@ -21,10 +21,10 @@ interface Props {
   toBeReleased: DateAmount[] | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement {
+function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   switch (stakingPopup) {
     case StakingPopUps.NONE:
-      return <></>;
+      return null;
 
     case StakingPopUps.INFO:
       return (
@@ -60,7 +60,7 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
         />);
 
     default:
-      return <></>;
+      return null;
   }
 }
 

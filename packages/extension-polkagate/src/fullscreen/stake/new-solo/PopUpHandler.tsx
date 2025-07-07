@@ -24,7 +24,7 @@ interface Props {
   toBeReleased: DateAmount[] | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement {
+function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   const onRestake = useCallback(() => {
     popupCloser();
     popupOpener(StakingPopUps.RESTAKE);
@@ -32,7 +32,7 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
 
   switch (stakingPopup) {
     case StakingPopUps.NONE:
-      return <></>;
+      return null;
 
     case StakingPopUps.INFO:
       return (
@@ -99,7 +99,7 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
       );
 
     default:
-      return <></>;
+      return null;
   }
 }
 
