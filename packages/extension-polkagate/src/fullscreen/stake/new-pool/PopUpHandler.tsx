@@ -22,34 +22,50 @@ interface Props {
 }
 
 function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement {
-  return (
-    <>
-      <Info
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.INFO}
-        stakingInfo={stakingInfo}
-      />
-      <Unstake
-        address={address}
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.UNSTAKE}
-      />
-      <ToBeReleased
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.UNLOCKING}
-        toBeReleased={toBeReleased}
-      />
-      <Withdraw
-        address={address}
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.WITHDRAW}
-      />
-    </>
-  );
+  switch (stakingPopup) {
+    case StakingPopUps.NONE:
+      return <></>;
+
+    case StakingPopUps.INFO:
+      return (
+        <Info
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={stakingPopup === StakingPopUps.INFO}
+          stakingInfo={stakingInfo}
+        />);
+
+    case StakingPopUps.UNSTAKE:
+      return (
+        <Unstake
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={stakingPopup === StakingPopUps.UNSTAKE}
+        />);
+
+    case StakingPopUps.UNLOCKING:
+
+      return (
+        <ToBeReleased
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={stakingPopup === StakingPopUps.UNLOCKING}
+          toBeReleased={toBeReleased}
+        />);
+
+    case StakingPopUps.WITHDRAW:
+      return (
+        <Withdraw
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={stakingPopup === StakingPopUps.WITHDRAW}
+        />);
+
+    default:
+      return <></>;
+  }
 }
 
 export default React.memo(PopUpHandler);
