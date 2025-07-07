@@ -772,6 +772,7 @@ export const useBondExtraPool = (
   }, [decimal]);
 
   return {
+    availableBalanceToStake: stakingInfo.availableBalanceToStake,
     bondAmount,
     errorMessage,
     estimatedFee,
