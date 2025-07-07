@@ -7,11 +7,12 @@ import React, { useCallback } from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
+import BondExtra from './bondExtra';
+import FastUnstake from './fastUnstaking';
 import Info from './Info';
 import Restake from './restake';
 import Unstake from './unstake';
 import Withdraw from './withdraw';
-import BondExtra from './bondExtra';
 
 interface Props {
   address: string | undefined;
@@ -29,47 +30,84 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
     popupOpener(StakingPopUps.RESTAKE);
   }, [popupCloser, popupOpener]);
 
-  return (
-    <>
-      <Info
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.INFO}
-        stakingInfo={stakingInfo}
-      />
-      <Unstake
-        address={address}
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.UNSTAKE}
-      />
-      <Restake
-        address={address}
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.RESTAKE}
-      />
-      <ToBeReleased
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        onRestake={onRestake}
-        open={stakingPopup === StakingPopUps.UNLOCKING}
-        toBeReleased={toBeReleased}
-      />
-      <Withdraw
-        address={address}
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.WITHDRAW}
-      />
-      <BondExtra
-        address={address}
-        genesisHash={genesisHash}
-        onClose={popupCloser}
-        open={stakingPopup === StakingPopUps.BOND_EXTRA}
-      />
-    </>
-  );
+  switch (stakingPopup) {
+    case StakingPopUps.NONE:
+      return <></>;
+
+    case StakingPopUps.INFO:
+      return (
+        <Info
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={true}
+          stakingInfo={stakingInfo}
+        />
+      );
+
+    case StakingPopUps.UNSTAKE:
+      return (
+        <Unstake
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={true}
+        />
+      );
+
+    case StakingPopUps.RESTAKE:
+      return (
+        <Restake
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={true}
+        />
+      );
+
+    case StakingPopUps.UNLOCKING:
+      return (
+        <ToBeReleased
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          onRestake={onRestake}
+          open={true}
+          toBeReleased={toBeReleased}
+        />
+      );
+
+    case StakingPopUps.WITHDRAW:
+      return (
+        <Withdraw
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={true}
+        />
+      );
+
+    case StakingPopUps.BOND_EXTRA:
+      return (
+        <BondExtra
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={true}
+        />
+      );
+
+    case StakingPopUps.FAST_UNSTAKE:
+      return (
+        <FastUnstake
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          open={true}
+        />
+      );
+
+    default:
+      return <></>;
+  }
 }
 
 export default React.memo(PopUpHandler);
