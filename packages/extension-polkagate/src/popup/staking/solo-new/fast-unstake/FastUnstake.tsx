@@ -3,34 +3,36 @@
 
 import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { TickCircle, Warning2 } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
-import { BN, BN_ZERO } from '@polkadot/util';
-
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
-import { amountToHuman } from '../../../../util/utils';
-import { getValue } from '../../../account/util';
+import { useFastUnstaking } from '../../../../util/api/staking';
 import StakingActionButton from '../../partial/StakingActionButton';
 import StakingMenu from '../../partial/StakingMenu';
 
-const CheckEligibility = ({ loading }: { loading: boolean }) => {
+export const CheckEligibility = ({ loading }: { loading: boolean }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
+
+  const style = isExtension
+    ? { mt: '12px', px: '15px', rowGap: '8px', width: '100%' }
+    : { bgcolor: '#05091C', borderRadius: '14px', m: 'auto', mb: '23px', p: '16px', width: '100%' };
 
   return (
-    <Stack direction='column' sx={{ mt: '12px', px: '15px', rowGap: '8px', width: '100%' }}>
+    <Stack direction='column' sx={style}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center' }}>
         <SyncLoader color={theme.palette.text.highlight} loading={loading} size={4} speedMultiplier={0.6} />
         <Typography color='text.highlight' variant='B-2'>
           {t('Checking fast unstake eligibility')}
         </Typography>
       </Grid>
-      <GradientDivider />
+      {isExtension && <GradientDivider />}
     </Stack>
   );
 };
@@ -40,9 +42,11 @@ interface EligibilityItemProps {
   done: boolean | undefined;
 }
 
-const EligibilityItem = ({ done, text }: EligibilityItemProps) => {
+export const EligibilityItem = ({ done, text }: EligibilityItemProps) => {
+  const isExtension = useIsExtensionPopup();
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '6px', display: 'flex' }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', justifyContent: isExtension ? 'normal' : 'center' }}>
       {!done
         ? <Grid sx={{ bgcolor: '#3E4065', borderRadius: '999px', height: '18px', width: '18px' }} />
         : <TickCircle color='#82FFA5' size='18' variant='Bold' />
@@ -54,13 +58,14 @@ const EligibilityItem = ({ done, text }: EligibilityItemProps) => {
   );
 };
 
-const EligibilityStatus = ({ onBack, status }: { status: boolean | undefined, onBack: () => void }) => {
+export const EligibilityStatus = ({ onBack, status }: { status: boolean | undefined, onBack: () => void }) => {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
 
   const size = status === undefined ? '65px' : '80px';
 
   return (
-    <Stack direction='column' sx={{ mt: '20px', px: '15px', rowGap: '8px', width: '100%' }}>
+    <Stack direction='column' sx={{ mt: '20px', px: isExtension ? '15px' : 0, rowGap: '8px', width: '100%' }}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center' }}>
         <Box
           component='img'
@@ -89,7 +94,7 @@ const EligibilityStatus = ({ onBack, status }: { status: boolean | undefined, on
         <NeonButton
           contentPlacement='center'
           onClick={onBack}
-          style={{ height: '44px', marginTop: '10px', width: '345px' }}
+          style={{ height: '44px', marginTop: '10px', width: isExtension ? '345px' : '100%' }}
           text={t('Back')}
         />
       }
@@ -104,66 +109,14 @@ export default function FastUnstake (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const selectedAccount = useSelectedAccount();
   const navigate = useNavigate();
-  const { api, decimal, token } = useChainInfo(genesisHash);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
-  const isExposed = useIsExposed2(genesisHash, stakingInfo);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+
+  const { checkDone,
+    eligibilityCheck,
+    isEligible,
+    transactionInformation,
+    tx } = useFastUnstaking(selectedAccount?.address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
-
-  const transferable = useMemo(() => {
-    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
-
-    return getValue('transferable', asset);
-  }, [accountAssets, genesisHash]);
-
-  const fastUnstake = api?.tx['fastUnstake']['registerFastUnstake'];
-  const estimatedFee = useEstimatedFee2(genesisHash, formatted, fastUnstake?.());
-
-  const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
-  const hasEnoughDeposit = fastUnstakeDeposit && estimatedFee && transferable
-    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_ZERO)
-    : undefined;
-
-  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
-  const redeemable = stakingInfo.stakingAccount?.redeemable;
-
-  const hasUnlockingAndRedeemable = redeemable !== undefined && stakingInfo.stakingAccount
-    ? !!(!redeemable.isZero() || stakingInfo.stakingAccount.unlocking?.length)
-    : undefined;
-
-  const isEligible = useMemo(() => isExposed !== undefined && hasUnlockingAndRedeemable !== undefined && hasEnoughDeposit !== undefined
-    ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
-    : undefined, [hasEnoughDeposit, hasUnlockingAndRedeemable, isExposed]);
-
-  const eligibilityCheck = useMemo(() => {
-    return [
-      { status: hasEnoughDeposit, text: t('Having {{deposit}} {{token}} available to deposit', { replace: { deposit: fastUnstakeDeposit ? amountToHuman(fastUnstakeDeposit, decimal) : ' ... ', token } }) },
-      { status: hasUnlockingAndRedeemable !== undefined ? !hasUnlockingAndRedeemable : undefined, text: t('No redeemable or unstaking funds') },
-      { status: isExposed !== undefined ? !isExposed : undefined, text: t('Not being rewarded in the past {{day}} days', { replace: { day: stakingInfo.stakingConsts?.bondingDuration ?? ' ... ' } }) }
-    ];
-  }, [decimal, fastUnstakeDeposit, hasEnoughDeposit, hasUnlockingAndRedeemable, isExposed, stakingInfo.stakingConsts?.bondingDuration, t, token]);
-
-  const checkDone = useMemo(() => eligibilityCheck.every(({ status }) => status !== undefined), [eligibilityCheck]);
-
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: staked as unknown as BN,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee,
-      title: t('Fee')
-    },
-    {
-      content: staked && transferable ? transferable.add(staked as unknown as BN) : undefined,
-      title: t('Available balance after'),
-      withLogo: true
-    }];
-  }, [transferable, estimatedFee, staked, t]);
-  const tx = useMemo(() => fastUnstake?.(), [fastUnstake]);
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
   const onNext = useCallback(() => setReview(true), []);
