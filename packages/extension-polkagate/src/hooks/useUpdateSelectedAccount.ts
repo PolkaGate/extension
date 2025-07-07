@@ -5,8 +5,16 @@ import { useCallback, useContext, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AccountContext } from '../components';
-import { updateMeta } from '../messaging';
+import { setStorage } from '../util';
+import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
+
+/**
+ * Checks if the given string is a valid hex-encoded genesis hash.
+ */
+function isValidGenesis (hash: string): boolean {
+  return hash.startsWith('0x') && hash.length === 66;
+}
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const { accounts } = useContext(AccountContext);
@@ -22,18 +30,21 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
 
     const pathParts = location.pathname.split('/');
 
+    const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p));
+    const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
+
     // Validate expected path format
-    if (pathParts.length < 4) {
+    if (maybeAddressIndex === -1) {
       console.warn('Unexpected path structure:', location.pathname);
 
       return;
     }
 
-    if (savedSelectedChain) {
-      pathParts[3] = savedSelectedChain;
+    if (savedSelectedChain && maybeGenesisIndex !== -1) {
+      pathParts[maybeGenesisIndex] = savedSelectedChain;
     }
 
-    pathParts[2] = newAddress;
+    pathParts[maybeAddressIndex] = newAddress;
 
     const newPath = pathParts.join('/');
 
@@ -62,27 +73,11 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    const accountToUnselect = accounts.find(({ selected }) => selected);
+    const account = accounts.find((acc) => acc.address === address);
 
-    if (!accountToUnselect) {
-      updateMeta(address, JSON.stringify({ selected: true })).catch(console.error);
+    setStorage('selectedAccount', account).finally(() => handleExit()).catch(console.error);
 
-      return;
-    }
-
-    if (accountToUnselect.address !== address) {
-      Promise
-        .all(
-          [
-            updateMeta(address, JSON.stringify({ selected: true })),
-            updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))
-          ])
-        .catch(console.error)
-        .finally(handleExit);
-    } else {
-      handleExit();
-    }
     // Using accounts.length here to avoid unnecessary re-renders due to deep object comparison
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts.length, address, handleExit, changeUrl]);
+  }, [accounts.length, address, handleExit]);
 }

@@ -141,4 +141,4 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
   );
 }
 
-export default AccountSelection;
+export default React.memo(AccountSelection);

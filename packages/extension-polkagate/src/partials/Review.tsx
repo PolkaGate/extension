@@ -22,7 +22,7 @@ import getLogo2 from '../util/getLogo2';
 import { toShortAddress } from '../util/utils';
 
 interface AccountBoxProps {
-  selectedAccount: AccountJson | undefined;
+  selectedAccount: AccountJson | null | undefined;
   genesisHash: string;
 }
 

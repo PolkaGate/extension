@@ -38,7 +38,7 @@ function AccountList (): React.ReactElement {
               const justOneAccount = isFirstAccount && isLast;
 
               const totalIndex = totalAccountsBefore + accIndex;
-              const delay = totalIndex * 0.4;
+              const delay = totalIndex * 0.2;
 
               return (
                 <motion.div

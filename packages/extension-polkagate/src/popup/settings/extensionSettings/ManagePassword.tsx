@@ -4,7 +4,7 @@
 import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ActionContext, GradientButton, MatchPasswordField, PasswordInput } from '../../../components';
+import { ActionContext, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
 import { type LoginInfo } from '../../../components/Loading';
 import { useTranslation } from '../../../components/translate';
 import { getStorage, setStorage } from '../../../util';
@@ -64,13 +64,14 @@ export default function ManagePassword (): React.ReactElement {
   }, [currentPassword, hasAlreadySetPassword, newPassword, readyToGo, t]);
 
   return (
-    <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ borderRadius: '14px', display: 'block', p: '1px' }}>
-      <WarningBox
-        description={t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
-        title={t('REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE')}
-      />
-      <Stack columnGap='15px' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', p: '15px' }}>
-        {hasAlreadySetPassword &&
+    <Motion>
+      <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ borderRadius: '14px', display: 'block', p: '1px' }}>
+        <WarningBox
+          description={t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
+          title={t('REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE')}
+        />
+        <Stack columnGap='15px' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', m: '5px 15px' }}>
+          {hasAlreadySetPassword &&
           <PasswordInput
             focused
             hasError={passwordError}
@@ -78,29 +79,30 @@ export default function ManagePassword (): React.ReactElement {
             style={{ marginBottom: '18px' }}
             title={t('Current Password')}
           />
-        }
-        <MatchPasswordField
-          focused
-          hashPassword
-          onSetPassword={onSetPassword}
-          setConfirmedPassword={setNewPassword}
-          style={{ marginBottom: '15px' }}
-          title1={t('New Password')}
-          title2={t('Confirm Password')}
+          }
+          <MatchPasswordField
+            focused
+            hashPassword
+            onSetPassword={onSetPassword}
+            setConfirmedPassword={setNewPassword}
+            style={{ marginBottom: '15px' }}
+            title1={t('New Password')}
+            title2={t('Confirm Password')}
+          />
+          <GradientButton
+            disabled={!readyToGo}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onClick={onSetPassword}
+            style={{ flex: 'none', height: '48px', width: '100%' }}
+            text={t('Set password')}
+          />
+        </Stack>
+        <MySnackbar
+          onClose={onClose}
+          open={showSnackbar}
+          text={snackbarText}
         />
-        <GradientButton
-          disabled={!readyToGo}
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onClick={onSetPassword}
-          style={{ flex: 'none', height: '48px', width: '100%' }}
-          text={t('Set password')}
-        />
-      </Stack>
-      <MySnackbar
-        onClose={onClose}
-        open={showSnackbar}
-        text={snackbarText}
-      />
-    </Grid>
+      </Grid>
+    </Motion>
   );
 }

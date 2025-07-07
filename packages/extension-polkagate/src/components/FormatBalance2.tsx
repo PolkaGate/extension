@@ -48,7 +48,8 @@ function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [num
 }
 
 function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number, tokenColor?: string | undefined): React.ReactNode {
-  const maybeTilde = postfix && parseFloat(postfix) > parseFloat(postfix.slice(0, decimalPoint)) ? '~' : '';
+  const trimmedPostfix = postfix?.replace(/0+$/, '') || '';
+  const maybeTilde = postfix && parseFloat(trimmedPostfix) > parseFloat(trimmedPostfix.slice(0, decimalPoint)) ? '~' : '';
 
   return <>{`${maybeTilde}${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span style={{ color: tokenColor ?? 'inherit' }}> {unit}</span>{label}</>;
 }

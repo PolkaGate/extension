@@ -18,8 +18,9 @@ import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { AssetLogo, FormatPrice, Identity2 } from '../../components';
 import { useAccountAssets, useCurrency, usePrices } from '../../hooks';
+import { setStorage } from '../../util';
 
-interface Props{
+interface Props {
   account: AccountWithChildren | undefined;
   onClick?: () => void;
   style?: React.CSSProperties;
@@ -123,18 +124,23 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
   const extraTokensCount = useMemo(() => assetsToShow ? assetsToShow.length - 4 : 0, [assetsToShow]);
 
   const goToNft = useCallback(() => {
-    account?.address && navigate(`/nft/${account.address}`) as void;
-  }, [account?.address, navigate]);
+    if (!account) {
+      return;
+    }
+
+    setStorage('selectedAccount', account).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
+  }, [account, navigate]);
 
   return (
-    <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: 'fit-content', ...style }}>
+    <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: '100%', ...style }}>
       <Identity2
         address={account?.address}
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
         identiconSize={14}
+        nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis'}}
         noIdenticon
         onClick={onClick}
-        style={{ color: '#BEAAD8', variant }}
+        style={{ color: '#BEAAD8', variant, width: '100%' }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>
         {/* Curve */}
@@ -174,20 +180,20 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         </Grid>
         {
           extraTokensCount > 0 &&
-              <Grid alignItems='center' container item justifyContent='center' sx={{ border: '2px dashed #9C28B7', borderRadius: '9px', height: '18px', mb: '-2px', minWidth: '24px', ml: '3px', width: 'fit-content' }}>
-                <Typography color='#EAEBF1' fontWeight={600} sx={{ letterSpacing: '-0.6px', lineHeight: 1, p: '0 4px 0 3px' }} variant='B-4'>
-                  {`+${extraTokensCount}`}
-                </Typography>
-              </Grid>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ border: '2px dashed #9C28B7', borderRadius: '9px', height: '18px', mb: '-2px', minWidth: '24px', ml: '3px', width: 'fit-content' }}>
+            <Typography color='#EAEBF1' fontWeight={600} sx={{ letterSpacing: '-0.6px', lineHeight: 1, p: '0 4px 0 3px' }} variant='B-4'>
+              {`+${extraTokensCount}`}
+            </Typography>
+          </Grid>
         }
         {
           !!myNfts?.length &&
-              <Stack alignItems='center' direction='row' mb='-2px' onClick={goToNft} sx={{ cursor: 'pointer' }}>
-                <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)', height: '1px', transform: 'rotate(90deg)', width: '16px' }} />
-                <Typography color='#AA83DC' variant='B-1'>
-                  {`${myNfts?.length} NFTs`}
-                </Typography>
-              </Stack>
+          <Stack alignItems='center' direction='row' mb='-2px' onClick={goToNft} sx={{ cursor: 'pointer' }}>
+            <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)', height: '1px', transform: 'rotate(90deg)', width: '16px' }} />
+            <Typography color='#AA83DC' variant='B-1'>
+              {`${myNfts?.length} NFTs`}
+            </Typography>
+          </Stack>
         }
       </Box>
     </Stack>

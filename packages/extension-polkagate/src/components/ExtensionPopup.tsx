@@ -44,6 +44,24 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
+const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { pt?: number, withoutBackground?: boolean }) {
+  const isBlueish = useIsBlueish();
+
+  if (withoutBackground) {
+    return null;
+  }
+
+  return (
+    <>
+      {
+        isBlueish
+          ? <BlueGradient style={{ top: `${-120 + (pt ?? 0)}px` }} />
+          : <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />
+      }
+    </>
+  );
+});
+
 function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
@@ -107,16 +125,8 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
               {RightItem}
             </Grid>}
           {!withoutTopBorder && <GradientDivider />}
-          {!withoutBackground &&
-            <>
-              {
-                isBlueish
-                  ? <BlueGradient style={{ top: `${-120 + (pt ?? 0)}px` }} />
-                  : <RedGradient style={{ top: `${-140 + (pt ?? 0)}px` }} />
-              }
-            </>
-          }
-          <Box id='boxContainer' sx={{ maxHeight, overflowY: 'auto', position: 'relative', width: '100%' }}>
+          <Gradient pt={pt} withoutBackground={withoutBackground} />
+          <Box id='boxContainer' sx={{ maxHeight, overflow: 'hidden', overflowY: 'auto', position: 'relative', width: '100%' }}>
             {children}
           </Box>
         </Grid>

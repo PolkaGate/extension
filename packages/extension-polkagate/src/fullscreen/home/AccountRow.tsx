@@ -6,14 +6,13 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
-import { AccountContext } from '../../components';
 import { useIsHovered } from '../../hooks';
+import { setStorage } from '../../util';
 import { Account } from '../components';
 import AccountDropDown from './AccountDropDown';
 
@@ -34,34 +33,21 @@ function GoToAccountButton ({ onClick }: { onClick: () => void }): React.ReactEl
 }
 
 function AccountRow ({ account }: { account: AccountWithChildren }): React.ReactElement {
-  const { accounts } = useContext(AccountContext);
   const navigate = useNavigate();
 
   const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); // 'genesisHash/assetId'
 
   const goToAccountPage = useCallback(() => {
-    const address = account?.address;
-
-    if (!address) {
+    if (!account) {
       return;
     }
 
-    // update account as selected to be consistent with extension
-    const accountToUnselect = accounts.find(({ address: accountAddress, selected }) => selected && address !== accountAddress);
-
-    Promise.all([
-      updateMeta(address, JSON.stringify({ selected: true })),
-      ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
-    ])
-      .catch(console.error)
-      .finally(() => {
-        navigate(`accountfs/${address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`) as void;
-      });
-  }, [account?.address, accounts, defaultGenesisAndAssetId, navigate]);
+    setStorage('selectedAccount', account).finally(()=> navigate(`accountfs/${account.address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`)).catch(console.error);
+  }, [account, defaultGenesisAndAssetId, navigate]);
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ m: '2px 0 10px', width: '98%' }}>
-      <Stack alignItems='center' direction='row' justifyContent='flex-start' sx={{ m: '2px 10px', width: 'fit-content' }}>
+      <Stack alignItems='center' direction='row' justifyContent='flex-start' sx={{ m: '2px 10px', overflow: 'hidden', width: '80%' }}>
         <PolkaGateIdenticon
           address={account.address}
           size={36}

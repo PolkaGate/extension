@@ -7,7 +7,7 @@ import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ActionButton, ActionContext, ChainLogo, SearchField } from '../../../components';
+import { ActionButton, ActionContext, ChainLogo, Motion, SearchField } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../components/translate';
 import { useGenesisHashOptions } from '../../../hooks';
@@ -124,13 +124,13 @@ export default function Chains (): React.ReactElement {
   const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
 
   return (
-    <Grid container item>
+    <Motion>
       <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', p: '10px' }}>
         <Grid container item>
           <SearchField
             onInputChange={onSearch}
             placeholder='🔍 Search chain'
-            style={{ borderRadius: '12px', height: '36px', marginBottom: '10px', marginTop: '10px' }}
+            style={{ borderRadius: '12px', height: '36px', marginBottom: '10px' }}
           />
         </Grid>
         {chainsToList.map(({ text, value }, index) => (
@@ -182,6 +182,6 @@ export default function Chains (): React.ReactElement {
         }}
         variant='contained'
       />
-    </Grid>
+    </Motion>
   );
 }

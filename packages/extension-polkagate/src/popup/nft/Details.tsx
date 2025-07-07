@@ -62,7 +62,7 @@ export default function Details ({ nft }: { nft: ItemInformation | undefined }):
             <Stack direction='column' sx={{ mt: '5px' }}>
               <ItemInfo
                 label={t('Collection name')}
-                value={nft.collectionName || t('Not in a collection')}
+                value={nft.collectionName ?? nft.collectionId ?? t('Not in a collection')}
               />
               <Divider
                 orientation='horizontal' sx={{
@@ -86,11 +86,11 @@ export default function Details ({ nft }: { nft: ItemInformation | undefined }):
           <Stack columnGap='15px' direction='row' sx={{ mt: '10px' }}>
             <ItemInfo
               label={t('Collection ID')}
-              value={nft.itemId || 'Unknown'}
+              value={nft.collectionId || 'Unknown'}
             />
             <ItemInfo
               label={t('NFT ID')}
-              value={nft.collectionId || 'Unknown'}
+              value={nft.itemId || 'Unknown'}
             />
             <ItemInfo
               label={t('Network')}
