@@ -19,6 +19,47 @@ interface WindowChangerProps {
   dateInterval: string | undefined;
 }
 
+const formatDateInterval = (interval: string) => {
+  // Match patterns like "Jun 23 - Jul 7" or "Jun 23 - 29"
+  const crossMonthPattern = /^(\w{3}) (\d{1,2}) - (\w{3}) (\d{1,2})$/;
+  const sameMonthPattern = /^(\w{3}) (\d{1,2}) - (\d{1,2})$/;
+
+  const crossMonthMatch = interval.match(crossMonthPattern);
+
+  if (crossMonthMatch) {
+    const [, month1, day1, month2, day2] = crossMonthMatch;
+
+    return (
+      <>
+        <Typography color='#AA83DC' component='span' variant='H-2'>{month1}</Typography>
+        <Typography color='text.primary' component='span' variant='H-2'>{` ${day1} - `}</Typography>
+        <Typography color='#AA83DC' component='span' variant='H-2'>{month2}</Typography>
+        <Typography color='text.primary' component='span' variant='H-2'>{` ${day2}`}</Typography>
+      </>
+    );
+  }
+
+  const sameMonthMatch = interval.match(sameMonthPattern);
+
+  if (sameMonthMatch) {
+    const [, month, day1, day2] = sameMonthMatch;
+
+    return (
+      <>
+        <Typography color='#AA83DC' component='span' variant='H-2'>{month}</Typography>
+        <Typography color='text.primary' component='span' variant='H-2'>{` ${day1} - ${day2}`}</Typography>
+      </>
+    );
+  }
+
+  // Fallback for unexpected formats
+  return (
+    <Typography color='text.primary' component='span' variant='H-2'>
+      {interval}
+    </Typography>
+  );
+};
+
 const WindowChanger = ({ dateInterval, onNextPeriod, onPreviousPeriod }: WindowChangerProps) => {
   const chevronStyle = {
     ':hover': { color: '#EAEBF1' },
@@ -27,17 +68,14 @@ const WindowChanger = ({ dateInterval, onNextPeriod, onPreviousPeriod }: WindowC
     boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
     color: '#AA83DC',
     cursor: 'pointer',
-    fontSize: '24px'
+    fontSize: '30px'
   };
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, minWidth: '190px', width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'space-between', m: 0, minWidth: '190px', width: 'fit-content' }}>
       <ChevronLeft onClick={onPreviousPeriod} sx={chevronStyle} />
       {dateInterval
-        ? (
-          <Typography color='text.highlight' variant='H-2'>
-            {dateInterval}
-          </Typography>)
+        ? formatDateInterval(dateInterval)
         : (
           <Skeleton
             animation='wave'
