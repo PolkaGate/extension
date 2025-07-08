@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { SELECTED_ACCOUNT_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 
@@ -128,7 +129,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       return;
     }
 
-    setStorage('selectedAccount', account).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
   }, [account, navigate]);
 
   return (

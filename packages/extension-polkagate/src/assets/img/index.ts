@@ -8,6 +8,7 @@ export { default as fullscreenBackground } from './fullscreenBackground.svg';
 export { default as homeBackgroundEffect } from './homeBackground.svg';
 export { default as ledgerErrorImage } from './ledgerErrorImage.svg';
 export { default as modalEffect } from './modalEffect.svg';
+export { default as NoNFT } from './NoNFT.svg';
 export { default as onboardingBackground } from './onboardingBackground.svg';
 export { default as user } from './user.png';
 export { default as Item1 } from './welcomeItems/Item1.svg';

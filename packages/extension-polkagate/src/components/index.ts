@@ -96,6 +96,7 @@ export { default as Popup } from './Popup';
 export { default as ProfileInput } from './ProfileInput';
 export { default as Progress } from './Progress';
 export { default as ProxyTable } from './ProxyTable';
+export { default as Radio } from './Radio';
 export { default as Recoverability } from './Recoverability';
 export { default as RemoteNodeSelector } from './RemoteNodeSelector';
 export { default as RemoveAuth } from './RemoveAuth';

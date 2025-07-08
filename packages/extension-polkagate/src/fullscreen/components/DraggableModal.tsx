@@ -20,7 +20,7 @@ export interface DraggableModalProps {
   showBackIconAsClose?: boolean;
   style?: React.CSSProperties;
   title?: string;
-  TitleLogo: React.ReactNode;
+  TitleLogo?: React.ReactNode;
   width?: number;
   RightItem?: React.ReactNode;
 }
@@ -133,9 +133,10 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
           </IconButton>
           <Stack alignItems='center' direction='row' justifyContent='center' sx={{ width: '100%' }}>
             {TitleLogo &&
-              <span style={{ margin: '0px 5px 0 41px' }}>
+              <span style={{ margin: '0px 8px 0 44px' }}>
                 {TitleLogo}
-              </span>}
+              </span>
+            }
             <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
               {title}
             </Typography>

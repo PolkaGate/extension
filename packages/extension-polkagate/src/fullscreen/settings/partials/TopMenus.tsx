@@ -32,7 +32,7 @@ function TopMenus (): React.ReactElement {
       <Stack columnGap='20px' direction='row' ml='5px' mt='12px' ref={ref}>
         <TopMenuItem
           Icon={MouseCircle}
-          label={t('Extension settings')}
+          label={t('Extension Settings')}
           path=''
           setPosition={setPosition}
         />

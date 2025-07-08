@@ -39,6 +39,7 @@ function RenameAccount({ address, open, setPopup }: Props): React.ReactElement {
 
   return (
     <SharePopup
+      modalProps={{ showBackIconAsClose: true }}
       modalStyle={{ minHeight: '200px' }}
       onClose={handleClose}
       open={open !== undefined}

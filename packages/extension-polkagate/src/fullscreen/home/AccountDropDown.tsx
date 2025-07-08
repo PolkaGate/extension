@@ -3,14 +3,16 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
-import { Data, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
+import { Data, DocumentDownload, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
+import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import ExportAccount from '../settings/partials/ExportAccount';
 import RemoveAccount from './RemoveAccount';
 import RenameAccount from './RenameAccount';
 
@@ -18,15 +20,11 @@ interface Props {
   address: string | undefined;
   disabled?: boolean;
   iconSize?: string;
+  name: string | undefined;
   style?: SxProps<Theme>;
 }
 
-enum ACCOUNT_POPUP {
-  RENAME,
-  REMOVE
-}
-
-function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props) {
+function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
@@ -34,7 +32,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
 
   const [hovered, setHovered] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [popup, setPopup] = useState<ACCOUNT_POPUP>();
+  const [popup, setPopup] = useState<ExtensionPopups>();
 
   const onMouseEnter = useCallback(() => setHovered(true), []);
   const onMouseLeave = useCallback(() => setHovered(false), []);
@@ -62,15 +60,20 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
       {
         Icon: Edit,
         text: t('Rename'),
-        value: () => setPopup(ACCOUNT_POPUP.RENAME)
+        value: () => setPopup(ExtensionPopups.RENAME)
       },
       {
         isLine: true
       },
       {
+        Icon: DocumentDownload,
+        text: t('Export account'),
+        value: () => setPopup(ExtensionPopups.EXPORT)
+      },
+      {
         Icon: LogoutCurve,
         text: t('Remove account'),
-        value: () => setPopup(ACCOUNT_POPUP.REMOVE)
+        value: () => setPopup(ExtensionPopups.REMOVE)
       }
     ];
   }, [t]);
@@ -120,7 +123,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
         setOpen={setOpen}
       />
       {
-        popup === ACCOUNT_POPUP.RENAME &&
+        popup === ExtensionPopups.RENAME &&
         <RenameAccount
           address={address}
           open={popup}
@@ -128,9 +131,18 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', style }: Props
         />
       }
       {
-        popup === ACCOUNT_POPUP.REMOVE &&
+        popup === ExtensionPopups.REMOVE &&
         <RemoveAccount
           address={address}
+          open={popup}
+          setPopup={setPopup}
+        />
+      }
+      {
+        popup === ExtensionPopups.EXPORT &&
+        <ExportAccount
+          address={address}
+          name={name}
           open={popup}
           setPopup={setPopup}
         />

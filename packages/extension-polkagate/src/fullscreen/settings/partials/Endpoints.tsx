@@ -8,9 +8,9 @@ import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-po
 
 import EndpointManager2 from '../../../class/endpointManager2';
 import MySwitch from '../../../components/MySwitch';
+import Radio from '../../../components/Radio';
 import { useChainInfo, useEndpoint2, useEndpoints, useTranslation } from '../../../hooks';
 import DotIndicator from '../../../popup/settings/extensionSettings/components/DotIndicator';
-import PRadio from '../../../popup/settings/extensionSettings/components/Radio';
 import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -169,7 +169,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
                 </Typography>
               }
               <Stack alignItems='center' columnGap='10px' direction='row'>
-                <PRadio
+                <Radio
                   checked={maybeNewEndpoint === value}
                   columnGap='5px'
                   label={name}

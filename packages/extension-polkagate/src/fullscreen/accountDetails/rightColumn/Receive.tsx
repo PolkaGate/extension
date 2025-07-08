@@ -76,11 +76,11 @@ function Receive({ address, genesisHash, open, setOpen }: Props): React.ReactEle
 
   return (
     <DraggableModal
-      noDivider
       onClose={onClose}
       open={open}
+      showBackIconAsClose
       style={{ minHeight: '400px', padding: '20px' }}
-      title={t('your address')}
+      title={t('Receive funds')}
     >
       <>
         <Stack direction='column' justifyItems='center' sx={{ display: 'block'}}>
@@ -102,8 +102,8 @@ function Receive({ address, genesisHash, open, setOpen }: Props): React.ReactEle
               value={formattedAddress ?? address ?? ''}
             />
           </Grid>
-          <Typography variant='B-1' sx={{ display: 'flex', width: '100%', my: '10px'}}>
-            {t('Your {{chainName}} address', { replace: { chainName: chain?.name } })}
+          <Typography sx={{ display: 'flex', my: '10px', width: '100%' }} variant='B-1'>
+            {t('Your {{chainName}} Address', { replace: { chainName: chain?.name } })}
           </Typography>
           <AddressComponent
             address={formattedAddress ?? address}
@@ -116,15 +116,15 @@ function Receive({ address, genesisHash, open, setOpen }: Props): React.ReactEle
             // isBusy={isBusy}
             onPrimaryClick={onCopy}
             onSecondaryClick={() => setOpen(false)}
-            primaryBtnText={t('Copy address')}
-            secondaryBtnText={t('Close')}
+            primaryBtnText={t('Copy to clipboard')}
+            secondaryBtnText={t('Done')}
             style={{ marginTop: '25px', width: '100%' }}
           />
         </Stack>
         <MySnackbar
           onClose={handleSnackbarClose}
           open={showSnackbar}
-          text={t("{{chainName}}'s address copied!", { replace: { chainName: chain?.name } })}
+          text={t('{{chainName}} address copied!', { replace: { chainName: chain?.name } })}
         />
       </>
     </DraggableModal>

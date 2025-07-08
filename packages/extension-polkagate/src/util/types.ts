@@ -12,7 +12,7 @@ import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, D
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
-import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
@@ -754,9 +754,11 @@ export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
   setCurrency: (selectedCurrency: CurrencyItemType) => void;
 }
+
+export type MyIconTheme = BaseIconTheme | 'polkasoul';
 export interface AccountIconThemeContextType {
-  accountIconTheme: IconTheme | undefined;
-  setAccountIconTheme: (theme: IconTheme) => void;
+  accountIconTheme: MyIconTheme | undefined;
+  setAccountIconTheme: (theme: MyIconTheme) => void;
 }
 
 export interface FetchingRequests {

@@ -70,7 +70,7 @@ export default function Appearance (): React.ReactElement {
   return (
     <Stack direction='column'>
       <Typography color='text.primary' fontSize='22px' m='20px 0 9px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
-        {t('Notification')}
+        {t('Appearance')}
       </Typography>
       <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center' }}>
         <Item

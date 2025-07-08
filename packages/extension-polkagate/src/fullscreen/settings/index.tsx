@@ -5,17 +5,18 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import { useFullscreen, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import HomeLayout from '../components/layout';
 import TopMenus from './partials/TopMenus';
+import About from './About';
+import AccountSettings from './AccountSettings';
 import ExtensionSettings from './ExtensionSettings';
 
 export default function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
-  useFullscreen();
   const { genesisHash } = useParams<{ address: string, genesisHash: string }>();
 
   return (
@@ -27,20 +28,20 @@ export default function Settings (): React.ReactElement {
         {t('Settings')}
       </Typography>
       <TopMenus />
-      <VelvetBox style={{ margin: '5px 20px 0 0', padding: 0}}>
+      <VelvetBox style={{ margin: '5px 20px 0 0', padding: 0 }}>
         <Grid container item>
           {
             pathname === '/settingsfs/' &&
             <ExtensionSettings />
           }
-          {/* {
-            pathname === '/settingsfs/chains' &&
-                <Chains />
+          {
+            pathname === '/settingsfs/account' &&
+            <AccountSettings />
           }
           {
-            pathname === '/settingsfs/password' &&
-                <ManagePassword />
-          } */}
+            pathname === '/settingsfs/about' &&
+            <About />
+          }
         </Grid>
       </VelvetBox>
     </HomeLayout>

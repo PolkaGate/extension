@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
+import type { MyIconTheme } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,17 +9,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import useSelectedAccount from '@polkadot/extension-polkagate/src/hooks/useSelectedAccount';
 import { PolkaGateIdenticon } from '@polkadot/extension-polkagate/src/style/index';
+import { DEFAULT_ACCOUNT_ICON_THEME, ICON_THEME_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { useTranslation } from '../../../components/translate';
 
-type IconTheme = BaseIconTheme | 'polkasoul';
-
 export interface ItemProps{
   address?: string;
-  iconTheme: IconTheme
+  iconTheme: MyIconTheme
   label: string;
-  selectedTheme: IconTheme | undefined
+  selectedTheme: MyIconTheme | undefined
 }
 
 function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
@@ -73,16 +72,13 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
   );
 }
 
-const DEFAULT_ICON_THEME = 'polkadot';
-const ICON_THEME_NAME_IN_STORAGE = 'iconTheme';
-
 export default function AccountIcon (): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
-  const [selectedTheme, setSelectedTheme] = useState<IconTheme>();
+  const [selectedTheme, setSelectedTheme] = useState<MyIconTheme>();
 
   useEffect(() => {
-    getStorage(ICON_THEME_NAME_IN_STORAGE).then((iTheme) => setSelectedTheme(iTheme as IconTheme | undefined ?? DEFAULT_ICON_THEME)).catch(console.error);
+    getStorage(ICON_THEME_NAME_IN_STORAGE).then((iTheme) => setSelectedTheme(iTheme as MyIconTheme | undefined ?? DEFAULT_ACCOUNT_ICON_THEME)).catch(console.error);
     const unsubscribe = watchStorage(ICON_THEME_NAME_IN_STORAGE, setSelectedTheme);
 
     return () => {

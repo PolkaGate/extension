@@ -46,7 +46,7 @@ function AccountSettings (): React.ReactElement {
 
   const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
   const onDapps = useCallback(() => setPopup(ExtensionPopups.DAPPS), []);
-  const onForget = useCallback(() => setPopup(ExtensionPopups.FORGET), []);
+  const onForget = useCallback(() => setPopup(ExtensionPopups.REMOVE), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
 
   return (
@@ -120,7 +120,7 @@ function AccountSettings (): React.ReactElement {
             height: '64px',
             mt: '8px'
           }}
-          title={t('Export Accounts')}
+          title={t('Export Account')}
         />
         <Stack alignItems='center' columnGap='5px' direction='row' onClick={onForget} sx={{ cursor: 'pointer', mt: '25px' }}>
           <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
@@ -135,7 +135,7 @@ function AccountSettings (): React.ReactElement {
         setPopup={setPopup}
       />
       <RemoveAccount
-        open={popup === ExtensionPopups.FORGET}
+        open={popup === ExtensionPopups.REMOVE}
         setPopup={setPopup}
       />
       <WebsitesAccess
