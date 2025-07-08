@@ -1692,5 +1692,6 @@
   "Your {{chainName}} Address": "",
   "{{chainName}} address copied!": "",
   "Create New Account": "",
-  "Derive New Account": ""
+  "Derive New Account": "",
+  "This is a collection.": ""
 }
