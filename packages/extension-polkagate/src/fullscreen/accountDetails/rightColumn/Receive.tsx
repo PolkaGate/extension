@@ -3,15 +3,14 @@
 
 import type { Network } from '@polkadot/networks/types';
 
-import { Avatar, Grid, Stack, styled, Typography } from '@mui/material';
+import { Grid, Stack, styled, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
-import { Address2, DecisionButtons, GradientDivider, SearchField } from '@polkadot/extension-polkagate/src/components/index';
+import { Address2, ChainLogo, DecisionButtons, GradientDivider, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
-import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
 import { decodeAddress, encodeAddress, selectableNetworks } from '@polkadot/util-crypto';
 
@@ -91,11 +90,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
             <>
               <ListItem container item key={index} onClick={handleChainSelect(chain)}>
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                  <Grid alignItems='center' container item pl='10px' width='fit-content'>
-                    <Avatar src={getLogo(chainNameSanitizer(chainName)) } sx={{ borderRadius: '50%', fontSize: '12px', height: 18, width: 18 }}>
-                      {chainName[0]}
-                    </Avatar>
-                  </Grid>
+                  <ChainLogo chainName={chainName} size={18} />
                   <Typography color='text.primary' variant='B-2'>
                     {chainName}
                   </Typography>
@@ -118,7 +113,7 @@ function AddressComponent ({ address, chainDisplayName, onCopy }: AddressCompone
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
       <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
-        <Avatar src={getLogo(chainName)} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
+        <ChainLogo chainName={chainName} size={18} />
         <Typography color='text.secondary' variant='B-4'>
           {toShortAddress(address, 12)}
         </Typography>
