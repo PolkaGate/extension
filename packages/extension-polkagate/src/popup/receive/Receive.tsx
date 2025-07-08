@@ -2,21 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransitionProps } from '@mui/material/transitions';
-import type { Network } from '@polkadot/networks/types';
 
-import { Avatar, Container, Dialog, Grid, Slide, styled, Typography } from '@mui/material';
+import { Container, Dialog, Grid, Slide, styled, Typography } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { selectableNetworks } from '@polkadot/networks';
+import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { NeonButton, SearchField } from '../../components';
+import { ChainLogo, NeonButton, SearchField } from '../../components';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
-import getLogo from '../../util/getLogo';
 import { sanitizeChainName, toShortAddress } from '../../util/utils';
 import MySnackbar from '../settings/extensionSettings/components/MySnackbar';
 
@@ -40,7 +38,7 @@ const chainNameSanitizer = (text: string) => sanitizeChainName(text)?.toLowerCas
 
 interface AddressComponentProp {
   address: string;
-  chain: Network;
+  chain: NetworkInfo;
 }
 
 function AddressComponent ({ address, chain }: AddressComponentProp) {
@@ -48,7 +46,7 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
 
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  const chainName = useMemo(() => chainNameSanitizer(chain.displayName), [chain.displayName]);
+  const chainName = useMemo(() => chainNameSanitizer(chain.name), [chain.name]);
 
   const onCopy = useCallback(() => {
     navigator.clipboard.writeText(address).catch((err) => console.error('Error copying text: ', err));
@@ -61,7 +59,7 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
     <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
-          <Avatar src={getLogo(chainName)} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
+          <ChainLogo chainName={chainName} size={18} />
           <Typography color='text.secondary' variant='B-4'>
             {toShortAddress(address, 12)}
           </Typography>
@@ -80,34 +78,34 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
 }
 
 interface SelectChainProp {
-  setSelectedChain: React.Dispatch<React.SetStateAction<Network | undefined>>;
+  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
 }
 
 function SelectChain ({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
 
-  const customSort = useCallback((itemA: Network, itemB: Network) => {
+  const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
     const hasRelay = (str: string) => str.toLowerCase().includes('relay');
 
-    return (Number(hasRelay(itemB.displayName)) - Number(hasRelay(itemA.displayName))) || itemA.displayName.localeCompare(itemB.displayName);
+    return (Number(hasRelay(itemB.name)) - Number(hasRelay(itemA.name))) || itemA.name.localeCompare(itemB.name);
   }, []);
 
-  const allNetworks = useMemo(() => selectableNetworks.sort(customSort), [customSort]);
+  const networks = useMemo(() => chains.sort(customSort), [customSort]);
 
-  const [chainsToShow, setChainsToShow] = useState<Network[]>(allNetworks);
+  const [chainsToShow, setChainsToShow] = useState<NetworkInfo[]>(networks);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
-      return setChainsToShow(allNetworks);
+      return setChainsToShow(networks);
     }
 
     keyword = keyword.trim().toLowerCase();
-    const _filtered = allNetworks.filter(({ displayName }) => displayName.toLowerCase().includes(keyword));
+    const _filtered = networks.filter(({ name }) => name.toLowerCase().includes(keyword));
 
     setChainsToShow([..._filtered]);
-  }, [allNetworks]);
+  }, [networks]);
 
-  const handleChainSelect = useCallback((chain: Network) => () => {
+  const handleChainSelect = useCallback((chain: NetworkInfo) => () => {
     setSelectedChain(chain);
   }, [setSelectedChain]);
 
@@ -128,17 +126,13 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
       </Grid>
       <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
         {chainsToShow.map((chain, index) => {
-          const chainName = chain.displayName;
+          const chainName = chain.name;
 
           return (
             <>
               <ListItem container item key={index} onClick={handleChainSelect(chain)}>
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                  <Grid alignItems='center' container item pl='10px' width='fit-content'>
-                    <Avatar src={getLogo(chainNameSanitizer(chainName)) } sx={{ borderRadius: '50%', fontSize: '12px', height: 18, width: 18 }}>
-                      {chainName[0]}
-                    </Avatar>
-                  </Grid>
+                  <ChainLogo chainName={chainName} size={18} />
                   <Typography color='text.primary' variant='B-2'>
                     {chainName}
                   </Typography>
@@ -157,8 +151,8 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
 
 interface QrCodeProps {
   address: string;
-  selectedChain: Network;
-  setSelectedChain: React.Dispatch<React.SetStateAction<Network | undefined>>;
+  selectedChain: NetworkInfo;
+  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
   onBackToAccount: () => void;
 }
 
@@ -167,10 +161,10 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
 
   const formattedAddress = useMemo(() => {
     const publicKey = decodeAddress(address);
-    const formatted = encodeAddress(publicKey, selectedChain.prefix);
+    const formatted = encodeAddress(publicKey, selectedChain.ss58Format);
 
     return formatted;
-  }, [address, selectedChain.prefix]);
+  }, [address, selectedChain.ss58Format]);
 
   const onBack = useCallback(() => setSelectedChain(undefined), [setSelectedChain]);
 
@@ -179,11 +173,9 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '8px 6px' }}>
         <ArrowCircleLeft color='#FF4FB9' onClick={onBack} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
         <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
-          <Grid alignItems='center' container item pl='10px' width='fit-content'>
-            <Avatar src={getLogo(chainNameSanitizer(selectedChain.displayName))} sx={{ borderRadius: '50%', height: 24, width: 24 }} variant='square' />
-          </Grid>
+          <ChainLogo chainName={selectedChain.name} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-            {chainNameSanitizer(selectedChain.displayName)}
+            {chainNameSanitizer(selectedChain.name)}
           </Typography>
         </Grid>
         <ArrowCircleLeft color='#FF4FB9' size='24' style={{ visibility: 'hidden' }} variant={'Bulk'} />
@@ -225,7 +217,7 @@ interface Props {
 export default function Receive ({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
-  const [selectedChain, setSelectedChain] = useState<Network | undefined>();
+  const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
 
   const handleClose = useCallback(() => {
     setOpenPopup(false);
