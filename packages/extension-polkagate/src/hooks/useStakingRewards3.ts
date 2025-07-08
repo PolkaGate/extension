@@ -28,7 +28,7 @@ ChartJS.register(
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 const DAYS_TO_SHOW = 10;
 
-interface useStakingRewardsProps {
+export interface UseStakingRewards {
   chartData: ChartData<'bar', string[] | undefined, string>;
   dateInterval: string | undefined;
   descSortedRewards: ClaimedRewardInfo[] | undefined;
@@ -41,9 +41,11 @@ interface useStakingRewardsProps {
   status: 'loading' | 'error' | 'ready';
 }
 
-export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool'): useStakingRewardsProps {
+export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: false): UseStakingRewards {
   const theme = useTheme();
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
+
+  const INTERVAL_PERIOD = useMemo(() => isFullScreen ? 15 : DAYS_TO_SHOW, [isFullScreen]);
 
   const [claimedRewardsInfo, setClaimedRewardsInfo] = useState<ClaimedRewardInfo[] | null | undefined>();
   const [weeksRewards, setWeekRewards] = useState<{ amount: BN, amountInHuman: string, date: string, timestamp: number, }[][]>();
@@ -160,11 +162,11 @@ export default function useStakingRewards3 (address: string | undefined, genesis
 
     // These lines filter dates from previous years within the same week.
     const biggestDate = Math.max(...rewardsDetailInAWeek.map(({ timeStamp }) => timeStamp));
-    const thresholdDate = biggestDate - (ONE_DAY_IN_SECONDS * (DAYS_TO_SHOW + 2)); // +2 for buffer
+    const thresholdDate = biggestDate - (ONE_DAY_IN_SECONDS * (INTERVAL_PERIOD + 2)); // +2 for buffer
     const filteredRewardsDetail = rewardsDetailInAWeek.filter(({ timeStamp }) => timeStamp >= thresholdDate);
 
     return filteredRewardsDetail.reverse();
-  }, [ascSortedRewards, formateDate, pageIndex, weeksRewards]);
+  }, [INTERVAL_PERIOD, ascSortedRewards, formateDate, pageIndex, weeksRewards]);
 
   useEffect(() => {
     if (!aggregatedRewards?.length) {
@@ -174,9 +176,9 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     const rewardPeriods = [];
     const sliced: [string[], string[]][] = [];
 
-    // Group data into DAYS_TO_SHOW periods starting from the most recent date
-    for (let i = aggregatedRewards.length - 1; i >= 0; i -= DAYS_TO_SHOW) {
-      const startIndex = Math.max(0, i - DAYS_TO_SHOW + 1);
+    // Group data into INTERVAL_PERIOD periods starting from the most recent date
+    for (let i = aggregatedRewards.length - 1; i >= 0; i -= INTERVAL_PERIOD) {
+      const startIndex = Math.max(0, i - INTERVAL_PERIOD + 1);
       const endIndex = i + 1;
 
       rewardPeriods.push(aggregatedRewards.slice(startIndex, endIndex));
@@ -186,8 +188,8 @@ export default function useStakingRewards3 (address: string | undefined, genesis
       const periodRewardsAmount: string[] = [];
       const periodRewardsLabel: string[] = [];
 
-      // Fill in the DAYS_TO_SHOW period
-      for (let i = 0; i < DAYS_TO_SHOW; i++) {
+      // Fill in the INTERVAL_PERIOD period
+      for (let i = 0; i < INTERVAL_PERIOD; i++) {
         if (period[i]?.date) {
           periodRewardsAmount.push(period[i].amountInHuman);
           // Remove month name from the formatted date before adding to label
@@ -220,7 +222,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
 
     setDataToShow(sliced);
     setWeekRewards(rewardPeriods);
-  }, [aggregatedRewards, formateDate]);
+  }, [INTERVAL_PERIOD, aggregatedRewards, formateDate]);
 
   const dateInterval = useMemo(() => {
     if (!dataToShow?.length || !weeksRewards?.length) {
@@ -302,6 +304,10 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     responsive: true,
     scales: {
       topAxis: {
+        border: {
+          dash: [2, 1],
+          display: false
+        },
         grid: {
           color: 'transparent',
           drawOnChartArea: false,
@@ -316,17 +322,23 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         }
       },
       x: {
+        border: {
+          dash: [2, 1],
+          display: false
+        },
         grid: {
-          borderColor: 'transparent',
-          color: 'transparent',
-          tickColor: 'transparent'
+          color: isFullScreen ? '#3A3A4D' : 'transparent'
         },
         ticks: { color: theme.palette.text.highlight, font: { family: 'Inter', size: 12, weight: 'bold' } }
       },
       y: {
-        display: false, // Hide y-axis completely
+        border: {
+          dash: [2, 1],
+          display: false
+        },
+        display: !!isFullScreen, // Hide y-axis completely on extension mode
         grid: {
-          drawBorder: false // Remove y-axis border
+          color: isFullScreen ? '#3A3A4D' : 'transparent'
         },
         ticks: {
           display: false
