@@ -21,6 +21,8 @@ import getLogo2 from '../../../util/getLogo2';
 import PortfolioActionButton, { type PortfolioActionButtonProps } from './PortfolioActionButton';
 
 const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: string | undefined; }) => {
+  const { t } = useTranslation();
+
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
 
   if (!token) {
@@ -31,7 +33,7 @@ const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: strin
     <Grid alignItems='center' container item sx={{ columnGap: '4px', width: 'fit-content' }}>
       <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
       <Typography color='text.highlight' variant='B-2'>
-        {`Staked ${token}`}
+        {t('Staked {{token}}', { replace: { token } })}
       </Typography>
     </Grid>
   );
