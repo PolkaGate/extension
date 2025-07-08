@@ -279,6 +279,7 @@ export enum ExtensionPopups {
   DERIVE,
   EXPORT,
   IMPORT,
+  RECEIVE,
   RENAME,
   REMOVE,
 }

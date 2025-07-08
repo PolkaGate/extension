@@ -1690,5 +1690,7 @@
   "Resources": "",
   "Receive funds": "",
   "Your {{chainName}} Address": "",
-  "{{chainName}} address copied!": ""
+  "{{chainName}} address copied!": "",
+  "Create New Account": "",
+  "Derive New Account": ""
 }

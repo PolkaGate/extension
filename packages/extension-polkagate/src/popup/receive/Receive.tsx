@@ -38,18 +38,6 @@ const ListItem = styled(Grid)(() => ({
 
 const chainNameSanitizer = (text: string) => sanitizeChainName(text)?.toLowerCase();
 
-// const shortenAddress = (address: string, charactersCount = 4) => {
-//   if (!address) {
-//     return '';
-//   }
-
-//   if (address.length <= charactersCount * 2) {
-//     return address;
-//   }
-
-//   return `${address.slice(0, charactersCount)}...${address.slice(-charactersCount)}`;
-// };
-
 interface AddressComponentProp {
   address: string;
   chain: Network;
@@ -124,42 +112,40 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
   }, [setSelectedChain]);
 
   return (
-    <>
-      <Grid container item justifyContent='center'>
-        <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
-          <ScanBarcode color='#AA83DC' size='24' variant='Bold' />
-          <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-            {t('Select network')}
-          </Typography>
-        </Grid>
-        <Grid container item>
-          <SearchField
-            focused
-            onInputChange={onSearch}
-            placeholder='🔍 Search networks'
-          />
-        </Grid>
-        <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
-          {chainsToShow.map((chain, index) => (
-            <>
-              <ListItem container item key={index} onClick={handleChainSelect(chain)}>
-                <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                  <Grid alignItems='center' container item pl='10px' width='fit-content'>
-                    <Avatar src={getLogo(chainNameSanitizer(chain.displayName))} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
-                  </Grid>
-                  <Typography color='text.primary' variant='B-2'>
-                    {chain.displayName}
-                  </Typography>
-                </Grid>
-              </ListItem>
-              {index !== chainsToShow.length - 1 &&
-                <GradientDivider style={{ my: '3px' }} />
-              }
-            </>
-          ))}
-        </Grid>
+    <Grid container item justifyContent='center'>
+      <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
+        <ScanBarcode color='#AA83DC' size='24' variant='Bold' />
+        <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
+          {t('Select network')}
+        </Typography>
       </Grid>
-    </>
+      <Grid container item>
+        <SearchField
+          focused
+          onInputChange={onSearch}
+          placeholder='🔍 Search networks'
+        />
+      </Grid>
+      <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
+        {chainsToShow.map((chain, index) => (
+          <>
+            <ListItem container item key={index} onClick={handleChainSelect(chain)}>
+              <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
+                <Grid alignItems='center' container item pl='10px' width='fit-content'>
+                  <Avatar src={getLogo(chainNameSanitizer(chain.displayName))} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
+                </Grid>
+                <Typography color='text.primary' variant='B-2'>
+                  {chain.displayName}
+                </Typography>
+              </Grid>
+            </ListItem>
+            {index !== chainsToShow.length - 1 &&
+                <GradientDivider style={{ my: '3px' }} />
+            }
+          </>
+        ))}
+      </Grid>
+    </Grid>
   );
 }
 

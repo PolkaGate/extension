@@ -3,7 +3,7 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
-import { Data, DocumentDownload, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
+import { ArrowCircleDown2, Data, DocumentDownload, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
@@ -12,6 +12,7 @@ import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import Receive from '../accountDetails/rightColumn/Receive';
 import ExportAccount from '../settings/partials/ExportAccount';
 import RemoveAccount from './RemoveAccount';
 import RenameAccount from './RenameAccount';
@@ -31,8 +32,8 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
   const genesisHash = useAccountSelectedChain(address);
 
   const [hovered, setHovered] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
-  const [popup, setPopup] = useState<ExtensionPopups>();
+  const [open, setOpenDropDown] = useState<boolean>(false);
+  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onMouseEnter = useCallback(() => setHovered(true), []);
   const onMouseLeave = useCallback(() => setHovered(false), []);
@@ -56,6 +57,11 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
     return [
       {
         isLine: true
+      },
+      {
+        Icon: ArrowCircleDown2,
+        text: t('Receive'),
+        value: () => setPopup(ExtensionPopups.RECEIVE)
       },
       {
         Icon: Edit,
@@ -99,8 +105,8 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
     ];
   }, [baseOption, extraExtensionOptions, extraFullscreenOptions, isExtension]);
 
-  const toggleOpen = useCallback(() => !disabled && setOpen((isOpen) => !isOpen), [disabled]);
-  const handleClickAway = useCallback(() => setOpen(false), []);
+  const toggleOpen = useCallback(() => !disabled && setOpenDropDown((isOpen) => !isOpen), [disabled]);
+  const handleClickAway = useCallback(() => setOpenDropDown(false), []);
 
   return (
     <>
@@ -120,7 +126,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
         containerRef={containerRef}
         open={open}
         options={_options}
-        setOpen={setOpen}
+        setOpen={setOpenDropDown}
       />
       {
         popup === ExtensionPopups.RENAME &&
@@ -145,6 +151,14 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
           name={name}
           open={popup}
           setPopup={setPopup}
+        />
+      }
+      {
+        popup === ExtensionPopups.RECEIVE &&
+        <Receive
+          address={address}
+          open={!!popup}
+          setOpen={setPopup}
         />
       }
     </>
