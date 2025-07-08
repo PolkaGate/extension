@@ -1,12 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Chart, ChartArea } from 'chart.js';
 import type { UseStakingRewards } from '../../../../hooks/useStakingRewards3';
 
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { Box, Container, Grid, Skeleton, Stack, Typography } from '@mui/material';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Box, Container, Skeleton, Stack, Typography } from '@mui/material';
+import React, { useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
 import { AssetLogo } from '../../../../components';
