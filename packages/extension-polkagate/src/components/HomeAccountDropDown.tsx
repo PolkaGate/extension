@@ -41,7 +41,7 @@ function HomeAccountDropDown ({ style }: Props) {
     const OPTIONS = [
       {
         Icon: AddCircle,
-        text: t('Create a New Account'),
+        text: t('Create New Account'),
         value: '/account/create'
       },
       {
@@ -56,12 +56,12 @@ function HomeAccountDropDown ({ style }: Props) {
       },
       {
         Icon: Broom,
-        text: t('Derive from Accounts'),
+        text: t('Derive New Account'),
         value: '/account/create'
       },
       {
         Icon: ExportCurve,
-        text: t('Export all Accounts'),
+        text: t('Export All Accounts'),
         value: () => setPopup(HOME_POPUP.EXPORT)
       }
     ];
