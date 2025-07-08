@@ -127,23 +127,29 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
         />
       </Grid>
       <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
-        {chainsToShow.map((chain, index) => (
-          <>
-            <ListItem container item key={index} onClick={handleChainSelect(chain)}>
-              <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                <Grid alignItems='center' container item pl='10px' width='fit-content'>
-                  <Avatar src={getLogo(chainNameSanitizer(chain.displayName))} sx={{ borderRadius: '50%', height: 18, width: 18 }} variant='square' />
+        {chainsToShow.map((chain, index) => {
+          const chainName = chain.displayName;
+
+          return (
+            <>
+              <ListItem container item key={index} onClick={handleChainSelect(chain)}>
+                <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
+                  <Grid alignItems='center' container item pl='10px' width='fit-content'>
+                    <Avatar src={getLogo(chainNameSanitizer(chainName)) } sx={{ borderRadius: '50%', fontSize: '12px', height: 18, width: 18 }}>
+                      {chainName[0]}
+                    </Avatar>
+                  </Grid>
+                  <Typography color='text.primary' variant='B-2'>
+                    {chainName}
+                  </Typography>
                 </Grid>
-                <Typography color='text.primary' variant='B-2'>
-                  {chain.displayName}
-                </Typography>
-              </Grid>
-            </ListItem>
-            {index !== chainsToShow.length - 1 &&
+              </ListItem>
+              {index !== chainsToShow.length - 1 &&
                 <GradientDivider style={{ my: '3px' }} />
-            }
-          </>
-        ))}
+              }
+            </>
+          );
+        })}
       </Grid>
     </Grid>
   );
