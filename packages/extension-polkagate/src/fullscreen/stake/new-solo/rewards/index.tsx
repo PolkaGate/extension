@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { UseStakingRewards } from '../../../../hooks/useStakingRewards3';
+import type { ClaimedRewardInfo } from '../../../../util/types';
 
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { Box, Container, Skeleton, Stack, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Box, Collapse, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { ArrowDown2 } from 'iconsax-react';
+import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo } from '../../../../components';
+import { AssetLogo, FormatBalance2, Identity2 } from '../../../../components';
+import { useChainInfo, useTranslation } from '../../../../hooks';
 import getLogo2 from '../../../../util/getLogo2';
 import { type PopupOpener, StakingPopUps } from '../../util/utils';
 import RewardConfigureButton from '../components/RewardConfigureButton';
@@ -145,6 +148,106 @@ const RewardChart = ({ rewardInfo }: RewardChartProps) => {
   );
 };
 
+interface RewardChartItemProps {
+  reward: ClaimedRewardInfo;
+  genesisHash: string | undefined;
+  onExpand: React.Dispatch<React.SetStateAction<string | undefined>>;
+  isExpanded: boolean;
+}
+
+const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardChartItemProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const handleExpand = useCallback(() => {
+    onExpand((alreadyExpanded) => alreadyExpanded === JSON.stringify(reward) ? undefined : JSON.stringify(reward));
+  }, [onExpand, reward]);
+
+  return (
+    <Collapse collapsedSize='48px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block', p: '6px' }}>
+      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', pt: isExpanded ? '12px' : '8px', transition: 'all 150ms ease-out', width: '100%' }}>
+        <Typography color='text.primary' textAlign='left' variant='B-2' width='40%'>
+          {new Date(reward.timeStamp * 1000).toDateString()}
+        </Typography>
+        <Typography color='text.primary' textAlign='left' variant='B-2' width='15%'>
+          {reward.era}
+        </Typography>
+        <FormatBalance2
+          decimalPoint={2}
+          decimals={[decimal ?? 0]}
+          style={{
+            color: theme.palette.text.primary,
+            ...theme.typography['B-2'],
+            textAlign: 'left',
+            width: 'max-content'
+          }}
+          tokenColor={theme.palette.text.highlight}
+          tokens={[token ?? '']}
+          value={reward.amount}
+        />
+        <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
+      </Container>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
+        <Typography color='text.highlight' variant='B-1' width='fit-content'>
+          {t('Received from')}:
+        </Typography>
+        <Identity2
+          address={reward.address}
+          genesisHash={genesisHash ?? ''}
+          identiconSize={24}
+          style={{
+            color: theme.palette.text.primary,
+            variant: 'B-1',
+            width: '200px'
+          }}
+          withShortAddress
+        />
+      </Container>
+    </Collapse>
+  );
+};
+
+interface RewardTableProps {
+  descSortedRewards: ClaimedRewardInfo[];
+  genesisHash: string | undefined;
+  expanded: string | undefined;
+  onExpand: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
+
+const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: RewardTableProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack direction='column' sx={{ gap: '10px', width: '100%' }}>
+      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb: '8px', px: '12px', width: '100%' }}>
+        <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='B-1' width='48%'>
+          {t('Date')}
+        </Typography>
+        <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='B-1' width='22%'>
+          {t('Era')}
+        </Typography>
+        <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='B-1' width='30%'>
+          {t('Reward')}
+        </Typography>
+      </Container>
+      {descSortedRewards.map((reward, index) => {
+        const isExpanded = expanded ? JSON.stringify(reward) === expanded : false;
+
+        return (
+          <RewardChartItem
+            genesisHash={genesisHash}
+            isExpanded={isExpanded}
+            key={index}
+            onExpand={onExpand}
+            reward={reward}
+          />
+        );
+      })}
+    </Stack>
+  );
+};
+
 export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token }: ChartHeaderProps) {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
@@ -157,6 +260,14 @@ export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token }
         />
         <RewardChart rewardInfo={rewardInfo} />
       </Stack>
+      <Grid container item sx={{ maxHeight: '315px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
+        <RewardTable
+          descSortedRewards={rewardInfo.descSortedRewards ?? []}
+          expanded={rewardInfo.detail}
+          genesisHash={genesisHash}
+          onExpand={rewardInfo.expand}
+        />
+      </Grid>
     </Container>
   );
 }
