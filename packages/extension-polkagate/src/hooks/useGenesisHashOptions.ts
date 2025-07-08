@@ -28,7 +28,7 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
     }
   }, []);
 
-  const hashes = useMemo(() => {
+  return useMemo(() => {
     const allChains = [
       // put the relay chains at the top
       ...chains.filter(({ chain }) => chain.includes(RELAY_CHAIN))
@@ -58,6 +58,4 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
 
     return allChains;
   }, [metadataChains, showAnyChain]);
-
-  return hashes;
 }
