@@ -165,12 +165,12 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
   }, [onExpand, reward]);
 
   return (
-    <Collapse collapsedSize='48px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block', p: '6px' }}>
-      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', pt: isExpanded ? '12px' : '8px', transition: 'all 150ms ease-out', width: '100%' }}>
+    <Collapse collapsedSize='48px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block' }}>
+      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '6px', pl: '18px', transition: 'all 150ms ease-out', width: '100%' }}>
         <Typography color='text.primary' textAlign='left' variant='B-2' width='40%'>
           {new Date(reward.timeStamp * 1000).toDateString()}
         </Typography>
-        <Typography color='text.primary' textAlign='left' variant='B-2' width='15%'>
+        <Typography color='text.secondary' textAlign='left' variant='B-2' width='15%'>
           {reward.era}
         </Typography>
         <FormatBalance2
@@ -182,13 +182,15 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
             textAlign: 'left',
             width: 'max-content'
           }}
-          tokenColor={theme.palette.text.highlight}
+          tokenColor={theme.palette.text.primary}
           tokens={[token ?? '']}
           value={reward.amount}
         />
-        <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '36px', width: '36px' }}>
+          <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
+        </Grid>
       </Container>
-      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', m: '6px', p: '8px 12px', position: 'relative', width: 'calc(100% - 12px)' }}>
         <Typography color='text.highlight' variant='B-1' width='fit-content'>
           {t('Received from')}:
         </Typography>
@@ -199,7 +201,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           style={{
             color: theme.palette.text.primary,
             variant: 'B-1',
-            width: '200px'
+            width: '330px'
           }}
           withShortAddress
         />

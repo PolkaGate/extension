@@ -115,7 +115,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const adaptiveDecimalPoint = useMemo(() => staked && decimal && (String(staked).length >= decimal - 1 ? 2 : 4), [decimal, staked]);
-  const textColor = useMemo(() => isFullScreen ? theme.palette.text.highlight : '#AA83DC', [isFullScreen, theme.palette.text.highlight]);
+  const textColor = useMemo(() => isFullScreen ? '#AA83DC' : theme.palette.text.highlight, [isFullScreen, theme.palette.text.highlight]);
 
   const stakedInCurrency = useMemo(() => {
     if (!staked || !pricesInCurrency || !tokenPrice || !decimal) {

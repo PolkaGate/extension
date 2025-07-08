@@ -327,7 +327,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
           display: false
         },
         grid: {
-          color: isFullScreen ? '#3A3A4D' : 'transparent'
+          color: isFullScreen ? '#2D1E4A59' : 'transparent'
         },
         ticks: { color: theme.palette.text.highlight, font: { family: 'Inter', size: 12, weight: 'bold' } }
       },
@@ -338,7 +338,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         },
         display: !!isFullScreen, // Hide y-axis completely on extension mode
         grid: {
-          color: isFullScreen ? '#3A3A4D' : 'transparent'
+          color: isFullScreen ? '#2D1E4A59' : 'transparent'
         },
         ticks: {
           display: false
