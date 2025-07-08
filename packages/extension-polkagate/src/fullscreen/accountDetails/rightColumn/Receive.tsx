@@ -201,7 +201,6 @@ function Receive ({ address, open, setOpen }: Props): React.ReactElement {
             <DecisionButtons
               cancelButton
               direction='vertical'
-              isBusy={showSnackbar}
               onPrimaryClick={onCopy}
               onSecondaryClick={onDone}
               primaryBtnText={t('Copy to clipboard')}
