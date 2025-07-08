@@ -6,7 +6,7 @@ import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types'
 import type { BN } from '@polkadot/util';
 import type { ItemInformation } from '../nft/utils/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Skeleton, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -138,7 +138,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         address={account?.address}
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
         identiconSize={14}
-        nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis'}}
+        nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}
         noIdenticon
         onClick={onClick}
         style={{ color: '#BEAAD8', variant, width: '100%' }}
@@ -168,6 +168,24 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
           width={totalBalance ? 'fit-content' : '100px'}
           withSmallDecimal
         />
+        {!assetsToShow &&
+          <Stack direction='row' spacing={0.1} sx={{ ml: '17px', position: 'relative' }}>
+            {[1, 2, 3].map((index) => (
+              <Skeleton
+                animation='wave'
+                height={18}
+                key={index}
+                sx={{
+                  borderRadius: '50%',
+                  fontWeight: 'bold',
+                  transform: 'none'
+                }}
+                variant='text'
+                width={18}
+              />
+            ))}
+          </Stack>
+        }
         <Grid alignItems='center' container item sx={{ ml: '10px', position: 'relative' }} width='fit-content'>
           {assetsToShow?.slice(0, 4).map(({ genesisHash, token }, index) => {
             const logoInfo = getLogo2(genesisHash, token);
