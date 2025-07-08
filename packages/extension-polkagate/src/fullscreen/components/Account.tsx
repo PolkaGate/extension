@@ -141,6 +141,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}
         noIdenticon
         onClick={onClick}
+        socialStyles={{ mt: 0 }}
         style={{ color: '#BEAAD8', variant, width: '100%' }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>

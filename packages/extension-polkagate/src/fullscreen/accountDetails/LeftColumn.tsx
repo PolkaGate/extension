@@ -42,7 +42,7 @@ export default function LeftColumn (): React.ReactElement {
         />
         <Account
           account={account}
-          style={{ margin: '50px 0 0 20px' }}
+          style={{ margin: '50px 0 0 20px', maxWidth: '92%' }}
           variant='B-3'
         />
         <AccountProfileLabel label={profile ?? t('Unknown')} style={{ position: 'absolute', right: '8px', top: '0' }} />

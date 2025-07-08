@@ -85,11 +85,13 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           />
         </Stack>
       </VelvetBox>
-      <Receive
-        address={address}
-        open={open === ExtensionPopups.RECEIVE}
-        setOpen={setOpen}
-      />
+      {
+        open === ExtensionPopups.RECEIVE &&
+        <Receive
+          address={address}
+          open={open === ExtensionPopups.RECEIVE}
+          setOpen={setOpen}
+        />}
     </>
   );
 }
