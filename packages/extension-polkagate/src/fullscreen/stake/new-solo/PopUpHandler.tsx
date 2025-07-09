@@ -11,6 +11,7 @@ import BondExtra from './bondExtra';
 import FastUnstake from './fastUnstaking';
 import Info from './Info';
 import Restake from './restake';
+import Settings from './settings';
 import Unstake from './unstake';
 import Withdraw from './withdraw';
 
@@ -92,6 +93,15 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
     case StakingPopUps.FAST_UNSTAKE:
       return (
         <FastUnstake
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+        />
+      );
+
+    case StakingPopUps.REWARD_DESTINATION_CONFIG:
+      return (
+        <Settings
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
