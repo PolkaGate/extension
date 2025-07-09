@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { UseStakingRewards } from '../../../../hooks/useStakingRewards3';
-import type { ClaimedRewardInfo } from '../../../../util/types';
+import type { UseStakingRewards } from '../../hooks/useStakingRewards3';
+import type { ClaimedRewardInfo } from '../../util/types';
 
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, Collapse, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
@@ -10,11 +10,11 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, FormatBalance2, Identity2 } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
-import getLogo2 from '../../../../util/getLogo2';
-import { type PopupOpener, StakingPopUps } from '../../util/utils';
-import RewardConfigureButton from '../components/RewardConfigureButton';
+import { AssetLogo, FormatBalance2, Identity2 } from '../../components';
+import { useChainInfo, useTranslation } from '../../hooks';
+import getLogo2 from '../../util/getLogo2';
+import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
+import { type PopupOpener, StakingPopUps } from './util/utils';
 
 interface WindowChangerProps {
   onNextPeriod: () => void;
@@ -97,9 +97,10 @@ interface RewardSettingProps {
   genesisHash: string | undefined;
   token: string | undefined;
   popupOpener: PopupOpener;
+  type: 'solo' | 'pool';
 }
 
-const RewardSetting = ({ genesisHash, popupOpener, token }: RewardSettingProps) => {
+const RewardSetting = ({ genesisHash, popupOpener, token, type }: RewardSettingProps) => {
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
 
   return (
@@ -110,7 +111,7 @@ const RewardSetting = ({ genesisHash, popupOpener, token }: RewardSettingProps) 
           {token}
         </Typography>
       </Container>
-      <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />
+      {type === 'solo' && <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />}
     </Container>
   );
 };
@@ -119,7 +120,7 @@ interface ChartHeaderProps extends RewardSettingProps {
   rewardInfo: UseStakingRewards;
 }
 
-const ChartHeader = ({ genesisHash, popupOpener, rewardInfo, token }: ChartHeaderProps) => {
+const ChartHeader = ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) => {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', mb: '20px' }}>
       <WindowChanger
@@ -131,6 +132,7 @@ const ChartHeader = ({ genesisHash, popupOpener, rewardInfo, token }: ChartHeade
         genesisHash={genesisHash}
         popupOpener={popupOpener}
         token={token}
+        type={type}
       />
     </Container>
   );
@@ -250,7 +252,7 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
   );
 };
 
-export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token }: ChartHeaderProps) {
+export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
       <Stack direction='column' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
@@ -259,6 +261,7 @@ export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token }
           popupOpener={popupOpener}
           rewardInfo={rewardInfo}
           token={token}
+          type={type}
         />
         <RewardChart rewardInfo={rewardInfo} />
       </Stack>

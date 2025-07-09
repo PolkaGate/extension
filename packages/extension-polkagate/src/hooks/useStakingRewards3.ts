@@ -41,7 +41,7 @@ export interface UseStakingRewards {
   status: 'loading' | 'error' | 'ready';
 }
 
-export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: false): UseStakingRewards {
+export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
   const theme = useTheme();
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
 

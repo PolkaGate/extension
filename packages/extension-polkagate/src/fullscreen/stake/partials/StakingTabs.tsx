@@ -2,11 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
+import type { UseStakingRewards } from '../../../hooks/useStakingRewards3';
+import type { PopupOpener } from '../util/utils';
 
 import { Container, Stack, Typography } from '@mui/material';
-import React, { type ReactElement } from 'react';
+import { Discover, MagicStar, Wallet } from 'iconsax-react';
+import React, { useCallback, useMemo, useState } from 'react';
 
+import { useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
+import Rewards from '../Rewards';
 
 export interface StakingTabsHeaderItems {
   title: string;
@@ -39,26 +44,83 @@ const StakingTabsHeader = ({ items }: StakingTabsHeaderProps) => {
   );
 };
 
-interface StakingTabBodyProps {
-  content: ReactElement;
-  style?: React.CSSProperties;
+interface Props {
+  rewardInfo: UseStakingRewards;
+  type: 'solo' | 'pool';
+  genesisHash: string | undefined;
+  token: string | undefined;
+  popupOpener: PopupOpener;
 }
 
-const StakingTabBody = ({ content, style }: StakingTabBodyProps) => {
-  return (
-    <VelvetBox style={style}>
-      {content}
-    </VelvetBox>
-  );
-};
+enum STAKING_TABS {
+  STAKING_POSITIONS,
+  REWARDS,
+  VALIDATORS
+}
 
-interface Props extends StakingTabsHeaderProps, StakingTabBodyProps {}
+function StakingTabs ({ genesisHash, popupOpener, rewardInfo, token, type }: Props) {
+  const { t } = useTranslation();
+  const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
 
-function StakingTabs ({ content, items, style }: Props) {
+  const tabSetter = useCallback((selectedTab: STAKING_TABS) => () => setTab(selectedTab), []);
+
+  const tabItems: StakingTabsHeaderItems[] = useMemo(() => {
+    const tabs: StakingTabsHeaderItems[] = [
+      {
+        Icon: Wallet,
+        isSelected: tab === STAKING_TABS.STAKING_POSITIONS,
+        onClick: tabSetter(STAKING_TABS.STAKING_POSITIONS),
+        title: t('Your staking positions')
+      },
+      {
+        Icon: MagicStar,
+        isSelected: tab === STAKING_TABS.REWARDS,
+        onClick: tabSetter(STAKING_TABS.REWARDS),
+        title: type === 'solo' ? t('Rewards') : t('Claimed Rewards')
+      }
+    ];
+
+    if (type === 'solo') {
+      tabs.push({
+        Icon: Discover,
+        isSelected: tab === STAKING_TABS.VALIDATORS,
+        onClick: tabSetter(STAKING_TABS.VALIDATORS),
+        title: t('Validators')
+      });
+    }
+
+    return tabs;
+  }, [t, tab, tabSetter, type]);
+
+  const content = useMemo(() => {
+    switch (tab) {
+      case STAKING_TABS.STAKING_POSITIONS:
+        return <></>;
+
+      case STAKING_TABS.REWARDS:
+        return (
+          <Rewards
+            genesisHash={genesisHash}
+            popupOpener={popupOpener}
+            rewardInfo={rewardInfo}
+            token={token}
+            type={type}
+          />);
+
+      case STAKING_TABS.VALIDATORS:
+        return <></>;
+
+      default:
+        return <></>;
+    }
+  }, [genesisHash, popupOpener, rewardInfo, tab, token, type]);
+
   return (
     <Stack direction='column' sx={{ gap: '12px', px: '18px' }}>
-      <StakingTabsHeader items={items} />
-      <StakingTabBody content={content} style={style} />
+      <StakingTabsHeader items={tabItems} />
+      <VelvetBox>
+        {content}
+      </VelvetBox>
     </Stack>
   );
 }

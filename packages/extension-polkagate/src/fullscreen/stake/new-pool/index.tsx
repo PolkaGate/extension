@@ -5,21 +5,24 @@ import { Stack } from '@mui/material';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router';
 
-import { useAccountAssets, usePoolStakingInfo, usePrices, useSelectedAccount } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
 import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
+import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandler from './PopUpHandler';
 
 export default function PoolFullScreen (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
+  const { token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
   const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
+  const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, 'pool', true);
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
@@ -49,6 +52,13 @@ export default function PoolFullScreen (): React.ReactElement {
             tokenPrice={tokenPrice}
             type='pool'
             unlockingAmount={unlockingAmount}
+          />
+          <StakingTabs
+            genesisHash={genesisHash}
+            popupOpener={popupOpener}
+            rewardInfo={rewardInfo}
+            token={token}
+            type='pool'
           />
         </Stack>
       </HomeLayout>
