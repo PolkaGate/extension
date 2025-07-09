@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import { Check, MouseCircle, UserOctagon } from 'iconsax-react';
+import { Check, MouseCircle, Routing, UserOctagon } from 'iconsax-react';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { GradientDivider } from '@polkadot/extension-polkagate/src/style/index';
@@ -40,6 +40,12 @@ function TopMenus (): React.ReactElement {
           Icon={UserOctagon}
           label={t('Account Settings')}
           path='account'
+          setPosition={setPosition}
+        />
+        <TopMenuItem
+          Icon={Routing}
+          label={t('Network Settings')}
+          path='network'
           setPosition={setPosition}
         />
         <TopMenuItem

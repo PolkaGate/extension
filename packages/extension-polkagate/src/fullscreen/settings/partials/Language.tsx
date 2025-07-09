@@ -33,11 +33,12 @@ export default function Language (): React.ReactElement {
   return (
     <>
       <Stack direction='column'>
-        <Typography color='text.primary' fontSize='22px' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4' >
+        <Typography color='text.primary' fontSize='22px' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
           {t('Language')}
         </Typography>
         <Stack
-          columnGap='10px' direction='row' sx={{ ':hover': { background: '#2D1E4A' },
+          columnGap='10px' direction='row' sx={{
+            ':hover': { background: '#2D1E4A' },
             alignItems: 'center',
             bgcolor: '#1B133CB2',
             border: '1px solid #BEAAD833',
@@ -46,21 +47,25 @@ export default function Language (): React.ReactElement {
             mt: '5px',
             px: '8px',
             transition: 'all 250ms ease-out',
-            width: '454px' }}
+            width: '454px'
+          }}
         >
           <Translate color={isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-          <Stack columnGap='5px' direction='row' justifyContent= 'space-between' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', width: '100%' }}>
-            <Typography color= '#BEAAD8' variant='B-4'>
+          <Stack columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', width: '100%' }}>
+            <Typography color='#BEAAD8' variant='B-4'>
               {language}
             </Typography>
             <ArrowDown2 color={isDark ? '#AA83DC' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
           </Stack>
         </Stack>
       </Stack>
-      <SelectLanguage
-        openMenu={showPopUp === ExtensionPopups.LANGUAGE}
-        setPopup={setShowPopUp}
-      />
+      {
+        showPopUp === ExtensionPopups.LANGUAGE &&
+        <SelectLanguage
+          openMenu={showPopUp === ExtensionPopups.LANGUAGE}
+          setPopup={setShowPopUp}
+        />
+      }
     </>
   );
 }

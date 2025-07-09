@@ -41,7 +41,7 @@ export default function EnableTestNet (): React.ReactElement {
 
   return (
     <Stack direction='column'>
-      <Typography color='text.primary' fontSize='22px' my='22px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4' >
+      <Typography color='text.primary' fontSize='22px' m='40px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4' >
         {t('Test Networks')}
       </Typography>
       <MySwitch

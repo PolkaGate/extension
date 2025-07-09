@@ -272,6 +272,7 @@ export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 export enum ExtensionPopups {
   NONE,
   LANGUAGE,
+  PASSWORD,
   PRIVACY,
   WARNING,
   // Account Popups

@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
 
-import { ChainLogo, MySwitch, SearchField } from '../../../components';
+import { ChainLogo, Motion, MySwitch, SearchField } from '../../../components';
 import { useGenesisHashOptions, useTranslation } from '../../../hooks';
 import { getStorage, setStorage } from '../../../util';
 import Endpoints from './Endpoints';
@@ -181,30 +181,31 @@ function ChainsToViewAssets (): React.ReactElement {
   const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
 
   return (
-    <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: '250px', overflow: 'scroll', p: '0 0 30px 20px', m: '0 4px 4px', width: '100%' }}>
-      <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
-        {t('Networks to view assets')}
-      </Typography>
-      <SearchField
-        onInputChange={onSearch}
-        placeholder='🔍 Search networks'
-        placeholderStyle={{ textAlign: 'left' }}
-        style={{ paddingRight: '4%' }}
-      />
-      <Grid alignItems='flex-start' container direction='row' item justifyContent='space-between' sx={{ mt: '15px', width: '96%' }}>
-        {chainsToList.map(({ text, value }, index) => (
-          <Item
-            chainEndpoints={chainEndpoints}
-            isEnabled={selectedChains.has(value as string)}
-            isLast={chainsToList.length - 1 === index}
-            key={index}
-            onSelect={onChainSelect}
-            text={text}
-            value={String(value)}
-          />
-        ))}
-      </Grid>
-      {chainToShowEndpoints &&
+    <Motion variant='slide'>
+      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: '600px', m: '5px', overflow: 'scroll', p: '0 0 30px 20px',  width: 'fill-available' }}>
+        <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
+          {t('Networks to view assets')}
+        </Typography>
+        <SearchField
+          onInputChange={onSearch}
+          placeholder='🔍 Search networks'
+          placeholderStyle={{ textAlign: 'left' }}
+          style={{ paddingRight: '4%' }}
+        />
+        <Grid alignItems='flex-start' container direction='row' item justifyContent='space-between' sx={{ mt: '15px', width: '96%' }}>
+          {chainsToList.map(({ text, value }, index) => (
+            <Item
+              chainEndpoints={chainEndpoints}
+              isEnabled={selectedChains.has(value as string)}
+              isLast={chainsToList.length - 1 === index}
+              key={index}
+              onSelect={onChainSelect}
+              text={text}
+              value={String(value)}
+            />
+          ))}
+        </Grid>
+        {chainToShowEndpoints &&
         <Endpoints
           genesisHash={chainToShowEndpoints}
           isEnabled={selectedChains.has(chainToShowEndpoints)}
@@ -212,8 +213,9 @@ function ChainsToViewAssets (): React.ReactElement {
           onEnableChain={applyChainSelect}
           open={Boolean(chainToShowEndpoints)}
         />
-      }
-    </Stack>
+        }
+      </Stack>
+    </Motion>
   );
 }
 

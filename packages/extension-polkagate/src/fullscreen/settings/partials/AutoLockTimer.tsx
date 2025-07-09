@@ -68,7 +68,7 @@ export default function AutoLockTimer (): React.ReactElement {
 
   return (
     <Stack direction='column' sx={{ width: '78%' }}>
-      <Typography color='text.primary' fontSize='22px' m='22px 0 10px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+      <Typography color='text.primary' fontSize='22px' m='40px 0 5px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
         {t('Auto-Lock Timer')}
       </Typography>
       <Stack columnGap='30px' direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between' }}>

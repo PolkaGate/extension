@@ -9,11 +9,11 @@ import { VelvetBox } from '../../style';
 import AccountIcon from './partials/AccountIcon';
 import Appearance from './partials/Appearance';
 import AutoLockTimer from './partials/AutoLockTimer';
-import ChainsToViewAssets from './partials/ChainsToViewAssets';
 import EnableCamera from './partials/EnableCamera';
 import EnableTestNet from './partials/EnableTestNet';
 import Language from './partials/Language';
 import Notification from './partials/Notification';
+import Password from './partials/Password';
 
 function ExtensionSettings (): React.ReactElement {
   return (
@@ -27,6 +27,7 @@ function ExtensionSettings (): React.ReactElement {
               <EnableCamera />
             </Stack>
             <AutoLockTimer />
+            <Password />
           </Stack>
           <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
             <AccountIcon />
@@ -35,7 +36,6 @@ function ExtensionSettings (): React.ReactElement {
           </Stack>
         </Stack>
       </VelvetBox>
-      <ChainsToViewAssets />
     </Motion>
   );
 }
