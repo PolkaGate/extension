@@ -958,3 +958,5 @@ export interface PositionInfo extends FetchedBalance, Chain {
   rate?: number;
   // You can add additional properties here if needed
 }
+
+export type RewardDestinationType = 'Others' | 'Staked' | undefined;
