@@ -4,7 +4,7 @@
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/types';
 
 import { Box, Container, Stack, Typography } from '@mui/material';
-import { Category, Key, Profile, Trash } from 'iconsax-react';
+import { Link2, Key, Profile, Trash } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { emptyList } from '../assets/icons/index';
@@ -117,7 +117,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
               }
               <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : '#05091C', borderRadius: '14px', p: isExtension ? '10px 0' : '12px 10px', mb: '2px', width: '100%' }}>
                 <Stack alignItems='center' columnGap='5px' direction='row'>
-                  <Category color='#FF4FB9' size='16' variant='Bulk' />
+                  <Link2 color='#FF4FB9' size='16' variant='Bulk' />
                   <Typography color='#EAEBF1' variant='B-4'>
                     {url}
                   </Typography>

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { Broom, Category, Edit, ExportCurve, type Icon, ImportCurve, LogoutCurve } from 'iconsax-react';
+import { Broom, Edit, ExportCurve, type Icon, ImportCurve, LogoutCurve, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -73,7 +73,7 @@ function AccountSettings (): React.ReactElement {
               path='/account/have-wallet'
             />
             <ActionBox
-              Icon={Category}
+              Icon={ShieldSecurity}
               label={t('Manage Website Access')}
               onClick={() => setPopup(ExtensionPopups.DAPPS)}
             />

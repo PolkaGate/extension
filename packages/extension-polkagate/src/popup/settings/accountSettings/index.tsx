@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { Category, DocumentDownload, Edit2, LogoutCurve, Notification, People } from 'iconsax-react';
+import { DocumentDownload, Edit2, LogoutCurve, Notification, People,ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -97,7 +97,7 @@ function AccountSettings (): React.ReactElement {
           title={t('Manage Profile')}
         />
         <ActionCard
-          Icon={Category}
+          Icon={ShieldSecurity}
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
