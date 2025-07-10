@@ -11,11 +11,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { deriveAccount, validateAccount, validateDerivationPath } from '@polkadot/extension-polkagate/src/messaging';
-import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
 import { nextDerivationPath } from '@polkadot/extension-polkagate/src/util/nextDerivationPath';
 
 import { exportAccountsGif } from '../../assets/gif';
-import { AccountContext, DecisionButtons, Identity2, MatchPasswordField, MyTextField, PasswordInput } from '../../components';
+import { AccountContext, DecisionButtons, Identity2, MatchPasswordField, MySnackbar, MyTextField, PasswordInput } from '../../components';
 import { useAccount, useSelectedAccount, useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 import SelectAccount from './SelectAccount';

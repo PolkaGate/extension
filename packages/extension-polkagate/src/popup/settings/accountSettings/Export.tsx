@@ -9,13 +9,12 @@ import React, { useCallback, useContext, useState } from 'react';
 import { noop } from '@polkadot/util';
 
 import { user } from '../../../assets/gif/index';
-import { AccountContext, ActionButton, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, Motion, PasswordInput } from '../../../components';
+import { AccountContext, ActionButton, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, Motion, MySnackbar, PasswordInput } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
 import { exportAccount, exportAccounts } from '../../../messaging';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
-import MySnackbar from '../extensionSettings/components/MySnackbar';
 
 /**
  * AccountSettings component allows users to export their accounts as encrypted JSON files.

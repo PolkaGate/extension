@@ -5,15 +5,19 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
+import { Add } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import { type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
+import { ASSETS_NAME_IN_STORAGE, ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
 
-import { ChainLogo, Motion, MySwitch, SearchField } from '../../../components';
-import { useGenesisHashOptions, useTranslation } from '../../../hooks';
-import { getStorage, setStorage } from '../../../util';
-import Endpoints from './Endpoints';
+import { ChainLogo, Motion, MySwitch, SearchField } from '../../components';
+import { useGenesisHashOptions, useTranslation } from '../../hooks';
+import { getStorage, setStorage } from '../../util';
+import AddNewNetwork from './partials/AddNewNetwork';
+import Endpoints from './partials/Endpoints';
 
 interface ItemProps {
   isLast: boolean;
@@ -63,7 +67,34 @@ function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Ite
   );
 }
 
-function ChainsToViewAssets (): React.ReactElement {
+function AddButton (): React.ReactElement {
+  const { t } = useTranslation();
+  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+
+  const onClick = useCallback(() => setPopup(ExtensionPopups.NEW_NETWORK), []);
+
+  return (
+    <>
+      <VelvetBox style={{ minWidth: '165px', width: 'fit-content' }}>
+        <Stack direction='row' onClick={onClick} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
+          <Add color='#FF4FB9' size='24' variant='Linear' />
+          <Typography color='text.primary' sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
+            {t('Add New Network')}
+          </Typography>
+        </Stack>
+      </VelvetBox>
+      {
+        popup === ExtensionPopups.NEW_NETWORK &&
+        <AddNewNetwork
+          open={popup === ExtensionPopups.NEW_NETWORK}
+          setOpen={setPopup}
+        />
+      }
+    </>
+  );
+}
+
+function NetworkSettings (): React.ReactElement {
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
 
@@ -182,10 +213,13 @@ function ChainsToViewAssets (): React.ReactElement {
 
   return (
     <Motion variant='slide'>
-      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: '600px', m: '5px', overflow: 'scroll', p: '0 0 30px 20px',  width: 'fill-available' }}>
-        <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
-          {t('Networks to view assets')}
-        </Typography>
+      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: '600px', m: '5px', overflow: 'scroll', p: '0 0 30px 20px', width: 'fill-available' }}>
+        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ my: '5px' }} width='95.5%'>
+          <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
+            {t('Networks to view assets')}
+          </Typography>
+          <AddButton />
+        </Stack>
         <SearchField
           onInputChange={onSearch}
           placeholder='🔍 Search networks'
@@ -206,17 +240,17 @@ function ChainsToViewAssets (): React.ReactElement {
           ))}
         </Grid>
         {chainToShowEndpoints &&
-        <Endpoints
-          genesisHash={chainToShowEndpoints}
-          isEnabled={selectedChains.has(chainToShowEndpoints)}
-          onClose={onCloseEndpoints}
-          onEnableChain={applyChainSelect}
-          open={Boolean(chainToShowEndpoints)}
-        />
+          <Endpoints
+            genesisHash={chainToShowEndpoints}
+            isEnabled={selectedChains.has(chainToShowEndpoints)}
+            onClose={onCloseEndpoints}
+            onEnableChain={applyChainSelect}
+            open={Boolean(chainToShowEndpoints)}
+          />
         }
       </Stack>
     </Motion>
   );
 }
 
-export default React.memo(ChainsToViewAssets);
+export default React.memo(NetworkSettings);

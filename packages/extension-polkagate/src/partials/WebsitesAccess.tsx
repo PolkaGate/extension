@@ -214,7 +214,7 @@ function WebsitesAccess ({ open, setPopup }: Props): React.ReactElement {
 
   return (
     <SharePopup
-      modalProps ={{ showBackIconAsClose: true }}
+      modalProps={{ showBackIconAsClose: true }}
       modalStyle={{ minHeight: '200px', padding: '20px 0px' }}
       onClose={handleClose}
       open={open}

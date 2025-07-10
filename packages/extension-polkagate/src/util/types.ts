@@ -12,6 +12,7 @@ import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, D
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { SavedAssets } from '@polkadot/extension-polkagate/hooks/useAssetsBalances';
 import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -22,7 +23,6 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/utils/types';
 import type { CurrencyItemType } from '../fullscreen/home/partials/Currency';
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
-import type { SavedAssets } from '../hooks/useAssetsBalances';
 
 import { type SxProps, type Theme } from '@mui/material';
 

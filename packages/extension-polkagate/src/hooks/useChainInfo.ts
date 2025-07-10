@@ -6,8 +6,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 import { useMemo } from 'react';
 
-import { selectableNetworks } from '@polkadot/networks';
-
+import chains from '../util/chains';
 import { sanitizeChainName } from '../util/utils';
 import { useApi2, useMetadata } from '.';
 
@@ -43,10 +42,10 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
   const api = useApi2(noApi ? undefined : genesisHash);
 
   return useMemo(() => {
-    const chainInfo = selectableNetworks.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash[0] === genesisHash);
-    const chainName = sanitizeChainName(chainInfo?.displayName);
-    const decimal = chainInfo?.decimals?.[0];
-    const token = chainInfo?.symbols?.[0];
+    const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
+    const chainName = sanitizeChainName(chainInfo?.chain);
+    const decimal = chainInfo?.tokenDecimal;
+    const token = chainInfo?.tokenSymbol;
 
     if (!genesisHash) {
       return {
@@ -59,6 +58,13 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
       };
     }
 
-    return { api, chain, chainName, decimal, displayName: chainInfo?.displayName, token };
+    return {
+      api,
+      chain,
+      chainName: chainName ?? chain?.name,
+      decimal: decimal ?? chain?.tokenDecimals,
+      displayName: chainInfo?.name ?? chain?.name ?? chainName,
+      token: token ?? chain?.tokenSymbol
+    };
   }, [api, chain, genesisHash]);
 }

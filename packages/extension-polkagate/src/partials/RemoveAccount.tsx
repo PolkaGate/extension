@@ -7,10 +7,9 @@ import React, { useCallback, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { Address2, DecisionButtons, GlowCheckbox, PasswordInput } from '../components';
+import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { forgetAccount } from '../messaging';
-import MySnackbar from '../popup/settings/extensionSettings/components/MySnackbar';
 import WarningBox from '../popup/settings/partials/WarningBox';
 import { ExtensionPopups } from '../util/constants';
 import { SharePopup } from '.';

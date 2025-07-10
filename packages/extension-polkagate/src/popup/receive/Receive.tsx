@@ -12,11 +12,11 @@ import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, NeonButton, SearchField } from '../../components';
+import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util/utils';
-import MySnackbar from '../settings/extensionSettings/components/MySnackbar';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;

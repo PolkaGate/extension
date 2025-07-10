@@ -113,7 +113,8 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
           ..._style,
           backgroundImage: `url(${modalEffect})`,
           backgroundPosition: 'top center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '100% auto',
         }}
       >
         <Grid alignItems='center' container item>

@@ -14,9 +14,9 @@ import TopMenus from './partials/TopMenus';
 import About from './About';
 import AccountSettings from './AccountSettings';
 import ExtensionSettings from './ExtensionSettings';
-import ChainsToViewAssets from './partials/ChainsToViewAssets';
+import NetworkSettings from './NetworkSettings';
 
-export default function Settings(): React.ReactElement {
+export default function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -46,7 +46,7 @@ export default function Settings(): React.ReactElement {
           }
           {
             pathname === '/settingsfs/network' &&
-            <ChainsToViewAssets />
+            <NetworkSettings />
           }
           {
             pathname === '/settingsfs/about' &&

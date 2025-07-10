@@ -1,18 +1,20 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import type { DropdownOption } from '../../../../util/types';
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, I3Dcube } from 'iconsax-react';
 import React, { type MouseEventHandler, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { ActionButton, ActionContext, ChainLogo, SearchField } from '../../../../components';
 import { getStorage, setStorage } from '../../../../components/Loading';
 import MySwitch from '../../../../components/MySwitch';
 import { useTranslation } from '../../../../components/translate';
 import { useGenesisHashOptions } from '../../../../hooks';
-import { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '../../../../hooks/useAssetsBalances';
 import { windowOpen } from '../../../../messaging';
 import { DEFAULT_SELECTED_CHAINS } from '../../../../util/defaultSelectedChains';
 

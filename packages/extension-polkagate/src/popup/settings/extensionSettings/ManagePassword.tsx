@@ -8,13 +8,13 @@ import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsEx
 
 import { ActionButton, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
 import { type LoginInfo } from '../../../components/Loading';
+import MySnackbar from '../../../components/MySnackbar';
 import { useTranslation } from '../../../components/translate';
 import { getStorage, setStorage } from '../../../util';
 import { isPasswordCorrect } from '../../passwordManagement';
 import WarningBox from '../partials/WarningBox';
-import MySnackbar from './components/MySnackbar';
 
-export default function ManagePassword ({ onBack }: {onBack?: () => void}): React.ReactElement {
+export default function ManagePassword ({ onBack }: { onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 

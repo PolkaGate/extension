@@ -1,10 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-
-import { Grid, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
+import { Grid, InputAdornment, Stack, styled, TextField, Typography, useTheme } from '@mui/material';
+import { type Icon, InfoCircle } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
+
+import { MyTooltip } from '.';
 
 const StyledTextFieldSmall = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'errorMessage'
@@ -132,21 +133,22 @@ const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, t
 
 interface Props {
   Icon?: Icon;
+  errorMessage?: string;
   focused?: boolean;
   iconSize?: number;
   inputType?: string;
+  inputValue?: string | number;
+  maxLength?: number;
+  mode?: 'small' | 'large';
   onEnterPress?: () => void;
   onTextChange: (text: string) => void;
   placeholder?: string;
   style?: React.CSSProperties;
   title?: string;
-  errorMessage?: string;
-  mode?: 'small' | 'large';
-  inputValue?: string | number;
-  maxLength?: number;
+  tooltip?: string;
 }
 
-export default function MyTextField ({ Icon, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -175,9 +177,19 @@ export default function MyTextField ({ Icon, errorMessage, focused = false, icon
   return (
     <Grid container item sx={style}>
       {title &&
-        <Typography height='20px' textAlign='left' variant='B-1' width='100%'>
-          {title}
-        </Typography>
+        <Stack columnGap='2px' direction='row' sx={{ alignItems: 'center', justifyContent: 'start' }}>
+          <Typography height='20px' textAlign='left' variant='B-1' width='100%'>
+            {title}
+          </Typography>
+          {
+            !!tooltip &&
+            <MyTooltip
+              content={tooltip}
+            >
+              <InfoCircle color={theme.palette.primary.main} size='16' variant='Bold' />
+            </MyTooltip>
+          }
+        </Stack>
       }
       <TextFieldComponent
         InputProps={{

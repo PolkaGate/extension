@@ -6,8 +6,7 @@ import { DocumentCopy } from 'iconsax-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
-import { Address2, ChainLogo, DecisionButtons, GradientDivider, SearchField } from '@polkadot/extension-polkagate/src/components/index';
-import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
+import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
