@@ -4,14 +4,13 @@
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/types';
 
 import { Box, Container, Stack, Typography } from '@mui/material';
-import { Link2, Key, Profile, Trash } from 'iconsax-react';
+import { Key, Link2, Profile, Trash } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { emptyList } from '../assets/icons/index';
-import { ActionButton, FadeOnScroll, MyTooltip, SearchField } from '../components';
+import { ActionButton, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
-import MySnackbar from '../popup/settings/extensionSettings/components/MySnackbar';
 import { ExtensionPopups } from '../util/constants';
 import { EditDappAccess, SharePopup } from '.';
 
