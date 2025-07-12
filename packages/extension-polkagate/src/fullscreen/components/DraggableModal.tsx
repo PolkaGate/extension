@@ -127,7 +127,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
               left: '20px',
               position: 'absolute',
               width: '36px',
-              zIndex: 1
+              zIndex: 2
             }}
           >
             <CLoseIcon sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />

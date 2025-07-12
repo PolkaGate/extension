@@ -340,12 +340,11 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
   }, [setShowAlert, manifest?.version, newVersion]);
 
   return (
-    //   style={{ position: 'relative' }}
     <SharePopup
       modalProps={{
         noDivider: true
       }}
-      modalStyle={{ minHeight: '500px', paddingTop: '33px' }}
+      modalStyle={{ minHeight: '500px', overflow: 'hidden', paddingTop: '33px' }}
       onClose={handleClose}
       open={openPopup}
       popupProps={{
