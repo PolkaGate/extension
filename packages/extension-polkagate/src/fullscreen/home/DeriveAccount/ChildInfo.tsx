@@ -3,7 +3,7 @@
 
 import type { HexString } from '@polkadot/util/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -11,7 +11,6 @@ import React, { useCallback, useState } from 'react';
 import { deriveAccount } from '@polkadot/extension-polkagate/src/messaging';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { exportAccountsGif } from '../../../assets/gif';
 import { DecisionButtons, Identity2, MatchPasswordField, MySnackbar, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { DERIVATION_STEPS } from './types';
