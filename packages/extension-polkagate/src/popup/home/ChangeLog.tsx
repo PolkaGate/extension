@@ -5,10 +5,12 @@ import { Box, Grid, Link, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import semver from 'semver';
 
+import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
+
 import { celebration } from '../../assets/gif';
 import { CometStar, Gear } from '../../assets/icons';
 import { logoTransparent } from '../../assets/logos';
-import { ExtensionPopup, GradientButton, GradientDivider, Progress } from '../../components';
+import { GradientButton, GradientDivider, Progress } from '../../components';
 import { useManifest } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { RedGradient } from '../../style';
@@ -338,14 +340,21 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
   }, [setShowAlert, manifest?.version, newVersion]);
 
   return (
-    <ExtensionPopup
-      handleClose={handleClose}
-      maxHeight='514px'
-      openMenu={openPopup}
-      px= {0}
-      style={{ position: 'relative' }}
-      withoutTopBorder
+    //   style={{ position: 'relative' }}
+    <SharePopup
+      modalProps={{
+        noDivider: true
+      }}
+      modalStyle={{ minHeight: '500px', paddingTop: '33px' }}
+      onClose={handleClose}
+      open={openPopup}
+      popupProps={{
+        maxHeight: '514px',
+        px: 0,
+        withoutTopBorder: true
+      }}
     >
+
       <Stack direction='column' sx={{ p: '10px 10px 0', position: 'relative', width: '100%', zIndex: 1 }}>
         {!isLoading && newVersion &&
             <Box
@@ -399,6 +408,6 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
             />
         }
       </Stack>
-    </ExtensionPopup>
+    </SharePopup>
   );
 }
