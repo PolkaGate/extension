@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Unlock } from 'iconsax-react';
 import React, { useCallback } from 'react';
@@ -12,7 +11,7 @@ import { useExtensionLockContext } from '../../../../context/ExtensionLockContex
 import { useAutoLockPeriod, useIsDark, useIsLoginEnabled, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
-export default function Lock({ style }: { style: SxProps<Theme> }): React.ReactElement {
+export default function Lock ({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const autoLockPeriod = useAutoLockPeriod();
@@ -37,9 +36,12 @@ export default function Lock({ style }: { style: SxProps<Theme> }): React.ReactE
       sx={{ ...style }}
     >
       <Unlock color={isLoginEnabled ? isDark ? '#AA83DC' : '#745D8B' : 'grey'} size={18} variant='Bulk' />
-      <Typography color={isLoginEnabled ? 'text.primary' : 'grey'} pl='3px' pt='3px' variant='B-4'>
-        {t('Lock')}
-      </Typography>
+      {
+        isExtension &&
+        <Typography color={isLoginEnabled ? 'text.primary' : 'grey'} pl='3px' pt='3px' variant='B-4'>
+          {t('Lock')}
+        </Typography>
+      }
     </Grid>
   );
 }

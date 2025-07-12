@@ -3,9 +3,10 @@
 
 import type { ItemInformation, ItemsListProps } from '../utils/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { NoNFT } from '@polkadot/extension-polkagate/src/assets/img/index';
 import { NFTItem } from '@polkadot/extension-polkagate/src/popup/home/partial/NFTItem';
 
 import Progress from '../../../components/Progress';
@@ -22,7 +23,7 @@ function NftList ({ nfts }: ItemsListProps): React.ReactElement {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPagePage] = useState<string | number>(DEFAULT_ITEMS_PER_PAGE);
   const [popupToShow, setShowPopup] = useState<ItemInformation>();
-  const [showFullscreen, setShowFullscreen] = useState<{ iFrame: boolean, source: string | null | undefined} | undefined>();
+  const [showFullscreen, setShowFullscreen] = useState<{ iFrame: boolean, source: string | null | undefined } | undefined>();
 
   const nftItemsToShow = useMemo(() => {
     if (!nfts || nfts?.length === 0) {
@@ -52,18 +53,19 @@ function NftList ({ nfts }: ItemsListProps): React.ReactElement {
 
   return (
     <Stack direction='column' sx={{ width: '952px' }}>
-      <Grid container item justifyContent='start' sx={{ gap: '8px', height: '492px', overflowY: 'scroll', mt: '30px' }}>
-        {!nfts &&
+      <Grid container item justifyContent='start' sx={{ gap: '8px', height: '492px', mt: '30px', overflowY: 'scroll' }}>
+        {(!nfts || nfts.length === 0) &&
           <Grid alignItems='center' container item justifyContent='center'>
             {nfts === undefined
               ? <Progress
-                gridSize={120}
                 title={t('Looking for NFTs/Uniques!')}
-                type='grid'
               />
-              : <Typography fontSize='16px' fontWeight={400}>
-                {t('You do not own any NFTs/Uniques')}!
-              </Typography>
+              : <Stack alignItems='center' direction='column' justifyContent='start' sx={{ height: '100%', mt: '10%', width: '100%' }}>
+                <Box component='img' src={NoNFT as string} sx={{ width: '200px' }} />
+                <Typography color='text.secondary' variant='B-2'>
+                  {t('You do not own any NFTs/Uniques')}!
+                </Typography>
+              </Stack>
             }
           </Grid>
         }
@@ -75,13 +77,6 @@ function NftList ({ nfts }: ItemsListProps): React.ReactElement {
             onClick={onClick(nftInfo)}
           />
         ))
-        }
-        {nfts && nfts.length === 0 &&
-          <Grid alignItems='center' container item justifyContent='center'>
-            <Typography fontSize='16px' fontWeight={400}>
-              {t('Nothing to Show')}!
-            </Typography>
-          </Grid>
         }
       </Grid>
       <PaginationRow

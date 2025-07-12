@@ -4,7 +4,7 @@
 import { Grid, type SxProps, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { useIsDark } from '../../../hooks';
+import { useIsDark, useIsExtensionPopup } from '../../../hooks';
 import { Discord, Docs, Email, Github, Web, XIcon, YoutubeIcon } from '../icons';
 import SocialIcon from './SocialIcon';
 
@@ -20,6 +20,7 @@ interface Props {
 export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18, label, short, style = {} }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
+  const isExtension = useIsExtensionPopup();
 
   const bgColor = short && !isDark ? '#CCD2EA' : undefined;
 
@@ -27,14 +28,16 @@ export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18,
     <Grid container item sx={{ ...style }}>
       {label &&
         <Typography
-          color='label.secondary'
+          color={isExtension ? 'label.secondary' : 'text.primary'}
+          fontSize={!isExtension ? '22px' : undefined}
           mb='8px'
           mt='10px'
           sx={{ display: 'block', textAlign: short ? 'left' : 'center' }}
           variant='H-4'
         >
           {label}
-        </Typography>}
+        </Typography>
+      }
       <Grid columnGap={columnGap} container item justifyContent={short ? 'flex-start' : 'center'}>
         <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} />
         <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize - 2}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />

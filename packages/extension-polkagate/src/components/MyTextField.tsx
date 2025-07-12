@@ -1,16 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-
-import { Grid, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
+import { Grid, InputAdornment, Stack, styled, TextField, Typography, useTheme } from '@mui/material';
+import { type Icon, InfoCircle } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
+import { MyTooltip } from '.';
+
 const StyledTextFieldSmall = styled(TextField, {
-  shouldForwardProp: (prop) => prop !== 'hasError'
-})<{ hasError?: boolean }>(({ hasError, theme }) => ({
+  shouldForwardProp: (prop) => prop !== 'errorMessage'
+})<{ errorMessage?: string }>(({ errorMessage, theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+    borderColor: errorMessage ? theme.palette.error.main : '#BEAAD833'
   },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
@@ -24,7 +25,7 @@ const StyledTextFieldSmall = styled(TextField, {
       },
       '& fieldset.MuiOutlinedInput-notchedOutline': {
         backgroundColor: 'unset',
-        borderColor: hasError ? theme.palette.error.main : '#3988FF',
+        borderColor: errorMessage ? theme.palette.error.main : '#3988FF',
         borderWidth: '2px',
         transition: 'all 150ms ease-out'
       }
@@ -41,7 +42,7 @@ const StyledTextFieldSmall = styled(TextField, {
     backgroundColor: '#1B133C',
     borderColor: '#BEAAD833',
     borderRadius: '12px',
-    color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
+    color: errorMessage ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
     marginTop: '5px',
     transition: 'all 150ms ease-out',
@@ -62,7 +63,7 @@ const StyledTextFieldSmall = styled(TextField, {
     }
   },
   '& input::placeholder': {
-    color: hasError ? theme.palette.error.main : theme.palette.text.secondary,
+    color: errorMessage ? theme.palette.error.main : theme.palette.text.secondary,
     ...theme.typography['B-4'],
     textAlign: 'left'
   },
@@ -132,20 +133,22 @@ const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, t
 
 interface Props {
   Icon?: Icon;
+  errorMessage?: string;
   focused?: boolean;
   iconSize?: number;
   inputType?: string;
+  inputValue?: string | number;
+  maxLength?: number;
+  mode?: 'small' | 'large';
   onEnterPress?: () => void;
   onTextChange: (text: string) => void;
   placeholder?: string;
   style?: React.CSSProperties;
   title?: string;
-  mode?: 'small' | 'large';
-  inputValue?: string | number;
-  maxLength?: number;
+  tooltip?: string;
 }
 
-export default function MyTextField ({ Icon, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -174,14 +177,24 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, inp
   return (
     <Grid container item sx={style}>
       {title &&
-        <Typography height='20px' textAlign='left' variant='B-1' width='100%'>
-          {title}
-        </Typography>
+        <Stack columnGap='2px' direction='row' sx={{ alignItems: 'center', justifyContent: 'start' }}>
+          <Typography height='20px' marginLeft= '4px' textAlign='left' variant='B-1' width='100%'>
+            {title}
+          </Typography>
+          {
+            !!tooltip &&
+            <MyTooltip
+              content={tooltip}
+            >
+              <InfoCircle color={theme.palette.primary.main} size='16' variant='Bold' />
+            </MyTooltip>
+          }
+        </Stack>
       }
       <TextFieldComponent
         InputProps={{
           startAdornment: (
-            <InputAdornment position='start' sx={{ marginRight: 0 }}>
+            <InputAdornment position='start' sx={{ marginRight: Icon ? '5px' : 0 }}>
               {
                 Icon && <Icon
                   color={focusing ? '#3988FF' : '#AA83DC'}
@@ -207,6 +220,11 @@ export default function MyTextField ({ Icon, focused = false, iconSize = 22, inp
         type={_inputType}
         value={inputValue}
       />
+      {errorMessage &&
+        <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
+          {errorMessage}
+        </Typography>
+      }
     </Grid>
   );
 }

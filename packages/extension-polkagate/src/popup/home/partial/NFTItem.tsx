@@ -3,12 +3,12 @@
 
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
-import { ArrowCircleRight } from 'iconsax-react';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { ArrowCircleRight, Cards } from 'iconsax-react';
 import React, { useCallback, useContext, useRef } from 'react';
 
-import { ActionContext } from '../../../components';
-import { useIsDark, useIsHovered, useSelectedAccount } from '../../../hooks';
+import { ActionContext, MyTooltip } from '../../../components';
+import { useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../../../hooks';
 import { toTitleCase } from '../../../util';
 import NftPrice from '../../nft/NftPrice';
 
@@ -21,6 +21,8 @@ interface NftItemProps {
 export function NFTItem ({ index, info, onClick }: NftItemProps) {
   const theme = useTheme();
   const isDark = useIsDark();
+  const { t } = useTranslation();
+
   const onAction = useContext(ActionContext);
   const account = useSelectedAccount();
   const containerRef = useRef(null);
@@ -90,23 +92,40 @@ export function NFTItem ({ index, info, onClick }: NftItemProps) {
           />
         </Grid>
         <Grid container direction='column' item sx={{ m: '6px 12px' }}>
+          <Stack alignItems='center' direction='row'>
+            {
+              info.isCollection &&
+              <MyTooltip content={t('This is a collection.')}>
+                <Cards color='#AA83DC' size='13' style={{ marginRight: '3px' }} />
+              </MyTooltip>
+            }
+            <Typography color={itemNameColor} sx={{ maxWidth: '110px', overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
+              {toTitleCase(info.name)}
+            </Typography>
+          </Stack>
           <Grid container item width='fit-content'>
             <span style={{ color: isDark ? '#BEAAD880' : '#745D8B', ...theme.typography['B-2'] }}>
-                #
+              #
             </span>
             <span style={{ color: itemIdColor, ...theme.typography['B-2'] }}>
               {info.isCollection ? info.collectionId : `${info.collectionId}${info.collectionId ? '_' : ''}${info.itemId}`}
             </span>
           </Grid>
-          <Typography color={itemNameColor} sx={{ maxWidth: '110px', overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
-            {toTitleCase(info.name)}
-          </Typography>
         </Grid>
       </Grid>
-      <NftPrice
-        nft={info}
-        style={{ justifyContent: 'center', p: '8px 0 4px' }}
-      />
+      {info.isCollection
+        ? <Stack alignItems='center' columnGap= '3px' direction='row' justifyContent= 'center' sx={{ p: '8px 0 4px', width: '100%' }}>
+          <Typography color='text.secondary' textAlign='left' variant='B-1'>
+            {t('Items')}:
+          </Typography>
+          <Typography color='primary.main' textAlign='left' variant='B-1'>
+            {info.items}
+          </Typography>
+        </Stack>
+        : <NftPrice
+          nft={info}
+          style={{ justifyContent: 'center', p: '8px 0 4px' }}
+        />}
     </Grid>
   );
 }

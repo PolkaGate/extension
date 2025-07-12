@@ -3,15 +3,17 @@
 
 import { Stack } from '@mui/material';
 import { Check, I3Dcube, Trade } from 'iconsax-react';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { GradientDivider } from '@polkadot/extension-polkagate/src/style/index';
 
 import { useTranslation } from '../../../hooks';
 import TopMenuItem from './components/TopMenuItem';
 
-function TopMenus(): React.ReactElement {
+function TopMenus (): React.ReactElement {
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
+
   const [position, setPosition] = useState<DOMRect | null>(null);
 
   const selectionLineStyle = useMemo(() => ({
@@ -20,14 +22,14 @@ function TopMenus(): React.ReactElement {
     height: '2px',
     position: 'relative',
     top: '2px',
-    transform: `translateX(${position ? position.left - 24 : 7}px)`,
+    transform: `translateX(${position && ref.current ? position.left - ref.current.getBoundingClientRect().left : 7}px)`,
     transition: 'transform 0.3s ease-in-out',
     width: `${position?.width ? position?.width + 24 : 0}px`
   }), [position]);
 
   return (
     <Stack direction='column' rowGap='2px'>
-      <Stack columnGap='20px' direction='row' ml='5px' mt='12px'>
+      <Stack columnGap='20px' direction='row' ml='5px' mt='12px' ref={ref}>
         <TopMenuItem
           Icon={Trade}
           label={t('Main')}
@@ -36,7 +38,7 @@ function TopMenus(): React.ReactElement {
         />
         <TopMenuItem
           Icon={I3Dcube}
-          label={t('Chains')}
+          label={t('Networks')}
           path='chains'
           setPosition={setPosition}
         />

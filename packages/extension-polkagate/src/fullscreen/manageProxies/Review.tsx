@@ -142,7 +142,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, se
               );
             })}
           </Grid>
-          <FadeOnScroll containerRef={refContainer} height='25px' ratio={0.3} style={{borderRadius: '0 0 14px 14px'}}/>
+          <FadeOnScroll containerRef={refContainer} height='25px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
         </Stack>
         <Stack columnGap='10px' sx={{ bgcolor: '#05091C', borderRadius: '14px', marginTop: '15px', padding: '10px 15px' }}>
           <DisplayValue

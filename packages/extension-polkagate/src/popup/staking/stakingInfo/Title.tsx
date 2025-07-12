@@ -22,21 +22,21 @@ function Title ({ selectedPosition }: Props): React.ReactElement {
         <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
           {t('Earn up to')}
         </Typography>
-        <Typography color='#82FFA5' textTransform='uppercase' variant='H-3' sx={{ px: '2px' }}>
+        <Typography color='#82FFA5' sx={{ px: '2px' }} textTransform='uppercase' variant='H-3'>
           {`${selectedPosition?.rate || 0}%`}
         </Typography>
         <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
           {t('on your')}
         </Typography>
       </Stack>
-      <Stack direction='row' alignItems='center' sx={{ mt: '-10px' }}>
-        <Typography color='text.primary' textTransform='uppercase' variant='H-3' sx={{ mr: '4px' }}>
+      <Stack alignItems='center' direction='row' sx={{ mt: '-10px' }}>
+        <Typography color='text.primary' sx={{ mr: '4px' }} textTransform='uppercase' variant='H-3'>
           {selectedPosition?.tokenSymbol}
         </Typography>
         <span style={{ marginBottom: '5px' }}>
           <ChainLogo genesisHash={selectedPosition?.genesisHash} size={24} />
         </span>
-        <Typography color='text.primary' textTransform='uppercase' variant='H-3' sx={{ ml: '2px' }}>
+        <Typography color='text.primary' sx={{ ml: '2px' }} textTransform='uppercase' variant='H-3'>
           {t('tokens per year')}
         </Typography>
       </Stack>

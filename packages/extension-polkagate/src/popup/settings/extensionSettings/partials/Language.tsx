@@ -3,12 +3,11 @@
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
+import { useSelectedLanguage } from '@polkadot/extension-polkagate/src/hooks/index';
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
-import uiSetting from '@polkadot/ui-settings';
 
-import { SettingsContext } from '../../../../components/contexts';
 import { useTranslation } from '../../../../components/translate';
 import useIsDark from '../../../../hooks/useIsDark';
 import SelectLanguage from '../../../../partials/SelectLanguage';
@@ -16,27 +15,16 @@ import { ExtensionPopups } from '../../../../util/constants';
 
 export default function Language (): React.ReactElement {
   const { t } = useTranslation();
-  const settings = useContext(SettingsContext);
+  const languageTicker = useSelectedLanguage();
   const isDark = useIsDark();
 
-  const [language, setLanguage] = useState('');
   const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
-  useEffect(() => {
+  const language = useMemo(() => {
     const options = getLanguageOptions();
 
-    const updateLanguage = (langValue: string) => {
-      const current = options.find(({ value }) => value === langValue)?.text || options[0].text;
-
-      setLanguage(current);
-    };
-
-    updateLanguage(settings.i18nLang);
-
-    uiSetting.on('change', (newSettings) => {
-      updateLanguage(newSettings.i18nLang);
-    });
-  }, [settings]);
+    return options.find(({ value }) => value === languageTicker)?.text || options[0].text;
+  }, [languageTicker]);
 
   const onClick = useCallback(() => {
     setShowPopUp(ExtensionPopups.LANGUAGE);

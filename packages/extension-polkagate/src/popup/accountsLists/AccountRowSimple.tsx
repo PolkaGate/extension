@@ -76,6 +76,7 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
             <AccountDropDown
               address={account?.address}
               iconSize='24px'
+              name={account?.name}
             />
           }
         </Stack>

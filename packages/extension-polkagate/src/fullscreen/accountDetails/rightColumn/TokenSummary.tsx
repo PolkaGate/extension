@@ -3,12 +3,13 @@
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/hooks/useAssetsBalances';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
+import { AssetLogo, FormatPrice, ShowBalance4 } from '../../../components';
 import { usePrices } from '../../../hooks';
 import { calcChange, calcPrice } from '../../../hooks/useYouHave';
 import DailyChange from '../../../popup/home/partial/DailyChange';
@@ -21,7 +22,7 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenSummary ({ address, token }: Props): React.ReactElement {
+function TokenSummary({ address, token }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
 
@@ -31,7 +32,10 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
   const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
 
-  const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+  const totalBalancePrice = useMemo(() =>
+    token?.decimal ? calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0) : undefined
+  , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+
   const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
   const [flipCondition, setFlipCondition] = useState(false);
@@ -46,8 +50,9 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
   }, [token?.genesisHash]);
 
   return (
-    <GlowBox style={{ justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
-      <Grid container item
+    <GlowBox style={{ height: '187px', justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
+      <Grid
+        container item
         sx={{
           backdropFilter: 'blur(4px)',
           border: '8px solid',
@@ -58,15 +63,23 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
           transform: flipCondition ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 1s',
           width: 'fit-content'
-        }}>
+        }}
+      >
         <AssetLogo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
       </Grid>
       <Explorer
         address={address}
       />
-      <Typography color='text.secondary' sx={{ height: '18px' }} variant='B-4'>
-        {token?.token}
-      </Typography>
+      {token?.token
+        ? <Typography color='text.secondary' sx={{ height: '18px' }} variant='B-4'>
+          {token?.token}
+        </Typography>
+        : <Skeleton
+          animation='wave'
+          height={12}
+          sx={{ borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '30px' }}
+        />
+      }
       <FormatPrice
         commify
         decimalColor={theme.palette.text.secondary}
@@ -74,24 +87,26 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         fontFamily='OdibeeSans'
         fontSize='48px'
         fontWeight={400}
-        height={53}
         num={totalBalancePrice}
-        width='fit-content'
+        skeletonHeight={30}
+        width={totalBalancePrice === undefined ? '100px' : 'fit-content'}
         withSmallDecimal
       />
       <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '30px', width: 'fit-content' }}>
-        <FormatBalance2
-          decimalPoint={4}
-          decimals={[token?.decimal ?? 0]}
-          style={{
-            color: '#BEAAD8',
-            fontFamily: 'Inter',
-            fontSize: '12px',
-            fontWeight: 500,
-            width: 'max-content'
+        <ShowBalance4
+          balance={token?.totalBalance}
+          balanceProps={{
+            style: {
+              color: '#BEAAD8',
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              fontWeight: 500,
+              width: 'max-content'
+            }
           }}
-          tokens={[token?.token ?? '']}
-          value={token?.totalBalance}
+          decimalPoint={FLOATING_POINT_DIGIT}
+          genesisHash={token?.genesisHash}
+          skeletonStyle={{ width: '130px' }}
         />
         {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
           <DailyChange

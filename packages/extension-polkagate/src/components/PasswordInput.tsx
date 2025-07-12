@@ -95,7 +95,7 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
   return (
     <Container disableGutters sx={style}>
       {title &&
-        <Typography display='block' height='20px' textAlign='left' variant='B-1' width='100%'>
+        <Typography display='block' height='20px' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '92%' }} textAlign='left' variant='B-1' width='100%'>
           {title}
         </Typography>
       }

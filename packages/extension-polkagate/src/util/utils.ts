@@ -373,7 +373,7 @@ export const isWss = (input: string | undefined): boolean => {
     return false;
   }
 
-  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(\/[\w\d-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
+  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(:\d+)?(\/[\w\d\-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
 
   return urlRegex.test(input);
 };

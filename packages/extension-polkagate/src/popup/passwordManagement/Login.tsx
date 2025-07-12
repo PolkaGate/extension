@@ -85,7 +85,7 @@ function Content ({ setStep }: Props): React.ReactElement {
         hasError={isPasswordError}
         onEnterPress={onUnlock}
         onPassChange={onPassChange}
-        title={t('Please enter your password to proceed')}
+        title={t('Enter your password')}
       />
       <DecisionButtons
         cancelButton

@@ -22,6 +22,7 @@ interface Props {
 export interface LoginInfo {
   status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
   lastLoginTime?: number;
+  lastEdit?: number;
   hashedPassword?: string;
   addressesToForget?: string[];
 }
@@ -95,7 +96,7 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
 
 const MAX_WAITING_TIME = 1500; // ms
 
-export default function Loading({ children }: Props): React.ReactElement<Props> {
+export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const autoLockPeriod = useAutoLockPeriod();
   const isPopupOpenedByExtension = useIsExtensionPopup();
 

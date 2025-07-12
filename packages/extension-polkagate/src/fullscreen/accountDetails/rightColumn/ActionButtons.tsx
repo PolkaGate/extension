@@ -9,7 +9,7 @@ import React, { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
-import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useTranslation } from '../../../hooks';
 import Receive from './Receive';
@@ -48,7 +48,9 @@ interface Props {
 
 function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(ExtensionPopups.NONE);
+
+  const onClick = useCallback(() => setOpen(ExtensionPopups.RECEIVE), []);
 
   return (
     <>
@@ -62,7 +64,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           <ActionBox
             Icon={ArrowCircleDown2}
             label={t('Receive')}
-            onClick={() => setOpen(true)}
+            onClick={onClick}
           />
           {GOVERNANCE_CHAINS.includes(genesisHash ?? '') &&
             <ActionBox
@@ -83,12 +85,13 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           />
         </Stack>
       </VelvetBox>
-      <Receive
-        address={address}
-        genesisHash={genesisHash}
-        open={open}
-        setOpen={setOpen}
-      />
+      {
+        open === ExtensionPopups.RECEIVE &&
+        <Receive
+          address={address}
+          open={open === ExtensionPopups.RECEIVE}
+          setOpen={setOpen}
+        />}
     </>
   );
 }

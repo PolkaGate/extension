@@ -7,12 +7,12 @@ import React, { useCallback, useState } from 'react';
 
 import keyring from '@polkadot/ui-keyring';
 
-import { Address2, DecisionButtons, ExtensionPopup, GlowCheckbox, PasswordInput } from '../components';
+import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { forgetAccount } from '../messaging';
-import MySnackbar from '../popup/settings/extensionSettings/components/MySnackbar';
 import WarningBox from '../popup/settings/partials/WarningBox';
 import { ExtensionPopups } from '../util/constants';
+import { SharePopup } from '.';
 
 interface Props {
   setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
@@ -78,14 +78,12 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
   }, []);
 
   return (
-    <ExtensionPopup
-      TitleIcon={LogoutCurve}
-      handleClose={handleClose}
-      iconSize={24}
-      openMenu={open}
-      pt={20}
+    <SharePopup
+      modalStyle={{ minHeight: '200px' }}
+      onClose={handleClose}
+      open={open}
+      popupProps={{ TitleIcon: LogoutCurve, iconSize: 24, pt: 20 }}
       title={t('Remove Account')}
-      withoutTopBorder
     >
       <Container disableGutters sx={{ height: '440px', position: 'relative', pt: '15px' }}>
         <WarningBox
@@ -100,7 +98,8 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
               name={account?.name}
               showAddress
               style={{ borderRadius: '14px', mt: '5px' }}
-            />}
+            />
+          }
           {account && account.isExternal
             ? (
               <GlowCheckbox
@@ -130,13 +129,13 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
             style={{ bottom: 0, position: 'absolute' }}
           />
         </Stack>
+        <MySnackbar
+          onClose={handleClose}
+          open={showSnackbar}
+          text={t('Account successfully removed!')}
+        />
       </Container>
-      <MySnackbar
-        onClose={handleClose}
-        open={showSnackbar}
-        text={t('Account successfully removed!')}
-      />
-    </ExtensionPopup>
+    </SharePopup>
   );
 }
 

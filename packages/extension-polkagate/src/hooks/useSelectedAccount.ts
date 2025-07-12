@@ -6,6 +6,7 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { useEffect, useState } from 'react';
 
 import { getStorage, watchStorage } from '../util';
+import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 
 export default function useSelectedAccount (): AccountJson | null | undefined {
   const [selected, setSelected] = useState<AccountJson | null>();
@@ -13,7 +14,7 @@ export default function useSelectedAccount (): AccountJson | null | undefined {
   useEffect(() => {
     let isMounted = true;
 
-    getStorage('selectedAccount')
+    getStorage(SELECTED_ACCOUNT_IN_STORAGE)
       .then((account) => {
         if (isMounted) {
           setSelected(account as AccountJson ?? null);
@@ -21,7 +22,7 @@ export default function useSelectedAccount (): AccountJson | null | undefined {
       })
       .catch(console.error);
 
-    const unsubscribe = watchStorage('selectedAccount', setSelected);
+    const unsubscribe = watchStorage(SELECTED_ACCOUNT_IN_STORAGE, setSelected);
 
     return () => {
       isMounted = false;

@@ -5,10 +5,9 @@ import { Grid, Typography } from '@mui/material';
 import { Edit2, User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { Address2, DecisionButtons, ExtensionPopup, MyTextField } from '../components';
+import { Address2, DecisionButtons, ExtensionPopup, MySnackbar, MyTextField } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { editAccount } from '../messaging';
-import MySnackbar from '../popup/settings/extensionSettings/components/MySnackbar';
 import { ExtensionPopups } from '../util/constants';
 
 interface Props {

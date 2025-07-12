@@ -35,7 +35,6 @@ export default function FromToBox ({ address, chainName, genesisHash, label }: P
         identiconSize={48}
         identiconStyle={{ marginRight: '7px' }}
         nameStyle={{ color: 'text.primary', maxWidth: '190px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-        showShortAddress
         style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-3' }}
         withShortAddress
       />

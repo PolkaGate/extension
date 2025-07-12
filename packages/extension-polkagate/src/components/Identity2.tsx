@@ -34,20 +34,20 @@ interface Props {
   inParentheses?: boolean;
   judgement?: unknown;
   name?: string;
+  nameStyle?: SxProps<Theme> | CSSProperties;
   noIdenticon?: boolean;
   onClick?: () => void;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
   showChainLogo?: boolean;
   showShortAddress?: boolean;
   showSocial?: boolean;
-  addressStyle?: SxProps<Theme> | CSSProperties;
-  nameStyle?: SxProps<Theme> | CSSProperties;
+  socialStyles?: SxProps<Theme> | CSSProperties;
   style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -178,7 +178,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
           </Grid>
         }
         {_showSocial && _accountInfo?.identity?.email &&
-          <Grid alignItems='center' columnGap='2px' container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content' }}>
+          <Grid alignItems='center' columnGap='2px' container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content', ...socialStyles }}>
             {_accountInfo?.identity?.email &&
               <SocialIcon Icon={<Email color={iconColors} width='10.12px' />} link={`mailto:${_accountInfo.identity.email}`} size={18} />
             }

@@ -1,18 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AutoLockDelayType } from '../../../../hooks/useAutoLock';
 
 import { Grid, type SelectChangeEvent, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { setStorage } from '../../../../components/Loading';
+import MySwitch from '../../../../components/MySwitch';
 import { useTranslation } from '../../../../components/translate';
 import { useAutoLock } from '../../../../hooks';
 import Field from '../components/Field';
 import MySelect from '../components/Select';
-import MySwitch from '../components/Switch';
 
 const autoLockOptions = [
   { text: 'min', value: 'min' },

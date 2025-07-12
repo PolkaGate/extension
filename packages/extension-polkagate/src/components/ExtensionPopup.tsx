@@ -107,7 +107,7 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
               </Typography>
             </Grid>
           }
-          <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p='10px'>
+          <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p={title || TitleIcon ? '10px' : 0}>
             {
               TitleIcon
                 ? <TitleIcon color={iconColor} size={iconSize} variant={iconVariant ?? 'Bold'} />

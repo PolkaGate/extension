@@ -1,17 +1,31 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React, { type CSSProperties, useCallback, useRef, useState } from 'react';
 
 import Sparkles from '../components/SVG/Sparkles';
-import { useIsDark, useIsHovered, useManifest, useTranslation } from '../hooks';
+import { useIsDark, useIsExtensionPopup, useIsHovered, useManifest, useTranslation } from '../hooks';
 import ChangeLog from '../popup/home/ChangeLog';
-import { GradientBorder } from '../style';
 
 interface Props {
   showLabel?: boolean;
   style?: CSSProperties;
+}
+
+function MyDivider (): React.ReactElement {
+  const isExtension = useIsExtensionPopup();
+
+  return (
+    <Box
+      sx={{
+        background: 'linear-gradient(180deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+        height: '14px',
+        mx: isExtension ? '5px' : '15px',
+        width: '1px'
+      }}
+    />
+  );
 }
 
 function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
@@ -34,11 +48,12 @@ function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom:
         {showLabel &&
           <Typography color={textColor} variant='B-1'>
             {t('Version')}
-          </Typography>}
+          </Typography>
+        }
         <Typography color={textColor} variant='B-1'>
           {version}
         </Typography>
-        <GradientBorder style={{ height: '1px', opacity: 0.5, position: 'static', rotate: '90deg', width: '14px', zIndex: 'auto' }} />
+        <MyDivider />
         <Sparkles color={hovered ? '#AA83DC' : sparklesColor} height={12} width={12} />
         <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onClick={toggleOpenPopup} ref={containerRef} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
           {t('What’s new page')}
@@ -48,7 +63,8 @@ function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom:
         <ChangeLog
           openMenu={openMenu}
           setShowAlert={setOpenMenu}
-        />}
+        />
+      }
     </>
   );
 }

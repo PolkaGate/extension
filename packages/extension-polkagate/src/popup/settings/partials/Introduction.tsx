@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Grid, type SxProps, Typography } from '@mui/material';
 import React from 'react';
 
@@ -10,7 +9,7 @@ import useIsDark from '../../../hooks/useIsDark';
 import { Version2 } from '../../../partials';
 import { EXTENSION_NAME } from '../../../util/constants';
 
-function Introduction({ style = {} }: { style?: SxProps }): React.ReactElement {
+function Introduction ({ style = {} }: { style?: SxProps }): React.ReactElement {
   const isDark = useIsDark();
 
   return (

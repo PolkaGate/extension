@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-no-bind */
 
 import { Box, keyframes, Slide, Snackbar, Typography, useTheme } from '@mui/material';
+import { CloseCircle } from 'iconsax-react';
 import React, { useEffect } from 'react';
 
 import { check } from '@polkadot/extension-polkagate/src/assets/gif/index';
@@ -33,7 +34,7 @@ const SNACK_BAR_VISIBILITY_DURATION = 2000;
  * @param {() => void} onClose - Callback function to close the Snackbar.
  * @returns {JSX.Element} The rendered Snackbar component.
  */
-const MySnackbar = ({ onClose, open, text }: Props) => {
+const MySnackbar = ({ isError, onClose, open, text }: Props) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -57,11 +58,15 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
     >
       <Box
         sx={{
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          alignItems: 'center',
+          background: isError ? 'linear-gradient(262.56deg, #B1004D 0%, #DC45A0 45%, #B1004D 100%)' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
           borderRadius: '12px',
           boxShadow: 3,
           color: '#fff',
+          columnGap: '5px',
+          display: 'flex',
           height: '52px',
+          justifyContent: 'center',
           overflow: 'hidden',
           position: 'relative',
           py: 1.5,
@@ -69,11 +74,15 @@ const MySnackbar = ({ onClose, open, text }: Props) => {
           width: '330px'
         }}
       >
-        <Box
-          component='img'
-          src={check as string}
-          sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
-        />
+        {
+          isError
+            ? <CloseCircle color='#EAEBF1' size='24' />
+            : <Box
+              component='img'
+              src={check as string}
+              sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
+            />
+        }
         <Typography color={theme.palette.text.primary} variant='B-2'>
           {text}
         </Typography>

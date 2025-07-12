@@ -3,7 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -51,7 +51,9 @@ function MenuButton ({ Icon, path, style = { marginBottom: '8px' }, text }: Prop
         cursor: 'pointer',
         height: '44px',
         paddingLeft: '30px',
+        position: 'relative',
         width: '100%',
+        overflow: 'hidden',
         ...style
       }}
     >
@@ -59,6 +61,18 @@ function MenuButton ({ Icon, path, style = { marginBottom: '8px' }, text }: Prop
       <Typography className='text' color={hovered || isSelected ? '#FF4FB9' : '#EAEBF1'} ml='25px' sx={{ userSelect: 'none' }} variant='B-2'>
         {text}
       </Typography>
+      {
+        isSelected &&
+        <Box sx={{
+          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          filter: 'blur(25px)',
+          height: '48px',
+          position: 'absolute',
+          right: '-48px',
+          width: '48px'
+        }}
+        />
+      }
     </Stack>
   );
 }

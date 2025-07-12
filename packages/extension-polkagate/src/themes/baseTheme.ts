@@ -109,7 +109,6 @@ export const baseTheme: ThemeOptions = {
       fontSize: '16px',
       fontWeight: 600,
       letterSpacing: '-0.6px',
-      // lineHeight: '23px',
       textAlign: 'center'
     },
     'B-4': {

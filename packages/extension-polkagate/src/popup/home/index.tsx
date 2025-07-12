@@ -66,7 +66,8 @@ export default function Home (): React.ReactElement {
           newVersion
           openMenu={show}
           setShowAlert={setShowAlert}
-        />}
+        />
+      }
       {hierarchy.length === 0
         ? loginInfo?.status === 'forgot'
           ? <Reset />

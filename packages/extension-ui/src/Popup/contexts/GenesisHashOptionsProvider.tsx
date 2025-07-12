@@ -6,7 +6,7 @@ import React from 'react';
 import { GenesisHashOptionsContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import useGenesisHashOptions from '@polkadot/extension-polkagate/src/hooks/useGenesisHashOptions';
 
-export default function GenesisHashOptionsProvider({ children }: { children: React.ReactNode }) {
+export default function GenesisHashOptionsProvider ({ children }: { children: React.ReactNode }) {
   const genesisHashOptionsCtx = useGenesisHashOptions();
 
   return (

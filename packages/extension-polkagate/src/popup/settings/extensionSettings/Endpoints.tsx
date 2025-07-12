@@ -7,14 +7,14 @@ import { useParams } from 'react-router';
 
 import EndpointManager2 from '../../../class/endpointManager2';
 import { ActionContext, BackWithLabel, ChainLogo } from '../../../components';
+import MySwitch from '../../../components/MySwitch';
+import Radio from '../../../components/Radio';
 import { useEndpoint2, useEndpoints, useMetadata, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 import DotIndicator from './components/DotIndicator';
-import PRadio from './components/Radio';
-import MySwitch from './components/Switch';
 
 const BackButton = ({ genesisHash }: { genesisHash: string | undefined; }) => {
   const chain = useMetadata(genesisHash, true);
@@ -141,7 +141,7 @@ function Endpoints (): React.ReactElement {
                     {t('NODES')}
                   </Typography>}
                 <Stack alignItems='center' columnGap='10px' direction='row'>
-                  <PRadio
+                  <Radio
                     checked={endpoint === value}
                     columnGap='5px'
                     label={name}
