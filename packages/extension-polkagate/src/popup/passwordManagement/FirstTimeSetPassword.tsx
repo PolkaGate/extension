@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
@@ -20,7 +18,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-function FirstTimeSetPassword({ setStep }: Props): React.ReactElement {
+function FirstTimeSetPassword ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 
@@ -31,7 +29,7 @@ function FirstTimeSetPassword({ setStep }: Props): React.ReactElement {
       return;
     }
 
-    await setStorage('loginInfo', { hashedPassword: password, lastLoginTime: Date.now(), status: 'justSet' });
+    await setStorage('loginInfo', { hashedPassword: password, lastEdit: Date.now(), lastLoginTime: Date.now(), status: 'justSet' });
     setExtensionLock(true);
     setStep(STEPS.SHOW_LOGIN);
   }, [password, setExtensionLock, setStep]);

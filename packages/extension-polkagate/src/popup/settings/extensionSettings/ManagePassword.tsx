@@ -56,13 +56,12 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
       return;
     }
 
-    setStorage('loginInfo',
-      { hashedPassword: newPassword, lastLoginTime: Date.now(), status: 'justSet' }
-    ).then(() => {
-      setPasswordError(false);
-      setShowSnackbar(true);
-      setSnackbarText(t('Password has been changed!'));
-    }).catch(console.error);
+    setStorage('loginInfo', { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: 'justSet' })
+      .then(() => {
+        setPasswordError(false);
+        setShowSnackbar(true);
+        setSnackbarText(t('Password has been changed!'));
+      }).catch(console.error);
   }, [currentPassword, hasAlreadySetPassword, newPassword, readyToGo, t]);
 
   return (

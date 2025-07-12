@@ -3,27 +3,37 @@
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Key } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { getStorage } from '@polkadot/extension-polkagate/src/util';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import { ExtensionPopups } from '../../../util/constants';
 import SetPassword from './SetPassword';
 
-export default function Password(): React.ReactElement {
+export default function Password (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
 
   const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const [lastEditDate, setLastEdit] = useState<string>();
 
-  const timestamp = 1752054672283;
-  const date = new Date(timestamp);
+  useEffect(() => {
+    getStorage('loginInfo').then((info) => {
+      const timestamp = info?.lastEdit as number | undefined;
 
-  const day = date.getDate(); // no padding
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // pad to 2 digits
-  const year = date.getFullYear();
+      if (timestamp) {
+        const date = new Date(timestamp);
 
-  const lastEditDate = `${day}.${month}.${year}`; // e.g., "9.06.2025"
+        const day = date.getDate();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        setLastEdit(`${day}.${month}.${year}`);
+      }
+    }).catch(console.error);
+  }, []);
 
   const onClick = useCallback(() => {
     setShowPopUp(ExtensionPopups.PASSWORD);
@@ -59,7 +69,7 @@ export default function Password(): React.ReactElement {
                 {t('Last edit')}:
               </Typography>
               <Typography color='text.secondary' variant='B-5'>
-                {lastEditDate}
+                {lastEditDate ?? '__,__,__'}
               </Typography>
             </Stack>
           </Stack>
