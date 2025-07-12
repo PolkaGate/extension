@@ -13,7 +13,7 @@ import { Motion } from '../../components';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { WebsitesAccess } from '../../partials';
 import { VelvetBox } from '../../style';
-import DeriveAccount from '../home/DeriveAccount';
+import DeriveAccount from '../home/DeriveAccount/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 
@@ -43,7 +43,7 @@ function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.React
   );
 }
 
-function AccountSettings (): React.ReactElement {
+function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
 
@@ -92,37 +92,37 @@ function AccountSettings (): React.ReactElement {
         </Stack>
         {
           popup === ExtensionPopups.RENAME &&
-        <RenameAccount
-          address={selectedAccount?.address}
-          open={popup}
-          setPopup={setPopup}
-        />
+          <RenameAccount
+            address={selectedAccount?.address}
+            open={popup}
+            setPopup={setPopup}
+          />
         }
         {popup === ExtensionPopups.EXPORT &&
-        <ExportAllAccounts
-          open={popup === ExtensionPopups.EXPORT}
-          setPopup={setPopup}
-        />
+          <ExportAllAccounts
+            open={popup === ExtensionPopups.EXPORT}
+            setPopup={setPopup}
+          />
         }
         {
           popup === ExtensionPopups.REMOVE &&
-        <RemoveAccount
-          open={popup === ExtensionPopups.REMOVE}
-          setPopup={setPopup}
-        />
+          <RemoveAccount
+            open={popup === ExtensionPopups.REMOVE}
+            setPopup={setPopup}
+          />
         }
         {
           popup === ExtensionPopups.DAPPS &&
-        <WebsitesAccess
-          open={popup === ExtensionPopups.DAPPS}
-          setPopup={setPopup}
-        />
+          <WebsitesAccess
+            open={popup === ExtensionPopups.DAPPS}
+            setPopup={setPopup}
+          />
         }
         {popup === ExtensionPopups.DERIVE &&
-        <DeriveAccount
-          open={popup === ExtensionPopups.DERIVE}
-          setPopup={setPopup}
-        />
+          <DeriveAccount
+            open={ExtensionPopups.DERIVE}
+            setPopup={setPopup}
+          />
         }
       </VelvetBox>
     </Motion>

@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { LoginInfo } from '@polkadot/extension-polkagate/src/components/Loading';
+
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Key } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -21,7 +23,7 @@ export default function Password (): React.ReactElement {
 
   useEffect(() => {
     getStorage('loginInfo').then((info) => {
-      const timestamp = info?.lastEdit as number | undefined;
+      const timestamp = (info as unknown as LoginInfo | undefined)?.lastEdit;
 
       if (timestamp) {
         const date = new Date(timestamp);

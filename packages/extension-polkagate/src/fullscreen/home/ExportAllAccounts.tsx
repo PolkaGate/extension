@@ -60,6 +60,7 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
       dividerStyle={{ margin: '5px 0 0' }}
       onClose={onClose}
       open={open !== undefined}
+      showBackIconAsClose
       style={{ minHeight: '200px' }}
       title={t('Export all Accounts')}
     >

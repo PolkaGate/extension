@@ -178,7 +178,7 @@ export default function MyTextField ({ Icon, errorMessage, focused = false, icon
     <Grid container item sx={style}>
       {title &&
         <Stack columnGap='2px' direction='row' sx={{ alignItems: 'center', justifyContent: 'start' }}>
-          <Typography height='20px' textAlign='left' variant='B-1' width='100%'>
+          <Typography height='20px' marginLeft= '4px' textAlign='left' variant='B-1' width='100%'>
             {title}
           </Typography>
           {
