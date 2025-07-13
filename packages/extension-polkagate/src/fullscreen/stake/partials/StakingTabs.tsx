@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
+import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 import type { UseStakingRewards } from '../../../hooks/useStakingRewards3';
 import type { PopupOpener } from '../util/utils';
 
@@ -11,6 +12,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
+import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTable';
 import Rewards from '../Rewards';
 
 export interface StakingTabsHeaderItems {
@@ -50,6 +52,7 @@ interface Props {
   genesisHash: string | undefined;
   token: string | undefined;
   popupOpener: PopupOpener;
+  stakingInfo?: SoloStakingInfo;
 }
 
 enum STAKING_TABS {
@@ -58,7 +61,7 @@ enum STAKING_TABS {
   VALIDATORS
 }
 
-function StakingTabs ({ genesisHash, popupOpener, rewardInfo, token, type }: Props) {
+function StakingTabs ({ genesisHash, popupOpener, rewardInfo, stakingInfo, token, type }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
 
@@ -108,12 +111,16 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, token, type }: Pro
           />);
 
       case STAKING_TABS.VALIDATORS:
-        return <></>;
+        return (
+          <ValidatorsTabBody
+            genesisHash={genesisHash}
+            stakingInfo={stakingInfo}
+          />);
 
       default:
         return <></>;
     }
-  }, [genesisHash, popupOpener, rewardInfo, tab, token, type]);
+  }, [genesisHash, popupOpener, rewardInfo, stakingInfo, tab, token, type]);
 
   return (
     <Stack direction='column' sx={{ gap: '12px', px: '18px' }}>

@@ -58,6 +58,7 @@ export default function SoloFullScreen (): React.ReactElement {
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}
+            stakingInfo={stakingInfo}
             token={token}
             type='solo'
           />
