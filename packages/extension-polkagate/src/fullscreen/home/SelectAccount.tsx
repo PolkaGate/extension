@@ -3,7 +3,7 @@
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown } from 'iconsax-react';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -28,6 +28,10 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
     setSelectedAccount(acc);
   }, [setSelectedAccount]);
 
+  const filteredAccounts = useMemo(() => {
+    return accounts?.filter(({ isExternal }) => !isExternal);
+  }, [accounts]);
+
   return (
     <DraggableModal
       onClose={handleClose}
@@ -36,12 +40,12 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
       style={{ height: '460px', padding: '20px' }}
       title={t('Select Parent Account')}
     >
-      <Motion style={{ display: 'inline-grid', height: '91%', position: 'relative',  width: '100%' }} variant='zoom'>
+      <Motion style={{ display: 'flex', flexDirection: 'column', height: '91%', position: 'relative', rowGap: '17px', textAlign: 'left', width: '100%' }} variant='zoom'>
         <Typography color='text.secondary' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
           {t('My Accounts')}
         </Typography>
         <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflowY: 'auto', rowGap: '12px' }}>
-          {accounts.map(({ address }) => {
+          {filteredAccounts.map(({ address }) => {
             const checked = address === selectedAccount;
 
             return (
