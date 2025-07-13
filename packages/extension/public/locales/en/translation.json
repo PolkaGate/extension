@@ -1718,5 +1718,6 @@
   "This account is derived from the selected parent account. It will have its own name and password.": "",
   "Derived accounts share the same recovery phrase as their parent but follow a different path to remain distinct.": "",
   "Password for {{parentName}}": "",
-  "Name & Password": ""
+  "Name & Password": "",
+  "+ Add New Network": ""
 }

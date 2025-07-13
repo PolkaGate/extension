@@ -39,11 +39,11 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
   const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); // 'genesisHash/assetId'
 
   const goToAccountPage = useCallback(() => {
-    if (!account) {
+    if (!account?.address) {
       return;
     }
 
-    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(()=> navigate(`accountfs/${account.address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`)).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account.address).finally(()=> navigate(`accountfs/${account.address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`)).catch(console.error);
   }, [account, defaultGenesisAndAssetId, navigate]);
 
   return (

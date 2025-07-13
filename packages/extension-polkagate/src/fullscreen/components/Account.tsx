@@ -125,11 +125,11 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
   const extraTokensCount = useMemo(() => assetsToShow ? assetsToShow.length - 4 : 0, [assetsToShow]);
 
   const goToNft = useCallback(() => {
-    if (!account) {
+    if (!account?.address) {
       return;
     }
 
-    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account.address).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
   }, [account, navigate]);
 
   return (
