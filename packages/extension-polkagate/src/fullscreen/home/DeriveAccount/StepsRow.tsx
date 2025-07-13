@@ -25,7 +25,7 @@ export default function StepsRow ({ inputStep }: { inputStep: DERIVATION_STEPS }
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ display: 'flex', justifySelf: 'center', m: '30px 0 25px', width: '80%' }}>
+    <Box sx={{ display: 'flex', justifySelf: 'center', m: '18px 0 25px', width: '80%' }}>
       <StepItem
         inputStep={inputStep}
         label={t('Derivation path')}
