@@ -71,7 +71,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
           description={t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
           title={t('REMEMBER YOUR PASSWORD WELL AND KEEP IT SAFE')}
         />
-        <Stack columnGap='15px' direction='column' sx={{ bgcolor: isExtension ? 'background.paper' : 'transparent', borderRadius: '14px', m: isExtension ? '5px 15px' : '25px 5px 0', zIndex: 1 }}>
+        <Stack columnGap='15px' direction='column' sx={{ bgcolor: isExtension ? 'background.paper' : 'transparent', borderRadius: '14px', m: isExtension ? '5px 15px' : '25px 5px 0', position: 'relative', zIndex: 1 }}>
           {hasAlreadySetPassword &&
             <PasswordInput
               focused
