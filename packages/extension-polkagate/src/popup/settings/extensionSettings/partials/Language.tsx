@@ -36,9 +36,9 @@ export default function Language (): React.ReactElement {
         <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
           {t('LANGUAGE')}
         </Typography>
-        <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center', mt: '5px' }}>
-          <Translate color={isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-          <Stack columnGap='5px' direction='row' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer' }}>
+        <Stack columnGap='10px' direction='row' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', mt: '5px' }}>
+          <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bulk' />
+          <Stack columnGap='5px' direction='row' onClick={onClick} sx={{ alignItems: 'center' }}>
             <Typography variant='B-1'>
               {language}
             </Typography>

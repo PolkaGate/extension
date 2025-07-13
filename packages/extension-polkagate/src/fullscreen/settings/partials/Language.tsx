@@ -37,12 +37,14 @@ export default function Language (): React.ReactElement {
           {t('Language')}
         </Typography>
         <Stack
-          columnGap='10px' direction='row' sx={{
+          columnGap='10px'
+          direction='row' onClick={onClick} sx={{
             ':hover': { background: '#2D1E4A' },
             alignItems: 'center',
             bgcolor: '#1B133CB2',
             border: '1px solid #BEAAD833',
             borderRadius: '12px',
+            cursor: 'pointer',
             height: '44px',
             mt: '5px',
             px: '8px',
@@ -50,8 +52,8 @@ export default function Language (): React.ReactElement {
             width: '454px'
           }}
         >
-          <Translate color={isDark ? '#AA83DC' : '#745D8B'} onClick={onClick} size='18' style={{ cursor: 'pointer' }} variant='Bulk' />
-          <Stack columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', width: '100%' }}>
+          <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bulk' />
+          <Stack columnGap='5px' direction='row' justifyContent='space-between' sx={{ alignItems: 'center', width: '100%' }}>
             <Typography color='#BEAAD8' variant='B-4'>
               {language}
             </Typography>
