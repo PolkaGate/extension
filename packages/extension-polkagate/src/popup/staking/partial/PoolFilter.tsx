@@ -31,7 +31,7 @@ export enum SORTED_BY {
 }
 
 export interface PoolFilterState {
-  sortBy: SORTED_BY;
+  sortBy: string;
   isVerified: boolean;
   commissionThreshold: number | undefined;
   stakedThreshold: BN;
@@ -133,7 +133,7 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
   const { decimal, token } = useChainInfo(genesisHash, true);
   const poolStakingConsts = usePoolConst(genesisHash);
 
-  const [sortConfig, setSortConfig] = React.useState<SORTED_BY>(SORTED_BY.INDEX);
+  const [sortConfig, setSortConfig] = React.useState<string>(SORTED_BY.INDEX);
   const [justVerifiedStash, setJustVerifiedStash] = React.useState<boolean>(false);
   const [commissionSetting, setCommissionSetting] = React.useState<Setting>(init);
   const [stakedSetting, setStakedSetting] = React.useState<Setting>(init);
@@ -204,6 +204,7 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
         <SortBy
           setSortBy={setSortConfig}
           sortBy={sortConfig}
+          sortOptions={Object.values(SORTED_BY)}
         />
         <GradientDivider style={{ my: '14px' }} />
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', justifyContent: 'space-between', m: 0, width: '96%' }}>

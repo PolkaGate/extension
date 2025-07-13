@@ -7,7 +7,7 @@ import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Dialog, Grid, Link, Slide, Stack, Typography } from '@mui/material';
+import { Container, Dialog, Grid, Link, Slide, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import Riot from '@polkadot/extension-polkagate/src/assets/icons/Riot';
@@ -36,13 +36,14 @@ interface ValidatorDetailProps {
 
 interface ValidatorIdSocialsProps {
   validatorDetail: ValidatorInformation;
+  style?: SxProps<Theme>;
 }
 
-const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
+export const ValidatorIdSocials = ({ style, validatorDetail }: ValidatorIdSocialsProps) => {
   const bgColor = '#FFFFFF1A';
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%' }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%', ...style }}>
       {validatorDetail.identity?.discord &&
         <SocialIcon Icon={<Discord color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
@@ -161,7 +162,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
             <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: 0, position: 'relative', zIndex: 1 }}>
             <BlueGradient style={{ top: '-120px' }} />
             <DetailGradientBox />
             <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>

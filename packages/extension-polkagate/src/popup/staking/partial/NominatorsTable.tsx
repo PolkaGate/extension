@@ -10,7 +10,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { FormatBalance2, Identity2 } from '../../../components';
+import { FormatBalance2 } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';

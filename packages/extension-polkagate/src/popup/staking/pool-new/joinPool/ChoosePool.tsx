@@ -40,7 +40,7 @@ const getStakedAmount = (pool: PoolInfo) => pool.bondedPool?.points ?? BN_ZERO;
 
 // Sorting functions map
 const sortingFunctions = {
-  [SORTED_BY.INDEX]: (a: PoolInfo, b: PoolInfo) => a.poolId - b.poolId,
+  [`${SORTED_BY.INDEX}`]: (a: PoolInfo, b: PoolInfo) => a.poolId - b.poolId,
 
   [SORTED_BY.LESS_COMMISSION]: (a: PoolInfo, b: PoolInfo) =>
     getCommissionPercentage(a) - getCommissionPercentage(b),
@@ -60,7 +60,7 @@ const sortingFunctions = {
   [SORTED_BY.LESS_STAKED]: (a: PoolInfo, b: PoolInfo) =>
     getStakedAmount(a).cmp(getStakedAmount(b)),
 
-  [SORTED_BY.NAME]: (a: PoolInfo, b: PoolInfo) => {
+  [`${SORTED_BY.NAME}`]: (a: PoolInfo, b: PoolInfo) => {
     const nameA = a.metadata?.toLowerCase() ?? '';
     const nameB = b.metadata?.toLowerCase() ?? '';
 
@@ -129,7 +129,7 @@ export default function ChoosePool ({ filter, onNext, pools, searchedQuery, sele
     }
 
     // Apply sorting
-    const sortFunction = sortingFunctions[filter.sortBy];
+    const sortFunction = sortingFunctions[filter.sortBy as keyof typeof sortingFunctions] || sortingFunctions[SORTED_BY.INDEX];
 
     if (sortFunction) {
       filtered = [...filtered].sort(sortFunction);
