@@ -77,6 +77,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={Setting}
+        path='/settingsfs/'
         text={t('Settings')}
       />
       <MenuButton
@@ -85,8 +86,8 @@ function MainMenuColumn (): React.ReactElement {
         text={t('History')}
       />
       <Stack direction='column' rowGap='20px' sx={{ bottom: '15px', position: 'absolute' }}>
-        <Grid container item width='fit-content'>
-          <Typography color='#674394' variant='B-5'>
+        <Grid container item justifyContent='start' width='fit-content'>
+          <Typography color='#674394' sx={{ textAlign: 'left', width: '20%' }} variant='B-5'>
             {`v.${version}`}
           </Typography>
           <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />

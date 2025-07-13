@@ -29,12 +29,15 @@ function PaginationRow ({ itemsPerPage, options, page, setItemsPerPagePage, setP
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '56px', p: '12px', width: '100%' }}>
-      <Stack columnGap='5px' direction='row'>
-        <Firstline color='#674394' size='18px' variant='Bold' />
-        <Typography color='#AA83DC' variant='B-4'>
-          {`${(page - 1) * _itemsPerPage + 1} - ${Math.min(page * _itemsPerPage, totalItems)} of ${totalItems} items`}
-        </Typography>
-      </Stack>
+      {
+        totalItems > 0 &&
+        <Stack columnGap='5px' direction='row'>
+          <Firstline color='#674394' size='18px' variant='Bold' />
+          <Typography color='#AA83DC' variant='B-4'>
+            {`${(page - 1) * _itemsPerPage + 1} - ${Math.min(page * _itemsPerPage, totalItems)} of ${totalItems} items`}
+          </Typography>
+        </Stack>
+      }
       {
         paginationCount > 1 &&
         <MyPagination
@@ -43,36 +46,39 @@ function PaginationRow ({ itemsPerPage, options, page, setItemsPerPagePage, setP
           setPage={setPage}
         />
       }
-      <Stack alignItems='center' columnGap='5px' direction='row'>
-        <Typography color='#AA83DC' variant='B-4'>
-          {t('Show:')}
-        </Typography>
-        <DropSelect
-          contentDropWidth={50}
-          defaultValue={options[0].value}
-          displayContentType='text'
-          dropContentStyle={{
-            fontSize: '12px',
-            minWidth: 'fit-content',
-            padding: '4px 6px'
-          }}
-          onChange={setItemsPerPagePage}
-          options={options}
-          showCheckAsIcon={false}
-          simpleArrow
-          style={{
-            border: 'none',
-            color: '#EAEBF1',
-            columnGap: 0,
-            margin: 0,
-            minWidth: 'fit-content',
-            padding: 0,
-            paddingLeft: '10px'
-          }}
-          textVariant={'B-4' as Variant}
-          value={itemsPerPage}
-        />
-      </Stack>
+      {
+        totalItems >= _itemsPerPage &&
+        <Stack alignItems='center' columnGap='5px' direction='row'>
+          <Typography color='#AA83DC' variant='B-4'>
+            {t('Show:')}
+          </Typography>
+          <DropSelect
+            contentDropWidth={50}
+            defaultValue={options[0].value}
+            displayContentType='text'
+            dropContentStyle={{
+              fontSize: '12px',
+              minWidth: 'fit-content',
+              padding: '4px 6px'
+            }}
+            onChange={setItemsPerPagePage}
+            options={options}
+            showCheckAsIcon={false}
+            simpleArrow
+            style={{
+              border: 'none',
+              color: '#EAEBF1',
+              columnGap: 0,
+              margin: 0,
+              minWidth: 'fit-content',
+              padding: 0,
+              paddingLeft: '10px'
+            }}
+            textVariant={'B-4' as Variant}
+            value={itemsPerPage}
+          />
+        </Stack>
+      }
     </Stack>
   );
 }

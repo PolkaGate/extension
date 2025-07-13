@@ -3,7 +3,6 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
-import AddNewChain from '@polkadot/extension-polkagate/src/fullscreen/addNewChain';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
@@ -11,6 +10,7 @@ import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageI
 import ManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
+import Settings from '@polkadot/extension-polkagate/src/fullscreen/settings';
 import SocialRecovery from '@polkadot/extension-polkagate/src/fullscreen/socialRecovery';
 import ManageValidatorsPoolfs from '@polkadot/extension-polkagate/src/fullscreen/stake/pool/commonTasks/manageValidators';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/manageValidators';
@@ -20,11 +20,6 @@ import History from '@polkadot/extension-polkagate/src/popup/history/newDesign';
 
 // NOTE: the rule for paths is /urlName/:address/:genesisHash/blah blah
 export const FEATURE_ROUTES: RouteConfig[] = [
-  {
-    Component: AddNewChain,
-    path: '/addNewChain/',
-    trigger: 'add-new-chain'
-  },
   {
     Component: AuthList,
     path: '/auth-list/:id?',
@@ -84,6 +79,10 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: Send,
     path: '/send/:address/:genesisHash/:assetId',
     trigger: 'send'
+  },
+  {
+    Component: Settings,
+    path: '/settingsfs/*'
   },
   {
     Component: SocialRecovery,

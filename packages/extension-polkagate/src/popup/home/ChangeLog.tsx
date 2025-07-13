@@ -1,26 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TransitionProps } from '@mui/material/transitions';
-
-import { Box, Container, Dialog, Grid, Link, Slide, Stack, Typography } from '@mui/material';
+import { Box, Grid, Link, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import semver from 'semver';
+
+import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { celebration } from '../../assets/gif';
 import { CometStar, Gear } from '../../assets/icons';
 import { logoTransparent } from '../../assets/logos';
 import { GradientButton, GradientDivider, Progress } from '../../components';
-import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useManifest } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { RedGradient } from '../../style';
 import { EXTENSION_NAME } from '../../util/constants';
 import { type News, news } from './news';
-
-const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 interface ChangeItemsType {
   title?: string;
@@ -55,7 +50,7 @@ interface ChangeLogEntry {
 * @param {string} changelogText - Raw changelog content as a string.
 * @returns {ChangeLogEntry[]} - Parsed list of change entries with their types and descriptions.
 */
-function parseChangelog(changelogText: string): ChangeLogEntry[] {
+function parseChangelog (changelogText: string): ChangeLogEntry[] {
   const entries: ChangeLogEntry[] = []; // Stores parsed changelog entries
   const lines = changelogText.split('\n'); // Split input text into lines
 
@@ -128,7 +123,7 @@ function parseChangelog(changelogText: string): ChangeLogEntry[] {
   return entries;
 }
 
-function UL({ note }: { note: string }) {
+function UL ({ note }: { note: string }) {
   const [title, description] = note.split(':');
 
   return (
@@ -144,7 +139,7 @@ function UL({ note }: { note: string }) {
   );
 }
 
-function ChangeItem({ item }: { item: ChangeItemsType }) {
+function ChangeItem ({ item }: { item: ChangeItemsType }) {
   return (
     <Grid columnGap='8px' container item>
       <Box sx={{ bgcolor: '#FF4FB9', borderRadius: '1px', height: '8px', m: '6px', rotate: '45deg', width: '8px' }} />
@@ -163,7 +158,7 @@ function ChangeItem({ item }: { item: ChangeItemsType }) {
   );
 }
 
-function ChangeItems({ change }: { change: Changes }) {
+function ChangeItems ({ change }: { change: Changes }) {
   const icon = (change.type === 'features' ? CometStar : Gear) as string;
   const { bugFixesDescriptions, featuresDescriptions, pullRequests } = useMemo(() => {
     const filterDescriptions = (items: ChangeItemsType[]) =>
@@ -207,7 +202,7 @@ function ChangeItems({ change }: { change: Changes }) {
   );
 }
 
-function NewVersionItem({ item }: { item: ChangeLogEntry }) {
+function NewVersionItem ({ item }: { item: ChangeLogEntry }) {
   return (
     <Stack sx={{ rowGap: '15px', width: '100%' }}>
       <Grid alignItems='center' columnGap='5px' container item>
@@ -239,7 +234,7 @@ interface Props {
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props): React.ReactElement<Props> {
+export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const manifest = useManifest();
@@ -345,53 +340,42 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
   }, [setShowAlert, manifest?.version, newVersion]);
 
   return (
-    <Dialog
-      PaperProps={{
-        sx: {
-          backgroundImage: 'unset',
-          bgcolor: 'transparent',
-          boxShadow: 'unset'
-        }
+    <SharePopup
+      modalProps={{
+        noDivider: true
       }}
-      TransitionComponent={Transition}
-      componentsProps={{
-        backdrop: {
-          sx: {
-            backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
-            bgcolor: 'transparent'
-          }
-        }
-      }}
-      fullScreen
+      modalStyle={{ minHeight: '500px', overflow: 'hidden', paddingTop: '33px' }}
+      onClose={handleClose}
       open={openPopup}
+      popupProps={{
+        maxHeight: '514px',
+        px: 0,
+        withoutTopBorder: true
+      }}
     >
-      <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
-        </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
-          {!isLoading && newVersion &&
+
+      <Stack direction='column' sx={{ p: '10px 10px 0', position: 'relative', width: '100%', zIndex: 1 }}>
+        {!isLoading && newVersion &&
             <Box
               component='img'
               src={celebration as string}
               sx={{ height: '235px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%' }}
             />
-          }
-          <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
-            <Box
-              component='img'
-              src={logoTransparent as string}
-              sx={{ height: '30px', width: '30px' }}
-            />
-            <Typography color='#fff' textTransform='uppercase' variant='H-2'>
-              {t('change log')}
-            </Typography>
-          </Grid>
-          <RedGradient style={{ top: '-130px' }} />
-          <GradientDivider />
-          <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
-            {!isLoading &&
+        }
+        <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
+          <Box
+            component='img'
+            src={logoTransparent as string}
+            sx={{ height: '30px', width: '30px' }}
+          />
+          <Typography color='#fff' textTransform='uppercase' variant='H-2'>
+            {t('change log')}
+          </Typography>
+        </Grid>
+        <RedGradient style={{ top: '-130px' }} />
+        <GradientDivider />
+        <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
+          {!isLoading &&
               <>
                 <Grid container item sx={{ pb: '5px', position: 'relative', zIndex: 1 }}>
                   <Stack sx={{ height: '380px', overflowY: 'auto', pt: '20px', rowGap: '20px', width: '100%' }}>
@@ -414,16 +398,15 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
                   />
                 </Grid>
               </>
-            }
-          </Box>
-          {isLoading &&
+          }
+        </Box>
+        {isLoading &&
             <Progress
               title={t('Loading, please wait')}
               withEllipsis
             />
-          }
-        </Grid>
-      </Container>
-    </Dialog>
+        }
+      </Stack>
+    </SharePopup>
   );
 }

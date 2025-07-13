@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { UnfoldMore as UnfoldMoreIcon } from '@mui/icons-material';
 import { Container, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { Triangle } from 'iconsax-react';
@@ -106,10 +105,12 @@ interface Props {
 function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
 
-  const tabIndex = useMemo(() => !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
-    ? TAB.CHAINS
-    : TAB.NFTS
-    , [tab]);
+  const tabIndex = useMemo(() =>
+    !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
+      ? TAB.CHAINS
+      : TAB.NFTS
+  ,
+  [tab]);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
     const selectedTab = value === TAB.NFTS

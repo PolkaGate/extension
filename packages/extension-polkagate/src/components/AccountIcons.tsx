@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { IconTheme } from '@polkadot/react-identicon/types';
 
 import { faShieldHalved, faSitemap } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +23,7 @@ interface Props {
   prefix?: number;
 }
 
-function AccountIcons({ address, identiconTheme, isSubId, judgements, prefix }: Props): React.ReactElement<Props> {
+function AccountIcons ({ address, identiconTheme, isSubId, judgements, prefix }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const onAction = useContext(ActionContext);
 

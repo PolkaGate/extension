@@ -6,13 +6,14 @@ import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types'
 import type { BN } from '@polkadot/util';
 import type { ItemInformation } from '../nft/utils/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Skeleton, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { SELECTED_ACCOUNT_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 
@@ -128,7 +129,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       return;
     }
 
-    setStorage('selectedAccount', account).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
   }, [account, navigate]);
 
   return (
@@ -137,9 +138,10 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         address={account?.address}
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
         identiconSize={14}
-        nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis'}}
+        nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}
         noIdenticon
         onClick={onClick}
+        socialStyles={{ mt: 0 }}
         style={{ color: '#BEAAD8', variant, width: '100%' }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>
@@ -167,6 +169,24 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
           width={totalBalance ? 'fit-content' : '100px'}
           withSmallDecimal
         />
+        {!assetsToShow &&
+          <Stack direction='row' spacing={0.1} sx={{ ml: '17px', position: 'relative' }}>
+            {[1, 2, 3].map((index) => (
+              <Skeleton
+                animation='wave'
+                height={18}
+                key={index}
+                sx={{
+                  borderRadius: '50%',
+                  fontWeight: 'bold',
+                  transform: 'none'
+                }}
+                variant='text'
+                width={18}
+              />
+            ))}
+          </Stack>
+        }
         <Grid alignItems='center' container item sx={{ ml: '10px', position: 'relative' }} width='fit-content'>
           {assetsToShow?.slice(0, 4).map(({ genesisHash, token }, index) => {
             const logoInfo = getLogo2(genesisHash, token);

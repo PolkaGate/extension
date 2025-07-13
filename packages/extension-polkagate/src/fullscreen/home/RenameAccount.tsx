@@ -5,9 +5,7 @@ import { Grid } from '@mui/material';
 import { Edit2, User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
-
-import { Address2, DecisionButtons, MyTextField } from '../../components';
+import { Address2, DecisionButtons, MySnackbar, MyTextField } from '../../components';
 import { useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { SharePopup } from '../../partials';
@@ -39,6 +37,7 @@ function RenameAccount({ address, open, setPopup }: Props): React.ReactElement {
 
   return (
     <SharePopup
+      modalProps={{ showBackIconAsClose: true }}
       modalStyle={{ minHeight: '200px' }}
       onClose={handleClose}
       open={open !== undefined}

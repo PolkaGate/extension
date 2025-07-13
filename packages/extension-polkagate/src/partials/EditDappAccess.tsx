@@ -6,11 +6,11 @@ import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { Motion } from '../components';
 import { useFavIcon, useTranslation } from '../hooks';
 import { extractBaseUrl } from '../util/utils';
 import ConnectedAccounts from './ConnectedAccounts';
 import DappInfo from './DappInfo';
-import { Motion } from '../components';
 
 interface Props {
   access: AuthUrlInfo;
@@ -18,7 +18,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EditDappAccess({ access, setAccessToEdit, setRefresh }: Props): React.ReactElement {
+export default function EditDappAccess ({ access, setAccessToEdit, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { origin, url } = access;

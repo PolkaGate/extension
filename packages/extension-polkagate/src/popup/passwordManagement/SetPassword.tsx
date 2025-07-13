@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+// @ts-nocheck
 
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -23,14 +23,14 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function SetPassword({ isPasswordError, newPassword, onBackClick, onPassChange, setStep }: Props): React.ReactElement {
+function SetPassword ({ isPasswordError, newPassword, onBackClick, onPassChange, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtensionMode = useIsExtensionPopup();
 
   const onSetPassword = useCallback(async () => {
     if (newPassword) {
       const hashedPassword = blake2AsHex(newPassword, 256);
-      const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'set' });
+      const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: 'set' });
 
       setStep(isConfirmed ? STEPS.NEW_PASSWORD_SET : STEPS.ERROR);
     }

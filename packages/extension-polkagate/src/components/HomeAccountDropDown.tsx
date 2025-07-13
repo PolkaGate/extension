@@ -41,27 +41,27 @@ function HomeAccountDropDown ({ style }: Props) {
     const OPTIONS = [
       {
         Icon: AddCircle,
-        text: t('Create new account'),
+        text: t('Create New Account'),
         value: '/account/create'
       },
       {
         Icon: ImportCurve,
-        text: t('Import account'),
+        text: t('Import Account'),
         value: '/account/have-wallet'
       },
       {
         Icon: Setting,
         text: t('Settings'),
-        value: '/account/create'
+        value: '/settingsfs/'
       },
       {
         Icon: Broom,
-        text: t('Derive from accounts'),
+        text: t('Derive New Account'),
         value: '/account/create'
       },
       {
         Icon: ExportCurve,
-        text: t('Export all accounts'),
+        text: t('Export All Accounts'),
         value: () => setPopup(HOME_POPUP.EXPORT)
       }
     ];

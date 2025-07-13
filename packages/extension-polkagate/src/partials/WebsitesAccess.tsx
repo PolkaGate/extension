@@ -4,16 +4,15 @@
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/types';
 
 import { Box, Container, Stack, Typography } from '@mui/material';
-import { Category, Key, Profile, Trash } from 'iconsax-react';
+import { Key, Link2, Profile, Trash } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { emptyList } from '../assets/icons/index';
-import { ActionButton, ExtensionPopup, FadeOnScroll, MyTooltip, SearchField } from '../components';
-import { useSelectedAccount, useTranslation } from '../hooks';
+import { ActionButton, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
+import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
-import MySnackbar from '../popup/settings/extensionSettings/components/MySnackbar';
 import { ExtensionPopups } from '../util/constants';
-import { EditDappAccess } from '.';
+import { EditDappAccess, SharePopup } from '.';
 
 interface Props {
   setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
@@ -30,8 +29,8 @@ function EmptyAccessList () {
         src={emptyList as string}
         sx={{ m: '70px auto -10px' }}
       />
-      <Typography color='#BEAAD8' sx={{ px: '40px' }} variant='B-2'>
-        {t('This is where the sites that have access to the accounts will appear.')}
+      <Typography color='#BEAAD8' sx={{ p: '10px 40px 30px' }} variant='B-2'>
+        {t('This is where sites with access to your accounts will appear')}
       </Typography>
     </Stack>
   );
@@ -48,6 +47,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef(null);
+  const isExtension = useIsExtensionPopup();
 
   const [isBusy, setIsBusy] = useState<boolean>();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -87,13 +87,14 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
 
   return (
     <Stack alignItems='center' direction='column' sx={{ height: '460px', position: 'relative', pt: '10px' }}>
-      <Typography color='#BEAAD8' sx={{ px: '10px' }} variant='B-4'>
+      <Typography color='#BEAAD8' sx={{ p: isExtension ? '0 10px' : '10px 25px' }} variant='B-4'>
         {t('Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.')}
       </Typography>
       <SearchField
         onInputChange={onSearch}
         placeholder='🔍 Search'
-        style={{ marginTop: '17px', padding: '0 10px' }}
+        placeholderStyle={{ textAlign: isExtension ? 'center' : 'left' }}
+        style={{ margin: isExtension ? '17px 0 0' : '20px 25px 15px', padding: '0 10px' }}
       />
       <Stack direction='row' justifyContent='space-between' sx={{ m: '20px 0 10px', px: '15px', width: '100%' }}>
         <Typography color='#7956A5' sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
@@ -103,19 +104,19 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
           {t('action')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ height: ' 400px', overflow: 'hidden', overflowY: 'auto', p: '0 15px 50px' }}>
+      <Container disableGutters ref={refContainer} sx={{ height: ' 400px', overflow: 'hidden', overflowY: 'auto', p: isExtension ? '0 15px 50px' : '0 5px 50px' }}>
         {filteredAuthorizedDapps && Object.entries(filteredAuthorizedDapps).map(([url, info], index) => {
           const isIncluded = info.authorizedAccounts.find((address) => address === selectedAccount?.address);
 
           return (
             <>
               {
-                !!index &&
+                !!index && isExtension &&
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
               }
-              <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ my: '10px', width: '100%' }}>
+              <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : '#05091C', borderRadius: '14px', p: isExtension ? '10px 0' : '12px 10px', mb: '2px', width: '100%' }}>
                 <Stack alignItems='center' columnGap='5px' direction='row'>
-                  <Category color='#FF4FB9' size='16' variant='Bulk' />
+                  <Link2 color='#FF4FB9' size='16' variant='Bulk' />
                   <Typography color='#EAEBF1' variant='B-4'>
                     {url}
                   </Typography>
@@ -165,6 +166,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
         variant='contained'
       />
       <MySnackbar
+        // eslint-disable-next-line react/jsx-no-bind
         onClose={() => setShowSnackbar(false)}
         open={showSnackbar}
         text={t('Access successfully removed!')}
@@ -175,6 +177,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
 
 function WebsitesAccess ({ open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
 
   const [authorizedDapps, setAuthorizedDapps] = useState<AuthUrls>();
   const [refreshList, setRefresh] = useState<boolean>(true);
@@ -201,22 +204,21 @@ function WebsitesAccess ({ open, setPopup }: Props): React.ReactElement {
   }, [authorizedDapps, searchKeyword]);
 
   const handleClose = useCallback(() => {
-    setPopup(ExtensionPopups.NONE);
     setAccessToEdit(undefined);
-  }, [setPopup]);
+
+    if (isExtension || !accessToEdit) {
+      setPopup(ExtensionPopups.NONE);
+    }
+  }, [accessToEdit, isExtension, setPopup]);
 
   return (
-    <ExtensionPopup
-      TitleIcon={accessToEdit ? undefined : Key}
-      handleClose={handleClose}
-      iconSize={18}
-      maxHeight='460px'
-      onBack={accessToEdit ? () => setAccessToEdit(undefined) : undefined}
-      openMenu={open}
-      pt={20}
-      px={0}
+    <SharePopup
+      modalProps={{ showBackIconAsClose: true }}
+      modalStyle={{ minHeight: '200px', padding: '20px 0px' }}
+      onClose={handleClose}
+      open={open}
+      popupProps={{ TitleIcon: accessToEdit ? undefined : Key, iconSize: 18, maxHeight: '460px', onBack: accessToEdit ? () => setAccessToEdit(undefined) : undefined, pt: 20, withoutTopBorder: true }}
       title={t('Website access')}
-      withoutTopBorder
     >
       {!Object.keys(filteredAuthorizedDapps ?? {}).length
         ? <EmptyAccessList />
@@ -233,7 +235,7 @@ function WebsitesAccess ({ open, setPopup }: Props): React.ReactElement {
             setSearchKeyword={setSearchKeyword}
           />
       }
-    </ExtensionPopup>
+    </SharePopup>
   );
 }
 

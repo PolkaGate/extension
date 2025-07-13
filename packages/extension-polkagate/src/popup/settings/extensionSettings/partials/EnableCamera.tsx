@@ -6,8 +6,8 @@ import React, { useCallback } from 'react';
 
 import settings from '@polkadot/ui-settings';
 
+import MySwitch from '../../../../components/MySwitch';
 import { useTranslation } from '../../../../components/translate';
-import MySwitch from '../components/Switch';
 
 export default function EnableCamera (): React.ReactElement {
   const { t } = useTranslation();

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
@@ -19,7 +18,7 @@ interface Props {
   setStep: (value: React.SetStateAction<number | undefined>) => void;
 }
 
-function AskToSetPassword({ setStep }: Props): React.ReactElement {
+function AskToSetPassword ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 

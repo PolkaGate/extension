@@ -43,26 +43,6 @@ const BpIcon = styled('span')(({ theme }) => ({
 }));
 
 const BpCheckedIcon = styled(BpIcon)({
-  backgroundColor: '#110F2A',
-  backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-  border: '2px solid transparent',
-  position: 'relative',
-
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '-2px',
-    left: '-2px',
-    right: '-2px',
-    bottom: '-2px',
-    borderRadius: '50%',
-    padding: '2px',
-    background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
-    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-    mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-    WebkitMaskComposite: 'destination-out',
-    maskComposite: 'exclude'
-  },
   '&::after': {
     backgroundColor: '#fff',
     borderRadius: '50%',
@@ -74,9 +54,28 @@ const BpCheckedIcon = styled(BpIcon)({
     transform: 'translate(-50%, -50%)',
     width: '8px'
   },
+  '&::before': {
+    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+    WebkitMaskComposite: 'destination-out',
+    background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+    borderRadius: '50%',
+    bottom: '-2px',
+    content: '""',
+    left: '-2px',
+    mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+    maskComposite: 'exclude',
+    padding: '2px',
+    position: 'absolute',
+    right: '-2px',
+    top: '-2px'
+  },
+  backgroundColor: '#110F2A',
+  backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+  border: '2px solid transparent',
   'input:hover ~ &': {
     backgroundColor: '#AA83DC'
-  }
+  },
+  position: 'relative'
 });
 
 interface Props extends RadioProps {
@@ -88,23 +87,25 @@ interface Props extends RadioProps {
   value: unknown;
 }
 
-export default function PRadio ({ checked, columnGap, label, onChange, props, value }: Props) {
+export default function MyRadio ({ checked, columnGap, label, onChange, props, value }: Props) {
   return (
     <Stack columnGap={columnGap} direction='row' sx={{ alignItems: 'center' }}>
-      <Radio
-        checked={checked}
-        checkedIcon={<BpCheckedIcon />}
-        color='default'
-        disableRipple
-        icon={<BpIcon />}
-        onChange={onChange}
-        value={value}
-        {...props}
-      />
-      <Typography color='#AA83DC' variant='B-1'>
-        {label}
-      </Typography>
+      <label htmlFor={`radio-${value}`} style={{ alignItems: 'center', cursor: 'pointer', display: 'flex' }}>
+        <Radio
+          checked={checked}
+          checkedIcon={<BpCheckedIcon />}
+          color='default'
+          disableRipple
+          icon={<BpIcon />}
+          id={`radio-${value}`}
+          onChange={onChange}
+          value={value}
+          {...props}
+        />
+        <Typography color='#AA83DC' variant='B-1'>
+          {label}
+        </Typography>
+      </label>
     </Stack>
-
   );
 }

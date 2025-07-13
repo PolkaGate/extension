@@ -70,7 +70,7 @@ function Settings (): React.ReactElement {
           }}
           title={t('About PolkaGate')}
         />
-        <Socials label={t(' STAY TUNED')} />
+        <Socials label={t('STAY TUNED')} />
       </Motion>
       <HomeMenu />
     </Container>

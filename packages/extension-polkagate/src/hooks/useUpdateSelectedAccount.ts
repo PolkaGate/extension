@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AccountContext } from '../components';
 import { setStorage } from '../util';
+import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
 
@@ -75,7 +76,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
 
     const account = accounts.find((acc) => acc.address === address);
 
-    setStorage('selectedAccount', account).finally(() => handleExit()).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(() => handleExit()).catch(console.error);
 
     // Using accounts.length here to avoid unnecessary re-renders due to deep object comparison
     // eslint-disable-next-line react-hooks/exhaustive-deps

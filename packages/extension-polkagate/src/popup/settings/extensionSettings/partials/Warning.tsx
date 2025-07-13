@@ -1,12 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
-import { ExtensionPopup, GradientButton, NeonButton } from '../../../../components';
+import { DecisionButtons, ExtensionPopup } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { ExtensionPopups } from '../../../../util/constants';
 
@@ -16,15 +15,15 @@ interface Props {
   onConfirm: () => void
 }
 
-function Warning({ onConfirm, open, setPopup }: Props): React.ReactElement {
+function Warning ({ onConfirm, open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
+  const onClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
     <ExtensionPopup
       TitleIcon={Warning2}
-      handleClose={handleClose}
+      handleClose={onClose}
       iconColor='#FFCE4F'
       iconSize={48}
       openMenu={open}
@@ -40,25 +39,13 @@ function Warning({ onConfirm, open, setPopup }: Props): React.ReactElement {
         <Typography variant='B-4'>
           {t('Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
         </Typography>
-        <GradientButton
-          contentPlacement='center'
-          onClick={onConfirm}
-          style={{
-            height: '44px',
-            marginTop: '30px',
-            width: '300px'
-          }}
-          text={t('Confirm')}
-        />
-        <NeonButton
-          contentPlacement='center'
-          onClick={handleClose}
-          style={{
-            height: '44px',
-            marginTop: '15px',
-            width: '300px'
-          }}
-          text={t('Reject')}
+        <DecisionButtons
+          direction='vertical'
+          onPrimaryClick={onConfirm}
+          onSecondaryClick={onClose}
+          primaryBtnText={t('Confirm')}
+          secondaryBtnText={t('Reject')}
+          style={{ marginTop: '30px', width: '92%' }}
         />
       </Grid>
     </ExtensionPopup>

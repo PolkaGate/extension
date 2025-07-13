@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/**
- * @description  this component is used to show an account balance in some pages like contributeToCrowdloan
- * */
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { FormatBalanceProps } from './FormatBalance2';

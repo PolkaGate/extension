@@ -6,12 +6,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { forgetAccount } from '@polkadot/extension-polkagate/src/messaging';
-import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { info } from '../../assets/gif';
-import { Address2, DecisionButtons, GlowCheckbox, PasswordInput } from '../../components';
+import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../../components';
 import { useAccount, useTranslation } from '../../hooks';
 import { SharePopup } from '../../partials';
 

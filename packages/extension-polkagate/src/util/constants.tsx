@@ -4,8 +4,9 @@
 import type { ProxyTypes } from './types';
 
 export const EXTENSION_NAME = 'PolkaGate';
-export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
+export const SUPPORT_EMAIL = 'support@polkagate.xyz';
+export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 
 export const POLKADOT_SLIP44 = 354;
 
@@ -267,16 +268,22 @@ export const AUTO_MODE = {
 export const KODADOT_URL = 'https://kodadot.xyz';
 
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
-export const DEFAULT_ACCOUNT_ICON_THEME = 'beachball';
 
 export enum ExtensionPopups {
   NONE,
   LANGUAGE,
+  NEW_NETWORK,
+  PASSWORD,
   PRIVACY,
   WARNING,
+  // Account Popups
+  DAPPS,
+  DERIVE,
+  EXPORT,
+  IMPORT,
+  RECEIVE,
   RENAME,
-  FORGET,
-  DAPPS
+  REMOVE,
 }
 
 export const TRANSACTION_FLOW_STEPS = {
@@ -286,3 +293,10 @@ export const TRANSACTION_FLOW_STEPS = {
 } as const;
 
 export type TransactionFlowStep = typeof TRANSACTION_FLOW_STEPS[keyof typeof TRANSACTION_FLOW_STEPS];
+
+export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
+
+// data names in local storage
+export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
+export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
+export const ASSETS_NAME_IN_STORAGE = 'assets';

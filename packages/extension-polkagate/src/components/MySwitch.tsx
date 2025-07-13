@@ -10,19 +10,20 @@ import * as React from 'react';
 
 import useIsBlueish from '@polkadot/extension-polkagate/src/hooks/useIsBlueish';
 
-import useIsDark from '../../../../hooks/useIsDark';
+import useIsDark from '../hooks/useIsDark';
 
 interface Props extends SwitchProps {
   columnGap?: string;
   label?: string;
+  style?: React.CSSProperties;
 }
 
-const MySwitch = ({ checked, columnGap, label, onChange, ...props }: Props) => {
+const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }: Props) => {
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
   return (
-    <Stack columnGap={columnGap} component='label' direction='row'>
+    <Stack columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
         checked={checked}
         disableRipple
@@ -32,7 +33,7 @@ const MySwitch = ({ checked, columnGap, label, onChange, ...props }: Props) => {
         onChange={onChange}
         {...props}
       />
-      <Typography variant='B-1'>
+      <Typography sx={{ cursor: 'pointer' }} variant='B-1'>
         {label}
       </Typography>
     </Stack>

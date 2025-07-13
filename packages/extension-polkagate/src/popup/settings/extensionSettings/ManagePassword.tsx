@@ -2,19 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ActionContext, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
+import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
+
+import { ActionButton, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
 import { type LoginInfo } from '../../../components/Loading';
+import MySnackbar from '../../../components/MySnackbar';
 import { useTranslation } from '../../../components/translate';
 import { getStorage, setStorage } from '../../../util';
 import { isPasswordCorrect } from '../../passwordManagement';
 import WarningBox from '../partials/WarningBox';
-import MySnackbar from './components/MySnackbar';
 
-export default function ManagePassword (): React.ReactElement {
+export default function ManagePassword ({ onBack }: { onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const isExtension = useIsExtensionPopup();
 
   const [hasAlreadySetPassword, setAlreadySetPassword] = useState<boolean>();
   const [currentPassword, setCurrentPassword] = useState<string>('');
@@ -27,8 +29,8 @@ export default function ManagePassword (): React.ReactElement {
 
   const onClose = useCallback(() => {
     setShowSnackbar(false);
-    !passwordError && onAction('/');
-  }, [onAction, passwordError]);
+    !passwordError && window.location.reload();
+  }, [passwordError]);
 
   useEffect(() => {
     getStorage('loginInfo').then((info) => {
@@ -54,13 +56,12 @@ export default function ManagePassword (): React.ReactElement {
       return;
     }
 
-    setStorage('loginInfo',
-      { hashedPassword: newPassword, lastLoginTime: Date.now(), status: 'justSet' }
-    ).then(() => {
-      setPasswordError(false);
-      setShowSnackbar(true);
-      setSnackbarText(t('Password has been changed!'));
-    }).catch(console.error);
+    setStorage('loginInfo', { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: 'justSet' })
+      .then(() => {
+        setPasswordError(false);
+        setShowSnackbar(true);
+        setSnackbarText(t('Password has been changed!'));
+      }).catch(console.error);
   }, [currentPassword, hasAlreadySetPassword, newPassword, readyToGo, t]);
 
   return (
@@ -68,24 +69,23 @@ export default function ManagePassword (): React.ReactElement {
       <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ borderRadius: '14px', display: 'block', p: '1px' }}>
         <WarningBox
           description={t('If you forget your password, you need to reimport your accounts and make a new password. Export and store your accounts securely to avoid losing them.')}
-          title={t('REMEMBER YOUR PASSWORD WELL AND KEEP  IT SAFE')}
+          title={t('REMEMBER YOUR PASSWORD WELL AND KEEP IT SAFE')}
         />
-        <Stack columnGap='15px' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', m: '5px 15px' }}>
+        <Stack columnGap='15px' direction='column' sx={{ bgcolor: isExtension ? 'background.paper' : 'transparent', borderRadius: '14px', m: isExtension ? '5px 15px' : '25px 5px 0', position: 'relative', zIndex: 1 }}>
           {hasAlreadySetPassword &&
-          <PasswordInput
-            focused
-            hasError={passwordError}
-            onPassChange={onCurrentPasswordChange}
-            style={{ marginBottom: '18px' }}
-            title={t('Current Password')}
-          />
+            <PasswordInput
+              focused
+              hasError={passwordError}
+              onPassChange={onCurrentPasswordChange}
+              style={{ marginBottom: '18px' }}
+              title={t('Current Password')}
+            />
           }
           <MatchPasswordField
             focused
             hashPassword
             onSetPassword={onSetPassword}
             setConfirmedPassword={setNewPassword}
-            style={{ marginBottom: '15px' }}
             title1={t('New Password')}
             title2={t('Confirm Password')}
           />
@@ -93,11 +93,20 @@ export default function ManagePassword (): React.ReactElement {
             disabled={!readyToGo}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={onSetPassword}
-            style={{ flex: 'none', height: '48px', width: '100%' }}
+            style={{ flex: 'none', height: '44px', marginTop: isExtension ? '15px' : '25px', width: '100%' }}
             text={t('Set password')}
           />
+          {!isExtension &&
+            <ActionButton
+              contentPlacement='center'
+              onClick={onBack}
+              style={{ height: '44px', marginTop: '20px', width: '100%' }}
+              text={t('Back')}
+            />
+          }
         </Stack>
         <MySnackbar
+          isError={passwordError}
           onClose={onClose}
           open={showSnackbar}
           text={snackbarText}

@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-
 import { Grid } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
@@ -10,7 +8,7 @@ import React, { useCallback, useContext } from 'react';
 import ColorContext from '../../../../components/ColorContext';
 import useIsDark from '../../../../hooks/useIsDark';
 
-export default function ThemeChange(): React.ReactElement {
+export default function ThemeChange (): React.ReactElement {
   const isDark = useIsDark();
 
   const colorMode = useContext(ColorContext);
