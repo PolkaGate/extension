@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
-import { isUpToDate } from './useAssetsBalances';
+import { isUpToDate } from './useSavedAssetsCache';
 import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useInfo, useNativeAssetBalances, usePoolBalances } from '.';
 
 export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {

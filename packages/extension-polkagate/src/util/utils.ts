@@ -10,6 +10,7 @@ import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 import type { HexString } from '@polkadot/util/types';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
@@ -723,3 +724,32 @@ export function blockToDate (blockNumber?: number, currentBlock?: number, option
 
   return new Date(now - diff).toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
 }
+
+// Remove zero balance records
+export const removeZeroBalanceRecords = (toBeSavedAssets: SavedAssets): SavedAssets => {
+  const _toBeSavedAssets = { ...toBeSavedAssets };
+  const balances = (_toBeSavedAssets)?.balances || [];
+
+  Object.entries(balances).forEach(([address, assetsPerChain]) => {
+    Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
+      const toBeDeletedIndexes: string[] = [];
+
+      fetchedBalance.forEach(({ token, totalBalance }) => {
+        if (new BN(totalBalance).isZero()) {
+          toBeDeletedIndexes.push(token);
+        }
+      });
+      toBeDeletedIndexes.forEach((_token) => {
+        const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+        index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
+      });
+
+      if (!_toBeSavedAssets.balances[address][genesisHash].length) {
+        delete _toBeSavedAssets.balances[address][genesisHash];
+      }
+    });
+  });
+
+  return _toBeSavedAssets;
+};
