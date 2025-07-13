@@ -129,7 +129,7 @@
     "@polkadot/networks": "^13.5.3",
     "@polkadot/types": "^15.9.1",
     "@polkadot/types-augment": "^15.9.1",
-    "@polkadot/ui-keyring": "^3.6.6",
+    "@polkadot/ui-keyring": "^3.15.2",
     "@polkadot/util": "^13.5.3",
     "@polkadot/util-crypto": "^13.5.3",
     "@polkadot/x-fetch": "^13.5.3",
