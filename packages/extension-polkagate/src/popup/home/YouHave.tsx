@@ -1,13 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Grid, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import CountUp from 'react-countup';
+
+import { PRICE_VALIDITY_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { logoBlack, logoWhite } from '../../assets/logos';
@@ -16,7 +17,6 @@ import HideBalance from '../../components/SVG/HideBalance';
 import Currency from '../../fullscreen/home/partials/Currency';
 import { changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../fullscreen/home/partials/TotalBalancePieChart';
 import { useCurrency, useIsHideNumbers, useYouHave } from '../../hooks';
-import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
 import ConnectedDappIcon from '../../partials/ConnectedDappIcon';
 import Menu from '../../partials/Menu';
@@ -26,7 +26,7 @@ import { countDecimalPlaces, formatDecimal } from '../../util/utils';
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave(): React.ReactElement {
+export default function YouHave (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();

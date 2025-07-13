@@ -10,6 +10,7 @@ import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/compon
 import usePriceIds from '@polkadot/extension-polkagate/src/hooks/usePriceIds';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
 import { EXTRA_PRICE_IDS } from '@polkadot/extension-polkagate/src/util/api/getPrices';
+import { PRICE_VALIDITY_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
   children: React.ReactNode;
@@ -18,9 +19,6 @@ interface Props {
 /** If we need to retrieve a price, and that price was fetched within the last PRICE_VALIDITY_PERIOD in seconds,
  *  there’s no need to fetch it again; we can simply use the previously saved value.
  * */
-
-const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;
-
 function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
   return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
