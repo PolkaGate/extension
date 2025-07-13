@@ -39,7 +39,7 @@ export const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selec
   return 0;
 };
 
-function AccountsTable({ accountTypeFilter, areAllCheck, label, manageConnectedAccounts, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
+function AccountsTable ({ accountTypeFilter, areAllCheck, label, manageConnectedAccounts, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);

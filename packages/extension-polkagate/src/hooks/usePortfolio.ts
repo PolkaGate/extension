@@ -3,10 +3,9 @@
 
 import { useContext, useMemo } from 'react';
 
-import { type BN, BN_ZERO } from '@polkadot/util';
+import { type BN } from '@polkadot/util';
 
 import { AccountsAssetsContext } from '../components';
-import { getValue } from '../popup/account/util';
 import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
@@ -58,7 +57,6 @@ export default function usePortfolio (address?: string): PortfolioType | undefin
     }
 
     let portfolio = 0;
-    let available = 0;
     let change = 0;
     const date = Math.min(accountsAssets.timeStamp, pricesInCurrencies.date);
 
@@ -80,19 +78,19 @@ export default function usePortfolio (address?: string): PortfolioType | undefin
 
           const { change: tokenPriceChange = 0, value: tokenValue = 0 } = tokenData;
 
-          const transferable = getValue('transferable', asset) ?? BN_ZERO;
+          // const transferable = getValue('transferable', asset) ?? BN_ZERO;
 
           const currentAssetPrice = calcPrice(tokenValue, totalBalance, decimal);
-          const currentAvailableAssetPrice = calcPrice(tokenValue, transferable, decimal);
+          // const currentAvailableAssetPrice = calcPrice(tokenValue, transferable, decimal);
           const tokenBalanceNum = Number(totalBalance) / 10 ** decimal;
 
           portfolio += currentAssetPrice;
-          available += currentAvailableAssetPrice;
+          // available += currentAvailableAssetPrice;
           change += calcChange(tokenValue, tokenBalanceNum, tokenPriceChange);
         }
       }
     }
 
-    return { available, change, date, portfolio };
+    return { available: 0, change, date, portfolio };
   }, [address, accountsAssets, pricesInCurrencies]);
 }
