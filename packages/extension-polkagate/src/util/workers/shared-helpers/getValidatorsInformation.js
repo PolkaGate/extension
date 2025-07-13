@@ -60,6 +60,7 @@ const convertId = (id) => ({
  * @param {MessagePort } port
  */
 export default async function getValidatorsInformation (genesisHash, port) {
+  // make connection to the relay chain Polkadot/Kusama/testnets
   const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
   const { api, connections } = await fastestEndpoint(endpoints);
   const chainName = getChainName(genesisHash);
@@ -73,8 +74,13 @@ export default async function getValidatorsInformation (genesisHash, port) {
       api.query['staking']['currentEra']()
     ]);
 
+    console.log('electedInfo, waitingInfo, currentEra fetched successfully');
+
+    // Close the initial connections to the relay chain
     closeWebsockets(connections);
 
+    // Start connect to the People chain endpoints in order to fetch identities
+    console.log('Connecting to People chain endpoints...');
     const endpoints = getChainEndpoints(chainName);
     const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(endpoints);
 

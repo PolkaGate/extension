@@ -20,7 +20,7 @@ import { GlowBall } from '../../../style/VelvetBox';
 import getLogo2 from '../../../util/getLogo2';
 import PortfolioActionButton, { type PortfolioActionButtonProps } from './PortfolioActionButton';
 
-const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: string | undefined; }) => {
+const StakedToken = ({ genesisHash, isFullScreen, token }: { genesisHash: string; isFullScreen: boolean; token: string | undefined; }) => {
   const { t } = useTranslation();
 
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
@@ -32,7 +32,7 @@ const StakedToken = ({ genesisHash, token }: { genesisHash: string; token: strin
   return (
     <Grid alignItems='center' container item sx={{ columnGap: '4px', width: 'fit-content' }}>
       <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
-      <Typography color='text.highlight' variant='B-2'>
+      <Typography color={isFullScreen ? '#AA83DC' : 'text.highlight'} variant='B-2'>
         {t('Staked {{token}}', { replace: { token } })}
       </Typography>
     </Grid>
@@ -128,7 +128,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
   return (
     <GlowBox isBlueish={!isFullScreen} shortSideDividers={isFullScreen} style={{ display: 'grid', p: '20px 18px 0px', rowGap: '5px', width: 'calc(100% - 16px)', ...style }}>
       {isFullScreen && onInfo && <OnChainInfo onClick={onInfo} />}
-      <StakedToken genesisHash={genesisHash} token={token} />
+      <StakedToken genesisHash={genesisHash} isFullScreen={isFullScreen} token={token} />
       <Grid container item>
         {staked === undefined
           ? (

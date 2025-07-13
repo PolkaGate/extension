@@ -7,10 +7,10 @@ import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { Container, IconButton, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-import { FormatBalance2 } from '../../../components';
+import { FormatBalance2, Identity2 } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';
@@ -18,11 +18,12 @@ import ValidatorDetail from './ValidatorDetail';
 
 interface ValidatorIdentityProp {
   validatorInfo: ValidatorInformation;
+  style?: SxProps<Theme>;
 }
 
-const ValidatorIdentity = ({ validatorInfo }: ValidatorIdentityProp) => {
+export const ValidatorIdentity = ({ style, validatorInfo }: ValidatorIdentityProp) => {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row' }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
       <PolkaGateIdenticon
         address={validatorInfo.accountId.toString()}
         size={24}
@@ -43,7 +44,7 @@ const ValidatorIdentity = ({ validatorInfo }: ValidatorIdentityProp) => {
   );
 };
 
-interface StakingInfoStackProps {
+export interface StakingInfoStackProps {
   decimal?: number | undefined;
   token?: string | undefined;
   title: string;
