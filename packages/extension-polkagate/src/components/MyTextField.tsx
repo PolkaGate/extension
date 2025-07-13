@@ -39,6 +39,16 @@ const StyledTextFieldSmall = styled(TextField, {
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
+    '&.Mui-disabled': {
+      backgroundColor: '#1B133C', // or a lighter/darker shade
+      color: theme.palette.text.disabled,
+      '& fieldset': {
+        borderColor: theme.palette.text.disabled // or any custom disabled border color
+      },
+      '& svg path': {
+        fill: theme.palette.text.disabled
+      }
+    },
     backgroundColor: '#1B133C',
     borderColor: '#BEAAD833',
     borderRadius: '12px',
@@ -134,6 +144,7 @@ const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, t
 interface Props {
   Icon?: Icon;
   errorMessage?: string;
+  disabled?: boolean;
   focused?: boolean;
   iconSize?: number;
   inputType?: string;
@@ -148,7 +159,7 @@ interface Props {
   tooltip?: string;
 }
 
-export default function MyTextField ({ Icon, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
+export default function MyTextField ({ Icon, disabled, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -207,6 +218,7 @@ export default function MyTextField ({ Icon, errorMessage, focused = false, icon
         }}
         autoComplete='off'
         autoFocus={focused}
+        disabled={disabled}
         fullWidth
         inputProps={{
           maxLength

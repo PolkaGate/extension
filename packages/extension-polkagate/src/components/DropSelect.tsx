@@ -16,10 +16,10 @@ import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { DropContent, ScrollingTextBox } from '.';
 
-const DropSelectContainer = styled(Grid)(({ focused }: { focused: boolean }) => ({
-  '&:hover': { background: '#2D1E4A' },
+const DropSelectContainer = styled(Grid)(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({
+  '&:hover': { background: disabled ? '#1B133C' : '#2D1E4A' },
   alignItems: 'center',
-  background: focused ? '#05091C' : '#1B133C',
+  background: focused && !disabled ? '#05091C' : '#1B133C',
   border: '1px solid',
   borderColor: '#BEAAD833',
   borderRadius: '12px',
@@ -87,10 +87,13 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
     setSelectedValue(value);
   }, [value]);
 
+  const textColor = disabled ? 'text.disabled' : style?.color ?? 'text.secondary';
+  const arrowColor = open ? '#FF4FB9' : disabled ? '#4B4B4B' : '#AA83DC';
+
   return (
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
-        <DropSelectContainer container focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
+        <DropSelectContainer container disabled={disabled} focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
           <Grid alignItems='center' container item sx={{ columnGap: style?.columnGap ?? '5px', flexWrap: 'noWrap' }} xs>
             {displayContentType === 'logo' && selectedValueText &&
               <Logo
@@ -116,20 +119,20 @@ function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayCo
                 <ScrollingTextBox
                   text={selectedValueText ?? defaultValueText ?? ''}
                   textStyle={{
-                    color: style?.color ?? 'text.secondary',
+                    color: textColor,
                     ...theme.typography['B-4']
                   }}
                   width={Math.floor(_contentDropWidth * 0.6)}
                 />)
-              : <Typography color={style?.color ?? 'text.secondary'} variant={textVariant ?? 'B-1'}>
+              : <Typography color={textColor} variant={textVariant ?? 'B-1'}>
                 {selectedValueText ?? defaultValueText}
               </Typography>
             }
           </Grid>
           {
             simpleArrow
-              ? <ExpandMore sx={{ color: open ? '#FF4FB9' : '#AA83DC', fontSize: '17px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
-              : <ArrowDown2 color={open ? '#FF4FB9' : '#AA83DC'} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
+              ? <ExpandMore sx={{ color: arrowColor, fontSize: '17px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
+              : <ArrowDown2 color={arrowColor} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
           }
         </DropSelectContainer>
       </ClickAwayListener>

@@ -3,15 +3,15 @@
 
 import type { AutoLockDelayType } from '../../../../hooks/useAutoLock';
 
-import { Grid, type SelectChangeEvent, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+
+import { DropSelect, MyTextField } from '@polkadot/extension-polkagate/src/components';
 
 import { setStorage } from '../../../../components/Loading';
 import MySwitch from '../../../../components/MySwitch';
 import { useTranslation } from '../../../../components/translate';
 import { useAutoLock } from '../../../../hooks';
-import Field from '../components/Field';
-import MySelect from '../components/Select';
 
 const autoLockOptions = [
   { text: 'min', value: 'min' },
@@ -19,7 +19,7 @@ const autoLockOptions = [
   { text: 'day', value: 'day' }
 ];
 
-export default function AutoLockTimer(): React.ReactElement {
+export default function AutoLockTimer (): React.ReactElement {
   const { t } = useTranslation();
   const autoLock = useAutoLock();
 
@@ -27,12 +27,12 @@ export default function AutoLockTimer(): React.ReactElement {
   const [enabled, setEnabled] = useState<boolean>();
   const [delayType, setDelayType] = useState<AutoLockDelayType | undefined>();
 
-  const onDelayValueChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(parseFloat(event.target.value || '0'));
+  const onDelayValueChange = useCallback((value: string) => {
+    setInputValue(parseFloat(value || '0'));
   }, []);
 
-  const onDelayTypeChange = useCallback((event: SelectChangeEvent) => {
-    setDelayType(event.target.value as AutoLockDelayType);
+  const onDelayTypeChange = useCallback((value: number | string) => {
+    setDelayType(value as AutoLockDelayType);
   }, []);
 
   const onSwitchChange = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -68,8 +68,8 @@ export default function AutoLockTimer(): React.ReactElement {
 
   return (
     <Stack direction='column'>
-      <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left' }} variant='H-4'>
-        AUTO-LOCK TIMER
+      <Typography color='label.secondary' mb='5px' mt='15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+        {t('Auto-Lock Timer')}
       </Typography>
       <Grid alignItems='center' columnGap='8px' container justifyContent='flex-start' pt='7px'>
         <MySwitch checked={autoLock?.enabled} onChange={onSwitchChange} />
@@ -77,14 +77,25 @@ export default function AutoLockTimer(): React.ReactElement {
           {t('Enable Auto-Lock')}
         </Typography>
       </Grid>
-      <Stack columnGap='10px' direction='row' sx={{ alignItems: 'baseline' }}>
-        <Field
-          onChange={onDelayValueChange}
-          value={inputValue ?? autoLock?.delay?.value ?? 30}
+      <Stack columnGap='10px' direction='row' sx={{ alignItems: 'end', mt: '8px' }}>
+        <MyTextField
+          disabled={!autoLock?.enabled}
+          inputType='number'
+          inputValue={inputValue ?? autoLock?.delay?.value ?? 30}
+          maxLength={4}
+          onTextChange={onDelayValueChange}
+          placeholder='00'
+          style={{ width: '70px' }}
         />
-        <MySelect
+        <DropSelect
+          contentDropWidth={120}
+          disabled={!autoLock?.enabled}
+          displayContentType='text'
           onChange={onDelayTypeChange}
           options={autoLockOptions}
+          scrollTextOnOverflow
+          showCheckAsIcon
+          style={{ height: '44px', margin: '0', width: '80px' }}
           value={delayType || autoLock?.delay?.type}
         />
       </Stack>

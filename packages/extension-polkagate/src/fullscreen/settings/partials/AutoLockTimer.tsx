@@ -80,6 +80,7 @@ export default function AutoLockTimer (): React.ReactElement {
         />
         <Stack columnGap='4px' direction='row'>
           <MyTextField
+            disabled={!autoLock?.enabled}
             inputType='number'
             inputValue={inputValue ?? autoLock?.delay?.value ?? 30}
             maxLength={4}
@@ -89,6 +90,7 @@ export default function AutoLockTimer (): React.ReactElement {
           />
           <DropSelect
             contentDropWidth={150}
+            disabled={!autoLock?.enabled}
             displayContentType='text'
             onChange={onDelayTypeChange}
             options={autoLockOptions}
