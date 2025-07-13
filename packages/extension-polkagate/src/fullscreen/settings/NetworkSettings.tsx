@@ -76,7 +76,7 @@ function AddButton (): React.ReactElement {
   return (
     <>
       <VelvetBox style={{ minWidth: '165px', width: 'fit-content' }}>
-        <Stack direction='row' onClick={onClick} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
+        <Stack direction='row' onClick={onClick} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
           <Add color='#FF4FB9' size='24' variant='Linear' />
           <Typography color='text.primary' sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
             {t('Add New Network')}
@@ -204,10 +204,6 @@ function NetworkSettings (): React.ReactElement {
   const onCloseEndpoints = useCallback(() => {
     setShowEndpoints(undefined);
   }, []);
-
-  // const onAddNewChain = useCallback(() => {
-  //   windowOpen('/addNewChain/').catch(console.error);
-  // }, []);
 
   const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
 

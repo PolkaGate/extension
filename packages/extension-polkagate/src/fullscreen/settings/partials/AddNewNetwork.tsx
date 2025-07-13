@@ -79,7 +79,7 @@ function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): R
                   <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase' }} variant='H-3'>
                     {metadata.chain}
                   </Typography>
-                  <Typography color='primary.main' sx={{ bgcolor: '#C6AECC26', borderRadius: '6px', height: '19px', px: '3px', textAlign: 'center', textTransform: 'uppercase' }} variant='S-2'>
+                  <Typography color='primary.main' sx={{ bgcolor: '#C6AECC26', borderRadius: '6px', lineHeight: '19px', px: '3px', textAlign: 'center', textTransform: 'uppercase' }} variant='S-2'>
                     {metadata.tokenSymbol}
                   </Typography>
                 </Stack>

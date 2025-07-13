@@ -120,7 +120,7 @@ export default function Chains (): React.ReactElement {
   }, [onAction]);
 
   const onAddNewChain = useCallback(() => {
-    windowOpen('/addNewChain/').catch(console.error);
+    windowOpen('/settingsfs/network').catch(console.error);
   }, []);
 
   const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
@@ -184,7 +184,7 @@ export default function Chains (): React.ReactElement {
           width: '100%'
         }}
         text={{
-          firstPart: t('+ Add Chain')
+          firstPart: t('+ Add New Network')
         }}
         variant='contained'
       />

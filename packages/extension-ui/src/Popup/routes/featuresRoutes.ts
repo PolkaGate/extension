@@ -3,7 +3,6 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
-import AddNewChain from '@polkadot/extension-polkagate/src/fullscreen/addNewChain';
 import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
 import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
@@ -21,11 +20,6 @@ import History from '@polkadot/extension-polkagate/src/popup/history/newDesign';
 
 // NOTE: the rule for paths is /urlName/:address/:genesisHash/blah blah
 export const FEATURE_ROUTES: RouteConfig[] = [
-  {
-    Component: AddNewChain,
-    path: '/addNewChain/',
-    trigger: 'add-new-chain'
-  },
   {
     Component: AuthList,
     path: '/auth-list/:id?',

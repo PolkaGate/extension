@@ -6,7 +6,6 @@ const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/
 const START_WITH_PATH = [
   '/account/',
   '/accountfs/',
-  '/addNewChain/',
   '/derivefs/',
   '/import/',
   '/governance/',
@@ -14,6 +13,7 @@ const START_WITH_PATH = [
   '/nft/',
   '/proxyManagement/',
   '/send/',
+  '/settingsfs/',
   '/stake/',
   '/socialRecovery/'
 ] as const;
