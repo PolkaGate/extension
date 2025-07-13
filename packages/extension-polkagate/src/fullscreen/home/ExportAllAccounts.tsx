@@ -6,10 +6,9 @@ import saveAs from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { exportAccounts } from '@polkadot/extension-polkagate/src/messaging';
-import MySnackbar from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/components/MySnackbar';
 
 import { exportAccountsGif } from '../../assets/gif';
-import { AccountContext, DecisionButtons, MatchPasswordField } from '../../components';
+import { AccountContext, DecisionButtons, MatchPasswordField, MySnackbar } from '../../components';
 import { useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 
@@ -61,6 +60,7 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
       dividerStyle={{ margin: '5px 0 0' }}
       onClose={onClose}
       open={open !== undefined}
+      showBackIconAsClose
       style={{ minHeight: '200px' }}
       title={t('Export all Accounts')}
     >

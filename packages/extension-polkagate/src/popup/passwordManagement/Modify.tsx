@@ -59,7 +59,7 @@ function Modify({ isPasswordError, newPassword, onBackClick, onPassChange, setIs
 
     if (newPassword) {
       const hashedPassword = blake2AsHex(newPassword, 256);
-      const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'set' });
+      const isConfirmed = await setStorage('loginInfo', { hashedPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: 'set' });
 
       setStep(isConfirmed ? STEPS.NEW_PASSWORD_SET : STEPS.ERROR);
     }

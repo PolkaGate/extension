@@ -10,6 +10,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
+import { SELECTED_ACCOUNT_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useIsHovered } from '../../hooks';
 import { setStorage } from '../../util';
@@ -42,7 +43,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
       return;
     }
 
-    setStorage('selectedAccount', account).finally(()=> navigate(`accountfs/${account.address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`)).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(()=> navigate(`accountfs/${account.address}/${defaultGenesisAndAssetId ?? `${POLKADOT_GENESIS}/0`}`)).catch(console.error);
   }, [account, defaultGenesisAndAssetId, navigate]);
 
   return (
@@ -61,6 +62,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
       <Stack columnGap='5px' direction='row'>
         <AccountDropDown
           address={account?.address}
+          name={account?.name}
         />
         <GoToAccountButton
           onClick={goToAccountPage}

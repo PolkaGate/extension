@@ -21,9 +21,10 @@ interface Props {
   chainName?: string;
   genesisHash?: string | undefined | null;
   logo?: string;
-  size?: number;
   logoRoundness?: string;
+  showSquare?: boolean;
   style?: React.CSSProperties;
+  size?: number;
 }
 
 function normalizeToWordSet (str: string): Set<string> {
@@ -54,7 +55,7 @@ function haveSameWords (str1: string, str2: string): boolean {
   return true;
 }
 
-function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size = 25, style = {} }: Props): React.ReactElement<Props> {
+function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {} }: Props): React.ReactElement<Props> {
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const [isDarkLogo, setIsDarkLogo] = useState(false);
@@ -65,7 +66,8 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
   const foundChainName = options.find(({ text, value }) => value === genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
 
   const _chainName = sanitizeChainName(foundChainName || chainName);
-  const _logo = logo || getLogo2(_chainName)?.logo;
+  const chainLogoInfo = getLogo2(_chainName);
+  const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 
   const filter = isDarkLogo && isDark && CHAINS_WITH_BLACK_LOGO.includes(_chainName) ? 'invert(0.2) brightness(2)' : '';
 
@@ -114,6 +116,8 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
     }
   }, [_logo]);
 
+  const borderRadius = showSquare ? 0 : logoRoundness;
+
   return (
     <>
       {_logo
@@ -123,7 +127,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
               imgProps={{ ref: imgRef }}
               src={_logo}
               sx={{
-                borderRadius: logoRoundness,
+                borderRadius,
                 filter,
                 height: size,
                 width: size,
@@ -136,7 +140,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
               icon={fas[convertToCamelCase(_logo)]}
               style={{
                 border: '0.5px solid',
-                borderRadius: logoRoundness,
+                borderRadius,
                 filter,
                 height: size,
                 width: size,
@@ -150,7 +154,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', size 
             imgProps={{ ref: imgRef }}
             sx={{
               bgcolor: maybeUserAddedChainColor,
-              borderRadius: logoRoundness,
+              borderRadius,
               fontSize: size * 0.7,
               height: size,
               width: size,

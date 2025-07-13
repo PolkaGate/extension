@@ -4,13 +4,12 @@
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from './utils/types';
 
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import NftManager from '../../class/nftManager';
-import { Warning } from '../../components';
-import { useApiWithChain2, useFullscreen, useTranslation } from '../../hooks';
+import { useApiWithChain2, useTranslation } from '../../hooks';
 import { getAssetHubByChainName } from '../../hooks/useReferendum';
 import HomeLayout from '../components/layout';
 import Filters from './components/Filters';
@@ -20,17 +19,14 @@ import { fetchItemMetadata } from './utils/util';
 
 enum STEPS {
   CHECK_SCREEN,
-  INDEX,
-  UNSUPPORTED
+  INDEX
 }
 
-function NFT (): React.ReactElement {
-  useFullscreen();
-  const nftManager = React.useMemo(() => new NftManager(), []);
-
+function NFT(): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
+
+  const nftManager = React.useMemo(() => new NftManager(), []);
 
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
@@ -44,6 +40,10 @@ function NFT (): React.ReactElement {
     const myNfts = nftManager.get(address);
 
     setNfts(myNfts);
+
+    if (!myNfts || myNfts?.length === 0) {
+      setItemsToShow(null);
+    }
 
     const handleNftUpdate = (updatedAddress: string, updatedNfts: ItemInformation[]) => {
       if (updatedAddress === address) {
@@ -106,29 +106,18 @@ function NFT (): React.ReactElement {
           </Typography>
         }
       </Stack>
-      {step === STEPS.UNSUPPORTED &&
-        <Grid alignItems='center' container direction='column' display='block' item>
-          <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', pt: '50px', width: '70%' }}>
-            <Warning
-              fontSize='16px'
-              fontWeight={500}
-              isBelowInput
-              theme={theme}
-            >
-              {t('The chosen blockchain does not support NFTs/Uniques.')}
-            </Warning>
-          </Grid>
-        </Grid>
-      }
       {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
         <>
-          <Typography color='text.secondary' variant='B-4' sx={{ mt: '7px' }}>
+          <Typography color='text.secondary' sx={{ mt: '7px' }} variant='B-4'>
             {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
           </Typography>
-          <Filters
-            items={nfts}
-            setItemsToShow={setItemsToShow}
-          />
+          {
+            nfts && !!nfts.length &&
+            <Filters
+              items={nfts}
+              setItemsToShow={setItemsToShow}
+            />
+          }
           <NftList
             apis={apis}
             nfts={itemsToShow}

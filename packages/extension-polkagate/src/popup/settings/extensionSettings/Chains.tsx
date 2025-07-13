@@ -1,20 +1,22 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import type { DropdownOption } from '../../../util/types';
 
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { ActionButton, ActionContext, ChainLogo, Motion, SearchField } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
+import MySwitch from '../../../components/MySwitch';
 import { useTranslation } from '../../../components/translate';
 import { useGenesisHashOptions } from '../../../hooks';
-import { ASSETS_NAME_IN_STORAGE, type SavedAssets } from '../../../hooks/useAssetsBalances';
 import { windowOpen } from '../../../messaging';
 import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
-import MySwitch from './components/Switch';
 
 export default function Chains (): React.ReactElement {
   const { t } = useTranslation();
@@ -118,7 +120,7 @@ export default function Chains (): React.ReactElement {
   }, [onAction]);
 
   const onAddNewChain = useCallback(() => {
-    windowOpen('/addNewChain/').catch(console.error);
+    windowOpen('/settingsfs/network').catch(console.error);
   }, []);
 
   const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
@@ -133,40 +135,44 @@ export default function Chains (): React.ReactElement {
             style={{ borderRadius: '12px', height: '36px', marginBottom: '10px' }}
           />
         </Grid>
-        {chainsToList.map(({ text, value }, index) => (
-          <Grid
-            alignItems='center' container item justifyContent='space-between' key={value} sx={{
-              backgroundImage: chainsToList.length - 1 === index ? '' : 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
-              backgroundPosition: 'bottom',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: '100% 2px',
-              borderBottom: chainsToList.length - 1 === index ? 0 : '1px solid transparent',
-              height: '45px',
-              px: '7px'
-            }}
-          >
-            <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value as string)} sx={{ cursor: 'pointer' }}>
-              <ChainLogo genesisHash={value as string} size={24} />
-              <Typography color='#EAEBF1' ml='8px' variant='B-1'>
-                {text}
-              </Typography>
-              <ChevronRight sx={{
-                '.hoverable:hover &': {
-                  transform: 'translateX(5px)'
-                },
-                color: 'text.primary',
-                fontSize: '17px',
-                transition: 'transform 250ms ease-out'
+        {chainsToList.map(({ text, value }, index) => {
+          const isSelected = selectedChains.has(value as string);
+
+          return (
+            <Grid
+              alignItems='center' container item justifyContent='space-between' key={value} sx={{
+                backgroundImage: chainsToList.length - 1 === index ? '' : 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+                backgroundPosition: 'bottom',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '100% 2px',
+                borderBottom: chainsToList.length - 1 === index ? 0 : '1px solid transparent',
+                height: '45px',
+                px: '7px'
               }}
+            >
+              <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value as string)} sx={{ cursor: 'pointer' }}>
+                <ChainLogo genesisHash={value as string} size={24} />
+                <Typography color={ isSelected ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
+                  {text}
+                </Typography>
+                <ChevronRight sx={{
+                  '.hoverable:hover &': {
+                    transform: 'translateX(5px)'
+                  },
+                  color: isSelected ? 'text.primary' : 'primary.main',
+                  fontSize: '17px',
+                  transition: 'transform 250ms ease-out'
+                }}
+                />
+              </Stack>
+              <MySwitch
+                checked={isSelected}
+                // eslint-disable-next-line react/jsx-no-bind
+                onChange={() => onChainSelect(value as string)}
               />
-            </Stack>
-            <MySwitch
-              checked={selectedChains.has(value as string)}
-              // eslint-disable-next-line react/jsx-no-bind
-              onChange={() => onChainSelect(value as string)}
-            />
-          </Grid>
-        ))}
+            </Grid>
+          );
+        })}
       </Grid>
       <ActionButton
         contentPlacement='center'
@@ -178,7 +184,7 @@ export default function Chains (): React.ReactElement {
           width: '100%'
         }}
         text={{
-          firstPart: t('+ Add Chain')
+          firstPart: t('+ Add New Network')
         }}
         variant='contained'
       />

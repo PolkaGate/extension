@@ -12,7 +12,7 @@ interface SettingsProviderProps {
   children: React.ReactNode;
 }
 
-export default function SettingsProvider({ children }: SettingsProviderProps) {
+export default function SettingsProvider ({ children }: SettingsProviderProps) {
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(uiSettings.get());
 
   useEffect(() => {

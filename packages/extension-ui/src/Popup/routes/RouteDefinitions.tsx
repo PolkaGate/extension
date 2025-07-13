@@ -34,7 +34,7 @@ const Signing = lazy(() => import('@polkadot/extension-polkagate/src/popup/signi
 export interface RouteConfig {
   path: string;
   Component: React.ComponentType<any>;
-  trigger: string;
+  trigger?: string;
   props?: Record<string, unknown>;
   exact?: boolean;
 }
