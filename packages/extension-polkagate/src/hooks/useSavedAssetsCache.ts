@@ -50,7 +50,7 @@ export default function useSavedAssetsCache ({ addresses,
   const addAlert = useCallback(() => {
     const id = random.string({ length: 10 });
 
-    setAlerts((perv) => [...perv, { id, severity: 'success', text: t('Accounts\' balances updated!') }]);
+    setAlerts((perv) => [...perv, { id, severity: 'success', text: t("Accounts' balances updated!") }]);
     const timeout = setTimeout(() => setAlerts((prev) => prev.filter(({ id: alertId }) => alertId !== id)), TIME_TO_REMOVE_ALERT);
 
     return () => clearTimeout(timeout);

@@ -7,7 +7,7 @@ import { useLocation, useParams } from 'react-router-dom';
 
 import ActionRow from '@polkadot/extension-polkagate/src/popup/settings/partials/ActionRow';
 
-import { useTranslation } from '../../hooks';
+import { useFullscreen, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import HomeLayout from '../components/layout';
 import TopMenus from './partials/TopMenus';
@@ -19,6 +19,8 @@ import NetworkSettings from './NetworkSettings';
 export default function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+
+  useFullscreen();
 
   const { genesisHash } = useParams<{ address: string, genesisHash: string }>();
 

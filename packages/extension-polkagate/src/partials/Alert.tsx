@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import '@vaadin/icons';
 
 import type { AlertType } from '../util/types';
@@ -15,7 +14,7 @@ interface Props {
   alert: AlertType;
 }
 
-function Alert({ alert }: Props): React.ReactElement {
+function Alert ({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { removeAlert } = useAlerts();
 
