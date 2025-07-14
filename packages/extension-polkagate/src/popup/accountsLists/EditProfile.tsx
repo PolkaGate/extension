@@ -26,7 +26,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const initialAccountList = useAccountsOrder();
   const profileAccounts = useProfileAccounts(initialAccountList, profileLabel);
-  const categorizedAccounts = useCategorizedAccountsInProfiles();
+  const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [maybeNewName, setName] = useState<string | null>();
