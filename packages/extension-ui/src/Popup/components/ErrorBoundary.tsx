@@ -25,7 +25,7 @@ interface State {
 class ErrorBoundary extends React.Component<Props> {
   private isExtensionPopup: boolean;
 
-  constructor (props: Props) {
+  constructor(props: Props) {
     super(props);
 
     // Initialize extension detection in constructor
@@ -45,11 +45,11 @@ class ErrorBoundary extends React.Component<Props> {
 
   public override state: State = { error: null };
 
-  public static getDerivedStateFromError (error: Error): Partial<State> {
+  public static getDerivedStateFromError(error: Error): Partial<State> {
     return { error };
   }
 
-  public override componentDidUpdate (prevProps: Props) {
+  public override componentDidUpdate(prevProps: Props) {
     const { error } = this.state;
     const { trigger } = this.props;
 
@@ -63,20 +63,20 @@ class ErrorBoundary extends React.Component<Props> {
     window.location.hash = '/';
   };
 
-  public override render (): React.ReactNode {
+  public override render(): React.ReactNode {
     const { children, t } = this.props;
     const { error } = this.state;
 
     return error
       ? (
         <Grid alignItems='center' container flexDirection='column' item justifyContent='center' sx={{ height: '100vh', position: 'relative', px: '20px' }}>
-          <Typography mt='35px' sx={{ textAlign: 'center' }} variant='H-1'>
+          <Typography mt='35px' sx={{ fontFamily: 'OdibeeSans', fontSize: '40px', fontWeight: 400, textAlign: 'center' }}>
             {t('An error occurred')}
           </Typography>
-          <Typography mt='35px' sx={{ textAlign: 'left' }} variant='B-2'>
+          <Typography mt='35px' sx={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, textAlign: 'left' }}>
             {t('We couldn’t load this section due to an unexpected error.')}
           </Typography>
-          <Typography color='error' mt='40px' variant='B-1'>
+          <Typography color='error' mt='40px' sx={{ fontFamily: 'Inter', fontSize: '13px', fontWeight: 500 }}>
             {error.message}
           </Typography>
           <GradientButton
