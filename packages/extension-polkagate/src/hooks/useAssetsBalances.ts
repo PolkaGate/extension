@@ -109,7 +109,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       return;
     }
 
-    console.log('setFetchedAssets in combineAndSetAssets:', assets);
+    // console.log('setFetchedAssets in combineAndSetAssets:', assets);
 
     setFetchedAssets((prev) => {
       const combinedAsset = {

@@ -70,5 +70,5 @@ export default function useCategorizedAccountsInProfiles (): { initialAccountLis
     }
   }, [initialAccountList, profileAccounts, selectedProfile, userDefinedProfiles]);
 
-  return {initialAccountList, categorizedAccounts};
+  return { categorizedAccounts, initialAccountList };
 }

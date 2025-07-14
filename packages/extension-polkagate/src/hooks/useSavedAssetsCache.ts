@@ -67,7 +67,7 @@ export default function useSavedAssetsCache ({ addresses,
     });
     const updatedAssetsToBeSaved = removeZeroBalanceRecords(toBeSavedAssets);
 
-  console.log('roundDone : setFetchedAssets in handleAccountsSaving:', updatedAssetsToBeSaved);
+    // console.log('roundDone : setFetchedAssets in handleAccountsSaving:', updatedAssetsToBeSaved);
 
     setFetchedAssets(updatedAssetsToBeSaved);
     setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
