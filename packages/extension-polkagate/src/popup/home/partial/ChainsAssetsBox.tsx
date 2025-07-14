@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { selectableNetworks } from '@polkadot/networks';
+import chains from '@polkadot/extension-polkagate/src/util/chains';
 
 import { AssetLogo, FormatPrice } from '../../../components';
 import { useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
@@ -24,7 +24,7 @@ interface AssetDetailType {
   chainName: string | undefined;
   genesisHash: string;
   logoInfo: LogoInfo | undefined;
-  token: string | undefined;
+  token?: string | undefined;
 }
 type Summary = AssetDetailType[] | null | undefined;
 
@@ -152,24 +152,23 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
         return sum + totalPrice;
       }, 0);
 
-      const sortedAssets = balances.sort((a, b) => {
+      const sortedAssets = balances.slice().sort((a, b) => {
         const totalPriceA = calcPrice(priceOf(a.priceId), a.totalBalance, a.decimal);
         const totalPriceB = calcPrice(priceOf(b.priceId), b.totalBalance, b.decimal);
 
         return totalPriceB - totalPriceA;
       });
-      const network = selectableNetworks.find(({ genesisHash: networkGenesisHash, symbols }) => genesisHash === networkGenesisHash[0] && symbols.length);
-      const token = network?.symbols[0];
+      const network = chains.find(({ genesisHash: networkGenesisHash, tokenSymbol }) => genesisHash === networkGenesisHash && tokenSymbol);
+      const token = network?.tokenSymbol;
       const logoInfo = getLogo2(genesisHash, token);
-      const chainName = network?.displayName;
+      const chainName = network?.name;
 
       return {
         assets: sortedAssets,
         chainName,
         chainTotalBalance,
         genesisHash,
-        logoInfo,
-        token
+        logoInfo
       };
     })
       .sort((a, b) => b.chainTotalBalance - a.chainTotalBalance);

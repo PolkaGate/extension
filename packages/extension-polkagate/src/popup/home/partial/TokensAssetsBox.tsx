@@ -298,7 +298,7 @@ function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
       });
       const priceId = assets[0].priceId;
 
-      const sortedAssets = assets.sort((a, b) => {
+      const sortedAssets = assets.slice().sort((a, b) => {
         const totalPriceA = calcPrice(priceOf(a.priceId), a.totalBalance, a.decimal);
         const totalPriceB = calcPrice(priceOf(b.priceId), b.totalBalance, b.decimal);
 

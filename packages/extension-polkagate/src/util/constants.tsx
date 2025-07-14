@@ -300,3 +300,5 @@ export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
 export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
 export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
 export const ASSETS_NAME_IN_STORAGE = 'assets';
+
+export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;

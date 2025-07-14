@@ -682,7 +682,7 @@ export interface Prices {
 }
 
 export interface PricesInCurrencies {
-  [currencyCode: string]: { date: number; prices: PricesType; };
+  [currencyCode: string]: Prices;
 }
 
 export interface Price {
@@ -753,6 +753,11 @@ export type UserAddedChains = Record<string, UserAddedEndpoint>
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
   setCurrency: (selectedCurrency: CurrencyItemType) => void;
+}
+
+export interface PricesContextType {
+  prices: Prices | undefined;
+  setPrices: (prices: Prices) => void;
 }
 
 export type MyIconTheme = BaseIconTheme | 'polkasoul';
