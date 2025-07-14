@@ -8,7 +8,7 @@ import type { ValidatorInformation } from '../../../hooks/useValidatorsInformati
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 
 import { FormatBalance2 } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
@@ -21,7 +21,7 @@ interface ValidatorIdentityProp {
   style?: SxProps<Theme>;
 }
 
-export const ValidatorIdentity = ({ style, validatorInfo }: ValidatorIdentityProp) => {
+export const ValidatorIdentity = memo(function ValidatorIdentity ({ style, validatorInfo }: ValidatorIdentityProp) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
       <PolkaGateIdenticon
@@ -42,7 +42,7 @@ export const ValidatorIdentity = ({ style, validatorInfo }: ValidatorIdentityPro
         </Typography>}
     </Container>
   );
-};
+});
 
 export interface StakingInfoStackProps {
   decimal?: number | undefined;
@@ -53,7 +53,7 @@ export interface StakingInfoStackProps {
   secondaryColor?: string;
 }
 
-export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) => {
+export const StakingInfoStack = memo(function StakingInfoStack ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
   const theme = useTheme();
 
   return (
@@ -82,7 +82,7 @@ export const StakingInfoStack = ({ amount, decimal, secondaryColor, text, title,
       </Typography>
     </Stack>
   );
-};
+});
 
 interface ValidatorInfoProp {
   validatorInfo: ValidatorInformation;
@@ -90,7 +90,7 @@ interface ValidatorInfoProp {
   onDetailClick: () => void;
 }
 
-const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorInfoProp) => {
+const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -116,14 +116,14 @@ const ValidatorInfo = ({ genesisHash, onDetailClick, validatorInfo }: ValidatorI
       </Container>
     </Stack>
   );
-};
+});
 
 interface NominatorsTableProp {
   genesisHash: string;
   validatorsInformation: ValidatorInformation[];
 }
 
-export default function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
@@ -150,3 +150,5 @@ export default function NominatorsTable ({ genesisHash, validatorsInformation }:
     </>
   );
 }
+
+export default memo(NominatorsTable);

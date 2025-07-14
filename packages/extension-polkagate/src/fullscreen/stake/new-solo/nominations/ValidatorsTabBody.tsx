@@ -16,7 +16,7 @@ import SortBy from '../../../../popup/staking/partial/SortBy';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 
-enum SORTED_BY {
+export enum VALIDATORS_SORTED_BY {
   DEFAULT = 'Default',
   MOST_STAKED = 'Most Staked',
   LEAST_COMMISSION = 'Least Commission',
@@ -27,15 +27,10 @@ interface ValidatorToolbarProps {
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
   onSearch: (input: string) => void;
-  genesisHash: string | undefined;
+  children: React.ReactNode;
 }
 
-const ValidatorToolbar = ({ genesisHash, onSearch, setSortBy, sortBy }: ValidatorToolbarProps) => {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-
-  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash, navigate]);
-
+export const ValidatorToolbar = ({ children, onSearch, setSortBy, sortBy }: ValidatorToolbarProps) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '18px', m: 0, width: 'fit-content' }}>
@@ -52,15 +47,10 @@ const ValidatorToolbar = ({ genesisHash, onSearch, setSortBy, sortBy }: Validato
           SortIcon={<Firstline color='#AA83DC' size='18' variant='Bold' />}
           setSortBy={setSortBy}
           sortBy={sortBy}
-          sortOptions={Object.values(SORTED_BY)}
+          sortOptions={Object.values(VALIDATORS_SORTED_BY)}
         />
       </Container>
-      <GradientButton
-        onClick={openValidatorManagement}
-        startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
-        style={{ height: '44px', padding: 0, width: '180px' }}
-        text={t('Manage Validators')}
-      />
+      {children}
     </Container>
   );
 };
@@ -71,9 +61,11 @@ interface Props {
 }
 
 export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
-  const [sortConfig, setSortConfig] = React.useState<string>(SORTED_BY.DEFAULT);
+  const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
 
   const nominatedValidatorsIds = useMemo(() =>
@@ -136,14 +128,22 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
     setSearch(input);
   }, []);
 
+  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash, navigate]);
+
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
       <ValidatorToolbar
-        genesisHash={genesisHash}
         onSearch={onSearch}
         setSortBy={setSortConfig}
         sortBy={sortConfig}
-      />
+      >
+        <GradientButton
+          onClick={openValidatorManagement}
+          startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
+          style={{ height: '44px', padding: 0, width: '180px' }}
+          text={t('Manage Validators')}
+        />
+      </ValidatorToolbar>
       <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
         {isLoaded &&
           nominatedValidatorsInformation?.map((validator, index) => (
