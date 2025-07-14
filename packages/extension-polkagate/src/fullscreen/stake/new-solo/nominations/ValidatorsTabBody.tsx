@@ -70,7 +70,7 @@ interface Props {
   stakingInfo: SoloStakingInfo | undefined;
 }
 
-export default function ValidatorsTable ({ genesisHash, stakingInfo }: Props): React.ReactElement {
+export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
   const [sortConfig, setSortConfig] = React.useState<string>(SORTED_BY.DEFAULT);
@@ -130,7 +130,7 @@ export default function ValidatorsTable ({ genesisHash, stakingInfo }: Props): R
 
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
   const isLoaded = useMemo(() => filteredValidators && filteredValidators.length > 0, [filteredValidators]);
-  const nothingToShow = useMemo(() => (stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0) || !filteredValidators?.length, [filteredValidators?.length, stakingInfo?.stakingAccount?.nominators]);
+  const nothingToShow = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
 
   const onSearch = useCallback((input: string) => {
     setSearch(input);
@@ -144,7 +144,7 @@ export default function ValidatorsTable ({ genesisHash, stakingInfo }: Props): R
         setSortBy={setSortConfig}
         sortBy={sortConfig}
       />
-      <Stack direction='column' sx={{ gap: '2px', px: '4px', width: '100%' }}>
+      <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
         {isLoaded &&
           nominatedValidatorsInformation?.map((validator, index) => (
             <ValidatorInfo

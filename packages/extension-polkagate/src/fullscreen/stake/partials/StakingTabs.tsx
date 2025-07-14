@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
-import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTable';
+import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTabBody';
 import Rewards from '../Rewards';
 
 export interface StakingTabsHeaderItems {
