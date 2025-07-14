@@ -4,7 +4,7 @@
 import { UnfoldMore as UnfoldMoreIcon } from '@mui/icons-material';
 import { Container, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { Triangle } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import CustomCommand from '../../../components/SVG/CustomCommand';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
@@ -104,27 +104,26 @@ interface Props {
 
 function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
+  const firstTabValue = useRef<TAB.TOKENS | TAB.CHAINS>(TAB.TOKENS);
 
-  const tabIndex = useMemo(() =>
-    !tab || [TAB.CHAINS, TAB.TOKENS].includes(tab)
-      ? TAB.CHAINS
-      : TAB.NFTS
-  ,
-  [tab]);
+  const tabValue = useMemo(() => {
+    if (tab && [TAB.TOKENS, TAB.CHAINS].includes(tab)) {
+      firstTabValue.current = tab as TAB.CHAINS | TAB.TOKENS;
+    }
+
+    return !tab ? TAB.TOKENS : tab;
+  }, [tab]);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
-    const selectedTab = value === TAB.NFTS
-      ? TAB.NFTS
-      : value === tabIndex
-        ? TAB.TOKENS
-        : TAB.CHAINS;
+    setTab(value === TAB.NFTS ? TAB.NFTS : firstTabValue.current);
+  }, [setTab]);
 
-    setTab(selectedTab);
-  }, [setTab, tabIndex]);
+  const tabSx = { m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' };
 
   return (
     <Container disableGutters sx={{ display: 'flex', mx: isExtension ? '30px' : '15px', width: '100%' }}>
       <Tabs
+        aria-label='Asset tabs'
         onChange={handleTabChange}
         sx={{
           '& div.MuiTabs-flexContainer': {
@@ -137,7 +136,7 @@ function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
           },
           minHeight: 'unset'
         }}
-        value={tabIndex}
+        value={tabValue}
       >
         <Tab
           label={
@@ -146,8 +145,8 @@ function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
               tab={tab}
             />
           }
-          sx={{ m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' }}
-          value={TAB.CHAINS}
+          sx={tabSx}
+          value={firstTabValue.current ?? TAB.TOKENS}
         />
         <Tab
           label={
@@ -155,7 +154,7 @@ function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
               isSelected={tab === TAB.NFTS}
             />
           }
-          sx={{ m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' }}
+          sx={tabSx}
           value={TAB.NFTS}
         />
       </Tabs>
