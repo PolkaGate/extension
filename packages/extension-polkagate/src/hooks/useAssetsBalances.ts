@@ -177,9 +177,9 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
-      const calls = fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
+      const call = fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
 
-      workerCallsCount.current += calls;
+      workerCallsCount.current += call;
     });
   }, [shouldFetchAssets, addresses, fetchAssets, worker, isTestnetEnabled, isUpdate, selectedChains, genesisOptions]);
 

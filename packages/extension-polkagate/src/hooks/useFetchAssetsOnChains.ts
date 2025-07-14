@@ -23,6 +23,10 @@ const FUNCTION_NAMES = {
   RELAY: 'getAssetOnRelayChain'
 };
 
+// 0 = request not sent; 1 = request sent to worker successfully
+const FAILED = 0;
+const SUCCESSFUL = 1;
+
 /**
  * Hook to encapsulate logic for dispatching asset-fetching requests
  * to a worker, based on chain type.
@@ -34,12 +38,12 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
     if (!worker) {
       console.warn(`Worker is undefined — skipping ${functionName}`);
 
-      return 0;
+      return FAILED;
     }
 
     worker.postMessage({ functionName, parameters });
 
-    return 1;
+    return SUCCESSFUL;
   }, [worker]);
 
   const fetchAssetOnAssetHub = useCallback((chainName: string, _addresses: string[]) => {
@@ -48,7 +52,7 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
     if (!assetsToBeFetched) {
       console.warn(`No assets config found for ${chainName}`);
 
-      return 0;
+      return FAILED;
     }
 
     return postToWorker(FUNCTION_NAMES.ASSET_HUB, {
@@ -77,22 +81,17 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
     if (!addresses?.length) {
       console.warn('No addresses provided to fetch assets.');
 
-      return 0;
+      return FAILED;
     }
-
-    let callsMade = 0;
 
     // Relay chains or chains with a single token
     if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
       const chainName = getChainName(genesisHash, genesisOptions);
 
       if (!chainName) {
-        console.error(
-          'Unable to resolve chain name for relay/single-token chain:',
-          genesisHash
-        );
+        console.error('Unable to resolve chain name for relay/single-token chain:', genesisHash);
 
-        return callsMade;
+        return FAILED;
       }
 
       return fetchAssetOnRelayChain(chainName, addresses);
@@ -105,7 +104,7 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
       if (!chainName) {
         console.error('Unable to resolve chain name for asset hub:', genesisHash);
 
-        return callsMade;
+        return FAILED;
       }
 
       return fetchAssetOnAssetHub(chainName, addresses);
@@ -113,10 +112,10 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
 
     // Other chains supporting multi-asset logic
     if (maybeMultiAssetChainName) {
-      callsMade += fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, addresses);
+      return fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, addresses);
     }
 
-    return callsMade;
+    return FAILED;
   }, [addresses, genesisOptions, fetchAssetOnRelayChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
 
   return { fetchAssets };
