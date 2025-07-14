@@ -1,124 +1,123 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import type { Asset } from '@polkagate/apps-config/assets/types';
 import type { DropdownOption, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH } from '../util/constants';
 import getChainName from '../util/getChainName';
 
-const assetsChains = createAssets();
-
 interface Params {
-  worker: MessagePort | undefined;
-  addresses: string[] | undefined;
+  worker?: MessagePort;
+  addresses?: string[];
   genesisOptions: DropdownOption[];
   userAddedEndpoints: UserAddedChains;
 }
 
+// Function names for worker calls
+const FUNCTION_NAMES = {
+  ASSET_HUB: 'getAssetOnAssetHub',
+  MULTI_ASSET: 'getAssetOnMultiAssetChain',
+  RELAY: 'getAssetOnRelayChain'
+};
+
 /**
- * Hook to encapsulate fetching assets logic.
+ * Hook to encapsulate logic for dispatching asset-fetching requests
+ * to a worker, based on chain type.
  */
-export default function useFetchAssetsOnChains ({ addresses,
-  genesisOptions,
-  userAddedEndpoints,
-  worker }: Params) {
-  const fetchAssetOnRelayChain = useCallback((_addresses: string[], chainName: string) => {
+export default function useFetchAssetsOnChains({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
+  const assetsChains = useMemo(() => createAssets(), []);
+
+  const postToWorker = useCallback((functionName: string, parameters: Record<string, unknown>): number => {
     if (!worker) {
+      console.warn(`Worker is undefined — skipping ${functionName}`);
+
       return 0;
     }
 
-    const functionName = 'getAssetOnRelayChain';
-
-    worker.postMessage({ functionName, parameters: { address: _addresses, chainName, userAddedEndpoints } });
+    worker.postMessage({ functionName, parameters });
 
     return 1;
-  }, [userAddedEndpoints, worker]);
+  }, [worker]);
 
-  const fetchAssetOnAssetHubs = useCallback((_addresses: string[], chainName: string, assetsToBeFetched?: Asset[]) => {
-    if (!worker) {
+  const fetchAssetOnAssetHub = useCallback((chainName: string, _addresses: string[]) => {
+    const assetsToBeFetched = assetsChains?.[chainName];
+
+    if (!assetsToBeFetched) {
+      console.warn(`No assets config found for ${chainName}`);
+
       return 0;
     }
 
-    const functionName = 'getAssetOnAssetHub';
+    return postToWorker(FUNCTION_NAMES.ASSET_HUB, {
+      addresses: _addresses,
+      assetsToBeFetched,
+      chainName,
+      userAddedEndpoints
+    });
+  }, [assetsChains, postToWorker, userAddedEndpoints]);
 
-    worker.postMessage({ functionName, parameters: { address: _addresses, assetsToBeFetched, chainName, userAddedEndpoints } });
+  const fetchAssetOnRelayChain = useCallback((chainName: string, _addresses: string[]) =>
+    postToWorker(FUNCTION_NAMES.RELAY, {
+      addresses: _addresses,
+      chainName,
+      userAddedEndpoints
+    }), [postToWorker, userAddedEndpoints]);
 
-    return 1;
-  }, [userAddedEndpoints, worker]);
+  const fetchAssetOnMultiAssetChain = useCallback((chainName: string, _addresses: string[]) =>
+    postToWorker(FUNCTION_NAMES.MULTI_ASSET, {
+      addresses: _addresses,
+      chainName,
+      userAddedEndpoints
+    }), [postToWorker, userAddedEndpoints]);
 
-  const fetchAssetOnMultiAssetChain = useCallback((addresses: string[], chainName: string) => {
-    if (!worker) {
-      return 0;
-    }
-
-    const functionName = 'getAssetOnMultiAssetChain';
-
-    worker.postMessage({ functionName, parameters: { addresses, chainName, userAddedEndpoints } });
-
-    return 1;
-  }, [userAddedEndpoints, worker]);
-
-  const fetchMultiAssetChainAssets = useCallback((chainName: string) => {
-    return addresses ? fetchAssetOnMultiAssetChain(addresses, chainName) : 0;
-  }, [addresses, fetchAssetOnMultiAssetChain]);
-
-  const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName: string | undefined) => {
+  const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName?: string): number => {
     if (!addresses?.length) {
-      console.log('No address to fetch assets!');
+      console.warn('No addresses provided to fetch assets.');
 
       return 0;
     }
 
     let callsMade = 0;
 
+    // Relay chains or chains with a single token
     if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
       const chainName = getChainName(genesisHash, genesisOptions);
 
       if (!chainName) {
-        console.error('can not find chain name by genesis hash!', genesisHash);
+        console.error(
+          'Unable to resolve chain name for relay/single-token chain:',
+          genesisHash
+        );
 
         return callsMade;
       }
 
-      callsMade += fetchAssetOnRelayChain(addresses, chainName);
-
-      return callsMade;
+      return fetchAssetOnRelayChain(chainName, addresses);
     }
 
+    // Asset hubs (like Statemint)
     if (ASSET_HUBS.includes(genesisHash)) {
       const chainName = getChainName(genesisHash);
 
       if (!chainName) {
-        console.error('can not find chain name by genesis hash!', genesisHash);
+        console.error('Unable to resolve chain name for asset hub:', genesisHash);
 
         return callsMade;
       }
 
-      const assetsToBeFetched = assetsChains?.[chainName];
-
-      if (!assetsToBeFetched) {
-        console.warn(`No assets config found for ${chainName}`);
-
-        return callsMade;
-      }
-
-      callsMade += fetchAssetOnAssetHubs(addresses, chainName, assetsToBeFetched);
-
-      return callsMade;
+      return fetchAssetOnAssetHub(chainName, addresses);
     }
 
+    // Other chains supporting multi-asset logic
     if (maybeMultiAssetChainName) {
-      callsMade += fetchMultiAssetChainAssets(maybeMultiAssetChainName);
+      callsMade += fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, addresses);
     }
 
     return callsMade;
-  }, [addresses, fetchAssetOnAssetHubs, fetchAssetOnRelayChain, fetchMultiAssetChainAssets, genesisOptions]);
+  }, [addresses, genesisOptions, fetchAssetOnRelayChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
 
   return { fetchAssets };
 }
