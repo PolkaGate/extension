@@ -10,8 +10,8 @@ import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH } from '../util/constants';
 import getChainName from '../util/getChainName';
 
 interface Params {
-  worker?: MessagePort;
-  addresses?: string[];
+  worker: MessagePort | undefined;
+  addresses: string[] | undefined;
   genesisOptions: DropdownOption[];
   userAddedEndpoints: UserAddedChains;
 }
@@ -27,7 +27,7 @@ const FUNCTION_NAMES = {
  * Hook to encapsulate logic for dispatching asset-fetching requests
  * to a worker, based on chain type.
  */
-export default function useFetchAssetsOnChains({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
+export default function useFetchAssetsOnChains ({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
   const assetsChains = useMemo(() => createAssets(), []);
 
   const postToWorker = useCallback((functionName: string, parameters: Record<string, unknown>): number => {
