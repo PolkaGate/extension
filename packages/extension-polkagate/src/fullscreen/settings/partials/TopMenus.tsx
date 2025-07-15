@@ -44,7 +44,6 @@ function TopMenus (): React.ReactElement {
         />
         <TopMenuItem
           Icon={Electricity}
-          iconVariant='Bulk'
           label={t('Network Settings')}
           path='network'
           setPosition={setPosition}

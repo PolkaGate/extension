@@ -20,7 +20,7 @@ interface Props {
   setPosition: React.Dispatch<React.SetStateAction<DOMRect | null>>
 }
 
-function TopMenuItem ({ Icon, iconVariant = 'Bold', label, path, setPosition }: Props): React.ReactElement {
+function TopMenuItem ({ Icon, iconVariant = 'Bulk', label, path, setPosition }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { pathname } = useLocation();
   const isDark = useIsDark();
