@@ -3,7 +3,7 @@
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountIconThemeContextType, AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, DropdownOption, FetchingRequests, PricesContextType, ReferendaContextType, UserAddedChains } from '../util/types';
+import type { AccountIconThemeContextType, AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, DropdownOption, FetchingRequests, PricesContextType, ReferendaContextType, SelectedContextType, UserAddedChains } from '../util/types';
 
 import React from 'react';
 
@@ -17,6 +17,7 @@ const APIContext = React.createContext<APIsContext>({ apis: {}, setIt: noop });
 const AlertContext = React.createContext<AlertContextType>({ alerts: [], setAlerts: noop });
 const AuthorizeReqContext = React.createContext<AuthorizeRequest[]>([]);
 const CurrencyContext = React.createContext<CurrencyContextType>({ currency: undefined, setCurrency: noop });
+const SelectedContext = React.createContext<SelectedContextType>({ selected: { account: undefined, chains: undefined, profile: undefined }, setSelected: noop });
 const PricesContext = React.createContext<PricesContextType>({ prices: undefined, setPrices: noop });
 const FetchingContext = React.createContext<FetchingRequests>({ fetching: {}, set: noop });
 const ReferendaContext = React.createContext<ReferendaContextType>({ refs: {}, setRefs: noop });
@@ -44,6 +45,7 @@ export { AccountContext,
   MetadataReqContext,
   PricesContext,
   ReferendaContext,
+  SelectedContext,
   SettingsContext,
   SigningReqContext,
   ToastContext,

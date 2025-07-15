@@ -755,6 +755,16 @@ export interface CurrencyContextType {
   setCurrency: (selectedCurrency: CurrencyItemType) => void;
 }
 
+export interface SelectedType {
+  account: AccountJson | undefined;
+  chains: Record<string, string> | undefined;
+  profile: string | undefined;
+}
+export interface SelectedContextType {
+  selected: SelectedType;
+  setSelected: (selectedItems: SelectedType) => void;
+}
+
 export interface PricesContextType {
   prices: Prices | undefined;
   setPrices: (prices: Prices) => void;
