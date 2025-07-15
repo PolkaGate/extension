@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -13,7 +12,7 @@ import { useProfiles, useTranslation } from '../../hooks';
 import ProfileTab from './ProfileTab';
 
 interface Props {
-  orderedAccounts: AccountsOrder[] | undefined;
+  orderedAccounts: AccountJson[] | undefined;
 }
 
 const ITEM_WIDTH = 130;

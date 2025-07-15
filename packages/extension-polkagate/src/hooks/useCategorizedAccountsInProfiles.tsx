@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '../util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useEffect, useState } from 'react';
 
@@ -21,13 +21,13 @@ import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile }
  *
  * @returns {Record<string, any[]>} A dictionary mapping profile tags to lists of matching account entries.
  */
-export default function useCategorizedAccountsInProfiles (): { initialAccountList: AccountsOrder[] | undefined, categorizedAccounts: Record<string, AccountsOrder[]>} {
+export default function useCategorizedAccountsInProfiles (): { initialAccountList: AccountJson[] | undefined, categorizedAccounts: Record<string, AccountJson[]>} {
   const initialAccountList = useAccountsOrder();
   const selectedProfile = useSelectedProfile();
   const { userDefinedProfiles } = useProfiles();
   const profileAccounts = useProfileAccounts(initialAccountList, selectedProfile);
 
-  const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
+  const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
 
   useEffect(() => {
     if (!initialAccountList || initialAccountList.length === 0 || !selectedProfile) {
@@ -41,11 +41,11 @@ export default function useCategorizedAccountsInProfiles (): { initialAccountLis
     }
 
     if (selectedProfile === PROFILE_TAGS.ALL) {
-      const categorized: Record<string, AccountsOrder[]> = {};
+      const categorized: Record<string, AccountJson[]> = {};
 
       if (userDefinedProfiles) {
         userDefinedProfiles.forEach((tag) => {
-          const accountsWithTag = initialAccountList.filter(({ account: { profile } }) =>
+          const accountsWithTag = initialAccountList.filter(({ profile }) =>
             profile?.split(',').includes(tag)
           );
 
@@ -56,10 +56,10 @@ export default function useCategorizedAccountsInProfiles (): { initialAccountLis
       }
 
       Object.assign(categorized, {
-        [PROFILE_TAGS.LEDGER]: initialAccountList.filter(({ account: { isHardware } }) => isHardware),
-        [PROFILE_TAGS.LOCAL]: initialAccountList.filter(({ account: { isExternal } }) => !isExternal),
-        [PROFILE_TAGS.QR_ATTACHED]: initialAccountList.filter(({ account: { isQR } }) => isQR),
-        [PROFILE_TAGS.WATCH_ONLY]: initialAccountList.filter(({ account: { isExternal, isHardware, isQR } }) => isExternal && !isQR && !isHardware)
+        [PROFILE_TAGS.LEDGER]: initialAccountList.filter(({ isHardware }) => isHardware),
+        [PROFILE_TAGS.LOCAL]: initialAccountList.filter(({ isExternal }) => !isExternal),
+        [PROFILE_TAGS.QR_ATTACHED]: initialAccountList.filter(({ isQR }) => isQR),
+        [PROFILE_TAGS.WATCH_ONLY]: initialAccountList.filter(({ isExternal, isHardware, isQR }) => isExternal && !isQR && !isHardware)
       });
 
       setCategorizedAccounts(categorized);
@@ -68,7 +68,7 @@ export default function useCategorizedAccountsInProfiles (): { initialAccountLis
         [selectedProfile]: profileAccountsData
       });
     }
-  }, [initialAccountList, profileAccounts, selectedProfile, userDefinedProfiles]);
+  }, [initialAccountList?.length, profileAccounts, selectedProfile, userDefinedProfiles]);
 
   return { categorizedAccounts, initialAccountList };
 }

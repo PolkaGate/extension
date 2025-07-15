@@ -69,7 +69,7 @@ function AccountList (): React.ReactElement {
                       isFirstAccount &&
                       <AccountProfileLabel label={label} />
                     }
-                    <AccountRow account={account.account} />
+                    <AccountRow account={account} />
                   </Stack>
                 </motion.div>
               );

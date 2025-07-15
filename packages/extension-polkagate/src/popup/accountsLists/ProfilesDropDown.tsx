@@ -1,9 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography } from '@mui/material';
@@ -32,7 +30,7 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
   width: `${preferredWidth}px`
 }));
 
-function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder[] | undefined, label: string }): React.ReactElement {
+function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
@@ -70,7 +68,7 @@ interface DropContentProps {
   contentDropWidth?: number | undefined;
   open: boolean;
   options: string[];
-  initialAccountList: AccountsOrder[] | undefined
+  initialAccountList: AccountJson[] | undefined
 }
 
 function CustomizedDropDown ({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {

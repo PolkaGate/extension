@@ -24,8 +24,8 @@ enum STEP {
 
 function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const initialAccountList = useAccountsOrder();
-  const profileAccounts = useProfileAccounts(initialAccountList, profileLabel);
+  const allAccounts = useAccountsOrder();
+  const profileAccounts = useProfileAccounts(allAccounts, profileLabel);
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -40,13 +40,11 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
   }, []);
 
   const onEdit = useCallback(async () => {
-    const allAccounts = initialAccountList?.map(({ account }) => account);
-
     setIsBusy(true);
 
     const cleanedProfiles = new Map<string, string>();
 
-    await Promise.all(profileAccounts?.map(async ({ account }) => {
+    await Promise.all(profileAccounts?.map(async (account) => {
       if (maybeNewName || account.profile?.includes(profileLabel)) {
         const maybeNewProfile = removeProfileTag(account.profile, profileLabel);
 
@@ -77,7 +75,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
       setIsBusy(false);
       handleClose();
     });
-  }, [handleClose, initialAccountList, maybeNewName, profileAccounts, profileLabel, selectedAddresses]);
+  }, [handleClose, allAccounts, maybeNewName, profileAccounts, profileLabel, selectedAddresses]);
 
   const onNameChange = useCallback((name: string | null) => setName(name), []);
 

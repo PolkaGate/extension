@@ -1,9 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ArrowForwardIosRounded as ArrowForwardIosRoundedIcon } from '@mui/icons-material';
 import { Grid } from '@mui/material';
@@ -13,7 +11,7 @@ import { useIsHovered, useProfiles } from '../../../hooks';
 import ProfileTabFullScreen from './ProfileTabFullScreen';
 
 interface Props {
-  orderedAccounts: AccountsOrder[] | undefined;
+  orderedAccounts: AccountJson[] | undefined;
 }
 
 export const HIDDEN_PERCENT = '50%';

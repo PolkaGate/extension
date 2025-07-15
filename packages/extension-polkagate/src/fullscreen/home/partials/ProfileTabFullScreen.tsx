@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -16,7 +15,7 @@ import { showAccount } from '../../../messaging';
 import { HIDDEN_PERCENT } from './ProfileTabsFullScreen';
 
 interface Props {
-  orderedAccounts: AccountsOrder[] | undefined
+  orderedAccounts: AccountJson[] | undefined
   selectedProfile: string | undefined;
   setSelectedProfile: React.Dispatch<React.SetStateAction<string | undefined>>;
   isHovered: boolean | undefined;
@@ -24,7 +23,7 @@ interface Props {
   index: number;
 }
 
-function ProfileTabFullScreen({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { alerts, notify } = useAlerts();
@@ -49,14 +48,14 @@ function ProfileTabFullScreen({ index, isHovered, orderedAccounts, selectedProfi
   /** check to see if all accounts in a profile is hidden */
   const areAllProfileAccountsHidden = useMemo(() => {
     const isHidden = profileAccounts?.length
-      ? profileAccounts.every(({ account }) => account.isHidden)
+      ? profileAccounts.every(({ isHidden }) => isHidden)
       : undefined;
 
     return isHidden;
   }, [profileAccounts]);
 
-  const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
-    toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
+  const hideAccounts = useCallback((accounts: AccountJson[]) => {
+    toHideAll !== undefined && accounts.forEach(({ address }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
     notify(t('Accounts in the {{profileName}} profile are now {{visibility}} websites.', { replace: { profileName: text, visibility: toHideAll ? 'hidden from' : 'visible to' } }), 'info');
