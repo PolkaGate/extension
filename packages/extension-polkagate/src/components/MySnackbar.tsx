@@ -10,6 +10,8 @@ import React, { useEffect } from 'react';
 import { check } from '@polkadot/extension-polkagate/src/assets/gif/index';
 
 interface Props {
+  direction?: 'up' | 'left' | 'right' | 'down' | undefined;
+  anchorOriginHorizontal?: 'center' | 'right' | 'left';
   text: string;
   open: boolean;
   isError?: boolean;
@@ -34,7 +36,7 @@ const SNACK_BAR_VISIBILITY_DURATION = 2000;
  * @param {() => void} onClose - Callback function to close the Snackbar.
  * @returns {JSX.Element} The rendered Snackbar component.
  */
-const MySnackbar = ({ isError, onClose, open, text }: Props) => {
+const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isError, onClose, open, text }: Props) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -51,8 +53,8 @@ const MySnackbar = ({ isError, onClose, open, text }: Props) => {
 
   return (
     <Snackbar
-      TransitionComponent={(props) => <Slide {...props} direction='up' />}
-      anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      TransitionComponent={(props) => <Slide {...props} direction={direction} />}
+      anchorOrigin={{ horizontal: anchorOriginHorizontal, vertical: 'top' }}
       open={open}
       sx={{ top: '90px !important' }}
     >

@@ -7,11 +7,10 @@ import type { AlertType } from '../util/types';
 import { Chance } from 'chance';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo } from 'react';
 
-import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { ASSETS_NAME_IN_STORAGE, TIME_TO_REMOVE_ALERT } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getStorage, setStorage } from '../components/Loading';
 import { removeZeroBalanceRecords } from '../util/utils';
-import { TIME_TO_REMOVE_ALERT } from './useAlerts';
 import { DEFAULT_SAVED_ASSETS, type SavedAssets } from './useAssetsBalances';
 
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
