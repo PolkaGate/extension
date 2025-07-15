@@ -4,6 +4,8 @@
 import { Grid, styled } from '@mui/material';
 import React from 'react';
 
+import { noop } from '@polkadot/util';
+
 interface Props {
   checked: boolean;
   disabled?: boolean;
@@ -56,7 +58,7 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({
 export default function GradientSwitch ({ checked, disabled = false, onChange }: Props): React.ReactElement {
   return (
     <div style={{ zIndex: 1 }}>
-      <SwitchContainer checked={checked} disabled={disabled} onClick={onChange}>
+      <SwitchContainer checked={checked} disabled={disabled} onClick={disabled ? noop : onChange}>
         <Ball checked={checked} disabled={disabled} />
       </SwitchContainer>
     </div>
