@@ -1,0 +1,93 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
+
+export const DEFAULT_VALIDATORS_PER_PAGE = 8;
+export const VALIDATORS_PAGINATION_OPTIONS = [
+  { text: '8', value: 8 },
+  { text: '10', value: 10 },
+  { text: '20', value: 20 },
+  { text: '50', value: 50 }
+];
+
+export enum VALIDATORS_SORTED_BY {
+  DEFAULT = 'Default',
+  MOST_STAKED = 'Most Staked',
+  LEAST_COMMISSION = 'Least Commission',
+  MOST_NOMINATORS = 'Most Nominators'
+}
+
+export const getFilterValidators = (validatorsInformation: ValidatorInformation[] | undefined, search: string) => {
+  if (!validatorsInformation || search.trim() === '') {
+    return validatorsInformation;
+  }
+
+  const searchLower = search.toLowerCase().trim();
+
+  return validatorsInformation.filter((validator) => {
+    // Search by account ID
+    if (validator.accountId.toString().toLowerCase().includes(searchLower)) {
+      return true;
+    }
+
+    // Search by display name if available
+    if (validator.identity?.display?.toLowerCase().includes(searchLower)) {
+      return true;
+    }
+
+    // Search by parent display name if available
+    if (validator.identity?.displayParent?.toLowerCase().includes(searchLower)) {
+      return true;
+    }
+
+    // Search by judgements (like "Reasonable", "KnownGood", etc.)
+    if (validator.identity?.judgements?.some(([, judgement]) =>
+      judgement.toString().toLowerCase().includes(searchLower))) {
+      return true;
+    }
+
+    return false;
+  });
+};
+
+export const getSortAndFilterValidators = (validatorsInformation: ValidatorInformation[] | undefined, sortConfig: string) => {
+  if (!validatorsInformation || sortConfig === VALIDATORS_SORTED_BY.DEFAULT.toString()) {
+    return validatorsInformation;
+  }
+
+  const sorted = [...validatorsInformation].sort((a, b) => {
+    switch (sortConfig) {
+      case VALIDATORS_SORTED_BY.MOST_STAKED.toString(): {
+        // Sort by total stake (assuming there's a totalStake property)
+        const aStake = a.stakingLedger.total || 0;
+        const bStake = b.stakingLedger.total || 0;
+
+        return Number(bStake) - Number(aStake); // Descending order
+      }
+
+      case VALIDATORS_SORTED_BY.LEAST_COMMISSION.toString(): {
+        // Sort by commission (ascending - least first)
+        const aCommission = a.validatorPrefs?.commission || 0;
+        const bCommission = b.validatorPrefs?.commission || 0;
+
+        return Number(aCommission) - Number(bCommission); // Ascending order
+      }
+
+      case VALIDATORS_SORTED_BY.MOST_NOMINATORS.toString(): {
+        // Sort by number of nominators (assuming there's a nominators property)
+        const aNominators = a.exposureMeta?.nominatorCount || 0;
+        const bNominators = b.exposureMeta?.nominatorCount || 0;
+
+        return bNominators - aNominators; // Descending order
+      }
+
+      default:
+        return 0;
+    }
+  });
+
+  return sorted;
+};

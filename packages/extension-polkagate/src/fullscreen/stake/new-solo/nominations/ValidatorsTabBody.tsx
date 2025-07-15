@@ -14,14 +14,8 @@ import { GradientButton, SearchField } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
 import SortBy from '../../../../popup/staking/partial/SortBy';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
+import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
-
-export enum VALIDATORS_SORTED_BY {
-  DEFAULT = 'Default',
-  MOST_STAKED = 'Most Staked',
-  LEAST_COMMISSION = 'Least Commission',
-  MOST_NOMINATORS = 'Most Nominators'
-}
 
 interface ValidatorToolbarProps {
   sortBy: string;
@@ -83,45 +77,11 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
       .filter(({ accountId }) => nominatedValidatorsIds.includes(accountId.toString()));
   }, [nominatedValidatorsIds, validatorsInfo]);
 
-  // New filtered validators based on search
-  const filteredValidators = useMemo(() => {
-    if (!nominatedValidatorsInformation || search.trim() === '') {
-      return nominatedValidatorsInformation;
-    }
-
-    const searchLower = search.toLowerCase().trim();
-
-    return nominatedValidatorsInformation.filter((validator) => {
-      // Search by account ID
-      if (validator.accountId.toString().toLowerCase().includes(searchLower)) {
-        return true;
-      }
-
-      // Search by display name if available
-      if (validator.identity?.display &&
-        validator.identity.display.toLowerCase().includes(searchLower)) {
-        return true;
-      }
-
-      // Search by parent display name if available
-      if (validator.identity?.displayParent &&
-        validator.identity.displayParent.toLowerCase().includes(searchLower)) {
-        return true;
-      }
-
-      // Search by judgements (like "Reasonable", "KnownGood", etc.)
-      if (validator.identity?.judgements &&
-        validator.identity.judgements.some(([, judgement]) =>
-          judgement.toString().toLowerCase().includes(searchLower))) {
-        return true;
-      }
-
-      return false;
-    });
-  }, [nominatedValidatorsInformation, search]);
+  const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
+  const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);
 
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
-  const isLoaded = useMemo(() => filteredValidators && filteredValidators.length > 0, [filteredValidators]);
+  const isLoaded = useMemo(() => sortedAndFilteredValidators && sortedAndFilteredValidators.length > 0, [sortedAndFilteredValidators]);
   const nothingToShow = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
 
   const onSearch = useCallback((input: string) => {
@@ -146,7 +106,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
       </ValidatorToolbar>
       <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
         {isLoaded &&
-          nominatedValidatorsInformation?.map((validator, index) => (
+          sortedAndFilteredValidators?.map((validator, index) => (
             <ValidatorInfo
               genesisHash={genesisHash}
               key={index}
