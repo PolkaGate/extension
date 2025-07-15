@@ -1,17 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Box, Stack, Typography } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
 import useProfileInfo from './useProfileInfo';
 
-function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder[] | undefined, label: string }): React.ReactElement {
+function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
@@ -20,11 +22,10 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
   const [hovered, setHovered] = useState(false);
 
   const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
-
   const isSelected = selectedProfile === label;
 
   const onClick = useCallback(() => {
-    setStorage('profile', label).catch(console.error);
+    setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, label).catch(console.error);
   }, [label]);
 
   return (
@@ -51,10 +52,10 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
   );
 }
 
-function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccountList: AccountsOrder[] | undefined, width?: string }): React.ReactElement {
+function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccountList: AccountJson[] | undefined, width?: string }): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
-
+  
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [hovered, setIsHovered] = useState('');

@@ -8,6 +8,7 @@ import { Loading } from '@polkadot/extension-polkagate/src/components';
 import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 
 import PricesProvider from './contexts/PricesProvider';
+import SelectedProvider from './contexts/SelectedProvider';
 import AppRoutes from './routes/RouteDefinitions';
 import { AccountAssetProvider, AccountIconThemeProvider, AccountProvider, ActionProvider, AlertProvider, ApiProvider, CurrencyProvider, FetchingProvider, GenesisHashOptionsProvider, MediaProvider, ReferendaProvider, RequestsProvider, SettingsProvider, UserAddedChainsProvider, WorkerProvider } from './contexts';
 
@@ -31,9 +32,11 @@ export default function Popup (): React.ReactElement {
                                   <RequestsProvider>
                                     <MediaProvider>
                                       <UserAddedChainsProvider>
-                                        <AccountAssetProvider>
-                                          <AppRoutes />
-                                        </AccountAssetProvider>
+                                        <SelectedProvider>
+                                          <AccountAssetProvider>
+                                            <AppRoutes />
+                                          </AccountAssetProvider>
+                                        </SelectedProvider>
                                       </UserAddedChainsProvider>
                                     </MediaProvider>
                                   </RequestsProvider>

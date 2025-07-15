@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Box, Container, Stack } from '@mui/material';
 import { AddCircle, Trash } from 'iconsax-react';
@@ -54,7 +54,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
   const isInSettingMode = mode === PROFILE_MODE.SETTING_MODE;
   const isProfileDropDownOpen = mode === PROFILE_MODE.DROP_DOWN;
 
-  const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
+  const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
   useEffect(() => {
@@ -91,7 +91,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
     const keywordLower = searchKeyword.toLowerCase();
 
     return Object.entries(categorizedAccounts).reduce((acc, [label, accounts]) => {
-      const filteredAccounts = accounts.filter(({ account }) =>
+      const filteredAccounts = accounts.filter((account) =>
         account.name?.toLowerCase().includes(keywordLower) ||
           account.address.toLowerCase().includes(keywordLower)
       );
@@ -101,7 +101,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
       }
 
       return acc;
-    }, {} as Record<string, AccountsOrder[]>);
+    }, {} as Record<string, AccountJson[]>);
   }, [categorizedAccounts, searchKeyword]);
 
   return (
@@ -128,7 +128,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
                         const notLocalProfile = PROFILE_TAGS.LOCAL !== label;
 
                         return (
-                          <React.Fragment key={account.account.address}>
+                          <React.Fragment key={account.address}>
                             {isFirstAccount &&
                               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
                                 <AccountProfileLabel
@@ -146,12 +146,12 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
                               </Stack>
                             }
                             <AccountRow
-                              account={account.account}
+                              account={account}
                               isFirstAccount={isFirstAccount}
                               isFirstProfile={isFirstProfile}
                               isInSettingMode={isInSettingMode}
                               isLast={isLast}
-                              isSelected={account.account.address === selectedAccount?.address}
+                              isSelected={account.address === selectedAccount?.address}
                             />
                           </React.Fragment>
                         );

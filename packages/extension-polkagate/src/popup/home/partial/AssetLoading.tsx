@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, Grid, Skeleton } from '@mui/material';
 import React from 'react';
 
@@ -9,7 +8,7 @@ import { logoWhiteTransparent } from '../../../assets/logos';
 import { useIsDark } from '../../../hooks/index';
 import { Drawer } from './TokensAssetsBox';
 
-function MySkeleton({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
+function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
   return (<Skeleton
     animation='wave'
     height={12}
@@ -17,7 +16,7 @@ function MySkeleton({ bgcolor, width }: { bgcolor: string, width: number }): Rea
   />);
 }
 
-function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
+function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   const isDark = useIsDark();
 
   return (

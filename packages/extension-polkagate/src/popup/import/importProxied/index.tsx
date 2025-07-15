@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { HexString } from '@polkadot/util/types';
 
@@ -11,6 +10,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, ActionContext, GenesisHashOptionsContext, Label, PButton, SelectChain } from '../../../components';
 import { useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
@@ -84,7 +84,7 @@ function ImportProxied(): React.ReactElement {
     setIsBusy(true);
     createProxids().then(() => {
       setIsBusy(false);
-      setStorage('profile', PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
       onBackClick();
     }).catch(console.error);
   }, [createProxids, onBackClick]);

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Container, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -27,9 +27,9 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
-  const {categorizedAccounts: initialCategorizedAccounts} = useCategorizedAccountsInProfiles();
+  const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 
-  const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
+  const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
   const [maybeSelected, setMayBeSelected] = useState<string>();
   const [appliedAddress, setAppliedAddress] = useState<string>();
   const [searchKeyword, setSearchKeyword] = useState<string>();
@@ -76,7 +76,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
     const keywordLower = searchKeyword.toLowerCase();
 
     return Object.entries(categorizedAccounts).reduce((acc, [label, accounts]) => {
-      const filteredAccounts = accounts.filter(({ account }) =>
+      const filteredAccounts = accounts.filter((account) =>
         account.name?.toLowerCase().includes(keywordLower) ||
         account.address.toLowerCase().includes(keywordLower)
       );
@@ -86,7 +86,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
       }
 
       return acc;
-    }, {} as Record<string, AccountsOrder[]>);
+    }, {} as Record<string, AccountJson[]>);
   }, [categorizedAccounts, searchKeyword]);
 
   return (
@@ -101,7 +101,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
           onInputChange={onSearch}
           placeholder='🔍 Search accounts'
         />
-        <ProfileTabsFS width='99%' />
+        <ProfileTabsFS initialAccountList={initialAccountList} width='99%' />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '345px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {
@@ -116,7 +116,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
                           const isLast = accIndex === accounts.length - 1;
 
                           return (
-                            <React.Fragment key={account.account.address}>
+                            <React.Fragment key={account.address}>
                               {isFirstAccount &&
                               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
                                 <AccountProfileLabel
@@ -125,12 +125,12 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
                               </Stack>
                               }
                               <AccountRowSimple
-                                account={account.account}
+                                account={account}
                                 handleSelect={setMayBeSelected}
                                 isFirstAccount={isFirstAccount}
                                 isFirstProfile={isFirstProfile}
                                 isLast={isLast}
-                                isSelected={account.account.address === selectedAccount?.address}
+                                isSelected={account.address === selectedAccount?.address}
                                 maybeSelected={maybeSelected}
                               />
                             </React.Fragment>

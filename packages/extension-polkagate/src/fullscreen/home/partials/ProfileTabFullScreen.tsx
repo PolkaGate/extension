@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { Infotip2, VaadinIcon } from '../../../components/index';
@@ -16,7 +16,7 @@ import { showAccount } from '../../../messaging';
 import { HIDDEN_PERCENT } from './ProfileTabsFullScreen';
 
 interface Props {
-  orderedAccounts: AccountsOrder[] | undefined
+  orderedAccounts: AccountJson[] | undefined
   selectedProfile: string | undefined;
   setSelectedProfile: React.Dispatch<React.SetStateAction<string | undefined>>;
   isHovered: boolean | undefined;
@@ -24,7 +24,7 @@ interface Props {
   index: number;
 }
 
-function ProfileTabFullScreen({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
+function ProfileTabFullScreen ({ index, isHovered, orderedAccounts, selectedProfile, setSelectedProfile, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { alerts, notify } = useAlerts();
@@ -42,21 +42,21 @@ function ProfileTabFullScreen({ index, isHovered, orderedAccounts, selectedProfi
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
-    setStorage('profile', text).catch(console.error);
+    setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, text).catch(console.error);
     isSelected && setToHideAll(!toHideAll);
   }, [toHideAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
   const areAllProfileAccountsHidden = useMemo(() => {
     const isHidden = profileAccounts?.length
-      ? profileAccounts.every(({ account }) => account.isHidden)
+      ? profileAccounts.every(({ isHidden }) => isHidden)
       : undefined;
 
     return isHidden;
   }, [profileAccounts]);
 
-  const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
-    toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
+  const hideAccounts = useCallback((accounts: AccountJson[]) => {
+    toHideAll !== undefined && accounts.forEach(({ address }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
     notify(t('Accounts in the {{profileName}} profile are now {{visibility}} websites.', { replace: { profileName: text, visibility: toHideAll ? 'hidden from' : 'visible to' } }), 'info');
@@ -75,11 +75,11 @@ function ProfileTabFullScreen({ index, isHovered, orderedAccounts, selectedProfi
 
   useEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
-    getStorage('profile').then((res) => {
+    getStorage(SELECTED_PROFILE_NAME_IN_STORAGE).then((res) => {
       setSelectedProfile(res as string || t('All'));
     }).catch(console.error);
 
-    const unsubscribe = watchStorage('profile', setSelectedProfile);
+    const unsubscribe = watchStorage(SELECTED_PROFILE_NAME_IN_STORAGE, setSelectedProfile);
 
     return () => {
       unsubscribe();

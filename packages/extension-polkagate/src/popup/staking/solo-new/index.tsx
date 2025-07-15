@@ -8,13 +8,14 @@ import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer1, Trade, UserOctagon } 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
+
 import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../../../hooks/useAccountSelectedChain';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { useWithdrawSolo } from '../../../util/api/staking';
-import { updateStorage } from '../../../util/index';
-import { amountToHuman } from '../../../util/numberUtils';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';

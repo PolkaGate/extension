@@ -5,6 +5,8 @@ import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Address, Label } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
@@ -60,7 +62,7 @@ function Derive({ isLocked }: Props): React.ReactElement<Props> {
     setIsBusy(true);
     deriveAccount(parentAddress, account.suri, parentPassword, name, password, parentGenesis)
       .then(() => {
-        setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+        setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
         onAction('/');
       })
       .catch((error): void => {

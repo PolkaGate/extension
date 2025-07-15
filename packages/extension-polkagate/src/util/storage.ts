@@ -53,6 +53,14 @@ export const watchStorage = (label: string, setChanges: (value: any) => void, pa
   };
 };
 
+export const getAndWatchStorage = (key: string, setter: (value: any) => void, parse = false): (() => void) => {
+  getStorage(key, parse)
+    .then((value) => setter(value as any))
+    .catch(console.error);
+
+  return watchStorage(key, setter, parse);
+};
+
 export const setStorage = (label: string, data: unknown, stringify = false) => {
   return new Promise<boolean>((resolve) => {
     const _data = stringify ? JSON.stringify(data) : data;

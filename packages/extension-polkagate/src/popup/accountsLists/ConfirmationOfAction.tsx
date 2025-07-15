@@ -17,7 +17,7 @@ interface Props {
   label: string;
 }
 
-function ConfirmationOfAction({ label, setPopup }: Props): React.ReactElement {
+function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const initialAccountList = useAccountsOrder();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
@@ -27,7 +27,7 @@ function ConfirmationOfAction({ label, setPopup }: Props): React.ReactElement {
   const onDelete = useCallback(async () => {
     const isDefaultProfile = Object.values(PROFILE_TAGS).includes(label);
 
-    await Promise.all(profileAccounts?.map(async ({ account }) => {
+    await Promise.all(profileAccounts?.map(async (account) => {
       setIsBusy(true);
       const address = account.address;
 

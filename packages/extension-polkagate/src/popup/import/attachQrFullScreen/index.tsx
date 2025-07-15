@@ -12,6 +12,7 @@ import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { QrScanAddress } from '@polkadot/react-qr';
 
@@ -31,7 +32,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
     const metaData = JSON.stringify({ isQR: true });
 
     account?.content && updateMeta(account.content, metaData).then(() => {
-      setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
+      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.QR_ATTACHED).catch(console.error);
       switchToOrOpenTab('/', true);
     }).catch(console.error);
   }, [account]);

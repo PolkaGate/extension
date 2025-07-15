@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
+
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import useProfileInfo from '../../fullscreen/home/useProfileInfo';
 import { useAccountsOrder, useIsHovered, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
@@ -32,7 +32,7 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
   width: `${preferredWidth}px`
 }));
 
-function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder[] | undefined, label: string }): React.ReactElement {
+function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
@@ -43,7 +43,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
   const isSelected = selectedProfile === label;
 
   const onClick = useCallback(() => {
-    setStorage('profile', label).catch(console.error);
+    setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, label).catch(console.error);
   }, [label]);
 
   return (
@@ -70,7 +70,7 @@ interface DropContentProps {
   contentDropWidth?: number | undefined;
   open: boolean;
   options: string[];
-  initialAccountList: AccountsOrder[] | undefined
+  initialAccountList: AccountJson[] | undefined
 }
 
 function CustomizedDropDown ({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {

@@ -8,10 +8,11 @@ import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import Subscan from '../assets/icons/Subscan';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
 import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../hooks/useAccountSelectedChain';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
 import { toTitleCase, updateStorage } from '../util';

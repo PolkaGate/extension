@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, Collapse, Stack, Typography } from '@mui/material';
@@ -13,7 +13,7 @@ import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/us
 import { GlowCheckbox, Identity2 } from '../../components';
 
 interface Props {
-  accounts: AccountsOrder[];
+  accounts: AccountJson[];
   defaultProfile?: string;
   label: string;
   maybeNewName?: string | null | undefined;
@@ -32,18 +32,18 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
       return false;
     }
 
-    return accounts.every(({ account: { address } }) => selectedAddresses.has(address));
+    return accounts.every(({ address }) => selectedAddresses.has(address));
   }, [accounts, selectedAddresses]);
 
   useEffect(() => {
     defaultProfile && setSelectedAddresses((prev) => {
       const next = new Set(prev);
 
-      accounts.every(({ account: { address, profile } }) => profile?.includes(defaultProfile) && next.add(address));
+      accounts.every(({ address, profile }) => profile?.includes(defaultProfile) && next.add(address));
 
       return next;
     });
-  }, []);
+  }, [accounts, defaultProfile, setSelectedAddresses]);
 
   const onClick = useCallback(() => {
     setOpen((pre) => pre ? '' : label);
@@ -67,7 +67,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
     setSelectedAddresses((prev) => {
       const next = new Set(prev);
 
-      accounts.every(({ account: { address } }) => checked ? next.add(address) : next.delete(address));
+      accounts.every(({ address }) => checked ? next.add(address) : next.delete(address));
 
       return next;
     });
@@ -91,7 +91,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
       </Stack>
       <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isOpen} sx={{ bgcolor: '#222540A6', borderRadius: '10px', m: '0 3px 3px', width: 'fill-available' }}>
         <Stack alignItems='center' direction='column'>
-          {accounts.map(({ account: { address, genesisHash } }, index) => (
+          {accounts.map(({ address, genesisHash }, index) => (
             <Stack direction='column' key={index} sx={{ width: '100%' }}>
               {!!index &&
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '337' }} />
@@ -104,6 +104,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
                   style={{ color: '#EAEBF1', variant: 'B-1', width: '90%' }}
                 />
                 <GlowCheckbox
+                  // eslint-disable-next-line react/jsx-no-bind
                   changeState={(value) => handleCheck(value, address)}
                   checked={selectedAddresses.has(address)}
                   style={{ justifyContent: 'end', width: '10%' }}

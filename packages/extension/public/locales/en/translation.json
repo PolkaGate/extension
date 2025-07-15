@@ -1719,5 +1719,6 @@
   "Derived accounts share the same recovery phrase as their parent but follow a different path to remain distinct.": "",
   "Password for {{parentName}}": "",
   "Name & Password": "",
-  "+ Add New Network": ""
+  "+ Add New Network": "",
+  "We couldn’t load this section due to an unexpected error.": ""
 }

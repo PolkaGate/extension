@@ -1,28 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 
-import { getStorage, watchStorage } from '../components/Loading';
-import { PROFILE_TAGS } from '../util/constants';
+import { SelectedContext } from '../components';
 
 export default function useSelectedProfile (): string | undefined | null {
-  const [selectedProfile, setSelectedProfile] = useState<string | null>();
+  const { selected: { profile } } = useContext(SelectedContext);
 
-  useEffect(() => {
-    /** set profile text in local storage and watch its change to apply on the UI */
-    getStorage('profile')
-      .then((res) => {
-        setSelectedProfile(res as string | undefined ?? PROFILE_TAGS.ALL);
-      })
-      .catch(console.error);
-
-    const unsubscribe = watchStorage('profile', setSelectedProfile);
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  return selectedProfile;
+  return profile;
 }
