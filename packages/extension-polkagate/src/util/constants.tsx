@@ -299,6 +299,8 @@ export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
 // data names in local storage
 export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
 export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
+export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
+export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
 export const ASSETS_NAME_IN_STORAGE = 'assets';
 
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;

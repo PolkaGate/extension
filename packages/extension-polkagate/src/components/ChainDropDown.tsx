@@ -5,10 +5,11 @@ import type { DropdownOption } from '../util/types';
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import useAccountSelectedChain, { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { useSelectedAccount } from '../hooks';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../util/constants';
 import { DropSelect, GenesisHashOptionsContext } from '.';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };

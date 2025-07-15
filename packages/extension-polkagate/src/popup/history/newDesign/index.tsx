@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption, TransactionDetail } from '../../../util/types';
+import type { FilterOptions } from '../hookUtils/types';
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import useAccountSelectedChain, { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext } from '../../../components';
@@ -15,7 +17,6 @@ import { HomeMenu, UserDashboardHeader } from '../../../partials';
 import useTransactionHistory2 from '../useTransactionHistory2';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
-import type { FilterOptions } from '../hookUtils/types';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 

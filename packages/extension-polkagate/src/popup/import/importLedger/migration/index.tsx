@@ -10,7 +10,7 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
-import { DISABLED_NETWORKS, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DISABLED_NETWORKS, SELECTED_PROFILE_NAME_IN_STORAGE, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, DropSelect } from '../../../../components';
 import { setStorage } from '../../../../components/Loading';
@@ -78,7 +78,7 @@ export default function MigrationApp ({ setMode }: Props): React.ReactElement {
 
         updateMeta(String(address), metaData)
           .then(() => {
-            setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+            setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER).catch(console.error);
             openOrFocusTab('/', true);
           })
           .catch(console.error);

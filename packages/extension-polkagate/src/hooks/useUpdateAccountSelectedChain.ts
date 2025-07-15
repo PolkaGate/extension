@@ -4,8 +4,9 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { updateStorage } from '../util';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from './useAccountSelectedChain';
 
 /**
  * Updates the selected chain for a given account address in storage and optionally changes the URL.

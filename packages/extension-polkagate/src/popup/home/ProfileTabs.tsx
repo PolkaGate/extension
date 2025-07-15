@@ -7,6 +7,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { getStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useProfiles, useTranslation } from '../../hooks';
 import ProfileTab from './ProfileTab';
@@ -27,13 +28,13 @@ function ProfileTabs({ orderedAccounts }: Props): React.ReactElement {
 
   useLayoutEffect(() => {
     /** set profile text in local storage and watch its change to apply on the UI */
-    getStorage('profile')
+    getStorage(SELECTED_PROFILE_NAME_IN_STORAGE)
       .then((res) => {
         setSelectedProfile(res as string || t('All'));
       })
       .catch(console.error);
 
-    const unsubscribe = watchStorage('profile', setSelectedProfile);
+    const unsubscribe = watchStorage(SELECTED_PROFILE_NAME_IN_STORAGE, setSelectedProfile);
 
     return () => {
       unsubscribe();

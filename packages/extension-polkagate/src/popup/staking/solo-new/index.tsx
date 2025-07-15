@@ -9,7 +9,7 @@ import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer1, Trade, UserOctagon } 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
 

@@ -11,7 +11,7 @@ import { Coin, Lock1, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';

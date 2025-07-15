@@ -17,6 +17,7 @@ import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from
 import HeaderBrand from '../../../partials/HeaderBrand';
 import Name from '../../../partials/Name';
 import { POLKADOT_GENESIS_HASH } from '../../../util/constants';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 export interface ScanType {
   isAddress: boolean;
@@ -41,7 +42,7 @@ export default function AttachQR(): React.ReactElement {
     const metaData = JSON.stringify({ isQR: true });
 
     updateMeta(String(address), metaData).then(() => {
-      setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
+      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.QR_ATTACHED).catch(console.error);
       onAction('/');
     }).catch(console.error);
   }, [address, onAction]);

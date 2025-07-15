@@ -1,10 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import DoneIcon from '@mui/icons-material/Done';
 import { Divider, Grid, IconButton, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, InputWithLabel, MenuItem, VaadinIcon } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
@@ -205,7 +206,7 @@ function ProfileMenu({ address, closeParentMenu }: Props): React.ReactElement<Pr
   const profileNames = account?.profile ? account.profile.split(',') : undefined;
 
   useEffect(() => {
-    getStorage('profile').then((res) => {
+    getStorage(SELECTED_PROFILE_NAME_IN_STORAGE).then((res) => {
       setCurrentProfile(res as string);
     }).catch(console.error);
   }, []);
@@ -245,7 +246,7 @@ function ProfileMenu({ address, closeParentMenu }: Props): React.ReactElement<Pr
         const isLastAccountWithTheProfile = accountsWithTheSameProfile.length === 1;
 
         if (isLastAccountWithTheProfile && currentProfile === profileToBeRemoved) {
-          setStorage('profile', PROFILE_TAGS.ALL)
+          setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.ALL)
             .then(() => {
               handleClose();
               closeParentMenu();

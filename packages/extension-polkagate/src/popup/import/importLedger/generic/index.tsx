@@ -11,7 +11,7 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
-import { POLKADOT_SLIP44 } from '@polkadot/extension-polkagate/src/util/constants';
+import { POLKADOT_SLIP44, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
 import { noop } from '@polkadot/util';
 
@@ -105,7 +105,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
   useEffect(() => {
     if (savedAccountCount && savedAccountCount === numberOfSelectedAccounts) {
       // return to home if all selected accounts are saved
-      setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER).catch(console.error);
       openOrFocusTab('/', true);
     }
   }, [savedAccountCount, numberOfSelectedAccounts, onAction]);
@@ -118,7 +118,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
         updateMeta(String(address), metaData)
           .then(() => {
             if (isAdvancedMode) {
-              setStorage('profile', PROFILE_TAGS.LEDGER).catch(console.error);
+              setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER).catch(console.error);
               openOrFocusTab('/', true);
             } else {
               setSavedAccountCount((pre) => pre + 1);
