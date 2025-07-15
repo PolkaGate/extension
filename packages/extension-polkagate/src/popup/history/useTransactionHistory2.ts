@@ -3,169 +3,17 @@
 
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
+import type { FilterOptions, RecordTabStatus, RecordTabStatusGov, TransactionHistoryOutput } from './hookUtils/types';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import { useChainInfo } from '../../hooks';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { getTXsHistory } from '../../util/api/getTXsHistory';
-
-// Constants
-const SINGLE_PAGE_SIZE = 50;
-const MAX_PAGE = 10;
-const MAX_LOCAL_HISTORY_ITEMS = 20; // Maximum number of items to store locally
-const DEBUG = false; // Toggle for enabling/disabling logs
-
-// Helper for consistent logging format
-const log = (message: string, data?: unknown) => {
-  if (DEBUG) {
-    console.log(`[TxHistory] ${message}`, data !== undefined ? data : '');
-  }
-};
-
-const formatString = (input: string) => input.replaceAll('_', ' ');
-
-// Saves transaction history to Chrome's local storage for a specific address and chain
-async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
-  if (!address || !genesisHash || !transactions?.length) {
-    log('Missing required parameters for saving history');
-
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve, reject) => {
-    try {
-      log(`Saving ${transactions.length} transactions for ${address} on chain ${genesisHash}`);
-
-      // First, get the current history object
-      chrome.storage.local.get('history', (res: Record<string, unknown>) => {
-        // Initialize with empty object if not exists
-        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.['history'] as Record<string, Record<string, TransactionDetail[]>> ?? {});
-
-        // Ensure the address entry exists
-        if (!allHistories[address]) {
-          allHistories[address] = {};
-        }
-
-        // Update the history for this specific address and chain
-        allHistories[address][genesisHash] = transactions;
-
-        // Save the updated history object back to storage
-        chrome.storage.local.set({ history: allHistories }, () => {
-          if (chrome.runtime.lastError) {
-            const error = chrome.runtime.lastError;
-
-            console.error('Error saving history to chrome storage:', error);
-            reject(error);
-          } else {
-            log('History saved successfully to chrome storage');
-            resolve();
-          }
-        });
-      });
-    } catch (error) {
-      console.error('Error in saveHistoryToStorage:', error);
-      reject(error);
-    }
-  });
-}
-
-// Retrieves transaction history from Chrome's local storage for a specific address and chain
-export async function getHistoryFromStorage (address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
-  if (!address || !genesisHash) {
-    log('Missing required parameters for loading history');
-
-    return Promise.resolve(undefined);
-  }
-
-  return new Promise((resolve) => {
-    chrome.storage.local.get('history', (res: Record<string, unknown>) => {
-      try {
-        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.['history'] as Record<string, Record<string, TransactionDetail[]>> ?? {});
-
-        // Navigate the nested structure: address -> genesisHash -> transactions
-        const addressHistories: Record<string, TransactionDetail[]> = allHistories[address] || {};
-        const chainHistory: TransactionDetail[] = addressHistories[genesisHash];
-
-        log(`Retrieved ${chainHistory?.length || 0} transactions for ${address} on chain ${genesisHash}`);
-        resolve(chainHistory);
-      } catch (error) {
-        console.error('Error retrieving history from storage:', error);
-        resolve(undefined);
-      }
-    });
-  });
-}
-
-interface RecordTabStatus {
-  pageNum: number;
-  isFetching?: boolean;
-  hasMore?: boolean;
-  transactions?: Transfers[];
-}
-
-interface RecordTabStatusGov {
-  pageNum: number;
-  isFetching?: boolean;
-  hasMore?: boolean;
-  transactions?: Extrinsics[];
-}
-
-export interface TransactionHistoryOutput {
-  allHistories: TransactionDetail[] | null;
-  count: number;
-  grouped: Record<string, TransactionDetail[]> | null | undefined;
-  isLoading: boolean;
-}
-
-export interface FilterOptions {
-  transfers?: boolean;
-  governance?: boolean;
-  staking?: boolean;
-}
-
-const INITIAL_STATE = {
-  hasMore: true,
-  isFetching: false,
-  pageNum: 0,
-  transactions: []
-};
-
-// Action types for the reducers
-type ReceivedAction =
-  | { type: 'RESET' }
-  | { type: 'UPDATE'; payload: Partial<RecordTabStatus> };
-
-type ExtrinsicsAction =
-  | { type: 'RESET' }
-  | { type: 'UPDATE'; payload: Partial<RecordTabStatusGov> };
-
-// Reducers with reset capability
-const receivedReducer = (state: RecordTabStatus, action: ReceivedAction): RecordTabStatus => {
-  switch (action.type) {
-    case 'RESET':
-      log('Resetting transfers state');
-
-      return INITIAL_STATE as RecordTabStatus;
-    case 'UPDATE':
-      return { ...state, ...action.payload };
-    default:
-      return state;
-  }
-};
-
-const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsAction): RecordTabStatusGov => {
-  switch (action.type) {
-    case 'RESET':
-      log('Resetting extrinsics state');
-
-      return INITIAL_STATE as RecordTabStatusGov;
-    case 'UPDATE':
-      return { ...state, ...action.payload };
-    default:
-      return state;
-  }
-};
+import { INITIAL_STATE, MAX_LOCAL_HISTORY_ITEMS, MAX_PAGE, SINGLE_PAGE_SIZE } from './hookUtils/consts';
+import { getHistoryFromStorage } from './hookUtils/getHistoryFromStorage';
+import { saveHistoryToStorage } from './hookUtils/saveHistoryToStorage';
+import { extrinsicsReducer, formatString, log, receivedReducer } from './hookUtils/utils';
 
 export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);

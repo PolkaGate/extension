@@ -21,13 +21,13 @@ export const DEFAULT_PROFILE_TAGS = {
 
 function AccountList (): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const categorizedAccounts = useCategorizedAccountsInProfiles();
+  const { categorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 
   let totalAccountsBefore = 0; // ← track accounts of previous profiles
 
   return (
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
-      <ProfileTabsFS />
+      <ProfileTabsFS initialAccountList={initialAccountList} />
       <VelvetBox style={{ marginTop: '5px' }}>
         <Stack ref={scrollContainerRef} style={{ maxHeight: '595px', minHeight: '100px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
           {Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => {

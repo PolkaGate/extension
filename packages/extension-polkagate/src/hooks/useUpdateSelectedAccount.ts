@@ -1,10 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { AccountContext } from '../components';
 import { setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
@@ -18,7 +17,6 @@ function isValidGenesis (hash: string): boolean {
 }
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
-  const { accounts } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -74,11 +72,6 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    const account = accounts.find((acc) => acc.address === address);
-
-    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account).finally(() => handleExit()).catch(console.error);
-
-    // Using accounts.length here to avoid unnecessary re-renders due to deep object comparison
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts.length, address, handleExit]);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, address).finally(() => handleExit()).catch(console.error);
+  }, [address, handleExit]);
 }

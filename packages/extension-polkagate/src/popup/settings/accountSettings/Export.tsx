@@ -140,7 +140,7 @@ export function ExportAccountsBody ({ address, name, onBack }: { address: string
   );
 
   return (
-    <Motion style={{ borderRadius: '14px', margin: '15px 15px 0', overflow: 'hidden', width: 'auto' }} variant={isExtension ? 'slide' : 'fade'}>
+    <Motion style={{ borderRadius: '14px', margin: isExtension ? '15px 15px 0' : '15px 5px 0', overflow: 'hidden', width: 'auto' }} variant={isExtension ? 'slide' : 'fade'}>
       {isExtension
         ? <GradientBox2 style={{ border: '4px solid #1B133C', borderRadius: '14px', boxShadow: 'none', overflow: 'none' }} withGradientTopBorder={false}>
           {content}

@@ -1,15 +1,32 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance } from './useAssetsBalances';
+import type { FetchedBalance } from '../util/types';
 
 import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
 import { TEST_NETS } from '../util/constants';
 import { isHexToBn } from '../util/utils';
-import { BN_MEMBERS } from './useAssetsBalances';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
+
+export const BN_MEMBERS = [
+  'totalBalance',
+  'availableBalance',
+  'soloTotal',
+  'poolReward',
+  'pooledBalance',
+  'lockedBalance',
+  'vestingLocked',
+  'vestedClaimable',
+  'vestingTotal',
+  'freeBalance',
+  'frozenBalance',
+  'frozenFee',
+  'frozenMisc',
+  'reservedBalance',
+  'votingBalance'
+];
 
 export default function useAccountAssets (address: string | undefined): FetchedBalance[] | undefined | null {
   const { accountsAssets } = useContext(AccountsAssetsContext);

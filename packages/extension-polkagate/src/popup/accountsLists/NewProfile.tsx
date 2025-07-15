@@ -25,7 +25,7 @@ enum STEP {
 function NewProfile ({ setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
-  const categorizedAccounts = useCategorizedAccountsInProfiles();
+  const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [profileName, setName] = useState<string | null>();

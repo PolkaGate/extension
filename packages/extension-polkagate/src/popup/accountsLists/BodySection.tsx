@@ -49,7 +49,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
   const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
   const selectedAccount = useSelectedAccount();
-  const initialCategorizedAccounts = useCategorizedAccountsInProfiles();
+  const { categorizedAccounts: initialCategorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const isInSettingMode = mode === PROFILE_MODE.SETTING_MODE;
   const isProfileDropDownOpen = mode === PROFILE_MODE.DROP_DOWN;

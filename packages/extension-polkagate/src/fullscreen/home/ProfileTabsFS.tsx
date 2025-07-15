@@ -7,7 +7,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
+import { useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
 import useProfileInfo from './useProfileInfo';
 
@@ -51,8 +51,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountsOrder
   );
 }
 
-function ProfileTabsFS ({ width = '535px' }: { width?: string }): React.ReactElement {
-  const initialAccountList = useAccountsOrder();
+function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccountList: AccountsOrder[] | undefined, width?: string }): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
 

@@ -405,7 +405,7 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
 
       case 'nominate':
       {
-        const nominators = (params?.[0].value as AccountId[] ?? []).map(({ Id }) => encodeAddress(hexToU8a(Id), prefix));
+        const nominators = (params?.[0].value as AccountId[] ?? []).map(({ Id }) => encodeAddress(hexToU8a(Id), prefix)); // FixMe: @amir for pools value is PoolId
 
         return { nominators };
       }

@@ -21,7 +21,7 @@ import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile }
  *
  * @returns {Record<string, any[]>} A dictionary mapping profile tags to lists of matching account entries.
  */
-export default function useCategorizedAccountsInProfiles (): Record<string, AccountsOrder[]> {
+export default function useCategorizedAccountsInProfiles (): { initialAccountList: AccountsOrder[] | undefined, categorizedAccounts: Record<string, AccountsOrder[]>} {
   const initialAccountList = useAccountsOrder();
   const selectedProfile = useSelectedProfile();
   const { userDefinedProfiles } = useProfiles();
@@ -70,5 +70,5 @@ export default function useCategorizedAccountsInProfiles (): Record<string, Acco
     }
   }, [initialAccountList, profileAccounts, selectedProfile, userDefinedProfiles]);
 
-  return categorizedAccounts;
+  return { categorizedAccounts, initialAccountList };
 }

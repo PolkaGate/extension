@@ -7,6 +7,7 @@ import React from 'react';
 import { Loading } from '@polkadot/extension-polkagate/src/components';
 import { ExtensionLockProvider } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 
+import PricesProvider from './contexts/PricesProvider';
 import AppRoutes from './routes/RouteDefinitions';
 import { AccountAssetProvider, AccountIconThemeProvider, AccountProvider, ActionProvider, AlertProvider, ApiProvider, CurrencyProvider, FetchingProvider, GenesisHashOptionsProvider, MediaProvider, ReferendaProvider, RequestsProvider, SettingsProvider, UserAddedChainsProvider, WorkerProvider } from './contexts';
 
@@ -25,17 +26,19 @@ export default function Popup (): React.ReactElement {
                         <AlertProvider>
                           <FetchingProvider>
                             <CurrencyProvider>
-                              <ReferendaProvider>
-                                <RequestsProvider>
-                                  <MediaProvider>
-                                    <UserAddedChainsProvider>
-                                      <AccountAssetProvider>
-                                        <AppRoutes />
-                                      </AccountAssetProvider>
-                                    </UserAddedChainsProvider>
-                                  </MediaProvider>
-                                </RequestsProvider>
-                              </ReferendaProvider>
+                              <PricesProvider>
+                                <ReferendaProvider>
+                                  <RequestsProvider>
+                                    <MediaProvider>
+                                      <UserAddedChainsProvider>
+                                        <AccountAssetProvider>
+                                          <AppRoutes />
+                                        </AccountAssetProvider>
+                                      </UserAddedChainsProvider>
+                                    </MediaProvider>
+                                  </RequestsProvider>
+                                </ReferendaProvider>
+                              </PricesProvider>
                             </CurrencyProvider>
                           </FetchingProvider>
                         </AlertProvider>

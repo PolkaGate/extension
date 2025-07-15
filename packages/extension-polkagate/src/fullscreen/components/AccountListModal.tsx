@@ -27,7 +27,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
-  const initialCategorizedAccounts = useCategorizedAccountsInProfiles();
+  const {categorizedAccounts: initialCategorizedAccounts} = useCategorizedAccountsInProfiles();
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountsOrder[]>>({});
   const [maybeSelected, setMayBeSelected] = useState<string>();
