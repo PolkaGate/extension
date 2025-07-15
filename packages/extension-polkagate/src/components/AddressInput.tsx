@@ -192,6 +192,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
       {openAccountList &&
         <AccountListModal
           genesisHash={chain?.genesisHash}
+          // eslint-disable-next-line react/jsx-no-bind
           handleClose={() => setOpenAccountList(false)}
           open={openAccountList}
           setAddress={setAddress}
