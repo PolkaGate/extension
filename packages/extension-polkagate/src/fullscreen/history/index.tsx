@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FilterOptions } from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory2';
+import type { FilterOptions } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/types';
 
 import { Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';

@@ -12,9 +12,10 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
-import useTransactionHistory2, { type FilterOptions } from '../useTransactionHistory2';
+import useTransactionHistory2 from '../useTransactionHistory2';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
+import type { FilterOptions } from '../hookUtils/types';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 
