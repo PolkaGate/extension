@@ -7,6 +7,8 @@ import { Container, Skeleton, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { FormatBalance2, GlowCheckbox } from '../../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks';
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
@@ -62,11 +64,11 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
     <Container
       disableGutters
       onClick={onSelect}
-      sx={{ alignItems: 'center', bgcolor: isSelected ? '#AA83DC1A' : isAlreadySelected ? '#FF4FB926' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px' }}
+      sx={{ alignItems: 'center', bgcolor: isSelected ? '#AA83DC1A' : isAlreadySelected ? '#e0d6dc26' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}
     >
       {onSelect &&
         <GlowCheckbox
-          changeState={onSelect}
+          changeState={noop}
           checked={isSelected}
           style={{ mr: '10px', width: 'fit-content' }}
         />
@@ -113,7 +115,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
 });
 
 const UndefinedItem = () => (
-  <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px' }}>
+  <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}>
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '300px' }} />
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
