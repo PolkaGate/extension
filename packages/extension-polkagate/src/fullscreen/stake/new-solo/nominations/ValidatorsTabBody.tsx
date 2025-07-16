@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces';
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
 import { Container, Stack } from '@mui/material';
@@ -15,7 +14,7 @@ import { GradientButton, SearchField } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
 import SortBy from '../../../../popup/staking/partial/SortBy';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
-import { getFilterValidators, getSortAndFilterValidators, placeholderValidator, VALIDATORS_SORTED_BY } from './util';
+import { getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 
 interface ValidatorToolbarProps {
@@ -63,39 +62,8 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
 
-  const nominatedValidatorsIds = useMemo(() =>
-    stakingInfo?.stakingAccount === null || stakingInfo?.stakingAccount?.nominators?.length === 0
-      ? null
-      : stakingInfo?.stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingInfo?.stakingAccount]);
-
-  const nominatedValidatorsInformation = useMemo(() => {
-    if (!validatorsInfo || !nominatedValidatorsIds) {
-      return undefined;
-    }
-
-    const allValidators = [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting];
-    const result = [];
-
-    // Go through each nominated validator ID
-    for (const nominatedId of nominatedValidatorsIds) {
-      // Try to find the validator in the existing data
-      const existingValidator = allValidators.find(({ accountId }) => String(accountId) === nominatedId);
-
-      if (existingValidator) {
-        // If found, use the existing validator info
-        result.push(existingValidator);
-      } else {
-        // If not found, create a placeholder validator object
-        result.push({
-          ...placeholderValidator,
-          accountId: nominatedId as unknown as AccountId
-        });
-      }
-    }
-
-    return result;
-  }, [nominatedValidatorsIds, validatorsInfo]);
+  const nominatedValidatorsIds = useMemo(() => getNominatedValidatorsIds(stakingInfo), [stakingInfo]);
+  const nominatedValidatorsInformation = useMemo(() => getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds), [nominatedValidatorsIds, validatorsInfo]);
 
   const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
   const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);

@@ -3,7 +3,8 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
+import type { SoloStakingInfo } from '@polkadot/extension-polkagate/hooks/useSoloStakingInfo';
+import type { ValidatorInformation, ValidatorsInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
 import type { Option, u32, Vec } from '@polkadot/types';
 import type { AccountId, ValidatorPrefs } from '@polkadot/types/interfaces';
 import type { PalletStakingRewardDestination, PalletStakingStakingLedger, SpStakingExposure, SpStakingExposurePage, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
@@ -108,4 +109,69 @@ export const placeholderValidator: ValidatorInformation = {
   stakingLedger: {} as unknown as PalletStakingStakingLedger,
   stashId: '' as unknown as AccountId,
   validatorPrefs: {} as unknown as ValidatorPrefs
+};
+
+export const getNominatedValidatorsIds = (stakingInfo: SoloStakingInfo | undefined) =>
+  stakingInfo?.stakingAccount === null || stakingInfo?.stakingAccount?.nominators?.length === 0
+    ? null
+    : stakingInfo?.stakingAccount?.nominators.map((item) => item.toString());
+
+export const getNominatedValidatorsInformation = (validatorsInfo: ValidatorsInformation | undefined, nominatedValidatorsIds: string[] | null | undefined) => {
+  if (!validatorsInfo || !nominatedValidatorsIds) {
+    return undefined;
+  }
+
+  const allValidators = [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting];
+  const result = [];
+
+  // Go through each nominated validator ID
+  for (const nominatedId of nominatedValidatorsIds) {
+    // Try to find the validator in the existing data
+    const existingValidator = allValidators.find(({ accountId }) => String(accountId) === nominatedId);
+
+    if (existingValidator) {
+      // If found, use the existing validator info
+      result.push(existingValidator);
+    } else {
+      // If not found, create a placeholder validator object
+      result.push({
+        ...placeholderValidator,
+        accountId: nominatedId as unknown as AccountId
+      });
+    }
+  }
+
+  return result;
+};
+
+export const isIncluded = (validator: ValidatorInformation, validatorArray: ValidatorInformation[] | undefined) =>
+  Boolean(validatorArray?.find(({ accountId }) => accountId.toString() === validator.accountId.toString()));
+
+export const onSort = (aId: string, bId: string, newSelectedValidators: ValidatorInformation[], nominatedValidatorsInformation: ValidatorInformation[]) => {
+  const newSelectedIds = new Set(newSelectedValidators.map(({ accountId }) => String(accountId)));
+  const nominatedIds = new Set(nominatedValidatorsInformation.map(({ accountId }) => String(accountId)));
+
+  const aNewSelected = newSelectedIds.has(aId);
+  const bNewSelected = newSelectedIds.has(bId);
+  const aNominated = nominatedIds.has(aId);
+  const bNominated = nominatedIds.has(bId);
+
+  // Priority: new selected > nominated > others
+  if (aNewSelected && !bNewSelected) {
+    return -1;
+  }
+
+  if (!aNewSelected && bNewSelected) {
+    return 1;
+  }
+
+  if (aNominated && !bNominated && !bNewSelected) {
+    return -1;
+  }
+
+  if (!aNominated && bNominated && !aNewSelected) {
+    return 1;
+  }
+
+  return 0;
 };
