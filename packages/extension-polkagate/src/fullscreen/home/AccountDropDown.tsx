@@ -48,7 +48,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
       {
         Icon: Data,
         text: t('Manage proxies'),
-        value: () => windowOpen(`/proxyManagement/${address}/${genesisHash}`)
+        value: `/proxyManagement/${address}/${genesisHash}`
       }
     ];
   }, [address, genesisHash, t]);
