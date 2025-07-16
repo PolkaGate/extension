@@ -303,6 +303,6 @@ export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
 export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
 export const ASSETS_NAME_IN_STORAGE = 'assets';
 
-export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000;
+export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
-export const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
+export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
