@@ -3,7 +3,7 @@
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, Setting } from 'iconsax-react';
-import React from 'react';
+import React, { useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
@@ -14,6 +14,7 @@ import { useManifest, useSelectedAccount, useTranslation } from '../../../hooks'
 import NeedHelp from '../../onboarding/NeedHelp';
 import Language from './Language';
 import MenuButton from './MenuButton';
+import ReceiveGeneral from './ReceiveGeneral';
 
 function Shining (): React.ReactElement {
   return (
@@ -37,20 +38,14 @@ function MainMenuColumn (): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
 
+  const [openReceive, setOpenReceive] = useState<boolean>(false);
+
   return (
     <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px' }}>
       <Shining />
       <Stack alignItems='center' direction='row' sx={{ mb: '20px', zIndex: 10 }}>
-        <Box
-          component='img'
-          src={(logoTransparent) as string}
-          sx={{ width: '38px' }}
-        />
-        <Box
-          component='img'
-          src={(polkagateVector) as string}
-          sx={{ width: '84px' }}
-        />
+        <Box component='img' src={(logoTransparent) as string} sx={{ width: '38px' }} />
+        <Box component='img' src={(polkagateVector) as string} sx={{ width: '84px' }} />
       </Stack>
       <MenuButton
         Icon={Home}
@@ -64,6 +59,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={ArrowCircleDown2}
+        onClick={() => setOpenReceive(true)}
         text={t('Receive')}
       />
       <MenuButton
@@ -97,6 +93,11 @@ function MainMenuColumn (): React.ReactElement {
         <Language />
         <Socials buttonSize={24} columnGap='4px' iconSize={13.5} style={{ flexWrap: 'nowrap', width: 'fit-content' }} />
       </Stack>
+      {openReceive &&
+        <ReceiveGeneral
+          setOpen={setOpenReceive}
+        />
+      }
     </Grid>
   );
 }

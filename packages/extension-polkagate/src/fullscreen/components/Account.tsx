@@ -137,7 +137,6 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       <Identity2
         address={account?.address}
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
-        identiconSize={14}
         nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}
         noIdenticon
         onClick={onClick}

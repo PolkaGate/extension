@@ -73,7 +73,6 @@ export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck =
           <Identity2
             address={proxyItem.proxy.delegate}
             genesisHash={genesisHash ?? POLKADOT_GENESIS}
-            identiconSize={14}
             noIdenticon
             style={{ color: '#EAEBF1', maxWidth: '170px', overflow: 'hidden', textOverflow: 'ellipsis', variant: 'B-1' }}
           />

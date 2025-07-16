@@ -8,7 +8,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
-import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
