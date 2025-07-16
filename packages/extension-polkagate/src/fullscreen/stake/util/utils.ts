@@ -58,8 +58,16 @@ interface CloseBehavior {
 export function getCloseBehavior (
   flowStep: FullScreenTransactionFlow,
   handleClosePopup: () => void,
-  setFlowStep: (step: FullScreenTransactionFlow) => void
+  setFlowStep: (step: FullScreenTransactionFlow) => void,
+  hasChildren?: boolean
 ): CloseBehavior {
+  if (!hasChildren) {
+    return {
+      onClose: handleClosePopup,
+      showCloseIcon: true
+    };
+  }
+
   switch (flowStep) {
     case FULLSCREEN_STAKING_TX_FLOW.NONE:
     case FULLSCREEN_STAKING_TX_FLOW.CONFIRMATION:

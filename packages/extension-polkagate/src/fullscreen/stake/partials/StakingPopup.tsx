@@ -42,7 +42,7 @@ export default function StakingPopup ({ address, children, flowStep, genesisHash
     closeReview();
   }, [closeReview, onClose]);
 
-  const { onClose: handler, showCloseIcon } = getCloseBehavior(flowStep, handleClosePopup, setFlowStep);
+  const { onClose: handler, showCloseIcon } = getCloseBehavior(flowStep, handleClosePopup, setFlowStep, !!children);
 
   return (
     <DraggableModal
