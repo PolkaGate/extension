@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountId } from '@polkadot/types/interfaces';
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
 import { Container, Stack } from '@mui/material';
@@ -14,7 +15,7 @@ import { GradientButton, SearchField } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
 import SortBy from '../../../../popup/staking/partial/SortBy';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
-import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
+import { getFilterValidators, getSortAndFilterValidators, placeholderValidator, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 
 interface ValidatorToolbarProps {
@@ -73,8 +74,27 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
       return undefined;
     }
 
-    return [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting]
-      .filter(({ accountId }) => nominatedValidatorsIds.includes(accountId.toString()));
+    const allValidators = [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting];
+    const result = [];
+
+    // Go through each nominated validator ID
+    for (const nominatedId of nominatedValidatorsIds) {
+      // Try to find the validator in the existing data
+      const existingValidator = allValidators.find(({ accountId }) => String(accountId) === nominatedId);
+
+      if (existingValidator) {
+        // If found, use the existing validator info
+        result.push(existingValidator);
+      } else {
+        // If not found, create a placeholder validator object
+        result.push({
+          ...placeholderValidator,
+          accountId: nominatedId as unknown as AccountId
+        });
+      }
+    }
+
+    return result;
   }, [nominatedValidatorsIds, validatorsInfo]);
 
   const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
@@ -104,7 +124,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
           text={t('Manage Validators')}
         />
       </ValidatorToolbar>
-      <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
+      <Stack direction='column' sx={{ gap: '2px', maxHeight: '270px', overflowY: 'auto', width: '100%' }}>
         {isLoaded &&
           sortedAndFilteredValidators?.map((validator, index) => (
             <ValidatorInfo

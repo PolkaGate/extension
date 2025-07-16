@@ -5,7 +5,7 @@ import type { ValidatorInformation } from '../../../../hooks/useValidatorsInform
 
 import { Container, Skeleton, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -42,6 +42,7 @@ const Info = memo(function Info ({ StartIcon, amount, decimal, text, title, toke
           {text}
         </Typography>
       }
+      {amount === undefined && text === undefined && '---'}
     </Container>
   );
 });
@@ -59,6 +60,8 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
   const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!(isHexToBn(validatorInfo?.stakingLedger.total as unknown as string))?.gtn(0));
+
+  const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
 
   return (
     <Container
@@ -87,14 +90,14 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
       />
       <Info
         StartIcon={PercentageSquare}
-        text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'}
+        text={isNaN(commission) ? '---' : String(commission) + '%'}
         title={t('Commission')}
         width='120px'
       />
       <Info
         StartIcon={Profile2User}
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        text={validatorInfo.exposureMeta?.nominatorCount ?? 0}
+        text={validatorInfo.exposureMeta?.nominatorCount}
         title={t('Nominators')}
         width='120px'
       />

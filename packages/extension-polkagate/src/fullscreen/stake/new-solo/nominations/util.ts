@@ -4,6 +4,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
+import type { Option, u32, Vec } from '@polkadot/types';
+import type { AccountId, ValidatorPrefs } from '@polkadot/types/interfaces';
+import type { PalletStakingRewardDestination, PalletStakingStakingLedger, SpStakingExposure, SpStakingExposurePage, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 
 export const DEFAULT_VALIDATORS_PER_PAGE = 8;
 export const VALIDATORS_PAGINATION_OPTIONS = [
@@ -90,4 +93,19 @@ export const getSortAndFilterValidators = (validatorsInformation: ValidatorInfor
   });
 
   return sorted;
+};
+
+export const placeholderValidator: ValidatorInformation = {
+  accountId: '' as unknown as AccountId,
+  claimedRewardsEras: [] as unknown as Vec<u32>,
+  controllerId: '' as unknown as AccountId,
+  exposureEraStakers: {} as unknown as SpStakingExposure,
+  exposureMeta: {} as unknown as Option<SpStakingPagedExposureMetadata>,
+  exposurePaged: {} as unknown as Option<SpStakingExposurePage>,
+  identity: null,
+  nominators: [],
+  rewardDestination: {} as unknown as PalletStakingRewardDestination,
+  stakingLedger: {} as unknown as PalletStakingStakingLedger,
+  stashId: '' as unknown as AccountId,
+  validatorPrefs: {} as unknown as ValidatorPrefs
 };
