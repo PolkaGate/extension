@@ -8,7 +8,9 @@ import { Container, Grid, IconButton, Typography } from '@mui/material';
 import { ArrowSwapHorizontal, MedalStar, Setting4 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useReducer, useState } from 'react';
 
-import { DecisionButtons, ExtensionPopup, GradientSwitch } from '../../../components';
+import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
+
+import { DecisionButtons, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
 import HistoryBox from '../../history/newDesign/HistoryBox';
@@ -97,10 +99,10 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
   }, [closePopup, dispatchFilter]);
 
   return (
-    <ExtensionPopup
-      TitleIcon={Setting4}
-      handleClose={closePopup}
-      openMenu={openMenu}
+    <SharePopup
+      onClose={closePopup}
+      open={openMenu}
+      popupProps={{ TitleIcon: Setting4, iconSize: 24, pt: 20 }}
       title={t('Filters')}
     >
       <>
@@ -132,7 +134,7 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
           secondaryBtnText={t('Reset Filters')}
         />
       </>
-    </ExtensionPopup>
+    </SharePopup>
   );
 }
 
