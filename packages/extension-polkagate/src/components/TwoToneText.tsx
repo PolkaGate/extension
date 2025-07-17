@@ -6,11 +6,12 @@ import React from 'react';
 interface Props {
   color?: string;
   text: string;
+  style?: React.CSSProperties;
   textPartInColor?: string;
   backgroundColor?: string;
 }
 
-function TwoToneText ({ backgroundColor, color = '#BEAAD8', text, textPartInColor = '' }: Props): React.ReactElement {
+function TwoToneText ({ backgroundColor, color = '#BEAAD8', style = {}, text, textPartInColor = '' }: Props): React.ReactElement {
   if (!textPartInColor) {
     return <span>{text}</span>;
   }
@@ -21,10 +22,11 @@ function TwoToneText ({ backgroundColor, color = '#BEAAD8', text, textPartInColo
         __html: text.replace(
           textPartInColor,
           `<span style="color: ${color}; ${
-            backgroundColor ? `background-color: ${backgroundColor}; border-radius: 6px;` : ''
+            backgroundColor ? `background-color: ${backgroundColor}; border-radius: 6px; padding: 0 5px 0` : ''
           }">${textPartInColor}</span>`
         )
       }}
+      style={{ ...style }}
     />
   );
 }
