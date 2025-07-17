@@ -1,6 +1,5 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import { getStorage, type LoginInfo, updateStorage } from '../../../components/Loading';
 import { forgetAccount } from '../../../messaging';

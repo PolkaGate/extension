@@ -14,7 +14,7 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfile
 import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
-import { DecisionButtons, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
+import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
@@ -33,7 +33,7 @@ enum STEP {
   DETAIL
 }
 
-export default function ImportSeed(): React.ReactElement {
+export default function ImportSeed (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -141,7 +141,7 @@ export default function ImportSeed(): React.ReactElement {
         labelPartInColor='recovery phrase'
         onBack={onBack}
       />
-      <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px' }}>
+      <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '525px' }}>
         {step === STEP.SEED &&
           <>
             <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
@@ -174,28 +174,26 @@ export default function ImportSeed(): React.ReactElement {
                   iconSize={18}
                   onTextChange={setPath}
                   placeholder='//'
-                  style={{ margin: '15px 0 0' }}
+                  style={{ margin: '15px 0 15px', width: '70%' }}
                   title={t('Derivation path')}
                 />
               </Collapse>
             </Collapse>
-            <GradientButton
-              contentPlacement='center'
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
               disabled={!!error || !seed}
-              onClick={onContinue}
+              onPrimaryClick={onContinue}
+              onSecondaryClick={onBack}
+              primaryBtnText={t('Continue')}
+              secondaryBtnText={t('Cancel')}
               showChevron
-              style={{
-                borderRadius: '18px',
-                height: '48px',
-                marginTop: '15px',
-                width: '236px'
-              }}
-              text={t('Continue')}
+              style={{ flexDirection: 'row-reverse', margin: '15px 0 0', width: '70%' }}
             />
           </>
         }
         {step === STEP.DETAIL &&
-          <Motion variant='slide'>
+          <Motion style={{ width: '370px' }} variant='slide'>
             <MyTextField
               Icon={User}
               focused
@@ -223,7 +221,7 @@ export default function ImportSeed(): React.ReactElement {
               primaryBtnText={t('Import')}
               secondaryBtnText={t('Cancel')}
               showChevron
-              style={{ flexDirection: 'row-reverse', position: 'absolute', width: '65%' }}
+              style={{ flexDirection: 'row-reverse', position: 'absolute', width: 'inherit' }}
             />
           </Motion>
         }

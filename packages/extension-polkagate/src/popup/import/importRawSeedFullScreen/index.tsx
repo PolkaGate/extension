@@ -17,7 +17,7 @@ import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { DecisionButtons, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
+import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
 import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
@@ -167,27 +167,25 @@ export default function ImportSeed (): React.ReactElement {
               setSeed={setSeed}
             />
             {!!error && !!seed &&
-              <Typography color='#FF4FB9' sx={{ textAlign: 'left' }} variant='B-1'>
+              <Typography color='#FF4FB9' sx={{ textAlign: 'left', width: '70%' }} variant='B-1'>
                 {error}
               </Typography>
             }
-            <GradientButton
-              contentPlacement='center'
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
               disabled={!!error || !seed}
-              onClick={onContinue}
+              onPrimaryClick={onContinue}
+              onSecondaryClick={onBack}
+              primaryBtnText={t('Continue')}
+              secondaryBtnText={t('Cancel')}
               showChevron
-              style={{
-                borderRadius: '18px',
-                height: '48px',
-                marginTop: '15px',
-                width: '236px'
-              }}
-              text={t('Continue')}
+              style={{ flexDirection: 'row-reverse', height: '48px', margin: '15px 0 0', width: '74%' }}
             />
           </>
         }
         {step === STEP.DETAIL &&
-          <Motion variant='slide'>
+          <Motion style={{ width: '370px' }} variant='slide'>
             <MyTextField
               Icon={User}
               focused
@@ -215,7 +213,7 @@ export default function ImportSeed (): React.ReactElement {
               primaryBtnText={t('Import')}
               secondaryBtnText={t('Cancel')}
               showChevron
-              style={{ flexDirection: 'row-reverse', position: 'absolute', width: '65%' }}
+              style={{ flexDirection: 'row-reverse', marginTop: '15px', position: 'absolute', width: 'inherit' }}
             />
           </Motion>
         }

@@ -71,7 +71,7 @@ export default function MyPhraseArea ({ isCorrect, label, seed, setSeed }: Props
 
   return (
     <>
-      <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' mt='15px'>
+      <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' m='15px 0 8px'>
         <Typography color='#EAEBF1' sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
           {label}
         </Typography>
