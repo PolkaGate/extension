@@ -4,6 +4,7 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
@@ -152,7 +153,7 @@ export default function AccountChainSelect ({ noSelection = false }: Props): Rea
           }}
         >
           <ChainLogo
-            genesisHash={genesisHash}
+            genesisHash={genesisHash ?? POLKADOT_GENESIS}
             size={20}
           />
         </Box>
