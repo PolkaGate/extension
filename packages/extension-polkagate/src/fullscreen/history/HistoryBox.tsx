@@ -3,7 +3,7 @@
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography } from '@mui/material';
 import React, { memo, useRef } from 'react';
 
 import { useTranslation } from '../../hooks';
@@ -22,7 +22,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
   const refContainer = useRef<HTMLDivElement>(null);
 
   return (
-    <>
+    <Grid container item>
       <Stack columnGap='30px' direction='row' sx={{ height: '40px', padding: '10px 15px', width: '100%' }}>
         <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.ACTION }} variant='B-1'>
           {t('Type')}
@@ -40,7 +40,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
           {t('Status')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: '422px', maxHeight: '470px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
+      <Container disableGutters ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: 'calc(100vh - 360px)', minHeight: '422px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
         {
           !notReady && historyItems?.map((item, index) => (
             <HistoryItem
@@ -67,7 +67,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
           </Typography>
         }
       </Container>
-    </>
+    </Grid>
   );
 }
 
