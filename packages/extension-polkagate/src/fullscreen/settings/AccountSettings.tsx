@@ -43,7 +43,7 @@ function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.React
   );
 }
 
-function AccountSettings(): React.ReactElement {
+function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
 
@@ -52,11 +52,11 @@ function AccountSettings(): React.ReactElement {
   return (
     <Motion variant='slide'>
       <VelvetBox>
-        <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: '600px', pl: '20px', position: 'relative', width: '100%' }}>
+        <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: 'calc(100vh - 190px)', minHeight: '600px', pl: '20px', position: 'relative', width: '100%' }}>
           <Typography color='text.primary' fontSize='22px' mt='30px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
             {t('Actions')}
           </Typography>
-          <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ width: 'fit-content', margin: '20px 0' }}>
+          <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ margin: '20px 0', width: 'fit-content'}}>
             <ActionBox
               Icon={Edit}
               label={t('Rename Account')}

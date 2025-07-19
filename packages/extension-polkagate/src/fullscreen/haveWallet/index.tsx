@@ -16,7 +16,7 @@ function HaveWallet (): React.ReactElement {
   const theme = useTheme();
 
   return (
-    <AdaptiveLayout>
+    <AdaptiveLayout style={{ maxWidth: '622px', width: '622px' }}>
       <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
         <OnboardTitle
           label={t('Already have a wallet')}

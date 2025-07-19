@@ -84,7 +84,7 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
 
   return (
     <VelvetBox style={style}>
-      <Container disableGutters id='scrollArea' ref={refContainer} sx={{ display: 'grid', height: isExtension ? 'inherit' : '150px', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
+      <Container disableGutters id='scrollArea' ref={refContainer} sx={{ display: 'grid', height: isExtension ? 'inherit' : 'calc(100vh - 633px)', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
         {!notReady && historyItems && Object.entries(historyItems).map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}

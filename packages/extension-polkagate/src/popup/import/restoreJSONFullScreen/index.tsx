@@ -193,7 +193,7 @@ export default function RestoreJson (): React.ReactElement {
       />
       <Stack direction='column' sx={{ position: 'relative', width: '500px' }}>
         {stepOne &&
-          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
+          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left', width: '369px' }} variant='B-1'>
             {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
           </Typography>
         }
@@ -226,7 +226,7 @@ export default function RestoreJson (): React.ReactElement {
                 variant='contained'
               />
             }
-            <Stack direction='column' sx={{ display: 'block', maxHeight: '190px', overflowY: 'auto' }}>
+            <Stack direction='column' sx={{ display: 'block', maxHeight: 'calc(100vh - 600px)', overflowY: 'auto' }}>
               {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
                 const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
 
@@ -259,7 +259,7 @@ export default function RestoreJson (): React.ReactElement {
           onBack={onBack}
           onChange={onChangeFile}
           reset={stepOne}
-          style={{ m: '15px 0', width: '500px' }}
+          style={{ m: '15px 0', width: '369px' }}
         />
         {isFileError &&
           <Warning
@@ -289,7 +289,7 @@ export default function RestoreJson (): React.ReactElement {
           primaryBtnText={t('Restore')}
           secondaryBtnText={stepOne ? t('Cancel') : t('Back')}
           showChevron
-          style={{ flexDirection: 'row-reverse', margin: '15px 0 0', width: '65%' }}
+          style={{ flexDirection: 'row-reverse', margin: '15px 0 0', width: '74%' }}
         />
       </Stack>
     </AdaptiveLayout>

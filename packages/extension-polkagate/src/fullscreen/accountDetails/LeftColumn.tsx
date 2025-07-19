@@ -62,7 +62,7 @@ export default function LeftColumn (): React.ReactElement {
           />
         </Stack>
       </Stack>
-      <Grid container item ref={refContainer} sx={{ maxHeight: '460px', overflow: 'hidden', overflowY: 'auto' }}>
+      <Grid container item ref={refContainer} sx={{ maxHeight: 'calc(100vh - 325px)', overflow: 'hidden', overflowY: 'auto' }}>
         <AssetsBox loadingItemsCount={5} />
         <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} />
       </Grid>

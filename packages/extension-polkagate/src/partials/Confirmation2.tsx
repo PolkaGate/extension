@@ -161,7 +161,9 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
       .finally(() => navigate('/history') as void)
       .catch(console.error);
   }, [address, genesisHash, navigate]);
-  const backToStakingHome = useCallback(() => navigate(stakingType + genesisHash) as void, [genesisHash, navigate, stakingType]);
+
+  const backToStakingHome = useCallback(() => navigate(stakingType + genesisHash, { replace: true }) as void, [genesisHash, navigate, stakingType]);
+
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;
 

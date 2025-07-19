@@ -19,7 +19,7 @@ import HistoryBox from './HistoryBox';
 import HistoryFilterRow from './HistoryFilterRow';
 import PaginationRow from './PaginationRow';
 
-const DEFAULT_ITEMS_PER_PAGE = 8;
+const DEFAULT_ITEMS_PER_PAGE = 10;
 const DEFAULT_EXTRA_FILTERS = {
   status: ANY_STATUS,
   type: ALL_TYPES
