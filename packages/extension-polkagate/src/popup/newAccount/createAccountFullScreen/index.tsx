@@ -23,25 +23,13 @@ enum STEP {
   DETAIL
 }
 
-function CreateAccount (): React.ReactElement {
+export function SetNameAndPassword ({ seed }: {seed: string | null}): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
 
-  const [seed, setSeed] = useState<null | string>(null);
   const [name, setName] = useState<string | null | undefined>();
   const [password, setPassword] = useState<string>();
   const [isBusy, setIsBusy] = useState<boolean>(false);
-  const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
-  const [step, setStep] = useState(STEP.SEED);
-
-  useEffect((): void => {
-    createSeed(undefined)
-      .then(({ seed }): void => {
-        setSeed(seed);
-      })
-      .catch(console.error);
-  }, []);
 
   const onNameChange = useCallback((enteredName: string) => {
     const trimmedName = enteredName.replace(/^\s+/, '');
@@ -53,14 +41,6 @@ function CreateAccount (): React.ReactElement {
   const onSetPassword = useCallback(async () => {
     // Example logic to handle password setting
     await Promise.resolve(''); // Replace with actual logic if needed
-  }, []);
-
-  const onCheck = useCallback(() => {
-    setIsMnemonicSaved(!isMnemonicSaved);
-  }, [isMnemonicSaved]);
-
-  const onContinue = useCallback(() => {
-    setStep(STEP.DETAIL);
   }, []);
 
   const onCancel = useCallback(() => {
@@ -84,8 +64,67 @@ function CreateAccount (): React.ReactElement {
   }, [name, navigate, password, seed]);
 
   return (
-    <AdaptiveLayout>
-      <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
+    <Motion style={{ width: '370px' }} variant='slide'>
+      <MyTextField
+        Icon={User}
+        focused
+        iconSize={18}
+        onTextChange={onNameChange}
+        placeholder={t('Enter account name')}
+        style={{ margin: '40px 0 20px' }}
+        title={t('Choose a name for this account')}
+      />
+      <MatchPasswordField
+        onSetPassword={onSetPassword}
+        setConfirmedPassword={setPassword}
+        spacing='20px'
+        style={{ marginBottom: '20px' }}
+        title1={t('Password for this account')}
+        title2={t('Repeat the password')}
+      />
+      <DecisionButtons
+        cancelButton
+        direction='horizontal'
+        disabled={!password}
+        isBusy={isBusy}
+        onPrimaryClick={onCreate}
+        onSecondaryClick={onCancel}
+        primaryBtnText={t('Create account')}
+        secondaryBtnText={t('Cancel')}
+        showChevron
+        style={{ flexDirection: 'row-reverse', marginTop: '15px', position: 'absolute', width: 'inherit' }}
+      />
+    </Motion>
+  );
+}
+
+function CreateAccount (): React.ReactElement {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  const [seed, setSeed] = useState<null | string>(null);
+  const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
+  const [step, setStep] = useState(STEP.SEED);
+
+  useEffect((): void => {
+    createSeed(undefined)
+      .then(({ seed }): void => {
+        setSeed(seed);
+      })
+      .catch(console.error);
+  }, []);
+
+  const onCheck = useCallback(() => {
+    setIsMnemonicSaved(!isMnemonicSaved);
+  }, [isMnemonicSaved]);
+
+  const onContinue = useCallback(() => {
+    setStep(STEP.DETAIL);
+  }, []);
+
+  return (
+    <AdaptiveLayout style={{ maxWidth: '582px' }}>
+      <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ position: 'relative', zIndex: 1 }}>
         <OnboardTitle
           label={t('Create a new account')}
           labelPartInColor={t('a new account')}
@@ -106,14 +145,13 @@ function CreateAccount (): React.ReactElement {
                 style={{
                   borderRadius: '18px',
                   height: '44px',
-                  width: '236px'
+                  width: '355px'
                 }}
                 text={t('Continue')}
               />
               <GlowCheckbox
                 changeState={onCheck}
                 checked={isMnemonicSaved}
-                disabled={isBusy}
                 label={t('I have saved my recovery phrase safely')}
                 labelPartInColor={t('my recovery phrase safely')}
                 labelStyle={{ ...theme.typography['B-1'] }}
@@ -122,37 +160,7 @@ function CreateAccount (): React.ReactElement {
           </>
         }
         {step === STEP.DETAIL &&
-          <Motion variant='slide'>
-            <MyTextField
-              Icon={User}
-              focused
-              iconSize={18}
-              onTextChange={onNameChange}
-              placeholder={t('Enter account name')}
-              style={{ margin: '40px 0 20px' }}
-              title={t('Choose a name for this account')}
-            />
-            <MatchPasswordField
-              onSetPassword={onSetPassword}
-              setConfirmedPassword={setPassword}
-              spacing='20px'
-              style={{ marginBottom: '20px' }}
-              title1={t('Password for this account')}
-              title2={t('Repeat the password')}
-            />
-            <DecisionButtons
-              cancelButton
-              direction='horizontal'
-              disabled={!password}
-              isBusy={isBusy}
-              onPrimaryClick={onCreate}
-              onSecondaryClick={onCancel}
-              primaryBtnText={t('Create account')}
-              secondaryBtnText={t('Cancel')}
-              showChevron
-              style={{ flexDirection: 'row-reverse', marginTop: '40px' }}
-            />
-          </Motion>
+         <SetNameAndPassword seed={seed} />
         }
       </Stack>
     </AdaptiveLayout>

@@ -263,8 +263,6 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
         const parsed = raw ? JSON.parse(raw) as unknown as SavedSoloStakingInfo : null;
 
         if (parsed && parsed.currentEra === currentEra) {
-          console.log('loaded from storage:', parsed);
-
           const revived = reviveSoloStakingInfoBNs(parsed);
 
           setSoloStakingInfo(revived);

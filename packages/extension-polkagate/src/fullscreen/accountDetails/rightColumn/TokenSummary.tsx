@@ -58,6 +58,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
           border: '8px solid',
           borderColor: '#00000033',
           borderRadius: '999px',
+          height: 'fit-content',
           ml: '-10px',
           mt: '15px',
           transform: flipCondition ? 'rotateY(180deg)' : 'rotateY(0deg)',

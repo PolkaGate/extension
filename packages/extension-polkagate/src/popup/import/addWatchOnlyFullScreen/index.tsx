@@ -76,14 +76,14 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           address={realAddress}
           label={t('Account ID')}
           setAddress={setRealAddress}
-          style={{ m: '30px auto 0', width: '100%' }}
+          style={{ m: '30px 0 0', width: '370px' }}
         />
         <MyTextField
           Icon={User}
           iconSize={18}
           onTextChange={onNameChange}
           placeholder={t('Enter account name')}
-          style={{ margin: '15px 0 0' }}
+          style={{ margin: '20px 0 0', width: '370px' }}
           title={t('Choose a name for this account')}
         />
         <DecisionButtons
@@ -96,7 +96,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           primaryBtnText={t('Add account')}
           secondaryBtnText={t('Cancel')}
           showChevron
-          style={{ flexDirection: 'row-reverse', margin: '15px 0', width: '65%' }}
+          style={{ flexDirection: 'row-reverse', margin: '25px 0 0', width: '370px' }}
         />
       </Stack>
     </AdaptiveLayout>

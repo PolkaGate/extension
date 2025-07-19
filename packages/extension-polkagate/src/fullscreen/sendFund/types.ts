@@ -15,7 +15,7 @@ export interface Inputs {
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   recipientAddress?: string | undefined;
-  recipientChain?: DropdownOption | undefined;
+  recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesis hash or para id!
   recipientGenesisHashOrParaId?: string | undefined;
   token?: string;
 }

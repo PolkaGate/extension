@@ -5,7 +5,7 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { UserAddedEndpoint } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Box, Collapse, IconButton, Stack, Typography, useTheme } from '@mui/material';
-import { Hashtag, ProgrammingArrow, RefreshCircle, TickCircle } from 'iconsax-react';
+import { CloseCircle, Hashtag, ProgrammingArrow, RefreshCircle, Tag2, TickCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -27,7 +27,7 @@ interface Props {
   open: boolean;
 }
 
-function getRandomColor() {
+function getRandomColor () {
   // Generate a random number between 0 and 16777215 (0xFFFFFF)
   const randomNumber = Math.floor(Math.random() * 16777215);
   // Convert the number to a hexadecimal string and pad with leading zeros if necessary
@@ -47,7 +47,7 @@ interface ChainItemProps {
   label: string
 }
 
-function ChainItem({ label, value }: ChainItemProps): React.ReactElement {
+function ChainItem ({ label, value }: ChainItemProps): React.ReactElement {
   return (
     <Stack alignItems='start' direction='column' rowGap='4px'>
       <Typography color='text.primary' variant='B-1'>
@@ -61,7 +61,7 @@ function ChainItem({ label, value }: ChainItemProps): React.ReactElement {
   );
 }
 
-function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): React.ReactElement {
+function ShowChainInfo ({ currencySign, metadata, price }: ShowChainInfoProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -132,7 +132,7 @@ function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): R
   );
 }
 
-function PolkadotJsUrlPicture({ show }: { show: boolean | undefined }): React.ReactElement {
+function PolkadotJsUrlPicture ({ show }: { show: boolean | undefined }): React.ReactElement {
   return (
     <Collapse in={show} orientation='vertical' sx={{ mb: '60px', width: '100%' }}>
       <Box
@@ -150,14 +150,14 @@ function PolkadotJsUrlPicture({ show }: { show: boolean | undefined }): React.Re
   );
 }
 
-function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, setPrice }:
-  {
-    chainName: string | undefined;
-    isCheckingPriceId: boolean | undefined;
-    price: number | null | undefined;
-    setCheckingPriceId: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-    setPrice: React.Dispatch<React.SetStateAction<number | null | undefined>>;
-  }): React.ReactElement {
+function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, setPrice }:
+{
+  chainName: string | undefined;
+  isCheckingPriceId: boolean | undefined;
+  price: number | null | undefined;
+  setCheckingPriceId: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setPrice: React.Dispatch<React.SetStateAction<number | null | undefined>>;
+}): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();
@@ -166,7 +166,8 @@ function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, s
 
   const onPriceIdChange = useCallback((input: string) => {
     setPriceId(input);
-  }, []);
+    setPrice(undefined);
+  }, [setPrice]);
 
   const getPrice = useCallback(async (priceId: string) => {
     if (priceId) {
@@ -187,11 +188,24 @@ function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, s
 
     getPrice(priceId)
       .then((p) => setPrice(p ?? null))
-      .catch(console.error)
+      .catch((error) => {
+        console.error(error);
+        setPrice(null);
+      })
       .finally(() => setCheckingPriceId(false));
   }, [setCheckingPriceId, priceId, getPrice, setPrice]);
 
-  const Icon = price ? TickCircle : RefreshCircle;
+  const [Icon, color] = useMemo(() => {
+    return isCheckingPriceId
+      ? [RefreshCircle, theme.palette.primary.main]
+      : price === undefined && !priceId
+        ? [Tag2, theme.palette.action.disabledBackground]
+        : price === undefined && priceId
+          ? [Tag2, theme.palette.primary.main]
+          : price === null
+            ? [CloseCircle, theme.palette.warning.main]
+            : [TickCircle, theme.palette.success.main];
+  }, [isCheckingPriceId, price, priceId, theme.palette.action.disabledBackground, theme.palette.primary.main, theme.palette.success.main, theme.palette.warning.main]);
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' sx={{ width: '100%' }}>
@@ -199,12 +213,12 @@ function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, s
         onEnterPress={onCheckPriceIdClick}
         onTextChange={onPriceIdChange}
         placeholder={chainName}
-        style={{ marginBottom: '66px', width: '80%' }}
+        style={{ marginBottom: '66px', width: '100%' }}
         title={t('Network token price id')}
         tooltip={t('Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]')}
       />
       <MyTooltip content={t('Check price ID')}>
-        <IconButton onClick={onCheckPriceIdClick} sx={{ mb: '40px' }}>
+        <IconButton onClick={onCheckPriceIdClick} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', mb: '41px', padding: '3px', position: 'absolute', right: '24px' }}>
           <Box sx={{
             '@keyframes spin': {
               '0%': { transform: 'rotate(0deg)' },
@@ -219,15 +233,7 @@ function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, s
             width: '30px'
           }}
           >
-            <Icon
-              color={
-                !priceId
-                  ? theme.palette.action.disabledBackground
-                  : price
-                    ? theme.palette.success.main
-                    : theme.palette.warning.main
-              } size='30' variant='Bold'
-            />
+            <Icon color={color} size='30' variant='Bulk' />
           </Box>
         </IconButton>
       </MyTooltip>
@@ -235,7 +241,7 @@ function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, s
   );
 }
 
-function AddNewNetwork({ open, setOpen }: Props): React.ReactElement {
+function AddNewNetwork ({ open, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();
@@ -419,13 +425,13 @@ function AddNewNetwork({ open, setOpen }: Props): React.ReactElement {
             />
           }
           {metadata && !isPriceIdAsChainName && !chainAlreadyExist &&
-            <GetPriceId
-              chainName={metadata?.chain}
-              isCheckingPriceId={isCheckingPriceId}
-              price={price}
-              setCheckingPriceId={setCheckingPriceId}
-              setPrice={setPrice}
-            />
+          <GetPriceId
+            chainName={metadata?.chain}
+            isCheckingPriceId={isCheckingPriceId}
+            price={price}
+            setCheckingPriceId={setCheckingPriceId}
+            setPrice={setPrice}
+          />
           }
           <DecisionButtons
             cancelButton

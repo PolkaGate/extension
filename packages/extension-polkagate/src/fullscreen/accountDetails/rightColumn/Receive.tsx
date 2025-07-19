@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, styled, Typography } from '@mui/material';
+import { Grid, Grow, Stack, styled, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
@@ -18,6 +18,7 @@ import { DraggableModal } from '../../components/DraggableModal';
 interface Props {
   address: string | undefined;
   open: boolean;
+  onClose?: () => void;
   setOpen: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
 }
 
@@ -122,7 +123,7 @@ function AddressComponent ({ address, chainDisplayName, onCopy }: AddressCompone
   );
 }
 
-function Receive ({ address, open, setOpen }: Props): React.ReactElement {
+function Receive ({ address, onClose, open, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -146,73 +147,83 @@ function Receive ({ address, open, setOpen }: Props): React.ReactElement {
   }, [address]);
 
   const handleSnackbarClose = useCallback(() => setShowSnackbar(false), []);
-  const onClose = useCallback(() => {
+  const _onClose = useCallback(() => {
+    if (onClose) {
+      return onClose();
+    }
+
     if (selectedChain) {
       setSelectedChain(undefined);
     } else {
       setOpen(ExtensionPopups.NONE);
     }
-  }, [selectedChain, setOpen]);
+  }, [onClose, selectedChain, setOpen]);
 
   const onDone = useCallback(() => {
+    onClose && onClose();
     setSelectedChain(undefined);
     setOpen(ExtensionPopups.NONE);
-  }, [setOpen]);
+  }, [onClose, setOpen]);
 
   return (
     <DraggableModal
-      onClose={onClose}
+      onClose={_onClose}
       open={open}
       showBackIconAsClose
       style={{ minHeight: '400px', padding: '20px' }}
       title={selectedChain ? t('Receive funds') : t('Select network')}
     >
-      {!selectedChain
-        ? <SelectChain setSelectedChain={setSelectedChain} />
-        : <>
-          <Stack direction='column' justifyItems='center' sx={{ display: 'block' }}>
-            <Address2
-              address={address}
-              name={account?.name}
-              style={{ marginTop: '10px' }}
-            />
-            <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
-              <QRCodeCanvas
-                bgColor='#fff'
-                fgColor='#000'
-                includeMargin
-                level='H'
-                size={200}
-                style={{
-                  borderRadius: '13px'
-                }}
-                value={formattedAddress ?? address ?? ''}
+      <Grow in={open}>
+        <Grid container>
+          {!selectedChain
+            ? <SelectChain setSelectedChain={setSelectedChain} />
+            : <>
+              <Stack direction='column' justifyItems='center' sx={{ display: 'block', width: '100%' }}>
+                <Address2
+                  address={address}
+                  name={account?.name}
+                  style={{ marginTop: '10px' }}
+                />
+                <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
+                  <QRCodeCanvas
+                    bgColor='#fff'
+                    fgColor='#000'
+                    includeMargin
+                    level='H'
+                    size={200}
+                    style={{
+                      borderRadius: '13px'
+                    }}
+                    value={formattedAddress ?? address ?? ''}
+                  />
+                </Grid>
+                <Typography sx={{ display: 'flex', my: '10px', width: '100%' }} variant='B-1'>
+                  {t('Your {{chainName}} Address', { replace: { chainName: selectedChain?.name } })}
+                </Typography>
+                <AddressComponent
+                  address={formattedAddress ?? address}
+                  chainDisplayName={selectedChain?.name}
+                  onCopy={onCopy}
+                />
+                <DecisionButtons
+                  cancelButton
+                  direction='vertical'
+                  onPrimaryClick={onCopy}
+                  onSecondaryClick={onDone}
+                  primaryBtnText={t('Copy to clipboard')}
+                  secondaryBtnText={t('Done')}
+                  style={{ marginTop: '25px', width: '100%' }}
+                />
+              </Stack>
+              <MySnackbar
+                onClose={handleSnackbarClose}
+                open={showSnackbar}
+                text={t('{{chainName}} address copied!', { replace: { chainName: selectedChain?.name } })}
               />
-            </Grid>
-            <Typography sx={{ display: 'flex', my: '10px', width: '100%' }} variant='B-1'>
-              {t('Your {{chainName}} Address', { replace: { chainName: selectedChain?.name } })}
-            </Typography>
-            <AddressComponent
-              address={formattedAddress ?? address}
-              chainDisplayName={selectedChain?.name}
-              onCopy={onCopy}
-            />
-            <DecisionButtons
-              cancelButton
-              direction='vertical'
-              onPrimaryClick={onCopy}
-              onSecondaryClick={onDone}
-              primaryBtnText={t('Copy to clipboard')}
-              secondaryBtnText={t('Done')}
-              style={{ marginTop: '25px', width: '100%' }}
-            />
-          </Stack>
-          <MySnackbar
-            onClose={handleSnackbarClose}
-            open={showSnackbar}
-            text={t('{{chainName}} address copied!', { replace: { chainName: selectedChain?.name } })}
-          />
-        </>}
+            </>
+          }
+        </Grid>
+      </Grow>
     </DraggableModal>
   );
 }

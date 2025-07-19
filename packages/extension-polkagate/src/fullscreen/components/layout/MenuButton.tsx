@@ -11,10 +11,11 @@ interface Props {
   Icon: Icon;
   path?: string;
   text?: string;
+  onClick?: () => void
   style?: React.CSSProperties;
 }
 
-function MenuButton ({ Icon, path, style = { marginBottom: '8px' }, text }: Props): React.ReactElement {
+function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, text }: Props): React.ReactElement {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -23,16 +24,20 @@ function MenuButton ({ Icon, path, style = { marginBottom: '8px' }, text }: Prop
   const getFirstSegment = (p: string | undefined) => p?.split('/')[1];
   const isSelected = getFirstSegment(path) === getFirstSegment(pathname);
 
-  const onClick = useCallback(() => {
+  const _onClick = useCallback(() => {
+    if (onClick) {
+      return onClick();
+    }
+
     path && navigate(path);
-  }, [navigate, path]);
+  }, [navigate, onClick, path]);
 
   return (
     <Stack
       alignItems='center'
       direction='row'
       justifyContent='start'
-      onClick={onClick}
+      onClick={_onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       sx={{

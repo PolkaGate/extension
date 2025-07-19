@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
 import type { Proxy, TransactionDetail, TxInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { Grid, Typography } from '@mui/material';
@@ -31,7 +30,7 @@ export default function SendFund (): React.ReactElement {
 
   useFullscreen();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
 
@@ -62,13 +61,15 @@ export default function SendFund (): React.ReactElement {
 
   const isLoading = useMemo(() =>
     (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee))
-  , [inputStep, inputs, inputTransaction]);
+  ,
+  [inputStep, inputs, inputTransaction]);
 
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientChain === undefined)) ||
     isLoading ||
     (inputStep === INPUT_STEPS.SUMMARY && !!inputs?.fee)
-  , [inputStep, inputs, isLoading]);
+  ,
+  [inputStep, inputs, isLoading]);
 
   const transactionDetail = useMemo(() => {
     return {
@@ -123,7 +124,7 @@ export default function SendFund (): React.ReactElement {
           />
         }
         {
-          inputStep === INPUT_STEPS.SUMMARY &&
+          inputStep === INPUT_STEPS.SUMMARY && inputs &&
           <Step4Summary
             inputs={inputs}
             teleportState={teleportState}
@@ -131,31 +132,30 @@ export default function SendFund (): React.ReactElement {
         }
       </Grid>
       {inputStep !== INPUT_STEPS.SUMMARY
-        ? (
-          <DecisionButtons
-            cancelButton
-            direction='horizontal'
-            disabled={buttonDisable}
-            divider
-            dividerStyle={{
-              background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
-              height: '32px'
-            }}
-            onPrimaryClick={onNext}
-            onSecondaryClick={onBack}
-            primaryBtnText={isLoading ? t('Preparing, please wait ...') : t('Next')}
-            primaryButtonProps={{
-              style: { width: '85%' }
-            }}
-            secondaryBtnText={t('Back')}
-            secondaryButtonProps={{
-              StartIcon: ArrowLeft,
-              disabled: inputStep === INPUT_STEPS.SENDER,
-              iconVariant: 'Linear',
-              style: { width: '15%' }
-            }}
-            style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
-          />)
+        ? <DecisionButtons
+          cancelButton
+          direction='horizontal'
+          disabled={buttonDisable}
+          divider
+          dividerStyle={{
+            background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+            height: '32px'
+          }}
+          onPrimaryClick={onNext}
+          onSecondaryClick={onBack}
+          primaryBtnText={!inputs?.amount || !isLoading ? t('Next') : t('Preparing, please wait ...')}
+          primaryButtonProps={{
+            style: { width: '85%' }
+          }}
+          secondaryBtnText={t('Back')}
+          secondaryButtonProps={{
+            StartIcon: ArrowLeft,
+            disabled: inputStep === INPUT_STEPS.SENDER,
+            iconVariant: 'Linear',
+            style: { width: '15%' }
+          }}
+          style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
+        />
         : inputTransaction &&
         <SignArea3
           address={address}

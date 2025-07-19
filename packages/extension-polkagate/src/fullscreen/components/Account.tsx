@@ -137,7 +137,6 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       <Identity2
         address={account?.address}
         genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
-        identiconSize={14}
         nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}
         noIdenticon
         onClick={onClick}
@@ -169,7 +168,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
           width={totalBalance ? 'fit-content' : '100px'}
           withSmallDecimal
         />
-        {!assetsToShow &&
+        {accountAssets === undefined &&
           <Stack direction='row' spacing={0.1} sx={{ ml: '17px', position: 'relative' }}>
             {[1, 2, 3].map((index) => (
               <Skeleton

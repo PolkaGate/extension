@@ -20,17 +20,19 @@ interface ChooseAccountMenuProps {
   genesisHash?: string | undefined;
   open: boolean;
   handleClose: () => void;
+  onApply?: () => void;
+  isSelectedAccountApplicable?: boolean; // to let enable apply on selected account
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
 }
 
-export default function AccountListModal ({ genesisHash, handleClose, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
+export default function AccountListModal ({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
   const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
-  const [maybeSelected, setMayBeSelected] = useState<string>();
+  const [maybeSelected, setMayBeSelected] = useState<string | undefined>(isSelectedAccountApplicable ? selectedAccount?.address : undefined);
   const [appliedAddress, setAppliedAddress] = useState<string>();
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
@@ -49,20 +51,20 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
     setCategorizedAccounts(initialCategorizedAccounts);
   }, [initialCategorizedAccounts]);
 
-  const onApply = useCallback(() => {
+  const _onApply = useCallback(() => {
     if (!maybeSelected) {
       return _handleClose();
     }
 
     if (setAddress) {
       setAddress(formatted ?? maybeSelected);
-      _handleClose();
+      onApply ? onApply() : _handleClose();
 
       return;
     }
 
     setAppliedAddress(maybeSelected);
-  }, [maybeSelected, setAddress, _handleClose, formatted]);
+  }, [maybeSelected, setAddress, _handleClose, formatted, onApply]);
 
   const onSearch = useCallback((keyword: string) => {
     setSearchKeyword(keyword);
@@ -150,7 +152,7 @@ export default function AccountListModal ({ genesisHash, handleClose, open, setA
           <GradientButton
             contentPlacement='center'
             disabled={!maybeSelected}
-            onClick={onApply}
+            onClick={_onApply}
             style={{
               bottom: '10px',
               height: '44px',

@@ -7,7 +7,7 @@ import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CallMerge as CallMergeIcon } from '@mui/icons-material';
 import { Container, Grid, Typography } from '@mui/material';
-import { Bezier, Data, type Icon, Image, LikeDislike, MedalStar, Paperclip2, People, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
+import { Bezier, Data, type Icon, Image, LikeDislike, MedalStar, Paperclip2, People, ProfileCircle, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
@@ -24,6 +24,9 @@ const reasonIcon = (reason: string): React.ReactNode => {
   switch (reason.toLowerCase()) {
     case 'proxy':
       return <Data color='#AA83DC' size='26' variant='Bulk' />;
+
+    case 'identity':
+      return <ProfileCircle color='#AA83DC' size='26' variant='Bulk' />;
 
     case 'society':
       return <People color='#AA83DC' size='26' />;
@@ -48,7 +51,7 @@ const reasonIcon = (reason: string): React.ReactNode => {
     case 'index':
       return <CallMergeIcon sx={{ color: '#AA83DC', fontSize: '20px' }} />;
 
-    case 'manage identity':
+    case 'manage identity': // @Amir, please double check
       return <FontAwesomeIcon color='#AA83DC' fontSize={19} icon={faAddressCard} />;
 
     case 'multisig':

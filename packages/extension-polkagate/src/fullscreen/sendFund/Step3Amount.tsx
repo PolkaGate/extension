@@ -1,14 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { TransferType } from '@polkadot/extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
 import type { Inputs } from './types';
 
 import { Box, Stack, Typography } from '@mui/material';
-import { getExistentialDeposit } from '@paraspell/sdk-pjs';
+import { getExistentialDeposit, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
@@ -25,7 +24,7 @@ import NumberedTitle from './partials/NumberedTitle';
 import useLimitedFeeCall from './useLimitedFeeCall';
 import useParaSpellFeeCall from './useParaSpellFeeCall';
 import useWarningMessage from './useWarningMessage';
-import { reorderAssetHubLabel } from './utils';
+import { isOnSameChain, reorderAssetHubLabel } from './utils';
 
 interface Props {
   inputs: Inputs | undefined;
@@ -33,7 +32,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
-export default function Step3Amount({ inputs, setInputs, teleportState }: Props): React.ReactElement {
+export default function Step3Amount ({ inputs, setInputs, teleportState }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
@@ -71,18 +70,26 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
       return;
     }
 
-    if (TEST_NETS.includes(genesisHash)) {
-      setInputs((prevInputs) => ({
-        ...(prevInputs || {}),
-        fee: totalFee
-      }));
+    const _isOnSameChain = isOnSameChain(senderChainName, inputs?.recipientChain?.text);
+
+    if ((TEST_NETS.includes(genesisHash) || _isOnSameChain) && totalFee) {
+      setInputs((prevInputs) => {
+        if (prevInputs?.fee?.eq?.(totalFee)) {
+          return prevInputs;
+        }
+
+        return { ...prevInputs, fee: totalFee };
+      });
     }
 
-    paraSpellFee && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
-      fee: paraSpellFee
-    }));
-  }, [genesisHash, paraSpellFee, setInputs, totalFee]);
+    paraSpellFee && setInputs((prevInputs) => {
+      if (prevInputs?.fee?.eq?.(paraSpellFee)) {
+        return prevInputs;
+      }
+
+      return { ...prevInputs, fee: paraSpellFee };
+    });
+  }, [genesisHash, inputs?.recipientChain?.text, paraSpellFee, senderChainName, setInputs, totalFee]);
 
   useEffect(() => {
     paraSpellTransaction && setInputs((prevInputs) => ({
@@ -147,7 +154,7 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
       if (senderChainName && inputs?.token && !TEST_NETS.includes(genesisHash ?? '')) {
         const _senderChainName = reorderAssetHubLabel(senderChainName);
 
-        mayBeEDasBN = getExistentialDeposit(_senderChainName, { symbol: inputs.token }) as string | null;
+        mayBeEDasBN = getExistentialDeposit(_senderChainName as TNodeWithRelayChains, { symbol: inputs.token });
       } else {
         mayBeEDasBN = api?.consts['balances']['existentialDeposit'] as unknown as BN;
       }

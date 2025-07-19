@@ -39,12 +39,13 @@ export default function PricesProvider ({ children }: Props) {
           const savedPricesInCurrencies = (res || {}) as PricesInCurrencies;
           const maybeSavedPriceInCurrentCurrencyCode = savedPricesInCurrencies[currency.code];
 
-          if (maybeSavedPriceInCurrentCurrencyCode && isPriceUpToDate(maybeSavedPriceInCurrentCurrencyCode.date)) {
-            /** price in the selected currency is already updated hence no need to fetch again */
-
+          if (maybeSavedPriceInCurrentCurrencyCode) {
             setPrices(maybeSavedPriceInCurrentCurrencyCode);
 
-            return;
+            /** price in the selected currency is already updated hence no need to continue to fetch them again */
+            if (isPriceUpToDate(maybeSavedPriceInCurrentCurrencyCode.date)) {
+              return;
+            }
           }
 
           const priceIds = priceIdsInfo.map(({ id }) => id);
