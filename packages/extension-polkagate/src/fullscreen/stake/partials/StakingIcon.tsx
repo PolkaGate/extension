@@ -8,7 +8,12 @@ import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
 
-export default function StakingIcon ({ type }: { type: 'solo' | 'pool'; }) {
+interface Props {
+  type: 'solo' | 'pool';
+  text?: string;
+}
+
+export default function StakingIcon ({ text, type }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -18,9 +23,11 @@ export default function StakingIcon ({ type }: { type: 'solo' | 'pool'; }) {
         : <Ice asPortfolio size='36' />
       }
       <Typography color='text.primary' textTransform='uppercase' variant='H-2'>
-        {type === 'solo'
-          ? t('Solo Staking')
-          : t('Pool Staking')}
+        {(
+          text ??
+          type === 'solo'
+            ? t('Solo Staking')
+            : t('Pool Staking'))}
       </Typography>
     </Grid>
   );
