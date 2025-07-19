@@ -7,10 +7,12 @@ import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type
 import React, { useCallback, useState } from 'react';
 
 import { GradientDivider, TwoToneText } from '../../../components';
+import { useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util/utils';
 
 interface AmountButtonProps extends AmountButtonInputProps {
-  onClick: ({ target: { value } }: React.ChangeEvent<HTMLInputElement>, fromButtons?: boolean) => void
+  onClick: ({ target: { value } }: React.ChangeEvent<HTMLInputElement>, fromButtons?: boolean) => void;
+  isExtension: boolean;
 }
 
 interface AmountButtonInputProps {
@@ -18,13 +20,13 @@ interface AmountButtonInputProps {
   value: string;
 }
 
-const StyledButton = styled(Grid)(() => ({
+const StyledButton = styled(Grid)(({ isExtension }: { isExtension: boolean }) => ({
   '&:hover': {
-    background: '#809ACB60',
+    background: isExtension ? '#809ACB60' : '#3b295eff',
     transition: 'all 150ms ease-in-out'
   },
   alignItems: 'center',
-  background: '#809ACB26',
+  background: isExtension ? '#809ACB26' : '#2D1E4A',
   borderRadius: '12px',
   cursor: 'pointer',
   justifyContent: 'center',
@@ -32,21 +34,21 @@ const StyledButton = styled(Grid)(() => ({
   width: 'fit-content'
 }));
 
-const AmountButton = ({ buttonName, onClick, value }: AmountButtonProps) => {
+const AmountButton = ({ buttonName, isExtension, onClick, value }: AmountButtonProps) => {
   const handleClick = useCallback(() => {
     onClick({ target: { value } } as React.ChangeEvent<HTMLInputElement>, true);
   }, [onClick, value]);
 
   return (
-    <StyledButton onClick={handleClick}>
-      <Typography color='text.highlight' variant='B-2'>
+    <StyledButton isExtension={isExtension} onClick={handleClick}>
+      <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-2'>
         {buttonName}
       </Typography>
     </StyledButton>
   );
 };
 
-const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme }) => ({
+const StyledTextField = styled(TextField)(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => ({
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& fieldset.MuiOutlinedInput-notchedOutline': {
@@ -72,7 +74,7 @@ const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme 
     },
     fontSize: '32px',
     fontWeight: 500,
-    height: height ?? '43px',
+    height: '43px',
     letterSpacing: '0.6px',
     lineHeight: '140%',
     transition: 'all 150ms ease-out',
@@ -83,7 +85,7 @@ const StyledTextField = styled(TextField)<{ height?: string }>(({ height, theme 
   },
   '& input::placeholder': {
     alignItems: 'center',
-    color: theme.palette.text.highlight,
+    color: isExtension ? theme.palette.text.highlight : '#AA83DC',
     fontSize: '32px',
     fontWeight: 500,
     textAlign: 'left'
@@ -109,6 +111,7 @@ interface Props {
 
 export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   const [textFieldValue, setTextFieldValue] = useState<string | null | undefined>();
 
@@ -168,8 +171,8 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant='B-1'>
             <TwoToneText
-              backgroundColor='#110F2A'
-              color={theme.palette.text.highlight}
+              backgroundColor={isExtension ? '#110F2A' : '#AA83DC26'}
+              color={isExtension ? theme.palette.text.highlight : '#AA83DC'}
               text={title ?? ''}
               textPartInColor={titleInColor ?? ''}
             />
@@ -178,6 +181,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
             {buttonsArray.map(({ buttonName, value }, index) => (
               <AmountButton
                 buttonName={buttonName}
+                isExtension={isExtension}
                 key={index}
                 onClick={onChange}
                 value={value}
@@ -190,6 +194,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
           autoComplete='off'
           autoFocus={focused}
           fullWidth
+          isExtension={isExtension}
           onChange={onChange}
           placeholder={placeholder ?? '0.00'}
           theme={theme}
