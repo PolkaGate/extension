@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
+import type { PoolInfo } from '../../../util/types';
 
 import { useCallback, useState } from 'react';
 
-import { type BN, noop } from '@polkadot/util';
+import { type BN, BN_ZERO, noop } from '@polkadot/util';
 
+import { SORTED_BY } from '../../../popup/staking/partial/PoolFilter';
 import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
 
 export enum StakingPopUps {
@@ -92,3 +94,51 @@ export function getCloseBehavior (
       };
   }
 }
+
+// Helper function to calculate commission percentage
+const getCommissionPercentage = (pool: PoolInfo) => {
+  if (!pool.bondedPool?.commission?.current?.isSome) {
+    return 0;
+  }
+
+  const rawCommission = pool.bondedPool.commission?.current?.value?.[0];
+  const commission = Number(rawCommission) / (10 ** 7);
+
+  return commission < 1 ? 0 : commission;
+};
+
+// Helper function to get member count
+const getMemberCount = (pool: PoolInfo) => pool.bondedPool?.memberCounter?.toNumber() ?? 0;
+
+// Helper function to get staked amount
+const getStakedAmount = (pool: PoolInfo) => pool.bondedPool?.points ?? BN_ZERO;
+
+// Sorting functions map
+export const sortingFunctions = {
+  [`${SORTED_BY.INDEX}`]: (a: PoolInfo, b: PoolInfo) => a.poolId - b.poolId,
+
+  [SORTED_BY.LESS_COMMISSION]: (a: PoolInfo, b: PoolInfo) =>
+    getCommissionPercentage(a) - getCommissionPercentage(b),
+
+  [SORTED_BY.MOST_COMMISSION]: (a: PoolInfo, b: PoolInfo) =>
+    getCommissionPercentage(b) - getCommissionPercentage(a),
+
+  [SORTED_BY.MOST_MEMBERS]: (a: PoolInfo, b: PoolInfo) =>
+    getMemberCount(b) - getMemberCount(a),
+
+  [SORTED_BY.LESS_MEMBERS]: (a: PoolInfo, b: PoolInfo) =>
+    getMemberCount(a) - getMemberCount(b),
+
+  [SORTED_BY.MOST_STAKED]: (a: PoolInfo, b: PoolInfo) =>
+    getStakedAmount(b).cmp(getStakedAmount(a)),
+
+  [SORTED_BY.LESS_STAKED]: (a: PoolInfo, b: PoolInfo) =>
+    getStakedAmount(a).cmp(getStakedAmount(b)),
+
+  [`${SORTED_BY.NAME}`]: (a: PoolInfo, b: PoolInfo) => {
+    const nameA = a.metadata?.toLowerCase() ?? '';
+    const nameB = b.metadata?.toLowerCase() ?? '';
+
+    return nameA.localeCompare(nameB);
+  }
+};
