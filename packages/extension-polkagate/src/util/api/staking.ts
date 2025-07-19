@@ -3,16 +3,19 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { KeyringPair } from '@polkadot/keyring/types';
+// @ts-ignore
+import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 import type { Content } from '../../partials/Review';
-import type { Proxy, RewardDestinationType, TxResult } from '../types';
+import type { PoolInfo, Proxy, RewardDestinationType, TxResult } from '../types';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_FIVE, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, usePoolStakingInfo, useSoloStakingInfo, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
 import { Review } from '../../popup/staking/pool-new';
+import { type RolesState, updateRoleReducer } from '../../popup/staking/pool-new/createPool/UpdateRoles';
 import { DATE_OPTIONS } from '../constants';
 import { amountToHuman, amountToMachine, isHexToBn } from '../utils';
 import { signAndSend } from './';
@@ -855,7 +858,7 @@ export const useSoloSettings = (
 
   const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount ?? rewardDestinationAddress ?? stashId), [makePayee, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId]);
 
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
+  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
   const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
   const nextDisabled = useMemo(() => rewardDestinationType === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount), [rewardDestinationAddress, rewardDestinationType, specificAccount]);
 
@@ -865,10 +868,10 @@ export const useSoloSettings = (
       title: t('Reward destination')
     },
     {
-      content: estimatedFee2,
+      content: estimatedFee,
       title: t('Fee')
     }];
-  }, [estimatedFee2, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId, t]);
+  }, [estimatedFee, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId, t]);
   const tx = useMemo(() => {
     return rewardDestination && setPayee
       ? setPayee(rewardDestination)
@@ -884,6 +887,252 @@ export const useSoloSettings = (
     setRewardDestinationType,
     setSpecificAccount,
     specificAccount,
+    transactionInformation,
+    tx
+  };
+};
+
+export const useJoinPool = (
+  address: string | undefined,
+  genesisHash: string | undefined
+) => {
+  const { t } = useTranslation();
+  const { api, decimal } = useChainInfo(genesisHash);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
+  const formatted = useFormatted3(address, genesisHash);
+
+  const join = api?.tx['nominationPools']['join']; // (amount, poolId)
+
+  const [searchedQuery, setSearchedQuery] = useState<string>('');
+  const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
+  const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>(undefined);
+
+  const tx = useMemo(() => {
+    if (!join || !bondAmount || !selectedPool) {
+      return undefined;
+    }
+
+    return join(bondAmount, selectedPool.poolId);
+  }, [bondAmount, join, selectedPool]);
+
+  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? join?.(bondAmount, selectedPool?.poolId ?? 0));
+
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: bondAmount,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee,
+      title: t('Fee')
+    }];
+  }, [bondAmount, estimatedFee, t]);
+
+  const errorMessage = useMemo(() => {
+    if (!bondAmount || !stakingInfo.availableBalanceToStake) {
+      return undefined;
+    }
+
+    if (stakingInfo.availableBalanceToStake.isZero()) {
+      return t('Not enough amount to stake more.');
+    }
+
+    if (bondAmount.gt(stakingInfo.availableBalanceToStake ?? BN_ZERO)) {
+      return t('It is more than the available balance to stake.');
+    }
+
+    if (bondAmount.lt(stakingInfo.poolStakingConsts?.minJoinBond ?? BN_ZERO)) {
+      return t('It is less than the minimum amount to join a pool.');
+    }
+
+    return undefined;
+  }, [bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minJoinBond, t]);
+
+  const onMaxValue = useMemo(() => {
+    if (!formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts) {
+      return '0';
+    }
+
+    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+  }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
+
+  const onMinValue = useMemo(() => {
+    if (!stakingInfo.poolStakingConsts) {
+      return '0';
+    }
+
+    return stakingInfo.poolStakingConsts?.minJoinBond.toString();
+  }, [stakingInfo.poolStakingConsts]);
+
+  const onInputChange = useCallback((value: string | null | undefined) => {
+    const valueAsBN = value ? amountToMachine(value, decimal) : BN_ZERO;
+
+    setBondAmount(valueAsBN);
+  }, [decimal, setBondAmount]);
+
+  const onSearch = useCallback((query: string) => setSearchedQuery(query), []);
+
+  return {
+    availableBalanceToStake: stakingInfo.availableBalanceToStake,
+    bondAmount,
+    errorMessage,
+    estimatedFee,
+    onInputChange,
+    onMaxValue,
+    onMinValue,
+    onSearch,
+    searchedQuery,
+    selectedPool,
+    setBondAmount,
+    setSelectedPool,
+    transactionInformation,
+    tx
+  };
+};
+
+export const useCreatePool = (
+  address: string | undefined,
+  genesisHash: string | undefined
+) => {
+  const { t } = useTranslation();
+  const { api, decimal } = useChainInfo(genesisHash);
+  const formatted = useFormatted3(address, genesisHash);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
+
+  const create = api?.tx['nominationPools']['create'];
+  const batch = api?.tx['utility']['batch'];
+  const setMetadata = api?.tx['nominationPools']['setMetadata'];
+
+  const [poolMetadata, setPoolMetadata] = useState<string | undefined>(undefined);
+  const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
+
+  const INITIAL_POOL_ROLES: RolesState = useMemo(() => ({
+    bouncer: formatted ?? address,
+    depositor: formatted ?? address ?? '', // can not be undefined nor null, so we use an empty string
+    nominator: formatted ?? address,
+    root: formatted ?? address
+  }), [formatted, address]);
+
+  const [roles, setRoles] = useReducer(updateRoleReducer, INITIAL_POOL_ROLES);
+
+  useEffect(() => {
+    if (formatted) {
+      setRoles(INITIAL_POOL_ROLES);
+    }
+  }, [INITIAL_POOL_ROLES, formatted]);
+
+  const poolId = useMemo(() => {
+    if (!stakingInfo.poolStakingConsts?.lastPoolId) {
+      return undefined;
+    } else {
+      return stakingInfo.poolStakingConsts.lastPoolId.addn(1);
+    }
+  }, [stakingInfo.poolStakingConsts?.lastPoolId]);
+
+  const initName = useMemo(() => {
+    const initialName = 'PolkaGate - ';
+    const lastPoolId = poolId?.toString() ?? undefined;
+
+    return initialName + lastPoolId;
+  }, [poolId]);
+
+  const errorMessage = useMemo(() => {
+    if (!bondAmount || !stakingInfo.availableBalanceToStake) {
+      return undefined;
+    }
+
+    if (stakingInfo.availableBalanceToStake.isZero()) {
+      return t('Not enough amount to stake more.');
+    }
+
+    if (bondAmount.gt(stakingInfo.availableBalanceToStake ?? BN_ZERO)) {
+      return t('It is more than the available balance to stake.');
+    }
+
+    if (bondAmount.lt(stakingInfo.poolStakingConsts?.minCreationBond ?? BN_ZERO)) {
+      return t('It is less than the minimum amount to create a pool.');
+    }
+
+    return undefined;
+  }, [bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minCreationBond, t]);
+
+  const tx = useMemo(() => {
+    if (!create || !bondAmount || !setMetadata || !batch || !poolId) {
+      return undefined;
+    }
+
+    return batch([
+      create(bondAmount, roles.root, roles.nominator, roles.bouncer),
+      setMetadata(poolId, poolMetadata || initName)
+    ]);
+  }, [batch, bondAmount, create, initName, poolId, poolMetadata, roles.bouncer, roles.nominator, roles.root, setMetadata]);
+
+  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? setMetadata?.(BN_FIVE, initName));
+
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: estimatedFee,
+      title: t('Fee')
+    }];
+  }, [estimatedFee, t]);
+
+  const onMaxValue = useMemo(() => {
+    if (!formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts) {
+      return '0';
+    }
+
+    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+  }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
+
+  const onMinValue = useMemo(() => {
+    if (!stakingInfo.poolStakingConsts) {
+      return '0';
+    }
+
+    return stakingInfo.poolStakingConsts?.minCreationBond.toString();
+  }, [stakingInfo.poolStakingConsts]);
+
+  const poolToCreate = useMemo(() => ({
+    bondedPool: {
+      memberCounter: 1,
+      points: bondAmount,
+      roles: {
+        bouncer: roles.bouncer,
+        depositor: roles.depositor,
+        nominator: roles.nominator,
+        root: roles.root
+      },
+      state: 'Creating' as unknown as PalletNominationPoolsPoolState
+    },
+    metadata: poolMetadata || initName,
+    poolId,
+    rewardPool: null
+  }) as unknown as PoolInfo, [bondAmount, roles.bouncer, roles.depositor, roles.nominator, roles.root, poolMetadata, initName, poolId]);
+
+  const onInputAmountChange = useCallback((value: string | null | undefined) => {
+    const valueAsBN = value ? amountToMachine(value, decimal) : BN_ZERO;
+
+    setBondAmount(valueAsBN);
+  }, [decimal, setBondAmount]);
+
+  const onMetadataInputChange = useCallback((input: string) => setPoolMetadata(input), []);
+
+  return {
+    bondAmount,
+    errorMessage,
+    estimatedFee,
+    initName,
+    onInputAmountChange,
+    onMaxValue,
+    onMetadataInputChange,
+    onMinValue,
+    poolId,
+    poolMetadata,
+    poolToCreate,
+    roles,
+    setBondAmount,
+    setRoles,
     transactionInformation,
     tx
   };
