@@ -38,7 +38,7 @@ export default function JoinCreatePool ({ genesisHash, onClose, popupOpener }: P
     if (selectedOption === stakingOptions.JOIN) {
       navigate('/fullscreen-stake/pool/join-pool/' + genesisHash) as void;
     } else if (selectedOption === stakingOptions.CREATE) {
-      popupOpener(StakingPopUps.CREATE_POOL);
+      popupOpener(StakingPopUps.CREATE_POOL)();
     }
   }, [genesisHash, navigate, popupOpener, selectedOption]);
 
