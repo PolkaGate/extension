@@ -14,6 +14,7 @@ import { BN, BN_FIVE, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, usePoolStakingInfo, useSoloStakingInfo, useTranslation } from '../../hooks';
 import { getValue } from '../../popup/account/util';
+import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../../popup/staking/partial/PoolFilter';
 import { Review } from '../../popup/staking/pool-new';
 import { type RolesState, updateRoleReducer } from '../../popup/staking/pool-new/createPool/UpdateRoles';
 import { DATE_OPTIONS } from '../constants';
@@ -903,6 +904,7 @@ export const useJoinPool = (
 
   const join = api?.tx['nominationPools']['join']; // (amount, poolId)
 
+  const [filter, dispatchFilter] = useReducer(poolFilterReducer, INITIAL_POOL_FILTER_STATE);
   const [searchedQuery, setSearchedQuery] = useState<string>('');
   const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>(undefined);
@@ -976,8 +978,10 @@ export const useJoinPool = (
   return {
     availableBalanceToStake: stakingInfo.availableBalanceToStake,
     bondAmount,
+    dispatchFilter,
     errorMessage,
     estimatedFee,
+    filter,
     onInputChange,
     onMaxValue,
     onMinValue,

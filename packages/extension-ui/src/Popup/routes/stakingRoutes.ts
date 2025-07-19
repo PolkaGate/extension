@@ -149,6 +149,11 @@ export const STAKING_ROUTES: RouteConfig[] = [
     trigger: 'pool-staking-fullscreen'
   },
   {
+    Component: PoolFS,
+    path: '/fullscreen-stake/pool/join-pool/:genesisHash',
+    trigger: 'join-pool-staking-fullscreen'
+  },
+  {
     Component: Stake,
     path: '/stake/:address',
     trigger: 'stake'

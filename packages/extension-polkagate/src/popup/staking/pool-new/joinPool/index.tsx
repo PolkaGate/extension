@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useReducer, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { Motion } from '../../../../components';
@@ -10,7 +10,6 @@ import { useBackground, usePools2, useSelectedAccount, useTransactionFlow, useTr
 import { UserDashboardHeader } from '../../../../partials';
 import { useJoinPool } from '../../../../util/api/staking';
 import JoinPoolBackButton from '../../partial/JoinPoolBackButton';
-import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../../partial/PoolFilter';
 import ChoosePool from './ChoosePool';
 import JoinPoolInput from './JoinPoolInput';
 
@@ -31,8 +30,10 @@ export default function JoinPool () {
 
   const { availableBalanceToStake,
     bondAmount,
+    dispatchFilter,
     errorMessage,
     estimatedFee,
+    filter,
     onInputChange,
     onMaxValue,
     onMinValue,
@@ -44,7 +45,6 @@ export default function JoinPool () {
     transactionInformation,
     tx } = useJoinPool(selectedAccount?.address, genesisHash);
 
-  const [filter, dispatchFilter] = useReducer(poolFilterReducer, INITIAL_POOL_FILTER_STATE);
   const [step, setStep] = useState(POOL_STEPS.CHOOSE_POOL);
 
   const onNext = useCallback(() => setStep(step + 1), [step]);
