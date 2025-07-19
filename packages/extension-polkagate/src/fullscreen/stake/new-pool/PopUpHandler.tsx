@@ -7,9 +7,11 @@ import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 import React from 'react';
 
 import ToBeReleased from '../ToBeReleased';
-import { type PopupCloser, StakingPopUps } from '../util/utils';
+import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import BondExtra from './bondExtra';
+import CreatePool from './createPool';
 import Info from './Info';
+import JoinCreatePool from './JoinCreatePool';
 import Unstake from './unstake';
 import Withdraw from './withdraw';
 
@@ -20,9 +22,10 @@ interface Props {
   popupCloser: PopupCloser;
   stakingInfo: PoolStakingInfo;
   toBeReleased: DateAmount[] | undefined;
+  popupOpener: PopupOpener;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   switch (stakingPopup) {
     case StakingPopUps.NONE:
       return null;
@@ -63,6 +66,22 @@ function PopUpHandler ({ address, genesisHash, popupCloser, stakingInfo, staking
     case StakingPopUps.BOND_EXTRA:
       return (
         <BondExtra
+          address={address}
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+        />);
+
+    case StakingPopUps.JOIN_CREATE_POOL:
+      return (
+        <JoinCreatePool
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          popupOpener={popupOpener}
+        />);
+
+    case StakingPopUps.CREATE_POOL:
+      return (
+        <CreatePool
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}

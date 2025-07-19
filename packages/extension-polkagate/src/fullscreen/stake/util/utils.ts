@@ -14,6 +14,7 @@ export enum StakingPopUps {
   INFO,
   WITHDRAW,
   RESTAKE,
+  JOIN_CREATE_POOL,
   UNSTAKE,
   BOND_EXTRA,
   STAKE,
@@ -21,7 +22,8 @@ export enum StakingPopUps {
   CLAIM_REWARDS,
   PENDING_REWARDS,
   UNLOCKING,
-  REWARD_DESTINATION_CONFIG
+  REWARD_DESTINATION_CONFIG,
+  CREATE_POOL
 }
 
 export type PopupOpener = (popup: StakingPopUps) => () => void;
