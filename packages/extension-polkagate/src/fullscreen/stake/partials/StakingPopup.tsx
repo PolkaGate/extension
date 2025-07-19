@@ -5,7 +5,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { Content } from '../../../partials/Review';
-import type { Proxy } from '../../../util/types';
+import type { PoolInfo, Proxy } from '../../../util/types';
 
 import React, { useCallback, useState } from 'react';
 
@@ -26,9 +26,10 @@ interface Props {
   height?: number;
   setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
   flowStep: FullScreenTransactionFlow;
+  pool?: PoolInfo | undefined;
 }
 
-export default function StakingPopup ({ address, children, flowStep, genesisHash, height = 605, onClose, setFlowStep, setValue, title, transaction, transactionInformation }: Props) {
+export default function StakingPopup ({ address, children, flowStep, genesisHash, height = 605, onClose, pool, setFlowStep, setValue, title, transaction, transactionInformation }: Props) {
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -73,6 +74,7 @@ export default function StakingPopup ({ address, children, flowStep, genesisHash
               closeReview={closeReview}
               flowStep={flowStep}
               genesisHash={genesisHash}
+              pool={pool}
               proxyTypeFilter={[]}
               selectedProxy={selectedProxy}
               setFlowStep={setFlowStep}

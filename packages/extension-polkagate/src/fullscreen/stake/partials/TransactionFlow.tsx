@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
-import type { Proxy, ProxyTypes, TxInfo } from '../../../util/types';
+import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../../../util/types';
 
 import React, { useMemo, useState } from 'react';
 
@@ -29,9 +29,10 @@ interface Props {
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   showProxySelection: boolean;
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
+  pool?: PoolInfo | undefined;
 }
 
-function TransactionFlow ({ address, closeReview, flowStep, genesisHash, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function TransactionFlow ({ address, closeReview, flowStep, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
   const transactionDetail = useMemo(() => {
@@ -61,6 +62,7 @@ function TransactionFlow ({ address, closeReview, flowStep, genesisHash, proxyTy
         <Review
           closeReview={closeReview}
           genesisHash={genesisHash}
+          pool={pool}
           proxyTypeFilter={proxyTypeFilter}
           selectedProxy={selectedProxy}
           setFlowStep={setFlowStep as React.Dispatch<React.SetStateAction<TransactionFlowStep>>}
