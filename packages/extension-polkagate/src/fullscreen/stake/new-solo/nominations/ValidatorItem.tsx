@@ -96,7 +96,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
       />
       <Info
         StartIcon={Profile2User}
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // @ts-ignore
         text={validatorInfo.exposureMeta?.nominatorCount}
         title={t('Nominators')}
         width='120px'

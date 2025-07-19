@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// @ts-nocheck
 
 import type { SoloStakingInfo } from '@polkadot/extension-polkagate/hooks/useSoloStakingInfo';
 import type { ValidatorInformation, ValidatorsInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';

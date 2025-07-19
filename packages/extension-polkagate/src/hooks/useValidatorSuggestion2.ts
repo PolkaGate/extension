@@ -9,9 +9,16 @@ import type { ValidatorInformation, ValidatorsInformation } from './useValidator
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getComparator } from '../popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '../util/constants';
 import { useStakingConsts2 } from '.';
+
+const commissionSort = (a: ValidatorInformation, b: ValidatorInformation) => {
+  // Sort by commission (ascending - least first)
+  const aCommission = a.validatorPrefs?.commission || 0;
+  const bCommission = b.validatorPrefs?.commission || 0;
+
+  return Number(aCommission) - Number(bCommission); // Ascending order
+};
 
 /**
  * @description
@@ -62,6 +69,7 @@ export default function useValidatorSuggestion2 (allValidatorsInfo: ValidatorsIn
       // !v.validatorPrefs.blocked && // filter blocked validators
       Number(v.validatorPrefs.commission) !== 0 && // filter 0 commission validators, to exclude new and chilled validators
       (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
+      // @ts-ignore
       (v.exposureMeta?.nominatorCount ?? 0) < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
@@ -71,9 +79,7 @@ export default function useValidatorSuggestion2 (allValidatorsInfo: ValidatorsIn
     //   ? filtered2.filter((v) => v?.identity?.display && v?.identity?.judgements?.length) // filter those who has no verified identity
     //   : filtered2;
 
-    // const filtered = filtered3.length ? filtered3 : filtered2;
-
-    return filtered2.sort(getComparator('Commissions')).slice(0, stakingConsts?.maxNominations);
+    return filtered2.sort(commissionSort).slice(0, stakingConsts?.maxNominations);
   }, [onLimitValidatorsPerOperator]);
 
   useEffect(() => {

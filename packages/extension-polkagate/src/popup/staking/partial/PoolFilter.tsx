@@ -11,10 +11,10 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { VerifiedTag } from '../../../assets/icons/index';
 import { DecisionButtons, ExtensionPopup, GradientDivider } from '../../../components';
+import MySwitch from '../../../components/MySwitch';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePoolConst, useTranslation } from '../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import MySwitch from '../../../components/MySwitch';
 import CheckBox from '../components/CheckBox';
 import Search from '../components/Search';
 import SortBy from './SortBy';
