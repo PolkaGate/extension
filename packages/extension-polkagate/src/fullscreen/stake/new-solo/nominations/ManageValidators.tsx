@@ -16,11 +16,11 @@ import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslati
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
+import TableToolbar from '../../partials/TableToolbar';
 import ReviewPopup from './ReviewPopup';
 import SystemSuggestion from './SystemSuggestionButton';
 import { DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, isIncluded, onSort, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
-import { ValidatorToolbar } from './ValidatorsTabBody';
 
 function ManageValidators () {
   const { t } = useTranslation();
@@ -174,17 +174,18 @@ function ManageValidators () {
           </Stack>
           <VelvetBox>
             <Stack direction='column' sx={{ width: '100%' }}>
-              <ValidatorToolbar
+              <TableToolbar
                 onSearch={onSearch}
                 setSortBy={onSortChange as React.Dispatch<React.SetStateAction<string>>}
                 sortBy={sortConfig}
+                sortByObject={VALIDATORS_SORTED_BY}
               >
                 <SystemSuggestion
                   disabled={!isLoaded}
                   onSystemSuggestion={onSystemSuggestion}
                   systemSuggestion={systemSuggestion}
                 />
-              </ValidatorToolbar>
+              </TableToolbar>
               <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
                 {isLoaded &&
                   itemsToShow?.map((validator, index) => (

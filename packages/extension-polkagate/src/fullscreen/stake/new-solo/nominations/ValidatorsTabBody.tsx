@@ -3,51 +3,19 @@
 
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
-import { Container, Stack } from '@mui/material';
-import { Firstline, Menu } from 'iconsax-react';
+import { Stack } from '@mui/material';
+import { Menu } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 
 import { noop } from '@polkadot/util';
 
-import { GradientButton, SearchField } from '../../../../components';
+import { GradientButton } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
-import SortBy from '../../../../popup/staking/partial/SortBy';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
+import TableToolbar from '../../partials/TableToolbar';
 import { getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
-
-interface ValidatorToolbarProps {
-  sortBy: string;
-  setSortBy: React.Dispatch<React.SetStateAction<string>>;
-  onSearch: (input: string) => void;
-  children: React.ReactNode;
-}
-
-export const ValidatorToolbar = ({ children, onSearch, setSortBy, sortBy }: ValidatorToolbarProps) => {
-  return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '18px', m: 0, width: 'fit-content' }}>
-        <SearchField
-          onInputChange={onSearch}
-          placeholder='🔍 Search'
-          style={{
-            height: '44px',
-            minWidth: '380px',
-            width: '380px'
-          }}
-        />
-        <SortBy
-          SortIcon={<Firstline color='#AA83DC' size='18' variant='Bold' />}
-          setSortBy={setSortBy}
-          sortBy={sortBy}
-          sortOptions={Object.values(VALIDATORS_SORTED_BY)}
-        />
-      </Container>
-      {children}
-    </Container>
-  );
-};
 
 interface Props {
   genesisHash: string | undefined;
@@ -80,10 +48,11 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
-      <ValidatorToolbar
+      <TableToolbar
         onSearch={onSearch}
         setSortBy={setSortConfig}
         sortBy={sortConfig}
+        sortByObject={VALIDATORS_SORTED_BY}
       >
         <GradientButton
           onClick={openValidatorManagement}
@@ -91,7 +60,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
           style={{ height: '44px', padding: 0, width: '180px' }}
           text={t('Manage Validators')}
         />
-      </ValidatorToolbar>
+      </TableToolbar>
       <Stack direction='column' sx={{ gap: '2px', maxHeight: '270px', overflowY: 'auto', width: '100%' }}>
         {isLoaded &&
           sortedAndFilteredValidators?.map((validator, index) => (
