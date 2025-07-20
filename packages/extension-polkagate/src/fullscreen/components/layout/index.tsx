@@ -21,7 +21,7 @@ interface Props {
 function HomeLayout ({ children, childrenStyle = {}, genesisHash, selectedProxyAddress, setShowProxySelection, style = {} }: Props): React.ReactElement {
   return (
     <Container maxWidth={false} sx={{ alignItems: 'start', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
-      <Grid alignItems='flex-start' columnGap='28px' container justifyContent='flex-end' sx={{ bgcolor: '#05091C', borderRadius: '24px', height: '100%', maxHeight: '100vh', minWidth: '1440px', overflow: 'hidden', p: '12px', position: 'relative', width: '1440px' }} wrap='nowrap'>
+      <Grid alignItems='flex-start' columnGap='25px' container justifyContent='flex-end' sx={{ bgcolor: '#05091C', borderRadius: '24px', height: '100%', maxHeight: '100vh', minWidth: '1440px', overflow: 'hidden', p: '12px', position: 'relative', width: '1440px' }} wrap='nowrap'>
         <MainMenuColumn />
         <Grid
           container item position='relative'
