@@ -1,7 +1,5 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-
 
 import { faExclamationTriangle, faUnlockKeyhole } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,14 +10,15 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import FullScreenHeader from '@polkadot/extension-polkagate/src/fullscreen/governance/FullScreenHeader';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { useFullscreen } from '@polkadot/extension-polkagate/src/hooks';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { FULLSCREEN_WIDTH, NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionContext, Checkbox2, TwoButtons } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import useTranslation from '../../hooks/useTranslation';
+import { LOGIN_STATUS } from './types';
 
-export default function ForgotPasswordFS(): React.ReactElement {
+export default function ForgotPasswordFS (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -31,7 +30,7 @@ export default function ForgotPasswordFS(): React.ReactElement {
   const [isChecked, setChecked] = useState<boolean>(false);
 
   const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
-    await updateStorage('loginInfo', { status: 'forgot' });
+    await updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { status: LOGIN_STATUS.FORGOT });
     setExtensionLock(false);
     openOrFocusTab('/reset-wallet', true);
   }, [setExtensionLock]);

@@ -6,15 +6,17 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import semver from 'semver';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
+import { getStorage } from '@polkadot/extension-polkagate/src/util';
+import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, FadeOnScroll, Motion } from '../../components';
-import { getStorage, type LoginInfo } from '../../components/Loading';
 import { useBackground, useManifest, useMerkleScience } from '../../hooks';
 import { UserDashboardHeader, Version2 as Version } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
+import { LOGIN_STATUS, type LoginInfo } from '../passwordManagement/types';
 import Welcome from '../welcome';
 import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
@@ -56,7 +58,7 @@ export default function Home (): React.ReactElement {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
 
-    getStorage('loginInfo').then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
+    getStorage(NAMES_IN_STORAGE.LOGIN_IFO).then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
   }, []);
 
   return (
@@ -69,7 +71,7 @@ export default function Home (): React.ReactElement {
         />
       }
       {hierarchy.length === 0
-        ? loginInfo?.status === 'forgot'
+        ? loginInfo?.status === LOGIN_STATUS.FORGOT
           ? <Reset />
           : <Welcome />
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>

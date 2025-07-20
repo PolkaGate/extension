@@ -5,18 +5,19 @@ import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
+import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
+import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { ActionButton, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
-import { type LoginInfo } from '../../../components/Loading';
 import MySnackbar from '../../../components/MySnackbar';
 import { useTranslation } from '../../../components/translate';
-import { getStorage, setStorage } from '../../../util';
+import { LOGIN_STATUS, type LoginInfo } from '../../passwordManagement/types';
 import WarningBox from '../partials/WarningBox';
 
 export const isPasswordCorrect = async (password: string, isHashed?: boolean) => {
   const hashedPassword = isHashed ? password : blake2AsHex(password, 256);
-  const info = await getStorage('loginInfo') as LoginInfo;
+  const info = await getStorage(NAMES_IN_STORAGE.LOGIN_IFO) as LoginInfo;
 
   return info?.hashedPassword === hashedPassword;
 };
@@ -40,8 +41,8 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
   }, [passwordError]);
 
   useEffect(() => {
-    getStorage('loginInfo').then((info) => {
-      setAlreadySetPassword((info as LoginInfo).status === 'set');
+    getStorage(NAMES_IN_STORAGE.LOGIN_IFO).then((info) => {
+      setAlreadySetPassword((info as LoginInfo).status === LOGIN_STATUS.SET);
     }).catch(console.error);
   }, []);
 
@@ -63,7 +64,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
       return;
     }
 
-    setStorage('loginInfo', { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: 'justSet' })
+    setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET })
       .then(() => {
         setPasswordError(false);
         setShowSnackbar(true);

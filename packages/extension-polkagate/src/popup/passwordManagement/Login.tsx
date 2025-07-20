@@ -7,19 +7,21 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
+import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { Box as BoxIcon } from '../../assets/icons';
-import { DecisionButtons, GradientBox, PasswordInput } from '../../components';
+import { DecisionButtons, GradientBox, MySwitch, PasswordInput } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
-import { useBackground, useIsExtensionPopup, useTranslation } from '../../hooks';
+import { useBackground, useIsExtensionPopup, useIsHideNumbers, useTranslation } from '../../hooks';
 import { Version } from '../../partials';
 import { RedGradient } from '../../style';
 import { isPasswordCorrect } from '../settings/extensionSettings/ManagePassword';
 import { STEPS } from './constants';
 import Header from './Header';
+import { LOGIN_STATUS } from './types';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -30,7 +32,7 @@ function Content ({ setStep }: Props): React.ReactElement {
 
   const { t } = useTranslation();
   const isPopup = useIsExtensionPopup();
-  // const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
+  const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
   const { setExtensionLock } = useExtensionLockContext();
 
   const [hashedPassword, setHashedPassword] = useState<string>();
@@ -50,7 +52,7 @@ function Content ({ setStep }: Props): React.ReactElement {
   const onUnlock = useCallback(async (): Promise<void> => {
     try {
       if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
-        await updateStorage('loginInfo', { lastLoginTime: Date.now(), status: 'set' });
+        await updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
         setHashedPassword(undefined);
         setExtensionLock(false);
       } else {
@@ -71,13 +73,13 @@ function Content ({ setStep }: Props): React.ReactElement {
   }, [isPopup, setStep]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ p: '18px 32px 32px' }}>
+    <Grid container item justifyContent='start' sx={{ p: '18px 32px 32px' }}>
       <Box
         component='img'
         src={BoxIcon as string}
-        sx={{ height: '145px', mt: '20px', width: '140px' }}
+        sx={{ height: '145px', m: '17px auto 7px', width: '140px' }}
       />
-      <Typography sx={{ mb: '15px', mt: '25px', width: '100%' }} textTransform='uppercase' variant='H-2'>
+      <Typography sx={{ mb: '15px', textAlign: 'center', width: '100%' }} textTransform='uppercase' variant='H-2'>
         {t('login')}
       </Typography>
       <PasswordInput
@@ -86,6 +88,13 @@ function Content ({ setStep }: Props): React.ReactElement {
         onEnterPress={onUnlock}
         onPassChange={onPassChange}
         title={t('Enter your password')}
+      />
+      <MySwitch
+        checked={isHideNumbers}
+        columnGap='8px'
+        label= {t('Hide Balance')}
+        onChange={toggleHideNumbers}
+        style = {{ marginTop: '20px' }}
       />
       <DecisionButtons
         cancelButton

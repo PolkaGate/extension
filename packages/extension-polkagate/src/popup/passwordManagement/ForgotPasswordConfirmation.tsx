@@ -5,6 +5,8 @@ import { Container, Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
+import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { BackWithLabel, DecisionButtons, GlowCheckbox, GradientBox } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
@@ -14,6 +16,7 @@ import { Version } from '../../partials';
 import { RedGradient } from '../../style';
 import { STEPS } from './constants';
 import Header from './Header';
+import { LOGIN_STATUS } from './types';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -27,9 +30,10 @@ export default function ForgotPasswordConfirmation ({ setStep }: Props): React.R
 
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
 
-  const onConfirmForgotPassword = useCallback(async (): Promise<void> => {
-    await updateStorage('loginInfo', { status: 'forgot' });
-    setExtensionLock(false);
+  const onConfirmForgotPassword = useCallback(() => {
+    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { status: LOGIN_STATUS.FORGOT }).then(() => {
+      setExtensionLock(false);
+    }).catch(console.error);
   }, [setExtensionLock]);
 
   const toggleAcknowledge = useCallback((state: boolean) => {
@@ -39,10 +43,6 @@ export default function ForgotPasswordConfirmation ({ setStep }: Props): React.R
   const onClose = useCallback(() => {
     setStep(STEPS.SHOW_LOGIN);
   }, [setStep]);
-
-  const _onConfirmForgotPassword = useCallback(() => {
-    onConfirmForgotPassword().catch(console.error);
-  }, [onConfirmForgotPassword]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -71,7 +71,7 @@ export default function ForgotPasswordConfirmation ({ setStep }: Props): React.R
             cancelButton
             disabled={!acknowledged}
             divider
-            onPrimaryClick={_onConfirmForgotPassword}
+            onPrimaryClick={onConfirmForgotPassword}
             onSecondaryClick={onClose}
             primaryBtnText={t('Next')}
             secondaryBtnText={t('Cancel')}
