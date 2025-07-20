@@ -7,7 +7,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useAutoLockPeriod } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
-import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
@@ -199,37 +198,43 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   return (
     <>
-      {showLoginPage
-        ? <Grid container item>
-          {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-            <ForgotPasswordConfirmation
-              setStep={setStep}
-            />
-          }
-          <Grid container item>
-            {isFlying && isPopupOpenedByExtension
-              ? <FlyingLogo />
-              : <>
-                {step === STEPS.ASK_TO_SET_PASSWORD &&
-                  <AskToSetPassword
-                    setStep={setStep}
-                  />
-                }
-                {step === STEPS.SET_PASSWORD &&
-                  <FirstTimeSetPassword
-                    setStep={setStep}
-                  />
-                }
-                {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
-                  <Login
-                    setStep={setStep}
-                  />
-                }
-              </>
+      {
+        showLoginPage
+          ? <Grid container item>
+            {
+              step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+              <ForgotPasswordConfirmation
+                setStep={setStep}
+              />
             }
+            <Grid container item>
+
+              {isFlying && isPopupOpenedByExtension
+                ? <FlyingLogo />
+                : <>
+                  {
+                    step === STEPS.ASK_TO_SET_PASSWORD &&
+                    <FirstTimeSetPassword
+                      setStep={setStep}
+                    />
+                  }
+                  {
+                    step === STEPS.SET_PASSWORD &&
+                    <FirstTimeSetPassword
+                      setStep={setStep}
+                    />
+                  }
+                  {
+                    step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
+                    <Login
+                      setStep={setStep}
+                    />
+                  }
+                </>
+              }
+            </Grid>
           </Grid>
-        </Grid>
-        : children
+          : children
       }
     </>
   );
