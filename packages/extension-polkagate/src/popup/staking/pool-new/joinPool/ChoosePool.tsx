@@ -6,7 +6,7 @@
 import type { UsePools } from '../../../../hooks/usePools2';
 import type { PoolInfo } from '../../../../util/types';
 
-import { LinearProgress, Stack } from '@mui/material';
+import { LinearProgress, Stack, type SxProps, type Theme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 import { useParams } from 'react-router';
 
@@ -19,9 +19,9 @@ import PoolsTable from '../../partial/PoolsTable';
 import Progress from '../../partial/Progress';
 import StakingActionButton from '../../partial/StakingActionButton';
 
-const FetchPoolProgress = ({ numberOfFetchedPools, totalNumberOfPools }: { totalNumberOfPools: number | undefined; numberOfFetchedPools: number; }) => (
+export const FetchPoolProgress = ({ numberOfFetchedPools, style, totalNumberOfPools }: { totalNumberOfPools: number | undefined; numberOfFetchedPools: number; style?: SxProps<Theme> }) => (
   <LinearProgress
-    sx={{ color: '#82FFA5', height: '2px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%' }}
+    sx={{ color: '#82FFA5', height: '2px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%', ...style }}
     value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0}
     variant='determinate'
   />
@@ -62,7 +62,7 @@ export default function ChoosePool ({ filter, onNext, pools, searchedQuery, sele
       filtered = filtered.filter((pool) => (pool.bondedPool?.memberCounter.toNumber() ?? 0) >= filter.membersThreshold);
     }
 
-    if (!filter.stakedThreshold?.isZero()) {
+    if (filter.stakedThreshold && !filter.stakedThreshold.isZero()) {
       filtered = filtered.filter(({ bondedPool }) => !!bondedPool?.points?.gte(filter.stakedThreshold));
     }
 

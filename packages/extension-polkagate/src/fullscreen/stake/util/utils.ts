@@ -11,6 +11,13 @@ import { type BN, BN_ZERO, noop } from '@polkadot/util';
 import { SORTED_BY } from '../../../popup/staking/partial/PoolFilter';
 import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
 
+export const DEFAULT_POOL_ITEMS_PER_PAGE = 10;
+export const POOL_ITEMS_PAGINATION_OPTIONS = [
+  { text: '10', value: 10 },
+  { text: '20', value: 20 },
+  { text: '50', value: 50 }
+];
+
 export enum StakingPopUps {
   NONE,
   INFO,

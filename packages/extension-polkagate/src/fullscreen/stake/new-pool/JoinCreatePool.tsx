@@ -37,10 +37,11 @@ export default function JoinCreatePool ({ genesisHash, onClose, popupOpener }: P
   const onStake = useCallback(() => {
     if (selectedOption === stakingOptions.JOIN) {
       navigate('/fullscreen-stake/pool/join-pool/' + genesisHash) as void;
+      onClose();
     } else if (selectedOption === stakingOptions.CREATE) {
       popupOpener(StakingPopUps.CREATE_POOL)();
     }
-  }, [genesisHash, navigate, popupOpener, selectedOption]);
+  }, [genesisHash, navigate, onClose, popupOpener, selectedOption]);
 
   return (
     <DraggableModal
@@ -79,7 +80,7 @@ export default function JoinCreatePool ({ genesisHash, onClose, popupOpener }: P
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={!selectedOption}
+          disabled={selectedOption === undefined}
           onPrimaryClick={onStake}
           onSecondaryClick={onClose}
           primaryBtnText={t('Next')}

@@ -23,9 +23,9 @@ export default function StakingIcon ({ text, type }: Props) {
         : <Ice asPortfolio size='36' />
       }
       <Typography color='text.primary' textTransform='uppercase' variant='H-2'>
-        {(
+        {
           text ??
-          type === 'solo'
+          (type === 'solo'
             ? t('Solo Staking')
             : t('Pool Staking'))}
       </Typography>

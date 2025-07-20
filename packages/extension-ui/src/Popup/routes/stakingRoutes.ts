@@ -5,6 +5,7 @@ import type { RouteConfig } from './RouteDefinitions';
 
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
 import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool';
+import JoinPoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool/joinPool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/ManageValidators';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
@@ -149,7 +150,7 @@ export const STAKING_ROUTES: RouteConfig[] = [
     trigger: 'pool-staking-fullscreen'
   },
   {
-    Component: PoolFS,
+    Component: JoinPoolFS,
     path: '/fullscreen-stake/pool/join-pool/:genesisHash',
     trigger: 'join-pool-staking-fullscreen'
   },

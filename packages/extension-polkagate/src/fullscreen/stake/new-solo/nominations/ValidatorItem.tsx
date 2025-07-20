@@ -20,7 +20,7 @@ interface InfoProps extends StakingInfoStackProps {
   width?: string;
 }
 
-const Info = memo(function Info ({ StartIcon, amount, decimal, text, title, token, width = '80px' }: InfoProps) {
+const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal, text, title, token, width = '80px' }: InfoProps) {
   const theme = useTheme();
 
   return (
@@ -80,7 +80,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
         style={{ m: 0, width: '300px' }}
         validatorInfo={validatorInfo}
       />
-      <Info
+      <InfoWithIcons
         StartIcon={BuyCrypto}
         amount={validatorInfo.stakingLedger.total}
         decimal={decimal}
@@ -88,20 +88,20 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
         token={token}
         width='150px'
       />
-      <Info
+      <InfoWithIcons
         StartIcon={PercentageSquare}
         text={isNaN(commission) ? '---' : String(commission) + '%'}
         title={t('Commission')}
         width='120px'
       />
-      <Info
+      <InfoWithIcons
         StartIcon={Profile2User}
         // @ts-ignore
         text={validatorInfo.exposureMeta?.nominatorCount}
         title={t('Nominators')}
         width='120px'
       />
-      <Info
+      <InfoWithIcons
         StartIcon={ChartSquare}
         text={validatorAPY ?? '--'}
         title={t('APY')}
@@ -117,19 +117,19 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
   );
 });
 
-const UndefinedItem = () => (
+const UndefinedItem = ({ noSocials = false }: { noSocials?: boolean }) => (
   <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}>
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '300px' }} />
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
     <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
+    {!noSocials && <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
       {Array.from({ length: 4 }).map((_, index) =>
         <Skeleton animation='wave' height={24} key={index} sx={{ borderRadius: '999px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '24px' }} />
       )}
-    </Container>
+    </Container>}
   </Container>
 );
 
-export { UndefinedItem, ValidatorInfo };
+export { InfoWithIcons, UndefinedItem, ValidatorInfo };

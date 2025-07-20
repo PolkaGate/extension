@@ -84,29 +84,29 @@ export default function JoinPool () {
           style={{ mb: '15px' }}
         />
         {step === POOL_STEPS.CHOOSE_POOL &&
-            <ChoosePool
-              filter={filter}
-              onNext={onNext}
-              pools={pools}
-              searchedQuery={searchedQuery}
-              selectedPool={selectedPool}
-              setSelectedPool={setSelectedPool}
-            />
+          <ChoosePool
+            filter={filter}
+            onNext={onNext}
+            pools={pools}
+            searchedQuery={searchedQuery}
+            selectedPool={selectedPool}
+            setSelectedPool={setSelectedPool}
+          />
         }
         {step === POOL_STEPS.CONFIG &&
-            <JoinPoolInput
-              availableBalanceToStake={availableBalanceToStake}
-              bondAmount={bondAmount}
-              errorMessage={errorMessage}
-              estimatedFee={estimatedFee}
-              genesisHash={genesisHash}
-              onBack={onBack}
-              onInputChange={onInputChange}
-              onMaxValue={onMaxValue}
-              onMinValue={onMinValue}
-              onNext={onNext}
-              selectedPool={selectedPool}
-            />
+          <JoinPoolInput
+            availableBalanceToStake={availableBalanceToStake}
+            bondAmount={bondAmount}
+            errorMessage={errorMessage}
+            estimatedFee={estimatedFee}
+            genesisHash={genesisHash}
+            onBack={onBack}
+            onInputChange={onInputChange}
+            onMaxValue={onMaxValue}
+            onMinValue={onMinValue}
+            onNext={onNext}
+            selectedPool={selectedPool}
+          />
         }
       </Motion>
     </Grid>
