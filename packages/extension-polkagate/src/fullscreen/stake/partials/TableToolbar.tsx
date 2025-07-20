@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container } from '@mui/material';
+import { Container, type SxProps, type Theme } from '@mui/material';
 import { Firstline } from 'iconsax-react';
 import React, { memo } from 'react';
 
@@ -14,11 +14,12 @@ interface TableToolbarProps {
   onSearch: (input: string) => void;
   children?: React.ReactNode;
   sortByObject: object;
+  style?: SxProps<Theme>;
 }
 
-function TableToolbar ({ children, onSearch, setSortBy, sortBy, sortByObject }: TableToolbarProps) {
+function TableToolbar ({ children, onSearch, setSortBy, sortBy, sortByObject, style }: TableToolbarProps) {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '18px', m: 0, width: 'fit-content' }}>
         <SearchField
           onInputChange={onSearch}

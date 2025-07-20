@@ -15,7 +15,7 @@ import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
 import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip, SignArea3 } from '../components';
-import { useChainInfo, useFormatted3, useSelectedAccount, useTranslation } from '../hooks';
+import { useChainInfo, useFormatted3, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
@@ -29,10 +29,13 @@ interface AccountBoxProps {
 const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const { t } = useTranslation();
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+  const isExtension = useIsExtensionPopup();
+
+  const color = useMemo(() => isExtension ? 'text.highlight' : '#AA83DC', [isExtension]);
 
   return (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
-      <Typography color='text.highlight' sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
+      <Typography color={color} sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
         {t('Account')}
       </Typography>
       <GradientDivider />
@@ -40,7 +43,7 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
       <Typography color='text.primary' sx={{ maxWidth: '220px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', width: '100%' }} variant='B-3'>
         {selectedAccount?.name}
       </Typography>
-      <Typography color='text.highlight' sx={{ mt: '-10px', textAlign: 'center', width: '100%' }} variant='B-1'>
+      <Typography color={color} sx={{ mt: '-10px', textAlign: 'center', width: '100%' }} variant='B-1'>
         {toShortAddress(formatted ?? selectedAccount?.address, 8)}
       </Typography>
     </Stack>
@@ -48,11 +51,13 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
 };
 
 const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
+  const isExtension = useIsExtensionPopup();
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
       <Identity2
         address={selectedAccount?.address}
-        addressStyle={{ color: 'text.highlight' }}
+        addressStyle={{ color: isExtension ? 'text.highlight' : '#AA83DC' }}
         charsCount={12}
         columnGap= '5px'
         genesisHash={genesisHash ?? ''}
@@ -67,6 +72,7 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
 
 const DescriptionTip = ({ description }: { description: string | undefined }) => {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   if (!description) {
     return null;
@@ -77,7 +83,7 @@ const DescriptionTip = ({ description }: { description: string | undefined }) =>
       content={description}
       placement='top'
     >
-      <InfoCircle color={theme.palette.text.highlight} size='18' style={{ cursor: 'help' }} variant='Bold' />
+      <InfoCircle color={isExtension ? theme.palette.text.highlight : '#AA83DC'} size='18' style={{ cursor: 'help' }} variant='Bold' />
     </MyTooltip>
   );
 };
@@ -97,13 +103,16 @@ interface ContentItemProps extends Content {
 }
 
 const ContentItem = ({ content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) => {
+  const isExtension = useIsExtensionPopup();
+
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
+  const color = useMemo(() => isExtension ? 'text.highlight' : '#AA83DC', [isExtension]);
 
   return (
     <>
       <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
-          <Typography color='text.highlight' variant='B-1'>
+          <Typography color={color} variant='B-1'>
             {title}
           </Typography>
           <DescriptionTip description={description} />

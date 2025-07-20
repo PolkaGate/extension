@@ -4,8 +4,8 @@
 import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useRef } from 'react';
+import { Container, IconButton, Stack, type SxProps, type Theme,Typography } from '@mui/material';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 
 import { useChainInfo, useIsHovered, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
@@ -14,19 +14,19 @@ import { StakingInfoStack } from './NominatorsTable';
 import PoolDetail from './PoolDetail';
 import { PoolIdenticon } from './PoolIdenticon';
 
-const PoolStashIdentity = ({ poolInfo }: { poolInfo: PoolInfo }) => {
+export const PoolStashIdentity = memo(function MemoPoolStashIdentity ({ poolInfo, style }: { poolInfo: PoolInfo; style?: SxProps<Theme> }) {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row' }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
       <PoolIdenticon
         poolInfo={poolInfo}
         size={24}
       />
-      <Typography color='text.primary' sx={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
+      <Typography id='poolMetadata' color='text.primary' sx={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
         {poolInfo.metadata}
       </Typography>
     </Container>
   );
-};
+});
 
 interface PoolInfoProp {
   poolInfo: PoolInfo;

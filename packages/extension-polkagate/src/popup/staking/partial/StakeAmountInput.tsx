@@ -167,7 +167,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
 
   return (
     <Stack direction='column' sx={style}>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#110F2A', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%' }}>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant='B-1'>
             <TwoToneText
