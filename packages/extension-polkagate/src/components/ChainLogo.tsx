@@ -12,7 +12,7 @@ import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
 import { useIsDark } from '../hooks';
-import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
+import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
@@ -23,8 +23,9 @@ interface Props {
   logo?: string;
   logoRoundness?: string;
   showSquare?: boolean;
-  style?: React.CSSProperties;
   size?: number;
+  style?: React.CSSProperties;
+  token?: string;
 }
 
 function normalizeToWordSet (str: string): Set<string> {
@@ -55,7 +56,7 @@ function haveSameWords (str1: string, str2: string): boolean {
   return true;
 }
 
-function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {} }: Props): React.ReactElement<Props> {
+function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {}, token }: Props): React.ReactElement<Props> {
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const [isDarkLogo, setIsDarkLogo] = useState(false);
@@ -69,7 +70,13 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
   const chainLogoInfo = getLogo2(_chainName);
   const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 
-  const filter = isDarkLogo && isDark && CHAINS_WITH_BLACK_LOGO.includes(_chainName) ? 'invert(0.2) brightness(2)' : '';
+  const filter = isDark
+    ? isDarkLogo && CHAINS_WITH_BLACK_LOGO.includes(_chainName)
+      ? 'invert(0.2) brightness(2)'
+      : TOKENS_WITH_BLACK_LOGO.includes(token ?? '')
+        ? 'invert(1)'
+        : ''
+    : '';
 
   useEffect(() => {
     const img = imgRef.current;

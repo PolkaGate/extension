@@ -12,7 +12,6 @@ import AccountsLists from '@polkadot/extension-polkagate/src/popup/accountsLists
 import Home from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
-import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
 import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
 import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
 import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
@@ -68,11 +67,6 @@ const DERIVE_ROUTES: RouteConfig[] = [
 
 // Password Management Routes
 const PASSWORD_ROUTES: RouteConfig[] = [
-  {
-    Component: LoginPassword,
-    path: '/login-password',
-    trigger: 'manage-login-password'
-  },
   {
     Component: ForgotPassword,
     path: '/forgot-password',

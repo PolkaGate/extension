@@ -15,7 +15,7 @@ export default function AccountDetails (): React.ReactElement {
 
   return (
     <HomeLayout>
-      <Stack columnGap='8px' direction='row' sx={{ height: '685px' }}>
+      <Stack columnGap='8px' direction='row' sx={{ minHeight: '685px' }}>
         <LeftColumn />
         <RightColumn />
       </Stack>

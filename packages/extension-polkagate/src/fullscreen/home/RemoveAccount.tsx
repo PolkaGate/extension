@@ -3,6 +3,7 @@
 
 import { Box, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { forgetAccount } from '@polkadot/extension-polkagate/src/messaging';
@@ -23,6 +24,7 @@ interface Props {
 function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
+  const navigate = useNavigate();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
@@ -35,9 +37,13 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
   }, []);
 
   const handleClose = useCallback(() => {
+    if (window.location.href.includes('accountfs')) { // removing an account from its home
+      navigate('/');
+    }
+
     setShowSnackbar(false);
     setPopup(undefined);
-  }, [setPopup]);
+  }, [navigate, setPopup]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -81,7 +87,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
 
   return (
     <SharePopup
-      modalProps={{ dividerStyle: { margin: '5px 0 0' } }}
+      modalProps={{ dividerStyle: { margin: '5px 0 0' }, showBackIconAsClose: true }}
       modalStyle={{ minHeight: '200px' }}
       onClose={handleClose}
       open={open !== undefined}

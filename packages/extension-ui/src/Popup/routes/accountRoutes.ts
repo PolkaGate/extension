@@ -8,7 +8,6 @@ import HaveWallet from '@polkadot/extension-polkagate/src/fullscreen/haveWallet'
 import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
 import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ExportAll from '@polkadot/extension-polkagate/src/popup/export/ExportAll';
-import ForgetAccount from '@polkadot/extension-polkagate/src/popup/forgetAccount';
 import ImportLedger from '@polkadot/extension-polkagate/src/popup/import/importLedger';
 import ImportRawSeed from '@polkadot/extension-polkagate/src/popup/import/importRawSeedFullScreen';
 import ImportSeed from '@polkadot/extension-polkagate/src/popup/import/importSeedFullScreen';
@@ -67,11 +66,6 @@ export const ACCOUNT_ROUTES: RouteConfig[] = [
     Component: Export,
     path: '/export/:address',
     trigger: 'export-address'
-  },
-  {
-    Component: ForgetAccount,
-    path: '/forget/:address/:isExternal',
-    trigger: 'forget-address'
   },
   {
     Component: Rename,

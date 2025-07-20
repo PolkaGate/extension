@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransitionProps } from '@mui/material/transitions';
 import type { HexString } from '@polkadot/util/types';
 
@@ -41,10 +40,6 @@ function AccountMenu({ address, isMenuOpen, setShowMenu }: Props): React.ReactEl
 
   const onAction = useContext(ActionContext);
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
-
-  const onForgetAccount = useCallback(() => {
-    onAction(`/forget/${address}/${account?.isExternal}`);
-  }, [address, account, onAction]);
 
   const onDeriveAccount = useCallback(() => {
     address && onAction(`/derive/${address}/locked`);
@@ -197,15 +192,6 @@ function AccountMenu({ address, isMenuOpen, setShowMenu }: Props): React.ReactEl
             }
             onClick={onRenameAccount}
             text={t('Rename')}
-            withHoverEffect
-          />
-          <MenuItem
-            fontSize='16px'
-            iconComponent={
-              <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
-            }
-            onClick={onForgetAccount}
-            text={t('Forget account')}
             withHoverEffect
           />
           <MenuSeparator />

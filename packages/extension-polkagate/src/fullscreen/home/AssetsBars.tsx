@@ -124,7 +124,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
           {t('Value')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ maxHeight: '272px', overflowY: 'scroll' }}>
+      <Container disableGutters ref={refContainer} sx={{ maxHeight: 'calc(100vh - 515px)', minHeight: '255px', overflowY: 'scroll' }}>
         {assets.map(({ genesisHash, percent, price, token, totalBalance, ui }, index) => {
           const logoInfo = getLogo2(genesisHash, token);
           const normalizePercent = (p: number) => (p > 5 ? p : p > 0 ? 5 : 0);
@@ -132,7 +132,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
           return (
             <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', my: '5px', px: '10px' }}>
               <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
-                <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+                <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
                 <Typography variant='B-2'>
                   {token}
                 </Typography>
