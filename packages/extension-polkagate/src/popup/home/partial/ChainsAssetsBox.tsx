@@ -34,7 +34,7 @@ function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
-        <AssetLogo assetSize='18px' baseTokenSize='16px' genesisHash={assetsDetail.genesisHash} logo={assetsDetail?.logoInfo?.logoSquare} logoRoundness='6px' subLogo={undefined} />
+        <AssetLogo assetSize='18px' baseTokenSize='16px' genesisHash={assetsDetail.genesisHash} logo={assetsDetail?.logoInfo?.logoSquare} logoRoundness='6px' token={assetsDetail.token} />
         <Typography color='text.secondary' variant='B-2'>
           {assetsDetail.chainName}
         </Typography>
@@ -80,7 +80,7 @@ function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, background: isSelected ? onHoverColor : undefined, borderRadius: '12px', cursor: 'pointer', px: isSelected ? '8px' : undefined, py: '4px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-        <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+        <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} token={asset.token} />
         <TokenPriceInfo
           priceId={asset.priceId}
           token={asset.token}
@@ -160,7 +160,7 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
       });
       const network = chains.find(({ genesisHash: networkGenesisHash, tokenSymbol }) => genesisHash === networkGenesisHash && tokenSymbol);
       const token = network?.tokenSymbol;
-      const logoInfo = getLogo2(genesisHash, token);
+      const logoInfo = getLogo2(genesisHash);
       const chainName = network?.name;
 
       return {
@@ -168,7 +168,8 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
         chainName,
         chainTotalBalance,
         genesisHash,
-        logoInfo
+        logoInfo,
+        token
       };
     })
       .sort((a, b) => b.chainTotalBalance - a.chainTotalBalance);
@@ -186,7 +187,10 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
               return (
                 <motion.div key={index} style={{ display: 'grid', rowGap: '6px', width: 'inherit' }} variants={itemVariants}>
                   <AssetsDetail asset={asset} />
-                  {showDivider && <Divider sx={{ bgcolor: '#1B133C', height: '1px', mx: '-10px' }} />}
+                  {
+                    showDivider &&
+                    <Divider sx={{ bgcolor: '#1B133C', height: '1px', mx: '-10px' }} />
+                  }
                 </motion.div>
               );
             })}
