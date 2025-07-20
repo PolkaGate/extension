@@ -4,6 +4,7 @@
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Unlock } from 'iconsax-react';
 import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
 import { updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
@@ -15,6 +16,7 @@ import { lockExtension } from '../../../../messaging';
 export default function Lock ({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const navigate = useNavigate();
   const autoLockPeriod = useAutoLockPeriod();
 
   const isLoginEnabled = useIsLoginEnabled();
@@ -27,9 +29,10 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
 
     updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
       setExtensionLock(true);
+      navigate('/') as void;
       lockExtension().catch(console.error);
     }).catch(console.error);
-  }, [autoLockPeriod, isLoginEnabled, setExtensionLock]);
+  }, [autoLockPeriod, isLoginEnabled, navigate, setExtensionLock]);
 
   return (
     <Grid
