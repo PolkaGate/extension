@@ -208,29 +208,29 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
               />
             }
             <Grid container item>
-
-              {isFlying && isPopupOpenedByExtension
-                ? <FlyingLogo />
-                : <>
-                  {
-                    step === STEPS.ASK_TO_SET_PASSWORD &&
-                    <FirstTimeSetPassword
-                      setStep={setStep}
-                    />
-                  }
-                  {
-                    step === STEPS.SET_PASSWORD &&
-                    <FirstTimeSetPassword
-                      setStep={setStep}
-                    />
-                  }
-                  {
-                    step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
-                    <Login
-                      setStep={setStep}
-                    />
-                  }
-                </>
+              {
+                isFlying && isPopupOpenedByExtension
+                  ? <FlyingLogo />
+                  : <>
+                    {
+                      step === STEPS.ASK_TO_SET_PASSWORD &&
+                      <FirstTimeSetPassword
+                        setStep={setStep}
+                      />
+                    }
+                    {
+                      step === STEPS.SET_PASSWORD &&
+                      <FirstTimeSetPassword
+                        setStep={setStep}
+                      />
+                    }
+                    {
+                      step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
+                      <Login
+                        setStep={setStep}
+                      />
+                    }
+                  </>
               }
             </Grid>
           </Grid>
