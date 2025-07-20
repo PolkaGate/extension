@@ -108,7 +108,7 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
       <PasswordInput
         onEnterPress={handleConfirm}
         onPassChange={handleRepeatPasswordChange}
-        title={title2 ?? t('Repeat the password')}
+        title={title2 ?? t('Confirm password')}
       />
     </Container>
   );

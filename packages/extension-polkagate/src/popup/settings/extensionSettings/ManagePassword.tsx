@@ -5,14 +5,21 @@ import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
+import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { ActionButton, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
 import { type LoginInfo } from '../../../components/Loading';
 import MySnackbar from '../../../components/MySnackbar';
 import { useTranslation } from '../../../components/translate';
 import { getStorage, setStorage } from '../../../util';
-import { isPasswordCorrect } from '../../passwordManagement';
 import WarningBox from '../partials/WarningBox';
+
+export const isPasswordCorrect = async (password: string, isHashed?: boolean) => {
+  const hashedPassword = isHashed ? password : blake2AsHex(password, 256);
+  const info = await getStorage('loginInfo') as LoginInfo;
+
+  return info?.hashedPassword === hashedPassword;
+};
 
 export default function ManagePassword ({ onBack }: { onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();

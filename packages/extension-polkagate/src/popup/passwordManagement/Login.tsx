@@ -17,9 +17,9 @@ import { openOrFocusTab } from '../../fullscreen/accountDetails/components/Commo
 import { useBackground, useIsExtensionPopup, useTranslation } from '../../hooks';
 import { Version } from '../../partials';
 import { RedGradient } from '../../style';
+import { isPasswordCorrect } from '../settings/extensionSettings/ManagePassword';
 import { STEPS } from './constants';
 import Header from './Header';
-import { isPasswordCorrect } from '.';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
