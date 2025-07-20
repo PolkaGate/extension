@@ -4,19 +4,20 @@
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { AddCircle } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
 import { POLKADOT_SLIP44, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import settings from '@polkadot/ui-settings';
 import { noop } from '@polkadot/util';
 
 import { ledgerErrorImage } from '../../../../assets/img/index';
-import { ActionContext, Address, DecisionButtons } from '../../../../components';
+import { Address, DecisionButtons } from '../../../../components';
 import { useGenericLedger, useTranslation } from '../../../../hooks';
 import { createAccountHardware, updateMeta } from '../../../../messaging';
 import ManualLedgerImport from '../partials/ManualLedgerImport';
@@ -43,7 +44,7 @@ interface AddItemProps {
 }
 
 export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
-  <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ borderRadius: '18px', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, width: '100%', border: '1px solid #2D1E4A' }}>
+  <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ '&:hover': { background: '#6743944D' }, border: '1px solid #2D1E4A', borderRadius: '18px', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, transition: 'all 250ms ease-out', width: '100%' }}>
     <AddCircle color='#AA83DC' size='20' variant='Bold' />
     <Typography color='#BEAAD8' pl='10px' variant='B-2'>
       {label}
@@ -54,23 +55,28 @@ export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
 export default function GenericApp ({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
+  const hasNavigatedRef = useRef(false);
+  const finishedCountRef = useRef(0);
 
   const [isBusy, setIsBusy] = useState(false);
   const [addressList, setAddressList] = useState<AddressList>({});
   const [accountIndex, setAccountIndex] = useState<number>(0);
   const [addressOffset, setAddressOffset] = useState<number>(0);
-  const [savedAccountCount, setSavedAccountCount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [isAdvancedMode, setAdvancedMode] = useState<boolean>(false);
 
   const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
 
+  const selectedAddresses = useMemo(() =>
+    Object.entries(addressList).filter(([_, options]) => options.selected),
+  [addressList]);
+
   const importDisabled = useMemo((): boolean =>
     isAdvancedMode
       ? !address
-      : !Object.entries(addressList).find(([_, { selected }]) => selected) // if there is at least one address is selected
-  , [address, addressList, isAdvancedMode]);
+      : !selectedAddresses.length // if there is at least one address is selected
+  , [address, selectedAddresses, isAdvancedMode]);
 
   useEffect(() => {
     if (!address) {
@@ -98,18 +104,6 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
 
   const name = useCallback((index: number, offset?: number) => offset ? `Ledger ${index}-${offset}` : `Ledger ${index}`, []);
 
-  const numberOfSelectedAccounts = useMemo(() =>
-    Object.entries(addressList).filter(([_, options]) => options.selected).length
-  , [addressList]);
-
-  useEffect(() => {
-    if (savedAccountCount && savedAccountCount === numberOfSelectedAccounts) {
-      // return to home if all selected accounts are saved
-      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER).catch(console.error);
-      openOrFocusTab('/', true);
-    }
-  }, [savedAccountCount, numberOfSelectedAccounts, onAction]);
-
   const handleCreateAccount = useCallback((address: string, index: number, offset?: number) => {
     createAccountHardware(address, 'ledger', index, offset ?? 0, name(index, offset), POLKADOT_GENESIS)
       .then(() => {
@@ -119,9 +113,19 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
           .then(() => {
             if (isAdvancedMode) {
               setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER).catch(console.error);
-              openOrFocusTab('/', true);
+              switchToOrOpenTab('/', true);
             } else {
-              setSavedAccountCount((pre) => pre + 1);
+              finishedCountRef.current++;
+
+              if (
+                finishedCountRef.current === selectedAddresses.length &&
+                !hasNavigatedRef.current
+              ) {
+                hasNavigatedRef.current = true;
+                setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER)
+                  .then(() => navigate('/'))
+                  .catch(console.error);
+              }
             }
           }
           ).catch(console.error);
@@ -132,23 +136,23 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
         setIsBusy(false);
         setError(error.message);
       });
-  }, [name, isAdvancedMode]);
+  }, [name, isAdvancedMode, navigate, selectedAddresses.length]);
 
   const onImport = useCallback(() => {
     if (isAdvancedMode) {
       setIsBusy(true);
       address && handleCreateAccount(address, accountIndex, addressOffset);
-    } else if (Object.entries(addressList).length) {
+    } else if (selectedAddresses.length) {
       setIsBusy(true);
 
-      Object.entries(addressList).forEach(([_address, options]) => {
+      selectedAddresses.forEach(([_address, options]) => {
         // create account if it is selected by user
         if (options.selected) {
           handleCreateAccount(_address, options.index);
         }
       });
     }
-  }, [accountIndex, address, addressOffset, addressList, isAdvancedMode, handleCreateAccount]);
+  }, [accountIndex, address, addressOffset, selectedAddresses, isAdvancedMode, handleCreateAccount]);
 
   const onBack = useCallback(() => setMode(MODE.INDEX), [setMode]);
 
@@ -178,7 +182,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
   const hasError = !!ledgerWarning || !!error || !!ledgerError;
 
   return (
-    <Stack direction='column' sx={{ height: '545px', position: 'relative', width: '500px' }}>
+    <Stack direction='column' sx={{ maxHeight: 'calc(100vh - 260px)', minHeight: '545px', position: 'relative', width: '500px' }}>
       <OnboardTitle
         label={t('Ledger Polkadot Generic')}
         labelPartInColor={t('Polkadot Generic')}
@@ -193,8 +197,8 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
               onClick={onModeSwitch}
             />
             {!isAdvancedMode
-              ? <Grid container sx={{ maxHeight: '264px', overflowY: 'auto' }}>
-                <Grid container ref={ref} sx={{ maxHeight: `${window.innerHeight - 475}px`, minHeight: '50px', overflowY: 'auto', pt: '10px', scrollBehavior: 'auto', scrollbarWidth: 'thin' }}>
+              ? <Grid container sx={{ maxHeight: 'calc(100vh - 575px)', overflowY: 'auto' }}>
+                <Grid container ref={ref} sx={{ minHeight: '50px', overflowY: 'auto', pt: '10px', scrollBehavior: 'auto', scrollbarWidth: 'thin' }}>
                   {!!Object.entries(addressList).length &&
                     <>
                       {Object.entries(addressList).map(([address, options]) => (
@@ -256,7 +260,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
         primaryBtnText={ledgerLocked ? t('Refresh') : t('Import')}
         secondaryBtnText={t('Back')}
         showChevron
-        style={{ bottom: Object.entries(addressList).length > 2 ? '-20px' : 0, flexDirection: 'row-reverse', position: 'absolute', width: '65%' }}
+        style={{ flexDirection: 'row-reverse', marginTop: '30px' }}
       />
     </Stack>
   );

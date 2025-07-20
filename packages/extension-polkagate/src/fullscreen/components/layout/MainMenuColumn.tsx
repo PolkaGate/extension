@@ -9,10 +9,10 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { logoTransparent, polkagateVector } from '../../../assets/logos';
 import { useManifest, useSelectedAccount, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
 import Language from './Language';
+import LogoWithText from './LogoWithText';
 import MenuButton from './MenuButton';
 import ReceiveGeneral from './ReceiveGeneral';
 
@@ -41,12 +41,21 @@ function MainMenuColumn (): React.ReactElement {
   const [openReceive, setOpenReceive] = useState<boolean>(false);
 
   return (
-    <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px' }}>
+    <Grid
+      container
+      direction='column'
+      item
+      justifyContent='start'
+      sx={{
+        height: '100%',
+        maxHeight: '100vh',
+        minHeight: '760px',
+        position: 'relative',
+        width: '196px'
+      }}
+    >
       <Shining />
-      <Stack alignItems='center' direction='row' sx={{ mb: '20px', zIndex: 10 }}>
-        <Box component='img' src={(logoTransparent) as string} sx={{ width: '38px' }} />
-        <Box component='img' src={(polkagateVector) as string} sx={{ width: '84px' }} />
-      </Stack>
+      <LogoWithText style={{ marginBottom: '20px', zIndex: 10 }} />
       <MenuButton
         Icon={Home}
         path='/'
@@ -80,7 +89,7 @@ function MainMenuColumn (): React.ReactElement {
         path='/historyfs'
         text={t('History')}
       />
-      <Stack direction='column' rowGap='20px' sx={{ bottom: '15px', position: 'absolute' }}>
+      <Stack direction='column' rowGap='20px' sx={{ pt: '190px' }}>
         <Grid container item justifyContent='start' width='fit-content'>
           <Typography color='#674394' sx={{ textAlign: 'left', width: '20%' }} variant='B-5'>
             {`v.${version}`}

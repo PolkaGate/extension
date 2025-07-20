@@ -124,7 +124,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
           {t('Value')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ maxHeight: '272px', overflowY: 'scroll' }}>
+      <Container disableGutters ref={refContainer} sx={{ maxHeight: 'calc(100vh - 515px)', minHeight: '255px', overflowY: 'scroll' }}>
         {assets.map(({ genesisHash, percent, price, token, totalBalance, ui }, index) => {
           const logoInfo = getLogo2(genesisHash, token);
           const normalizePercent = (p: number) => (p > 5 ? p : p > 0 ? 5 : 0);
