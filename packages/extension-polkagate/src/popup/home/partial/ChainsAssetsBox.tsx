@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import chains from '@polkadot/extension-polkagate/src/util/chains';
 
-import { AssetLogo, FormatPrice } from '../../../components';
+import { AssetLogo, ChainLogo, FormatPrice } from '../../../components';
 import { useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
@@ -28,13 +28,13 @@ interface AssetDetailType {
 }
 type Summary = AssetDetailType[] | null | undefined;
 
-function AssetsHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
+function ChainHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   const theme = useTheme();
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
-        <AssetLogo assetSize='18px' baseTokenSize='16px' genesisHash={assetsDetail.genesisHash} logo={assetsDetail?.logoInfo?.logoSquare} logoRoundness='6px' token={assetsDetail.token} />
+        <ChainLogo genesisHash={assetsDetail.genesisHash} showSquare size={18} token={assetsDetail.token} />
         <Typography color='text.secondary' variant='B-2'>
           {assetsDetail.chainName}
         </Typography>
@@ -180,7 +180,7 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
       {summary?.map((assetsDetail, index) => (
         <motion.div key={index} variants={itemVariants}>
           <Grid container item sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
-            <AssetsHeader assetsDetail={assetsDetail} />
+            <ChainHeader assetsDetail={assetsDetail} />
             {assetsDetail.assets.map((asset, index) => {
               const showDivider = assetsDetail.assets.length !== index + 1;
 
