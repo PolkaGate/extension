@@ -3,19 +3,19 @@
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
-import { Container, Stack, Typography, useTheme } from '@mui/material';
-import { Add, ArrowLeft, Firstline } from 'iconsax-react';
+import { Stack, Typography } from '@mui/material';
+import { Firstline } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { noop } from '@polkadot/util';
 
-import { ActionButton, GradientButton, GradientDivider } from '../../../../components';
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorsInformation, useValidatorSuggestion2 } from '../../../../hooks';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
+import FooterControls from '../../partials/FooterControls';
 import TableToolbar from '../../partials/TableToolbar';
 import ReviewPopup from './ReviewPopup';
 import SystemSuggestion from './SystemSuggestionButton';
@@ -25,7 +25,6 @@ import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 function ManageValidators () {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const theme = useTheme();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const selectedAccount = useSelectedAccount();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
@@ -213,40 +212,15 @@ function ManageValidators () {
               />
             </Stack>
           </VelvetBox>
-          <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', pt: '26px', width: '100%', zIndex: 1 }}>
-            <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, width: 'fit-content' }}>
-              <ActionButton
-                StartIcon={ArrowLeft}
-                contentPlacement='center'
-                iconSize={24}
-                iconVariant='Linear'
-                onClick={backToStakingHome}
-                style={{
-                  height: '44px',
-                  width: '90px'
-                }}
-                text={t('Back')}
-                variant='text'
-              />
-              <GradientDivider
-                isBlueish
-                orientation='vertical'
-                style={{ height: '40px', mx: '4px' }}
-              />
-              <Firstline color='#674394' size='18' variant='Bold' />
-              <Typography color='#AA83DC' variant='B-2'>
-                <span style={{ color: theme.palette.text.primary }}>{newSelectedValidators?.length || 0}</span>
-                {t(' / {{maximum}} selected', { replace: { maximum } })}
-              </Typography>
-              <Add color='#674394' onClick={onReset} size='28' style={{ cursor: 'pointer', rotate: '45deg' }} />
-            </Container>
-            <GradientButton
-              disabled={isNextDisabled}
-              onClick={toggleReview}
-              style={{ height: '44px', width: '244px' }}
-              text={t('Next')}
-            />
-          </Container>
+          <FooterControls
+            Icon={Firstline}
+            isNextDisabled={isNextDisabled}
+            maxSelectable={maximum}
+            onBack={backToStakingHome}
+            onNext={toggleReview}
+            onReset={onReset}
+            selectedCount={newSelectedValidators?.length}
+          />
         </Stack>
       </HomeLayout>
       {review &&
