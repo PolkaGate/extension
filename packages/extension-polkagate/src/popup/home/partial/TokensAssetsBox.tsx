@@ -198,7 +198,7 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
                   }
                 }}
               >
-                <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={tokenDetail.genesisHash} logo={tokenDetail.logoInfo?.logo ?? tokenDetail.logoInfo?.subLogo} subLogo={undefined} />
+                <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={tokenDetail.genesisHash} logo={tokenDetail.logoInfo?.logo ?? tokenDetail.logoInfo?.subLogo} token={tokenDetail.token} />
               </Badge>
               <TokenPriceInfo
                 priceId={tokenDetail.priceId}
