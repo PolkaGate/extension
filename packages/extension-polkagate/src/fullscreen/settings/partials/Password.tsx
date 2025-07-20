@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { LoginInfo } from '@polkadot/extension-polkagate/src/components/Loading';
+import type { LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Key } from 'iconsax-react';
@@ -11,7 +11,7 @@ import { getStorage } from '@polkadot/extension-polkagate/src/util';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
-import { ExtensionPopups } from '../../../util/constants';
+import { ExtensionPopups, NAMES_IN_STORAGE } from '../../../util/constants';
 import SetPassword from './SetPassword';
 
 export default function Password (): React.ReactElement {
@@ -22,7 +22,7 @@ export default function Password (): React.ReactElement {
   const [lastEditDate, setLastEdit] = useState<string>();
 
   useEffect(() => {
-    getStorage('loginInfo').then((info) => {
+    getStorage(NAMES_IN_STORAGE.LOGIN_IFO).then((info) => {
       const timestamp = (info as unknown as LoginInfo | undefined)?.lastEdit;
 
       if (timestamp) {

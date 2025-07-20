@@ -5,6 +5,9 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import { Check, DocumentText } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
+import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
+import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { Lock } from '../../assets/gif';
 import { ActionCard, ActionContext, BackWithLabel } from '../../components';
 import { updateStorage } from '../../components/Loading';
@@ -12,9 +15,11 @@ import { useBackground, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { Version } from '../../partials';
 import Header from './Header';
+import { LOGIN_STATUS } from './types';
 
 function Reset (): React.ReactElement {
   useBackground('drops');
+  const { setExtensionLock } = useExtensionLockContext();
 
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
@@ -24,10 +29,13 @@ function Reset (): React.ReactElement {
   }, []);
 
   const back = useCallback((): void => {
-    updateStorage('loginInfo', { status: 'set' })
-      .finally(() => onAction('/'))
+    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { status: LOGIN_STATUS.SET })
+      .finally(() => {
+        setExtensionLock(true);
+        onAction('/');
+      })
       .catch(console.error);
-  }, [onAction]);
+  }, [onAction, setExtensionLock]);
 
   const goToImport = useCallback((): void => {
     windowOpen('/account/import-seed').catch(console.error);

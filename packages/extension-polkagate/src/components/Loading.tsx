@@ -11,19 +11,12 @@ import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
 import Login from '../popup/passwordManagement/Login';
-import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD } from '../util/constants';
+import { LOGIN_STATUS, type LoginInfo } from '../popup/passwordManagement/types';
+import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NAMES_IN_STORAGE } from '../util/constants';
 import FlyingLogo from './FlyingLogo';
 
 interface Props {
   children?: React.ReactNode;
-}
-
-export interface LoginInfo {
-  status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
-  lastLoginTime?: number;
-  lastEdit?: number;
-  hashedPassword?: string;
-  addressesToForget?: string[];
 }
 
 export const updateStorage = async (label: string, newInfo: object) => {
@@ -123,20 +116,20 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      const info = await getStorage('loginInfo') as LoginInfo;
+      const info = await getStorage(NAMES_IN_STORAGE.LOGIN_IFO) as LoginInfo;
 
       if (!info?.status) {
         /** To not asking for password setting for the onboarding time */
-        setStorage('loginInfo', { lastLoginTime: Date.now(), status: 'mayBeLater' }).catch(console.error);
+        setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
 
         return setExtensionLock(false);
       }
 
-      if (info?.status === 'reset') {
+      if (info?.status === LOGIN_STATUS.RESET) {
         return setStep(STEPS.ASK_TO_SET_PASSWORD);
       }
 
-      if (info.status === 'mayBeLater') {
+      if (info.status === LOGIN_STATUS.MAYBE_LATER) {
         if (info.lastLoginTime && Date.now() > (info.lastLoginTime + MAYBE_LATER_PERIOD)) {
           setStep(STEPS.ASK_TO_SET_PASSWORD);
         } else {
@@ -147,17 +140,17 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      if (info.status === 'noLogin') {
+      if (info.status === LOGIN_STATUS.NO_LOGIN) {
         setStep(STEPS.NO_LOGIN);
 
         return setExtensionLock(false);
       }
 
-      if (info.status === 'justSet') {
+      if (info.status === LOGIN_STATUS.JUST_SET) {
         return setStep(STEPS.SHOW_LOGIN);
       }
 
-      if (info.status === 'set') {
+      if (info.status === LOGIN_STATUS.SET) {
         if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + autoLockPeriod))) {
           setStep(STEPS.SHOW_LOGIN);
         } else {
@@ -168,7 +161,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      if (info.status === 'forgot') {
+      if (info.status === LOGIN_STATUS.FORGOT) {
         setStep(STEPS.SHOW_LOGIN);
       }
     };

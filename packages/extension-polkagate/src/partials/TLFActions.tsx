@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import LockIcon from '@mui/icons-material/Lock';
 import { Divider, Grid, IconButton } from '@mui/material';
 import React, { useCallback } from 'react';
@@ -12,7 +11,7 @@ import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
 import { useIsLoginEnabled, useTranslation } from '../hooks';
 import { lockExtension } from '../messaging';
-import { NO_PASS_PERIOD } from '../util/constants';
+import { NAMES_IN_STORAGE, NO_PASS_PERIOD } from '../util/constants';
 
 const TLFActions = () => {
   const { t } = useTranslation();
@@ -21,7 +20,7 @@ const TLFActions = () => {
   const { setExtensionLock } = useExtensionLockContext();
 
   const onLockExtension = useCallback((): void => {
-    updateStorage('loginInfo', { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
+    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
       setExtensionLock(true);
       lockExtension().catch(console.error);
     }).catch(console.error);
