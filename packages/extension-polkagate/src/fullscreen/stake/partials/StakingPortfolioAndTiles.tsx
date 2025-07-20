@@ -40,11 +40,14 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
       <GlowBall />
       <StakingInfoTile
         Icon={Moneys}
-        buttonsArray={[{
-          Icon: Timer,
-          onClick: isPoolStaking ? popupOpener(StakingPopUps.CLAIM_REWARDS) : popupOpener(StakingPopUps.PENDING_REWARDS),
-          text: isPoolStaking ? t('Rewards') : t('Pending Rewards')
-        }]}
+        buttonsArray={
+          isPoolStaking
+            ? undefined
+            : [{
+              Icon: Timer,
+              onClick: popupOpener(StakingPopUps.PENDING_REWARDS),
+              text: t('Pending Rewards')
+            }]}
         cryptoAmount={rewards}
         decimal={decimal ?? 0}
         fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
