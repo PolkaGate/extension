@@ -63,13 +63,17 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
       .finally(() => {
         setIsBusy(false);
         setShowSnackbar(true);
-        setRefresh(true);
       });
-  }, [setRefresh]);
+  }, []);
 
   const onEditList = useCallback((info: AuthUrlInfo) => {
     setAccessToEdit(info);
   }, [setAccessToEdit]);
+
+  const onSnackbarClose = useCallback(() => {
+    setShowSnackbar(false);
+    setRefresh(true);
+  }, [setRefresh]);
 
   const onDeleteAll = useCallback(() => {
     if (filteredAuthorizedDapps) {
@@ -166,8 +170,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
         variant='contained'
       />
       <MySnackbar
-        // eslint-disable-next-line react/jsx-no-bind
-        onClose={() => setShowSnackbar(false)}
+        onClose={onSnackbarClose}
         open={showSnackbar}
         text={t('Access successfully removed!')}
       />
