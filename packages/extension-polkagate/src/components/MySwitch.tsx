@@ -23,7 +23,7 @@ const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }:
   const isBlueish = useIsBlueish();
 
   return (
-    <Stack columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
+    <Stack alignItems= 'center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
         checked={checked}
         disableRipple
