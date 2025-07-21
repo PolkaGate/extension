@@ -195,17 +195,17 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
       .finally(() => setCheckingPriceId(false));
   }, [setCheckingPriceId, priceId, getPrice, setPrice]);
 
-  const [Icon, color] = useMemo(() => {
+  const [Icon, color, bgcolor] = useMemo(() => {
     return isCheckingPriceId
-      ? [RefreshCircle, theme.palette.primary.main]
+      ? [RefreshCircle, theme.palette.primary.main, '#2D1E4A']
       : price === undefined && !priceId
-        ? [Tag2, theme.palette.action.disabledBackground]
+        ? [Tag2, theme.palette.primary.main, '#2D1E4A']
         : price === undefined && priceId
-          ? [Tag2, theme.palette.primary.main]
+          ? [Tag2, theme.palette.primary.main, '#2D1E4A']
           : price === null
-            ? [CloseCircle, theme.palette.warning.main]
-            : [TickCircle, theme.palette.success.main];
-  }, [isCheckingPriceId, price, priceId, theme.palette.action.disabledBackground, theme.palette.primary.main, theme.palette.success.main, theme.palette.warning.main]);
+            ? [CloseCircle, '#FF165C', '#B319554D']
+            : [TickCircle, theme.palette.success.main, '#68A87A4D'];
+  }, [isCheckingPriceId, price, priceId, theme.palette.primary.main, theme.palette.success.main]);
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' sx={{ width: '100%' }}>
@@ -218,7 +218,7 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
         tooltip={t('Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]')}
       />
       <MyTooltip content={t('Check price ID')}>
-        <IconButton onClick={onCheckPriceIdClick} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', mb: '41px', padding: '3px', position: 'absolute', right: '24px' }}>
+        <IconButton onClick={onCheckPriceIdClick} sx={{ bgcolor, borderRadius: '8px', mb: '41px', padding: '3px', position: 'absolute', right: '24px' }}>
           <Box sx={{
             '@keyframes spin': {
               '0%': { transform: 'rotate(0deg)' },
