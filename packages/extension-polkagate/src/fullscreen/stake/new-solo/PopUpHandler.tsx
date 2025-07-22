@@ -3,7 +3,7 @@
 
 import type { DateAmount, SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
