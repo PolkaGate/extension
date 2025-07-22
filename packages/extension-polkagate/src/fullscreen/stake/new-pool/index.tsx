@@ -65,6 +65,7 @@ export default function PoolFullScreen (): React.ReactElement {
       <PopUpHandler
         address={selectedAccount?.address}
         genesisHash={genesisHash}
+        poolInfo={stakingInfo.pool}
         popupCloser={popupCloser}
         popupOpener={popupOpener}
         stakingInfo={stakingInfo}

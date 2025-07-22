@@ -3,11 +3,13 @@
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
+import type { MyPoolInfo } from '../../../util/types';
 
 import React from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
+import PoolDetail from './joinPool/PoolDetail';
 import BondExtra from './bondExtra';
 import CreatePool from './createPool';
 import Info from './Info';
@@ -23,9 +25,10 @@ interface Props {
   stakingInfo: PoolStakingInfo;
   toBeReleased: DateAmount[] | undefined;
   popupOpener: PopupOpener;
+  poolInfo: MyPoolInfo | null | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   switch (stakingPopup) {
     case StakingPopUps.NONE:
       return null;
@@ -85,6 +88,14 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           address={address}
           genesisHash={genesisHash}
           onClose={popupCloser}
+        />);
+
+    case StakingPopUps.MY_POOL:
+      return (
+        <PoolDetail
+          genesisHash={genesisHash}
+          onClose={popupCloser}
+          poolDetail={poolInfo}
         />);
 
     default:

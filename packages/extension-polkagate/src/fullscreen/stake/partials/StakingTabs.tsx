@@ -4,7 +4,6 @@
 import type { Icon } from 'iconsax-react';
 import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 import type { UseStakingRewards } from '../../../hooks/useStakingRewards3';
-import type { PopupOpener } from '../util/utils';
 
 import { Container, Stack, Typography } from '@mui/material';
 import { Discover, MagicStar, Wallet } from 'iconsax-react';
@@ -14,6 +13,8 @@ import { useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTabBody';
 import Rewards from '../Rewards';
+import StakingPositions from '../stakingPositions';
+import { type PopupOpener, StakingPopUps } from '../util/utils';
 
 export interface StakingTabsHeaderItems {
   title: string;
@@ -58,6 +59,7 @@ interface Props {
 enum STAKING_TABS {
   STAKING_POSITIONS,
   REWARDS,
+  MY_POOL,
   VALIDATORS
 }
 
@@ -92,13 +94,22 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, stakingInfo, token
       });
     }
 
+    if (type === 'pool') {
+      tabs.push({
+        Icon: Discover,
+        isSelected: false,
+        onClick: popupOpener(StakingPopUps.MY_POOL),
+        title: t('My Pool')
+      });
+    }
+
     return tabs;
-  }, [t, tab, tabSetter, type]);
+  }, [popupOpener, t, tab, tabSetter, type]);
 
   const content = useMemo(() => {
     switch (tab) {
       case STAKING_TABS.STAKING_POSITIONS:
-        return <></>;
+        return <StakingPositions />;
 
       case STAKING_TABS.REWARDS:
         return (
@@ -116,6 +127,9 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, stakingInfo, token
             genesisHash={genesisHash}
             stakingInfo={stakingInfo}
           />);
+
+      case STAKING_TABS.MY_POOL:
+        return (<></>);
 
       default:
         return <></>;

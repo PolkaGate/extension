@@ -1144,7 +1144,7 @@ export const useCreatePool = (
 };
 
 export const usePoolDetail = (
-  poolDetail: MyPoolInfo | undefined,
+  poolDetail: MyPoolInfo | null | undefined,
   genesisHash: string | undefined
 ) => {
   type CollapseState = Record<string, boolean>;

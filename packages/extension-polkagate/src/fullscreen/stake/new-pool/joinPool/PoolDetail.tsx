@@ -210,7 +210,7 @@ const RightColumnContent = ({ commission, genesisHash, onSelect, poolDetail }: R
 interface Props {
   onClose: () => void;
   genesisHash: string | undefined;
-  poolDetail: MyPoolInfo | undefined;
+  poolDetail: MyPoolInfo | null | undefined;
   onSelect?: () => void;
 }
 
@@ -234,6 +234,10 @@ export default function PoolDetail ({ genesisHash, onClose, onSelect, poolDetail
     onClose();
   }, [onClose, onSelect]);
 
+  if (poolDetail === null) {
+    return <></>;
+  }
+
   return (
     <DetailPanel
       leftColumnContent={
@@ -254,7 +258,7 @@ export default function PoolDetail ({ genesisHash, onClose, onSelect, poolDetail
         <RightColumnContent
           commission={commission}
           genesisHash={genesisHash}
-          onSelect={handleSelect}
+          onSelect={onSelect ? handleSelect : undefined}
           poolDetail={poolDetail}
         />
       }
