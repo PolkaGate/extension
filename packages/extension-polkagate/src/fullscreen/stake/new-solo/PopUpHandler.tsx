@@ -3,7 +3,7 @@
 
 import type { DateAmount, SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
@@ -26,91 +26,88 @@ interface Props {
 }
 
 function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
-  const onRestake = useCallback(() => {
-    popupCloser();
-    popupOpener(StakingPopUps.RESTAKE);
-  }, [popupCloser, popupOpener]);
+  return useMemo(() => {
+    switch (stakingPopup) {
+      case StakingPopUps.NONE:
+        return null;
 
-  switch (stakingPopup) {
-    case StakingPopUps.NONE:
-      return null;
+      case StakingPopUps.INFO:
+        return (
+          <Info
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+            stakingInfo={stakingInfo}
+          />
+        );
 
-    case StakingPopUps.INFO:
-      return (
-        <Info
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-          stakingInfo={stakingInfo}
-        />
-      );
+      case StakingPopUps.UNSTAKE:
+        return (
+          <Unstake
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
-    case StakingPopUps.UNSTAKE:
-      return (
-        <Unstake
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />
-      );
+      case StakingPopUps.RESTAKE:
+        return (
+          <Restake
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
-    case StakingPopUps.RESTAKE:
-      return (
-        <Restake
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />
-      );
+      case StakingPopUps.UNLOCKING:
+        return (
+          <ToBeReleased
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+            onRestake={popupOpener(StakingPopUps.RESTAKE)}
+            toBeReleased={toBeReleased}
+          />
+        );
 
-    case StakingPopUps.UNLOCKING:
-      return (
-        <ToBeReleased
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-          onRestake={onRestake}
-          toBeReleased={toBeReleased}
-        />
-      );
+      case StakingPopUps.WITHDRAW:
+        return (
+          <Withdraw
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
-    case StakingPopUps.WITHDRAW:
-      return (
-        <Withdraw
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />
-      );
+      case StakingPopUps.BOND_EXTRA:
+        return (
+          <BondExtra
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
-    case StakingPopUps.BOND_EXTRA:
-      return (
-        <BondExtra
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />
-      );
+      case StakingPopUps.FAST_UNSTAKE:
+        return (
+          <FastUnstake
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
-    case StakingPopUps.FAST_UNSTAKE:
-      return (
-        <FastUnstake
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />
-      );
+      case StakingPopUps.REWARD_DESTINATION_CONFIG:
+        return (
+          <Settings
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
-    case StakingPopUps.REWARD_DESTINATION_CONFIG:
-      return (
-        <Settings
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />
-      );
-
-    default:
-      return null;
-  }
+      default:
+        return null;
+    }
+  }, [address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased]);
 }
 
 export default React.memo(PopUpHandler);

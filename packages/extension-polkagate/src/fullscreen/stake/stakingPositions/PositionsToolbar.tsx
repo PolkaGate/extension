@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Variant } from '@mui/material/styles/createTypography';
 import type { AdvancedDropdownOption } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
@@ -12,7 +13,6 @@ import { noop } from '@polkadot/util';
 import { DropSelect, GradientSwitch } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import Search from '../../../popup/staking/components/Search';
-import type { Variant } from '@mui/material/styles/createTypography';
 
 type StakingType = 'solo' | 'pool' | 'both';
 
@@ -33,7 +33,7 @@ const initialState: State = {
   stakingType: 'both'
 };
 
-function reducer(state: State, action: Action): State {
+function reducer (state: State, action: Action): State {
   switch (action.type) {
     case 'SET_STAKING_TYPE':
       return { ...state, stakingType: action.payload };
@@ -104,7 +104,7 @@ const PositionsEarnings = ({ selectedTab, setter }: PositionsEarningsProps) => {
   );
 };
 
-function PositionsToolbar() {
+function PositionsToolbar () {
   const { t } = useTranslation();
   const theme = useTheme();
 

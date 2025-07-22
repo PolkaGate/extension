@@ -5,7 +5,7 @@ import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 import type { MyPoolInfo } from '../../../util/types';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
@@ -29,78 +29,80 @@ interface Props {
 }
 
 function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
-  switch (stakingPopup) {
-    case StakingPopUps.NONE:
-      return null;
+  return useMemo(() => {
+    switch (stakingPopup) {
+      case StakingPopUps.NONE:
+        return null;
 
-    case StakingPopUps.INFO:
-      return (
-        <Info
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-          stakingInfo={stakingInfo}
-        />);
+      case StakingPopUps.INFO:
+        return (
+          <Info
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+            stakingInfo={stakingInfo}
+          />);
 
-    case StakingPopUps.UNSTAKE:
-      return (
-        <Unstake
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />);
+      case StakingPopUps.UNSTAKE:
+        return (
+          <Unstake
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />);
 
-    case StakingPopUps.UNLOCKING:
+      case StakingPopUps.UNLOCKING:
 
-      return (
-        <ToBeReleased
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-          toBeReleased={toBeReleased}
-        />);
+        return (
+          <ToBeReleased
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+            toBeReleased={toBeReleased}
+          />);
 
-    case StakingPopUps.WITHDRAW:
-      return (
-        <Withdraw
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />);
+      case StakingPopUps.WITHDRAW:
+        return (
+          <Withdraw
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />);
 
-    case StakingPopUps.BOND_EXTRA:
-      return (
-        <BondExtra
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />);
+      case StakingPopUps.BOND_EXTRA:
+        return (
+          <BondExtra
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />);
 
-    case StakingPopUps.JOIN_CREATE_POOL:
-      return (
-        <JoinCreatePool
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-          popupOpener={popupOpener}
-        />);
+      case StakingPopUps.JOIN_CREATE_POOL:
+        return (
+          <JoinCreatePool
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+            popupOpener={popupOpener}
+          />);
 
-    case StakingPopUps.CREATE_POOL:
-      return (
-        <CreatePool
-          address={address}
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-        />);
+      case StakingPopUps.CREATE_POOL:
+        return (
+          <CreatePool
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />);
 
-    case StakingPopUps.MY_POOL:
-      return (
-        <PoolDetail
-          genesisHash={genesisHash}
-          onClose={popupCloser}
-          poolDetail={poolInfo}
-        />);
+      case StakingPopUps.MY_POOL:
+        return (
+          <PoolDetail
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+            poolDetail={poolInfo}
+          />);
 
-    default:
-      return null;
-  }
+      default:
+        return null;
+    }
+  }, [address, genesisHash, poolInfo, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased]);
 }
 
 export default React.memo(PopUpHandler);
