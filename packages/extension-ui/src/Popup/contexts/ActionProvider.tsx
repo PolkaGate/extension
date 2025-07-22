@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 
 import { ActionContext } from '@polkadot/extension-polkagate/src/components/contexts';
 
-export default function ActionProvider({ children }: { children: React.ReactNode }) {
+export default function ActionProvider ({ children }: { children: React.ReactNode }) {
   const onAction = useCallback((to?: string): void => {
     if (to) {
       window.location.hash = to;

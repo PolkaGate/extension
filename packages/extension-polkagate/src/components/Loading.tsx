@@ -9,7 +9,7 @@ import { useAutoLockPeriod } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
-import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
+import ForgotPassword from '../popup/passwordManagement/ForgotPassword';
 import Login from '../popup/passwordManagement/Login';
 import { LOGIN_STATUS, type LoginInfo } from '../popup/passwordManagement/types';
 import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NAMES_IN_STORAGE } from '../util/constants';
@@ -196,7 +196,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
           ? <Grid container item>
             {
               step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-              <ForgotPasswordConfirmation
+              <ForgotPassword
                 setStep={setStep}
               />
             }
