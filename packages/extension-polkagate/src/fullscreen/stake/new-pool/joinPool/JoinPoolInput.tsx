@@ -59,7 +59,7 @@ export default function JoinPoolInput ({ address, availableBalanceToStake, bondA
       transaction={tx}
       transactionInformation={transactionInformation}
     >
-      <Stack direction='column' sx={{ gap: '8px', px: '15px', width: '100%', zIndex: 1 }}>
+      <Stack direction='column' sx={{ gap: '8px', position: 'relative', px: '15px', width: '100%', zIndex: 1 }}>
         <TokenStakeStatus
           amount={availableBalanceToStake}
           decimal={decimal}

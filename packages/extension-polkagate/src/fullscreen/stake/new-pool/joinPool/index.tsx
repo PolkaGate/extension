@@ -8,8 +8,6 @@ import { People } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { noop } from '@polkadot/util';
-
 import { usePools2, useSelectedAccount, useTranslation } from '../../../../hooks';
 import { SORTED_BY } from '../../../../popup/staking/partial/PoolFilter';
 import { FetchPoolProgress } from '../../../../popup/staking/pool-new/joinPool/ChoosePool';
@@ -162,13 +160,12 @@ function JoinPool () {
                 style={{ p: '12px 18px' }}
               />
               <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
-                {poolsToShow?.map((poolItem, index) => {
+                {poolsToShow?.map((poolItem) => {
                   return (
                     <PoolItem
                       genesisHash={genesisHash}
                       isSelected={isSelected(poolItem)}
-                      key={index}
-                      onDetailClick={noop}
+                      key={String(poolItem.poolId)}
                       onSelect={selectPool(poolItem)}
                       poolInfo={poolItem}
                     />

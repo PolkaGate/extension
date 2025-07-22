@@ -7,11 +7,11 @@ import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
+import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback } from 'react';
 
 import { FormatBalance2 } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';
 import ValidatorDetail from './ValidatorDetail';
@@ -55,6 +55,7 @@ export interface StakingInfoStackProps {
 
 export const StakingInfoStack = memo(function StakingInfoStack ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   return (
     <Stack direction='column' sx={{ width: 'fit-content' }}>
@@ -77,7 +78,7 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ amount, decima
           {text}
         </Typography>
       }
-      <Typography color='text.highlight' textAlign='left' variant='B-4'>
+      <Typography color='text.highlight' textAlign='left' variant={isExtension ? 'B-4' : 'B-6'}>
         {title}
       </Typography>
     </Stack>
