@@ -6,13 +6,14 @@ import type { KeyringPair } from '@polkadot/keyring/types';
 // @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 import type { Content } from '../../partials/Review';
-import type { PoolInfo, Proxy, RewardDestinationType, TxResult } from '../types';
+import type { MyPoolInfo, PoolInfo, Proxy, RewardDestinationType, TxResult } from '../types';
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
 import { BN, BN_FIVE, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, usePoolStakingInfo, useSoloStakingInfo, useTranslation } from '../../hooks';
+import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, usePoolStakingInfo, useSoloStakingInfo, useTokenPriceBySymbol, useTranslation } from '../../hooks';
+import { calcPrice } from '../../hooks/useYouHave2';
 import { getValue } from '../../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../../popup/staking/partial/PoolFilter';
 import { Review } from '../../popup/staking/pool-new';
@@ -1139,5 +1140,91 @@ export const useCreatePool = (
     setRoles,
     transactionInformation,
     tx
+  };
+};
+
+export const usePoolDetail = (
+  poolDetail: MyPoolInfo | undefined,
+  genesisHash: string | undefined
+) => {
+  type CollapseState = Record<string, boolean>;
+
+  const { t } = useTranslation();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+  const price = useTokenPriceBySymbol(token ?? '', genesisHash ?? '');
+
+  const collapseReducer = useCallback((state: CollapseState, action: { type: string }): CollapseState => {
+    // Create new state where all sections are closed
+    const newState: CollapseState = Object.keys(state).reduce((acc, key) => {
+      // Only open the clicked section if it was previously closed
+      acc[key] = key === action.type ? !state[action.type] : false;
+
+      return acc;
+    }, {} as CollapseState);
+
+    return newState;
+  }, []);
+
+  const [collapse, dispatchCollapse] = useReducer(collapseReducer, { Ids: false, Members: false, Rewards: false, Roles: false });
+
+  const unwrapRewardAccount = useCallback((rewardDestination: string | undefined) => {
+    try {
+      const parsed = rewardDestination ? JSON.parse(rewardDestination) as unknown : undefined;
+
+      if (parsed && typeof parsed === 'object' && parsed !== null && 'account' in parsed) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return (parsed as { account?: string }).account;
+      }
+
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  }, []);
+
+  const commission = useMemo(() => {
+    const maybeCommission = poolDetail?.bondedPool?.commission?.current?.isSome ? poolDetail.bondedPool.commission.current.value[0] : 0;
+
+    return Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
+  }, [poolDetail?.bondedPool?.commission]);
+
+  const roles = useMemo(() => ({
+    bouncer: poolDetail?.bondedPool?.roles.bouncer?.toString(),
+    depositor: poolDetail?.bondedPool?.roles.depositor?.toString(),
+    nominator: poolDetail?.bondedPool?.roles.nominator?.toString(),
+    root: poolDetail?.bondedPool?.roles.root?.toString()
+  }), [poolDetail]);
+
+  const ids = useMemo(() => ({
+    'reward ID': poolDetail?.accounts?.rewardId.toString() ?? unwrapRewardAccount(poolDetail?.stashIdAccount?.rewardDestination?.toString()),
+    'stash ID': poolDetail?.accounts?.stashId.toString() ?? poolDetail?.stashIdAccount?.accountId.toString()
+  }), [poolDetail]);
+
+  const poolStatus = useMemo(() => {
+    if (!poolDetail) {
+      return '';
+    }
+
+    const status = poolDetail.bondedPool?.state.toString();
+
+    return status === 'Open'
+      ? t('pool')
+      : status === 'Destroying'
+        ? t('destroying')
+        : t('blocked');
+  }, [poolDetail?.bondedPool?.state, t]);
+
+  const totalPoolRewardAsFiat = useMemo(() => calcPrice(price.price, isHexToBn(poolDetail?.rewardClaimable?.toString() ?? '0') ?? BN_ZERO, decimal ?? 0), [decimal, price?.price]);
+
+  const handleCollapses = useCallback((type: string) => () => dispatchCollapse({ type }), []);
+
+  return {
+    collapse,
+    commission,
+    handleCollapses,
+    ids,
+    poolStatus,
+    roles,
+    totalPoolRewardAsFiat
   };
 };

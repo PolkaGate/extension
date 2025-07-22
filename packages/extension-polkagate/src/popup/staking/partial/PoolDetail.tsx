@@ -4,22 +4,21 @@
 import type { TransitionProps } from '@mui/material/transitions';
 import type { Compact } from '@polkadot/types';
 import type { INumber } from '@polkadot/types/types';
+import type { BN } from '@polkadot/util';
 import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
-import React, { useCallback, useMemo, useReducer, useRef } from 'react';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
-
-import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
-import { type BN, BN_ZERO } from '@polkadot/util';
 
 import Subscan from '../../../assets/icons/Subscan';
 import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useChainInfo, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
+import { usePoolDetail } from '../../../util/api';
 import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Email, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
@@ -33,21 +32,6 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
 });
 
-const unwrapRewardAccount = (rewardDestination: string | undefined) => {
-  try {
-    const parsed = rewardDestination ? JSON.parse(rewardDestination) as unknown : undefined;
-
-    if (parsed && typeof parsed === 'object' && parsed !== null && 'account' in parsed) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return (parsed as { account?: string }).account;
-    }
-
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
 interface StakingInfoStackWithIconProps {
   Icon: React.ReactNode;
   amount?: string | BN | Compact<INumber> | null | undefined;
@@ -57,9 +41,11 @@ interface StakingInfoStackWithIconProps {
   text?: string | undefined;
 }
 
-const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
+export const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
+  const isExtension = useIsExtensionPopup();
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: isExtension ? '6px' : '24px', m: 0, width: 'fit-content' }}>
       {Icon}
       <StakingInfoStack amount={amount} decimal={decimal} text={text} title={title} token={token} />
     </Container>
@@ -70,19 +56,23 @@ interface PoolStashIdSocialsProps {
   poolDetail: PoolInfo;
 }
 
-const PoolStashIdSocials = ({ poolDetail }: PoolStashIdSocialsProps) => {
+export const PoolStashIdSocials = ({ poolDetail }: PoolStashIdSocialsProps) => {
+  const theme = useTheme();
   const bgColor = '#FFFFFF1A';
+  const isExtension = useIsExtensionPopup();
+
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%' }}>
       {poolDetail.identity?.info.email &&
-        <SocialIcon Icon={<Email color='#809ACB' width='14px' />} bgColor={bgColor} link={poolDetail.identity.info.email} size={24} />
+        <SocialIcon Icon={<Email color={color} width='14px' />} bgColor={bgColor} link={poolDetail.identity.info.email} size={24} />
       }
       {poolDetail.identity?.info.twitter &&
-        <SocialIcon Icon={<XIcon color='#809ACB' width='13px' />} bgColor={bgColor} link={poolDetail.identity.info.twitter} size={24} />
+        <SocialIcon Icon={<XIcon color={color} width='13px' />} bgColor={bgColor} link={poolDetail.identity.info.twitter} size={24} />
       }
       {poolDetail.identity?.info.web &&
-        <SocialIcon Icon={<Web color='#809ACB' width='14px' />} bgColor={bgColor} link={poolDetail.identity.info.web} size={24} />
+        <SocialIcon Icon={<Web color={color} width='14px' />} bgColor={bgColor} link={poolDetail.identity.info.web} size={24} />
       }
     </Container>
   );
@@ -91,22 +81,12 @@ const PoolStashIdSocials = ({ poolDetail }: PoolStashIdSocialsProps) => {
 interface PoolIdentityDetailProps {
   poolDetail: PoolInfo;
   genesisHash: string | undefined;
+  poolStatus: string;
 }
 
-const PoolIdentityDetail = ({ genesisHash, poolDetail }: PoolIdentityDetailProps) => {
-  const { t } = useTranslation();
+const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
-
-  const poolStatus = useMemo(() => {
-    const status = poolDetail.bondedPool?.state.toString();
-
-    return status === 'Open'
-      ? t('pool')
-      : status === 'Destroying'
-        ? t('destroying')
-        : t('blocked');
-  }, [poolDetail.bondedPool?.state, t]);
 
   const { bgcolor, textColor } = useMemo(() => {
     const status = poolDetail.bondedPool?.state.toString();
@@ -173,25 +153,29 @@ interface PoolMembersProps {
   }[];
   genesisHash: string | undefined;
   totalStaked: string;
+  maxHeight?: string;
 }
 
-const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) => {
+export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalStaked }: PoolMembersProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef(null);
+  const isExtension = useIsExtensionPopup();
+
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
     <>
-      <Stack direction='column' ref={containerRef} sx={{ bgcolor: '#222540A6', borderRadius: '10px', gap: '12px', maxHeight: '220px', overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
+      <Stack direction='column' ref={containerRef} sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
         <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
-          <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
+          <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
             {t('Identity')}
           </Typography>
-          <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
+          <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
             {t('Staked')}
           </Typography>
-          <Typography color='text.highlight' letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='25%'>
+          <Typography color={color} letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='25%'>
             {t('Percent')}
           </Typography>
         </Container>
@@ -213,7 +197,7 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
                   <FormatBalance2
                     decimals={[decimal ?? 0]}
                     style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
-                    tokenColor={theme.palette.text.highlight}
+                    tokenColor={color}
                     tokens={[token ?? '']}
                     value={isHexToBn(member.member.points.toString())}
                   />
@@ -235,26 +219,27 @@ const PoolMembers = ({ genesisHash, members, totalStaked }: PoolMembersProps) =>
 interface PoolRewardProps {
   genesisHash: string | undefined;
   totalPoolReward: string;
+  totalPoolRewardAsFiat: number;
 }
 
-const PoolReward = ({ genesisHash, totalPoolReward }: PoolRewardProps) => {
+export const PoolReward = ({ genesisHash, totalPoolReward, totalPoolRewardAsFiat }: PoolRewardProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isExtension = useIsExtensionPopup();
 
-  const price = useTokenPriceBySymbol(token ?? '', genesisHash ?? '');
-  const fiatBalance = useMemo(() => calcPrice(price.price, isHexToBn(totalPoolReward) ?? BN_ZERO, decimal ?? 0), [decimal, price?.price, totalPoolReward]);
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', gap: '18px', p: '12px', width: '100%' }}>
-      <Typography color='text.highlight' letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '18px', p: '12px', width: '100%' }}>
+      <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
         {t('Pool Claimable Reward')}
       </Typography>
       <CryptoFiatBalance
         cryptoBalance={isHexToBn(totalPoolReward)}
-        cryptoProps={{ style: { ...theme.typography['B-4'] }, tokenColor: theme.palette.text.highlight }}
+        cryptoProps={{ style: { ...theme.typography['B-4'] }, tokenColor: color }}
         decimal={decimal ?? 0}
-        fiatBalance={fiatBalance}
+        fiatBalance={totalPoolRewardAsFiat}
         fiatProps={{ decimalColor: theme.palette.text.primary }}
         style={{
           alignItems: 'start',
@@ -278,8 +263,11 @@ interface CollapseSectionProp {
   sideText?: string;
 }
 
-const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, sideText, title }: CollapseSectionProp) => {
+export const CollapseSection = memo(function CollapseSectionMemo ({ TitleIcon, children, notShow, onClick, open, sideText, title }: CollapseSectionProp) {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
+
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
     <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: '#060518', borderRadius: '14px', display: notShow ? 'none' : 'block', p: '4px' }}>
@@ -288,20 +276,20 @@ const CollapseSection = ({ TitleIcon, children, notShow, onClick, open, sideText
         <Typography color={open ? '#596AFF' : theme.palette.text.primary} sx={{ transition: 'all 150ms ease-out', width: 'fit-content' }} variant='B-2'>
           {title}
         </Typography>
-        <ArrowDown2 color={open ? '#596AFF' : theme.palette.text.highlight} size='17' style={{ rotate: open ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
+        <ArrowDown2 color={open ? '#596AFF' : color} size='17' style={{ rotate: open ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
         {sideText &&
           <Grid container item sx={{ alignItems: 'center', justifyContent: 'flex-end' }} xs>
-            <Typography color='text.highlight' sx={{ bgcolor: '#809ACB33', borderRadius: '8px', p: '2px 3px' }} variant='B-4'>
+            <Typography color={color} sx={{ bgcolor: isExtension ? '#809ACB33' : '#2D1E4A', borderRadius: '8px', p: '2px 3px' }} variant='B-4'>
               {sideText}
             </Typography>
           </Grid>}
       </Container>
-      <Stack direction='column' sx={{ bgcolor: '#222540A6', borderRadius: '10px', position: 'relative' }}>
+      <Stack direction='column' sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', position: 'relative' }}>
         {children}
       </Stack>
     </Collapse>
   );
-};
+});
 
 interface RoleItemProps {
   role: string;
@@ -309,9 +297,13 @@ interface RoleItemProps {
   genesisHash: string | undefined;
 }
 
-const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
+export const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
+  const isExtension = useIsExtensionPopup();
+
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '18px' }}>
@@ -332,7 +324,7 @@ const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
           underline='none'
         >
           <Subscan
-            color='#809ACB'
+            color={color}
           />
         </Link>
       </Grid>
@@ -348,39 +340,18 @@ interface PoolDetailProps {
   openMenu?: boolean;
 }
 
-type CollapseState = Record<string, boolean>;
-
 export default function PoolDetail ({ comprehensive, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const collapseReducer = useCallback((state: CollapseState, action: { type: string }): CollapseState => ({
-    ...state,
-    [action.type]: !state[action.type]
-  }), []);
-
-  const [collapse, dispatchCollapse] = useReducer(collapseReducer, { Ids: false, Members: false, Rewards: false, Roles: false });
-
-  const commission = useMemo(() => {
-    const maybeCommission = poolDetail?.bondedPool?.commission?.current?.isSome ? poolDetail.bondedPool.commission.current.value[0] : 0;
-
-    return Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
-  }, [poolDetail?.bondedPool?.commission]);
-
-  const roles = useMemo(() => ({
-    bouncer: poolDetail?.bondedPool?.roles.bouncer?.toString(),
-    depositor: poolDetail?.bondedPool?.roles.depositor?.toString(),
-    nominator: poolDetail?.bondedPool?.roles.nominator?.toString(),
-    root: poolDetail?.bondedPool?.roles.root?.toString()
-  }), [poolDetail]);
-
-  const ids = useMemo(() => ({
-    'reward ID': poolDetail?.accounts?.rewardId.toString() ?? unwrapRewardAccount(poolDetail?.stashIdAccount?.rewardDestination?.toString()),
-    'stash ID': poolDetail?.accounts?.stashId.toString() ?? poolDetail?.stashIdAccount?.accountId.toString()
-  }), [poolDetail]);
-
-  const handleCollapses = useCallback((type: string) => () => dispatchCollapse({ type }), []);
+  const { collapse,
+    commission,
+    handleCollapses,
+    ids,
+    poolStatus,
+    roles,
+    totalPoolRewardAsFiat } = usePoolDetail(poolDetail, genesisHash);
 
   return (
     <Dialog
@@ -422,6 +393,7 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
               <PoolIdentityDetail
                 genesisHash={genesisHash}
                 poolDetail={poolDetail}
+                poolStatus={poolStatus}
               />
               <GradientDivider style={{ mb: '12px' }} />
               <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
@@ -506,7 +478,8 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
                 >
                   <PoolReward
                     genesisHash={genesisHash}
-                    totalPoolReward={poolDetail.rewardClaimable?.toString() ?? '0'}
+                    totalPoolReward={poolDetail?.rewardClaimable?.toString() ?? '0'}
+                    totalPoolRewardAsFiat={totalPoolRewardAsFiat}
                   />
                 </CollapseSection>
               </Stack>
