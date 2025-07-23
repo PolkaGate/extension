@@ -46,7 +46,7 @@ function StakingPositions () {
 
   return (
     <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-      <PositionsToolbar dispatch={dispatch} state={state} />
+      <PositionsToolbar dispatch={dispatch} earningsCount={0} positionsCount={positions?.length} state={state} />
       <Stack direction='column' ref={containerRef} sx={{ gap: '4px', maxHeight: '250px', overflow: 'auto', width: '100%' }}>
         {filteredToken?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }, index) => {
           const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;

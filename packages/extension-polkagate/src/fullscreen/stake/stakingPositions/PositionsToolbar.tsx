@@ -42,9 +42,11 @@ const TabItem = ({ count, isSelected, selector, text }: TabItemProps) => {
 interface PositionsEarningsProps {
   setter: (selectedTab: POSITION_TABS) => () => void;
   selectedTab: POSITION_TABS;
+  positionsCount: number | undefined;
+  earningsCount: number | undefined;
 }
 
-const PositionsEarnings = ({ selectedTab, setter }: PositionsEarningsProps) => {
+const PositionsEarnings = ({ earningsCount, positionsCount, selectedTab, setter }: PositionsEarningsProps) => {
   const { t } = useTranslation();
 
   const isSelected = useCallback((tabName: POSITION_TABS) => tabName === selectedTab, [selectedTab]);
@@ -52,13 +54,13 @@ const PositionsEarnings = ({ selectedTab, setter }: PositionsEarningsProps) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '12px', display: 'flex', flexDirection: 'row', gap: '4px', height: '44px', m: 0, p: '4px', position: 'relative', width: 'fit-content' }}>
       <TabItem
-        count={0}
+        count={positionsCount ?? 0}
         isSelected={isSelected(POSITION_TABS.POSITIONS)}
         selector={setter(POSITION_TABS.POSITIONS)}
         text={t('Positions')}
       />
       <TabItem
-        count={1}
+        count={earningsCount ?? 0}
         isSelected={isSelected(POSITION_TABS.EARNING)}
         selector={setter(POSITION_TABS.EARNING)}
         text={t('Earning')}
@@ -71,9 +73,11 @@ const PositionsEarnings = ({ selectedTab, setter }: PositionsEarningsProps) => {
 interface Props {
   dispatch: React.Dispatch<PositionsAction>;
   state: PositionsState;
+  positionsCount: number | undefined;
+  earningsCount: number | undefined;
 }
 
-function PositionsToolbar ({ dispatch, state }: Props) {
+function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -90,7 +94,7 @@ function PositionsToolbar ({ dispatch, state }: Props) {
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '40px', p: '14px', width: '100%' }}>
-      <PositionsEarnings selectedTab={state.tab} setter={setter} />
+      <PositionsEarnings earningsCount={earningsCount} positionsCount={positionsCount} selectedTab={state.tab} setter={setter} />
       <DropSelect
         displayContentType='iconOption'
         onChange={stakingTypeHandler}
