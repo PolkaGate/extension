@@ -146,15 +146,31 @@ interface Props {
   address: string;
   transactionDetail: TransactionDetail;
   genesisHash: string | undefined;
+  close?: () => void
 }
 
-export default function Confirmation2 ({ address, genesisHash, transactionDetail }: Props) {
+export default function Confirmation2 ({ address, close, genesisHash, transactionDetail }: Props) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const stakingType = pathname.includes('pool') ? '/pool/' : '/solo/';
+  const { redirectPath, redirectToSamePath } = useMemo(() => {
+    if (!genesisHash) {
+      return {
+        redirectPath: '',
+        redirectToSamePath: false
+      };
+    }
+
+    const stakingPath = pathname.startsWith('/pool/') ? 'pool' : 'solo';
+    const redirectPath = `/${stakingPath}/${genesisHash}`;
+
+    return {
+      redirectPath,
+      redirectToSamePath: pathname === redirectPath
+    };
+  }, [pathname, genesisHash]);
 
   const goToHistory = useCallback(() => {
     updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
@@ -162,7 +178,10 @@ export default function Confirmation2 ({ address, genesisHash, transactionDetail
       .catch(console.error);
   }, [address, genesisHash, navigate]);
 
-  const backToStakingHome = useCallback(() => navigate(stakingType + genesisHash, { replace: true }) as void, [genesisHash, navigate, stakingType]);
+  const backToStakingHome = useCallback(() =>
+    close && redirectToSamePath ? close() : navigate(redirectPath, { replace: true })
+  ,
+  [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;
