@@ -1,16 +1,20 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance, Prices } from '../../../util/types';
+import type { FetchedBalance, PositionInfo, Prices } from '../../../util/types';
 
 import { Stack } from '@mui/material';
-import React, { memo, useCallback, useMemo, useReducer, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 
 import { FadeOnScroll } from '../../../components';
 import { useAccountAssets, useAccountSelectedChain, usePrices, useSelectedAccount } from '../../../hooks';
-import { TEST_NETS } from '../../../util/constants';
-import { POSITION_TABS, positionsInitialState, positionsReducer, type PositionsState } from '../util/utils';
+import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS, TEST_NETS } from '../../../util/constants';
+import { fetchStaking } from '../../../util/fetchStaking';
+import getChain from '../../../util/getChain';
+import { sanitizeChainName } from '../../../util/utils';
+import { type PopupOpener, POSITION_TABS, positionsInitialState, positionsReducer, type PositionsState } from '../util/utils';
+import EarningItem from './EarningItem';
 import PositionItem from './PositionItem';
 import PositionsToolbar from './PositionsToolbar';
 
@@ -60,7 +64,40 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
   </>
 );
 
-function StakingPositions () {
+interface EarningOptionsProps {
+  earningItems: PositionInfo[] | undefined;
+  rates: Record<string, number> | undefined;
+  address: string | undefined;
+  popupOpener: PopupOpener;
+}
+
+const EarningOptions = ({ address, earningItems, popupOpener, rates }: EarningOptionsProps) => (
+  <>
+    {earningItems?.map((token, index) => {
+      const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
+      const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
+
+      return (
+        <EarningItem
+          address={address}
+          availableBalance={availableBalance}
+          decimal={decimal}
+          genesisHash={genesisHash}
+          key={index}
+          popupOpener={popupOpener}
+          rate={info.rate}
+          token={tokenSymbol}
+        />
+      );
+    })}
+  </>
+);
+
+interface Props {
+  popupOpener: PopupOpener;
+}
+
+function StakingPositions ({ popupOpener }: Props) {
   const selectedAccount = useSelectedAccount();
   const containerRef = useRef(null);
   const accountAssets = useAccountAssets(selectedAccount?.address);
@@ -69,8 +106,19 @@ function StakingPositions () {
   const pricesInCurrency = usePrices();
 
   const [state, dispatch] = useReducer(positionsReducer, positionsInitialState);
+  const [rates, setRates] = useState<Record<string, number> | undefined>(undefined);
 
   const isSelected = useCallback((genesis: string, stakingType: string) => selectedGenesisHash === genesis && pathname.includes(stakingType), [pathname, selectedGenesisHash]);
+
+  useEffect(() => {
+    if (rates || state.tab !== POSITION_TABS.EARNING) {
+      return;
+    }
+
+    fetchStaking().then((res) => {
+      setRates(res.rates);
+    }).catch(console.error);
+  }, [rates, state.tab]);
 
   const positions = useMemo(() =>
     accountAssets?.filter(({ pooledBalance, soloTotal }) => (soloTotal && !soloTotal.isZero()) || (pooledBalance && !pooledBalance.isZero()))
@@ -96,6 +144,40 @@ function StakingPositions () {
     });
   }, [positions, state.searchQuery, state.tab]);
 
+  const stakingTokens = useMemo(() => {
+    if (state.tab !== POSITION_TABS.EARNING) {
+      return undefined;
+    }
+
+    return STAKING_CHAINS.map((genesisHash) => {
+      const chain = getChain(genesisHash);
+
+      if (!chain) {
+        return undefined;
+      }
+
+      const nativeTokenBalance = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && assetId === NATIVE_TOKEN_ASSET_ID);
+
+      if ( // filter staked tokens
+        (nativeTokenBalance?.soloTotal && !nativeTokenBalance?.soloTotal.isZero()) ||
+        (nativeTokenBalance?.pooledBalance && !nativeTokenBalance?.pooledBalance.isZero())) {
+        return undefined;
+      }
+
+      return {
+        ...chain,
+        ...nativeTokenBalance,
+        chainName: sanitizeChainName(chain?.name || '') ?? 'Unknown'
+      } as unknown as PositionInfo;
+    }).filter((item) => !!item);
+  }, [accountAssets, state.tab]);
+
+  const earningItems = useMemo(() => {
+    return state.searchQuery
+      ? stakingTokens?.filter((item) => item?.tokenSymbol?.toLowerCase().includes(state.searchQuery))
+      : stakingTokens;
+  }, [stakingTokens, state.searchQuery]);
+
   return (
     <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
       <PositionsToolbar dispatch={dispatch} earningsCount={0} positionsCount={positions?.length} state={state} />
@@ -108,7 +190,13 @@ function StakingPositions () {
               pricesInCurrency={pricesInCurrency}
               state={state}
             />)
-          : <></>
+          : (
+            <EarningOptions
+              address={selectedAccount?.address}
+              earningItems={earningItems}
+              popupOpener={popupOpener}
+              rates={rates}
+            />)
         }
       </Stack>
       <FadeOnScroll containerRef={containerRef} height='70px' ratio={0.2} style={{ borderRadius: '12px' }} />

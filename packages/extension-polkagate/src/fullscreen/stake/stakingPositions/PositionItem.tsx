@@ -19,7 +19,7 @@ interface TokenInfoProps {
   genesisHash: string;
 }
 
-const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
+export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
   const { chainName, token } = useChainInfo(genesisHash, true);
 
   return (
@@ -69,7 +69,7 @@ const Staked = ({ balance, decimal, price, token }: StakedProps) => {
   );
 };
 
-const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
+export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
   const { displayName } = useChainInfo(genesisHash, true);
 
   return (

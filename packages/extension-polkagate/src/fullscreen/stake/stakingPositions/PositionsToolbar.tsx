@@ -95,17 +95,18 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '40px', p: '14px', width: '100%' }}>
       <PositionsEarnings earningsCount={earningsCount} positionsCount={positionsCount} selectedTab={state.tab} setter={setter} />
-      <DropSelect
-        displayContentType='iconOption'
-        onChange={stakingTypeHandler}
-        options={positionOptions}
-        style={{
-          minWidth: '220px',
-          width: 'fit-content'
-        }}
-        textVariant={'B-4' as Variant}
-        value={state.stakingType}
-      />
+      {state.tab === POSITION_TABS.POSITIONS && (
+        <DropSelect
+          displayContentType='iconOption'
+          onChange={stakingTypeHandler}
+          options={positionOptions}
+          style={{
+            minWidth: '220px',
+            width: 'fit-content'
+          }}
+          textVariant={'B-4' as Variant}
+          value={state.stakingType}
+        />)}
       <Search
         defaultValue={state.searchQuery}
         inputColor='#BEAAD8'
@@ -120,7 +121,7 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
             height: 'fit-content',
             p: '6px'
           },
-          width: '195px'
+          width: state.tab === POSITION_TABS.POSITIONS ? '195px' : '300px'
         }}
       />
       <Grid container item onClick={toggleTestnets} sx={{ alignItems: 'center', cursor: 'pointer', gap: '6px', width: 'fit-content' }}>
