@@ -55,7 +55,7 @@ export default function InputPage({ address, inputs, setInputs, setStep }: Props
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-    , [stakingAccount]);
+  , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {

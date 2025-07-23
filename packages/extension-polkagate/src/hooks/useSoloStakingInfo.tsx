@@ -185,7 +185,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   const balances = useBalances2(address, genesisHash, refresh, setRefresh);
   const currentEra = useCurrentEraIndex2(genesisHash);
 
-  const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo>();
+  const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo | undefined>(undefined);
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
 
   // Tracks when we need to save to storage
@@ -194,6 +194,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   const fetchingFlag = useRef(true);
 
   const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
+
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const rewards = useStakingRewards2(chainName, stakingAccount); // total reward
   const stakingConsts = useStakingConsts2(genesisHash);

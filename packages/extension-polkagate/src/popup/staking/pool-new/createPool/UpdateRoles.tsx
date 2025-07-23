@@ -3,10 +3,11 @@
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft2, ArrowCircleRight2, Mirror } from 'iconsax-react';
-import React, { type SetStateAction, useCallback, useState } from 'react';
+import React, { type SetStateAction, useCallback, useMemo, useState } from 'react';
 
-import { AddressInput, ExtensionPopup } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { AddressInput } from '../../../../components';
+import { useIsExtensionPopup, useTranslation } from '../../../../hooks';
+import { SharePopup } from '../../../../partials';
 import PolkaGateIdenticon from '../../../../style/PolkaGateIdenticon';
 import { toShortAddress } from '../../../../util/utils';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -27,9 +28,10 @@ interface ChangeRolesProp {
   openMenu: boolean;
   setRoles: React.Dispatch<Partial<RolesState>>;
   roles: RolesState;
+  color: string;
 }
 
-const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp) => {
+const ChangeRoles = ({ color, handleClose, openMenu, roles, setRoles }: ChangeRolesProp) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -46,21 +48,23 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
   }, [setRoles]);
 
   return (
-    <ExtensionPopup
-      TitleIcon={Mirror}
-      darkBackground
-      handleClose={handleClose}
-      iconColor={theme.palette.text.highlight}
-      iconSize={26}
-      openMenu={openMenu}
-      style={{ '> div#container': { pt: '10px' } }}
+    <SharePopup
+      onClose={handleClose}
+      open={openMenu}
+      popupProps={{
+        TitleIcon: Mirror,
+        darkBackground: true,
+        iconColor: theme.palette.text.highlight,
+        iconSize: 26,
+        style: { '> div#container': { pt: '10px' } },
+        withoutTopBorder: true
+      }}
       title={t('Update roles')}
-      withoutTopBorder
     >
       <Stack direction='column' sx={{ gap: '8px', height: '440px', position: 'relative', pt: '25px', width: '100%' }}>
         <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '12px 15px' }}>
           <Container disableGutters sx={{ display: 'flex', gap: '6px' }}>
-            <ArrowCircleRight2 color={theme.palette.text.highlight} size='22' variant='Bulk' />
+            <ArrowCircleRight2 color={color} size='22' variant='Bulk' />
             <Typography color='text.primary' variant='B-1'>
               {t('Nominator')}
             </Typography>
@@ -74,7 +78,7 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
         </Stack>
         <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '12px 15px' }}>
           <Container disableGutters sx={{ display: 'flex', gap: '6px' }}>
-            <ArrowCircleLeft2 color={theme.palette.text.highlight} size='22' variant='Bulk' />
+            <ArrowCircleLeft2 color={color} size='22' variant='Bulk' />
             <Typography color='text.primary' variant='B-1'>
               {t('Bouncer')}
             </Typography>
@@ -99,7 +103,7 @@ const ChangeRoles = ({ handleClose, openMenu, roles, setRoles }: ChangeRolesProp
           text={t('Update')}
         />
       </Stack>
-    </ExtensionPopup>
+    </SharePopup>
   );
 };
 
@@ -112,23 +116,26 @@ interface Props {
 export default function UpdateRoles ({ address, roles, setRoles }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
+
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   const toggleMenu = useCallback(() => setOpenMenu((isOpen) => !isOpen), []);
 
   return (
     <>
-      <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', gap: '8px', p: '15px', pb: '5px', pr: '5px' }}>
+      <Stack direction='column' sx={{ bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', gap: '8px', p: '15px', pb: isExtension ? '5px' : '15px', pr: '5px' }}>
         <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '6px' }}>
-          <Mirror color={theme.palette.text.highlight} size='22' variant='Bulk' />
+          <Mirror color={color} size='22' variant='Bulk' />
           <Typography color='text.primary' variant='B-1'>
             {t('Roles')}
           </Typography>
         </Container>
-        <Typography color='text.highlight' textAlign='left' variant='B-4'>
+        <Typography color={isExtension ? 'text.highlight' : 'text.secondary'} textAlign='left' variant='B-4'>
           {t('All the roles (Depositor, Root, Nominator, and Bouncer) are set the following ID by default although you can update the Nominator and Bouncer by clicking')}
-          <Typography color='text.highlight' onClick={toggleMenu} sx={{ bgcolor: '#809ACB26', borderRadius: '6px', cursor: 'pointer', ml: '4px', p: '2px 4px' }} variant='B-5'>
+          <Typography color={color} onClick={toggleMenu} sx={{ bgcolor: isExtension ? '#809ACB26' : '#2D1E4A', borderRadius: '6px', cursor: 'pointer', ml: '4px', p: '2px 4px' }} variant='B-5'>
             {t('Update roles')}
           </Typography>
         </Typography>
@@ -137,12 +144,13 @@ export default function UpdateRoles ({ address, roles, setRoles }: Props) {
             address={address}
             size={24}
           />
-          <Typography color='text.highlight' variant='B-4'>
+          <Typography color={color} variant='B-4'>
             {toShortAddress(address, 8)}
           </Typography>
         </Container>
       </Stack>
       <ChangeRoles
+        color={color}
         handleClose={toggleMenu}
         openMenu={openMenu}
         roles={roles}

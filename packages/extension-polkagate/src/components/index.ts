@@ -40,6 +40,7 @@ export { default as Convictions } from './Convictions';
 export { default as CopyAddressButton } from './CopyAddressButton';
 export { default as CryptoFiatBalance } from './CryptoFiatBalance';
 export { default as DecisionButtons } from './DecisionButtons';
+export { default as DetailPanel } from './DetailPanel';
 export { default as DisplayInfo } from './DisplayInfo';
 export { default as Dots } from './Dots';
 export { default as DropContent } from './DropContent';

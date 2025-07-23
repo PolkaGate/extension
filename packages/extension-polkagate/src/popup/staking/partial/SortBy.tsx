@@ -9,8 +9,9 @@ import { ClickAwayListener, Container, Grid, Popover, styled, type SxProps, type
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
 
-import { useIsHovered, useTranslation } from '../../../hooks/index';
-import { SORTED_BY } from './PoolFilter';
+import { useIsExtensionPopup, useIsHovered, useTranslation } from '../../../hooks';
+
+// This code is used in both extension and fullscreen modes, so the UI design varies between the two.
 
 const DropContentContainer = styled(Grid)(() => ({
   background: '#05091C',
@@ -31,8 +32,8 @@ const DropContentContainer = styled(Grid)(() => ({
 
 interface TabProps {
   label: string;
-  sortBy: SORTED_BY;
-  setSortBy: React.Dispatch<React.SetStateAction<SORTED_BY>>;
+  sortBy: string;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
@@ -43,7 +44,7 @@ function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
   const isSelected = sortBy.toLowerCase() === label.toLowerCase();
 
   const onClick = useCallback(() => {
-    setSortBy(label as SORTED_BY);
+    setSortBy(label);
   }, [label, setSortBy]);
 
   return (
@@ -59,11 +60,12 @@ function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
 interface DropContentProps {
   containerRef: React.RefObject<HTMLDivElement>;
   open: boolean;
-  sortBy: SORTED_BY;
-  setSortBy: React.Dispatch<React.SetStateAction<SORTED_BY>>;
+  sortBy: string;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  sortOptions: string[];
 }
 
-function DropContent ({ containerRef, open, setSortBy, sortBy }: DropContentProps) {
+function DropContent ({ containerRef, open, setSortBy, sortBy, sortOptions }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -91,7 +93,7 @@ function DropContent ({ containerRef, open, setSortBy, sortBy }: DropContentProp
       }}
     >
       <DropContentContainer container direction='column' item>
-        {Object.values(SORTED_BY).map((value, index) => (
+        {sortOptions.map((value, index) => (
           <Tab
             key={index}
             label={value}
@@ -105,15 +107,18 @@ function DropContent ({ containerRef, open, setSortBy, sortBy }: DropContentProp
 }
 
 interface Props {
-  sortBy: SORTED_BY;
-  setSortBy: React.Dispatch<React.SetStateAction<SORTED_BY>>;
+  sortBy: string;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
   style?: SxProps<Theme>;
+  sortOptions: string[];
+  SortIcon?: React.ReactNode;
 }
 
-export default function SortBy ({ setSortBy, sortBy, style }: Props) {
+export default function SortBy ({ SortIcon, setSortBy, sortBy, sortOptions, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
+  const isExtension = useIsExtensionPopup();
 
   const [openMenu, setOpenMenu] = React.useState<boolean>(false);
 
@@ -124,12 +129,12 @@ export default function SortBy ({ setSortBy, sortBy, style }: Props) {
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
         <Container disableGutters ref={containerRef} sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', ...style }}>
-          <FilterListIcon sx={{ color: 'text.highlight', fontSize: '26px' }} />
+          {SortIcon || <FilterListIcon sx={{ color: 'text.highlight', fontSize: '26px' }} />}
           <Container disableGutters onClick={toggleOpen} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px' }}>
-            <Typography color='text.highlight' fontSize='13px' fontWeight={700}>
+            <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} fontSize={isExtension ? '13px' : '12px'} fontWeight={isExtension ? 700 : 500}>
               {t('Sort by')}
             </Typography>
-            <Typography color='text.primary' variant='B-2'>
+            <Typography color='text.primary' fontSize={isExtension ? undefined : '12px'} fontWeight={isExtension ? undefined : 500} variant='B-2'>
               {sortBy}
             </Typography>
             <ArrowDown2 color={theme.palette.text.primary} size='12' variant='Bold' />
@@ -141,6 +146,7 @@ export default function SortBy ({ setSortBy, sortBy, style }: Props) {
         open={openMenu}
         setSortBy={setSortBy}
         sortBy={sortBy}
+        sortOptions={sortOptions}
       />
     </>
   );

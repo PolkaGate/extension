@@ -23,6 +23,10 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
   const savedSelectedChain = useAccountSelectedChain(address);
 
   const updatePathWithNewAddress = useCallback((newAddress: string) => {
+    if (location.pathname.includes('/fullscreen-stake/')) {
+      return;
+    }
+
     const pathParts = location.pathname.split('/');
 
     const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p));
@@ -43,7 +47,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
 
     const newPath = pathParts.join('/');
 
-    navigate(newPath);
+    navigate(newPath) as void;
   }, [location.pathname, navigate, savedSelectedChain]);
 
   const handleExit = useCallback(() => {

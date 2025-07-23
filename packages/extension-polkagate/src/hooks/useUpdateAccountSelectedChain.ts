@@ -25,6 +25,10 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
   const navigate = useNavigate();
 
   const changePath = useCallback(async () => {
+    if (location.pathname.includes('/fullscreen-stake/')) {
+      return;
+    }
+
     const pathParts = location.pathname.split('/');
 
     // Validate expected path format

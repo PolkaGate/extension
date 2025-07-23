@@ -4,7 +4,7 @@
 import type { PoolInfo } from '../../../util/types';
 
 import { Box } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { logoPink } from '@polkadot/extension-polkagate/src/assets/logos/index';
 
@@ -18,19 +18,18 @@ interface Props{
 export const PoolIdenticon = ({ poolInfo, size = 24 }: Props) => {
   const isPolkagate = poolInfo?.metadata?.toLocaleLowerCase().includes('polkagate');
 
-  return (
-    <>
-      {isPolkagate
-        ? <Box
+  return useMemo(() => (
+    isPolkagate
+      ? (
+        <Box
           component='img'
           src={logoPink as string}
           sx={{ height: size, width: size }}
-        />
-        : <PolkaGateIdenticon
+        />)
+      : (
+        <PolkaGateIdenticon
           address={poolInfo?.stashIdAccount?.accountId.toString() ?? ''}
           size={size}
-        />
-      }
-    </>
-  );
+        />)
+  ), [isPolkagate, poolInfo?.stashIdAccount?.accountId, size]);
 };

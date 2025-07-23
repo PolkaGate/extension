@@ -1,0 +1,79 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
+
+import { Stack } from '@mui/material';
+import { Menu } from 'iconsax-react';
+import React, { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router';
+
+import { noop } from '@polkadot/util';
+
+import { GradientButton } from '../../../../components';
+import { useTranslation, useValidatorsInformation } from '../../../../hooks';
+import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
+import TableToolbar from '../../partials/TableToolbar';
+import { getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
+import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
+
+interface Props {
+  genesisHash: string | undefined;
+  stakingInfo: SoloStakingInfo | undefined;
+}
+
+export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const validatorsInfo = useValidatorsInformation(genesisHash);
+
+  const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
+  const [search, setSearch] = React.useState<string>('');
+
+  const nominatedValidatorsIds = useMemo(() => getNominatedValidatorsIds(stakingInfo), [stakingInfo]);
+  const nominatedValidatorsInformation = useMemo(() => getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds), [nominatedValidatorsIds, validatorsInfo]);
+
+  const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
+  const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);
+
+  const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
+  const isLoaded = useMemo(() => sortedAndFilteredValidators && sortedAndFilteredValidators.length > 0, [sortedAndFilteredValidators]);
+  const nothingToShow = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
+
+  const onSearch = useCallback((input: string) => {
+    setSearch(input);
+  }, []);
+
+  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash, navigate]);
+
+  return (
+    <Stack direction='column' sx={{ width: '100%' }}>
+      <TableToolbar
+        onSearch={onSearch}
+        setSortBy={setSortConfig}
+        sortBy={sortConfig}
+        sortByObject={VALIDATORS_SORTED_BY}
+      >
+        <GradientButton
+          onClick={openValidatorManagement}
+          startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
+          style={{ height: '44px', padding: 0, width: '180px' }}
+          text={t('Manage Validators')}
+        />
+      </TableToolbar>
+      <Stack direction='column' sx={{ gap: '2px', maxHeight: '270px', overflowY: 'auto', width: '100%' }}>
+        {isLoaded &&
+          sortedAndFilteredValidators?.map((validator, index) => (
+            <ValidatorInfo
+              genesisHash={genesisHash}
+              key={index}
+              onDetailClick={noop}
+              validatorInfo={validator}
+            />
+          ))}
+        {isLoading && Array.from({ length: 10 }).map((_, index) => (<UndefinedItem key={index} />))}
+        {nothingToShow && <EmptyNomination />}
+      </Stack>
+    </Stack>
+  );
+}

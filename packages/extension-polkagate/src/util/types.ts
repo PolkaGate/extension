@@ -153,7 +153,7 @@ export interface TxResult {
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
-  accounts?: string[];
+  accounts?: string[]; // used for proxy management
   action: string; // send, solo staking, pool staking, convictionvoting, ...
   amount?: string;
   chain?: Chain | null;
@@ -975,3 +975,5 @@ export interface PositionInfo extends FetchedBalance, Chain {
   rate?: number;
   // You can add additional properties here if needed
 }
+
+export type RewardDestinationType = 'Others' | 'Staked' | undefined;

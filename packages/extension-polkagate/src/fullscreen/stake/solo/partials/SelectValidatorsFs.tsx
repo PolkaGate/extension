@@ -51,14 +51,14 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
   );
 };
 
-export default function SelectValidators({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
+export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const allValidatorsInfo = useValidators(address);
   const selectedBestValidators = useValidatorSuggestion(address);
 
-  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
+  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo?.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked as unknown as boolean === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
 
@@ -211,9 +211,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
   return (
     <>
       {allValidators === undefined || !nominatedValidatorsIds === undefined
-        ? <Waiting
-          height={_tableHeight - 250}
-        />
+        ? <Waiting height={_tableHeight - 250} />
         : <>
           <Grid container sx={{ justifyContent: 'flex-start' }}>
             <Grid alignItems='center' container item ml='2%' pr='3%' width='29%'>

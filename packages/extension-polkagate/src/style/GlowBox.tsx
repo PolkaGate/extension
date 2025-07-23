@@ -4,7 +4,7 @@
 import { Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
-import { useIsBlueish, useIsDark, useIsExtensionPopup } from '../hooks';
+import { useIsDark, useIsExtensionPopup } from '../hooks';
 import { GradientBorder, GradientDivider } from '.';
 
 const GlowBoxContainer = styled(Container)(() => ({
@@ -61,9 +61,20 @@ const FadeOutFs = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
   width: '100%'
 }));
 
-function GlowDivider ({ isDark, placement, staking }: { staking: boolean; isDark: boolean; placement: 'right' | 'left'; }): React.ReactElement {
+interface GlowDividerProps {
+  staking: boolean;
+  shortSideDividers: boolean;
+  isDark: boolean;
+  placement: 'right' | 'left';
+}
+
+function GlowDivider ({ isDark, placement, shortSideDividers, staking }: GlowDividerProps): React.ReactElement {
   const stakingStyle = staking
     ? { background: 'linear-gradient(180deg, rgba(16, 16, 25, 0.1) 0%, rgba(60, 196, 255, 0.5) 50.06%, transparent 100%)' }
+    : {};
+
+  const shortSideDividersStyle = shortSideDividers
+    ? { bottom: '45px', height: '50%' }
     : {};
 
   return (
@@ -79,7 +90,8 @@ function GlowDivider ({ isDark, placement, staking }: { staking: boolean; isDark
         top: 0,
         width: '2px',
         zIndex: 1,
-        ...stakingStyle
+        ...stakingStyle,
+        ...shortSideDividersStyle
       }}
     />
   );
@@ -89,14 +101,15 @@ interface Props {
   showTopBorder?: boolean;
   children: React.ReactNode;
   style?: SxProps<Theme>;
+  isBlueish?: boolean;
+  shortSideDividers?: boolean; // Enables shorter side dividers used specifically in fullscreen mode.
 }
 
-function GlowBox ({ children, showTopBorder = true, style }: Props): React.ReactElement {
+function GlowBox ({ children, isBlueish = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
-  const staking = useIsBlueish();
 
-  const stakingStyle = staking
+  const stakingStyle = isBlueish
     ? { background: 'linear-gradient(90deg, #1D0939 0%, #3CC4FF 50.06%, rgba(29, 9, 57, 0) 100%)' }
     : {};
 
@@ -106,14 +119,14 @@ function GlowBox ({ children, showTopBorder = true, style }: Props): React.React
       <GlowBoxContainer disableGutters>
         {showTopBorder &&
           <GradientBorder style={{ width: '311px', ...stakingStyle }} type='pinkish' />}
-        <GlowDivider isDark={isDark} placement='left' staking={staking} />
-        <GlowDivider isDark={isDark} placement='right' staking={staking} />
+        <GlowDivider isDark={isDark} placement='left' shortSideDividers={shortSideDividers} staking={isBlueish} />
+        <GlowDivider isDark={isDark} placement='right' shortSideDividers={shortSideDividers} staking={isBlueish} />
         {isDark &&
-          <GlowBall staking={staking} />
+          <GlowBall staking={isBlueish} />
         }
         {isExtension
           ? <>
-            {!staking && <Fade />}
+            {!isBlueish && <Fade />}
             <FadeOut isDark={isDark} />
           </>
           : <FadeOutFs isDark={isDark} />

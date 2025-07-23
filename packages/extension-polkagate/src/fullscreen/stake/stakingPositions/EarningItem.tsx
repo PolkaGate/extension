@@ -1,0 +1,121 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { Container, Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Add, PercentageCircle } from 'iconsax-react';
+import React, { memo, useCallback, useMemo } from 'react';
+
+import { type BN } from '@polkadot/util';
+
+import { FormatBalance2 } from '../../../components';
+import { useTranslation } from '../../../hooks';
+import { TestnetBadge } from '../../../popup/staking/StakingPositions';
+import { updateStorage } from '../../../util';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, TEST_NETS } from '../../../util/constants';
+import { type PopupOpener, StakingPopUps } from '../util/utils';
+import { ChainIdentifier, TokenInfo } from './PositionItem';
+
+interface StakedProps {
+  balance: BN;
+  decimal: number;
+  token: string;
+}
+
+const Staked = ({ balance, decimal, token }: StakedProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <Grid container item sx={{ alignItems: 'center', gap: '6px', justifyContent: 'flex-end', minWidth: '150px', width: 'fit-content' }}>
+      <Typography color='#AA83DC' variant='B-2'>
+        {t('Available')}:
+      </Typography>
+      {balance === undefined
+        ? (
+          <Skeleton
+            animation='wave'
+            height='16px'
+            sx={{ borderRadius: '10px', fontWeight: 'bold', maxWidth: '75px', transform: 'none', width: '100%' }}
+            variant='text'
+          />)
+        : (
+          <FormatBalance2
+            decimals={[decimal ?? 0]}
+            style={{
+              borderRadius: '9px',
+              color: theme.palette.text.secondary,
+              fontFamily: 'Inter',
+              fontSize: '16px',
+              fontWeight: 600,
+              width: 'max-content'
+            }}
+            tokens={[token ?? '']}
+            value={balance}
+          />)}
+    </Grid>
+  );
+};
+
+const YieldBadge = ({ rate }: { rate: number | undefined }) => {
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, p: '2px 6px', width: 'fit-content' }}>
+      <PercentageCircle color='#82FFA5' size='16' variant='Bold' />
+      <Grid container item sx={{ fontSize: '14px', fontWeight: 600, gap: '3px', width: 'fit-content' }}>
+        <span style={{ color: '#82FFA5' }}>up</span>
+        <span style={{ color: '#82FFA580' }}>to</span>
+        <span style={{ color: '#82FFA5' }}>{rate}%</span>
+        <span style={{ color: '#82FFA580' }}>per year</span>
+      </Grid>
+    </Container>
+  );
+};
+
+const StakeButton = ({ onClick }: { onClick: () => void }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '8px', cursor: 'pointer', gap: '6px', justifyContent: 'center', p: '8px', width: 'fit-content' }}>
+      <Typography color='#82FFA5' variant='B-2'>
+        {t('Stake')}
+      </Typography>
+      <Add color='#82FFA580' size='20' />
+    </Grid>
+  );
+};
+
+interface Props {
+  genesisHash: string;
+  availableBalance: BN;
+  decimal: number;
+  rate: number | undefined;
+  token: string;
+  address: string | undefined;
+  popupOpener: PopupOpener;
+}
+
+function EarningItem ({ address, availableBalance, decimal, genesisHash, popupOpener, rate, token }: Props) {
+  const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
+
+  const onStake = useCallback(() => {
+    if (!address) {
+      return;
+    }
+
+    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+      .then(() => popupOpener(StakingPopUps.EASY_STAKE)())
+      .catch(console.error);
+  }, [address, genesisHash, popupOpener]);
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+      <TokenInfo genesisHash={genesisHash} />
+      <Staked balance={availableBalance} decimal={decimal} token={token} />
+      <ChainIdentifier genesisHash={genesisHash} />
+      <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
+      <YieldBadge rate={rate} />
+      <StakeButton onClick={onStake} />
+    </Container>
+  );
+}
+
+export default memo(EarningItem);
