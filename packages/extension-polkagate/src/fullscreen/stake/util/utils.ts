@@ -150,3 +150,48 @@ export const sortingFunctions = {
     return nameA.localeCompare(nameB);
   }
 };
+
+export type StakingType = 'solo' | 'pool' | 'both';
+
+export enum POSITION_TABS {
+  POSITIONS = 'positions',
+  EARNING = 'earning'
+}
+
+export interface PositionsState {
+  stakingType: StakingType;
+  isTestnet: boolean;
+  searchQuery: string;
+  tab: POSITION_TABS;
+}
+
+export type PositionsAction =
+  | { type: 'SET_STAKING_TYPE'; payload: StakingType }
+  | { type: 'TOGGLE_TESTNET' }
+  | { type: 'RESET' }
+  | { type: 'SET_TAB', payload: POSITION_TABS }
+  | { type: 'SET_SEARCH_QUERY'; payload: string };
+
+export const positionsInitialState: PositionsState = {
+  isTestnet: false,
+  searchQuery: '',
+  stakingType: 'both',
+  tab: POSITION_TABS.POSITIONS
+};
+
+export function positionsReducer (state: PositionsState, action: PositionsAction): PositionsState {
+  switch (action.type) {
+    case 'SET_STAKING_TYPE':
+      return { ...state, stakingType: action.payload };
+    case 'TOGGLE_TESTNET':
+      return { ...state, isTestnet: !state.isTestnet };
+    case 'SET_SEARCH_QUERY':
+      return { ...state, searchQuery: action.payload };
+    case 'SET_TAB':
+      return { ...state, tab: action.payload };
+    case 'RESET':
+      return { ...positionsInitialState };
+    default:
+      return state;
+  }
+}

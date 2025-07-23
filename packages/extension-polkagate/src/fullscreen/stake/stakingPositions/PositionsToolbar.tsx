@@ -6,50 +6,14 @@ import type { AdvancedDropdownOption } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Category2, People, Profile } from 'iconsax-react';
-import React, { memo, useCallback, useMemo, useReducer, useState } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
 import { DropSelect, GradientSwitch } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import Search from '../../../popup/staking/components/Search';
-
-type StakingType = 'solo' | 'pool' | 'both';
-
-interface State {
-  stakingType: StakingType;
-  isTestnet: boolean;
-  searchQuery: string;
-}
-
-type Action =
-  | { type: 'SET_STAKING_TYPE'; payload: StakingType }
-  | { type: 'TOGGLE_TESTNET' }
-  | { type: 'SET_SEARCH_QUERY'; payload: string };
-
-const initialState: State = {
-  isTestnet: false,
-  searchQuery: '',
-  stakingType: 'both'
-};
-
-function reducer (state: State, action: Action): State {
-  switch (action.type) {
-    case 'SET_STAKING_TYPE':
-      return { ...state, stakingType: action.payload };
-    case 'TOGGLE_TESTNET':
-      return { ...state, isTestnet: !state.isTestnet };
-    case 'SET_SEARCH_QUERY':
-      return { ...state, searchQuery: action.payload };
-    default:
-      return state;
-  }
-}
-
-enum POSITION_TABS {
-  POSITIONS = 'positions',
-  EARNING = 'earning'
-}
+import { POSITION_TABS, type PositionsAction, type PositionsState, type StakingType } from '../util/utils';
 
 interface TabItemProps {
   isSelected: boolean;
@@ -104,7 +68,12 @@ const PositionsEarnings = ({ selectedTab, setter }: PositionsEarningsProps) => {
   );
 };
 
-function PositionsToolbar () {
+interface Props {
+  dispatch: React.Dispatch<PositionsAction>;
+  state: PositionsState;
+}
+
+function PositionsToolbar ({ dispatch, state }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -114,17 +83,14 @@ function PositionsToolbar () {
     { Icon: <Category2 color='#AA83DC' size='20' variant='Bulk' />, text: t('Solo and Pool Staking'), value: 'both' }
   ]), [t]);
 
-  const [tab, setTab] = useState<POSITION_TABS>(POSITION_TABS.POSITIONS);
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const setter = useCallback((selectedTab: POSITION_TABS) => () => setTab(selectedTab), []);
-  const stakingTypeHandler = useCallback((value: string | number) => dispatch({ payload: value as StakingType, type: 'SET_STAKING_TYPE' }), []);
-  const searchHandler = useCallback((text: string) => dispatch({ payload: text, type: 'SET_SEARCH_QUERY' }), []);
-  const toggleTestnets = useCallback(() => dispatch({ type: 'TOGGLE_TESTNET' }), []);
+  const setter = useCallback((selectedTab: POSITION_TABS) => () => dispatch({ payload: selectedTab, type: 'SET_TAB' }), [dispatch]);
+  const stakingTypeHandler = useCallback((value: string | number) => dispatch({ payload: value as StakingType, type: 'SET_STAKING_TYPE' }), [dispatch]);
+  const searchHandler = useCallback((text: string) => dispatch({ payload: text, type: 'SET_SEARCH_QUERY' }), [dispatch]);
+  const toggleTestnets = useCallback(() => dispatch({ type: 'TOGGLE_TESTNET' }), [dispatch]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '40px', p: '14px', width: '100%' }}>
-      <PositionsEarnings selectedTab={tab} setter={setter} />
+      <PositionsEarnings selectedTab={state.tab} setter={setter} />
       <DropSelect
         displayContentType='iconOption'
         onChange={stakingTypeHandler}

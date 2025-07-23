@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,40 @@ import { TEST_NETS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { TokenBalanceDisplay } from '../home/partial/TokensAssetsBox';
 
+export const TestnetBadge = ({ style }: { style?: SxProps<Theme>; }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', mt: '5px', p: '3px 5px', ...style }}>
+      <HierarchySquare3 color='#3988FF' size='14' variant='Bulk' />
+      <Typography color='#3988FF' fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
+        {t('Testnet')}
+      </Typography>
+    </Stack>
+  );
+};
+
+interface StakingBadgeProps {
+  hasPoolStaking: boolean;
+  isFullscreen?: boolean;
+  style?: SxProps<Theme>;
+}
+
+export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBadgeProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: hasPoolStaking ? '#A7DFB726' : '#C6AECC26', borderRadius: '9px', p: '3px 5px', ...style }}>
+      {hasPoolStaking
+        ? <I3Dcube color='#A7DFB7' size='14' variant='Bulk' />
+        : <SnowFlake color={isFullscreen ? '#AA83DC' : '#809ACB'} size='14' />}
+      <Typography color={hasPoolStaking ? '#A7DFB7' : isFullscreen ? '#AA83DC' : '#809ACB'} fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
+        {hasPoolStaking ? t('Pool staking') : t('Solo staking')}
+      </Typography>
+    </Stack>
+  );
+};
+
 interface Props {
   balance: BN;
   decimal: number;
@@ -30,7 +64,6 @@ interface Props {
 }
 
 function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, price, token, type }: Props): React.ReactElement {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -47,21 +80,9 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
           <Typography sx={{ mt: '-7px' }} variant='B-2'>
             {token}
           </Typography>
-          <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: hasPoolStaking ? '#A7DFB726' : '#C6AECC26', borderRadius: '9px', p: '3px 5px' }}>
-            {hasPoolStaking
-              ? <I3Dcube color='#A7DFB7' size='14' variant='Bulk' />
-              : <SnowFlake color='#809ACB' size='14' />}
-            <Typography color={hasPoolStaking ? '#A7DFB7' : '#809ACB'} fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
-              {hasPoolStaking ? 'Pool staking' : 'Solo staking'}
-            </Typography>
-          </Stack>
+          <StakingBadge hasPoolStaking={hasPoolStaking} />
           {isTestNet &&
-            <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', mt: '5px', p: '3px 5px' }}>
-              <HierarchySquare3 color='#3988FF' size='14' variant='Bulk' />
-              <Typography color='#3988FF' fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
-                {t('Testnet')}
-              </Typography>
-            </Stack>}
+            <TestnetBadge />}
         </Stack>
       </Stack>
       <TokenBalanceDisplay

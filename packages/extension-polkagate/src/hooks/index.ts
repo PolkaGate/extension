@@ -10,6 +10,7 @@ export { default as useAccountLocks } from './useAccountLocks';
 export { default as useAccountLocks2 } from './useAccountLocks2';
 export { default as useAccountName } from './useAccountName';
 export { default as useAccountProfile } from './useAccountProfile';
+export { default as useAccountSelectedChain } from './useAccountSelectedChain';
 export { default as useAccountsInfo } from './useAccountsInfo';
 export { default as useAccountsOrder } from './useAccountsOrder';
 export { default as useActiveEraIndex } from './useActiveEraIndex';
