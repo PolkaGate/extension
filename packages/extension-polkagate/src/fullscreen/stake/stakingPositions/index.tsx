@@ -69,13 +69,18 @@ interface EarningOptionsProps {
   rates: Record<string, number> | undefined;
   address: string | undefined;
   popupOpener: PopupOpener;
+  state: PositionsState;
 }
 
-const EarningOptions = ({ address, earningItems, popupOpener, rates }: EarningOptionsProps) => (
+const EarningOptions = ({ address, earningItems, popupOpener, rates, state }: EarningOptionsProps) => (
   <>
     {earningItems?.map((token, index) => {
       const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
       const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
+
+      if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
+        return <></>;
+      }
 
       return (
         <EarningItem
@@ -144,11 +149,7 @@ function StakingPositions ({ popupOpener }: Props) {
     });
   }, [positions, state.searchQuery, state.tab]);
 
-  const stakingTokens = useMemo(() => {
-    if (state.tab !== POSITION_TABS.EARNING) {
-      return undefined;
-    }
-
+  const earning = useMemo(() => {
     return STAKING_CHAINS.map((genesisHash) => {
       const chain = getChain(genesisHash);
 
@@ -170,17 +171,17 @@ function StakingPositions ({ popupOpener }: Props) {
         chainName: sanitizeChainName(chain?.name || '') ?? 'Unknown'
       } as unknown as PositionInfo;
     }).filter((item) => !!item);
-  }, [accountAssets, state.tab]);
+  }, [accountAssets]);
 
   const earningItems = useMemo(() => {
     return state.searchQuery
-      ? stakingTokens?.filter((item) => item?.tokenSymbol?.toLowerCase().includes(state.searchQuery))
-      : stakingTokens;
-  }, [stakingTokens, state.searchQuery]);
+      ? earning?.filter((item) => item?.tokenSymbol?.toLowerCase().includes(state.searchQuery))
+      : earning;
+  }, [earning, state.searchQuery]);
 
   return (
     <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-      <PositionsToolbar dispatch={dispatch} earningsCount={0} positionsCount={positions?.length} state={state} />
+      <PositionsToolbar dispatch={dispatch} earningsCount={earning?.length} positionsCount={positions?.length} state={state} />
       <Stack direction='column' ref={containerRef} sx={{ gap: '4px', maxHeight: '250px', overflow: 'auto', width: '100%' }}>
         {state.tab === POSITION_TABS.POSITIONS
           ? (
@@ -196,6 +197,7 @@ function StakingPositions ({ popupOpener }: Props) {
               earningItems={earningItems}
               popupOpener={popupOpener}
               rates={rates}
+              state={state}
             />)
         }
       </Stack>
