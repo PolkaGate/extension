@@ -152,7 +152,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
               </>
             )}
           </Stack>
-          <FadeOnScroll containerRef={refContainer} height='62px' ratio={0.3} />
+          <FadeOnScroll containerRef={refContainer} height='30px' ratio={0.3} />
         </VelvetBox>
         {
           isInSettingMode

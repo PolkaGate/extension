@@ -61,15 +61,18 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
       open={!!label}
       popupProps={{ pt: 190, withoutTopBorder: true }}
     >
-      <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ p: isExtension ? ' 0 0 5px' : '61px 0 0', position: 'relative', zIndex: 1 }}>
+      <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ p: isExtension ? ' 0 0 5px' : '40px 0 0', position: 'relative', zIndex: 1 }}>
         <Box
           component='img'
           src={info as string}
           sx={{ height: '100px', width: '100px', zIndex: 2 }}
         />
-        <Typography color='text.primary' sx={{ zIndex: 2 }} textTransform='uppercase' variant='H-3'>
-          {t('Confirmation of action')}
-        </Typography>
+        {
+          isExtension &&
+          <Typography color='text.primary' sx={{ zIndex: 2 }} textTransform='uppercase' variant='H-3'>
+            {t('Confirmation of action')}
+          </Typography>
+        }
         <Typography color='text.primary' sx={{ mt: isExtension ? '15px' : '30px' }} variant='B-4'>
           <TwoToneText
             text={t('Profile "{{label}}" will be deleted.', { replace: { label } })}
@@ -79,7 +82,7 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
         <Typography color='text.secondary' fontWeight={700} variant='B-4'>
           {t('Accounts unique to this profile will be deleted.')}
         </Typography>
-        <Typography color='text.primary' sx={{ mb: isExtension ? 0 : '40px' }} variant='B-4'>
+        <Typography color='text.primary' sx={{ mb: isExtension ? 0 : '66px' }} variant='B-4'>
           {t('Are you sure you want to continue?')}
         </Typography>
         <DecisionButtons

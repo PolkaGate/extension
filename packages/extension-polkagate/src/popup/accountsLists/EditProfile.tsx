@@ -1,14 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Folder } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
-import { DecisionButtons, GradientButton, MyTextField } from '../../components';
+import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
 import { useAccountsOrder, useCategorizedAccountsInProfiles, useProfileAccounts, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { addProfileTag, removeProfileTag } from './utils';
@@ -25,6 +25,7 @@ enum STEP {
 
 function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const allAccounts = useAccountsOrder();
   const profileAccounts = useProfileAccounts(allAccounts, profileLabel);
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
@@ -129,7 +130,11 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
         {step === STEP.CHOOSE_ACCOUNTS &&
           <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
             <Typography color='#BEAAD8' variant='B-4'>
-              {t('Select the addresses you’d like to include in {{profileLabel}} profile', { replace: { profileLabel: maybeNewName ?? profileLabel } })}
+              <TwoToneText
+                color={theme.palette.text.primary}
+                text={t('Select the addresses you’d like to include in {{profileLabel}} profile', { replace: { profileLabel: maybeNewName ?? profileLabel } })}
+                textPartInColor={maybeNewName ?? profileLabel ?? ''}
+              />
             </Typography>
             <Stack direction='column' sx={{ height: '350px', mt: '25px', overflowY: 'auto', width: '100%' }}>
               {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
