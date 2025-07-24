@@ -1,35 +1,35 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { type MutableRefObject, useEffect, useRef, useState } from 'react';
+import type React from 'react';
 
-export default function useIsHovered (): { isHovered: boolean, ref: MutableRefObject<HTMLElement | null> } {
-  const ref = useRef<HTMLElement | null>(null);
+import { useEffect, useRef, useState } from 'react';
 
+export default function useIsHovered<T extends HTMLElement = HTMLDivElement> (): {
+  isHovered: boolean;
+  ref: React.RefObject<T>;
+} {
+  const ref = useRef<T>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (!ref?.current) {
+    const element = ref.current;
+
+    if (!element) {
       return;
     }
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
 
-    const container = ref.current;
-
-    if (container) {
-      container.addEventListener('mouseenter', handleMouseEnter);
-      container.addEventListener('mouseleave', handleMouseLeave);
-    }
+    element.addEventListener('mouseenter', handleMouseEnter);
+    element.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      if (container) {
-        container.removeEventListener('mouseenter', handleMouseEnter);
-        container.removeEventListener('mouseleave', handleMouseLeave);
-      }
+      element.removeEventListener('mouseenter', handleMouseEnter);
+      element.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [ref]);
+  }, []);
 
   return { isHovered, ref };
 }
