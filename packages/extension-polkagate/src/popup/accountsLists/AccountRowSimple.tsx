@@ -3,6 +3,7 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
+import { DragIndicator } from '@mui/icons-material';
 import { Divider, Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
@@ -23,12 +24,13 @@ interface Props {
   isFirstProfile?: boolean;
   isInSettingMode?: boolean;
   isLast?: boolean;
+  showDrag?: boolean;
 }
 
 const MAX_ACCOUNT_NAME_WIDTH = 255;
 const OFFSET = 30;
 
-function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected }: Props): React.ReactElement {
+function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected, showDrag }: Props): React.ReactElement {
   const navigate = useNavigate();
 
   const [appliedAddress, setAppliedAddress] = useState<string>();
@@ -57,9 +59,13 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ borderRadius: '12px', m: '5px 8px 5px 15px', minHeight: '36px', width: '100%' }}>
           {
             isSelected && !isInSettingMode &&
-           <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
+            <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
           }
           <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: isInSettingMode ? undefined : '0 8px' }, cursor: 'pointer', maxWidth: `${MAX_ACCOUNT_NAME_WIDTH}px`, overflow: 'hidden', transition: 'all 250ms ease-out', width: 'fit-content' }}>
+            {
+              showDrag &&
+              <DragIndicator sx={{ color: '#674394', fontSize: '19px' }} />
+            }
             <PolkaGateIdenticon
               address={account.address}
               size={identiconSize}

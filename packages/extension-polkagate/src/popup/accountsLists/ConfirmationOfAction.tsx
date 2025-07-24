@@ -6,10 +6,11 @@ import React, { useCallback, useState } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { forgetAccount, updateMeta } from '@polkadot/extension-polkagate/src/messaging';
+import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { info } from '../../assets/gif';
-import { DecisionButtons, ExtensionPopup, TwoToneText } from '../../components';
-import { useAccountsOrder, useProfileAccounts, useTranslation } from '../../hooks';
+import { DecisionButtons, TwoToneText } from '../../components';
+import { useAccountsOrder, useIsExtensionPopup, useProfileAccounts, useTranslation } from '../../hooks';
 import { removeProfileTag } from './utils';
 
 interface Props {
@@ -21,6 +22,8 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const initialAccountList = useAccountsOrder();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
+  const isExtension = useIsExtensionPopup();
+
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
   const handleClose = useCallback(() => setPopup(undefined), [setPopup]);
@@ -51,13 +54,14 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
   }, [handleClose, label, profileAccounts]);
 
   return (
-    <ExtensionPopup
-      handleClose={handleClose}
-      openMenu={!!label}
-      pt={165}
-      withoutTopBorder
+    <SharePopup
+      modalProps={{ showBackIconAsClose: true, title: t('Confirmation') }}
+      modalStyle={{ padding: '20px' }}
+      onClose={handleClose}
+      open={!!label}
+      popupProps={{ pt: 190, withoutTopBorder: true }}
     >
-      <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ pb: '5px', position: 'relative', zIndex: 1 }}>
+      <Grid alignItems='center' container direction='column' item justifyContent='center' sx={{ p: isExtension ? ' 0 0 5px' : '61px 0 0', position: 'relative', zIndex: 1 }}>
         <Box
           component='img'
           src={info as string}
@@ -66,7 +70,7 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
         <Typography color='text.primary' sx={{ zIndex: 2 }} textTransform='uppercase' variant='H-3'>
           {t('Confirmation of action')}
         </Typography>
-        <Typography color='text.primary' sx={{ mt: '15px' }} variant='B-4'>
+        <Typography color='text.primary' sx={{ mt: isExtension ? '15px' : '30px' }} variant='B-4'>
           <TwoToneText
             text={t('Profile "{{label}}" will be deleted.', { replace: { label } })}
             textPartInColor={`"${label}"`}
@@ -75,7 +79,7 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
         <Typography color='text.secondary' fontWeight={700} variant='B-4'>
           {t('Accounts unique to this profile will be deleted.')}
         </Typography>
-        <Typography color='text.primary' variant='B-4'>
+        <Typography color='text.primary' sx={{ mb: isExtension ? 0 : '40px' }} variant='B-4'>
           {t('Are you sure you want to continue?')}
         </Typography>
         <DecisionButtons
@@ -89,7 +93,7 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
           style={{ margin: '15px 0', width: '97%' }}
         />
       </Grid>
-    </ExtensionPopup>
+    </SharePopup>
   );
 }
 
