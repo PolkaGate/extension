@@ -16,7 +16,7 @@ interface ScrollingTextBoxProps {
   scrollOnHover?: boolean;
 }
 
-const BoxContainer = styled(Box)(({ maximumWidth, shouldScroll }: { shouldScroll: boolean; maximumWidth: number }) => ({
+const BoxContainer = styled(Box)(({ maxWidth, shouldScroll }: { shouldScroll: boolean; maxWidth: number }) => ({
   '&::after': {
     background: shouldScroll ? 'linear-gradient(90deg, transparent 0%, #591467 100%)' : undefined,
     opacity: 0.3,
@@ -36,7 +36,7 @@ const BoxContainer = styled(Box)(({ maximumWidth, shouldScroll }: { shouldScroll
     zIndex: 1
   },
   borderRadius: '8px',
-  maxWidth: `${maximumWidth}px`,
+  maxWidth: `${maxWidth}px`,
   overflow: 'hidden',
   position: 'relative',
   width: 'fit-content'
@@ -88,7 +88,7 @@ function ScrollingTextBox ({ scrollOnHover = false, style, text, textStyle, widt
   }), [animationDuration, hovered, scrollOnHover, shouldScroll, textWidth, uniqueKeyframeName, width]);
 
   return (
-    <BoxContainer maximumWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
+    <BoxContainer maxWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
       <Typography ref={textRef} sx={{ ...textboxStyle, ...textStyle }}>
         {text}
       </Typography>
