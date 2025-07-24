@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const path = require('path');
+
+require('dotenv').config({ path: path.resolve(__dirname, '../../', '.env') }); // ✅ Add this
+
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const ManifestPlugin = require('webpack-extension-manifest-plugin');
@@ -90,11 +93,9 @@ module.exports = (entry, alias = {}) => ({
       resourceRegExp: /^\.\/locale$/
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        EXTENSION_PREFIX: JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production'),
-        PORT_PREFIX: JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64))
-      }
+      'process.env.EXTENSION_PREFIX': JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'process.env.PORT_PREFIX': JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64))
     }),
     new CopyPlugin({ patterns: [{ from: 'public' }] }),
     new ManifestPlugin({
