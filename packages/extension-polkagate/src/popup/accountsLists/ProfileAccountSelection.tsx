@@ -74,7 +74,7 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
   }, [accounts, setSelectedAddresses]);
 
   return (
-    <Stack alignItems='center' direction='column' justifyContent='start' sx={{ bgcolor: '#060518', borderRadius: '14px', mb: '7px', width: '345px' }}>
+    <Stack alignItems='center' direction='column' justifyContent='start' sx={{ bgcolor: '#060518', borderRadius: '14px', mb: '7px', width: '100%' }}>
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '10px 13px 10px 15px', width: '100%' }}>
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onClick} sx={{ cursor: 'pointer', width: '90%' }}>
           <profileInfo.Icon color='#AA83DC' size='18' variant='Bulk' />
@@ -118,4 +118,4 @@ function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeN
   );
 }
 
-export default ProfileAccountSelection;
+export default React.memo(ProfileAccountSelection);

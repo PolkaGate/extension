@@ -1728,5 +1728,6 @@
   "Hide Balance": "",
   "This will permanently delete your accounts, and you won’t be able to recover your password. To restore access, import a backup (JSON file or recovery phrase).": "",
   "I understand the accounts will be deleted.": "",
-  "Coming Soon!": ""
+  "Coming Soon!": "",
+  "customization": ""
 }
