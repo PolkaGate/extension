@@ -71,6 +71,8 @@
     "@polkadot/util": "^13.5.3",
     "@polkadot/util-crypto": "^13.5.3",
     "@polkagate/apps-config": "^0.141.1",
+    "@sentry/react": "^8.42.0",
+    "@sentry/webpack-plugin": "^2.22.6",
     "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
@@ -93,9 +95,7 @@
     "rehype-raw": "^6.1.1",
     "semver": "^7.6.3",
     "style-loader": "^3.3.2",
-    "umi-request": "^1.4.0",
-    "@sentry/react": "^8.42.0",
-    "@sentry/webpack-plugin": "^2.22.6",
+    "umi-request": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
