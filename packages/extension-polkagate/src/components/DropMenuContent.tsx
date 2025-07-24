@@ -65,14 +65,14 @@ function DropMenuContent ({ containerRef, contentDropWidth, open, options, setOp
       <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
         {options.map((option, index) => {
           const isLastOne = options.length === index + 1;
+          const key = `option-${index}-${option.text ?? 'line'}`;
 
           return (
-            <>
+            <React.Fragment key={key}>
               {option.isLine
                 ? <GradientDivider style={{ my: '3px' }} />
                 : (
                   <DropMenuRow
-                    key={index}
                     option={option}
                     setOpen={setOpen}
                   />)
@@ -80,7 +80,7 @@ function DropMenuContent ({ containerRef, contentDropWidth, open, options, setOp
               {withDivider && !isLastOne &&
                 <GradientDivider style={{ my: '3px' }} />
               }
-            </>
+            </React.Fragment>
           );
         })}
       </DropContentContainer>

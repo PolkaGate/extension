@@ -16,7 +16,9 @@ interface ScrollingTextBoxProps {
   scrollOnHover?: boolean;
 }
 
-const BoxContainer = styled(Box)(({ maxWidth, shouldScroll }: { shouldScroll: boolean; maxWidth: number }) => ({
+const BoxContainer = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'shouldScroll' && prop !== 'maxWidth'
+})<{ shouldScroll: boolean; maxWidth: number }>(({ maxWidth, shouldScroll }) => ({
   '&::after': {
     background: shouldScroll ? 'linear-gradient(90deg, transparent 0%, #591467 100%)' : undefined,
     opacity: 0.3,

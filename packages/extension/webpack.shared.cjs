@@ -94,8 +94,9 @@ module.exports = (entry, alias = {}) => ({
     }),
     new webpack.DefinePlugin({
       'process.env.EXTENSION_PREFIX': JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
+      'process.env.EXTENSION_VERSION': JSON.stringify(pkgJson.version),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
-      'process.env.PORT_PREFIX': JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64))
+      'process.env.PORT_PREFIX': JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64)),
     }),
     new CopyPlugin({ patterns: [{ from: 'public' }] }),
     new ManifestPlugin({
@@ -112,11 +113,14 @@ module.exports = (entry, alias = {}) => ({
       ? []
       : [sentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        include: path.resolve(__dirname, 'build'),
         ipScrubbing: true,
         org: 'polkagate',
         project: 'extension',
+        release: pkgJson.version,
         sendDefaultPii: false,
-        telemetry: false
+        telemetry: false,
+        urlPrefix: '~/'
       })]
     )
   ],

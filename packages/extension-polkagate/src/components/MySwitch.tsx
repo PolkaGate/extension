@@ -40,7 +40,9 @@ const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }:
   );
 };
 
-const StyledSwitch = styled(Switch)<{ isDark: boolean, isBlueish: boolean }>(({ checked, isBlueish, isDark, theme }) => ({
+const StyledSwitch = styled(Switch, {
+  shouldForwardProp: (prop) => prop !== 'isBlueish' && prop !== 'isDark'
+})<{ isDark: boolean, isBlueish: boolean }>(({ checked, isBlueish, isDark, theme }) => ({
   background: checked
     ? isDark
       ? 'linear-gradient(#2D1E4A, #2D1E4A) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
