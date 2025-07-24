@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import { useEffect, useMemo, useState } from 'react';
@@ -8,12 +9,12 @@ import { BN, bnMax } from '@polkadot/util';
 
 import { useApi, useStakingConsts, useToken } from '.';
 
-export default function useMinToReceiveRewardsInSolo2(address: string): BN | undefined {
+export default function useMinToReceiveRewardsInSolo2 (address: string | undefined): BN | undefined {
   const api = useApi(address);
   const token = useToken(address);
   const stakingConsts = useStakingConsts(address);
 
-  const tokenFromApi = api && api.registry.chainTokens[0];
+  const tokenFromApi = api?.registry.chainTokens[0];
 
   const [minimumActiveStake, setMinimumActiveStake] = useState<BN | undefined>();
 

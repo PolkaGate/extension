@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -29,14 +28,14 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../u
 import TxDetail from './TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   amount: BN;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;
   selectedToPayout: ExpandedRewards[]
 }
 
-export default function Review ({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
+export default function Review({ address, amount, selectedToPayout, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);

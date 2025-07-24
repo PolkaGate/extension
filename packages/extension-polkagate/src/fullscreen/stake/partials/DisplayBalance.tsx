@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { Balance } from '@polkadot/types/interfaces';
@@ -20,7 +19,7 @@ import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { FormatPrice, ShowBalance } from '../../../components';
 
 interface DisplayBalanceProps {
-  address: string;
+  address: string | undefined;
   amount: BN | Balance | undefined;
   title: string;
   onClicks?: (() => void)[];
@@ -63,7 +62,7 @@ const ToBeReleased = ({ decimal, showUnstaking, text, toBeReleased, token }: ToB
   </Collapse>
 );
 
-export default function DisplayBalance ({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
+export default function DisplayBalance({ actions, address, amount, icons, isUnstaking, marginTop = '10px', onClicks, title, toBeReleased }: DisplayBalanceProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const price = useNativeTokenPrice(address);
@@ -110,8 +109,8 @@ export default function DisplayBalance ({ actions, address, amount, icons, isUns
           <FormatPrice
             amount={amount}
             decimals={decimal}
-            fontSize= '22px'
-            fontWeight= {400}
+            fontSize='22px'
+            fontWeight={400}
             price={price}
             skeletonHeight={20}
           />

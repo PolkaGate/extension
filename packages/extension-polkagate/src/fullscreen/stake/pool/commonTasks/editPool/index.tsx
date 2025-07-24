@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -10,7 +9,7 @@ import type { MyPoolInfo, TxInfo } from '../../../../../util/types';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 
 import { useFormatted, useTranslation } from '../../../../../hooks';
@@ -22,7 +21,7 @@ import Review from './Review';
 import TxDetail from './TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   onClose: () => void;
@@ -43,7 +42,7 @@ export interface ChangesProps {
   } | undefined
 }
 
-export default function ManageEditPool ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function ManageEditPool({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 

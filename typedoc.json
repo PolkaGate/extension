@@ -1,0 +1,16 @@
+{
+    "out": "docs",  // Output folder for docs
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,  // Hide the generator information in the docs
+    "entryPointStrategy": "expand",  // Expand entry points in the src folder
+    "exclude": [
+      "**/node_modules/**/*",
+      "packages/*"
+    ],
+    "theme": "default",  // Use the default theme for docs
+    "tsconfig": "./tsconfig.json",  // Use your existing tsconfig
+    "entryPoints": [
+      "packages/extension-polkagate/src"  // Directly specify the entry points here
+    ]
+  }

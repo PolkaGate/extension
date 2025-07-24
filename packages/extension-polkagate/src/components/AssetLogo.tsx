@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useContext } from 'react';
@@ -14,10 +14,14 @@ interface Props {
   chainName?: string;
   genesisHash?: string | undefined;
   logo?: string | undefined;
-  subLogo: string | undefined;
+  subLogo?: string | undefined;
+  subLogoPosition?: string;
+  token?: string;
+  logoRoundness?: string;
+  style?: React.CSSProperties;
 }
 
-function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, subLogo }: Props): React.ReactElement<Props> {
+function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, logoRoundness, style, subLogo, subLogoPosition, token }: Props): React.ReactElement<Props> {
   const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find((chain) => chain.value === genesisHash)?.text;
@@ -25,18 +29,25 @@ function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash,
 
   return (
     <>
-      { subLogo && logo
+      {subLogo && logo
         ? <AssetDualLogo
           asset={logo}
           assetSize={assetSize}
           baseLogo={subLogo}
+          baseLogoPosition={subLogoPosition}
           baseLogoSize={baseTokenSize}
+          logoRoundness={logoRoundness}
+          style={style}
+
         />
         : <ChainLogo
           chainName={_chainName}
           genesisHash={genesisHash}
           logo={logo || subLogo}
+          logoRoundness={logoRoundness}
           size={Number(assetSize.replace('px', ''))}
+          style={style}
+          token={token}
         />
       }
     </>

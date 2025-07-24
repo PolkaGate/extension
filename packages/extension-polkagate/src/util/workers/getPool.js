@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-/* eslint-disable header/header */
 
 // @ts-nocheck
 
@@ -17,7 +15,7 @@ import { BN_ZERO, bnMax } from '@polkadot/util';
 import getApi from '../getApi.ts';
 import getPoolAccounts from '../getPoolAccounts';
 
-async function getPool(endpoint, stakerAddress, id = undefined) {
+async function getPool (endpoint, stakerAddress, id = undefined) {
   console.log(`getPool is called for ${stakerAddress} id:${id} endpoint:${endpoint}`);
   const api = await getApi(endpoint);
 

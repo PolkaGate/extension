@@ -76,15 +76,3 @@ Once added, you can create an account or import via multiple options. To view he
    - It is possible via the extension. To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
 
    - Note that you need to check 'Enable testnet chains' in the Menu/Settings to be able to work with Westend.
-
-
-<!-- ## More information 
-
-for more information about the extension and how it works, please go to the project [wiki](https://github.com/Nick-1979/polkadot-Js-Plus-extension/wiki)  -->
-
-<!-- ## To support 
-
-
-<img src="./packages/extension-polkagate/docs/logos/dot.svg" width="20" />  17VdcY2F3WvhSLFHBGZreubzQNQ3NZzLbQsugGzHmzzprSG
-
-<img src="./packages/extension-polkagate/docs/logos/ksm.svg" width="20" />  Cgp9bcq1dGP1Z9B6F2ccTSTHNez9jq2iUX993ZbDVByPSU2 -->

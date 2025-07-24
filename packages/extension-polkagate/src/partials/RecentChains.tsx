@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { HexString } from '@polkadot/util/types';
 import type { RecentChainsType } from '../util/types';
@@ -108,7 +107,7 @@ interface Props {
   chainName: string | undefined;
 }
 
-function RecentChains ({ address, chainName }: Props): React.ReactElement<Props> {
+function RecentChains({ address, chainName }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { genesisHash } = useInfo(address);
   const genesisHashes = useContext(GenesisHashOptionsContext);
@@ -204,6 +203,7 @@ function RecentChains ({ address, chainName }: Props): React.ReactElement<Props>
 
     setCurrentSelectedChain(newChainName);
     setFirstTime(false);
+        //NO TIE ANYMORE IN NEW DESIGN
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((error) => {
       setCurrentSelectedChain(chainName);
       console.error(error);

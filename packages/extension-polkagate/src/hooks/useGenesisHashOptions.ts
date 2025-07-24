@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
@@ -28,7 +28,7 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
     }
   }, []);
 
-  const hashes = useMemo(() => {
+  return useMemo(() => {
     const allChains = [
       // put the relay chains at the top
       ...chains.filter(({ chain }) => chain.includes(RELAY_CHAIN))
@@ -58,6 +58,4 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
 
     return allChains;
   }, [metadataChains, showAnyChain]);
-
-  return hashes;
 }

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
@@ -11,7 +10,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
 import { BN } from '@polkadot/util';
 
@@ -28,7 +26,7 @@ import PoolCommonTasks from './partials/PoolCommonTasks';
 import { MODAL_IDS } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<number>>;
   balances: BalancesInfo | undefined;
   pool: MyPoolInfo | null | undefined;
@@ -46,7 +44,6 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
 
   const staked = useMemo(() => pool === undefined ? undefined : new BN(pool?.member?.points ?? 0), [pool]);
   const claimable = useMemo(() => pool === undefined ? undefined : new BN(pool?.myClaimable ?? 0), [pool]);
-  const availableBalance = useMemo(() => getValue('available', balances), [balances]);
 
   const onUnstake = useCallback(() => {
     staked && !staked?.isZero() && setShow(MODAL_IDS.UNSTAKE);
@@ -86,7 +83,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
       <Grid container item justifyContent='space-between' mb='15px'>
         <Grid container direction='column' item mb='10px' minWidth='735px' rowGap='10px' width='calc(100% - 320px - 3%)'>
           <StakedBar
-            availableBalance={availableBalance}
+            availableBalance={balances?.freeBalance}
             balances={balances}
             redeemable={redeemable}
             staked={staked}
@@ -129,7 +126,7 @@ export default function PoolStaked ({ address, balances, pool, redeemable, setSh
               actions={[staked && !staked.isZero() ? t('stake extra') : t('stake')]}
               address={address}
               /** to disable action button until fetching has done */
-              amount={!staked || !redeemable || !unlockingAmount ? undefined : availableBalance}
+              amount={!staked || !redeemable || !unlockingAmount ? undefined : balances?.freeBalance}
               icons={[faPlus]}
               onClicks={[onStakeOrExtra]}
               title={t('Available to stake')}

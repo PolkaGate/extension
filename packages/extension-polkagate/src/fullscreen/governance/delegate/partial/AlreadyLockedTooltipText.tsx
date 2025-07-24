@@ -1,18 +1,18 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
+import type { BN } from '@polkadot/util';
+import type { Lock } from '../../../../hooks/useAccountLocks';
 
-import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
-
-import { Grid, Skeleton, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
-import { BN, BN_MAX_INTEGER } from '@polkadot/util';
+import { BN_MAX_INTEGER } from '@polkadot/util';
 
 import { useCurrentBlockNumber, useDecimal, useToken, useTranslation } from '../../../../hooks';
-import { Lock } from '../../../../hooks/useAccountLocks';
 import { amountToHuman, remainingTime } from '../../../../util/utils';
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
   accountLocks: Lock[] | undefined
 }
 
-export function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined): BN | undefined {
+export function getAlreadyLockedValue(allBalances: BalancesInfo | undefined): BN | undefined {
   const LOCKS_ORDERED = ['pyconvot', 'democrac', 'phrelect'];
   const sortedLocks = allBalances?.lockedBreakdown
     // first sort by amount, so greatest value first
@@ -30,6 +30,7 @@ export function getAlreadyLockedValue(allBalances: DeriveBalancesAll | undefined
     // then sort by the type of lock (we try to find relevant)
     .sort((a, b): number => {
       if (!a.id.eq(b.id)) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < LOCKS_ORDERED.length; i++) {
           const lockName = LOCKS_ORDERED[i];
 
@@ -80,7 +81,7 @@ function AlreadyLockedTooltipText({ accountLocks, address }: Props): React.React
         {currentBlock && accountLocks?.map((lock, index) => (
           <React.Fragment key={index}>
             <Grid item xs={2.5}>
-              {lock.refId.toNumber()}
+              {lock.refId?.toNumber()}
             </Grid>
             <Grid item xs={3.6}>
               {amountToHuman(lock.total, decimal)} {token}

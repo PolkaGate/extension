@@ -1,16 +1,16 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+
+import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
+import type { BN } from '@polkadot/util';
 
 import { Box, Grid, Tooltip, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
-import { BN, BN_HUNDRED, BN_ZERO } from '@polkadot/util';
+import { BN_HUNDRED, BN_ZERO } from '@polkadot/util';
 
 interface Props {
   availableBalance: BN | undefined;

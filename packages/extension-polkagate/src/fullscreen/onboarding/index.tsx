@@ -1,180 +1,124 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
+import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { AddCircle, Convertshape2, Wallet } from 'iconsax-react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { faBook, faBookJournalWhills, faCirclePlus, faFileCode, faHome, faMagnifyingGlassArrowRight, faQrcode, faTag, faWallet } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, Typography } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { DEMO_ACCOUNT, FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
-
-import { AccountContext, ActionContext } from '../../components';
+import { handWave } from '../../assets/gif';
+import { ActionButton, GradientButton } from '../../components';
 import { useFullscreen, useTranslation } from '../../hooks';
-import { createAccountExternal, windowOpen } from '../../messaging';
-import FollowUs from '../../popup/welcome/FollowUs';
-import NeedHelp from '../../popup/welcome/NeedHelp';
-import Privacy from '../../popup/welcome/Privacy';
-import FullScreenHeader from '../governance/FullScreenHeader';
-import IconBox from './IconBox';
+import { createAccountExternal } from '../../messaging';
+import { setStorage } from '../../util';
+import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
+import OnboardingLayout from './OnboardingLayout';
 
 export const ICON_BOX_WIDTH = '300px';
 
+function OrSeparator (): React.ReactElement {
+  const { t } = useTranslation();
+
+  return (
+    <Stack alignItems='center' columnGap='20px' direction='row' sx={{ my: '20px' }}>
+      <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '144px' }} />
+      <Typography color='#BEAAD8' textTransform='uppercase' variant='H-5'>
+        {t('or')}
+      </Typography>
+      <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '144px' }} />
+    </Stack>
+  );
+}
+
 function Onboarding (): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const navigate = useNavigate();
 
   useFullscreen();
 
-  const { accounts } = useContext(AccountContext);
-  const onAction = useContext(ActionContext);
+  const onCreate = useCallback(() => navigate('/account/create'), [navigate]);
 
-  const [showPrivacyAndSecurity, setShowPrivacyAndSecurity] = useState(false);
-
-  useEffect(() => {
-    if (accounts?.length > 0) {
-      onAction('/');
-    }
-  }, [accounts?.length, onAction]);
-
-  const onRestoreFromJson = useCallback(
-    (): void => {
-      windowOpen('/account/restore-json').catch(console.error);
-    }, []
-  );
-
-  const onImportLedger = useCallback(
-    (): void => {
-      windowOpen('/account/import-ledger').catch(console.error);
-    }, []
-  );
+  const onAddAccount = useCallback(() => navigate('/account/have-wallet'), [navigate]);
 
   const onExploreDemo = useCallback((): void => {
-    createAccountExternal('Demo Account ☔️', DEMO_ACCOUNT, POLKADOT_GENESIS)
-      .then(() => onAction('/'))
+    createAccountExternal('Demo account', DEMO_ACCOUNT, undefined)
+      .then(() => {
+        setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+        navigate('/');
+      })
       .catch((error: Error) => {
         console.error(error);
       });
-  }, [onAction]);
-
-  const onCreate = useCallback(
-    (): void => {
-      windowOpen('/account/create').catch(console.error);
-    }, []
-  );
-
-  const onAddWatchOnly = useCallback(
-    (): void => {
-      windowOpen('/import/add-watch-only-full-screen').catch(console.error);
-    }, []
-  );
-
-  const onImport = useCallback(
-    (): void => {
-      windowOpen('/account/import-seed').catch(console.error);
-    }, []
-  );
-
-  const onImportRawSeed = useCallback(
-    (): void => {
-      windowOpen('/account/import-raw-seed').catch(console.error);
-    }, []
-  );
-
-  const onAttachQR = useCallback(
-    (): void => {
-      windowOpen('/import/attach-qr-full-screen').catch(console.error);
-    }, []
-  );
+  }, [navigate]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
-      />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Grid alignContent='center' alignItems='center' container item>
-            <Grid item sx={{ mr: '20px' }}>
-              <FontAwesomeIcon
-                fontSize='30px'
-                icon={faHome}
-              />
-            </Grid>
-            <Grid item>
-              <Typography fontSize='30px' fontWeight={700} py='20px' width='100%'>
-                {t('Welcome!')}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography fontSize='16px' fontWeight={500} pb='15px' pt='30px' width='100%'>
-            {t('We appreciate your choice in selecting PolkaGate as your gateway to the Polkadot ecosystem! 🌟')}
+    <OnboardingLayout>
+      <Stack alignItems='center' direction='column' justifyContent='flex-start' sx={{ width: '396px', zIndex: 1 }}>
+        <Stack alignContent='start' columnGap='10px' direction='row' justifyContent='start' width='100%'>
+          <Box
+            component='img'
+            src={handWave as string}
+            sx={{ height: '48px', width: '48px' }}
+          />
+          <Typography textAlign='left' textTransform='uppercase' variant='H-1' width='100%'>
+            {t('Welcome')}<span style={{ color: '#BEAAD8' }}>!</span>
           </Typography>
-          <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
-          </Typography>
-          <Grid alignItems='center' container item justifyContent='space-between' pt='60px' rowGap='5px' width='700px'>
-            <IconBox
-              icon={faCirclePlus}
-              label={t('Create a New Account')}
-              onClick={onCreate}
-            />
-            <IconBox
-              icon={faFileCode}
-              label={t('Restore from JSON File')}
-              onClick={onRestoreFromJson}
-            />
-            <IconBox
-              icon={faBook}
-              label={t('Import from Recovery Phrase')}
-              onClick={onImport}
-            />
-            <IconBox
-              icon={faBookJournalWhills}
-              label={t('Import from Raw Seed')}
-              onClick={onImportRawSeed}
-            />
-            <IconBox
-              icon={faWallet}
-              label={t('Attach Ledger Device')}
-              onClick={onImportLedger}
-            />
-            <IconBox
-              icon={faQrcode}
-              label={t('Attach QR-Signer')}
-              onClick={onAttachQR}
-            />
-            <IconBox
-              icon={faTag}
-              label={t('Add Watch-only Account')}
-              onClick={onAddWatchOnly}
-            />
-            <IconBox
-              icon={faMagnifyingGlassArrowRight}
-              label={t('Explore a Demo')}
-              onClick={onExploreDemo}
-            />
-            <Grid alignItems='center' container justifyContent='space-between' sx={{ bottom: 10, position: 'absolute', width: 'inherit' }}>
-              <FollowUs width={ICON_BOX_WIDTH} />
-              <NeedHelp />
-              {/* eslint-disable-next-line react/jsx-no-bind */}
-              <Typography onClick={() => setShowPrivacyAndSecurity(true)} sx={{ cursor: 'pointer', fontSize: '14px', textAlign: 'right', textDecoration: 'underline', width: ICON_BOX_WIDTH }}>
-                {t('Privacy and Security')}
-              </Typography>
-            </Grid>
-            {showPrivacyAndSecurity &&
-              <Privacy
-                asModal
-                setShow={setShowPrivacyAndSecurity}
-                show={showPrivacyAndSecurity}
-              />
-            }
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+        </Stack>
+        <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1'>
+          {t('At present, you do not have any accounts. To begin your journey, you can create your first account, import existing accounts, or explore the demo option to get started.')}
+        </Typography>
+        <GradientButton
+          StartIcon={AddCircle}
+          contentPlacement='start'
+          onClick={onCreate}
+          style={{
+            borderRadius: '18px',
+            height: '48px',
+            marginTop: '25px',
+            paddingLeft: '100px',
+            width: '100%'
+          }}
+          text={t('Create a new account')}
+        />
+        <ActionButton
+          StartIcon={Wallet}
+          contentPlacement='start'
+          onClick={onAddAccount}
+          style={{
+            borderRadius: '18px',
+            height: '44px',
+            mt: '20px',
+            pl: '100px',
+            width: '100%'
+          }}
+          text={{
+            firstPart: t('Already'),
+            secondPart: t('have an account')
+          }}
+          variant='contained'
+        />
+        <OrSeparator />
+        <ActionButton
+          StartIcon={Convertshape2}
+          contentPlacement='start'
+          onClick={onExploreDemo}
+          style={{
+            borderRadius: '18px',
+            height: '44px',
+            pl: '100px',
+            width: '100%'
+          }}
+          text={{
+            firstPart: t('Demo'),
+            secondPart: t('account import')
+          }}
+          variant='contained'
+        />
+      </Stack>
+    </OnboardingLayout>
   );
 }
 

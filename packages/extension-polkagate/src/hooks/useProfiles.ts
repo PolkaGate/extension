@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -6,6 +6,7 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { useContext, useMemo } from 'react';
 
 import { AccountContext } from '../components';
+import { PROFILE_TAGS } from './useProfileAccounts';
 
 interface Profiles {
   accountProfiles: string[];
@@ -13,6 +14,20 @@ interface Profiles {
   defaultProfiles: string[];
 }
 
+/**
+ * A React hook that derives profile categorization data from the available accounts.
+ *
+ * It returns:
+ * - `accountProfiles`: The sorted list of profile tags assigned to the given `account`, if any.
+ * - `defaultProfiles`: A list of default system-defined profile tags based on all loaded accounts.
+ *   Includes tags like `ALL`, `LOCAL`, `LEDGER`, and `WATCH_ONLY` depending on account properties.
+ * - `userDefinedProfiles`: A sorted list of all unique custom profile tags set by users across all accounts.
+ *
+ * This hook uses memoization to avoid unnecessary recalculations unless `account` or `accounts` change.
+ *
+ * @param {AccountJson} [account] - The specific account for which associated profile tags are returned.
+ * @returns {Profiles} An object containing default, user-defined, and account-specific profiles.
+ */
 export default function useProfiles (account?: AccountJson): Profiles {
   const { accounts } = useContext(AccountContext);
 
@@ -25,47 +40,44 @@ export default function useProfiles (account?: AccountJson): Profiles {
       };
     }
 
-    // default profiles
-    const defaultProfiles = ['All'];
-    const hasLocal = accounts.find(({ isExternal }) => !isExternal);
+    const defaultProfilesSet = new Set<string>([PROFILE_TAGS.ALL]);
+    const allUserProfiles = new Set<string>();
 
-    if (hasLocal) {
-      defaultProfiles.push('Local');
+    for (const acc of accounts) {
+      // Add default profile tags based on account type
+      if (!acc.isExternal) {
+        defaultProfilesSet.add(PROFILE_TAGS.LOCAL);
+      }
+
+      if (acc.isHardware) {
+        defaultProfilesSet.add(PROFILE_TAGS.LEDGER);
+      }
+
+      if (acc.isQR) {
+        defaultProfilesSet.add(PROFILE_TAGS.QR_ATTACHED);
+      }
+
+      if (!acc.isQR && acc.isExternal && !acc.isHardware) {
+        defaultProfilesSet.add(PROFILE_TAGS.WATCH_ONLY);
+      }
+
+      // Collect user-defined profile tags
+      acc.profile?.split(',').forEach((tag) => {
+        if (tag) {
+          allUserProfiles.add(tag);
+        }
+      });
     }
 
-    const hasLedger = accounts.find(({ isHardware }) => isHardware);
-
-    if (hasLedger) {
-      defaultProfiles.push('Ledger');
-    }
-
-    const hasWatchOnly = accounts.find(({ isExternal, isHardware, isQR }) => isExternal && !isQR && !isHardware);
-
-    if (hasWatchOnly) {
-      defaultProfiles.push('Watch-only');
-    }
-
-    const hasQrAttached = accounts.find(({ isQR }) => isQR);
-
-    if (hasQrAttached) {
-      defaultProfiles.push('QR-attached');
-    }
-
-    let accountProfiles: string[] = [];
-
-    if (account) {
-      const profiles = account.profile?.split(',');
-
-      accountProfiles = profiles ? profiles.sort() : [];
-    }
-
-    // user defined profiles
-    const profiles = accounts.map(({ profile }) => profile ? profile.split(',') : undefined).flat().filter(Boolean) as string[];
+    // Extract current account's profile tags
+    const accountProfiles = account?.profile
+      ? account.profile.split(',').sort()
+      : [];
 
     return {
       accountProfiles,
-      defaultProfiles,
-      userDefinedProfiles: [...new Set(profiles)].sort()
+      defaultProfiles: [...defaultProfilesSet],
+      userDefinedProfiles: [...allUserProfiles].sort()
     };
   }, [account, accounts]);
 }

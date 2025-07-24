@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransactionDetail } from '../../../util/types';
 
@@ -10,7 +9,7 @@ import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Progress } from '../../../components';
-import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../../fullscreen/components/DraggableModal';
 import SimpleModalTitle from '../../../fullscreen/partials/SimpleModalTitle';
 import { useInfo, useTranslation } from '../../../hooks';
 import HistoryTabs, { TAB_MAP } from '../HistoryTabs';
@@ -19,11 +18,11 @@ import HistoryDetailModal from './HistoryDetailModal';
 import HistoryItemModal from './HistoryItemModal';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export default function HistoryModal ({ address, setDisplayPopup }: Props): React.ReactElement {
+export default function HistoryModal({ address, setDisplayPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { chainName, decimal, formatted, token } = useInfo(address);
@@ -42,13 +41,13 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
         <SimpleModalTitle
           icon={showDetail ? faReceipt : faHistory}
           onClose={backToAccount}
-          title= {showDetail ? t('Transaction Detail') : t('History')}
+          title={showDetail ? t('Transaction Detail') : t('History')}
         />
         {!showDetail &&
           <>
             <HistoryTabs
-              address ={address}
-              setTabIndex ={setTabIndex}
+              address={address}
+              setTabIndex={setTabIndex}
               tabIndex={tabIndex}
             />
             <Grid container id='scrollArea' item sx={{ gap: '5px', height: '70%', maxHeight: 650 - 145, overflowY: 'auto' }}>
@@ -77,7 +76,7 @@ export default function HistoryModal ({ address, setDisplayPopup }: Props): Reac
                 </Grid>
               }
               {(grouped === undefined || ((transfersTx.isFetching || governanceTx.isFetching) && tabHistory?.length === 0)) &&
-               <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
+                <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
               }
               {grouped &&
                 <Grid container justifyContent='center'>

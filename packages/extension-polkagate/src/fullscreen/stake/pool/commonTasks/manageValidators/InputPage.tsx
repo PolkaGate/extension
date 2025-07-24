@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { MyPoolInfo, StakingConsts, ValidatorInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { AccountId } from '@polkadot/types/interfaces';
@@ -21,7 +20,7 @@ import SelectValidatorsFs from '../../../solo/partials/SelectValidatorsFs';
 import { STEPS } from '../../stake';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
   inputs: StakingInputs | undefined;
@@ -30,7 +29,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -47,7 +46,7 @@ function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, pool, setInputs, setStep, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, formatted } = useInfo(address);

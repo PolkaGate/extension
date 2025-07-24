@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
@@ -38,7 +37,7 @@ interface QuickActionButtonType {
 const ARROW_ICON_SIZE = 17;
 const ACTION_ICON_SIZE = '27px';
 
-const QuickActionButton = React.memo(function QuickActionButton ({ disabled, divider, icon, onClick, title }: QuickActionButtonType) {
+const QuickActionButton = React.memo(function QuickActionButton({ disabled, divider, icon, onClick, title }: QuickActionButtonType) {
   const theme = useTheme();
 
   return (
@@ -62,7 +61,7 @@ const QuickActionButton = React.memo(function QuickActionButton ({ disabled, div
   );
 });
 
-function QuickActionFullScreen ({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+function QuickActionFullScreen({ address, assetId, containerRef, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
 import type { AnyTuple } from '@polkadot/types/types';
@@ -11,7 +10,7 @@ import type { StakingInputs } from '../../../type';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { useEstimatedFee, useInfo, useStakingConsts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { DATE_OPTIONS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -25,13 +24,13 @@ import { STEPS } from '../../stake';
 import TxDetail from './TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   pool: MyPoolInfo;
   onClose: () => void;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function LeavePool ({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function LeavePool({ address, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const stakingConsts = useStakingConsts(address);
   const { api, decimal, formatted, token } = useInfo(address);

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
@@ -19,7 +19,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const MIN_LENGTH = 6;
+const MINIMUM_ALLOWED_PASSWORD_LENGTH = 1;
 
 export default function Passwords2({ disabled, firstPassStyle, secondPassStyle, isFocussed, onChange, onEnter, label = undefined }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -27,9 +27,9 @@ export default function Passwords2({ disabled, firstPassStyle, secondPassStyle, 
   const [pass2, setPass2] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-  const isFirstPasswordValid = useMemo(() => isNotShorterThan(MIN_LENGTH, t<string>('Password is too short')), [t]);
+  const isFirstPasswordValid = useMemo(() => isNotShorterThan(MINIMUM_ALLOWED_PASSWORD_LENGTH, t<string>('Password is too short')), [t]);
   const isSecondPasswordValid = useCallback((firstPassword: string): Validator<string> => allOf(
-    isNotShorterThan(MIN_LENGTH, t<string>('Password is too short')),
+    isNotShorterThan(MINIMUM_ALLOWED_PASSWORD_LENGTH, t<string>('Password is too short')),
     isSameAs(firstPassword, t<string>('Password do not match'))
   ), [t]);
 

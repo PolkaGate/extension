@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
@@ -68,7 +67,7 @@ const Item: React.FC<{ height?: string, logoSize?: number, text: string | undefi
   );
 };
 
-function FullscreenChainNames ({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
+function FullscreenChainNames({ address, defaultValue, disabledItems, helperText, label, labelFontSize = '14px', onChange, options, style }: Props) {
   const theme = useTheme();
   const _allOptions = useContext(GenesisHashOptionsContext);
 
@@ -87,7 +86,7 @@ function FullscreenChainNames ({ address, defaultValue, disabledItems, helperTex
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-  , [disabledItems, isTestnetEnabled]);
+    , [disabledItems, isTestnetEnabled]);
 
   useEffect(() => {
     onChange(defaultValue);

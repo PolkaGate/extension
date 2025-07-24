@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid } from '@mui/material';
 import { grey } from '@mui/material/colors';
@@ -20,7 +19,7 @@ interface Props {
   showTooltip?: boolean;
 }
 
-function VoteChart ({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
+function VoteChart({ ayes, height, nays, noBorderColor = false, showTooltip = true }: Props): React.ReactElement<Props> {
   const chartRef = useRef(null);
 
   Chart.register(...registerables);

@@ -1,9 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountsContext, AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
-import type { AccountIconThemeContextType, AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, DropdownOption, FetchingRequests, ReferendaContextType, UserAddedChains } from '../util/types';
+import type { AccountIconThemeContextType, AccountsAssetsContextType, AlertContextType, APIsContext, CurrencyContextType, DropdownOption, FetchingRequests, PricesContextType, ReferendaContextType, SelectedContextType, UserAddedChains } from '../util/types';
 
 import React from 'react';
 
@@ -17,6 +17,8 @@ const APIContext = React.createContext<APIsContext>({ apis: {}, setIt: noop });
 const AlertContext = React.createContext<AlertContextType>({ alerts: [], setAlerts: noop });
 const AuthorizeReqContext = React.createContext<AuthorizeRequest[]>([]);
 const CurrencyContext = React.createContext<CurrencyContextType>({ currency: undefined, setCurrency: noop });
+const SelectedContext = React.createContext<SelectedContextType>({ selected: { account: undefined, chains: undefined, profile: undefined }, setSelected: noop });
+const PricesContext = React.createContext<PricesContextType>({ prices: undefined, setPrices: noop });
 const FetchingContext = React.createContext<FetchingRequests>({ fetching: {}, set: noop });
 const ReferendaContext = React.createContext<ReferendaContextType>({ refs: {}, setRefs: noop });
 const MediaContext = React.createContext<boolean>(false);
@@ -41,7 +43,9 @@ export { AccountContext,
   GenesisHashOptionsContext,
   MediaContext,
   MetadataReqContext,
+  PricesContext,
   ReferendaContext,
+  SelectedContext,
   SettingsContext,
   SigningReqContext,
   ToastContext,

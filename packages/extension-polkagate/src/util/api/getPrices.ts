@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -28,10 +28,17 @@ export default async function getPrices (priceIds: string[], currencyCode = 'usd
   const outputObjectPrices: PricesType = {};
 
   for (const [key, value] of Object.entries(prices)) {
-    outputObjectPrices[key] = { change: value[`${currencyCode}_24h_change`] as number, value: value[currencyCode] as number };
+    outputObjectPrices[key] = {
+      change: value[`${currencyCode}_24h_change`] as number,
+      value: value[currencyCode] as number
+    };
   }
 
-  const price = { currencyCode, date: Date.now(), prices: outputObjectPrices };
+  const price = {
+    currencyCode,
+    date: Date.now(),
+    prices: outputObjectPrices
+  };
 
   return price;
 }

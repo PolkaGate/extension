@@ -1,26 +1,23 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { faPaste, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, IconButton, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
+import { isValidAddress } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { Input, Label } from '../../../components';
 import { useOutsideClick } from '../../../hooks';
-import isValidAddress from '../../../util/validateAddress';
 import TrustedFriendAccount from './TrustedFriendAccount';
 
-export type AddressWithIdentity = { address: string, accountIdentity: DeriveAccountInfo | undefined };
+export interface AddressWithIdentity { address: string, accountIdentity: DeriveAccountInfo | undefined }
 
 interface Props {
   chain: Chain | null | undefined;
@@ -34,7 +31,7 @@ interface Props {
   iconType?: 'plus' | 'minus' | 'none';
 }
 
-export default function SelectTrustedFriend({ accountsInfo = [], chain, disabled = false, placeHolder = '', iconType = 'plus', onSelectFriend, helperText = '', label, style }: Props): React.ReactElement<Props> {
+export default function SelectTrustedFriend ({ accountsInfo = [], chain, disabled = false, helperText = '', iconType = 'plus', label, onSelectFriend, placeHolder = '', style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

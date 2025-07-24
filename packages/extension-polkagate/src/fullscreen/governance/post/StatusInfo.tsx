@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Timeline, Track } from '../utils/types';
 
@@ -26,7 +25,7 @@ interface Props {
   refIndex: number | undefined;
 }
 
-export default function StatusInfo ({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
+export default function StatusInfo({ address, isDecisionDepositPlaced, isOngoing, refIndex, status, timeline, track }: Props): React.ReactElement | null {
   const { t } = useTranslation();
   const theme = useTheme();
   const [remainingBlocks, setRemainingBlocks] = useState<number>();

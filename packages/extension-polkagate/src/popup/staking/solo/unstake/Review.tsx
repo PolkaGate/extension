@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -29,7 +28,7 @@ import { amountToHuman, amountToMachine, getSubstrateAddress, saveAsHistory } fr
 import TxDetail from './partials/TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   amount: string;
   chilled: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined
   estimatedFee: Balance | undefined;
@@ -46,7 +45,7 @@ interface Props {
   isUnstakeAll: boolean;
 }
 
-export default function Review ({ address, amount, chilled, estimatedFee, hasNominator, isUnstakeAll, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
+export default function Review({ address, amount, chilled, estimatedFee, hasNominator, isUnstakeAll, maxUnlockingChunks, redeem, redeemDate, setShow, show, staked, total, unbonded, unlockingLen }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const proxies = useProxies(api, formatted);

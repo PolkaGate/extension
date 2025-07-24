@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -28,7 +27,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ReservedReasons ({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function ReservedReasons({ address, assetId, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const { chain, decimal, formatted } = useInfo(address);
   const accountName = useAccountName(address);
@@ -99,8 +98,8 @@ export default function ReservedReasons ({ address, assetId, identity, setShow, 
                         <FormatPrice
                           amount={value}
                           decimals={decimal}
-                          fontSize= '16px'
-                          fontWeight= {300}
+                          fontSize='16px'
+                          fontWeight={300}
                           price={price}
                         />
                       </Grid>

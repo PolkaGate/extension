@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -14,9 +14,11 @@ export async function toGetNativeToken (addresses, api, chainName) {
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
 
   const systemBalance = await Promise.all(addresses.map((address) => api.query.system.account(address)));
+  const existentialDeposit = api.consts.balances.existentialDeposit;
 
   addresses.forEach((address, index) => {
-    balances[index].frozenBalance = systemBalance[index].frozen;
+    balances[index].ED = existentialDeposit;
+    balances[index].frozenBalance = systemBalance[index].data.frozen;
 
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
 

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 //@ts-ignore
@@ -25,7 +24,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function LostAccountRecoveryInfo ({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
+export default function LostAccountRecoveryInfo({ accountsInfo, decimal, lostAccountRecoveryInfo, style, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

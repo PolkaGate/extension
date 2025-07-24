@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -27,7 +26,7 @@ import Filters from '../partial/Filters';
 import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   validatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   validatorsInfo?: AllValidators;
   api: ApiPromise | undefined;
@@ -43,7 +42,7 @@ interface Props {
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SelectValidators ({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
+export default function SelectValidators({ address, api, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, setShow, setShowReview, show, staked, stakingConsts, stashId, title, validatorsIdentities, validatorsInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, decimal, token } = useInfo(address);
@@ -188,7 +187,7 @@ export default function SelectValidators ({ address, api, newSelectedValidators,
 
   const isSelected = useCallback((v: ValidatorInfo) =>
     !!newSelectedValidators.find((n) => n.accountId === v.accountId)
-  , [newSelectedValidators]);
+    , [newSelectedValidators]);
 
   const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>, validator: ValidatorInfo) => {
     const checked = e.target.checked;

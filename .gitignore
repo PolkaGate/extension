@@ -1,6 +1,7 @@
 build/
 build-*/
 coverage/
+docs/
 node_modules/
 tmp/
 NOTES.md

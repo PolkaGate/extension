@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import { useAlerts, useInfo, useTranslation } from '.';
  * notify users on chain switch
  * @returns nothing
  */
-export default function useNotifyOnChainChange (address: string | undefined): undefined {
+export default function useNotifyOnChainChange(address: string | undefined): undefined {
   const { accountName, chainName } = useInfo(address);
   const { t } = useTranslation();
   const { notify } = useAlerts();

@@ -1,17 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
-import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
 
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -23,19 +19,19 @@ import { DATE_OPTIONS, MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../uti
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Review from './Review';
 
-interface State {
-  api: ApiPromise | undefined;
-  pathname: string;
-  stakingConsts: StakingConsts | undefined;
-  stakingAccount: AccountStakingInfo | undefined
-}
+// interface State {
+//   api: ApiPromise | undefined;
+//   pathname: string;
+//   stakingConsts: StakingConsts | undefined;
+//   stakingAccount: AccountStakingInfo | undefined
+// }
 
 export default function Index (): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { api, chain, decimal, formatted, token } = useInfo(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -120,11 +116,8 @@ export default function Index (): React.ReactElement {
   }, [amountAsBN, api, chilled, formatted, getFee, maxUnlockingChunks, redeem, staked, unbonded, unlockingLen]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: `/solo/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate(`/solo/${address}`, { state: { ...state } });
+  }, [address, navigate, state]);
 
   const onChangeAmount = useCallback((value: string) => {
     setIsUnstakeAll(false);
@@ -211,7 +204,7 @@ export default function Index (): React.ReactElement {
         disabled={!amount || amount === '0'}
         text={t('Next')}
       />
-      {showReview && amount && api && formatted && maxUnlockingChunks && staked && chain &&
+      {showReview && amount && api && formatted && maxUnlockingChunks && staked && chain && address &&
         <Review
           address={address}
           amount={amount}

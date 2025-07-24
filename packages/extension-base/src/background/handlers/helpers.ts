@@ -1,7 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export function withErrorLog (fn: () => unknown): void {
+export function withErrorLog(fn: () => unknown): void {
   try {
     const p = fn();
 

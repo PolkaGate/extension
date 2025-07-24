@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-inject authors & contributors
+// Copyright 2019-2025 @polkadot/extension-inject authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // cyrb53 (c) 2018 bryc (github.com/bryc)
@@ -14,7 +14,7 @@
 //   - Return value is a hex string (as per comment in SO answer)
 //   - TS typings added
 //   - Non-intrusive coding-style variable declaration changes
-export function cyrb53 (input: string, seed = Date.now()): string {
+export function cyrb53(input: string, seed = Date.now()): string {
   let h1 = 0xdeadbeef ^ seed;
   let h2 = 0x41c6ce57 ^ seed;
 

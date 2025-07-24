@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
@@ -20,6 +19,7 @@ import { VaadinIcon } from '../../../../components';
 import ShowValidator from './ShowValidator';
 
 interface Props {
+  address: string | undefined;
   activeValidators?: ValidatorInfo[] | undefined;
   allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   formatted?: AccountId | string;
@@ -27,13 +27,12 @@ interface Props {
   height?: number;
   isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
+  nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
   style?: SxProps<Theme> | undefined;
   staked: BN | undefined;
   stakingConsts?: StakingConsts | null | undefined;
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
-  address: string;
-  nominatedValidatorsIds?: string[]| AccountId[] | null | undefined;
 }
 
 export default function ValidatorsTableFS ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {

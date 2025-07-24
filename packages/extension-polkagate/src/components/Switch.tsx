@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Theme } from '@mui/material/styles';
 
@@ -24,7 +23,7 @@ interface Props {
 export const CHECKED_COLOR = '#46890C';
 export const UNCHECKED_COLOR = '#838383';
 
-function Switch ({ checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
+function Switch({ checkedLabel, className, fontSize = '18px', fontWeight = 300, isChecked = false, onChange, uncheckedLabel }: Props): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' className={className} container item width='fit-content'>
       <Typography display='inline' fontSize={fontSize} fontWeight={fontWeight}>

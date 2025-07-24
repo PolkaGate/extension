@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -13,7 +12,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Avatar, Grid, IconButton, Link, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN, hexToBn, isHex } from '@polkadot/util';
 
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
@@ -33,7 +32,7 @@ interface Props {
   setShowValidatorInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
+export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowValidatorInfo, showValidatorInfo, staked, stakerAddress, validatorInfo, validatorsIdentities }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
@@ -242,7 +241,7 @@ export default function ValidatorInfoPage ({ api, chain, isFullscreen, setShowVa
 
   if (isFullscreen) {
     return (
-      <DraggableModal blurBackdrop onClose={onClose} open={showValidatorInfo} px={0}>
+      <DraggableModal blurBackdrop onClose={onClose} open={showValidatorInfo}>
         {page}
       </DraggableModal>
     );

@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /** 
@@ -7,13 +8,14 @@
  * this hook returns a 
  * */
 
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountStakingInfo } from '../util/types';
+
 import { useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
-import type { AccountStakingInfo } from '../util/types';
 import { useChainName, useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
@@ -51,7 +53,7 @@ export async function getStakingReward(chainName: string, address: AccountId | s
   });
 }
 
-export default function useStakingRewards(address: string, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
+export default function useStakingRewards(address: string | undefined, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
   const [rewards, setRewards] = useState<BN>();
   const chainName = useChainName(address);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);

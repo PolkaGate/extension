@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -42,7 +42,6 @@ export default function useNFT (accountsFromContext: AccountJson[] | null) {
 
       if (!NFTs) {
         notify(t('Unable to fetch NFT/Unique items!'), 'info');
-        // setFetching(false);
 
         return;
       }
@@ -52,22 +51,17 @@ export default function useNFT (accountsFromContext: AccountJson[] | null) {
       try {
         parsedNFTsInfo = JSON.parse(NFTs) as NftItemsWorker;
 
-        // console.log('All fetched NFTs:', parsedNFTsInfo);
-
         if (parsedNFTsInfo.functionName !== NFT_FUNCTION_NAME) {
           return;
         }
       } catch (error) {
         console.error('Failed to parse NFTs JSON:', error);
-        // setFetching(false);
 
         return;
       }
 
       // Save all fetched items to Chrome storage
       saveToStorage(parsedNFTsInfo.results);
-
-      // setFetching(false);
     };
 
     worker.addEventListener('message', handleMessage);

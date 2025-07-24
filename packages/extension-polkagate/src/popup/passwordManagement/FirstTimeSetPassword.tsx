@@ -1,68 +1,98 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
+import { Box, Container, Grid, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
-import { Grid } from '@mui/material';
-import React, { useCallback } from 'react';
+import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
+import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { TwoButtons } from '../../components';
+import { Lock as LockGif } from '../../assets/gif';
+import { GradientBox, GradientButton, MatchPasswordField } from '../../components';
 import { setStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
-import { useTranslation } from '../../hooks';
-import Passwords2 from '../newAccount/createAccountFullScreen/components/Passwords2';
+import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import { Version } from '../../partials';
+import { RedGradient } from '../../style';
 import { STEPS } from './constants';
+import Header from './Header';
+import { LOGIN_STATUS } from './types';
 
 interface Props {
-  onPassChange: (pass: string | null) => void
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
-  hashedPassword: string | undefined;
-  setHashedPassword: React.Dispatch<React.SetStateAction<string | undefined>>
+  isFullscreen?: boolean;
 }
 
-function FirstTimeSetPassword ({ hashedPassword, onPassChange, setHashedPassword, setStep }: Props): React.ReactElement {
+function Content ({ isFullscreen, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
 
+  const [password, setPassword] = useState<string>();
+
   const onSetPassword = useCallback(async () => {
-    if (!hashedPassword) {
+    if (!password) {
       return;
     }
 
-    await setStorage('loginInfo', { hashedPassword, lastLoginTime: Date.now(), status: 'justSet' });
+    await setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { hashedPassword: password, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET });
     setExtensionLock(true);
     setStep(STEPS.SHOW_LOGIN);
-    setHashedPassword(undefined);
-  }, [hashedPassword, setExtensionLock, setHashedPassword, setStep]);
-
-  const onCancel = useCallback(() => {
-    setStep(STEPS.ASK_TO_SET_PASSWORD);
-  }, [setStep]);
+  }, [password, setExtensionLock, setStep]);
 
   return (
-    <Grid alignContent='center' container direction='column' justifyContent='center'>
-      <Grid container item justifyContent='center' sx={{ display: 'block', px: '10%' }}>
-        <Passwords2
-          firstPassStyle={{ marginBlock: '8px' }}
-          isFocussed
-          label={t('Password')}
-          onChange={onPassChange}
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onEnter={onSetPassword}
-        />
-      </Grid>
-      <Grid container item justifyContent='center' sx={{ px: '2%' }}>
-        <TwoButtons
-          disabled={!hashedPassword}
-          mt='20px'
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onPrimaryClick={onSetPassword}
-          onSecondaryClick={onCancel}
-          primaryBtnText={t('Set')}
-          secondaryBtnText={t('Cancel')}
-        />
-      </Grid>
+    <Grid container item justifyContent='center' sx={{ p: '18px 15px 26px', position: 'relative', zIndex: 1 }}>
+      <Box
+        component='img'
+        src={LockGif as string}
+        sx={{ height: '53px', width: '53px' }}
+      />
+      <Typography sx={{ lineHeight: '32px', mb: '12px', mt: '20px', width: '100%' }} textTransform='uppercase' variant='H-2'>
+        {t('Set a secure password')}
+      </Typography>
+      <Typography sx={{ color: 'text.secondary', m: isFullscreen ? '20px 0 20px' : '0 0 22px', px: '7px', width: '100%' }} variant='B-4'>
+        {t('Make sure to remember this password. If you forget it, you’ll need to reimport your accounts and set a new one. To avoid losing access, export and store your accounts securely.')}
+      </Typography>
+      <MatchPasswordField
+        focused
+        hashPassword
+        onSetPassword={onSetPassword}
+        setConfirmedPassword={setPassword}
+        style={{ marginBottom: '15px' }}
+      />
+      <GradientButton
+        contentPlacement='center'
+        disabled={!password}
+        onClick={onSetPassword}
+        style={{
+          height: '44px',
+          marginTop: isFullscreen ? '20px' : 'auto'
+        }}
+        text={t('Set Password')}
+      />
     </Grid>
+  );
+}
+
+function FirstTimeSetPassword ({ setStep }: Props): React.ReactElement {
+  const isExtensionPopup = useIsExtensionPopup();
+
+  return (
+    <>
+      {isExtensionPopup
+        ? <Container disableGutters sx={{ position: 'relative' }}>
+          <Header />
+          <GradientBox noGradient style={{ m: 'auto', mt: '8px', width: '359px' }}>
+            <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
+            <Content setStep={setStep} />
+          </GradientBox>
+          <Version />
+        </Container>
+        : <OnboardingLayout childrenStyle={{ justifyContent: 'center', margin: 'auto', width: '434px' }} showBread={false} showLeftColumn={false}>
+          <Content isFullscreen={true} setStep={setStep} />
+        </OnboardingLayout>
+      }
+    </>
+
   );
 }
 

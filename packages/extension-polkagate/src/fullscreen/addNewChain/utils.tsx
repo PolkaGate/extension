@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
@@ -14,7 +14,7 @@ export function useUserAddedEndpoints (): Record<HexString, UserAddedEndpoint> |
   return userEndpoints;
 }
 
-export function useUserAddedEndpoint (genesis: string | null | undefined): DropdownOption []| undefined {
+export function useUserAddedEndpoint (genesis: string | null | undefined): DropdownOption[] | undefined {
   const endpoints = useUserAddedEndpoints();
 
   return useMemo(() => {

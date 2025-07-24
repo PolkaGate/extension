@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
@@ -27,7 +26,7 @@ interface Props {
   manageConnectedAccounts?: boolean;
 }
 
-const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
+export const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
   const isASelected = selectedList.includes(accountA.address);
   const isBSelected = selectedList.includes(accountB.address);
 

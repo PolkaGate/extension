@@ -1,8 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-export const ALT_NFT_BGCOLOR_LIGHT = '#FBFBFB';
-export const ALT_NFT_BGCOLOR_DARK = '#4D4D4D';
 
 export const IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 export const KODADOT_IPFS_GATEWAY = 'https://image.w.kodadot.xyz/ipfs/';
@@ -44,3 +41,4 @@ export const SUPPORTED_NFT_CHAINS = {
 
 export const THUMBNAIL_HEIGHT = '340px';
 export const THUMBNAIL_WIDTH = '190px';
+export const PREVIEW_SIZE = '200px';

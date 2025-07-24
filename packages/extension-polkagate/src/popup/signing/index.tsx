@@ -1,35 +1,48 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SignerPayloadJSON } from '@polkadot/types/types';
+import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
+import type { HexString } from '@polkadot/util/types';
 
-import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ActionContext, Header, Loading, SigningReqContext, Warning } from '../../components';
+import { TypeRegistry } from '@polkadot/types';
+
+import { ActionContext, ExtensionPopup, Loading, SigningReqContext } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
-import { cancelSignRequest } from '../../messaging';
+import { approveSignSignature, cancelSignRequest } from '../../messaging';
+import Confirm from './Confirm';
+import ExtrinsicDetail from './ExtrinsicDetail';
 import Request from './Request';
 import TransactionIndex from './TransactionIndex';
+import { type Data, type ModeData, SIGN_POPUP_MODE } from './types';
 
-export default function Signing (): React.ReactElement {
+const registry = new TypeRegistry();
+
+function isRawPayload (payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
+  return !!(payload as SignerPayloadRaw).data;
+}
+
+export default function Signing(): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(SigningReqContext);
-  const [requestIndex, setRequestIndex] = useState(0);
   const onAction = useContext(ActionContext);
-  const theme = useTheme();
+
+  const DEFAULT_MODE_DATA: ModeData = useMemo(() => ({
+    data: null,
+    title: t('Approve Request'),
+    type: SIGN_POPUP_MODE.REQUEST
+  }), [t]);
+
+  const [requestIndex, setRequestIndex] = useState(0);
+  const [mode, setMode] = useState<ModeData>(DEFAULT_MODE_DATA);
 
   const [error, setError] = useState<string | null>(null);
+  const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
 
-  const _onNextClick = useCallback(
-    () => setRequestIndex((requestIndex) => requestIndex + 1),
-    []
-  );
+  const _onNextClick = useCallback(() => setRequestIndex((requestIndex) => requestIndex + 1), []);
 
-  const _onPreviousClick = useCallback(
-    () => setRequestIndex((requestIndex) => requestIndex - 1),
-    []
-  );
+  const _onPreviousClick = useCallback(() => setRequestIndex((requestIndex) => requestIndex - 1), []);
 
   useEffect(() => {
     setRequestIndex(
@@ -39,7 +52,6 @@ export default function Signing (): React.ReactElement {
     );
   }, [requests]);
 
-  // protect against removal overflows/underflows
   const request = requests.length !== 0
     ? requestIndex >= 0
       ? requestIndex < requests.length
@@ -47,7 +59,28 @@ export default function Signing (): React.ReactElement {
         : requests[requests.length - 1]
       : requests[0]
     : null;
-  const isTransaction = !!((request?.request?.payload as SignerPayloadJSON)?.blockNumber);
+
+  useEffect((): void => {
+    if (!request) {
+      return;
+    }
+
+    const payload = request.request.payload;
+
+    if (isRawPayload(payload)) {
+      setData({
+        hexBytes: payload.data,
+        payload: null
+      });
+    } else {
+      registry.setSignedExtensions(payload.signedExtensions);
+
+      setData({
+        hexBytes: null,
+        payload: registry.createType('ExtrinsicPayload', payload, { version: payload.version })
+      });
+    }
+  }, [request]);
 
   const _onCancel = useCallback((): void => {
     if (!request?.id) {
@@ -56,49 +89,78 @@ export default function Signing (): React.ReactElement {
 
     cancelSignRequest(request.id)
       .then(() => onAction('/'))
-      .catch((error: Error) => console.error(error));
+      .catch(console.error);
   }, [onAction, request?.id]);
 
+  const onBack = useCallback((): void => {
+    setMode(DEFAULT_MODE_DATA);
+  }, [DEFAULT_MODE_DATA]);
+
+  const onSignature = useCallback(({ signature }: { signature: HexString }): void => {
+    request?.id && approveSignSignature(request.id, signature)
+      .then(() => onAction('/'))
+      .catch((e: Error): void => {
+        setError(e.message);
+        console.error(e);
+      });
+  }, [onAction, setError, request?.id]);
+
   return request
-    ? (
-      <>
-        <Header
-          onClose={_onCancel}
-          text={isTransaction ? t('Transaction') : t('Sign message')}
+    ? <ExtensionPopup
+      TitleIcon={mode.Icon}
+      handleClose={_onCancel}
+      iconSize={24}
+      maxHeight='450px'
+      onBack={[SIGN_POPUP_MODE.DETAIL, SIGN_POPUP_MODE.SIGN].includes(mode.type) ? onBack : undefined}
+      openMenu={true}
+      pt={10}
+      title={mode.title}
+      withoutTopBorder
+    >
+      {mode.type === SIGN_POPUP_MODE.DETAIL &&
+        <ExtrinsicDetail
+          account={request.account}
+          mode={mode}
+          request={request.request}
         />
-        {error &&
-          <Grid container>
-            <Warning
-              fontWeight={400}
-              isDanger
-              marginTop={15}
-              theme={theme}
-            >
-              {error}
-            </Warning>
-          </Grid>
-        }
-        {requests.length > 1 && (
-          <TransactionIndex
-            index={requestIndex}
-            onNextClick={_onNextClick}
-            onPreviousClick={_onPreviousClick}
-            totalItems={requests.length}
-          />
-        )}
-        {request.account &&
-          <Request
-            account={request.account}
-            buttonText={isTransaction ? t('Sign the transaction') : t('Sign the message')}
-            error={error}
-            isFirst={requestIndex === 0}
-            request={request.request}
-            setError={setError}
-            signId={request.id}
-            url={request.url}
-          />
-        }
-      </>
-    )
+      }
+      {[SIGN_POPUP_MODE.REQUEST, SIGN_POPUP_MODE.QR, SIGN_POPUP_MODE.RAW_DATA].includes(mode.type) &&
+        <>
+          {requests.length > 1 && (
+            <TransactionIndex
+              index={requestIndex}
+              onNextClick={_onNextClick}
+              onPreviousClick={_onPreviousClick}
+              totalItems={requests.length}
+            />
+          )}
+          {request.account &&
+            <Request
+              account={request.account}
+              error={error}
+              hexBytes={hexBytes}
+              isFirst={requestIndex === 0}
+              onSignature={onSignature}
+              payload={payload}
+              request={request.request}
+              setError={setError}
+              setMode={setMode}
+              signId={request.id}
+              url={request.url}
+            />
+          }
+        </>
+      }
+      {mode.type === SIGN_POPUP_MODE.SIGN && payload &&
+        <Confirm
+          extrinsicPayload={payload}
+          fee={mode.fee}
+          isFirst={requestIndex === 0}
+          onCancel={_onCancel}
+          onSignature={onSignature}
+          request={request}
+        />
+      }
+    </ExtensionPopup>
     : <Loading />;
 }

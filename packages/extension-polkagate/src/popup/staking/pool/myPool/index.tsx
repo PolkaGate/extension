@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo } from '../../../../util/types';
@@ -15,7 +14,7 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 
@@ -56,7 +55,7 @@ export default function Pool(): React.ReactElement {
   const api = useApi(address, state?.api);
   const [refresh, setRefresh] = useState<boolean>(false);
   const pool = usePool(address, undefined, refresh);
-  const history = useHistory();
+  const navigate = useNavigate();
   const chain = useChain(address);
   const formatted = useFormatted(address);
 
@@ -163,18 +162,12 @@ export default function Pool(): React.ReactElement {
   const isRemoveAllDisabled = !['Destroying', 'Blocked'].includes(poolState ?? '') || (poolsToShow && Number(poolsToShow[poolIndex]?.bondedPool?.memberCounter) === 1);
 
   const backToStake = useCallback(() => {
-    history.push({
-      pathname: `/pool/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate(`/pool/${address}`, { state: { ...state } }).catch(console.error);
+  }, [address, navigate, state]);
 
   const goToPoolStake = useCallback(() => {
-    history.push({
-      pathname: `/pool/stake/${address}`,
-      state: { pool: null }
-    });
-  }, [address, history]);
+    navigate(`/pool/stake/${address}`, { state: { pool: null } }).catch(console.error);
+  }, [address, navigate]);
 
   const goBlock = useCallback(() => {
     if (poolState === 'Destroying' || poolState === 'Blocked') {

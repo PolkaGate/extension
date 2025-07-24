@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
@@ -28,7 +28,7 @@ interface Props {
   type?: string;
 }
 
-function InputWithLabel ({ defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', labelFontSize = '14px', onChange, onEnter, placeholder, type = 'text', value }: Props): React.ReactElement<Props> {
+function InputWithLabel({ defaultValue, disabled, fontSize = 18, fontWeight = 300, height = 31, helperText, isError, isFocused, isReadOnly, label = '', labelFontSize = '14px', onChange, onEnter, placeholder, type = 'text', value }: Props): React.ReactElement<Props> {
   const [offFocus, setOffFocus] = useState(false);
   const theme = useTheme();
 

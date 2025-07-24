@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
@@ -9,9 +9,9 @@ import { useEffect, useState } from 'react';
 
 import { isNumber } from '@polkadot/util';
 
-import { useInfo } from '.';
+import { useChainInfo, useEndpoint2 } from '.';
 
-interface Teleport {
+export interface Teleport {
   allowTeleport: boolean;
   destinations: LinkOption[];
   isParaTeleport?: boolean;
@@ -60,20 +60,20 @@ function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOpti
     );
 }
 
-export default function useTeleport (address: string | undefined): Teleport {
-  const { api, chain, endpoint: endpointUrl } = useInfo(address);
-
+export default function useTeleport (genesisHash: string | undefined): Teleport {
+  const { api, chain } = useChainInfo(genesisHash);
+  const { endpoint: endpointUrl } = useEndpoint2(genesisHash);
   const [state, setState] = useState<Teleport>(() => ({ ...DEFAULT_STATE }));
   const [paraId, setParaId] = useState<ParaId>();
   const [firstEndpoint, setFirstEndpoint] = useState<ExtLinkOption | undefined>(undefined);
   const [secondEndpoint, setSecondEndpoint] = useState<ExtLinkOption | undefined>(undefined);
 
   useEffect((): void => {
-    api && api.query['parachainInfo'] && api.query['parachainInfo']['parachainId']()
-      .then((id: any) => { setParaId(id) })
-      .catch((error) => {
-        console.error('Failed to fetch parachain ID:', error);
-      });
+    api?.query['parachainInfo']?.['parachainId']().then((id: unknown) => {
+      return setParaId(id as ParaId);
+    }).catch((error) => {
+      console.error('Failed to fetch parachain ID:', error);
+    });
   }, [api]);
 
   useEffect((): void => {

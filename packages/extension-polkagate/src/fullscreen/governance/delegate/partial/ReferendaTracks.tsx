@@ -1,10 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 import type { Lock } from '../../../../hooks/useAccountLocks';
@@ -52,7 +51,7 @@ export const LoadingSkeleton = ({ skeletonsNum, withCheckBox = false }: { skelet
   return skeletonArray;
 };
 
-export default function ReferendaTracks ({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
+export default function ReferendaTracks({ filterDelegatedTracks, filterLockedTracks, firstSelections, maximumHeight = '175px', selectedTracks, setSelectedTracks, tracks }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

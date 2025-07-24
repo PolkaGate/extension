@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../../util/types';
 
@@ -24,7 +23,7 @@ import DisplayIdentity from './component/DisplayIdentity';
 import { IdJudgement, Mode, STEPS } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   maxFeeValue: BN | undefined;

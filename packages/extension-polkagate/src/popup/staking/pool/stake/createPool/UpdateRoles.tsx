@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Slide, Typography, useTheme } from '@mui/material';
@@ -14,7 +13,7 @@ import getAllAddresses from '../../../../../util/getAllAddresses';
 import type { Chain } from '@polkadot/extension-chains/types';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   chain?: Chain;
   formatted?: string;
   nominatorId: string | undefined;

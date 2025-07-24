@@ -1,45 +1,30 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
 
-import type { ThemeOptions, TypeText } from '@mui/material';
+import type { ExtendedThemeOptions } from './dark';
 
 import { baseTheme } from './baseTheme';
 
-declare module '@mui/material/styles' {
-  interface Palette {
-    aye: Palette['primary'];
-    nay: Palette['primary'];
-    label: Palette['primary'];
-    approval: Palette['primary'];
-    support: Palette['primary'];
-    backgroundFL: TypeText;
-  }
-  interface PaletteOptions {
-    approval?: PaletteOptions['primary'];
-    aye?: PaletteOptions['primary'];
-    nay?: PaletteOptions['primary'];
-    label?: PaletteOptions['primary'];
-    support?: PaletteOptions['primary'];
-    backgroundFL?: Partial<TypeText>;
-  }
-}
-
-export const lightTheme: ThemeOptions = {
+export const lightTheme: ExtendedThemeOptions = {
   ...baseTheme,
   palette: {
     mode: 'light',
-    primary: { main: '#99004F', light: '#838383', contrastText: '#F1F1F1' },
-    secondary: { main: '#99004F', light: '#BA2882', contrastText: '#747474' },
+    menuIcon: { active: '#8299BD', hover: '#FF4FB9', selected: '#291443' },
+    primary: { main: '#291443', light: '#838383', contrastText: '#F1F1F1' },
+    secondary: { main: '#8F97B8', light: '#8299BD', contrastText: '#CCD2EA59' },
     support: { main: '#BCE2DB', contrastText: '#008080' },
     approval: { main: '#BA82A4', contrastText: '#DFCBD7' },
     aye: { main: '#008080' },
     nay: { main: '#FF5722' },
-    label: { main: '#FFFFFF' },
-    background: { default: '#F1F1F1', paper: '#fff' },
+    error: { main: '#FF4FB9' },
+    icon: { primary: '#FFFFFF', secondary: '#291443' },
+    label: { primary: '#FFFFFF', secondary: '#291443' },
+    background: { default: '#CCD2EA', paper: '#FFFFFF' },
     backgroundFL: { primary: '#DFDFDF', secondary: '#F1F1F1' },
-    text: { primary: '#63364D', secondary: '#FFFFFF', disabled: '#747474' },
+    border: { default: '#05091C', paper: '#F5F4FF' },
+    text: { primary: '#291443', secondary: '#8299BD;', disabled: '#747474', highlight: '#809ACB' },
     action: { disabled: '#fff', disabledBackground: '#989898', focus: '#BA82A5' },
     success: { main: '#1F7720', light: '#46890C', contrastText: '#228B22' },
     warning: { main: '#FF002B' },
@@ -53,13 +38,6 @@ export const lightTheme: ThemeOptions = {
           backgroundColor: 'grey.200'
         }
       }
-    }
-  },
-  typography: {
-    allVariants: {
-      fontWeight: 400,
-      fontFamily: 'Roboto',
-      letterSpacing: '-0.015em'
     }
   }
 };

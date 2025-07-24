@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransactionDetail } from '../../../util/types';
 
@@ -25,7 +24,7 @@ interface Props {
   chainName: string | undefined;
 }
 
-export default function HistoryItem ({ anotherDay, chainName, date, decimal, formatted, info, token }: Props): React.ReactElement {
+export default function HistoryItem({ anotherDay, chainName, date, decimal, formatted, info, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -56,9 +55,9 @@ export default function HistoryItem ({ anotherDay, chainName, date, decimal, for
   return (
     <Container disableGutters sx={{ marginTop: `${anotherDay ? 20 : -0.8}px` }}>
       {anotherDay &&
-       <Grid container item justifyContent='center' sx={{ fontSize: '14px', fontWeight: 400 }}>
-         {date}
-       </Grid>
+        <Grid container item justifyContent='center' sx={{ fontSize: '14px', fontWeight: 400 }}>
+          {date}
+        </Grid>
       }
       <Grid alignItems='center' container direction='column' item justifyContent='space-between' sx={{ '> .historyItems:last-child': { border: 'none' }, bgcolor: 'background.paper', borderRadius: '5px', boxShadow: '0px 0px 3px 2px rgba(0, 0, 0, 0.1)', mx: '3px', width: 'calc(100% - 6px)' }}>
         <Grid className='historyItems' container item py='5px' sx={{ borderBottom: '1px solid', borderBottomColor: 'secondary.light' }}>

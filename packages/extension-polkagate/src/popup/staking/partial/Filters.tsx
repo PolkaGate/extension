@@ -1,9 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { Filter, StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../../../util/types';
@@ -12,7 +11,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/partial/comparators';
 import { DEFAULT_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -38,7 +37,7 @@ interface Props {
   onLimitValidatorsPerOperator: (validators: ValidatorInfoWithIdentity[] | undefined, limit: number) => ValidatorInfoWithIdentity[];
 }
 
-export default function Filters ({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
+export default function Filters({ allValidators, allValidatorsIdentities, apply, filters, isFullscreen, newSelectedValidators, onLimitValidatorsPerOperator, setApply, setFilteredValidators, setFilters, setNewSelectedValidators, setShow, setSortValue, show, sortValue, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

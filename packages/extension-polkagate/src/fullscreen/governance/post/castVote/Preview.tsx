@@ -1,8 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+import type { Vote } from '../myVote/util';
 
 import { Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -14,7 +15,7 @@ import { Identity, Motion, PButton, ShowBalance, TwoButtons } from '../../../../
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
 import { STATUS_COLOR } from '../../utils/consts';
 import { getVoteType } from '../../utils/util';
-import { getConviction, Vote } from '../myVote/util';
+import { getConviction } from '../myVote/util';
 import DisplayValue from './partial/DisplayValue';
 import { STEPS } from '.';
 

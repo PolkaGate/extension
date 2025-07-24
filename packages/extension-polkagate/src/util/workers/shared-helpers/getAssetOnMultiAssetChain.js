@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { getSubstrateAddress } from '../../utils';
@@ -13,7 +13,7 @@ import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, me
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort} port
  */
-export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
+export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
@@ -44,6 +44,10 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     });
 
     const balance = entry[1];
+
+    // @ts-ignore
+    balance.ED = foundAsset?.extras?.existentialDeposit ?? 0;
+
     // @ts-ignore
     const totalBalance = balance.free.add(balance.reserved);
 

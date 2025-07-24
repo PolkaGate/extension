@@ -1,12 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { MyPoolInfo, PoolStakingConsts, StakingConsts } from '../../../../util/types';
 
 import { faPersonCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +11,7 @@ import { AutoDelete as AutoDeleteIcon } from '@mui/icons-material';
 import { Button, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -29,25 +26,17 @@ import RemoveAll from '../myPool/removeAll';
 import SetState from '../myPool/SetState';
 import Review from './Review';
 
-interface State {
-  api: ApiPromise | undefined;
-  pathname: string;
-  poolConsts: PoolStakingConsts | undefined;
-  stakingConsts: StakingConsts;
-  myPool: MyPoolInfo | undefined;
-}
-
 export const CONDITION_MAP = {
   DESTROY: 1,
   REMOVE_ALL: 2
 };
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
 
@@ -189,11 +178,8 @@ export default function Index (): React.ReactElement {
   }, [formatted, isPoolDepositor, isPoolRoot, myPool, poolConsts, poolMemberCounter, poolState, staked, t]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: state?.pathname ?? '/',
-      state: { ...state }
-    });
-  }, [history, state]);
+    navigate(state?.pathname ?? '/', { state: { ...state } });
+  }, [navigate, state]);
 
   const onChangeAmount = useCallback((value: string) => {
     setUnstakeAllAmount(false);

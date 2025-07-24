@@ -1,7 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
+
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
+import type { Icon } from 'iconsax-react';
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
@@ -9,7 +12,8 @@ import type { DeriveAccountInfo, DeriveAccountRegistration, DeriveBalancesAll, D
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
-import type { IconTheme } from '@polkadot/react-identicon/types';
+import type { SavedAssets } from '@polkadot/extension-polkagate/hooks/useAssetsBalances';
+import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
@@ -17,9 +21,8 @@ import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMem
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/utils/types';
-import type { CurrencyItemType } from '../fullscreen/homeFullScreen/partials/Currency';
+import type { CurrencyItemType } from '../fullscreen/home/partials/Currency';
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
-import type { SavedAssets } from '../hooks/useAssetsBalances';
 
 import { type SxProps, type Theme } from '@mui/material';
 
@@ -47,6 +50,8 @@ export const DEFAULT_ACCOUNT_BALANCE = { address: null, balanceInfo: null, chain
 
 export interface StakingConsts {
   bondingDuration: number; // eras
+  decimal: number;
+  eraDuration: number;
   eraIndex: number;
   existentialDeposit: BN;
   maxNominations: number;
@@ -148,20 +153,28 @@ export interface TxResult {
   failureText?: string;
 }
 export interface TransactionDetail extends TxResult {
-  action: string; // send, Solo staking, pool staking, convictionvoting ...
+  accounts?: string[];
+  action: string; // send, solo staking, pool staking, convictionvoting, ...
   amount?: string;
-  chain?: Chain;
-  date: number;
-  from: NameAddress;
-  subAction?: string; // bond_extra, unbound, nominate, vote
-  to?: NameAddress;
-  token?: string;
-  throughProxy?: NameAddress;
-  refId?: number;
-  voteType?: number;
+  chain?: Chain | null;
+  description?: string; // a short description which can be replace with 'Completed' text on success
+  calls?: string[];
   class?: number;
   conviction?: string;
+  date: number;
+  decimal?: number;
   delegatee?: string;
+  deposit?: string;
+  from: NameAddress;
+  nominators?: string[];
+  poolId?: string;
+  refId?: number;
+  subAction?: string; // bond_extra, unbound, nominate, vote, unvote, unlock, ...
+  to?: NameAddress;
+  token?: string;
+  throughProxy?: NameAddress; // not available in subscan (can be removed)
+  voteType?: number;
+  extra?: Record<string, string>
 }
 
 export interface TxInfo extends TransactionDetail {
@@ -234,6 +247,7 @@ export interface TransferRequest {
   };
   generated_at: number;
   message: string;
+  for: string;
 }
 
 export interface ExtrinsicsRequest {
@@ -244,6 +258,7 @@ export interface ExtrinsicsRequest {
   };
   generated_at: number;
   message: string;
+  for: string;
 }
 
 export interface TipsRequest {
@@ -280,6 +295,11 @@ export interface Extrinsics {
   class?: number;
   conviction?: string;
   delegatee?: string;
+  poolId?: string;
+  nominators?: string[];
+  to?: string;
+  to_account_display?: AccountDisplay;
+  calls?: string[];
 }
 
 export interface Transfers {
@@ -424,6 +444,7 @@ export interface PoolStakingConsts {
   minJoinBond: BN;
   minNominatorBond: BN;
   token: string;
+  eraLength: BN,
 }
 
 export interface PoolInfo {
@@ -445,6 +466,13 @@ export interface MyPoolInfo extends PoolInfo {
   token?: string;
   decimal?: number;
   date?: number;
+  poolMembers?: {
+    accountId: string;
+    member: {
+      points: number,
+      poolId: number;
+    };
+  }[];
 }
 
 export interface PoolAccounts {
@@ -560,6 +588,7 @@ export interface RewardInfo {
 }
 
 export interface SubscanClaimedRewardInfo {
+  validator_stash?: string;
   era: number,
   pool_id: number,
   account_display: { address: string },
@@ -572,6 +601,7 @@ export interface SubscanClaimedRewardInfo {
 }
 
 export interface ClaimedRewardInfo {
+  address: string;
   era: number;
   amount: BN;
   date?: string;
@@ -634,9 +664,11 @@ export interface Step {
   style?: SxProps<Theme> | undefined;
 }
 
-interface PriceValue {
-  value: number,
-  change: number
+export interface PriceValue {
+  value: number;
+  change: number;
+  genesisHash?: string;
+  symbol?: string;
 }
 
 export interface PricesType {
@@ -650,7 +682,7 @@ export interface Prices {
 }
 
 export interface PricesInCurrencies {
-  [currencyCode: string]: { date: number; prices: PricesType; };
+  [currencyCode: string]: Prices;
 }
 
 export interface Price {
@@ -683,6 +715,7 @@ export interface BalancesInfo extends DeriveBalancesAll {
   decimal: number;
   genesisHash: string;
   pooledBalance?: BN;
+  votingBalance: Balance;
   frozenBalance: BN;
   soloTotal?: BN;
   token: string;
@@ -715,15 +748,32 @@ export interface UserAddedEndpoint {
   priceId: string;
 }
 
-export type UserAddedChains= Record<string, UserAddedEndpoint>
+export type UserAddedChains = Record<string, UserAddedEndpoint>
 
 export interface CurrencyContextType {
   currency: CurrencyItemType | undefined;
   setCurrency: (selectedCurrency: CurrencyItemType) => void;
 }
+
+export interface SelectedType {
+  account: AccountJson | undefined;
+  chains: Record<string, string> | undefined;
+  profile: string | undefined;
+}
+export interface SelectedContextType {
+  selected: SelectedType;
+  setSelected: (selectedItems: SelectedType) => void;
+}
+
+export interface PricesContextType {
+  prices: Prices | undefined;
+  setPrices: (prices: Prices) => void;
+}
+
+export type MyIconTheme = BaseIconTheme | 'polkasoul';
 export interface AccountIconThemeContextType {
-  accountIconTheme: IconTheme | undefined;
-  setAccountIconTheme: (theme: IconTheme) => void;
+  accountIconTheme: MyIconTheme | undefined;
+  setAccountIconTheme: (theme: MyIconTheme) => void;
 }
 
 export interface FetchingRequests {
@@ -826,7 +876,7 @@ export interface AccountsAssetsContextType {
   setAccountsAssets: (savedAccountAssets: SavedAssets) => void;
 }
 
-export type Severity= 'error' | 'warning' | 'info' | 'success'
+export type Severity = 'error' | 'warning' | 'info' | 'success'
 
 export interface AlertType {
   id: string;
@@ -846,6 +896,11 @@ export interface SoloSettings {
   controllerId?: AccountId | string | undefined,
   payee: Payee,
   stashId?: AccountId | string | undefined,
+}
+
+export interface AdvancedDropdownOption extends DropdownOption {
+  Icon?: React.JSX.Element | Icon;
+  count?: number;
 }
 
 export interface DropdownOption {
@@ -883,3 +938,40 @@ export interface FastestConnectionType {
 export type RecentChainsType = Record<string, string[]>;
 
 export type NftItemsType = Record<string, ItemInformation[]>;
+
+export interface FetchedBalance {
+  ED: BN,
+  assetId: number | string,
+  availableBalance: BN,
+  balanceDetails?: any,
+  chainName: string,
+  date?: number,
+  decimal: number,
+  freeBalance?: BN,
+  frozenBalance: BN,
+  frozenFee?: BN,
+  frozenMisc?: BN,
+  genesisHash: string,
+  lockedBalance?: BN,
+  poolName?: string,
+  priceId: string,
+  price?: number,
+  pooledBalance?: BN,
+  poolReward?: BN,
+  reservedBalance?: BN,
+  soloTotal?: BN,
+  token: string,
+  totalBalance: BN,
+  vestingLocked?: BN,
+  vestedClaimable?: BN,
+  vestedBalance?: BN,
+  vestingTotal?: BN,
+  votingBalance?: BN
+}
+
+export interface PositionInfo extends FetchedBalance, Chain {
+  chainName: string;
+  genesisHash: string;
+  rate?: number;
+  // You can add additional properties here if needed
+}

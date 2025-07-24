@@ -67,7 +67,7 @@ const testnets = [{
     "website": "https://polkadot.network"
 },
 {
-    "prefix": 42,
+    "prefix": 0,
     "network": "paseo",
     "displayName": "Paseo Testnet",
     "symbols": ["PAS"],

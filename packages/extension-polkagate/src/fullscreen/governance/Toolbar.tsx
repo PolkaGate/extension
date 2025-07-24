@@ -1,9 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DecidingCount } from '../../hooks/useDecidingCount';
 import type { TopMenu } from './utils/types';
@@ -38,7 +37,7 @@ interface TopMenuComponentProps {
   color: string;
 }
 
-const TopMenuComponent = React.memo(function TopMenuComponent ({ bgcolor, color, item, onTopMenuMenuMouseEnter, onTopMenuMenuMouseLeave }: TopMenuComponentProps): React.ReactElement<{ item: TopMenu }> {
+const TopMenuComponent = React.memo(function TopMenuComponent({ bgcolor, color, item, onTopMenuMenuMouseEnter, onTopMenuMenuMouseLeave }: TopMenuComponentProps): React.ReactElement<{ item: TopMenu }> {
   return (
     <Grid alignItems='center' container item justifyContent='center' onMouseEnter={() => onTopMenuMenuMouseEnter(item)} onMouseLeave={() => onTopMenuMenuMouseLeave()}
       sx={{
@@ -62,7 +61,7 @@ const TopMenuComponent = React.memo(function TopMenuComponent ({ bgcolor, color,
   );
 });
 
-export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
+export default function Toolbar({ decidingCounts, menuOpen, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address, topMenu } = useParams<{ address: string, topMenu: 'referenda' | 'fellowship', postId?: string }>();
@@ -71,7 +70,7 @@ export default function Toolbar ({ decidingCounts, menuOpen, setMenuOpen, setSel
 
   const [openDelegate, setOpenDelegate] = useState(false);
   const [showDelegationNote, setShowDelegationNote] = useState<boolean>(true);
-  const [hoveredTopMenu, setHoveredTopMenu] = useState<'referenda' | 'fellowship'>(topMenu);
+  const [hoveredTopMenu, setHoveredTopMenu] = useState<'referenda' | 'fellowship' | undefined>(topMenu);
 
   React.useEffect(() => {
     setShowDelegationNote(window.localStorage.getItem('delegate_about_disabled') !== 'true');

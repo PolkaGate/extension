@@ -1,20 +1,17 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { SxProps} from '@mui/material';
-import type { ApiPromise } from '@polkadot/api';
+import type { SxProps } from '@mui/material';
 import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
-import type { MyPoolInfo, PoolStakingConsts, StakingConsts, ValidatorInfo } from '../../../../util/types';
+import type { ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
@@ -27,20 +24,12 @@ import Review from '../../partial/SelectValidatorsReview';
 import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
 
-interface State {
-  api: ApiPromise | undefined;
-  pathname: string;
-  poolConsts: PoolStakingConsts | undefined;
-  stakingConsts: StakingConsts | undefined
-  pool: MyPoolInfo | undefined;
-}
-
 export default function Index (): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
 
@@ -61,13 +50,13 @@ export default function Index (): React.ReactElement {
   const [showReview, setShowReview] = useState<boolean>(false);
 
   const canNominate = useMemo(() => pool && formatted && ([String(pool.bondedPool?.roles.root), String(pool.bondedPool?.roles.nominator)].includes(String(formatted))), [formatted, pool]);
-  const staked = useMemo(() => new BN(pool?.stashIdAccount?.stakingLedger?.active as unknown as BN|undefined ?? 0), [pool?.stashIdAccount?.stakingLedger?.active]);
+  const staked = useMemo(() => new BN(pool?.stashIdAccount?.stakingLedger?.active as unknown as BN | undefined ?? 0), [pool?.stashIdAccount?.stakingLedger?.active]);
 
   const selectedValidatorsInfo = useMemo(() =>
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: DeriveStakingQuery) => nominatedValidatorsIds.includes(v.accountId))
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const activeValidators = useMemo(() => selectedValidatorsInfo?.filter((sv) => sv.exposure.others.find(({ who }) => who.toString() === pool?.accounts?.stashId)), [pool?.accounts?.stashId, selectedValidatorsInfo]);
 
@@ -77,11 +66,8 @@ export default function Index (): React.ReactElement {
   }, [pool]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: state?.pathname ?? `/pool/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate(state?.pathname ?? `/pool/${address}`, { state: { ...state } });
+  }, [address, navigate, state]);
 
   const goToSelectValidator = useCallback(() => {
     setShowSelectValidator(true);

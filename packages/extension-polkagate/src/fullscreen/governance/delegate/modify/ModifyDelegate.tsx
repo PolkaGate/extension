@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -53,7 +52,7 @@ interface Props {
 
 export type ModifyModes = 'Modify' | 'ReviewModify';
 
-export default function ModifyDelegate ({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
+export default function ModifyDelegate({ accountLocks, address, balances, classicDelegateInformation, formatted, lockedAmount, mixedDelegateInformation, mode, otherDelegatedTracks, selectedProxy, setDelegateInformation, setModalHeight, setMode, setStep, setTxInfo, step }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, chain, decimal, genesisHash, token } = useInfo(address);
   const { tracks } = useTracks(address);
@@ -90,7 +89,7 @@ export default function ModifyDelegate ({ accountLocks, address, balances, class
       : conviction === 0.1
         ? 0
         : conviction
-  , [conviction, newConviction]);
+    , [conviction, newConviction]);
 
   const delegateAmountBN = useMemo(() => newDelegateAmount ? amountToMachine(newDelegateAmount, decimal) : classicDelegateInformation ? classicDelegateInformation.delegateAmountBN : BN_ZERO, [classicDelegateInformation, decimal, newDelegateAmount]);
   const delegatePower = useMemo(() => {

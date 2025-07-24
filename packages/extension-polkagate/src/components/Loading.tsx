@@ -1,38 +1,22 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
+import { Grid } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import type { Theme } from '@mui/material';
-
-import { Box, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { blake2AsHex } from '@polkadot/util-crypto';
-
-import { logoBlack, logoMotionDark, logoMotionLight, logoWhite } from '../assets/logos';
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
-import { useManifest } from '../hooks';
+import { useAutoLockPeriod } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
-import { isPasswordCorrect } from '../popup/passwordManagement';
-import AskToSetPassword from '../popup/passwordManagement/AskToSetPassword';
 import { STEPS } from '../popup/passwordManagement/constants';
 import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
-import ForgotPasswordConfirmation from '../popup/passwordManagement/ForgotPasswordConfirmation';
+import ForgotPassword from '../popup/passwordManagement/ForgotPassword';
 import Login from '../popup/passwordManagement/Login';
-import PasswordSettingAlert from '../popup/passwordManagement/PasswordSettingAlert';
-import NeedHelp from '../popup/welcome/NeedHelp';
-import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NO_PASS_PERIOD } from '../util/constants';
+import { LOGIN_STATUS, type LoginInfo } from '../popup/passwordManagement/types';
+import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NAMES_IN_STORAGE } from '../util/constants';
+import FlyingLogo from './FlyingLogo';
 
 interface Props {
   children?: React.ReactNode;
-}
-
-export interface LoginInfo {
-  status: 'noLogin' | 'mayBeLater' | 'justSet' | 'set' | 'forgot' | 'reset';
-  lastLoginTime?: number;
-  hashedPassword?: string;
-  addressesToForget?: string[];
 }
 
 export const updateStorage = async (label: string, newInfo: object) => {
@@ -102,35 +86,15 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
   });
 };
 
-const MAX_WAITING_TIME = 1000; // ms
-
-const StillLogo = ({ theme }: { theme: Theme }) => (
-  <Box
-    component='img'
-    src={theme.palette.mode === 'dark' ? logoBlack as string : logoWhite as string}
-    sx={{ height: 'fit-content', width: '37%' }}
-  />
-);
-
-const FlyingLogo = ({ theme }: { theme: Theme }) => (
-  <Box
-    component='img'
-    src={theme.palette.mode === 'dark' ? logoMotionDark as string : logoMotionLight as string}
-    sx={{ height: 'fit-content', width: '100%' }}
-  />
-);
+const MAX_WAITING_TIME = 1500; // ms
 
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
-  const manifest = useManifest();
-
-  const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
+  const autoLockPeriod = useAutoLockPeriod();
   const isPopupOpenedByExtension = useIsExtensionPopup();
 
+  const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const [isFlying, setIsFlying] = useState(true);
   const [step, setStep] = useState<number>();
-  const [hashedPassword, setHashedPassword] = useState<string>();
-  const [isPasswordError, setIsPasswordError] = useState(false);
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
@@ -148,20 +112,24 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   useEffect(() => {
     const handleInitLoginInfo = async () => {
-      const info = await getStorage('loginInfo') as LoginInfo;
+      if (autoLockPeriod === undefined) {
+        return;
+      }
+
+      const info = await getStorage(NAMES_IN_STORAGE.LOGIN_IFO) as LoginInfo;
 
       if (!info?.status) {
         /** To not asking for password setting for the onboarding time */
-        setStorage('loginInfo', { lastLoginTime: Date.now(), status: 'mayBeLater' }).catch(console.error);
+        setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
 
         return setExtensionLock(false);
       }
 
-      if (info?.status === 'reset') {
+      if (info?.status === LOGIN_STATUS.RESET) {
         return setStep(STEPS.ASK_TO_SET_PASSWORD);
       }
 
-      if (info.status === 'mayBeLater') {
+      if (info.status === LOGIN_STATUS.MAYBE_LATER) {
         if (info.lastLoginTime && Date.now() > (info.lastLoginTime + MAYBE_LATER_PERIOD)) {
           setStep(STEPS.ASK_TO_SET_PASSWORD);
         } else {
@@ -172,18 +140,18 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      if (info.status === 'noLogin') {
+      if (info.status === LOGIN_STATUS.NO_LOGIN) {
         setStep(STEPS.NO_LOGIN);
 
         return setExtensionLock(false);
       }
 
-      if (info.status === 'justSet') {
+      if (info.status === LOGIN_STATUS.JUST_SET) {
         return setStep(STEPS.SHOW_LOGIN);
       }
 
-      if (info.status === 'set') {
-        if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + NO_PASS_PERIOD))) {
+      if (info.status === LOGIN_STATUS.SET) {
+        if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + autoLockPeriod))) {
           setStep(STEPS.SHOW_LOGIN);
         } else {
           setStep(STEPS.IN_NO_LOGIN_PERIOD);
@@ -193,46 +161,21 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      if (info.status === 'forgot') {
+      if (info.status === LOGIN_STATUS.FORGOT) {
         setStep(STEPS.SHOW_LOGIN);
       }
     };
 
     handleInitLoginInfo().catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [autoLockPeriod]);
 
   useEffect(() => {
     if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {
-    // The extension has been locked by the user through the settings menu.
+      // The extension has been locked by the user through the settings menu.
       setStep(STEPS.SHOW_LOGIN);
     }
   }, [isExtensionLocked, step]);
-
-  const onPassChange = useCallback((pass: string | null): void => {
-    if (!pass) {
-      return setHashedPassword(undefined);
-    }
-
-    setIsPasswordError(false);
-    const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
-
-    setHashedPassword(hashedPassword);
-  }, []);
-
-  const onUnlock = useCallback(async (): Promise<void> => {
-    try {
-      if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
-        await updateStorage('loginInfo', { lastLoginTime: Date.now(), status: 'set' });
-        setHashedPassword(undefined);
-        setExtensionLock(false);
-      } else {
-        setIsPasswordError(true);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [hashedPassword, setExtensionLock]);
 
   const showLoginPage = useMemo(() => {
     const extensionUrl = window.location.hash.replace('#', '');
@@ -248,64 +191,43 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   return (
     <>
-      {showLoginPage
-        ? <Grid container item sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'black' : 'white', height: window.innerHeight }}>
-          {step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-            <ForgotPasswordConfirmation
-              setStep={setStep}
-            />
-          }
-          {step === STEPS.SET_PASSWORD &&
-            <>
-              <Grid container item justifyContent='center' mt='33px' my='35px'>
-                <StillLogo theme={theme} />
-              </Grid>
-              <Grid container sx={{ position: 'absolute', top: '165px' }}>
-                <PasswordSettingAlert />
-              </Grid>
-            </>
-          }
-          <Grid container item sx={{ p: '145px 0 70px' }}>
-            {isFlying && isPopupOpenedByExtension
-              ? <FlyingLogo theme={theme} />
-              : <>
-                {step !== undefined && ([STEPS.ASK_TO_SET_PASSWORD, STEPS.SHOW_LOGIN].includes(step)) &&
-                  <Grid container item justifyContent='center' mt='33px' my='35px'>
-                    <StillLogo theme={theme} />
-                  </Grid>
-                }
-                {step === STEPS.ASK_TO_SET_PASSWORD &&
-                  <AskToSetPassword
-                    setStep={setStep}
-                  />
-                }
-                {step === STEPS.SET_PASSWORD &&
-                  <FirstTimeSetPassword
-                    hashedPassword={hashedPassword}
-                    onPassChange={onPassChange}
-                    setHashedPassword={setHashedPassword}
-                    setStep={setStep}
-                  />
-                }
-                {step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
-                  <Login
-                    isPasswordError={isPasswordError}
-                    onPassChange={onPassChange}
-                    onUnlock={onUnlock}
-                    setStep={setStep}
-                  />
-                }
-                <Grid alignItems='flex-end' container item justifyContent='space-between' sx={{ bottom: '5px', position: 'absolute', px: '20px' }}>
-                  <NeedHelp />
-                  <Typography sx={{ fontSize: '10px', opacity: '0.7' }}>
-                    {`${('V')}${(manifest?.version || '')}`}
-                  </Typography>
-                </Grid>
-              </>
+      {
+        showLoginPage
+          ? <Grid container item>
+            {
+              step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
+              <ForgotPassword
+                setStep={setStep}
+              />
             }
+            <Grid container item>
+              {
+                isFlying && isPopupOpenedByExtension
+                  ? <FlyingLogo />
+                  : <>
+                    {
+                      step === STEPS.ASK_TO_SET_PASSWORD &&
+                      <FirstTimeSetPassword
+                        setStep={setStep}
+                      />
+                    }
+                    {
+                      step === STEPS.SET_PASSWORD &&
+                      <FirstTimeSetPassword
+                        setStep={setStep}
+                      />
+                    }
+                    {
+                      step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
+                      <Login
+                        setStep={setStep}
+                      />
+                    }
+                  </>
+              }
+            </Grid>
           </Grid>
-        </Grid>
-        : children
+          : children
       }
     </>
   );

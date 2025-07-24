@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -90,7 +90,7 @@ const MODULE = 'convictionvoting';
 const RETRY_DELAY = 1100; // 1.1 second delay
 const MAX_RETRIES = 7;
 const BATCH_SIZE = 3;
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 5;
 
 /**
  * Sleep function to create delays between retries
@@ -225,7 +225,7 @@ export async function getGovHistory (chainName: string, address: string, pageNum
 }
 
 function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
-  const id = (txDetail.data.params[1]?.value as AccountId).Id as string | undefined;
+  const id = (txDetail.data.params[1]?.value as AccountId)?.Id as string | undefined;
   const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
 
   const voteBalance = ((txDetail.data.params[1]?.value as VotesType)?.Standard?.balance ?? (txDetail.data.params[1]?.value as VotesType)?.SplitAbstain?.abstain) as string | undefined;

@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { MyPoolInfo, TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { StakingInputs } from '../../../type';
@@ -11,7 +9,7 @@ import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Progress } from '@polkadot/extension-polkagate/src/components';
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN } from '@polkadot/util';
@@ -31,7 +29,7 @@ interface Props {
   pool: MyPoolInfo | null | undefined;
 }
 
-export default function StakeRewards ({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeRewards({ address, pool, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
 

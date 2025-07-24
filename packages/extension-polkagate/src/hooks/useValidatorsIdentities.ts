@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useCurrentEraIndex, useInfo, usePeopleChain } from '.';
 import { AUTO_MODE } from '../util/constants';
 
-export default function useValidatorsIdentities (address: string | undefined, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
+export default function useValidatorsIdentities(address: string | undefined, allValidatorsIds: AccountId[] | null | undefined, identities?: DeriveAccountInfo[] | null): DeriveAccountInfo[] | null | undefined {
   const { chainName } = useInfo(address);
   const { endpoint } = usePeopleChain(address);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ValidatorInfo } from '../util/types';
@@ -14,7 +14,7 @@ export interface MyValidatorsInfo {
   nonActiveValidators: ValidatorInfo[] | undefined | null;
 }
 
-export default function useActiveValidators (address: string | undefined): MyValidatorsInfo {
+export default function useActiveValidators(address: string | undefined): MyValidatorsInfo {
   const allValidatorsInfo = useValidators(address);
   const stakingConsts = useStakingConsts(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
@@ -34,7 +34,7 @@ export default function useActiveValidators (address: string | undefined): MyVal
     allValidatorsInfo && nominatedValidatorsIds && allValidatorsInfo.current
       .concat(allValidatorsInfo.waiting)
       .filter((v: ValidatorInfo) => nominatedValidatorsIds.includes(v.accountId.toString()))
-  , [allValidatorsInfo, nominatedValidatorsIds]);
+    , [allValidatorsInfo, nominatedValidatorsIds]);
 
   const overSubscribed = useCallback((v: ValidatorInfo): { notSafe: boolean, safe: boolean } | undefined => {
     if (!stakingConsts) {

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
@@ -29,7 +28,7 @@ interface IdentityProps {
   web: string | undefined;
 }
 
-export default function ShowIdentity ({ accountIdentity, style }: Props): React.ReactElement {
+export default function ShowIdentity({ accountIdentity, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

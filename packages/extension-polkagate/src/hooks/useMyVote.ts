@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getAddressVote } from '../fullscreen/governance/post/myVote/util';
 import { useInfo } from '.';
 
-export default function useMyVote (
+export default function useMyVote(
   address: string | undefined,
   refIndex: number | string | undefined,
   trackId: number | string | undefined,

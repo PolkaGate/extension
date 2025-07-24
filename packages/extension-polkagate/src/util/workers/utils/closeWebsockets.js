@@ -1,12 +1,19 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
+/**
+ * @typedef {Object} ConnectionInfo
+ * @property {Promise<import('@polkadot/api-derive/types')>} connection - The connection promise
+ * @property {string} connectionEndpoint - The endpoint URL
+ * @property {import('@polkadot/api').WsProvider} wsProvider - The WebSocket provider
+ */
 
+/**
+ * Closes the open connections
+ * @param {ConnectionInfo[]} connections
+ */
 export function closeWebsockets (connections) {
-  connections.forEach(
-    ({ wsProvider }) =>
-      wsProvider
-        .disconnect()
-        .catch(console.error));
+  Promise.allSettled(
+    connections.map(({ wsProvider }) => wsProvider.disconnect())
+  ).catch(console.error);
 }

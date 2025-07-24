@@ -1,10 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
-import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { StakingInputs } from '../../type';
 
@@ -12,7 +10,7 @@ import { faCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 
@@ -29,7 +27,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<number>>;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
   redeemable: BN | undefined;
-  availableBalance: Balance | undefined;
+  availableBalance: BN | undefined;
 }
 
 export default function WithdrawRedeem ({ address, availableBalance, redeemable, setRefresh, setShow }: Props): React.ReactElement<Props> {

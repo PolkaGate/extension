@@ -1,28 +1,34 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useEffect, useMemo, useState } from 'react';
 
 import { getStorage } from '../components/Loading';
+import allChains from '../util/chains';
 import { TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import useSelectedChains from './useSelectedChains';
 
 const assetsChains = createAssets();
 
-/**
- * @description To fetch assets priceIds for fetching their prices
- * @returns a list of priceIds like 'acala', 'polkadot, ...
- */
-export default function usePriceIds (): string[] | undefined | null {
+interface priceIdInfo {
+  genesisHash: string;
+  symbol?: string;
+  id: string;
+}
+
+export default function usePriceIds (): priceIdInfo[] | undefined | null {
   const selectedChains = useSelectedChains();
-  const [userAddedPriceIds, setUserAddedPriceIds] = useState<string[]>([]);
+  const [userAddedPriceIds, setUserAddedPriceIds] = useState<priceIdInfo[]>([]);
 
   useEffect(() => {
     getStorage('userAddedEndpoint').then((info) => {
       if (info) {
-        const maybePriceIds: string[] | undefined = Object.entries(info).map(([_, { priceId }]) => priceId as string).filter(Boolean);
+        const maybePriceIds = Object.entries(info).map(([genesisHash, { priceId }]) => ({
+          genesisHash,
+          id: priceId as string
+        })).filter(Boolean);
 
         maybePriceIds?.length && setUserAddedPriceIds(maybePriceIds);
       }
@@ -31,13 +37,60 @@ export default function usePriceIds (): string[] | undefined | null {
 
   return useMemo(() => {
     const nonTestNetSelectedChains = selectedChains?.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
-    let selectedChainsChainName = nonTestNetSelectedChains?.map((genesisHash) => getChainName(genesisHash)).filter(Boolean);
+    let selectedChainsChainName = nonTestNetSelectedChains?.map((genesisHash) => {
+      const maybeChainName = getChainName(genesisHash);
 
-    const assetsInfoOfMultiAssetSelectedChains = selectedChainsChainName?.map((chainName) => chainName && assetsChains[chainName]?.map((asset) => asset?.priceId))?.flat().filter((item) => !!item);
+      if (!maybeChainName) {
+        return undefined;
+      }
 
-    selectedChainsChainName = selectedChainsChainName?.map((item) => item?.replace('AssetHub', '')); // TODO: needs double check
-    const nonDuplicatedPriceIds = new Set([...(selectedChainsChainName || []), ...(assetsInfoOfMultiAssetSelectedChains || []), ...userAddedPriceIds]);
+      const chainInfo = allChains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
 
-    return nonDuplicatedPriceIds.size ? [...nonDuplicatedPriceIds] as string[] : null;
+      return {
+        genesisHash,
+        id: maybeChainName,
+        symbol: chainInfo?.tokenSymbol ?? 'Unit'
+      };
+    }).filter((i) => !!i);
+
+    const assetsInfoOfMultiAssetSelectedChains = selectedChainsChainName?.map(({ genesisHash, id }) =>
+      id && assetsChains[id]?.map((asset) => {
+        if (!asset.priceId) {
+          return undefined;
+        }
+
+        return {
+          genesisHash,
+          id: asset.priceId,
+          symbol: asset.symbol
+        };
+      }))
+      ?.flat().filter((i) => !!i);
+
+    selectedChainsChainName = selectedChainsChainName?.map((item) => {
+      item.id = item.id.replace('AssetHub', '');
+
+      return item;
+    }); // TODO: needs double check
+
+    const merged = [
+      ...(selectedChainsChainName || []),
+      ...(assetsInfoOfMultiAssetSelectedChains || []),
+      ...userAddedPriceIds
+    ];
+
+    // Deduplicate based on `id`, keeping the first occurrence
+    const seen = new Set<string>();
+    const nonDuplicatedPriceIds = merged.filter((item) => {
+      if (seen.has(item.id)) {
+        return false;
+      }
+
+      seen.add(item.id);
+
+      return true;
+    });
+
+    return nonDuplicatedPriceIds.length ? [...nonDuplicatedPriceIds] : null;
   }, [selectedChains, userAddedPriceIds]);
 }

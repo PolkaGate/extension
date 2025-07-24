@@ -1,23 +1,19 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import { Grid, Typography, useTheme } from '@mui/material';
-//@ts-ignore
-import { Circle, CubeGrid } from 'better-react-spinkit';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+
+import { LoaderGif } from '@polkadot/extension-polkagate/src/components/index';
 
 import { useTranslation } from '../../../hooks';
 
 interface Props {
   defaultText?: string;
-  showCube?: boolean;
 }
 
-function WaitScreen ({ defaultText, showCube = false }: Props): React.ReactElement {
+function WaitScreen ({ defaultText }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [text, setText] = useState<string>(defaultText || t('We are working on your transaction.'));
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
@@ -47,17 +43,14 @@ function WaitScreen ({ defaultText, showCube = false }: Props): React.ReactEleme
   }, [handleTxEvent]);
 
   return (
-    <Grid container direction='column' justifyContent='center' py='50px'>
-      <Grid container height='50px' item pb='90px' pt='40px'>
-        <Typography align='center' fontSize='22px' fontWeight={300} m='auto'>
-          {text}
-        </Typography>
-      </Grid>
-      {showCube
-        ? <CubeGrid col={3} color={theme.palette.secondary.main} row={3} size={135} style={{ margin: 'auto', opacity: '0.4' }} />
-        : <Circle color='#E30B7B' scaleEnd={0.7} scaleStart={0.4} size={115} style={{ margin: 'auto' }} />
-      }
-      <Typography sx={{ fontSize: '18px', fontWeight: 300, m: 'auto', pt: '70px', px: '20px', textAlign: 'center', width: 'fit-content' }}>
+    <Grid container direction='column' justifyContent='center'>
+      <Typography align='center' color='#EAEBF1' mt='25px' variant='B-3'>
+        {text}
+      </Typography>
+      <LoaderGif
+        style={{ alignSelf: 'center', width: '250px' }}
+      />
+      <Typography align='center' color='#BEAAD8' variant='B-4'>
         {t('Please wait a few seconds and don’t close the window.')}
       </Typography>
     </Grid>

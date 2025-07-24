@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Step } from '../util/types';
@@ -6,7 +6,7 @@ import type { Step } from '../util/types';
 import { Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-function Steps ({ current, style = { fontSize: '18px', fontWeight: 400, lineHeight: '35px' }, total }: Step) {
+function Steps({ current, style = { fontSize: '18px', fontWeight: 400, lineHeight: '35px' }, total }: Step) {
   const theme = useTheme();
 
   return (

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 import type { Proxy, TxInfo } from '../../../../../util/types';
@@ -21,7 +20,7 @@ import { STEPS } from '../../../pool/stake';
 import ValidatorsTableFS from '../../partials/ValidatorsTableFS';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   inputs: StakingInputs;
   step: number;

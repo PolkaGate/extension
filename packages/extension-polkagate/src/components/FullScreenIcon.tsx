@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,7 +16,7 @@ interface Props {
   isSettingSubMenu?: boolean;
 }
 
-export default function FullScreenIcon ({ isSettingSubMenu, url }: Props): React.ReactElement {
+export default function FullScreenIcon({ isSettingSubMenu, url }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

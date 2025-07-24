@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Popover, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -14,7 +13,7 @@ interface Props {
   iconWidth?: number;
 }
 
-function OptionalCopyButton ({ address, iconWidth = 20 }: Props): React.ReactElement {
+function OptionalCopyButton({ address, iconWidth = 20 }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

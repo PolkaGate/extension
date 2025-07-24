@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 /* eslint-disable header/header */
@@ -47,7 +47,7 @@ async function getAllValidatorsIdentities(endpoint, _accountIds) {
 
       const parsedInfo = info
         .map((i, index) => {
-          const id = i.isSome ? i.unwrap()[0] : undefined;
+          const id = i.isSome ? i.unwrap() : undefined;
 
           return id?.info
             ? {
@@ -106,7 +106,7 @@ async function getAllValidatorsIdentities(endpoint, _accountIds) {
           ));
 
       const parsedInfo = parentInfo.map((i, index) => {
-        const id = i.isSome ? i.unwrap()[0] : undefined;
+        const id = i.isSome ? i.unwrap() : undefined;
 
         return id?.info
           ? {

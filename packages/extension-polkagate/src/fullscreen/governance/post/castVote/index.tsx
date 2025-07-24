@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import type { Vote } from '../myVote/util';
@@ -68,7 +67,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function Index ({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
+export default function Index({ address, cantModify, hasVoted, myVote, notVoted, open, refIndex, setOpen, setRefresh, showAbout, status, trackId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -170,7 +169,7 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
   }, [notVoted, step]);
 
   return (
-    <DraggableModalWithTitle icon={faVoteYea} onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop} open={open} title= {title}>
+    <DraggableModalWithTitle icon={faVoteYea} onClose={step !== STEPS.WAIT_SCREEN ? handleClose : noop} open={open} title={title}>
       <>
         {step === STEPS.ABOUT &&
           <About
@@ -187,7 +186,6 @@ export default function Index ({ address, cantModify, hasVoted, myVote, notVoted
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your voting status...')}
-            showCube
           />
         }
         {step === STEPS.INDEX &&

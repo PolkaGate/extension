@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
@@ -39,7 +38,7 @@ export const HEADER_COMPONENT_STYLE = {
   width: 'fit-content'
 };
 
-function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
+function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
   const { address, postId, topMenu } = useParams<{ address: string, topMenu?: 'referenda' | 'fellowship', postId?: string }>();
   const allChains = useContext(GenesisHashOptionsContext);
   const onAction = useContext(ActionContext);
@@ -67,7 +66,7 @@ function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChai
   const onAccountChange = useCallback((selectedAddress: string) => {
     switch (page) {
       case 'proxyManagement':
-        return onAction(`/fullscreenProxyManagement/${selectedAddress}`);
+        return onAction(`/proxyManagement/${selectedAddress}`);
       case 'governance':
         return onAction(`/governance/${selectedAddress}/${`${topMenu ?? ''}`}/${postId ?? ''}`);
       case 'manageIdentity':

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
@@ -11,7 +10,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import Asset from '@polkadot/extension-polkagate/src/partials/Asset';
 import ShowPool from '@polkadot/extension-polkagate/src/popup/staking/partial/ShowPool';
@@ -43,7 +42,7 @@ export const STEPS = {
   SIGN_QR: 200
 };
 
-export default function StakeExtra ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function StakeExtra({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
@@ -54,7 +53,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [inputs, setInputs] = useState<StakingInputs>();
 
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
+  const freeBalance = balances?.freeBalance;
   const [amount, setAmount] = useState<string | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
@@ -64,12 +63,12 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   const ED = api?.consts?.['balances']?.['existentialDeposit'] as unknown as BN | undefined;
 
   const max = useMemo(() => {
-    if (!availableBalance || !ED || !estimatedMaxFee) {
+    if (!freeBalance || !ED || !estimatedMaxFee) {
       return;
     }
 
-    return new BN(availableBalance).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
-  }, [ED, availableBalance, estimatedMaxFee]);
+    return new BN(freeBalance).sub(ED.muln(2)).sub(new BN(estimatedMaxFee));
+  }, [ED, freeBalance, estimatedMaxFee]);
 
   useEffect(() => {
     if (amount && api && staked && amountAsBN) {
@@ -118,15 +117,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
   }, [decimal]);
 
   useEffect(() => {
-    if (!balances) {
-      return;
-    }
-
-    setAvailableBalance(balances.availableBalance);
-  }, [balances]);
-
-  useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
+    if (!api || !freeBalance || !formatted) {
       return;
     }
 
@@ -138,10 +129,10 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
       setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
 
-    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: availableBalance.toString() }).paymentInfo(formatted).then((i) => {
+    amountAsBN && api.tx['nominationPools']['bondExtra']({ FreeBalance: freeBalance.toString() }).paymentInfo(formatted).then((i) => {
       setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
-  }, [formatted, api, availableBalance, amount, decimal, amountAsBN]);
+  }, [formatted, api, freeBalance, amount, decimal, amountAsBN]);
 
   const nextBtnDisabled = useMemo(() => {
     if (!amountAsBN || !max || !inputs) {
@@ -195,7 +186,7 @@ export default function StakeExtra ({ address, setRefresh, setShow, show }: Prop
             <Asset
               address={address}
               api={api}
-              balance={availableBalance}
+              balance={freeBalance}
               balanceLabel={t('Available balance')}
               fee={estimatedFee}
               style={{

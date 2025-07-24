@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -11,7 +11,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useChain } from './';
 
 /** We use chain here to fetch formatted address */
-export default function useFormatted2 (address: AccountId | string |undefined, formatted: AccountId | string|undefined, chain: Chain | null | undefined): AccountId | string | undefined {
+export default function useFormatted2 (address: AccountId | string | undefined, formatted: AccountId | string | undefined, chain: Chain | null | undefined): AccountId | string | undefined {
   const _chain = useChain(address, chain);
 
   const encodedAddress = useMemo(() => {

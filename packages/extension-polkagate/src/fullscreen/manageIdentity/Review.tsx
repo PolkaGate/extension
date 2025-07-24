@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -22,7 +21,7 @@ import { useCanPayFeeAndDeposit, useEstimatedFee, useInfo, useProxies } from '..
 import useTranslation from '../../hooks/useTranslation';
 import { ThroughProxy } from '../../partials';
 import { pgBoxShadow } from '../../util/utils';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SelectProxyModal2 from '../governance/components/SelectProxyModal2';
 import WaitScreen from '../governance/partials/WaitScreen';
 import DisplayValue from '../governance/post/castVote/partial/DisplayValue';
@@ -33,7 +32,7 @@ import IdentityTable from './partial/IdentityTable';
 import { type Mode, STEPS, type SubIdAccountsToSubmit, type SubIdsParams } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain;
   depositToPay: BN | undefined;
@@ -51,7 +50,7 @@ interface Props {
   selectedRegistrarName: string | undefined;
 }
 
-export default function Review ({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, identityToSet, infoParams, maxFeeAmount, mode, parentDisplay, selectedRegistrar, selectedRegistrarName, setRefresh, setStep, step, subIdsParams }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);
@@ -76,7 +75,7 @@ export default function Review ({ address, api, chain, depositToPay, depositValu
 
   useEffect(() => {
     formatted && api?.derive.balances?.all(formatted).then((b) => {
-      setBalances(b as BalancesInfo);
+      setBalances(b as unknown as BalancesInfo);
     });
   }, [api, formatted]);
 

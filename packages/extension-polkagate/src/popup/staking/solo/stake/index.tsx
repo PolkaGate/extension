@@ -1,17 +1,14 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
-import type { AccountStakingInfo, SoloSettings, StakingConsts, ValidatorInfo } from '../../../../util/types';
+import type { SoloSettings, ValidatorInfo } from '../../../../util/types';
 
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { BN_ONE, BN_ZERO } from '@polkadot/util';
 
@@ -25,20 +22,20 @@ import SelectValidators from '../../partial/SelectValidators';
 import Review from './Review';
 import Settings from './Settings';
 
-interface State {
-  api: ApiPromise | undefined;
-  pathname: string;
-  stakingConsts: StakingConsts | undefined;
-  stakingAccount: AccountStakingInfo | undefined
-}
+// interface State {
+//   api: ApiPromise | undefined;
+//   pathname: string;
+//   stakingConsts: StakingConsts | undefined;
+//   stakingAccount: AccountStakingInfo | undefined
+// }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
-  const history = useHistory();
+  const navigate = useNavigate();
   const balances = useBalances(address);
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
@@ -98,7 +95,7 @@ export default function Index (): React.ReactElement {
       ? [amountAsBN, settings.payee]
       : [settings.stashId, amountAsBN, settings.payee]
     : [amountAsBN]
-  , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
+    , [amountAsBN, settings.payee, settings.stashId, stakingAccount?.stakingLedger?.total, isControllerDeprecated]);
 
   /** Staking is the default payee,can be changed in the advanced section **/
   /** payee:
@@ -149,11 +146,8 @@ export default function Index (): React.ReactElement {
   }, [api, availableToSoloStake, t, amountAsBN, stakingConsts?.minNominatorBond, isFirstTimeStaking, amount]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: `/solo/${address}/`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate(`/solo/${address}/`, { state: { ...state } });
+  }, [address, navigate, state]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!decimal) {

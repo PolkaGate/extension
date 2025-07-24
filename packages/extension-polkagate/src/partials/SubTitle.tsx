@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -23,7 +22,7 @@ interface Props {
   lineHeight?: string;
 }
 
-function SubTitle ({ label, lineHeight = '35px', mt, style = { fontSize: '16px', fontWeight: 500, marginBottom: '5px' }, withSteps }: Props) {
+function SubTitle({ label, lineHeight = '35px', mt, style = { fontSize: '16px', fontWeight: 500, marginBottom: '5px' }, withSteps }: Props) {
   return (
     <Grid alignItems='center' container item justifyContent='center' mt={mt ?? '-15px'} style={{ ...style }}>
       <Grid item sx={{ lineHeight, pr: '5px' }}>

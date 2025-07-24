@@ -1,8 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { IconTheme } from '@polkadot/react-identicon/types';
+//@ts-nocheck
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { MyIconTheme } from '../util/types';
 
 import { CheckCircleOutline as CheckIcon, InsertLinkRounded as LinkIcon } from '@mui/icons-material';
 import React, { useContext } from 'react';
@@ -14,7 +15,7 @@ import { AccountIconThemeContext } from '.';
 
 interface Props {
   className?: string;
-  iconTheme?: IconTheme;
+  iconTheme?: MyIconTheme;
   isSubId?: boolean;
   judgement?: RegExpMatchArray | null | undefined;
   onCopy?: () => void;
@@ -34,7 +35,7 @@ function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, 
           onCopy={onCopy}
           prefix={prefix}
           size={size}
-          theme={ accountIconTheme || iconTheme}
+          theme={accountIconTheme || iconTheme}
           value={value}
         />
       </div>

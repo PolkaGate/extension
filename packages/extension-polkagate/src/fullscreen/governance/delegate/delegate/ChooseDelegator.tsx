@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DelegateInformation } from '..';
 
@@ -20,7 +19,7 @@ interface Props {
   setDelegateInformation: React.Dispatch<React.SetStateAction<DelegateInformation | undefined>>;
 }
 
-export default function ChooseDelegator ({ setDelegateInformation, setStep }: Props): React.ReactElement {
+export default function ChooseDelegator({ setDelegateInformation, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -97,7 +96,7 @@ export default function ChooseDelegator ({ setDelegateInformation, setStep }: Pr
         <AccountInputWithIdentity
           address={delegatorAddress}
           chain={chain}
-          helperText={t<string>('Enter the account address that you want to delegate to')}
+          // helperText={t<string>('Enter the account address that you want to delegate to')}
           ignoreAddress={String(myFormattedAddress)}
           label={t('Delegate to Account')}
           setAddress={setDelegatorAddress}

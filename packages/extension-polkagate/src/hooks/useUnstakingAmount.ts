@@ -1,10 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useApi, useStakingAccount } from '.';
@@ -29,20 +29,22 @@ interface UnstakingType {
  * @description get the total unstaking amount and their release dates
  *
  */
-export default function useUnstakingAmount(address: AccountId | string | undefined, refresh?: boolean): UnstakingType {
+export default function useUnstakingAmount (address: AccountId | string | undefined, refresh?: boolean): UnstakingType {
   const api = useApi(address);
   const stakingAccount = useStakingAccount(address, undefined, refresh);
 
   const [sessionInfo, setSessionInfo] = useState<SessionIfo>();
 
   useEffect(() => {
-    api && api.derive.session?.progress().then((sessionInfo) => {
-      setSessionInfo({
-        currentEra: Number(sessionInfo.currentEra),
-        eraLength: Number(sessionInfo.eraLength),
-        eraProgress: Number(sessionInfo.eraProgress)
-      });
-    });
+    api?.derive.session?.progress()
+      .then((sessionInfo) => {
+        setSessionInfo({
+          currentEra: Number(sessionInfo.currentEra),
+          eraLength: Number(sessionInfo.eraLength),
+          eraProgress: Number(sessionInfo.eraProgress)
+        });
+      })
+      .catch(console.error);
   }, [api]);
 
   return useMemo(() => {

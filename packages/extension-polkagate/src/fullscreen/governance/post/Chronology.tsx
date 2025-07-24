@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proposal, Referendum, ReferendumHistory } from '../utils/types';
 
@@ -52,7 +51,7 @@ interface Props {
   currentTreasuryApprovalList: Proposal[] | undefined
 }
 
-function getAwardedDate (currentBlockNumber: number, executionBlockNumber: number, spendPeriod: number): Date {
+function getAwardedDate(currentBlockNumber: number, executionBlockNumber: number, spendPeriod: number): Date {
   const startBlock = Math.floor((executionBlockNumber - 1) / spendPeriod) * spendPeriod + 1;
   const endBlock = startBlock + spendPeriod - 1;
   const diff = currentBlockNumber - endBlock;
@@ -61,7 +60,7 @@ function getAwardedDate (currentBlockNumber: number, executionBlockNumber: numbe
   return endBlockDate;
 }
 
-export default function Chronology ({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement<Props> {
+export default function Chronology({ address, currentTreasuryApprovalList, referendum }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const chain = useChain(address);
   const api = useApi(address);
@@ -92,7 +91,7 @@ export default function Chronology ({ address, currentTreasuryApprovalList, refe
   const maybeAwardedDate = useMemo(() =>
     (currentBlockNumber && spendPeriod && maybeExecutionBlock && getAwardedDate(currentBlockNumber, maybeExecutionBlock, spendPeriod)) ||
     referendum?.timelinePA?.[1]?.statuses?.[1]?.timestamp
-  , [currentBlockNumber, maybeExecutionBlock, spendPeriod, referendum]);
+    , [currentBlockNumber, maybeExecutionBlock, spendPeriod, referendum]);
 
   /** in rare case as ref 160 the proposers are not the same! needs more research */
   const isInTreasuryQueue = useMemo(() => isExecuted && currentTreasuryApprovalList && !!currentTreasuryApprovalList?.find((item) => String(item.value) === referendum.requested && item.beneficiary === maybeBeneficiary), [currentTreasuryApprovalList, isExecuted, maybeBeneficiary, referendum]);

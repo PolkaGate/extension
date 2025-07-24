@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { StakingInputs } from '../../type';
@@ -11,7 +10,7 @@ import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineS
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
@@ -32,7 +31,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function FastUnstake ({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
+export default function FastUnstake({ address, setRefresh, setShow, show }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useInfo(address);
@@ -49,9 +48,9 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
   const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
-  const availableBalance = getValue('available', myBalances);
-  const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && availableBalance
-    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(availableBalance || BN_MAX_INTEGER)
+  const transferable = getValue('transferable', myBalances);
+  const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && transferable
+    ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_MAX_INTEGER)
     : undefined;
 
   const hasUnlockingAndRedeemable = redeemable && stakingAccount
@@ -65,12 +64,12 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
   const staked = useMemo(() => stakingAccount?.stakingLedger?.active as BN | undefined, [stakingAccount]);
 
   useEffect(() => {
-    if (!api || !staked || !availableBalance) {
+    if (!api || !staked || !transferable) {
       return;
     }
 
     const call = api.tx['fastUnstake']['registerFastUnstake'];
-    const availableBalanceAfter = availableBalance.add(staked);
+    const availableBalanceAfter = transferable.add(staked);
 
     const params: never[] = [];
 
@@ -86,7 +85,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
       extraInfo,
       params
     });
-  }, [api, availableBalance, decimal, myBalances, staked]);
+  }, [api, transferable, decimal, myBalances, staked]);
 
   const onNext = useCallback(() => {
     setStep(STEPS.REVIEW);

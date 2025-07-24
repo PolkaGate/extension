@@ -1,13 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProxyTypes } from './types';
 
-/* eslint-disable header/header */
-
 export const EXTENSION_NAME = 'PolkaGate';
-export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
+export const SUPPORT_EMAIL = 'support@polkagate.xyz';
+export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 
 export const POLKADOT_SLIP44 = 354;
 
@@ -22,6 +21,7 @@ export const POLKAGATE_POOL_IDS: Record<string, number> = {
 };
 
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';
+export const PRIVACY_POLICY_LINK = 'https://docs.polkagate.xyz/polkagate/polkagate-extension-user-guide/legal-and-security/privacy-policy';
 
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const AUCTION_GRACE_PERIOD = 27000;// blocks
@@ -38,7 +38,7 @@ export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
-export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
+export const TOKENS_WITH_BLACK_LOGO = ['INTR', 'KSM', 'PEN', 'ZTG', 'CFG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
 
@@ -53,7 +53,6 @@ export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdf
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
 export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
 
-
 /** relay chains info */
 export const RELAY_CHAINS_NAMES = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
 
@@ -61,6 +60,8 @@ export const POLKADOT_GENESIS_HASH = '0x91b171bb158e2d3848fa23a9f1c25182fb8e2031
 export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe';
 export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
 export const PASEO_GENESIS_HASH = '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f';
+
+export const MIGRATED_NOMINATION_POOLS_CHAINS = [KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH];
 
 export const RELAY_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,
@@ -124,7 +125,7 @@ export const PEOPLE_CHAINS_GENESIS_HASHES = [
 ];
 
 export const IDENTITY_CHAINS = [
-  ...STAKING_CHAINS,
+  ...RELAY_CHAINS_GENESISHASH,
   ...PEOPLE_CHAINS_GENESIS_HASHES,
   '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6', // Astar
   '0x262e1b2ad728475fd6fe88e62d34c200abe6fd693931ddad144059b1eb884e5b', // Bifrost
@@ -153,13 +154,19 @@ export const STAKING_ACTIONS = ['Solo Staking', 'Pool Staking'];
 export const STATES_NEEDS_MESSAGE = ['withdrawUnbound', 'unstake', 'stopNominating', 'tuneUp'];
 export const CONFIRMING_STATE = ['fail', 'success', 'confirming'];
 
-const PROXY_TYPE_POLKADOT = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_KUSAMA = ['Any', 'NonTransfer', 'Staking', 'Society', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_WESTEND = ['Any', 'NonTransfer', 'Staking', 'Governance', 'SudoBalances', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
-const PROXY_TYPE_ASSET_HUBS = ['Any', 'NonTransfer', 'CancelProxy', 'Assets', 'AssetOwner', 'AssetManager', 'Collator'];
-const PROXY_TYPE_PASEO = ['Any', 'NonTransfer', 'Staking', 'Governance', 'IdentityJudgement', 'CancelProxy', 'Auction', 'NominationPools'];
+const PROXY_TYPE_POLKADOT = ['Any', 'CancelProxy', 'Governance', 'NominationPools', 'NonTransfer', 'Staking'];
+const PROXY_TYPE_KUSAMA = [...PROXY_TYPE_POLKADOT, 'Society'];
+const PROXY_TYPE_WESTEND = [...PROXY_TYPE_POLKADOT, 'SudoBalances'];
+const PROXY_TYPE_ASSET_HUBS = ['Any', 'Assets', 'AssetManager', 'AssetOwner', 'CancelProxy', 'Collator', 'NonTransfer'];
+const PROXY_TYPE_PASEO = [...PROXY_TYPE_POLKADOT];
 
-export const CHAIN_PROXY_TYPES = { Kusama: PROXY_TYPE_KUSAMA, Polkadot: PROXY_TYPE_POLKADOT, Westend: PROXY_TYPE_WESTEND, AssetHubs: PROXY_TYPE_ASSET_HUBS, Paseo: PROXY_TYPE_PASEO };
+export const CHAIN_PROXY_TYPES = {
+  AssetHubs: PROXY_TYPE_ASSET_HUBS,
+  Kusama: PROXY_TYPE_KUSAMA,
+  Paseo: PROXY_TYPE_PASEO,
+  Polkadot: PROXY_TYPE_POLKADOT,
+  Westend: PROXY_TYPE_WESTEND
+};
 
 export const VOTE_MAP = {
   AYE: 1,
@@ -216,8 +223,9 @@ export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string
 ];
 
 /** Login Password constants */
-export const NO_PASS_PERIOD = 30 * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
-export const MAYBE_LATER_PERIOD = 5 * 60 * 1000; // ms
+export const AUTO_LOCK_PERIOD_DEFAULT = 30;
+export const NO_PASS_PERIOD = AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
+export const MAYBE_LATER_PERIOD = 0; // 5 * 60 * 1000; // ms
 
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
@@ -241,8 +249,16 @@ export const PROFILE_COLORS = [
   { light: '#ACE894', dark: '#D81B60' },
   { light: '#F5D5ED', dark: '#2B4162' },
   { light: '#EBCFB2', dark: '#9D8189' },
-  { light: '#FCF0CC', dark: '#5F4842' },
+  { light: '#FCF0CC', dark: '#5F4842' }
 ];
+
+export const PROFILE_TAGS = {
+  ALL: 'All',
+  LEDGER: 'Hardware',
+  LOCAL: 'Local',
+  QR_ATTACHED: 'QR-attached',
+  WATCH_ONLY: 'Watch-only'
+};
 
 export const AUTO_MODE = {
   text: 'Auto Mode',
@@ -252,4 +268,45 @@ export const AUTO_MODE = {
 export const KODADOT_URL = 'https://kodadot.xyz';
 
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
-export const DEFAULT_ACCOUNT_ICON_THEME = 'beachball';
+
+export enum ExtensionPopups {
+  NONE,
+  LANGUAGE,
+  NEW_NETWORK,
+  PASSWORD,
+  PRIVACY,
+  WARNING,
+  // Account Popups
+  DAPPS,
+  DERIVE,
+  EXPORT,
+  IMPORT,
+  RECEIVE,
+  RENAME,
+  REMOVE,
+}
+
+export const TRANSACTION_FLOW_STEPS = {
+  CONFIRMATION: 'confirmation',
+  REVIEW: 'review',
+  WAIT_SCREEN: 'wait_screen'
+} as const;
+
+export type TransactionFlowStep = typeof TRANSACTION_FLOW_STEPS[keyof typeof TRANSACTION_FLOW_STEPS];
+
+export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
+
+// data names in local storage
+export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
+export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
+export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
+export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
+export const ASSETS_NAME_IN_STORAGE = 'assets';
+
+export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
+
+export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
+
+export const NAMES_IN_STORAGE = {
+  LOGIN_IFO: 'loginInfo'
+};

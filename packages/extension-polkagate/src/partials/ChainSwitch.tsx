@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { HexString } from '@polkadot/util/types';
 
@@ -155,7 +154,7 @@ interface Props {
   externalChainNamesToShow?: (string | undefined)[] | undefined;
 }
 
-function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
+function ChainSwitch({ address, children, externalChainNamesToShow, invert }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { pathname } = useLocation();
   const { chainName: currentChainNameFromAccount, genesisHash } = useInfo(address);
@@ -238,6 +237,7 @@ function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: P
 
     setCurrentChainName(newChainName);
     setFirstTime(false);
+        //NO TIE ANYMORE IN NEW DESIGN
     address && selectedGenesisHash && tieAccount(address, selectedGenesisHash).catch((err) => {
       setCurrentChainName(currentChainNameFromAccount);
       console.error(err);
@@ -248,7 +248,7 @@ function ChainSwitch ({ address, children, externalChainNamesToShow, invert }: P
     chainNamesToShow && (chainNamesToShow.length > 1
       ? setShowOtherChains(!showOtherChains)
       : selectNetwork(chainNamesToShow[0]))
-  , [chainNamesToShow, selectNetwork, showOtherChains]);
+    , [chainNamesToShow, selectNetwork, showOtherChains]);
 
   const closeChainSwitch = useCallback(() => setShowOtherChains(false), [setShowOtherChains]);
 

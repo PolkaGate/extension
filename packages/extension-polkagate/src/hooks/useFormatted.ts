@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -10,7 +10,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { AccountContext } from '../components/contexts';
 import { useChain } from './';
 
-export default function useFormatted (address?: AccountId | string, formatted?: AccountId | string): string | undefined {
+export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): string | undefined {
   const { accounts } = useContext(AccountContext);
   const chain = useChain(address);
 

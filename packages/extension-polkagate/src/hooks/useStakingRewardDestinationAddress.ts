@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /**
@@ -7,15 +8,15 @@
  * this hook returns a solo staking reward destination address
  * */
 
-import { useEffect, useState } from 'react';
-
 import type { AccountStakingInfo } from '../util/types';
 
-export default function useStakingRewardDestinationAddress(stakingAccount: AccountStakingInfo | null | undefined): string | undefined {
+import { useEffect, useState } from 'react';
+
+export default function useStakingRewardDestinationAddress (stakingAccount: AccountStakingInfo | null | undefined): string | undefined {
   const [payeeAddress, setPayeeAddress] = useState<string>();
 
   useEffect(() => {
-    if (!stakingAccount || !stakingAccount.rewardDestination) {
+    if (!stakingAccount?.rewardDestination) {
       return;
     }
 

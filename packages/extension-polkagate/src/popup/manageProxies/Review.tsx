@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -25,7 +24,7 @@ import { getFormattedAddress, getSubstrateAddress, saveAsHistory } from '../../u
 import ManageProxiesTxDetail from './partials/ManageProxiesTxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise;
   chain: Chain;
   depositValue: BN;
@@ -33,7 +32,7 @@ interface Props {
   depositToPay: BN | undefined;
 }
 
-export default function Review ({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
+export default function Review({ address, api, chain, depositToPay, depositValue, proxies }: Props): React.ReactElement {
   const { t } = useTranslation();
   const name = useAccountDisplay(address);
   const account = useAccount(address);

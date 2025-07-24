@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -15,7 +14,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { BN_ZERO } from '@polkadot/util';
 
@@ -28,7 +27,7 @@ import { STEPS } from '../../stake';
 import Review from './Review';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   pool: MyPoolInfo;
@@ -65,7 +64,7 @@ const remainingTime = (seconds: number) => {
 
 export type Mode = 'UnbondAll' | 'RemoveAll';
 
-export default function RemoveAll ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+export default function RemoveAll({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 

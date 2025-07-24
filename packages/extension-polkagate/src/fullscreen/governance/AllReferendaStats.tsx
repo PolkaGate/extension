@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { SxProps } from '@mui/material';
 import type { Statistics } from './utils/helpers';
@@ -19,8 +17,8 @@ import { getReferendumStatistics } from './utils/helpers';
 import { LabelValue } from './TrackStats';
 
 interface Props {
-  address: string;
-  topMenu: 'referenda' | 'fellowship';
+  address: string | undefined;
+  topMenu: 'referenda' | 'fellowship' | undefined;
 }
 
 export interface TreasuryStats {
@@ -40,7 +38,7 @@ export interface TreasuryStats {
 const EMPTY_U8A_32 = new Uint8Array(32);
 
 interface TreasuryBalanceStatProps {
-  address: string;
+  address: string | undefined;
   title: string;
   balance: BN | undefined;
   tokenPrice: number | undefined;
@@ -72,7 +70,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
             <FormatPrice
               amount={balance}
               decimals={decimal}
-              fontSize= '16px'
+              fontSize='16px'
               price={tokenPrice}
             />
           </Grid>
@@ -83,7 +81,7 @@ const TreasuryBalanceStat = ({ address, balance, noDivider, rowDisplay, style, t
   );
 };
 
-export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElement<Props> {
+export function AllReferendaStats({ address, topMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const firstBreakpoint = !useMediaQuery('(min-width:1000px)');
   const secondBreakpoint = !useMediaQuery('(min-width:700px)');
@@ -183,7 +181,15 @@ export function AllReferendaStats ({ address, topMenu }: Props): React.ReactElem
     }
   }, [chainName, setReferendumStats, topMenu]);
 
-  const allDeciding = useMemo(() => decidingCounts?.[topMenu]?.find((d) => d[0] === 'all')?.[1], [decidingCounts, topMenu]);
+  const allDeciding = useMemo(() => {
+    if (!topMenu) {
+      return undefined;
+    }
+
+    const counts = decidingCounts?.[topMenu] as string[][] | undefined;
+
+    return counts?.find((d) => d[0] === 'all')?.[1];
+  }, [decidingCounts, topMenu]);
 
   return (
     <Container disableGutters sx={styles.allReferendaStatsContainer}>

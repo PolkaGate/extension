@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -28,7 +27,7 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../u
 import TxDetail from './partials/TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   show: boolean;
   formatted: string;
   api: ApiPromise;
@@ -39,7 +38,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RewardsStakeReview ({ address, amount, api, chain, formatted, setRefresh, setShow, show, staked }: Props): React.ReactElement {
+export default function RewardsStakeReview({ address, amount, api, chain, formatted, setRefresh, setShow, show, staked }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, formatted);
   const name = useAccountDisplay(address);

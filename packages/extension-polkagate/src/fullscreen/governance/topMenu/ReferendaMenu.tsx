@@ -1,15 +1,14 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Count } from '../../../hooks/useDecidingCount';
 
 import { AccountBalance as TreasuryIcon, AdminPanelSettings as AdminsIcon, BorderAll as All, Cancel, Hub as Root } from '@mui/icons-material/';
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { MAX_WIDTH } from '../utils/consts';
 
@@ -45,19 +44,17 @@ interface MenuItemProps {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ToolbarMenuItem = React.memo(function ToolbarMenuItem ({ address, borderWidth = '2px', clickable = true, decidingCounts, fontWeight, icon, item, setMenuOpen, setSelectedSubMenu, top = false, width = '18%' }: MenuItemProps): React.ReactElement {
+export const ToolbarMenuItem = React.memo(function ToolbarMenuItem({ address, borderWidth = '2px', clickable = true, decidingCounts, fontWeight, icon, item, setMenuOpen, setSelectedSubMenu, top = false, width = '18%' }: MenuItemProps): React.ReactElement {
   const theme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const decidingCount = findItemDecidingCount(item, decidingCounts);
   const onSubMenuClick = useCallback(() => {
-    address && history.push({
-      pathname: `/governance/${address}/referenda`
-    });
+    address && navigate(`/governance/${address}/referenda`);
 
     setSelectedSubMenu(item);
     setMenuOpen((prevStatus) => !prevStatus);
-  }, [address, history, item, setMenuOpen, setSelectedSubMenu]);
+  }, [address, navigate, item, setMenuOpen, setSelectedSubMenu]);
 
   return (
     <Grid alignItems='center' container item
@@ -91,7 +88,7 @@ export const ToolbarMenuItem = React.memo(function ToolbarMenuItem ({ address, b
   );
 });
 
-export default function ReferendaMenu ({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
+export default function ReferendaMenu({ address, decidingCounts, setMenuOpen, setSelectedSubMenu }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const onMouseLeave = useCallback(() => {
     setMenuOpen(false);

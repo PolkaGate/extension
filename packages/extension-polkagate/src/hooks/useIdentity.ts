@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -16,10 +16,11 @@ interface SubIdentity {
   display: string
 }
 
-export default function useIdentity (genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
+export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
   const { peopleChain } = usePeopleChain(undefined, genesisHash);
+
   const api = useApiWithChain2(peopleChain);
 
   const getIdentityOf = useCallback(async (accountId: string) => {
@@ -27,8 +28,8 @@ export default function useIdentity (genesisHash: string | undefined, formatted:
       return;
     }
 
-    const i = await api.query['identity']['identityOf'](accountId) as any;
-    const id = i.isSome ? i.unwrap()[0] as PalletIdentityRegistration : null;
+    const i = await api.query['identity']['identityOf'](accountId);
+    const id = i.isSome ? i.unwrap() as PalletIdentityRegistration : null;
 
     return id?.info
       ? {

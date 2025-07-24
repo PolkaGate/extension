@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable no-use-before-define */
@@ -58,6 +58,7 @@ export interface AccountJson extends KeyringPair$Meta {
   profile?: string;
   stakingAccount?: string;
   addedTime?: number; // for DApp authorization check
+  selected?: boolean
 }
 
 export type AccountWithChildren = AccountJson & {

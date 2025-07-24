@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { LatestReferenda, TopMenu } from './utils/types';
 
@@ -9,7 +7,7 @@ import { OpenInNewRounded as OpenInNewIcon, ScheduleRounded as ClockIcon } from 
 import { Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { noop } from '@polkadot/util';
 
@@ -37,8 +35,7 @@ const VerticalBar = () => (
 
 function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const history = useHistory();
-
+  const navigate = useNavigate();
   const { address, topMenu } = useParams<{ address?: string | undefined, topMenu?: TopMenu | undefined }>();
   const newReferendum = useReferendum(address, topMenu, refSummary?.post_id, undefined, true, ENDED_STATUSES.includes(refSummary.status), true);
   const api = useApi(address);
@@ -72,26 +69,24 @@ function ReferendumSummary ({ key, myVotedReferendaIndexes, refSummary }: Props)
   }, [newReferendum, t]);
 
   const openReferendum = useCallback(() => {
-    address && history.push({
-      pathname: `/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`,
-    });
-  }, [address, history, refSummary.post_id, refSummary.type]);
+    address && navigate(`/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`);
+  }, [address, navigate, refSummary.post_id, refSummary.type]);
 
   const openInNewTab = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
-    address && windowOpen(`/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`).catch(console.error);
+    address && windowOpen(`/governance/${address}/${refSummary.type === 'ReferendumV2' ? 'referenda' : 'fellowship'}/${refSummary.post_id}`);
   }, [address, refSummary.post_id, refSummary.type]);
 
   return (
     <Grid container item key={key} onClick={!openDecisionDeposit ? openReferendum : noop} sx={{ '&:hover': { boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }, bgcolor: 'background.paper', borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '109px', my: '13px', p: '0 20px', position: 'relative' }}>
       <Grid container item sx={{ height: '30px' }}>
         {isThisMine &&
-          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
+          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.primary', fontSize: '12px', height: '20px', mr: '15px', textAlign: 'center', width: '85px' }}>
             {t('Mine')}
           </Grid>
         }
         {amIVoted &&
-          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.main', fontSize: '12px', height: '20px', textAlign: 'center', width: '85px' }}>
+          <Grid item sx={{ bgcolor: 'text.primary', color: 'label.primary', fontSize: '12px', height: '20px', textAlign: 'center', width: '85px' }}>
             {t('Voted')}
           </Grid>
         }

@@ -1,14 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Close as CloseIcon, FiberManualRecord as FiberManualRecordIcon } from '@mui/icons-material';
 import { Box, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../components';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/components/DraggableModal';
 import { useTranslation } from '../../hooks';
 
 interface Props {
@@ -17,7 +16,7 @@ interface Props {
   asModal?: boolean;
 }
 
-function Privacy ({ asModal, setShow, show = false }: Props): React.ReactElement {
+function Privacy({ asModal, setShow, show = false }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {
@@ -35,7 +34,7 @@ function Privacy ({ asModal, setShow, show = false }: Props): React.ReactElement
       <Typography fontSize='14px' lineHeight={1.4} px='15px'>
         {t('PolkaGate is a browser extension that lets you use the Polkadot network and decentralized apps. We respect your privacy and do not collect or store any of your personal data. This is how we protect your privacy:')}
       </Typography>
-      <Box sx={{ backgroundColor: 'background.paper', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px', maxHeight: '300px', overflowY: 'scroll' }}>
+      <Box sx={{ backgroundColor: 'background.paper', borderRadius: '5px', fontSize: '14px', m: '20px 15px 17px', maxHeight: '300px', overflowY: 'auto' }}>
         <List sx={{ color: 'text.primary' }}>
           <ListItem sx={{ py: '2px' }}>
             <ListItemIcon sx={{ color: 'primary.main', minWidth: '26px', width: '26px' }}>

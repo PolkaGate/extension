@@ -1,5 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 /**
@@ -7,13 +8,14 @@
  * this hook returns a
  * */
 
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountStakingInfo } from '../util/types';
+
 import { useCallback, useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { BN } from '@polkadot/util';
 
 import { updateMeta } from '../messaging';
-import type { AccountStakingInfo } from '../util/types';
 import { isHexToBn } from '../util/utils';
 import { useInfo, useStashId } from '.';
 
@@ -30,7 +32,7 @@ BN.prototype.toJSON = function () {
  * @param setRefresh
  * @returns account staking Info
  */
-export default function useStakingAccount(address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew?: boolean): AccountStakingInfo | null | undefined {
+export default function useStakingAccount (address: AccountId | string | undefined, stateInfo?: AccountStakingInfo, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew?: boolean): AccountStakingInfo | null | undefined {
   const { account, api, token: addressCurrentToken } = useInfo(address);
   const stashId = useStashId(address);
 

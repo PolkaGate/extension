@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
@@ -18,7 +17,7 @@ interface Props {
   chain: Chain | null | undefined;
 }
 
-export default function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivider }: Props) {
+export default function ShowPoolRole({ chain, roleAddress, roleTitle, showDivider }: Props) {
   const { t } = useTranslation();
 
   return (

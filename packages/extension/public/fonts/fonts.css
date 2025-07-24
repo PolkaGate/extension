@@ -66,3 +66,41 @@
   src: local(''),
        url('./Roboto-Black.ttf') format('truetype'), /* Safari, Android, iOS */
 }
+
+/* OdibeeSans-Regular */
+@font-face {
+  font-family: 'OdibeeSans';
+  font-weight: 400;
+  font-style: normal;
+  src: url('./OdibeeSans-Regular.ttf'); /* IE9 Compat Modes */
+  src: local(''),
+       url('./OdibeeSans-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./Inter-VariableFont_opsz,wght.ttf') format('truetype'); 
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;  
+  font-style: italic;  
+}
+
+@font-face {
+  font-family: 'JetBrainsMono';
+  src: url('./JetBrainsMono-VariableFont_wght.ttf') format('truetype'); 
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JetBrainsMono';
+  src: url('./JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;  
+  font-style: italic;  
+}

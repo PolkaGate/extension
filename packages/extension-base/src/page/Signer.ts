@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-base authors & contributors
+// Copyright 2019-2025 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Signer as SignerInterface, SignerResult } from '@polkadot/api/types';
@@ -10,11 +10,11 @@ let sendRequest: SendRequest;
 let nextId = 0;
 
 export default class Signer implements SignerInterface {
-  constructor (_sendRequest: SendRequest) {
+  constructor(_sendRequest: SendRequest) {
     sendRequest = _sendRequest;
   }
 
-  public async signPayload (payload: SignerPayloadJSON): Promise<SignerResult> {
+  public async signPayload(payload: SignerPayloadJSON): Promise<SignerResult> {
     const id = ++nextId;
     const result = await sendRequest('pub(extrinsic.sign)', payload);
 
@@ -27,7 +27,7 @@ export default class Signer implements SignerInterface {
     };
   }
 
-  public async signRaw (payload: SignerPayloadRaw): Promise<SignerResult> {
+  public async signRaw(payload: SignerPayloadRaw): Promise<SignerResult> {
     const id = ++nextId;
     const result = await sendRequest('pub(bytes.sign)', payload);
 

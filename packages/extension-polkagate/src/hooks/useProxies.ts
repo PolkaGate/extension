@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -8,7 +8,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-//@ts-ignore
+// @ts-ignore
 import type { PalletProxyProxyDefinition } from '@polkadot/types/lookup';
 import type { u128, Vec } from '@polkadot/types-codec';
 import type { Proxy, ProxyTypes } from '../util/types';

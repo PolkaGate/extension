@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -60,9 +60,7 @@ export default class Extension {
   private applyAddedTime ({ pair }: ApplyAddedTime): void {
     assert(pair, 'Unable to find pair');
 
-    const addedTime = Date.now();
-
-    keyring.saveAccountMeta(pair, { ...pair.meta, addedTime });
+    keyring.saveAccountMeta(pair, { ...pair.meta, addedTime: Date.now() });
   }
 
   private accountsCreateExternal ({ address, genesisHash, name }: RequestAccountCreateExternal): boolean {
@@ -197,7 +195,9 @@ export default class Extension {
 
     assert(pair, 'Unable to find pair');
 
-    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash });
+    console.warn('NO TIE ANYMORE IN NEW DESIGN, genesisHash:', genesisHash);
+
+    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null }); //NO TIE ANYMORE IN NEW DESIGN
 
     return true;
   }
@@ -315,7 +315,7 @@ export default class Extension {
   }
 
   // added for PolkaGate
-  private metadataUpdate(metadata: MetadataDef): boolean {
+  private metadataUpdate (metadata: MetadataDef): boolean {
     assert(metadata, 'Unable to update metadata');
 
     this.#state.saveMetadata(metadata);
@@ -328,6 +328,7 @@ export default class Extension {
       const pair = keyring.restoreAccount(file, password);
 
       this.applyAddedTime({ pair });
+      this.accountsTie({ address: pair.address, genesisHash: null });
     } catch (error) {
       throw new Error((error as Error).message);
     }
@@ -505,7 +506,7 @@ export default class Extension {
     const url = `${chrome.runtime.getURL('index.html')}#${path}`;
 
     if (!ALLOWED_PATH.includes(path as any) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for PolkaGate, updated
-      console.error('Not allowed to open the url:', url);
+      console.error('Extension background handler says: not allowed to open the url:', url);
 
       return false;
     }

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
@@ -10,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ArrowForwardIos as ArrowForwardIosIcon, Boy as BoyIcon } from '@mui/icons-material';
 import { Grid, IconButton, Slide, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { HorizontalMenuItem, PoolStakingIcon, VaadinIcon } from '../components';
 import { useInfo, useTranslation } from '../hooks';
@@ -25,10 +24,10 @@ interface Props {
 
 const ICON_SIZE = 10;
 
-export default function QuickAction ({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
+export default function QuickAction({ address, quickActionOpen, setQuickActionOpen }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { api, formatted, genesisHash } = useInfo(address);
 
   const handleOpen = useCallback(() => setQuickActionOpen(String(address)), [address, setQuickActionOpen]);
@@ -43,31 +42,23 @@ export default function QuickAction ({ address, quickActionOpen, setQuickActionO
   }, [genesisHash, address]);
 
   const goToPoolStaking = useCallback(() => {
-    address && isStakingEnabled && history.push({
-      pathname: `/pool/${String(address)}/`,
-      state: { api }
-    });
-  }, [address, isStakingEnabled, history, api]);
+    address && isStakingEnabled && navigate(`/pool/${String(address)}/`, { state: { api } });
+  }, [address, isStakingEnabled, navigate, api]);
 
   const goToSoloStaking = useCallback(() => {
-    address && isStakingEnabled && history.push({
-      pathname: `/solo/${String(address)}/`,
-      state: { api }
-    });
-  }, [address, isStakingEnabled, history, api]);
+    address && isStakingEnabled && navigate(`/solo/${String(address)}/`, { state: { api } });
+  }, [address, isStakingEnabled, navigate, api]);
 
   const goToCrowdLoans = useCallback(() => {
     formatted && isCrowdLoanEnabled &&
-      history.push({
-        pathname: `/crowdloans/${address}`
-      });
-  }, [formatted, isCrowdLoanEnabled, history, address]);
+      navigate(`/crowdloans/${address}`);
+  }, [formatted, isCrowdLoanEnabled, navigate, address]);
 
   const goToGovernanceOrHistory = useCallback(() => {
     isGovernanceEnabled
       ? address && windowOpen(`/governance/${address}/referenda`).catch(console.error)
-      : genesisHash && history.push({ pathname: `/history/${String(address)}` });
-  }, [isGovernanceEnabled, address, genesisHash, history]);
+      : genesisHash && navigate(`/history/${String(address)}`);
+  }, [isGovernanceEnabled, address, genesisHash, navigate]);
 
   const isSlideOpen = quickActionOpen === address;
 

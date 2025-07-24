@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -31,7 +30,7 @@ interface Props {
 
 }
 
-export default function BalanceFee ({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
+export default function BalanceFee({ address, api, balance, balances, fee, type }: Props): React.ReactElement<Props> {
   const value = balance ?? (type ? getValue(type, balances) : undefined);
   const token = useToken(address);
   const decimal = useDecimal(address);

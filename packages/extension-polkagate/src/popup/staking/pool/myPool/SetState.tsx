@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { MyPoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../util/types';
@@ -21,7 +20,7 @@ import { getSubstrateAddress, saveAsHistory } from '../../../../util/utils';
 import ShowPool from '../../partial/ShowPool';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   formatted: AccountId | string;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,7 +31,7 @@ interface Props {
   headerText: string;
 }
 
-export default function SetState ({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
+export default function SetState({ address, formatted, headerText, helperText, pool, setRefresh, setShow, show, state }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { api, chain } = useInfo(address);

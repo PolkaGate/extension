@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { AccessTime as AccessTimeIcon, ArrowForward as ArrowForwardIcon, Handshake as HandshakeIcon } from '@mui/icons-material';
 import { alpha, Box, Button, Dialog, DialogContent, Paper, Slide, type Theme, Typography, useTheme } from '@mui/material';
@@ -78,7 +77,7 @@ const MaybeLaterButton = styled(Button)(({ theme }: { theme: Theme }) => ({
   textTransform: 'none'
 }));
 
-export default function SupportUs () {
+export default function SupportUs() {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -122,8 +121,9 @@ export default function SupportUs () {
       }
     });
 
+    //NO TIE ANYMORE IN NEW DESIGN
     addressWithMaxVotingPower && tieAccount(addressWithMaxVotingPower, POLKADOT_GENESIS_HASH).finally(() => {
-      setAddress(addressWithMaxVotingPower);
+      setAddress(addressWithMaxVotingPower);  
     }).catch(console.error);
   }, [accountsAssets]);
 

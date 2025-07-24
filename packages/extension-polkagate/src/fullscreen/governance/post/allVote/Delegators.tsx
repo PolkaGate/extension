@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { ArrowBackIos as ArrowBackIosIcon, Check as CheckIcon, Close as CloseIcon, RemoveCircle as AbstainIcon } from '@mui/icons-material';
 import { Divider, Grid, Pagination, SxProps, Typography, useTheme } from '@mui/material';
@@ -12,7 +11,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { Identity, ShowBalance, VaadinIcon } from '../../../../components';
 import { useApi, useChain, useDecimal, useToken, useTranslation } from '../../../../hooks';
-import { DraggableModal } from '../../components/DraggableModal';
+import { DraggableModal } from '../../../components/DraggableModal';
 import { AbstainVoteType, VoteType } from '../../utils/helpers';
 import { getVoteCapital, getVoteValue } from '.';
 

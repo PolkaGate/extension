@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable header/header */
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -14,14 +13,14 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { QrCode2 } from '@mui/icons-material';
 import { Box, Divider, Grid, Link, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { subscan } from '../../assets/icons/';
 import { Infotip, OptionalCopyButton, ShortAddress2 } from '../../components';
 import { useInfo, useTranslation } from '../../hooks';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   identity: DeriveAccountRegistration | null | undefined
   showName?: boolean;
   showDivider?: boolean;
@@ -32,15 +31,12 @@ function AccountBrief ({ address, identity, showDivider = true, showName = true 
   const theme = useTheme();
 
   const { account, chainName, formatted } = useInfo(address);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const goToReceive = useCallback(() => {
-    history.push({
-      pathname: `/receive/${address}/`,
-      state: { pathname }
-    });
-  }, [history, address, pathname]);
+    navigate(`/receive/${address}/`, { state: { pathname } });
+  }, [navigate, address, pathname]);
 
   const subscanLink = useCallback((address?: string) => {
     if (chainName === 'WestendAssetHub') {

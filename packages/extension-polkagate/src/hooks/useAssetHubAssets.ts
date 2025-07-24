@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { bool, Bytes, StorageKey, u8, u128 } from '@polkadot/types';
@@ -15,7 +15,7 @@ import { useInfo } from '.';
 /**
  * @description To get all available assets on asset hubs for an address based on its chain
  */
-export default function useAssetHubAssets (address: AccountId | string | undefined): DropdownOption[] | undefined | null {
+export default function useAssetHubAssets(address: AccountId | string | undefined): DropdownOption[] | undefined | null {
   const { api, genesisHash: accountGenesisHash } = useInfo(address);
   const [assets, setAssets] = useState<DropdownOption[] | null>();
 

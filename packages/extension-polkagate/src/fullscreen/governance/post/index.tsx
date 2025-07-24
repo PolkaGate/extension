@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AnyJson } from '@polkadot/types-codec/types';
 import type { Proposal, TopMenu } from '../utils/types';
@@ -9,7 +8,7 @@ import type { Proposal, TopMenu } from '../utils/types';
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { PButton } from '../../../components';
 import { useApi, useChainName, useDecidingCount, useFullscreen, useMyVote, useReferendum, useTrack, useTranslation } from '../../../hooks';
@@ -33,13 +32,13 @@ interface LocationState {
   selectedSubMenu: string;
 }
 
-export default function ReferendumPost (): React.ReactElement {
+export default function ReferendumPost(): React.ReactElement {
   const { t } = useTranslation();
   const { address, postId, topMenu } = useParams<{ address?: string | undefined, topMenu?: TopMenu | undefined, postId?: string | undefined }>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const referendum = useReferendum(address, topMenu, postId ? Number(postId) : undefined, refresh);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
 
@@ -79,11 +78,9 @@ export default function ReferendumPost (): React.ReactElement {
     if (!ref.current) {
       ref.current = chainName;
     } else if (ref.current !== chainName) {
-      history.push({
-        pathname: `/governance/${address}/${topMenu}`
-      });
+      navigate(`/governance/${address}/${topMenu}`);
     }
-  }, [address, chainName, history, topMenu]);
+  }, [address, chainName, navigate, topMenu]);
 
   useEffect(() => {
     if (!api) {
@@ -113,11 +110,8 @@ export default function ReferendumPost (): React.ReactElement {
   }, [api]);
 
   useEffect(() => {
-    selectedSubMenu && history.push({
-      pathname: `/governance/${address}/${topMenu}`,
-      state: { selectedSubMenu }
-    });
-  }, [address, history, selectedSubMenu, topMenu]);
+    selectedSubMenu && navigate(`/governance/${address}/${topMenu}`, { state: { selectedSubMenu } });
+  }, [address, navigate, selectedSubMenu, topMenu]);
 
   const onCastVote = useCallback(() => setShowCastVote(true), []);
 

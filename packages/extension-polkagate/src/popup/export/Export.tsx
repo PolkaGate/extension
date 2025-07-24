@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,25 +34,28 @@ export default function Export (): React.ReactElement {
     }
     , []);
 
-  const _onExportButtonClick = useCallback(
-    (): void => {
-      setIsBusy(true);
+  const _onExportButtonClick = useCallback((): void => {
+    if (!address) {
+      return;
+    }
 
-      exportAccount(address, pass)
-        .then(({ exportedJson }) => {
-          const blob = new Blob([JSON.stringify(exportedJson)], { type: 'application/json; charset=utf-8' });
+    setIsBusy(true);
 
-          saveAs(blob, `${address}.json`);
+    exportAccount(address, pass)
+      .then(({ exportedJson }) => {
+        const blob = new Blob([JSON.stringify(exportedJson)], { type: 'application/json; charset=utf-8' });
 
-          onAction('/');
-        })
-        .catch((err: Error) => {
-          console.error(err);
-          setIsPasswordError(true);
-          setIsBusy(false);
-        });
-    },
-    [address, onAction, pass]
+        saveAs(blob, `${address}.json`);
+
+        onAction('/');
+      })
+      .catch((err: Error) => {
+        console.error(err);
+        setIsPasswordError(true);
+        setIsBusy(false);
+      });
+  },
+  [address, onAction, pass]
   );
 
   return (

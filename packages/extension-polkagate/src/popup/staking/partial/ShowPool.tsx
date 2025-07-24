@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -31,7 +30,7 @@ interface Props {
   showInfo?: boolean;
 }
 
-export default function ShowPool ({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
+export default function ShowPool({ api, chain, label, labelPosition = 'left', mode, pool, showInfo, style }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [isOpenPoolInfo, setOpenPoolInfo] = useState<boolean>(false);

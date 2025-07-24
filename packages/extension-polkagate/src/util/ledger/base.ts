@@ -1,12 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
+
 import type Transport from '@ledgerhq/hw-transport';
+import type { AccountOptions } from '@polkadot/hw-ledger/types';
 
 import { Ledger, type LedgerTypes } from './types';
-
-import type { AccountOptions } from '@polkadot/hw-ledger/types';
 
 interface LedgerApp {
   transport: Transport;
@@ -31,10 +31,10 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
     this.slip44 = slip44;
   }
 
-  protected abstract serializePath (accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): string
+  protected abstract serializePath(accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): string
   protected abstract getApp(): Promise<T>
 
-  protected withApp = async(fn: (_app: T) => Promise<V>): Promise<V> => {
+  protected withApp = async (fn: (_app: T) => Promise<V>): Promise<V> => {
     try {
       const app = await this.getApp();
 
@@ -59,5 +59,5 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
     });
   }
 
-  abstract mappingError (error: Error): string;
+  abstract mappingError(error: Error): string;
 }

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 //@ts-nocheck
 
 import type { PoolFilter, PoolInfo, StakingConsts } from '@polkadot/extension-polkagate/src/util/types';
@@ -11,7 +10,7 @@ import { Divider, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Checkbox2, Input, Select, SlidePopUp, TwoButtons } from '@polkadot/extension-polkagate/src/components';
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getComparator } from '@polkadot/extension-polkagate/src/popup/staking/pool/stake/joinPool/partials/comparators';
 import { DEFAULT_POOL_FILTERS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -34,7 +33,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function Filters ({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
+export default function Filters({ apply, decimal, filters, pools, setApply, setFilteredPools, setFilters, setShow, setSortValue, show, sortValue, stakingConsts, token }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtensionPopup = useIsExtensionPopup();
@@ -268,7 +267,7 @@ export default function Filters ({ apply, decimal, filters, pools, setApply, set
         ? <SlidePopUp show={show}>
           {page}
         </SlidePopUp>
-        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show} px = {0}>
+        : <DraggableModal minHeight={650} onClose={onCloseFilter} open={show} px={0}>
           {page}
         </DraggableModal>
       }

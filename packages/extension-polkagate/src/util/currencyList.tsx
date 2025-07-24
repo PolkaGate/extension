@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export const ASSETS_AS_CURRENCY_LIST = ['BTC', 'ETH', 'DOT'];
@@ -10,7 +10,7 @@ export const USD_CURRENCY = {
   sign: '$'
 };
 
-const CRYPTO_AS_CURRENCY = [{
+export const CRYPTO_AS_CURRENCY = [{
   code: 'BTC',
   country: 'Bitcoin',
   currency: 'Bitcoin',

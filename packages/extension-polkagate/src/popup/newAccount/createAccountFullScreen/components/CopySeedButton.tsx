@@ -1,26 +1,20 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Grid, IconButton, type SxProps, type Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Tooltip } from '@mui/material';
+import { Copy } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
+import ActionButton from '../../../../components/ActionButton';
 import { useTranslation } from '../../../../hooks';
 
 interface Props {
   value: string;
-  copyText?: string | null | undefined;
-  iconSize?: number;
   style?: SxProps<Theme>;
 }
 
-function CopySeedButton({ copyText, iconSize = 20, style, value }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+function CopySeedButton ({ style, value }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const [copied, setCopy] = useState<boolean>(false);
@@ -71,23 +65,28 @@ function CopySeedButton({ copyText, iconSize = 20, style, value }: Props): React
         placement='top'
         title={t<string>('Copied')}
       >
-        <IconButton
-          onClick={_onCopy}
-          sx={{ borderRadius: '5px', m: '5px', p: '2px' }}
-        >
+        <>
           <CopyToClipboard text={value}>
-            <Grid alignItems='center' container item width='fit-content'>
-              <FontAwesomeIcon
-                color={theme.palette.secondary.light}
-                fontSize={iconSize}
-                icon={faCopy}
-              />
-              <Typography fontSize='16px' fontWeight={400} sx={{ pl: '8px', textDecoration: 'underline' }}>
-                {copyText ?? t('Copy to clipboard')}
-              </Typography>
-            </Grid>
+            <ActionButton
+              StartIcon={Copy}
+              contentPlacement='start'
+              iconSize={14}
+              onClick={_onCopy}
+              style={{
+                '& .MuiButton-startIcon': {
+                  marginRight: '5px'
+                },
+                borderRadius: '8px',
+                height: '32px',
+                padding: '5px 10px'
+              }}
+              text={{
+                firstPart: t('Copy')
+              }}
+              variant='contained'
+            />
           </CopyToClipboard>
-        </IconButton>
+        </>
       </Tooltip>
     </Grid>
   );

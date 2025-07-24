@@ -1,53 +1,41 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
-
+import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolRoles, PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
+import type { PoolInfo } from '../../../../../util/types';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { AddressInput, AmountWithOptions, InputWithLabel, PButton, ShowBalance } from '../../../../../components';
-import { useApi, useChain, useDecimal, useFormatted, usePoolConsts, useToken, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
+import { useBalances, useInfo, usePoolConsts, useTranslation, useUnSupportedNetwork } from '../../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../../partials';
 import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../../util/constants';
-import type { PoolInfo, PoolStakingConsts } from '../../../../../util/types';
 import { amountToHuman, amountToMachine } from '../../../../../util/utils';
 import Review from './Review';
 import UpdateRoles from './UpdateRoles';
 
-interface State {
-  api?: ApiPromise;
-  availableBalance: Balance;
-  poolStakingConsts: PoolStakingConsts;
-}
-
 export default function CreatePool(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
-  const { state } = useLocation<State>();
-  const formatted = useFormatted(address);
-  const api = useApi(address, state?.api);
-  const history = useHistory();
-  const token = useToken(address);
-  const decimal = useDecimal(address);
+  const { state } = useLocation();
+  const { api, chain, decimal, formatted, token } = useInfo(address);
+  const navigate = useNavigate();
+  const freeBalance = useBalances(address)?.freeBalance;
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
 
   const poolStakingConsts = usePoolConsts(address, state?.poolStakingConsts);
-  const chain = useChain(address);
 
   const [poolName, setPoolName] = useState<string | undefined>();
   const [createAmount, setCreateAmount] = useState<string | undefined>();
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
   const [estimatedMaxFee, setEstimatedMaxFee] = useState<Balance | undefined>();
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>();
   const [showRoles, setShowRoles] = useState<boolean>(false);
@@ -64,11 +52,8 @@ export default function CreatePool(): React.ReactElement {
   const amountAsBN = useMemo(() => amountToMachine(createAmount, decimal), [createAmount, decimal]);
 
   const backToStake = useCallback(() => {
-    history.push({
-      pathname: `/pool/stake/${address}`,
-      state: { api, consts: poolStakingConsts, pool: null }
-    });
-  }, [address, api, history, poolStakingConsts]);
+    navigate(`/pool/stake/${address}`, { state: { api, consts: poolStakingConsts, pool: null } });
+  }, [address, api, navigate, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {
@@ -81,15 +66,15 @@ export default function CreatePool(): React.ReactElement {
   }, [decimal]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedMaxFee || !ED) {
+    if (!api || !freeBalance || !estimatedMaxFee || !ED) {
       return;
     }
 
-    const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedMaxFee));
+    const max = new BN(freeBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedMaxFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setCreateAmount(maxToHuman);
-  }, [ED, api, availableBalance, decimal, estimatedMaxFee]);
+  }, [ED, api, freeBalance, decimal, estimatedMaxFee]);
 
   const onMinAmount = useCallback(() => {
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));
@@ -135,21 +120,13 @@ export default function CreatePool(): React.ReactElement {
     }
 
     const goTo = !(formatted && nominatorId && bouncerId && createAmount);
-    const isAmountInRange = amountAsBN?.gt(availableBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
+    const isAmountInRange = amountAsBN?.gt(freeBalance?.sub(estimatedMaxFee ?? BN_ZERO) ?? BN_ZERO) || !amountAsBN?.gte(poolStakingConsts.minCreateBond);
 
     setToReviewDisabled(goTo || isAmountInRange);
-  }, [amountAsBN, availableBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
+  }, [amountAsBN, freeBalance, createAmount, estimatedMaxFee, formatted, nominatorId, poolStakingConsts?.minCreateBond, bouncerId]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-void
-    !state?.availableBalance && api && formatted && void api.derive.balances?.all(formatted).then((b) => {
-      setAvailableBalance(b.availableBalance);
-    });
-    state?.availableBalance && setAvailableBalance(state?.availableBalance);
-  }, [formatted, api, state?.availableBalance]);
-
-  useEffect(() => {
-    if (!api || !availableBalance || !formatted) {
+    if (!api || !freeBalance || !formatted) {
       return;
     }
 
@@ -161,10 +138,10 @@ export default function CreatePool(): React.ReactElement {
       setEstimatedFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
 
-    api && api.tx['nominationPools']['create'](String(availableBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
-      setEstimatedMaxFee(api.createType('Balance', i?.partialFee));
+    api && api.tx['nominationPools']['create'](String(freeBalance), formatted, nominatorId, bouncerId).paymentInfo(formatted).then((i) => {
+      setEstimatedMaxFee(api.createType('Balance', i?.partialFee) as Balance);
     }).catch(console.error);
-  }, [amountAsBN, api, availableBalance, formatted, nominatorId, bouncerId]);
+  }, [amountAsBN, api, freeBalance, formatted, nominatorId, bouncerId]);
 
   return (
     <>
@@ -203,7 +180,7 @@ export default function CreatePool(): React.ReactElement {
       <Typography fontSize='14px' fontWeight={300} sx={{ m: 'auto', width: '90%' }} textAlign='left'>
         {t<string>('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
       </Typography>
-      <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} showIdenticon style={{ m: '15px auto 0', width: '92%' }} />
+      <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} style={{ m: '15px auto 0', width: '92%' }} />
       <Grid ml='4%' onClick={onUpdateRoles} width='fit-content'>
         <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
           {t<string>('Update roles')}

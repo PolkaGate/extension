@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, useTheme } from '@mui/material';
@@ -8,14 +8,10 @@ import { useParams } from 'react-router';
 import { ActionContext, Header, Warning } from '../components';
 import useTranslation from '../hooks/useTranslation';
 
-interface WebsiteState {
-  website: string;
-}
-
 export default function PhishingDetected (): React.ReactElement {
   const { t } = useTranslation();
-  const { website } = useParams<WebsiteState>();
-  const decodedWebsite = decodeURIComponent(website);
+  const { website } = useParams();
+  const decodedWebsite = decodeURIComponent(website ?? '');
   const onAction = useContext(ActionContext);
   const theme = useTheme();
 

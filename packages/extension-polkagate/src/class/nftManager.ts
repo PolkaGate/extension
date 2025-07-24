@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation, ItemMetadata, ItemOnChainInfo } from '../fullscreen/nft/utils/types';
@@ -21,7 +21,7 @@ export default class NftManager {
   private nfts: NftItemsType = {};
   private listeners = new Set<Listener>();
   private initializationListeners = new Set<InitializationListener>();
-  private readonly STORAGE_KEY = 'nftItems';
+  private readonly STORAGE_KEY = 'nfts';
   private isInitialized = false;
   private initializationPromise: Promise<void>;
 
@@ -110,7 +110,7 @@ export default class NftManager {
     });
   }
 
-  // Get nft items for a specific
+  // Get nft items for a specific address
   get (address: string): ItemInformation[] | null | undefined {
     if (!address) {
       throw new NftManagerError('Address is required');

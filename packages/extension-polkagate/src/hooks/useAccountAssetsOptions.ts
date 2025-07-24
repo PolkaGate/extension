@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from '../util/types';
@@ -8,7 +8,7 @@ import { useContext, useMemo } from 'react';
 import { AccountsAssetsContext } from '../components';
 import { useGenesisHash } from '.';
 
-export default function useAccountAssetsOptions (address: string | undefined): DropdownOption[] | undefined | null {
+export default function useAccountAssetsOptions(address: string | undefined): DropdownOption[] | undefined | null {
   const genesisHash = useGenesisHash(address);
 
   const { accountsAssets } = useContext(AccountsAssetsContext);

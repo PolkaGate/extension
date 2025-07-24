@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -35,7 +34,7 @@ import ShowValidators from './partials/ShowValidators';
 import TxDetail from './partials/TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   amount: string;
   api: ApiPromise;
   chain: Chain;
@@ -50,7 +49,7 @@ interface Props {
   selectedValidators: ValidatorInfo[] | null | undefined;
 }
 
-export default function Review ({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
+export default function Review({ address, amount, api, chain, estimatedFee, isFirstTimeStaking, params, selectedValidators, setShow, settings, show, total, tx }: Props): React.ReactElement {
   const { t } = useTranslation();
   const proxies = useProxies(api, settings.stashId);
   const name = useAccountDisplay(address);

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -42,7 +41,7 @@ interface Props {
   txType: 'Remove' | 'Vote';
 }
 
-export default function Review ({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
+export default function Review({ address, estimatedFee, selectedProxy, setModalHeight, setRefresh, setStep, setTxInfo, status, step, tx, txType, voteInformation }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, decimal, token } = useInfo(address);
@@ -135,7 +134,7 @@ export default function Review ({ address, estimatedFee, selectedProxy, setModal
         <AccountHolderWithProxy
           address={address}
           chain={chain}
-          direction ='row'
+          direction='row'
           selectedProxyAddress={selectedProxyAddress}
           style={{ m: 'auto', pt: isPasswordError ? 0 : '10px' }}
         />

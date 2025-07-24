@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 import type { Balance } from '@polkadot/types/interfaces';
 
@@ -14,7 +13,7 @@ import { TOTAL_STAKE_HELPER_TEXT } from '../util/constants';
 import { ChainLogo, Infotip, ShowValue } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   amount: string | React.ReactNode;
   children?: React.ReactNode;
   label: string;
@@ -25,7 +24,7 @@ interface Props {
   withFee?: boolean;
 }
 
-function AmountFee({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
+function AmountFee ({ address, amount, children, fee, label, style = {}, showDivider = false, token, withFee }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
 

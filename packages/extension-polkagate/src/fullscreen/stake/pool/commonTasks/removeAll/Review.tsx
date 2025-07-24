@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -23,7 +22,7 @@ import { useEstimatedFee, useFormatted, useProxies, useTranslation } from '../..
 import { STEPS } from '../../stake';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise;
   chain: Chain;
   pool: MyPoolInfo;
@@ -36,7 +35,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<Mode | undefined>>;
 }
 
-export default function Review ({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, api, chain, mode, pool, poolMembers, setMode, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const proxies = useProxies(api, formatted);

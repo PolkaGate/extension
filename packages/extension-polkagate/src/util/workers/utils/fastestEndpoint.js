@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -12,7 +12,7 @@ export async function fastestEndpoint (endpoints) {
   const connections = endpoints.map(({ value }) => {
     // Check if e.value matches the pattern 'wss://<any_number>'
     // ignore due to its rate limits
-    if (/^wss:\/\/\d+$/.test(value) || (value).includes('onfinality')) {
+    if (/^wss:\/\/\d+$/.test(value) || (value).includes('onfinality') || value.startsWith('light')) {
       return undefined;
     }
 

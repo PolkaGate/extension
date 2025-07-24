@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -24,7 +23,7 @@ interface Props {
   setBgImage: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-export default function AiBackgroundImage ({ bgImage, setBgImage }: Props): React.ReactElement {
+export default function AiBackgroundImage({ bgImage, setBgImage }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const imgRef = useRef({ dark: 0, light: 0 });

@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +12,7 @@ import { ActionContext, Checkbox2, MenuItem, Select, SelectIdenticonTheme, Vaadi
 import { getStorage } from '../components/Loading';
 import { useTranslation } from '../hooks';
 import { setNotification } from '../messaging';
-import getLanguageOptions from '../util/getLanguageOptions';
+import { getLanguageOptions } from '../util/getLanguageOptions';
 
 interface Props {
   isTestnetEnabledChecked: boolean | undefined;

@@ -1,9 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 /* eslint-disable header/header */
 
-export default async function postData (url: string, data = {}) {
+export default async function postData(url: string, data = {}) {
   // console.log('calling post data, url:', url);
 
   // Default options are marked with *

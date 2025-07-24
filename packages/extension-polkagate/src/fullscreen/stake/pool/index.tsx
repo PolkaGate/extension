@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '../../../util/types';
 
@@ -13,6 +12,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { PoolStakingIcon } from '../../../components';
 import { useBalances, useFullscreen, useInfo, usePool, useTranslation, useUnSupportedNetwork } from '../../../hooks';
+import { getValue } from '../../../popup/account/util';
 import { FULLSCREEN_WIDTH, STAKING_CHAINS } from '../../../util/constants';
 import { openOrFocusTab } from '../../accountDetails/components/CommonTasks';
 import FullScreenHeader from '../../governance/FullScreenHeader';
@@ -192,7 +192,7 @@ export default function Index (): React.ReactElement {
       {showId === MODAL_IDS.REDEEM &&
         <WithdrawRedeem
           address={address}
-          availableBalance={balances?.availableBalance}
+          availableBalance={getValue('transferable', balances)}
           redeemable={redeemable}
           setRefresh={setRefresh}
           setShow={setShow}

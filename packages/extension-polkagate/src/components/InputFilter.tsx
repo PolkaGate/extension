@@ -1,4 +1,4 @@
-// Copyright 2017-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
@@ -22,7 +22,7 @@ interface Props {
   withReset?: boolean;
 }
 
-export default function InputFilter ({ autoFocus = true, disabled, fontSize = '18px', label, onChange, placeholder, theme, value, withReset = false }: Props) {
+export default function InputFilter({ autoFocus = true, disabled, fontSize = '18px', label, onChange, placeholder, theme, value, withReset = false }: Props) {
   const inputRef: React.RefObject<HTMLInputElement> | null = useRef(null);
 
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

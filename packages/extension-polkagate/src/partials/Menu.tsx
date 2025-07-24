@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransitionProps } from '@mui/material/transitions';
 
@@ -33,13 +32,13 @@ enum COLLAPSIBLE_MENUS {
   SETTING
 }
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>;}, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='left' ref={ref} {...props} />;
 });
 
 const Div = () => <Divider sx={{ bgcolor: 'divider', height: '1px', justifySelf: 'flex-end', mx: '10px', width: '83%' }} />;
 
-function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function Menu({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const onAction = useContext(ActionContext);
@@ -93,7 +92,7 @@ function Menu ({ isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
       setStorage('testnet_enabled', false).catch(console.error);
       accounts?.forEach(({ address, genesisHash }) => {
         if (genesisHash && TEST_NETS.includes(genesisHash)) {
-          tieAccount(address, null).catch(console.error);
+          tieAccount(address, null).catch(console.error);     //NO TIE ANYMORE IN NEW DESIGN
         }
       });
       setIsTestnetEnableConfirmed(false);

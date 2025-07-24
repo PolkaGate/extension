@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Breadcrumbs, Link, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
@@ -12,7 +11,7 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { openOrFocusTab } from '../accountDetails/components/CommonTasks';
 import { capitalizeFirstLetter } from '../governance/utils/util';
 
-export default function Bread (): React.ReactElement {
+export default function Bread(): React.ReactElement {
   const { address } = useParams<{ address: string, paramAssetId?: string }>();
   const { t } = useTranslation();
 

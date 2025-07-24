@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { StakingConsts, ValidatorInfo, ValidatorInfoWithIdentity } from '../util/types';
@@ -14,7 +14,7 @@ import { useStakingConsts, useValidators, useValidatorsIdentities } from '.';
  * This hooks return a list of suggested validators to choose
  */
 
-export default function useValidatorSuggestion(address: string): ValidatorInfo[] | null | undefined {
+export default function useValidatorSuggestion(address: string | undefined): ValidatorInfo[] | null | undefined {
   const allValidatorsInfo = useValidators(address);
   const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);

@@ -1,11 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
-import type { AccountStakingInfo, PoolStakingConsts, StakingConsts } from '../../../util/types';
 
 import { faHand, faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +10,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Container, Divider, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { noop } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
@@ -32,19 +29,19 @@ import Info from './Info';
 import RedeemableWithdrawReview from './redeem';
 import Settings from './settings';
 
-interface State {
-  api?: ApiPromise;
-  stakingConsts?: StakingConsts;
-  stakingAccount?: AccountStakingInfo;
-  poolConsts?: PoolStakingConsts;
-}
+// interface State {
+//   api?: ApiPromise;
+//   stakingConsts?: StakingConsts;
+//   stakingAccount?: AccountStakingInfo;
+//   poolConsts?: PoolStakingConsts;
+// }
 
-export default function Index (): React.ReactElement {
+export default function Index(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const theme = useTheme();
-  const history = useHistory();
-  const { pathname, state } = useLocation<State>();
+  const navigate = useNavigate();
+  const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const onExtension = useIsExtensionPopup();
@@ -107,39 +104,24 @@ export default function Index (): React.ReactElement {
   }, [address, chain?.genesisHash, onAction, onExtension]);
 
   const onStake = useCallback(() => {
-    history.push({
-      pathname: `/solo/stake/${address}`,
-      state: { api, pathname, stakingConsts }
-    });
-  }, [address, api, history, pathname, stakingConsts]);
+    navigate(`/solo/stake/${address}`, { state: { api, pathname, stakingConsts } });
+  }, [address, api, navigate, pathname, stakingConsts]);
 
   const onUnstake = useCallback(() => {
-    history.push({
-      pathname: `/solo/unstake/${address}`,
-      state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
-    });
-  }, [history, address, api, balances, pathname, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
+    navigate(`/solo/unstake/${address}`, { state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount } });
+  }, [navigate, address, api, balances, pathname, redeemable, stakingConsts, unlockingAmount, stakingAccount]);
 
   const onFastUnstake = useCallback(() => {
-    history.push({
-      pathname: `/solo/fastUnstake/${address}`,
-      state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
-    });
-  }, [address, api, balances, history, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
+    navigate(`/solo/fastUnstake/${address}`, { state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount } });
+  }, [address, api, balances, navigate, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
 
   const onRestake = useCallback(() => {
-    history.push({
-      pathname: `/solo/restake/${address}`,
-      state: { api, balances, pathname, stakingAccount, stakingConsts, unlockingAmount }
-    });
-  }, [history, address, api, balances, pathname, stakingConsts, unlockingAmount, stakingAccount]);
+    navigate(`/solo/restake/${address}`, { state: { api, balances, pathname, stakingAccount, stakingConsts, unlockingAmount } });
+  }, [navigate, address, api, balances, pathname, stakingConsts, unlockingAmount, stakingAccount]);
 
   const onNominations = useCallback(() => {
-    history.push({
-      pathname: `/solo/nominations/${address}`,
-      state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount }
-    });
-  }, [history, address, api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
+    navigate(`/solo/nominations/${address}`, { state: { api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount } });
+  }, [navigate, address, api, balances, pathname, redeemable, stakingAccount, stakingConsts, unlockingAmount]);
 
   const onInfo = useCallback(() => {
     setShowInfo(true);
@@ -159,11 +141,8 @@ export default function Index (): React.ReactElement {
   }, [rewards]);
 
   const onPendingRewards = useCallback(() => {
-    history.push({
-      pathname: `/solo/payout/${address}`,
-      state: {}
-    });
-  }, [address, history]);
+    navigate(`/solo/payout/${address}`, { state: {} });
+  }, [address, navigate]);
 
   const ToBeReleased = () => (
     <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'secondary.light', fontSize: '16px', fontWeight: 500, ml: '7%', mt: '2px', width: '95%' }}>

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Price } from '../util/types';
@@ -44,7 +44,7 @@ export default function useTokenPrice (address: string | undefined, assetId?: nu
       : isAssetHub
         ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB
         : undefined
-  , [assetId, isAssetHub]);
+    , [assetId, isAssetHub]);
 
   return useMemo(() => {
     if (!_chainName || !pricesInCurrencies || !token || !decimal) {

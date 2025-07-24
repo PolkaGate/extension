@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
@@ -25,7 +24,7 @@ interface OptionProps {
   logo?: unknown;
 }
 
-export default function StakingSubOption ({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
+export default function StakingSubOption({ api, balance, balanceText, logo, onClick, style, title, warningText }: OptionProps): React.ReactElement {
   const theme = useTheme();
 
   return (

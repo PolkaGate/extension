@@ -1,6 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
 import type { Message } from '@polkadot/extension-base/types';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -133,7 +134,7 @@ export async function approveSignSignature (id: string, signature: HexString, si
   return sendMessage('pri(signing.approve.signature)', { id, signature, signedTransaction });
 }
 
-export async function createAccountExternal (name: string, address: string, genesisHash: HexString): Promise<boolean> {
+export async function createAccountExternal (name: string, address: string, genesisHash: HexString | null | undefined): Promise<boolean> {
   return sendMessage('pri(accounts.create.external)', { address, genesisHash, name });
 }
 

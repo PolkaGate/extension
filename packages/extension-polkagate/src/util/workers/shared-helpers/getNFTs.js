@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -50,6 +50,7 @@ async function fetchCollections (api, addresses, chainName, isNft) {
         chainName,
         collectionId,
         data: collectionMetadataInfo?.data ?? null,
+        genesisHash: api.genesisHash.toHex(),
         isCollection: true,
         isNft,
         items,
@@ -150,6 +151,7 @@ async function fetchItems (api, addresses, chainName, isNft) {
       collectionId,
       creator: isNft ? String(itemInfo.deposit.account) : creators?.[collectionId],
       data: metadata[index],
+      genesisHash: api.genesisHash.toHex(),
       isCollection: false,
       isNft,
       itemId,

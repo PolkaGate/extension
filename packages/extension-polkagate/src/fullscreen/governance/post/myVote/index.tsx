@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 import type { Vote } from './util';
@@ -23,7 +22,7 @@ interface Props {
   isFinished: boolean | undefined;
 }
 
-export default function MyVote ({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
+export default function MyVote({ address, isFinished, notVoted, vote }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useInfo(address);

@@ -1,9 +1,9 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
-
+import type { BN } from '@polkadot/util';
 import type { MemberPoints, MyPoolInfo } from '../../../../../util/types';
 
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
@@ -12,7 +12,7 @@ import { Grid, Typography } from '@mui/material';
 import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { PButton, Popup } from '../../../../../components';
 import { useApi, useChain, useFormatted, useTranslation } from '../../../../../hooks';
@@ -21,7 +21,7 @@ import { HeaderBrand } from '../../../../../partials';
 import Review from './Review';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   pool: MyPoolInfo;
   showRemoveAll?: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -55,7 +55,7 @@ const remainingTime = (seconds: number) => {
   });
 };
 
-export default function RemoveAll({ address, pool, setRefresh, setShowRemoveAll, showRemoveAll }: Props): React.ReactElement {
+export default function RemoveAll ({ address, pool, setRefresh, setShowRemoveAll, showRemoveAll }: Props): React.ReactElement {
   const { t } = useTranslation();
   const api = useApi(address);
   const chain = useChain(address);

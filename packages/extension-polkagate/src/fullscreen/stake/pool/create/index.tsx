@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { StakingInputs } from '../../type';
 
@@ -24,12 +23,12 @@ interface Props {
   inputs: StakingInputs | undefined;
 }
 
-export default function CreatePool ({ inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function CreatePool({ inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
-  const availableBalance = useBalances(address, undefined, undefined, true)?.availableBalance;
+  const freeBalance = useBalances(address, undefined, undefined, true)?.freeBalance;
 
   const estimatedFee = useEstimatedFee(address, inputs?.call, inputs?.params);
 
@@ -54,12 +53,11 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
     }
 
     const isAmountOutOfRange =
-      amountAsBN.lt(poolStakingConsts.minCreateBond)
-      ||
-      amountAsBN.gt(availableBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
+      amountAsBN.lt(poolStakingConsts.minCreateBond) ||
+      amountAsBN.gt(freeBalance?.sub(estimatedFee ?? BN_ZERO) ?? BN_ZERO);
 
     return isAmountOutOfRange;
-  }, [amountAsBN, availableBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
+  }, [amountAsBN, freeBalance, bouncerId, createAmount, estimatedFee, formatted, inputs?.extraInfo?.['poolName'], nominatorId, poolStakingConsts]);
 
   const stakeAmountChange = useCallback((value: string) => {
     if (decimal && value.length > decimal - 1) {
@@ -72,15 +70,15 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
   }, [decimal]);
 
   const onMaxAmount = useCallback(() => {
-    if (!api || !availableBalance || !estimatedFee || !ED) {
+    if (!api || !freeBalance || !estimatedFee || !ED) {
       return;
     }
 
-    const max = new BN(availableBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedFee));
+    const max = new BN(freeBalance.toString()).sub(ED.muln(3)).sub(new BN(estimatedFee));
     const maxToHuman = amountToHuman(max.toString(), decimal);
 
     maxToHuman && setCreateAmount(maxToHuman);
-  }, [ED, api, availableBalance, decimal, estimatedFee]);
+  }, [ED, api, freeBalance, decimal, estimatedFee]);
 
   const onMinAmount = useCallback(() => {
     poolStakingConsts?.minCreationBond && setCreateAmount(amountToHuman(poolStakingConsts.minCreationBond.toString(), decimal));
@@ -196,7 +194,7 @@ export default function CreatePool ({ inputs, setInputs, setStep }: Props): Reac
         <Typography fontSize='14px' fontWeight={300} sx={{ mt: 'auto', width: '90%' }} textAlign='left'>
           {t('All the roles (Depositor, Root, Nominator, and Bouncer) are set to the following ID by default although you can update the Nominator and Bouncer by clicking on “Update roles”.')}
         </Typography>
-        <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} showIdenticon style={{ mt: '15px', width: '92%' }} />
+        <AddressInput address={formatted} chain={chain as any} disabled label={''} setAddress={() => null} style={{ mt: '15px', width: '92%' }} />
         <Grid onClick={onUpdateRoles} width='fit-content'>
           <Typography fontSize='16px' fontWeight={400} lineHeight='36px' sx={{ cursor: 'pointer', textAlign: 'left', textDecoration: 'underline' }}>
             {t('Update roles')}

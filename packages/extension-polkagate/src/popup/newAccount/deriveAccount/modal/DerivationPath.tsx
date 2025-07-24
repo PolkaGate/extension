@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,7 +17,7 @@ interface Props {
   withSoftPath: boolean;
 }
 
-function DerivationPath ({ defaultPath, isError, onChange, withSoftPath }: Props): React.ReactElement<Props> {
+function DerivationPath({ defaultPath, isError, onChange, withSoftPath }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [path, setPath] = useState<string | undefined>(defaultPath);
   const [isDisabled, setIsDisabled] = useState(true);

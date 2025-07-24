@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DropdownOption } from '../util/types';
 
@@ -30,7 +29,7 @@ interface Props {
   fullWidthDropdown?: boolean;
 }
 
-function CustomizedSelect ({ _mt = 0, defaultValue, disabledItems, fullWidthDropdown, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
+function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, fullWidthDropdown, helperText, isDisabled = false, label, onChange, options, showLogo = false, value }: Props) {
   const theme = useTheme();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);

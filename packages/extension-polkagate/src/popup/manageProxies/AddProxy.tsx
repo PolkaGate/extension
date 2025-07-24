@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -19,7 +18,7 @@ import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
@@ -143,7 +142,7 @@ export default function AddProxy({ address, chain, onChange, proxyItems, setProx
       </Grid>
       {realAddress && !(myselfAsProxy || alreadyExisting) &&
         <ShowIdentity
-          accountIdentity={proxyAccountIdentity !==undefined && proxyAccountIdentity?.identity || null}
+          accountIdentity={proxyAccountIdentity !== undefined && proxyAccountIdentity?.identity || null}
           style={{ m: 'auto', width: '92%' }}
         />
       }

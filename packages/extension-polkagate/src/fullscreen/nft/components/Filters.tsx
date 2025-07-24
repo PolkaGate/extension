@@ -1,19 +1,15 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { FilterAction, FilterSectionProps, FilterState, ItemInformation, SortAction, SortState } from '../utils/types';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Stack } from '@mui/material';
 import React, { useCallback, useEffect, useReducer, useState } from 'react';
 
+import { SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import { selectableNetworks } from '@polkadot/networks';
-import { isNumber } from '@polkadot/util';
 
-import InputFilter from '../../../components/InputFilter';
 import { usePrices } from '../../../hooks';
-import useTranslation from '../../../hooks/useTranslation';
 import NftFilter from './NftFilter';
 
 const initialFilterState: FilterState = {
@@ -47,14 +43,11 @@ const sortReducer = (state: SortState, action: SortAction): SortState => {
 };
 
 function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
-  const { t } = useTranslation();
-  const theme = useTheme();
   const prices = usePrices();
 
   const [filters, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const [searchedTxt, setSearchTxt] = useState<string | undefined>();
   const [sort, dispatchSort] = useReducer(sortReducer, initialSortState);
-  const [count, setCount] = useState<number>();
 
   const onSearch = useCallback((text: string) => {
     setSearchTxt(text);
@@ -118,8 +111,6 @@ function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactEle
         return matchesSearch && matchesNetwork && matchesType && matchesCollection;
       });
 
-      setCount(filtered.length);
-
       // Apply sorting
       filtered = sortItems(filtered);
 
@@ -131,27 +122,20 @@ function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactEle
   }, [items, filters, searchedTxt, sortItems, setItemsToShow]);
 
   return (
-    <Grid alignItems='center' container item justifyContent={!isNumber(count) ? 'flex-end' : 'space-between'} sx={{ mb: '10px', mt: '20px' }}>
-      {isNumber(count) &&
-        <Typography color='text.disabled' fontSize='16px' fontWeight={500}>
-          {t('Items')}{`(${count})`}
-        </Typography>}
-      <Grid alignItems='center' columnGap='15px' container item width='fit-content'>
-        <InputFilter
-          autoFocus={false}
-          onChange={onSearch}
-          placeholder={t('🔍 Search')}
-          theme={theme}
-        // value={searchKeyword ?? ''}
-        />
-        <NftFilter
-          dispatchFilter={dispatchFilter}
-          dispatchSort={dispatchSort}
-          filters={filters}
-          sort={sort}
-        />
-      </Grid>
-    </Grid>
+    <Stack alignItems='center' columnGap='15px' direction= 'row' justifyContent='space-between' sx={{ mt: '20px' }}>
+      <SearchField
+        onInputChange={onSearch}
+        placeholder='🔍 Search'
+        placeholderStyle={{ textAlign: 'left' }}
+        style={{ minWidth: '380px', width: '40%' }}
+      />
+      <NftFilter
+        dispatchFilter={dispatchFilter}
+        dispatchSort={dispatchSort}
+        filters={filters}
+        sort={sort}
+      />
+    </Stack>
   );
 }
 

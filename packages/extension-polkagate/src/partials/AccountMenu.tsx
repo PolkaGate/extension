@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransitionProps } from '@mui/material/transitions';
 import type { HexString } from '@polkadot/util/types';
@@ -13,7 +11,7 @@ import { Dialog, Divider, Grid, IconButton, Slide, useTheme } from '@mui/materia
 import React, { useCallback, useContext, useState } from 'react';
 
 import { ActionContext, GenesisHashOptionsContext, Identity, MenuItem, RemoteNodeSelector, SelectChain, SocialRecoveryIcon, VaadinIcon } from '../components';
-import ProfileMenu from '../fullscreen/homeFullScreen/partials/ProfileMenu';
+import ProfileMenu from '../fullscreen/home/partials/ProfileMenu';
 import { useInfo, useTranslation } from '../hooks';
 import { tieAccount, windowOpen } from '../messaging';
 import { IDENTITY_CHAINS, PROXY_CHAINS, SOCIAL_RECOVERY_CHAINS } from '../util/constants';
@@ -25,13 +23,13 @@ interface Props {
   address: string;
 }
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>;}, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition(props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' ref={ref} {...props} />;
 });
 
 const MenuSeparator = () => <Divider sx={{ bgcolor: 'divider', height: '1px', my: '3px' }} />;
 
-function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
+function AccountMenu({ address, isMenuOpen, setShowMenu }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const options = useContext(GenesisHashOptionsContext);
@@ -43,21 +41,18 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
   const onAction = useContext(ActionContext);
   const hasPrivateKey = !(account?.isExternal || account?.isHardware);
 
-  const onForgetAccount = useCallback(() => {
-    onAction(`/forget/${address}/${account?.isExternal}`);
-  }, [address, account, onAction]);
-
   const onDeriveAccount = useCallback(() => {
     address && onAction(`/derive/${address}/locked`);
   }, [address, onAction]);
 
   const closeMenu = useCallback(() =>
     setShowMenu((isMenuOpen) => !isMenuOpen)
-  , [setShowMenu]);
+    , [setShowMenu]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     const availableGenesisHash = newGenesisHash.startsWith('0x') ? newGenesisHash : null;
 
+    //NO TIE ANYMORE IN NEW DESIGN
     address && tieAccount(address, availableGenesisHash as HexString).catch(console.error);
     setGenesis(availableGenesisHash ?? undefined);
   }, [address]);
@@ -197,15 +192,6 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
             }
             onClick={onRenameAccount}
             text={t('Rename')}
-            withHoverEffect
-          />
-          <MenuItem
-            fontSize='16px'
-            iconComponent={
-              <VaadinIcon icon='vaadin:file-remove' style={vaadinIconStyle} />
-            }
-            onClick={onForgetAccount}
-            text={t('Forget account')}
             withHoverEffect
           />
           <MenuSeparator />

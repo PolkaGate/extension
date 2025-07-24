@@ -1,14 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ApiPromise } from '@polkadot/api';
 import type { BalancesInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { Boy as BoyIcon } from '@mui/icons-material';
 import { Box, Slide, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BN, bnMax } from '@polkadot/util';
 
@@ -25,9 +24,9 @@ interface Props {
 
 export default function Options({ balance, setShowStakingOptions, showStakingOptions }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
-  const { pathname, state } = useLocation<{ api: ApiPromise }>();
+  const { pathname, state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const api = useApi(address, state?.api);
 
@@ -56,18 +55,12 @@ export default function Options({ balance, setShowStakingOptions, showStakingOpt
   }, [minimumActiveStake, stakingConsts]);
 
   const goToPoolStaking = useCallback(() => {
-    address && history.push({
-      pathname: `/pool/${address}/`,
-      state: { api, pathname, poolConsts, stakingConsts }
-    });
-  }, [address, api, history, pathname, poolConsts, stakingConsts]);
+    address && navigate(`/pool/${address}/`, { state: { api, pathname, poolConsts, stakingConsts } });
+  }, [address, api, navigate, pathname, poolConsts, stakingConsts]);
 
   const goToSoloStaking = useCallback(() => {
-    address && history.push({
-      pathname: `/solo/${address}/`,
-      state: { api, pathname, stakingConsts }
-    });
-  }, [address, api, history, pathname, stakingConsts]);
+    address && navigate(`/solo/${address}/`, { state: { api, pathname, stakingConsts } });
+  }, [address, api, navigate, pathname, stakingConsts]);
 
   return (
     <Slide

@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconDefinition, IconProp } from '@fortawesome/fontawesome-svg-core';
 
@@ -23,7 +22,7 @@ interface Props {
   isDragging: boolean;
 }
 
-export default function ModalTitleWithDrag ({ icon, isDragging, onClose, onMouseDown, onMouseMove, onMouseUp, title }: Props): React.ReactElement {
+export default function ModalTitleWithDrag({ icon, isDragging, onClose, onMouseDown, onMouseMove, onMouseUp, title }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 

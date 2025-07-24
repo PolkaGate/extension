@@ -1,12 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 
 import { Progress } from '../../components';
 import { useInfo, useTranslation } from '../../hooks';
@@ -15,10 +13,10 @@ import HistoryItem from './partials/HistoryItem';
 import HistoryTabs, { TAB_MAP } from './HistoryTabs';
 import useTransactionHistory from './useTransactionHistory';
 
-export default function TransactionHistory (): React.ReactElement {
+export default function TransactionHistory(): React.ReactElement {
   const { t } = useTranslation();
-  const history = useHistory();
-  const { state } = useLocation<{ tabIndex: number; pathname?: string }>();
+  const navigate = useNavigate();
+  const { state } = useLocation();
   const { address } = useParams<{ address: string }>();
   const { chainName, decimal, formatted, token } = useInfo(address);
 
@@ -27,10 +25,8 @@ export default function TransactionHistory (): React.ReactElement {
   const { governanceTx, grouped, tabHistory, transfersTx } = useTransactionHistory(address, tabIndex);
 
   const onBack = useCallback(() => {
-    history.push({
-      pathname: state?.pathname ?? '/'
-    });
-  }, [history, state?.pathname]);
+    navigate(state?.pathname ?? '/');
+  }, [navigate, state?.pathname]);
 
   return (
     <>
@@ -40,8 +36,8 @@ export default function TransactionHistory (): React.ReactElement {
         text={t('Transaction History')}
       />
       <HistoryTabs
-        address ={address}
-        setTabIndex ={setTabIndex}
+        address={address}
+        setTabIndex={setTabIndex}
         tabIndex={tabIndex}
       />
       <Grid container id='scrollArea' item sx={{ gap: '5px', height: '70%', maxHeight: window.innerHeight - 145, overflowY: 'auto', px: '15px' }}>
@@ -69,7 +65,7 @@ export default function TransactionHistory (): React.ReactElement {
           </Grid>
         }
         {(grouped === undefined || ((transfersTx.isFetching || governanceTx.isFetching) && tabHistory?.length === 0)) &&
-        <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
+          <Progress pt='150px' size={50} title={t('Loading history')} type='grid' />
         }
         <div id='observerObj' style={{ height: '1px' }} />
         {grouped &&

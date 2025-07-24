@@ -1,9 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
 /* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import type { LatestReferenda } from './utils/types';
@@ -17,7 +16,7 @@ import { useFormatted, useTranslation } from '../../hooks';
 import { REFERENDA_STATUS } from './utils/consts';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   referenda: LatestReferenda[] | null | undefined;
   setFilteredReferenda: React.Dispatch<React.SetStateAction<LatestReferenda[] | null | undefined>>;
   myVotedReferendaIndexes: number[] | null | undefined;
@@ -44,7 +43,7 @@ const DEFAULT_FILTER = {
   status: REFERENDA_STATUS[0]
 };
 
-export default function SearchBox ({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
+export default function SearchBox({ address, myVotedReferendaIndexes, referenda, setFilteredReferenda }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const formatted = useFormatted(address);

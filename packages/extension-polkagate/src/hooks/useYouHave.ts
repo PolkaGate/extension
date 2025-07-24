@@ -1,11 +1,12 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import type { BN } from '@polkadot/util';
 
 import { useContext, useMemo } from 'react';
 
+import { type BN, BN_ZERO } from '@polkadot/util';
+
 import { AccountsAssetsContext } from '../components';
+import { getValue } from '../popup/account/util';
 import { amountToHuman } from '../util/utils';
 import { usePrices } from '.';
 
@@ -16,7 +17,7 @@ export interface YouHaveType {
   portfolio: number;
 }
 
-export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0);
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal) || '0') * (assetPrice ?? 0);
 
 export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
   if (tokenPriceChange === -100) {
@@ -58,7 +59,10 @@ export default function useYouHave (): YouHaveType | undefined | null {
           const tokenValue = pricesInCurrencies.prices[asset.priceId]?.value ?? 0;
           const tokenPriceChange = pricesInCurrencies.prices[asset.priceId]?.change ?? 0;
           const currentAssetPrice = calcPrice(tokenValue, asset.totalBalance, asset.decimal);
-          const currentAvailableAssetPrice = calcPrice(tokenValue, asset.availableBalance, asset.decimal);
+          //@ts-ignore
+          const transferable = getValue('transferable', asset);
+
+          const currentAvailableAssetPrice = calcPrice(tokenValue, transferable ?? BN_ZERO, asset.decimal);
 
           portfolio += currentAssetPrice;
           available += currentAvailableAssetPrice;

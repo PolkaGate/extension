@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -31,7 +30,7 @@ interface Props {
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function Others ({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
+export default function Others({ address, balances, chain, identity, setShow, show }: Props): React.ReactElement<void> {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
   const accountName = useAccountName(address);

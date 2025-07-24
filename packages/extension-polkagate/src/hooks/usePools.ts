@@ -1,14 +1,14 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveStakingAccount } from '@polkadot/api-derive/types';
 import type { Codec } from '@polkadot/types/types';
 import type { PoolInfo } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
-
-import { ApiPromise } from '@polkadot/api';
 
 import getPoolAccounts from '../util/getPoolAccounts';
 import { useApi } from '.';
@@ -34,13 +34,13 @@ const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBat
     }
   })?.filter((f) => f !== undefined);
 
-type UsePools = {
+interface UsePools {
   incrementalPools: PoolInfo[] | null | undefined;
   numberOfFetchedPools: number;
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools(address: string): UsePools {
+export default function usePools(address: string | undefined): UsePools {
   const api = useApi(address);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
@@ -83,9 +83,9 @@ export default function usePools(address: string): UsePools {
         const { stashId } = getPoolAccounts(api, poolId);
 
         queries.push(Promise.all([
-          api.query.nominationPools.metadata(poolId),
+          api.query['nominationPools']['metadata'](poolId),
           api.query['nominationPools']['bondedPools'](poolId),
-          api.query.nominationPools.rewardPools(poolId),
+          api.query['nominationPools']['rewardPools'](poolId),
           api.derive.staking.account(stashId)
         ]));
       }
@@ -102,7 +102,7 @@ export default function usePools(address: string): UsePools {
   }, []);
 
   useEffect(() => {
-    api && getPools(api);
+    api && getPools(api).catch(console.error);
   }, [api, getPools]);
 
   return {

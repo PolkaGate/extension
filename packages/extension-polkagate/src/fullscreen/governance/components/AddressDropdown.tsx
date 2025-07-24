@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { HexString } from '@polkadot/util/types';
@@ -23,7 +22,7 @@ interface Props {
   inHeading?: boolean;
 }
 
-export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
+export default function AddressDropdown({ api, chainGenesis, inHeading, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isDarkMode = theme.palette.mode === 'dark';
@@ -38,6 +37,7 @@ export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelec
   const hideDropdown = useCallback(() => setDropdownVisible(false), []);
   const toggleDropdown = useCallback(() => addressesToDisplay.length > 0 && setDropdownVisible(!isDropdownVisible), [addressesToDisplay, isDropdownVisible]);
   const _onSelect = useCallback((addr: string) => () => {
+    //NO TIE ANYMORE IN NEW DESIGN
     addr && chainGenesis && tieAccount(addr, chainGenesis as HexString).then(() => setTimeout(() => onSelect(addr), 150)).catch(console.error);
   }, [chainGenesis, onSelect]);
 

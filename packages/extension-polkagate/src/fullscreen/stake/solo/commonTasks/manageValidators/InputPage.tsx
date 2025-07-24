@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ValidatorInfo } from 'extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
@@ -20,13 +19,13 @@ import { STEPS } from '../../../pool/stake';
 import SelectValidatorsFs from '../../partials/SelectValidatorsFs';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setInputs: React.Dispatch<React.SetStateAction<StakingInputs | undefined>>;
   inputs: StakingInputs | undefined;
 }
 
-function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -43,7 +42,7 @@ function arraysAreEqual (arr1: string[], arr2: string[]): boolean {
   return true;
 }
 
-export default function InputPage ({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
+export default function InputPage({ address, inputs, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const stakingConsts = useStakingConsts(address);
@@ -56,7 +55,7 @@ export default function InputPage ({ address, inputs, setInputs, setStep }: Prop
     stakingAccount === null || stakingAccount?.nominators?.length === 0
       ? null
       : stakingAccount?.nominators.map((item) => item.toString())
-  , [stakingAccount]);
+    , [stakingAccount]);
 
   const { call, params } = useMemo(() => {
     if (api && newSelectedValidators?.length) {

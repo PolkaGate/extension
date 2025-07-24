@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { faGithubSquare, faSquareXTwitter, faYoutubeSquare, type IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
@@ -34,7 +33,7 @@ const Icon = ({ bounce = false, icon, link }: { link: string, icon: IconDefiniti
   );
 };
 
-function FollowUs ({ width }: { width: string }): React.ReactElement {
+function FollowUs({ width }: { width: string }): React.ReactElement {
   const { t } = useTranslation();
   const ICON_COUNTS = 4;
   const DEFAULT_BOUNCING = Array(ICON_COUNTS).fill(false) as boolean[];

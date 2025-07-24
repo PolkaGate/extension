@@ -1,21 +1,18 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
+import type { ApiPromise } from '@polkadot/api';
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import type { PoolStakingConsts } from '../../../../util/types';
 
 import { faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-
-import { ApiPromise } from '@polkadot/api';
-import type { Balance } from '@polkadot/types/interfaces';
+import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
-import type { PoolStakingConsts } from '../../../../util/types';
 import Option from '../../partial/StakingOption';
 
 interface Props {
@@ -27,58 +24,41 @@ interface Props {
 
 export default function StakeInitialChoice({ address, api, balances, consts }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
 
-  const [availableBalance, setAvailableBalance] = useState<Balance | undefined>();
+  const freeBalance = balances?.freeBalance;
   const [joinDisabled, setJoinDisabled] = useState<boolean>(true);
   const [createDisabled, setCreateDisabled] = useState<boolean>(true);
   const [createWarningText, setCreateWarningText] = useState<string | undefined>();
   const [joinWarningText, setJoinWarningText] = useState<string | undefined>();
 
   const backToIndex = useCallback(() => {
-    history.push({
-      pathname: `/pool/${address}`
-    });
-  }, [address, history]);
+    navigate(`/pool/${address}`);
+  }, [address, navigate]);
 
   const joinPool = useCallback(() => {
-    history.push({
-      pathname: `/pool/join/${address}`,
-      state: { api, availableBalance, consts }
-    });
-  }, [address, api, availableBalance, history, consts]);
+    navigate(`/pool/join/${address}`, { state: { api, availableBalance: freeBalance, consts } });
+  }, [address, api, freeBalance, navigate, consts]);
 
   const createPool = useCallback(() => {
-    history.push({
-      pathname: `/pool/create/${address}`,
-      state: { api, availableBalance, consts }
-    });
-  }, [address, api, availableBalance, history, consts]);
+    navigate(`/pool/create/${address}`, { state: { api, availableBalance: freeBalance, consts }});
+  }, [address, api, freeBalance, navigate, consts]);
 
   useEffect(() => {
-    if (!balances) {
+    if (!consts || !freeBalance) {
       return;
     }
 
-    // TODO: consider that frozen amount can be staked as well!
-    setAvailableBalance(balances.availableBalance);
-  }, [balances]);
-
-  useEffect(() => {
-    if (!consts || !availableBalance) {
-      return;
-    }
-
-    if (consts?.minJoinBond.gt(availableBalance)) {
+    if (consts?.minJoinBond.gt(freeBalance)) {
       return setJoinWarningText(t<string>('You don’t have enough fund.'));
     }
 
     setJoinDisabled(false);
-  }, [availableBalance, consts, t]);
+  }, [freeBalance, consts, t]);
 
   useEffect(() => {
-    if (!consts || !availableBalance) {
+    if (!consts || !freeBalance) {
       return;
     }
 
@@ -86,12 +66,12 @@ export default function StakeInitialChoice({ address, api, balances, consts }: P
       return setCreateWarningText(t<string>('Pools are full.'));
     }
 
-    if (consts?.minCreationBond.gt(availableBalance)) {
+    if (consts?.minCreationBond.gt(freeBalance)) {
       return setCreateWarningText(t<string>('You don’t have enough fund.'));
     }
 
     setCreateDisabled(false);
-  }, [availableBalance, consts, t]);
+  }, [freeBalance, consts, t]);
 
   return (
     <>

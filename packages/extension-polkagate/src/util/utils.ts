@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
@@ -10,6 +10,7 @@ import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 import type { HexString } from '@polkadot/util/types';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
@@ -26,18 +27,20 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress (_address: string | undefined): boolean {
+export function isValidAddress (address: string | undefined): boolean {
   try {
+    if (!address || address === 'undefined') {
+      return false;
+    }
+
     encodeAddress(
-      isHex(_address)
-        ? hexToU8a(_address)
-        : decodeAddress(_address)
+      isHex(address)
+        ? hexToU8a(address)
+        : decodeAddress(address)
     );
 
     return true;
-  } catch (error) {
-    console.log(error);
-
+  } catch {
     return false;
   }
 }
@@ -64,7 +67,7 @@ export function getDecimal (n: string | number, count = 2) {
   return decimalPart ? decimalPart.slice(0, count) : 0;
 }
 
-export function fixFloatingPoint (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+export function formatDecimal (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
 
   // make number positive if it is negative
@@ -104,7 +107,7 @@ export function amountToHuman (_amount: string | number | BN | bigint | Compact<
 
   const x = 10 ** _decimals;
 
-  return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
+  return formatDecimal(Number(_amount) / x, decimalDigits, commify);
 }
 
 export function amountToMachine (amount: string | undefined, decimal: number | undefined): BN {
@@ -290,6 +293,10 @@ export function formatMeta (meta?: Meta): string[] | null {
 }
 
 export function toShortAddress (address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+  if (!address) {
+    return '';
+  }
+
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
@@ -367,7 +374,7 @@ export const isWss = (input: string | undefined): boolean => {
     return false;
   }
 
-  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(\/[\w\d-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
+  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(:\d+)?(\/[\w\d\-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
 
   return urlRegex.test(input);
 };
@@ -598,4 +605,151 @@ export const addressToChain = (address: string) => {
     chainName: chain?.chain,
     genesisHash: chain?.genesisHash
   };
+};
+
+/**
+ * Format options for the timestamp display
+ */
+export type TimestampPart = 'weekday' | 'month' | 'day' | 'year' | 'hours' | 'minutes' | 'seconds' | 'ampm';
+
+/**
+ * Formats a timestamp with customizable output based on the parts you want to include.
+ *
+ * @param {number|string|Date} timestamp - The timestamp to format. Can be:
+ *   - number: milliseconds since epoch (e.g., 1723026480000)
+ *   - string: a date string parsable by the Date constructor (e.g., "2024-08-06T19:48:00")
+ *   - Date: a JavaScript Date object
+ *
+ * @param {TimestampPart[] | undefined} [parts] - Array of timestamp parts to include in the output:
+ *   - If undefined or empty, returns the full formatted date
+ *   - Available parts: 'weekday', 'month', 'day', 'year', 'hours', 'minutes', 'seconds', 'ampm'
+ *
+ * @param {string} [separator=", "] - The separator to use between parts
+ *
+ * @returns {string} The formatted date string including only the specified parts
+ *
+ * @example
+ * // Returns something like "Tue, Aug 6, 2024, 7:48:00 PM"
+ * formatTimestamp(1723026480000);
+ *
+ * @example
+ * // Returns something like "Aug 6 7"
+ * formatTimestamp(1723026480000, ['month', 'day', 'hours']);
+ *
+ * @example
+ * // Returns something like "Aug-6-2024"
+ * formatTimestamp(1723026480000, ['month', 'day', 'year'], '-');
+ */
+export function formatTimestamp (
+  timestamp: number | string | Date,
+  parts?: TimestampPart[]
+): string {
+  const date = new Date(timestamp);
+
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const components: Record<TimestampPart, string | number> = {
+    ampm: date.getHours() >= 12 ? 'PM' : 'AM',
+    day: date.getDate(),
+    hours: date.getHours() % 12 || 12,
+    minutes: date.getMinutes().toString().padStart(2, '0'),
+    month: months[date.getMonth()],
+    seconds: date.getSeconds().toString().padStart(2, '0'),
+    weekday: weekdays[date.getDay()],
+    year: date.getFullYear()
+  };
+
+  if (!parts || parts.length === 0) {
+    // Default full date-time
+    return `${components.weekday}, ${components.month} ${components.day}, ${components.year}, ${components.hours}:${components.minutes}:${components.seconds} ${components.ampm}`;
+  }
+
+  const dateParts: string[] = [];
+  const timeParts: string[] = [];
+
+  parts.forEach((part) => {
+    if (['weekday', 'month', 'day', 'year'].includes(part)) {
+      if (part === 'month' && parts.includes('day')) {
+        // Let 'month' and 'day' group together like "Apr 13"
+        if (!dateParts.includes(`${components.month} ${components.day}`)) {
+          dateParts.push(`${components.month} ${components.day}`);
+        }
+      } else if (part === 'day' && parts.includes('month')) {
+        // Already handled above
+      } else {
+        dateParts.push(String(components[part]));
+      }
+    } else {
+      // time parts
+      timeParts.push(part);
+    }
+  });
+
+  // Format time block smartly
+  let timeString = '';
+
+  if (timeParts.length > 0) {
+    const hours = timeParts.includes('hours') ? components.hours : '';
+    const minutes = timeParts.includes('minutes') ? `:${components.minutes}` : '';
+    const seconds = timeParts.includes('seconds') ? `:${components.seconds}` : '';
+    const ampm = timeParts.includes('ampm') ? ` ${components.ampm}` : '';
+
+    timeString = `${hours}${minutes}${seconds}${ampm}`.trim();
+  }
+
+  if (dateParts.length > 0 && timeString) {
+    return `${dateParts.join(' ')}, ${timeString}`;
+  } else if (dateParts.length > 0) {
+    return dateParts.join(' ');
+  } else {
+    return timeString;
+  }
+}
+
+export function blockToDate (blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions) {
+  if (!blockNumber || !currentBlock) {
+    return 'N/A';
+  }
+
+  if (blockNumber >= currentBlock) {
+    const time = (blockNumber - currentBlock) * 6000;
+    const now = Date.now();
+
+    return new Date(now + time).toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  const diff = (currentBlock - blockNumber) * 6000;
+  const now = Date.now();
+
+  return new Date(now - diff).toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// Remove zero balance records
+export const removeZeroBalanceRecords = (toBeSavedAssets: SavedAssets): SavedAssets => {
+  const _toBeSavedAssets = { ...toBeSavedAssets };
+  const balances = (_toBeSavedAssets)?.balances || [];
+
+  Object.entries(balances).forEach(([address, assetsPerChain]) => {
+    Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
+      const toBeDeletedIndexes: string[] = [];
+
+      fetchedBalance.forEach(({ token, totalBalance }) => {
+        if (new BN(totalBalance).isZero()) {
+          toBeDeletedIndexes.push(token);
+        }
+      });
+      toBeDeletedIndexes.forEach((_token) => {
+        const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+        index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
+      });
+
+      if (!_toBeSavedAssets.balances[address][genesisHash].length) {
+        delete _toBeSavedAssets.balances[address][genesisHash];
+      }
+    });
+  });
+
+  return _toBeSavedAssets;
 };

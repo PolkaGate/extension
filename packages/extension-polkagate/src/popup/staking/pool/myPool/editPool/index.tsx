@@ -1,8 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { MyPoolInfo } from '../../../../../util/types';
 
@@ -17,7 +16,7 @@ import CollapseIt from './CollapseIt';
 import Review from './Review';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   pool: MyPoolInfo;
   showEdit: boolean;
   setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;

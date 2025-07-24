@@ -1,46 +1,35 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
-
+import type { ApiPromise } from '@polkadot/api';
 import type { Proxy, ProxyItem } from '../../util/types';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ApiPromise } from '@polkadot/api';
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { Warning } from '../../components';
-import { useFullscreen, useInfo, useTranslation } from '../../hooks';
-import { FULLSCREEN_WIDTH, PROXY_CHAINS } from '../../util/constants';
-import FullScreenHeader from '../governance/FullScreenHeader';
+import { useAccount, useChainInfo, useFullscreen, useTranslation, useUpdateSelectedAccount } from '../../hooks';
+import { PROXY_CHAINS } from '../../util/constants';
+import { NotSupportedBox } from '../components';
+import HomeLayout from '../components/layout';
 import AddProxy from './AddProxy';
+import { STEPS } from './consts';
 import Manage from './Manage';
-import Review from './Review';
+import TransactionFlow from './TransactionFlow';
+import { type ProxyFlowStep } from './types';
 
-export const STEPS = {
-  ADD_PROXY: 3,
-  CHECK: 0,
-  CONFIRM: 6,
-  MANAGE: 2,
-  PROXY: 100,
-  REVIEW: 4,
-  SIGN_QR: 200,
-  UNSUPPORTED: 1,
-  WAIT_SCREEN: 5
-};
-
-function ManageProxies(): React.ReactElement {
+function ManageProxies (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
-  const { address } = useParams<{ address: string; }>();
-  const { account, api, chain, decimal, token } = useInfo(address);
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
+  const account = useAccount(address);
+  const { api, chain, decimal, token } = useChainInfo(genesisHash);
 
-  const [step, setStep] = useState<number>(STEPS.CHECK);
+  useUpdateSelectedAccount(address);
+
+  const [step, setStep] = useState<ProxyFlowStep>(STEPS.CHECK);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
   const [depositedValue, setDepositedValue] = useState<BN | null | undefined>();
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
@@ -53,7 +42,7 @@ function ManageProxies(): React.ReactElement {
     setRefresh(false);
     setFetching(true);
 
-    _api.query.proxy?.proxies(_address).then((_proxies) => {
+    _api.query['proxy']?.['proxies'](_address).then((_proxies) => {
       const fetchedProxies = _proxies.toHuman() as [Proxy[], string];
 
       const _proxyItems = fetchedProxies[0].map((_proxy) => ({ proxy: _proxy, status: 'current' })) as ProxyItem[];
@@ -72,14 +61,14 @@ function ManageProxies(): React.ReactElement {
   }, []);
 
   useLayoutEffect(() => {
-    if (!account?.genesisHash) {
+    if (!genesisHash) {
       setStep(STEPS.CHECK);
-    } else if (!PROXY_CHAINS.includes(account.genesisHash ?? '')) {
+    } else if (!PROXY_CHAINS.includes(genesisHash ?? '')) {
       setStep(STEPS.UNSUPPORTED);
     } else {
       setStep(STEPS.MANAGE);
     }
-  }, [account?.genesisHash, chain, refresh]);
+  }, [genesisHash, chain, refresh]);
 
   useEffect(() => {
     setProxyItems(undefined);
@@ -87,7 +76,7 @@ function ManageProxies(): React.ReactElement {
   }, [chain?.genesisHash, refresh]);
 
   useEffect(() => {
-    if (!api || proxyItems !== undefined || fetching) {
+    if (!address || !api || proxyItems !== undefined || fetching) {
       return;
     }
 
@@ -102,66 +91,61 @@ function ManageProxies(): React.ReactElement {
   }, [address, api, chain?.genesisHash, fetchProxies, fetching, proxyItems, refresh]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader page='proxyManagement' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          {step === STEPS.UNSUPPORTED &&
-            <Grid alignItems='center' container direction='column' display='block' item>
-              <Typography fontSize='30px' fontWeight={700} p='30px 0 60px 30px'>
-                {t('Proxy Management')}
-              </Typography>
-              <Grid container item sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', width: '500px' }}>
-                <Warning
-                  fontWeight={500}
-                  isBelowInput
-                  theme={theme}
-                >
-                  {t('The chosen blockchain does not support proxy management.')}
-                </Warning>
-              </Grid>
-            </Grid>
-          }
-          {step === STEPS.MANAGE &&
-            <Manage
-              api={api}
-              chain={chain as any}
-              decimal={decimal}
-              depositedValue={depositedValue}
-              isDisabledAddProxyButton={!!isDisabledAddProxyButton}
-              newDepositValue={newDepositValue}
-              proxyItems={proxyItems}
-              setNewDepositedValue={setNewDepositedValue}
-              setProxyItems={setProxyItems}
-              setStep={setStep}
-              token={token}
-            />
-          }
-          {step === STEPS.ADD_PROXY &&
-            <AddProxy
-              chain={chain as any}
-              proxiedAddress={address}
-              proxyItems={proxyItems}
-              setProxyItems={setProxyItems}
-              setStep={setStep}
-            />
-          }
-          {[STEPS.REVIEW, STEPS.PROXY, STEPS.WAIT_SCREEN, STEPS.CONFIRM, STEPS.SIGN_QR].includes(step) &&
-            <Review
-              address={address}
-              api={api}
-              chain={chain as any}
-              depositedValue={BN_ZERO}
-              newDepositValue={newDepositValue}
-              proxyItems={proxyItems}
-              setRefresh={setRefresh}
-              setStep={setStep}
-              step={step}
-            />
-          }
-        </Grid>
+    <HomeLayout childrenStyle={{ paddingLeft: '25px' }}>
+      <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+        {t('Proxy Management')}
+      </Typography>
+      <Typography color='text.secondary' sx={{ m: '10px 0 20px' }} variant='B-4'>
+        {t('You can add new proxies or remove existing ones for the selected account. Keep in mind that a deposit is required to maintain proxies.')}
+      </Typography>
+      <Grid container item sx={{ display: 'block', position: 'relative' }}>
+        {step === STEPS.UNSUPPORTED &&
+          <NotSupportedBox
+            style={{ height: '500px', marginTop: '20px' }}
+            text={t('The chosen blockchain does not support proxy management.')}
+          />
+        }
+        {step !== STEPS.UNSUPPORTED &&
+          <Manage
+            api={api}
+            chain={chain}
+            decimal={decimal}
+            depositedValue={depositedValue}
+            isDisabledAddProxyButton={!!isDisabledAddProxyButton}
+            newDepositValue={newDepositValue}
+            proxyItems={proxyItems}
+            setNewDepositedValue={setNewDepositedValue}
+            setProxyItems={setProxyItems}
+            setStep={setStep}
+            token={token}
+          />
+        }
+        {step === STEPS.ADD_PROXY &&
+          <AddProxy
+            chain={chain}
+            proxiedAddress={address}
+            proxyItems={proxyItems}
+            setNewDepositedValue={setNewDepositedValue}
+            setProxyItems={setProxyItems}
+            setStep={setStep}
+            step={step}
+          />
+        }
+        {[STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRMATION, STEPS.SIGN_QR].includes(step) &&
+          <TransactionFlow
+            address={address}
+            api={api}
+            chain={chain}
+            depositedValue={depositedValue ?? BN_ZERO}
+            newDepositValue={newDepositValue}
+            proxyItems={proxyItems}
+            setRefresh={setRefresh}
+            setStep={setStep}
+            step={step}
+          />
+        }
       </Grid>
-    </Grid>
+    </HomeLayout>
   );
 }
 

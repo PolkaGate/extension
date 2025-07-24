@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
@@ -18,7 +17,7 @@ import { useAccountDisplay, useBalances, useEstimatedFee, useInfo, useProxies, u
 import { ThroughProxy } from '../../../../partials';
 import { getValue } from '../../../../popup/account/util';
 import { PROXY_TYPE } from '../../../../util/constants';
-import { DraggableModal } from '../../components/DraggableModal';
+import { DraggableModal } from '../../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { type Track } from '../../utils/types';
@@ -42,7 +41,7 @@ const STEPS = {
   SIGN_QR: 200
 };
 
-export default function DecisionDeposit ({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
+export default function DecisionDeposit({ address, open, refIndex, setOpen, track }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted, token } = useInfo(address);
   const theme = useTheme();
@@ -52,7 +51,7 @@ export default function DecisionDeposit ({ address, open, refIndex, setOpen, tra
 
   const proxyItems = useMemo(() =>
     proxies?.map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[]
-  , [proxies]);
+    , [proxies]);
 
   const [step, setStep] = useState<number>(STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();

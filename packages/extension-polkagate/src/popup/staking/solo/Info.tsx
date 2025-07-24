@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { StakingConsts } from '../../../util/types';
 
@@ -16,7 +14,7 @@ import { HeaderBrand, SubTitle } from '../../../partials';
 import { amountToHuman } from '../../../util/utils';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   showInfo: boolean;
   info: StakingConsts | null | undefined;
   setShowInfo: React.Dispatch<React.SetStateAction<boolean>>

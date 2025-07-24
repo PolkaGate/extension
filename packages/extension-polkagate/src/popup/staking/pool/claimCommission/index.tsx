@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -27,13 +26,13 @@ import { To } from '../../../send/Review';
 import TxDetail from '../rewards/partials/TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   show: boolean;
   pool: MyPoolInfo;
   setShow: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function ClaimCommission ({ address, pool, setShow, show }: Props): React.ReactElement {
+export default function ClaimCommission({ address, pool, setShow, show }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain, decimal, formatted } = useInfo(address);
   const proxies = useProxies(api, formatted);

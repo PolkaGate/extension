@@ -1,7 +1,6 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo, Proxy, TxInfo } from '../../../util/types';
 import type { StakingInputs } from '../type';
@@ -24,7 +23,7 @@ import DisplayValue from '../../governance/post/castVote/partial/DisplayValue';
 import { STEPS } from '..';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   balances: BalancesInfo | undefined;
   inputs: StakingInputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -33,7 +32,7 @@ interface Props {
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>
 }
 
-export default function Review ({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
+export default function Review({ address, balances, inputs, setRefresh, setStep, setTxInfo, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, chain } = useInfo(address);
   const theme = useTheme();
@@ -61,7 +60,7 @@ export default function Review ({ address, balances, inputs, setRefresh, setStep
     inputs?.extraInfo?.['amount'] && balances?.decimal
       ? amountToMachine((inputs.extraInfo)['amount'] as string, balances.decimal)
       : undefined
-  , [inputs, balances]);
+    , [inputs, balances]);
 
   const handleCancel = useCallback(() => {
     setStep(inputs?.mode || STEPS.INDEX);

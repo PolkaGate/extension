@@ -1,211 +1,152 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { HexString } from '@polkadot/util/types';
 import type { ScanType } from '../attachQR';
 
-import { Button, Grid, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import { Camera, User, Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { QrScanAddress } from '@polkadot/react-qr';
 
-import { AccountNamePasswordCreation, Address, PButton, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
-import { Title } from '../../../fullscreen/sendFund/InputPage';
+import { ActionButton, Address, DecisionButtons, MyTextField } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
-import { createAccountExternal, createAccountSuri, createSeed, updateMeta } from '../../../messaging';
-import { Name } from '../../../partials';
+import { createAccountExternal, updateMeta } from '../../../messaging';
 
 export default function AttachQrFullScreen (): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const [account, setAccount] = useState<ScanType | null>(null);
-  const [address, setAddress] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
 
-    updateMeta(String(address), metaData).then(() => {
-      setStorage('profile', PROFILE_TAGS.QR_ATTACHED).catch(console.error);
-      openOrFocusTab('/', true);
+    account?.content && updateMeta(account.content, metaData).then(() => {
+      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.QR_ATTACHED).catch(console.error);
+      switchToOrOpenTab('/', true);
     }).catch(console.error);
-  }, [address]);
+  }, [account]);
 
-  const onAttach = useCallback(() => {
-    if (account && name) {
-      if (account.isAddress) {
-        createAccountExternal(name, account.content, account.genesisHash as HexString)
-          .then(() => setQrLabelAndGoToHome())
-          .catch((error: Error) => console.error(error));
-      } else if (password) {
-        createAccountSuri(name, password, account.content, 'sr25519', account.genesisHash as HexString)
-          .then(() => setQrLabelAndGoToHome())
-          .catch((error: Error) => console.error(error));
-      }
+  const onImport = useCallback(() => {
+    if (account?.isAddress && name) {
+      createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS)
+        .then(() => setQrLabelAndGoToHome())
+        .catch((error: Error) => console.error(error));
     }
-  }, [account, name, password, setQrLabelAndGoToHome]);
+  }, [account, name, setQrLabelAndGoToHome]);
 
-  const _setAccount = useCallback(
-    (qrAccount: ScanType) => {
-      setAccount(qrAccount);
-      setName(qrAccount?.name || null);
+  const _setAccount = useCallback((qrAccount: ScanType) => {
+    if (!qrAccount.isAddress) {
+      return;
+    }
 
-      if (qrAccount.isAddress) {
-        setAddress(qrAccount.content);
-      } else {
-        createSeed(undefined, qrAccount.content)
-          .then(({ address }) => setAddress(address))
-          .catch(console.error);
-      }
-    },
-    []
-  );
+    setAccount(qrAccount);
+    setInvalidQR(false);
+    setName(qrAccount?.name || null);
+  }, []);
 
-  const onCancel = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
 
   const _onError = useCallback((error: Error) => {
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 
-  const onOkay = useCallback(() => {
-    setInvalidQR(false);
-  }, []);
-
   const QRWarning = () => (
-    <Grid alignItems='center' border={1.5} borderColor='warning.main' container direction='column' fontSize={14} item justifyContent='center' mx='28px' pb='80px' pt='30px'>
-      <Grid item>
-        <Warning
-          isDanger
-          theme={theme}
-        >
-          {t('Invalid QR code.')}
-        </Warning>
-      </Grid>
-      <Grid item>
+    <Stack alignItems='center' columnGap='2px' direction='row' sx={{ mt: '10px' }}>
+      <Warning2 color='#FF4FB9' size='20px' variant='Bold' />
+      <Typography sx={{ color: '#FF4FB9', textAlign: 'left' }} variant='B-4'>
+        {t('Invalid QR code.')}
+      </Typography>
+      <Typography sx={{ color: '#FF4FB9' }} variant='B-4'>
         {t('Please try another one.')}
-      </Grid>
-      <Button
-        onClick={onOkay}
-        sx={{
-          borderColor: 'secondary.main',
-          borderRadius: '5px',
-          fontSize: 18,
-          fontWeight: 400,
-          height: '36px',
-          mt: '25px',
-          textTransform: 'none',
-          width: '60%'
-        }}
-        variant='contained'
-      >
-        {t<string>('Okay')}
-      </Button>
-    </Grid>
+      </Typography>
+    </Stack>
   );
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
+    <AdaptiveLayout style={{ width: '600px' }}>
+      <OnboardTitle
+        label={t('Attach QR-signer')}
+        labelPartInColor='QR-signer'
+        url='/account/have-wallet'
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
-          <Title
-            height='85px'
-            logo={
-              <VaadinIcon icon='vaadin:qrcode' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            }
-            text= {t('Attach QR-signer')}
-          />
-          {!account &&
-            <Grid alignItems='center' container justifyContent='center'>
-              <Typography fontSize='16px' m='auto' pt='40px' textAlign='center' width='92%'>
-                {t('Scan account QR code')}
-              </Typography>
-              <Grid alignItems='center' border='1px dashed' borderColor='secondary.light' borderRadius='5px' boxSizing='border-box' container fontSize='16px' height='328px' justifyContent='center' m='10px 15px' sx={{ backgroundColor: 'background.paper' }} width='328px'>
-                {!invalidQR
-                  ? <QrScanAddress
-                    onError={_onError}
-                    onScan={_setAccount}
-                    size={272}
-                  />
-                  : <QRWarning />
-                }
-              </Grid>
-              <Typography fontSize='16px' fontWeight={300} m='auto' pt='20px' textAlign='center' width='92%'>
-                {t('Hold the QR code in front of the device’s camera')}
-              </Typography>
-              <PButton
-                _ml={0}
-                _mt='30px'
-                _onClick={onCancel}
-                _variant='contained'
-                _width={100}
-                text={t('Cancel')}
+      <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px' }}>
+        <Typography color='#BEAAD8' sx={{ mb: '15px', textAlign: 'left' }} variant='B-1'>
+          {!account
+            ? t('Import an account from your QR signer, such as Polkadot Vault.')
+            : t('The account fetched via the scanned QR code.')
+          }
+        </Typography>
+        {!account
+          ? <>
+            <Grid container sx={{ mb: '15px' }}>
+              <QrScanAddress
+                onError={_onError}
+                onScan={_setAccount}
+                style={{
+                  background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '14px', height: 'fit-content', minHeight: '200Px', padding: '3px', width: '272px'
+                }}
               />
+              {invalidQR && <QRWarning />}
             </Grid>
-          }
-          {account &&
-            <>
-              <Grid alignItems='center' container justifyContent='flex-start'>
-                <Typography fontSize='16px' fontWeight={500} pt='40px'>
-                  {t('The account fetched via the scanned QR code.')}
-                </Typography>
-              </Grid>
-              <Address
-                address={address}
-                name={name}
-                width='100%'
-              />
-              {
-                account?.isAddress
-                  ? <>
-                    <Name
-                      isFocused
-                      onChange={setName}
-                      style={{ width: '100%' }}
-                      value={name || ''}
-                    />
-                    <Grid container item justifyContent='flex-end' pt='40px'>
-                      <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
-                        <TwoButtons
-                          disabled={!name}
-                          mt='1px'
-                          onPrimaryClick={onAttach}
-                          onSecondaryClick={onCancel}
-                          primaryBtnText={t('Add account')}
-                          secondaryBtnText={t('Cancel')}
-                        />
-                      </Grid>
-                    </Grid>
-                  </>
-                  : <AccountNamePasswordCreation
-                    buttonLabel={t('Add account')}
-                    mt='40px'
-                    onBackClick={onCancel}
-                    onCreate={onAttach}
-                    onNameChange={setName}
-                    onPasswordChange={setPassword}
-                    style={{ width: '100%' }}
-                    withCancel
-                  />
-              }
-            </>
-          }
-        </Grid>
-      </Grid>
-    </Grid>
+            <Stack alignItems='center' direction='row' justifyContent='flex-start'>
+              <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+                {t('Hold the QR code in front of your ')}
+              </Typography>
+              <Camera color='#AA83DC' size={16} style={{ marginLeft: '4px', marginRight: '4px' }} variant='Bold' />
+              <Typography color='#AA83DC' variant='B-1'>
+                {t('device’s camera')}
+              </Typography>
+            </Stack>
+            <ActionButton
+              contentPlacement='center'
+              onClick={onCancel}
+              style={{ height: '44px', marginTop: '20px', width: '40%' }}
+              text={t('Cancel')}
+            />
+          </>
+          : <Stack direction='column' sx={{ height: '245px', position: 'relative', zIndex: '1' }}>
+            <Address
+              address={account?.content}
+              genesisHash={account?.genesisHash}
+              name={name}
+              style={{ margin: '5px auto 10px' }}
+              width='100%'
+            />
+            <MyTextField
+              Icon={User}
+              focused
+              iconSize={18}
+              onEnterPress={onImport}
+              onTextChange={setName}
+              placeholder={t('Enter account name')}
+              style={{ margin: '5px 0 0' }}
+              title={t('Choose a name for this account')}
+            />
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
+              disabled={!name}
+              onPrimaryClick={onImport}
+              onSecondaryClick={onCancel}
+              primaryBtnText={t('Add account')}
+              secondaryBtnText={t('Cancel')}
+              showChevron
+              style={{ bottom: 0, flexDirection: 'row-reverse', position: 'absolute', width: '65%' }}
+            />
+          </Stack>
+        }
+      </Stack>
+    </AdaptiveLayout>
   );
 }

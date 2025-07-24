@@ -1,5 +1,55 @@
 # Change Log
 
+## [0.36.3](https://github.com/polkagate/extension/compare/v0.36.2...v0.36.3) (2025-04-08)
+
+
+### Bug Fixes
+
+* update ledger dependencies ([#1732](https://github.com/polkagate/extension/issues/1732)) ([4a011fb](https://github.com/polkagate/extension/commit/4a011fb9bc65e01cb438f923b482acbaac62c60a))
+
+## [0.36.2](https://github.com/polkagate/extension/compare/v0.36.1...v0.36.2) (2025-04-01)
+
+
+### Bug Fixes
+
+* available balance issue raised by api derive ([#1725](https://github.com/polkagate/extension/issues/1725)) ([9269b05](https://github.com/polkagate/extension/commit/9269b05f064b455467e3731cbc9b74a5024ffa98)), closes [#1723](https://github.com/polkagate/extension/issues/1723) [#1724](https://github.com/polkagate/extension/issues/1724)
+
+## [0.36.1](https://github.com/polkagate/extension/compare/v0.36.0...v0.36.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* handle 0 available balance returned by polkadot js api derive ([c851afd](https://github.com/polkagate/extension/commit/c851afdf52d3b1e6b2cae24546729e7220fddd60))
+* use multiple endpoints in useApiWithChain to get fastest connection ([87df027](https://github.com/polkagate/extension/commit/87df02774a84a0361100854e5d7927ff17a716af)), closes [#1718](https://github.com/polkagate/extension/issues/1718)
+
+# [0.36.0](https://github.com/polkagate/extension/compare/v0.35.2...v0.36.0) (2025-02-28)
+
+
+### Features
+
+* polkadot pool migration ([#1710](https://github.com/polkagate/extension/issues/1710)) ([1cbeb7f](https://github.com/polkagate/extension/commit/1cbeb7f034c4345a4ff2858e29da6918067dda4f))
+
+## [0.35.2](https://github.com/polkagate/extension/compare/v0.35.1...v0.35.2) (2025-02-23)
+
+
+### Bug Fixes
+
+* balance name issues ([#1705](https://github.com/polkagate/extension/issues/1705)) ([b6a5a71](https://github.com/polkagate/extension/commit/b6a5a71a83ca0f2f3e4dfafc2a6e0118413deb02))
+
+## [0.35.1](https://github.com/polkagate/extension/compare/v0.35.0...v0.35.1) (2025-02-22)
+
+
+### Bug Fixes
+
+* undefined asset id in send page ([#1704](https://github.com/polkagate/extension/issues/1704)) ([dca28a0](https://github.com/polkagate/extension/commit/dca28a046309a5cde5bf14c823208dc8d057d378)), closes [#1703](https://github.com/polkagate/extension/issues/1703)
+
+# [0.35.0](https://github.com/polkagate/extension/compare/v0.34.0...v0.35.0) (2025-02-22)
+
+
+### Features
+
+* add support for pool migration ([#1702](https://github.com/polkagate/extension/issues/1702)) ([55c57b8](https://github.com/polkagate/extension/commit/55c57b81e8d97e9df3ff533d0479938c8542cff4))
+
 # [0.34.0](https://github.com/polkagate/extension/compare/v0.33.3...v0.34.0) (2024-12-06)
 
 

@@ -1,10 +1,7 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { HexString } from '@polkadot/util/types';
-import type { AddressState } from '../../../util/types';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -16,7 +13,7 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { FULLSCREEN_WIDTH, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, AccountNamePasswordCreation, ActionContext, Label, Password, VaadinIcon, Warning } from '../../../components';
 import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
@@ -35,7 +32,7 @@ function DeriveFromAccounts(): React.ReactElement {
   const theme = useTheme();
   const onAction = useContext(ActionContext);
   const { accounts } = useContext(AccountContext);
-  const { address: parentAddress } = useParams<AddressState>();
+  const { address: parentAddress } = useParams();
 
   const defaultPath = useMemo(() => nextDerivationPath(accounts, parentAddress), [accounts, parentAddress]);
   const [suriPath, setSuriPath] = useState<null | string>(defaultPath);
@@ -99,14 +96,14 @@ function DeriveFromAccounts(): React.ReactElement {
       }
     }
 
-    if (!account || !name || !password || !validatedParentPassword) {
+    if (!account || !name || !password || !validatedParentPassword || !parentAddress) {
       return;
     }
 
     setIsBusy(true);
     deriveAccount(parentAddress, account.suri, validatedParentPassword, name, password, parentGenesis as HexString | null)
       .then(() => {
-        setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
+        setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
         openOrFocusTab('/', true);
       })
       .catch((error): void => {

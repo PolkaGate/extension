@@ -1,14 +1,13 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useRef } from 'react';
 
+import { useIsHovered } from '../../hooks';
 import { pgBoxShadow } from '../../util/utils';
 import { ICON_BOX_WIDTH } from '.';
 
@@ -20,16 +19,8 @@ interface Props {
 
 function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
   const theme = useTheme();
-
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const onMouseEnter = useCallback((): void => {
-    setHovered(true);
-  }, []);
-
-  const onMouseLeave = useCallback((): void => {
-    setHovered(false);
-  }, []);
+  const containerRef = useRef(null);
+  const hovered = useIsHovered(containerRef);
 
   return (
     <Grid
@@ -37,8 +28,7 @@ function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
       container
       item
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      ref={containerRef}
       sx={{ bgcolor: hovered ? theme.palette.primary.main : theme.palette.background.paper, borderRadius: '10px', boxShadow: theme.palette.mode === 'light' ? pgBoxShadow(theme) : undefined, cursor: 'pointer', height: '90px', mb: '10px', position: 'relative', px: '15px', width: ICON_BOX_WIDTH }}
     >
       <FontAwesomeIcon

@@ -1,12 +1,10 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AudioPlayerProps } from '../utils/types';
 
-import { PauseCircle as PauseCircleIcon, PlayCircle as PlayCircleIcon } from '@mui/icons-material';
-import { Grid, IconButton, Slider, Typography } from '@mui/material';
+import { Grid, IconButton, Slider, Stack, Typography } from '@mui/material';
+import { PauseCircle, PlayCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.ReactElement {
@@ -64,39 +62,47 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
   }, []);
 
   return (
-    <Grid container item sx={{ bgcolor: 'background.paper', borderRadius: '50px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', width: '320px' }}>
+    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '8px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
       <audio
         ref={audioRef}
-        src={audioUrl}
+        src={audioUrl ?? undefined}
       />
-      <Grid alignItems='center' container item>
+      <Grid alignItems='center' container item sx={{ m: '5px' }}>
         <IconButton
           onClick={togglePlayPause}
-          sx={{ width: 'fit-content' }}
+          sx={{ p: '5px', width: 'fit-content' }}
         >
           {isPlaying
-            ? <PauseCircleIcon sx={{ color: 'primary.main' }} />
-            : <PlayCircleIcon sx={{ color: 'primary.main' }} />
+            ? <PauseCircle color='#AA83DC' size='18' variant='Bold' />
+            : <PlayCircle color='#AA83DC' size='18' variant='Bold' />
           }
         </IconButton>
         <Grid alignItems='center' container item justifyContent='space-between' px='10px' xs>
-          <Typography fontSize='14px' fontWeight={400}>
-            {formatTime(currentTime)}
-          </Typography>
           <Slider
             aria-labelledby='continuous-slider'
             max={duration}
             min={0}
             onChange={handleSeek}
             sx={{
-              color: 'primary.main',
-              width: '170px'
+              '& .MuiSlider-thumb': {
+                height: 8,
+                width: 8
+              },
+              color: '#AA83DC',
+              height: '2px',
+              py: '5px',
+              width: '100%'
             }}
             value={currentTime}
           />
-          <Typography fontSize='14px' fontWeight={400}>
-            {formatTime(duration)}
-          </Typography>
+          <Stack direction='row' justifyContent='space-between' width='100%'>
+            <Typography color='#EAEBF1' fontSize='10px' variant='S-2'>
+              {formatTime(currentTime)}
+            </Typography>
+            <Typography color='#AA83DC' fontSize='10px' variant='S-2'>
+              {formatTime(duration)}
+            </Typography>
+          </Stack>
         </Grid>
       </Grid>
     </Grid>

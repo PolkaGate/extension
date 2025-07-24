@@ -1,4 +1,4 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN_ZERO } from '@polkadot/util';
@@ -6,7 +6,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { decodeMultiLocation } from '../../utils';
 
 //@ts-ignore
-export async function getAssets (addresses, api, assets, chainName, results) {
+export async function getAssets(addresses, api, assets, chainName, results) {
   try {
     for (const asset of assets) {
       const isForeignAssets = asset.isForeign;
@@ -15,6 +15,8 @@ export async function getAssets (addresses, api, assets, chainName, results) {
       // @ts-ignore
       const maybeTheAssetOfAddresses = addresses.map((address) => api.query[section].account(assetId, address));
       const assetMetaData = api.query[section].metadata(assetId);
+      const assetInfo = await api.query[section].asset(assetId);
+      const ED = assetInfo.toPrimitive().minBalance;
 
       const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
       const metadata = response[0];
@@ -36,6 +38,7 @@ export async function getAssets (addresses, api, assets, chainName, results) {
         const item = {
           assetId: asset.id,
           balanceDetails: {
+            ED,
             availableBalance: isFrozen ? 0 : _balance,
             lockedBalance: isFrozen ? _balance : 0,
             reservedBalance: isFrozen ? balance : 0 // JUST to comply with the rule that total=available + reserve

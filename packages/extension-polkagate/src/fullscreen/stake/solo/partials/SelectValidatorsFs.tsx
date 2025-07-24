@@ -1,7 +1,5 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -24,7 +22,7 @@ import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/consta
 import ValidatorsTableFS from './ValidatorsTableFS';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   nominatedValidatorsIds?: string[] | null | undefined;
   stashId: AccountId | string | undefined;
   stakingConsts: StakingConsts | null | undefined;
@@ -53,7 +51,7 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
   );
 };
 
-export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
+export default function SelectValidators({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -245,7 +243,7 @@ export default function SelectValidators ({ address, newSelectedValidators, nomi
               <FilterIcon sx={{ color: 'secondary.light' }} />
             </Grid>
             <Grid item xs={12}>
-              {validatorsToList &&
+              {validatorsToList && address &&
                 <ValidatorsTableFS
                   address={address}
                   allValidatorsIdentities={allValidatorsIdentities}

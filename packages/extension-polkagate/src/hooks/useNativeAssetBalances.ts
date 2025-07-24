@@ -1,7 +1,8 @@
-// Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
+import type { Balance } from '@polkadot/types/interfaces';
 //@ts-ignore
 import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
 import type { HexString } from '@polkadot/util/types';
@@ -42,6 +43,8 @@ export default function useNativeAssetBalances (address: string | undefined, ref
         // some chains such as PARALLEL does not support this call hence BN_ZERO is set for them
         const frozenBalance = systemBalance?.frozen || BN_ZERO;
 
+        const votingBalance = api.createType('Balance', allBalances.freeBalance.add(allBalances.reservedBalance)) as unknown as Balance;
+
         setNewBalances({
           ED,
           assetId: isFetchingNativeTokenOfAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
@@ -53,7 +56,8 @@ export default function useNativeAssetBalances (address: string | undefined, ref
           genesisHash: api.genesisHash.toString(),
           pooledBalance: balances?.pooledBalance, // fill from saved balance it exists, it will be updated
           soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN,
-          token
+          token,
+          votingBalance // since api derive does not updated after pools migration
         });
         setRefresh?.(false);
         isFetching.fetching[String(formatted)]['balances'] = false;
@@ -77,8 +81,6 @@ export default function useNativeAssetBalances (address: string | undefined, ref
       isFetching.fetching[String(formatted)]['balances'] = true;
       isFetching.set(isFetching.fetching);
       getBalances();
-    } else {
-      console.info(`Balance is fetching for ${formatted}, hence doesn't need to fetch it again!`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
