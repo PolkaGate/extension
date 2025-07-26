@@ -130,7 +130,7 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
           onChange={noop}
         />
         <Typography color='text.secondary' variant='B-4'>
-          {t('Testnets')}
+          {t('Test Networks')}
         </Typography>
       </Grid>
     </Container>
