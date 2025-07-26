@@ -25,7 +25,7 @@ const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }:
   return (
     <Stack alignItems= 'center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
-        checked={checked}
+        checked={Boolean(checked)}
         disableRipple
         focusVisibleClassName='.Mui-focusVisible'
         isBlueish={isBlueish}
