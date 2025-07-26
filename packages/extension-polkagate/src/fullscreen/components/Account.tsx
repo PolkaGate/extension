@@ -117,10 +117,15 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       !getValue('total', _asset as unknown as BalancesInfo)?.isZero()
     );
 
-    nonZeroAssets[0] && setDefaultGenesisAndAssetId?.(`${nonZeroAssets[0].genesisHash}/${nonZeroAssets[0].assetId}`);
 
     return nonZeroAssets;
-  }, [accountAssets, calculatePrice, pricesInCurrencies, setDefaultGenesisAndAssetId]);
+  }, [accountAssets, calculatePrice, pricesInCurrencies]);
+
+  useEffect(() => {
+    if (assetsToShow?.[0]) {
+      setDefaultGenesisAndAssetId?.(`${assetsToShow[0].genesisHash}/${assetsToShow[0].assetId}`);
+    }
+  }, [assetsToShow, setDefaultGenesisAndAssetId]);
 
   const extraTokensCount = useMemo(() => assetsToShow ? assetsToShow.length - 4 : 0, [assetsToShow]);
 

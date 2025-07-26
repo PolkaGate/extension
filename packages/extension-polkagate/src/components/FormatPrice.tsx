@@ -144,7 +144,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
       {mayCurrencySign}
       <span>
         {integerPart.split(',').map((part, idx, arr) => (
-          <>
+          <React.Fragment key={idx}>
             <span key={`number-${idx}`} style={{ color: textColor }}>
               {part}
             </span>
@@ -153,7 +153,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
                 ,
               </span>
             )}
-          </>
+          </React.Fragment>
         ))}
         {decimalPart && (
           <span style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>

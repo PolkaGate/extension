@@ -111,7 +111,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                 ? <>
                   {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
                     return (
-                      <>
+                      <React.Fragment key={profileIndex}>
                         {accounts.map((account, accIndex) => {
                           const isFirstProfile = profileIndex === 0;
                           const isFirstAccount = accIndex === 0;
@@ -138,7 +138,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                             </React.Fragment>
                           );
                         })}
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </>

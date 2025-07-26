@@ -5,7 +5,6 @@ import type { RouteConfig } from './RouteDefinitions';
 
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import HaveWallet from '@polkadot/extension-polkagate/src/fullscreen/haveWallet';
-import AccountEx from '@polkadot/extension-polkagate/src/popup/account';
 import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ExportAll from '@polkadot/extension-polkagate/src/popup/export/ExportAll';
 import ImportLedger from '@polkadot/extension-polkagate/src/popup/import/importLedger';
@@ -17,11 +16,6 @@ import Receive from '@polkadot/extension-polkagate/src/popup/receive';
 import Rename from '@polkadot/extension-polkagate/src/popup/rename';
 
 export const ACCOUNT_ROUTES: RouteConfig[] = [
-  {
-    Component: AccountEx,
-    path: '/account/:genesisHash/:address/',
-    trigger: 'account'
-  },
   {
     Component: CreateAccount,
     path: '/account/create',

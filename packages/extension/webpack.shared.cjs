@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const path = require('path');
+
+require('dotenv').config({ path: path.resolve(__dirname, '../../', '.env') });
+
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const ManifestPlugin = require('webpack-extension-manifest-plugin');
@@ -10,6 +13,7 @@ const { blake2AsHex } = require('@polkadot/util-crypto');
 
 const pkgJson = require('./package.json');
 const manifest = require('./manifest.json');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const Dotenv = require('dotenv-webpack');
 
@@ -28,7 +32,7 @@ const packages = [
 
 module.exports = (entry, alias = {}) => ({
   context: __dirname,
-  devtool: false,
+  devtool: 'source-map', // Source map generation must be turned on
   entry,
   module: {
     rules: [
@@ -89,11 +93,10 @@ module.exports = (entry, alias = {}) => ({
       resourceRegExp: /^\.\/locale$/
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        EXTENSION_PREFIX: JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
-        NODE_ENV: JSON.stringify('production'),
-        PORT_PREFIX: JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64))
-      }
+      'process.env.EXTENSION_PREFIX': JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
+      'process.env.EXTENSION_VERSION': JSON.stringify(pkgJson.version),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'process.env.PORT_PREFIX': JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64)),
     }),
     new CopyPlugin({ patterns: [{ from: 'public' }] }),
     new ManifestPlugin({
@@ -104,7 +107,22 @@ module.exports = (entry, alias = {}) => ({
         }
       }
     }),
-    new Dotenv({ path: envPath })
+    new Dotenv({ path: envPath }),
+    // Put the Sentry Webpack plugin after all other plugins
+    ...(process.env.NODE_ENV === 'development'
+      ? []
+      : [sentryWebpackPlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        include: path.resolve(__dirname, 'build'),
+        ipScrubbing: true,
+        org: 'polkagate',
+        project: 'extension',
+        release: pkgJson.version,
+        sendDefaultPii: false,
+        telemetry: false,
+        urlPrefix: '~/'
+      })]
+    )
   ],
   resolve: {
     alias: packages.reduce((alias, p) => ({

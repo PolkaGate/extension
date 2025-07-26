@@ -49,9 +49,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
             />
           ))
         }
-        <Typography fontSize='18px' fontWeight={600}>
-          <div id='observerObj' style={{ height: '1px' }} />
-        </Typography>
+        <div id='observerObj' style={{ height: '1px' }} />
         {
           !notReady && historyItems === null &&
           <EmptyListBox style={{ marginTop: '20px' }} />

@@ -189,8 +189,6 @@ function DeriveFromAccounts(): React.ReactElement {
             defaultPath={defaultPath}
             isError={!!pathError}
             onChange={onSuriPathChange}
-            parentAddress={parentAddress}
-            parentPassword={parentPassword}
             withSoftPath={allowSoftDerivation}
           />
           {(!!pathError) && (

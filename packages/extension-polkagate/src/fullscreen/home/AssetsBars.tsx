@@ -44,7 +44,7 @@ interface BarColorProps {
 }
 
 const BorderLinearProgress = styled(LinearProgress, {
-  shouldForwardProp: (prop) => prop !== 'barColor'
+  shouldForwardProp: (prop) => prop !== 'barColor' && prop !== 'barHeight'
 })<BarColorProps>(({ barColor, barHeight = 12, theme }) => ({
   borderRadius: 5,
   height: barHeight,
