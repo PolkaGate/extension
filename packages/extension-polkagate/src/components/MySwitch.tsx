@@ -3,9 +3,10 @@
 
 import type { SwitchProps } from '@mui/material/Switch';
 
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
+import { EyeSlash } from 'iconsax-react';
 import * as React from 'react';
 
 import useIsBlueish from '@polkadot/extension-polkagate/src/hooks/useIsBlueish';
@@ -16,9 +17,27 @@ interface Props extends SwitchProps {
   columnGap?: string;
   label?: string;
   style?: React.CSSProperties;
+  showHidden?: boolean;
 }
 
-const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }: Props) => {
+const HiddenIcon = () => {
+  return (
+    <Box sx={{
+      alignItems: 'center',
+      background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+      borderRadius: '50%',
+      display: 'flex',
+      height: '18px',
+      justifyContent: 'center',
+      width: '18px'
+    }}
+    >
+      <EyeSlash color='#FFFFFF' size='12' variant='Bold' />
+    </Box>
+  );
+};
+
+const MySwitch = ({ checked, columnGap, label, onChange, showHidden = false, style = {}, ...props }: Props) => {
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
@@ -26,14 +45,16 @@ const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }:
     <Stack alignItems= 'center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
         checked={Boolean(checked)}
+        checkedIcon={showHidden ? <HiddenIcon /> : <Box sx={{ borderRadius: '50%', height: '10px', width: '10px' }} />}
         disableRipple
         focusVisibleClassName='.Mui-focusVisible'
         isBlueish={isBlueish}
         isDark={isDark}
         onChange={onChange}
+        showHidden={showHidden}
         {...props}
       />
-      <Typography sx={{ cursor: 'pointer' }} variant='B-1'>
+      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer' }} variant='B-1'>
         {label}
       </Typography>
     </Stack>
@@ -41,8 +62,8 @@ const MySwitch = ({ checked, columnGap, label, onChange, style = {}, ...props }:
 };
 
 const StyledSwitch = styled(Switch, {
-  shouldForwardProp: (prop) => prop !== 'isBlueish' && prop !== 'isDark'
-})<{ isDark: boolean, isBlueish: boolean }>(({ checked, isBlueish, isDark, theme }) => ({
+  shouldForwardProp: (prop) => prop !== 'isBlueish' && prop !== 'isDark' && prop !== 'showHidden'
+})<{ isDark: boolean, isBlueish: boolean, showHidden: boolean }>(({ checked, isBlueish, isDark, showHidden, theme }) => ({
   background: checked
     ? isDark
       ? 'linear-gradient(#2D1E4A, #2D1E4A) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
@@ -82,16 +103,16 @@ const StyledSwitch = styled(Switch, {
   '& .MuiSwitch-switchBase': {
     alignSelf: 'anchor-center',
     left: 0,
-    margin: 2,
+    margin: '0 3px',
     padding: 0,
     transition: theme.transitions.create(['transform', 'background-color', 'box-shadow'], {
       duration: 300,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
     }),
     '&.Mui-checked': {
-      background: isDark ? '#EAEBF1' : '#3988FF',
-      padding: 2,
-      transform: 'translateX(14px)',
+      background: showHidden ? undefined : isDark ? '#EAEBF1' : '#3988FF',
+      padding: showHidden ? 0 : 2,
+      transform: `translateX(${showHidden ? 10 : 13}px)`,
       '& .MuiSwitch-thumb': {
         background: isDark ? '#EAEBF1' : '#3988FF'
       },

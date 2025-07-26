@@ -92,6 +92,7 @@ function Content ({ setStep }: Props): React.ReactElement {
         columnGap='8px'
         label= {t('Hide Balance')}
         onChange={toggleHideNumbers}
+        showHidden
         style = {{ marginTop: '20px' }}
       />
       <DecisionButtons
