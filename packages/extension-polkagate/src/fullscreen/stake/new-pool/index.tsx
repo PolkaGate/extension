@@ -40,7 +40,7 @@ export default function PoolFullScreen (): React.ReactElement {
     <>
       <HomeLayout>
         <Stack columnGap='8px' direction='column' sx={{ height: '685px' }}>
-          <StakingIcon type='pool' />
+          <StakingIcon variant='people' type='pool' />
           <StakingPortfolioAndTiles
             availableBalanceToStake={stakingInfo.availableBalanceToStake}
             genesisHash={genesisHash}

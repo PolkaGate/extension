@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
+import { People, UserOctagon } from 'iconsax-react';
 import React from 'react';
 
 import Ice from '../../../components/SVG/Ice';
@@ -11,16 +12,30 @@ import { useTranslation } from '../../../hooks';
 interface Props {
   type: 'solo' | 'pool';
   text?: string;
+  variant?: 'nature' | 'people';
 }
 
-export default function StakingIcon ({ text, type }: Props) {
+export default function StakingIcon({ text, type, variant = 'nature' }: Props) {
   const { t } = useTranslation();
 
   return (
-    <Grid alignItems='flex-start' container item sx={{ columnGap: '6px', pl: '18px' }}>
-      {type === 'solo'
-        ? <SnowFlake size='36' />
-        : <Ice asPortfolio size='36' />
+    <Grid alignItems={variant === 'people' ? 'center' : 'flex-start'} container item sx={{ columnGap: '6px', pl: '18px' }}>
+      {
+        variant === 'people'
+          ? <>
+            {
+              type === 'solo'
+                ? <UserOctagon color='#AA83DC' size='36' variant='Bulk' />
+                : <People color='#AA83DC' size='32' variant='Bulk' />
+            }
+          </>
+          : <>
+            {
+              type === 'solo'
+                ? <SnowFlake size='36' />
+                : <Ice asPortfolio size='36' />
+            }
+          </>
       }
       <Typography color='text.primary' textTransform='uppercase' variant='H-2'>
         {
