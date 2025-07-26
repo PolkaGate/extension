@@ -63,7 +63,7 @@ const PositionsEarnings = ({ earningsCount, positionsCount, selectedTab, setter 
         count={earningsCount ?? 0}
         isSelected={isSelected(POSITION_TABS.EARNING)}
         selector={setter(POSITION_TABS.EARNING)}
-        text={t('Earning')}
+        text={t('Explore')}
       />
       <Grid sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '10px', height: '36px', left: '4px', position: 'absolute', top: '4px', transform: isSelected(POSITION_TABS.EARNING) ? 'translateX(109px)' : 'none', transition: 'all ease-in-out 150ms', width: '105px' }} />
     </Container>
