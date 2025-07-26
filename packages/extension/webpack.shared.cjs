@@ -3,7 +3,7 @@
 
 const path = require('path');
 
-require('dotenv').config({ path: path.resolve(__dirname, '../../', '.env') }); // ✅ Add this
+require('dotenv').config({ path: path.resolve(__dirname, '../../', '.env') });
 
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
