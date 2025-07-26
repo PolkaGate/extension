@@ -45,7 +45,7 @@ const Staked = ({ balance, decimal, token }: StakedProps) => {
               borderRadius: '9px',
               color: theme.palette.text.secondary,
               fontFamily: 'Inter',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: 600,
               width: 'max-content'
             }}
