@@ -3,10 +3,13 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
+import type { BN } from '@polkadot/util';
+import type { LogoInfo } from '../../../util/getLogo2';
+
+import { Collapse, Container, Grid, Skeleton, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { GradientDivider, TwoToneText } from '../../../components';
+import { AssetLogo, FormatBalance2, GradientDivider, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util/utils';
 
@@ -94,6 +97,56 @@ const StyledTextField = styled(TextField)(({ isExtension, theme }: { isExtension
   transition: 'all 150ms ease-out'
 }));
 
+interface SubAmountProps {
+  amount: BN | undefined;
+  title: string;
+  token: string | undefined;
+  genesisHash: string | undefined;
+  decimal: number | undefined;
+  logoInfo: LogoInfo | undefined;
+  isExtension?: boolean;
+}
+
+const SubAmount = ({ amount, decimal, genesisHash, isExtension, logoInfo, title, token }: SubAmountProps) => {
+  const theme = useTheme();
+
+  return (
+    <>
+      <GradientDivider style={{ my: '6px' }} />
+      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', gap: '6px', justifyContent: 'space-start', pl: '10px', pt: '8px' }}>
+        <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
+          {title}
+        </Typography>
+        <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+        {amount
+          ? (
+            <FormatBalance2
+              decimalPoint={4}
+              decimals={[decimal ?? 0]}
+              style={{
+                color: theme.palette.text.primary,
+                fontFamily: 'Inter',
+                fontSize: '13px',
+                fontWeight: 500,
+                width: 'max-content'
+              }}
+              tokens={[token ?? '']}
+              value={amount}
+            />)
+          : (
+            <Skeleton
+              animation='wave'
+              height='12px'
+              sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '70px' }}
+              variant='text'
+            />
+          )
+        }
+      </Container>
+    </>
+  );
+};
+
 interface Props {
   style?: SxProps<Theme>;
   title?: string;
@@ -107,9 +160,10 @@ interface Props {
   enteredValue?: string;
   errorMessage?: string | undefined;
   decimal: number | undefined;
+  subAmount?: SubAmountProps;
 }
 
-export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, title, titleInColor }: Props): React.ReactElement {
+export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -201,6 +255,17 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
           type='text'
           value={enteredValue ?? textFieldValue ?? ''}
         />
+        {subAmount &&
+          <SubAmount
+            amount={subAmount.amount}
+            decimal={subAmount.decimal}
+            genesisHash={subAmount.genesisHash}
+            isExtension={isExtension}
+            logoInfo={subAmount.logoInfo}
+            title={subAmount.title}
+            token={subAmount.token}
+          />
+        }
       </Stack>
       <Collapse in={!!errorMessage} sx={{ width: '100%' }}>
         <Typography color='#FF4FB9' variant='B-1'>
