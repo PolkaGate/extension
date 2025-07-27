@@ -9,7 +9,9 @@ import ExportAllAccounts from '../fullscreen/home/ExportAllAccounts';
 import { useTranslation } from '../hooks';
 import DropMenuContent from './DropMenuContent';
 
-const DropSelectContainer = styled(Grid)(({ focused }: { focused: boolean }) => ({
+const DropSelectContainer = styled(Grid, {
+  shouldForwardProp: (prop) => prop !== 'focused'
+})<{ focused: boolean }>(({ focused }) => ({
   ':hover': { background: '#674394' },
   alignItems: 'center',
   backdropFilter: 'blur(20px)',

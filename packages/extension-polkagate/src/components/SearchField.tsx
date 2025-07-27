@@ -4,7 +4,7 @@
 import { Container, styled, TextField, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
-const StyledTextField = styled(TextField)<{ height?: string, placeholderStyle?: React.CSSProperties }>(({ height, placeholderStyle, theme }) => ({
+const StyledTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== 'placeholderStyle' })<{ height?: string, placeholderStyle?: React.CSSProperties }>(({ height, placeholderStyle, theme }) => ({
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& fieldset.MuiOutlinedInput-notchedOutline': {

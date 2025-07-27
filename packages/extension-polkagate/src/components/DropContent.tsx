@@ -216,7 +216,7 @@ function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType,
           const isLastOne = options.length === index + 1;
 
           return (
-            <>
+            <React.Fragment key={ index }>
               {displayContentType === 'text'
                 ? (
                   <TextContentDisplay
@@ -247,7 +247,7 @@ function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType,
               {withDivider && !isLastOne &&
                 <GradientDivider style={{ my: '3px' }} />
               }
-            </>
+            </React.Fragment>
           );
         })}
       </DropContentContainer>

@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useIsBlueish, useIsDark, useTranslation } from '../hooks';
 
 const StyledTextField = styled(TextField, {
-  shouldForwardProp: (prop) => prop !== 'hasError'
+  shouldForwardProp: (prop) => prop !== 'hasError' && prop !== 'isBlueish'
 })<{ hasError?: boolean; isBlueish?: boolean }>(({ hasError, isBlueish, theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: hasError ? theme.palette.error.main : '#BEAAD833'

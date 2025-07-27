@@ -9,6 +9,7 @@ import { VelvetBox } from '../../style';
 import AccountIcon from './partials/AccountIcon';
 import Appearance from './partials/Appearance';
 import AutoLockTimer from './partials/AutoLockTimer';
+import DiagnosticsReports from './partials/DiagnosticsReports';
 import EnableCamera from './partials/EnableCamera';
 import EnableTestNet from './partials/EnableTestNet';
 import Language from './partials/Language';
@@ -26,13 +27,14 @@ function ExtensionSettings (): React.ReactElement {
               <EnableTestNet />
               <EnableCamera />
             </Stack>
-            <AutoLockTimer />
+            <DiagnosticsReports />
             <Password />
           </Stack>
           <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
             <AccountIcon />
             <Notification />
             <Appearance />
+            <AutoLockTimer />
           </Stack>
         </Stack>
       </VelvetBox>
