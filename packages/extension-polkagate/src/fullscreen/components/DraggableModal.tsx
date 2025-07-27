@@ -127,6 +127,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
               height: '36px',
               left: '20px',
               position: 'absolute',
+              top: noDivider ? '20px' : 'inherit',
               visibility: noCloseButton ? 'hidden' : 'visible',
               width: '36px',
               zIndex: 2

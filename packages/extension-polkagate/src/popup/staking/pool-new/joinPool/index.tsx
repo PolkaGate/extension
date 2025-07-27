@@ -6,9 +6,8 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { Motion } from '../../../../components';
-import { useBackground, usePools2, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useJoinPool, usePools2, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
-import { useJoinPool } from '../../../../util/api/staking';
 import JoinPoolBackButton from '../../partial/JoinPoolBackButton';
 import ChoosePool from './ChoosePool';
 import JoinPoolInput from './JoinPoolInput';

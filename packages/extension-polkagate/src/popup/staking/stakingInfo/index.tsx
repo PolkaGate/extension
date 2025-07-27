@@ -11,8 +11,9 @@ import { useNavigate } from 'react-router';
 import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
-import { ExtensionPopup, FormatBalance2, GradientButton } from '../../../components';
+import { FormatBalance2, GradientButton } from '../../../components';
 import { usePoolConst, useStakingConst, useTranslation } from '../../../hooks';
+import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
 import { remainingTime } from '../../../util/time';
 import { amountToHuman } from '../../../util/utils';
@@ -21,29 +22,34 @@ import Title from './Title';
 
 interface Props {
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
-  selectedPosition: PositionInfo;
+  selectedPosition: PositionInfo | undefined;
+  onNext?: () => void;
+  onClose?: () => void;
 }
 
-function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.ReactElement {
+function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { availableBalance, decimal, genesisHash, tokenSymbol } = selectedPosition;
-  const poolConsts = usePoolConst(genesisHash);
-  const stakingConsts = useStakingConst(genesisHash);
-  const _decimal = decimal || stakingConsts?.decimal || 1;
+  const poolConsts = usePoolConst(selectedPosition?.genesisHash);
+  const stakingConsts = useStakingConst(selectedPosition?.genesisHash);
+  const _decimal = selectedPosition?.decimal || stakingConsts?.decimal || 1;
 
   const eraLength = remainingTime(poolConsts?.eraLength?.toNumber() ?? 0);
-  const handleClose = useCallback(() => setSelectedPosition(undefined), [setSelectedPosition]);
-  const goStaking = useCallback(() => navigate('/pool/' + genesisHash + '/stake') as void, [genesisHash, navigate]);
+  const handleClose = useCallback(() => onClose ? onClose() : setSelectedPosition(undefined), [onClose, setSelectedPosition]);
+  const goStaking = useCallback(() => onNext ? onNext() : navigate('/pool/' + selectedPosition?.genesisHash + '/stake') as void, [selectedPosition?.genesisHash, navigate, onNext]);
 
   return (
-    <ExtensionPopup
-      handleClose={handleClose}
-      maxHeight='500px'
-      openMenu={!!selectedPosition}
-      px= {0}
-      style={{ position: 'relative' }}
-      withoutTopBorder
+    <SharePopup
+      modalProps={{ noDivider: true }}
+      onClose={handleClose}
+      open
+      popupProps={{
+        maxHeight: '500px',
+        openMenu: !!selectedPosition,
+        px: 0,
+        style: { position: 'relative' },
+        withoutTopBorder: true
+      }}
     >
       <Stack direction='column' sx={{ p: '10px 10px 0', position: 'relative', width: '100%', zIndex: 1 }}>
         <RedGradient style={{ right: '-3%' }} />
@@ -52,8 +58,8 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
             <FormatBalance2
               decimalPoint={2}
               decimals={[_decimal]}
-              tokens={[tokenSymbol]}
-              value={availableBalance ?? BN_ZERO}
+              tokens={[selectedPosition?.tokenSymbol ?? '']}
+              value={selectedPosition?.availableBalance ?? BN_ZERO}
             />
           </Typography>
         </Box>
@@ -77,7 +83,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
               <InfoRow
                 Icon={WalletMoney}
                 text1={'Stake anytime with as little as '}
-                text2={`${amountToHuman(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond, _decimal)} ${tokenSymbol}`}
+                text2={`${amountToHuman(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond, _decimal)} ${selectedPosition?.tokenSymbol}`}
                 text3={t('and start earning rewards actively within {{eraLength}}', { replace: { eraLength } })}
               />}
           <InfoRow
@@ -105,7 +111,7 @@ function StakingInfo ({ selectedPosition, setSelectedPosition }: Props): React.R
           text={t('Start staking')}
         />
       </Stack>
-    </ExtensionPopup>
+    </SharePopup>
   );
 }
 
