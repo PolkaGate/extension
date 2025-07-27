@@ -12,8 +12,7 @@ import { type BN } from '@polkadot/util';
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { TestnetBadge } from '../../../popup/staking/StakingPositions';
-import { updateStorage } from '../../../util';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, TEST_NETS } from '../../../util/constants';
+import { TEST_NETS } from '../../../util/constants';
 import { type PopupOpener, StakingPopUps } from '../util/utils';
 import { ChainIdentifier, TokenInfo } from './PositionItem';
 
@@ -92,30 +91,22 @@ interface Props {
   decimal: number;
   rate: number | undefined;
   token: string;
-  address: string | undefined;
   popupOpener: PopupOpener;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function EarningItem ({ address, availableBalance, chainName, decimal, genesisHash, popupOpener, rate, setSelectedPosition, token }: Props) {
+function EarningItem ({ availableBalance, chainName, decimal, genesisHash, popupOpener, rate, setSelectedPosition, token }: Props) {
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
   const onStake = useCallback(() => {
-    if (!address) {
-      return;
-    }
+    setSelectedPosition({
+      chainName,
+      genesisHash,
+      rate
+    } as PositionInfo);
 
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
-      .then(() => {
-        setSelectedPosition({
-          chainName,
-          genesisHash,
-          rate
-        } as PositionInfo);
-        popupOpener(StakingPopUps.STAKING_INFO)();
-      })
-      .catch(console.error);
-  }, [address, chainName, genesisHash, popupOpener, rate, setSelectedPosition]);
+    popupOpener(StakingPopUps.STAKING_INFO)();
+  }, [availableBalance, chainName, genesisHash, popupOpener, rate, setSelectedPosition]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
