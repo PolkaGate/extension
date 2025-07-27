@@ -1,15 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable object-curly-newline */
-
 import type { Icon } from 'iconsax-react';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
+import { useIsBlueish } from '@polkadot/extension-polkagate/src/hooks';
 import { noop } from '@polkadot/util';
+
 import useIsHovered from '../../../hooks/useIsHovered';
 
 export interface PortfolioActionButtonProps {
@@ -23,7 +22,8 @@ export interface PortfolioActionButtonProps {
 export default function PortfolioActionButton ({ Icon, disabled = false, isFullScreen = false, onClick, text }: PortfolioActionButtonProps): React.ReactElement {
   const containerRef = useRef(null);
   const isHovered = useIsHovered(containerRef);
-  
+  const isBlueish = useIsBlueish();
+
   const background = useMemo(() =>
     isFullScreen
       ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
@@ -45,7 +45,7 @@ export default function PortfolioActionButton ({ Icon, disabled = false, isFullS
         width: 'fit-content'
       }}
     >
-      <Icon color={isHovered && isFullScreen ? '#fff' : '#809ACB'} size={isFullScreen ? 24 : 19} variant='Bulk' />
+      <Icon color={isHovered && isFullScreen ? '#fff' : isBlueish ? '#809ACB' : '#AA83DC'} size={isFullScreen ? 24 : 19} variant='Bulk' />
       <Typography color={isFullScreen ? 'text.primary' : 'text.highlight'} variant={isFullScreen ? 'B-6' : 'B-2'}>
         {text}
       </Typography>

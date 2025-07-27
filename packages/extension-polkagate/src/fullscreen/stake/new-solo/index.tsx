@@ -45,7 +45,7 @@ export default function SoloFullScreen (): React.ReactElement {
     <>
       <HomeLayout>
         <Stack columnGap='8px' direction='column' sx={{ height: '685px' }}>
-          <StakingIcon variant='people' type='solo' />
+          <StakingIcon type='solo' variant='people' />
           <StakingPortfolioAndTiles
             availableBalanceToStake={stakingInfo.availableBalanceToStake}
             genesisHash={genesisHash}
