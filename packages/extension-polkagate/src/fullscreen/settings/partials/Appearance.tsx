@@ -5,10 +5,9 @@ import type { Icon } from 'iconsax-react';
 
 import { Stack, Typography } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 
-import { ColorContext } from '@polkadot/extension-polkagate/src/components/index';
-import { useIsDark } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useAlerts, useIsDark } from '@polkadot/extension-polkagate/src/hooks/index';
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 
 import { useTranslation } from '../../../components/translate';
@@ -20,8 +19,13 @@ export interface ItemProps{
 }
 
 function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
-  const colorMode = useContext(ColorContext);
-  const onClick = useCallback(() => colorMode.toggleColorMode(), [colorMode]);
+  const { notify } = useAlerts();
+  const { t } = useTranslation();
+  // const colorMode = useContext(ColorContext);
+  const onClick = useCallback(() => {
+  //  colorMode.toggleColorMode();
+    notify(t('Coming Soon!'), 'info');
+  }, [notify, t]);
 
   return (
     <Stack

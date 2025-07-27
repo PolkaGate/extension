@@ -28,8 +28,6 @@ interface Props {
 }
 
 function Content ({ setStep }: Props): React.ReactElement {
-  useBackground('drops');
-
   const { t } = useTranslation();
   const isPopup = useIsExtensionPopup();
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
@@ -94,6 +92,7 @@ function Content ({ setStep }: Props): React.ReactElement {
         columnGap='8px'
         label= {t('Hide Balance')}
         onChange={toggleHideNumbers}
+        showHidden
         style = {{ marginTop: '20px' }}
       />
       <DecisionButtons
@@ -116,6 +115,8 @@ function Content ({ setStep }: Props): React.ReactElement {
 
 function Login ({ setStep }: Props): React.ReactElement {
   const isExtensionPopup = useIsExtensionPopup();
+
+  useBackground('drops');
 
   return (
     <>

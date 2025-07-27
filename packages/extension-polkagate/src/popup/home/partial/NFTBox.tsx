@@ -7,12 +7,13 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
+
 import { logoBlackBirdTransparent } from '../../../assets/logos';
 import NftManager from '../../../class/nftManager';
 import { ActionButton } from '../../../components';
 import { fetchItemMetadata } from '../../../fullscreen/nft/utils/util';
 import { useIsDark, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
-import { windowOpen } from '../../../messaging';
 import { NFTItem } from './NFTItem';
 
 const nftManager = new NftManager();
@@ -89,7 +90,7 @@ function NFTBox () {
   }, [fetchMetadata, itemsToShow]);
 
   const openNft = useCallback(() => {
-    windowOpen(`/nft/${account?.address ?? ''}`).catch(console.error);
+    switchToOrOpenTab(`/nft/${account?.address ?? ''}`, true);
   }, [account?.address]);
 
   return (
@@ -102,6 +103,7 @@ function NFTBox () {
                 index={index}
                 info={item}
                 key={index}
+                onClick ={isExtension ? undefined : openNft}
               />
             ))}
           </Container>

@@ -8,6 +8,7 @@ import type { BalancesInfo, FetchedBalance } from '../../../util/types';
 import { Grid, Stack, Typography } from '@mui/material';
 import { Coin, Lock1, Trade, UserOctagon } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ReservedLockedPopup from '@polkadot/extension-polkagate/src/popup/tokens/partial/ReservedLockedPopup';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style/index';
@@ -16,7 +17,7 @@ import { BN_ZERO, noop } from '@polkadot/util';
 import { useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useTranslation } from '../../../hooks';
 import { getValue } from '../../../popup/account/util';
 import TokenDetailBox from '../../../popup/tokens/partial/TokenDetailBox';
-import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS } from '../../../util/constants';
+import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS, NATIVE_TOKEN_ASSET_ID } from '../../../util/constants';
 
 export type Type = 'locked' | 'reserved';
 
@@ -74,6 +75,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   const formatted = useFormatted3(address, genesisHash);
   const reservedReason = useReservedDetails2(formatted, genesisHash);
   const pricesInCurrency = usePrices();
+  const navigate = useNavigate();
   const { api } = useChainInfo(genesisHash);
   const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(address, genesisHash, undefined); // TODO: timeToUnlock!
 
@@ -109,6 +111,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   }, [api, genesisHash, t, unlockableAmount]);
 
   const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
+  const onTransferable = useCallback(() => navigate(`/send/${address}/${genesisHash}/${token?.assetId ?? NATIVE_TOKEN_ASSET_ID}`), [address, genesisHash, navigate, token?.assetId]);
 
   const displayPopup = useCallback((type: Type) => () => {
     const items: Record<string, BN | undefined> = {};
@@ -235,7 +238,8 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
               background='#05091C'
               decimal={token?.decimal}
               iconSize='20'
-              onClick={noop}
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              onClick={onTransferable}
               priceId={token?.priceId}
               title={t('Transferable')}
               token={token?.token}
@@ -272,7 +276,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
               decimal={token?.decimal}
               iconSize='20'
               iconVariant='Bold'
-              onClick={noop}
+              onClick={noop} // TODO @Amir
               priceId={token?.priceId}
               title={t('Pool Staked')}
               token={token?.token}
@@ -287,7 +291,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
               decimal={token?.decimal}
               iconSize='20'
               iconVariant='Bold'
-              onClick={noop}
+              onClick={noop} // TODO @Amir
               priceId={token?.priceId}
               title={t('Solo Staked')}
               token={token?.token}

@@ -10,7 +10,7 @@ import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useSt
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip, SearchField } from '../../components';
+import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
 import { AccountProfileLabel } from '../../fullscreen/components';
 import { useCategorizedAccountsInProfiles, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -39,11 +39,13 @@ function BackDrop ({ setMode }: { setMode: React.Dispatch<React.SetStateAction<P
 
 interface Props {
   mode: PROFILE_MODE;
+  searchKeyword: string | undefined;
+  onApply: () => void;
   setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>>
   setShowDeleteConfirmation: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
+function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts: flatAccounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -55,7 +57,6 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
   const isProfileDropDownOpen = mode === PROFILE_MODE.DROP_DOWN;
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
-  const [searchKeyword, setSearchKeyword] = useState<string>();
 
   useEffect(() => {
     setCategorizedAccounts(initialCategorizedAccounts);
@@ -67,17 +68,9 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
     }
   }, [flatAccounts.length, onAction]);
 
-  const onSearch = useCallback((keyword: string) => {
-    setSearchKeyword(keyword);
-  }, []);
-
   const onCreateClick = useCallback(() => {
     windowOpen('/account/create').catch(console.error);
   }, []);
-
-  const onApply = useCallback(() => {
-    setMode(PROFILE_MODE.NONE);
-  }, [setMode]);
 
   const onDeleteProfile = useCallback((label: string) => () => {
     setShowDeleteConfirmation(label);
@@ -93,7 +86,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
     return Object.entries(categorizedAccounts).reduce((acc, [label, accounts]) => {
       const filteredAccounts = accounts.filter((account) =>
         account.name?.toLowerCase().includes(keywordLower) ||
-          account.address.toLowerCase().includes(keywordLower)
+        account.address.toLowerCase().includes(keywordLower)
       );
 
       if (filteredAccounts.length > 0) {
@@ -109,11 +102,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
       {isProfileDropDownOpen &&
         <BackDrop setMode={setMode} />
       }
-      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
-        <SearchField
-          onInputChange={onSearch}
-          placeholder='🔍 Search accounts'
-        />
+      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {Object.keys(filteredCategorizedAccounts).length > 0 && (
@@ -152,6 +141,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
                               isInSettingMode={isInSettingMode}
                               isLast={isLast}
                               isSelected={account.address === selectedAccount?.address}
+                              showDrag ={isInSettingMode}
                             />
                           </React.Fragment>
                         );
@@ -162,7 +152,7 @@ function BodySection ({ mode, setMode, setShowDeleteConfirmation }: Props): Reac
               </>
             )}
           </Stack>
-          <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
+          <FadeOnScroll containerRef={refContainer} height='30px' ratio={0.3} />
         </VelvetBox>
         {
           isInSettingMode

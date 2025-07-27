@@ -3,7 +3,7 @@
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import React, { memo, useCallback, useRef } from 'react';
 
 import { FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
@@ -84,7 +84,7 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
 
   return (
     <VelvetBox style={style}>
-      <Container disableGutters id='scrollArea' ref={refContainer} sx={{ display: 'grid', height: isExtension ? 'inherit' : 'calc(100vh - 633px)', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
+      <Stack direction='column' id='scrollArea' ref={refContainer} sx={{ height: isExtension ? 'inherit' : 'calc(100vh - 633px)', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
         {!notReady && historyItems && Object.entries(historyItems).map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}
@@ -107,7 +107,7 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
           </Typography>
         }
         <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} />
-      </Container>
+      </Stack>
     </VelvetBox>
   );
 }

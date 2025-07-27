@@ -102,6 +102,7 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
         {flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
           <Confirmation2
             address={address ?? ''}
+            close={closeReview}
             genesisHash={genesisHash}
             transactionDetail={transactionDetail}
           />

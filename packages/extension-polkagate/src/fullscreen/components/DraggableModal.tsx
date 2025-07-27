@@ -23,10 +23,11 @@ export interface DraggableModalProps {
   TitleLogo?: React.ReactNode;
   width?: number;
   RightItem?: React.ReactNode;
+  rightItemStyle?: React.CSSProperties;
   noCloseButton?: boolean;
 }
 
-export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton = false, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -141,15 +142,16 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
                 {TitleLogo}
               </span>
             }
-            <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+            <Typography color='#EAEBF1' sx={{ ml: RightItem ? '60px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
               {title}
             </Typography>
+            {
+              RightItem &&
+              <Grid alignItems='center' container item sx={{ position: 'absolute', right: '15px', top: '25px', width: 'fit-content', zIndex: 2, ...rightItemStyle }}>
+                {RightItem}
+              </Grid>
+            }
           </Stack>
-          {RightItem &&
-            <Grid alignItems='center' container item sx={{ position: 'absolute', right: '15px', top: '25px', width: 'fit-content', zIndex: 2 }}>
-              {RightItem}
-            </Grid>
-          }
         </Grid>
         {
           !noDivider &&

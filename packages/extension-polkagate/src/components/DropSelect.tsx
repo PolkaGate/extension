@@ -16,7 +16,7 @@ import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 import { DropContent, ScrollingTextBox } from '.';
 
-const DropSelectContainer = styled(Grid)(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({
+const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'focused' })(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({
   '&:hover': { background: disabled ? '#1B133C' : '#2D1E4A' },
   alignItems: 'center',
   background: focused && !disabled ? '#05091C' : '#1B133C',

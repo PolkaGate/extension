@@ -31,9 +31,9 @@ function SharePopup ({ RightItem, children, modalProps, modalStyle, onClose, ope
           <ExtensionPopup
             RightItem={RightItem}
             handleClose={onClose}
-            {...popupProps}
             openMenu={open}
             title={title}
+            {...popupProps}
           >
             {children}
           </ExtensionPopup>)
@@ -42,9 +42,9 @@ function SharePopup ({ RightItem, children, modalProps, modalStyle, onClose, ope
             RightItem={RightItem}
             onClose={onClose}
             open={open}
-            {...modalProps}
             style={{ minHeight: '400px', padding: '20px', ...modalStyle }}
             title={title}
+            {...modalProps}
           >
             {children}
           </DraggableModal>)

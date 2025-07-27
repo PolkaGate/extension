@@ -55,7 +55,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[]
 function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccountList: AccountJson[] | undefined, width?: string }): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [hovered, setIsHovered] = useState('');
@@ -117,7 +117,7 @@ function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccoun
         showLeftArrow &&
         <Box justifyContent='start' sx={{ background: 'linear-gradient(90deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', left: '0px', position: 'absolute', width: '40px' }}>
           <ArrowCircleLeft
-            color={hovered === 'left' ? '#FF4FB9' : '#EAEBF1'}
+            color={hovered === 'left' ? '#FF4FB9' : '#AA83DC'}
             onClick={onClickLeftArrow}
             onMouseEnter={handleHover('left')}
             onMouseLeave={handleHover('')}
@@ -137,11 +137,13 @@ function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccoun
       {showRightArrow &&
         <Box justifyContent='end' sx={{ background: 'linear-gradient(270deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', right: '-7px', width: '40px' }}>
           <ArrowCircleRight
-            color={hovered === 'right' ? '#FF4FB9' : '#EAEBF1'}
+            color={hovered === 'right' ? '#FF4FB9' : '#AA83DC'}
             onClick={onClickRightArrow}
             onMouseEnter={handleHover('right')}
             onMouseLeave={handleHover('')}
-            size='24' style={{ cursor: 'pointer' }} variant='Bold'
+            size='24'
+            style={{ cursor: 'pointer' }}
+            variant='Bold'
           />
         </Box>
       }
