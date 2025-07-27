@@ -1,13 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 import type { Content } from '../partials/Review';
 import type { MyPoolInfo, PoolInfo, RewardDestinationType } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
-import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_TEN, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
@@ -1217,13 +1218,9 @@ export const useEasyStake = (
     return accountAssets.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0') ?? null;
   }, [accountAssets, genesisHash]);
   const amountAsBN = useMemo(() => (amount && decimal) ? amountToMachine(amount, decimal) : BN_ZERO, [amount, decimal]);
-  const availableBalanceToStake = useMemo(() => poolStakingInfo.availableBalanceToStake, [poolStakingInfo.availableBalanceToStake]);
-
-  // const freeBalance = useMemo(() => token?.freeBalance, [token?.freeBalance]);
+  const availableBalanceToStake = useMemo(() => token?.freeBalance, [token?.freeBalance]);
 
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, bondExtra?.({ FreeBalance: availableBalanceToStake ?? BN_ONE }));
-
-  // console.log('freeBalance:', freeBalance?.toString());
 
   const thresholds = useMemo(() => {
     if (!decimal || !estimatedFee || !availableBalanceToStake || !poolStakingInfo.poolStakingConsts || !poolStakingInfo.stakingConsts) {
@@ -1241,8 +1238,10 @@ export const useEasyStake = (
 
     setTopStakingLimit(maxAsBn);
 
-    const min = amountToHuman(minAsBn, decimal);
-    const max = amountToHuman(maxAsBn, decimal);
+    const min = minAsBn.div(BN_TEN.muln(decimal)).toString();
+    const max = maxAsBn.div(BN_TEN.muln(decimal)).toString();
+    // const min = amountToHuman(minAsBn, decimal);
+    // const max = amountToHuman(maxAsBn, decimal);
 
     return { max, min };
   }, [availableBalanceToStake, decimal, estimatedFee, poolStakingInfo.poolStakingConsts, poolStakingInfo.stakingConsts]);

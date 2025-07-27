@@ -4,18 +4,39 @@
 import type { BN } from '@polkadot/util';
 import type { PositionInfo } from '../../../util/types';
 
+import { Collapse, Container, Stack, Typography } from '@mui/material';
+import { ArrowRight2, People } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
 import { GradientButton } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useEasyStake, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
-import { useEasyStake } from '../../../util/api';
 import getLogo2 from '../../../util/getLogo2';
 import StakingPopup from '../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../util/utils';
-import { Stack } from '@mui/material';
+
+const StakingTypeOptionBox = ({ open }: { open: boolean; }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Collapse in={open}>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
+        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
+          <People color='#AA83DC' size='24' style={{ marginRight: '6px' }} variant='Bulk' />
+          <Typography color='text.primary' variant='B-3'>
+            {t('Pool Staking')}
+          </Typography>
+          <ArrowRight2 color='#AA83DC' size='18' />
+        </Container>
+        <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
+          {t('Recommended')}
+        </Typography>
+      </Container>
+    </Collapse>
+  );
+};
 
 interface Props {
   address: string | undefined;
@@ -28,17 +49,15 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
 
-  const { 
-    // amount,
-    // amountAsBN,
+  // amountAsBN,
+  const { amount,
     availableBalanceToStake,
     buttonDisable,
     errorMessage,
     onChangeAmount,
-    onThresholdAmount,
+    onMaxAmount,
+    onMinAmount,
     setAmount } = useEasyStake(address, selectedPosition?.genesisHash);
-
-  console.log('selectedPosition:', selectedPosition);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
   const [BNamount, setBNamount] = useState<BN | null | undefined>(BN_ZERO);
@@ -72,21 +91,20 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
       transaction={undefined}
       transactionInformation={[]}
     >
-      <Stack direction='column' sx={{ p: '18px', pt: 0 }}>
+      <Stack direction='column' sx={{ p: '18px' }}>
         <StakeAmountInput
           buttonsArray={[{
             buttonName: t('Max'),
-            value: onThresholdAmount('max') ?? '0'
+            value: onMaxAmount ?? '0'
           },
           {
             buttonName: t('Min'),
-            value: onThresholdAmount('min') ?? '0'
+            value: onMinAmount ?? '0'
           }]}
           decimal={decimal}
           errorMessage={errorMessage}
           focused
           onInputChange={onChangeAmount}
-          style={{ mb: '18px', mt: '18px' }}
           subAmount={{
             amount: availableBalanceToStake,
             decimal,
@@ -98,6 +116,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
           title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
           titleInColor={` (${token?.toUpperCase() ?? '--'})`}
         />
+        <StakingTypeOptionBox open={!!amount} />
         <GradientButton
           disabled={buttonDisable}
           isBusy={false}
