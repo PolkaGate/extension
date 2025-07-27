@@ -143,11 +143,13 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
     )?.sort((a, b) => {
       if (a.pooledBalance && b.pooledBalance) {
         return b.pooledBalance.cmp(a.pooledBalance);
-      } else if (a.soloTotal && b.soloTotal) {
-        return b.soloTotal.cmp(a.soloTotal);
-      } else {
-        return 0;
       }
+
+      if (a.soloTotal && b.soloTotal) {
+        return b.soloTotal.cmp(a.soloTotal);
+      }
+
+      return 0;
     });
   }, [positions, state.searchQuery, state.tab]);
 
