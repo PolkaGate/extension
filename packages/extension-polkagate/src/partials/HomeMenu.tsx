@@ -11,11 +11,13 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';
+import GovernanceModal from '../fullscreen/components/GovernanceModal';
 import { useIsHovered, useSelectedAccount } from '../hooks';
+import useAccountSelectedChain from '../hooks/useAccountSelectedChain';
 import { windowOpen } from '../messaging';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
-import useAccountSelectedChain from '../hooks/useAccountSelectedChain';
+import { ExtensionPopups } from '../util/constants';
 
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
@@ -93,13 +95,11 @@ function HomeMenu (): React.ReactElement {
   const account = useSelectedAccount();
   const lastSelectedAccountGenesisHash = useAccountSelectedChain(account?.address);
   const { assetId } = useParams<{ assetId: string }>();
-
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const navigate = useNavigate();
-
   const [leftPosition, setLeftPosition] = useState<number | null>(null);
   const [currentMenu, setCurrentMenu] = useState<string>();
-  const [openReceive, setOpenReceive] = useState<boolean>(false);
+  const [openModal, setOpen] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const page = useMemo(() => {
     if (!pathname || pathname === '/') {
@@ -122,26 +122,17 @@ function HomeMenu (): React.ReactElement {
     return () => clearTimeout(timeout);
   }, [page, state?.previousUrl]);
 
-  const handleMenuClick = useCallback((input: Pages) => () => {
-    if (input === 'send') {
-      account && windowOpen(`/send/${account.address}/${lastSelectedAccountGenesisHash}/${assetId ?? 0}`).catch(console.error);
-
-      return;
+  const handleMenuClick = useCallback((input: Pages) => (): void => {
+    switch (input) {
+      case 'send':
+        return (account && windowOpen(`/send/${account.address}/${lastSelectedAccountGenesisHash}/${assetId ?? 0}`))as unknown as void;
+      case 'receive':
+        return setOpen(ExtensionPopups.RECEIVE);
+      case 'governance':
+        return setOpen(ExtensionPopups.GOVERNANCE);
+      default:
+        navigate(`/${input}`, { state: { previousUrl: page } }) as void;
     }
-
-    if (input === 'receive') {
-      setOpenReceive(true);
-
-      return;
-    }
-
-    if (input === 'governance') {
-      account && windowOpen(`/governance/${account.address}/referenda`).catch(console.error);
-
-      return;
-    }
-
-    navigate(`/${input}`, { state: { previousUrl: page } }) as void;
   }, [account, assetId, lastSelectedAccountGenesisHash, navigate, page]);
 
   const selectionLineStyle = useMemo(() => ({
@@ -170,9 +161,16 @@ function HomeMenu (): React.ReactElement {
         </Grid>
       </Container>
       <Receive
-        openPopup={openReceive}
-        setOpenPopup={setOpenReceive}
+        openPopup={openModal === ExtensionPopups.RECEIVE}
+        setOpenPopup={setOpen}
       />
+      {
+        openModal === ExtensionPopups.GOVERNANCE &&
+        <GovernanceModal
+          open={openModal === ExtensionPopups.GOVERNANCE}
+          setOpen={setOpen}
+        />
+      }
     </>
   );
 }
