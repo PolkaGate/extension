@@ -84,7 +84,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
           const chainName = chain.name;
 
           return (
-            <>
+            <React.Fragment key={index}>
               <ListItem container item key={index} onClick={handleChainSelect(chain)}>
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                   <ChainLogo chainName={chainName} size={18} />
@@ -95,9 +95,9 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
               </ListItem>
               {
                 index !== chainsToShow.length - 1 &&
-              <GradientDivider style={{ my: '3px' }} />
+                <GradientDivider style={{ my: '3px' }} />
               }
-            </>
+            </React.Fragment>
           );
         })}
       </Grid>

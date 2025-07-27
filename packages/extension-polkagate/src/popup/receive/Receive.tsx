@@ -9,6 +9,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
+import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, NeonButton, SearchField } from '../../components';
@@ -41,7 +42,7 @@ interface AddressComponentProp {
   chain: NetworkInfo;
 }
 
-function AddressComponent ({ address, chain }: AddressComponentProp) {
+function AddressComponent({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -81,7 +82,7 @@ interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
 }
 
-function SelectChain ({ setSelectedChain }: SelectChainProp) {
+function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
 
   const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
@@ -125,25 +126,27 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
         />
       </Grid>
       <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
-        {chainsToShow.map((chain, index) => {
-          const chainName = chain.name;
+        {
+          chainsToShow.map((chain, index) => {
+            const chainName = chain.name;
 
-          return (
-            <>
-              <ListItem container item key={index} onClick={handleChainSelect(chain)}>
-                <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                  <ChainLogo chainName={chainName} size={18} />
-                  <Typography color='text.primary' variant='B-2'>
-                    {chainName}
-                  </Typography>
-                </Grid>
-              </ListItem>
-              {index !== chainsToShow.length - 1 &&
-                <GradientDivider style={{ my: '3px' }} />
-              }
-            </>
-          );
-        })}
+            return (
+              <React.Fragment key={index}>
+                <ListItem container item onClick={handleChainSelect(chain)}>
+                  <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
+                    <ChainLogo chainName={chainName} size={18} />
+                    <Typography color='text.primary' variant='B-2'>
+                      {chainName}
+                    </Typography>
+                  </Grid>
+                </ListItem>
+                {
+                  index !== chainsToShow.length - 1 &&
+                  <GradientDivider style={{ my: '3px' }} />
+                }
+              </React.Fragment>
+            );
+          })}
       </Grid>
     </Grid>
   );
@@ -211,7 +214,7 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
 
 interface Props {
   openPopup: boolean;
-  setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
 }
 
 export default function Receive ({ openPopup, setOpenPopup }: Props) {
@@ -220,7 +223,7 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
 
   const handleClose = useCallback(() => {
-    setOpenPopup(false);
+    setOpenPopup(ExtensionPopups.NONE);
     setSelectedChain(undefined);
   }, [setOpenPopup]);
 
@@ -253,7 +256,7 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
             {!selectedChain &&
-              <SelectChain
+              <SelectNetwork
                 setSelectedChain={setSelectedChain}
               />
             }

@@ -29,7 +29,7 @@ interface Props {
   fullWidthDropdown?: boolean;
 }
 
-function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, isDisabled, label, onChange, options, style }: Props) {
+function SelectChain ({ address, defaultValue, disabledItems, fullWidthDropdown, icon = undefined, isDisabled, label, onChange, options, style }: Props) {
   const currentChainName = useChainName(address !== 'dummy' ? address : undefined);
   const theme = useTheme();
   const isTestnetEnabled = useIsTestnetEnabled();
@@ -38,7 +38,7 @@ function SelectChain({ address, defaultValue, disabledItems, fullWidthDropdown, 
     !isTestnetEnabled
       ? [...(disabledItems || []), ...TEST_NETS]
       : disabledItems
-    , [disabledItems, isTestnetEnabled]);
+  , [disabledItems, isTestnetEnabled]);
 
   const onChangeNetwork = useCallback((newGenesisHash: string) => {
     try {

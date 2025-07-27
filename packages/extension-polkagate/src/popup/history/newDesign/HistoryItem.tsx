@@ -183,7 +183,7 @@ function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
           const noDivider = historyItems.length === index + 1;
 
           return (
-            <>
+            <React.Fragment key={index}>
               <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={openDetail(historyItem)} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
                   <HistoryIcon action={action} />
@@ -209,7 +209,7 @@ function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
                 </Grid>
               </Grid>
               {!noDivider && <GradientDivider style={{ my: '4px' }} />}
-            </>
+            </React.Fragment>
           );
         })}
       </Container>

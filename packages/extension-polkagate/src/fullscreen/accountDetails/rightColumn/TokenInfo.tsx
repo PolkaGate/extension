@@ -269,33 +269,33 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             />
             {
               stakings?.hasPoolStake &&
-            <TokenDetailBox
-              Icon={UserOctagon}
-              amount={stakings.maybePoolStake}
-              background='#05091C'
-              decimal={token?.decimal}
-              iconSize='20'
-              iconVariant='Bold'
-              onClick={noop} // TODO @Amir
-              priceId={token?.priceId}
-              title={t('Pool Staked')}
-              token={token?.token}
-            />
+              <TokenDetailBox
+                Icon={UserOctagon}
+                amount={stakings.maybePoolStake}
+                background='#05091C'
+                decimal={token?.decimal}
+                iconSize='20'
+                iconVariant='Bold'
+                onClick={noop} // TODO @Amir
+                priceId={token?.priceId}
+                title={t('Pool Staked')}
+                token={token?.token}
+              />
             }
             {
               stakings?.hasSoloStake &&
-            <TokenDetailBox
-              Icon={UserOctagon}
-              amount={stakings.maybeSoloStake}
-              background='#05091C'
-              decimal={token?.decimal}
-              iconSize='20'
-              iconVariant='Bold'
-              onClick={noop} // TODO @Amir
-              priceId={token?.priceId}
-              title={t('Solo Staked')}
-              token={token?.token}
-            />
+              <TokenDetailBox
+                Icon={UserOctagon}
+                amount={stakings.maybeSoloStake}
+                background='#05091C'
+                decimal={token?.decimal}
+                iconSize='20'
+                iconVariant='Bold'
+                onClick={noop} // TODO @Amir
+                priceId={token?.priceId}
+                title={t('Solo Staked')}
+                token={token?.token}
+              />
             }
           </Stack>
         </VelvetBox>

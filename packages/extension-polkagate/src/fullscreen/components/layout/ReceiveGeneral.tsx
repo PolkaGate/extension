@@ -10,7 +10,7 @@ import Receive from '../../accountDetails/rightColumn/Receive';
 import AccountListModal from '../AccountListModal';
 
 interface Props {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setOpen: React.Dispatch<React.SetStateAction<ExtensionPopups>>
 }
 
 function ReceiveGeneral ({ setOpen }: Props): React.ReactElement {
@@ -18,7 +18,7 @@ function ReceiveGeneral ({ setOpen }: Props): React.ReactElement {
   const [openReceive, setOpenReceive] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onClose = useCallback(() => {
-    setOpen(false);
+    setOpen(ExtensionPopups.NONE);
     setAddress(undefined);
   }, [setOpen]);
 
