@@ -10,11 +10,12 @@ import React, { useMemo, useRef } from 'react';
 import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, FormatBalance2, FormatPrice, MyTooltip } from '../../../components';
-import { useIsHovered } from '../../../hooks';
+import { useIsHideNumbers, useIsHovered } from '../../../hooks';
 
 interface TileActionButtonProps {
   text: string;
   Icon: Icon;
+  iconVariant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone';
   onClick: () => void;
   noText?: boolean;
   isRow?: boolean;
@@ -23,14 +24,14 @@ interface TileActionButtonProps {
   isFullScreen?: boolean;
 }
 
-export function TileActionButton ({ Icon, isDisabled = false, isFullScreen, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
 
   const color = useMemo(() =>
     isDisabled
-      ? '#809acb8c'
+      ? isFullScreen ? '#AA83DC' : '#809acb8c'
       : hovered
         ? '#ffffff'
         : isFullScreen
@@ -44,19 +45,20 @@ export function TileActionButton ({ Icon, isDisabled = false, isFullScreen, isRo
         <Grid alignItems='center' container item justifyContent='center' onClick={isDisabled ? noop : onClick} ref={containerRef}
           sx={{
             ':hover': isDisabled ? {} : { bgcolor: theme.palette.text.highlight, borderColor: 'transparent' },
-            bgcolor: isFullScreen ? '#2D1E4A' : '#110F2A',
+            bgcolor: isFullScreen ? isDisabled ? '#1B133C' : '#2D1E4A' : '#110F2A',
             border: isRow ? 'none' : '2px solid #060518',
             borderRadius: '11px',
             columnGap: '4px',
             cursor: isDisabled ? 'default' : 'pointer',
             flexWrap: 'nowrap',
+            opacity: isFullScreen && isDisabled ? '30%' : 1,
             p: isFullScreen ? '8.5px 6px' : '4px 7px',
             transition: 'all 150ms ease-out',
             ...style
           }}
           xs
         >
-          <Icon color={color} size='19' variant='Bulk' />
+          <Icon color={color} size='19' variant={iconVariant} />
           {!noText &&
             <Typography color={color} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
               {text}
@@ -76,8 +78,11 @@ interface StakingFiatCryptoFSProps {
 
 const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: StakingFiatCryptoFSProps) => {
   const theme = useTheme();
+  const { isHideNumbers } = useIsHideNumbers();
 
   const adaptiveDecimalPoint = useMemo(() => staked && decimal && (String(staked).length >= decimal - 1 ? 2 : 4), [decimal, staked]);
+
+  const isDisabled = useMemo(() => Boolean(staked?.isZero()), [staked]);
 
   return (
     <Grid container item>
@@ -93,13 +98,14 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
           : (
             <FormatPrice
               commify
-              decimalColor='#fff'
+              decimalColor={isDisabled ? '#674394' : '#fff'}
               dotStyle='normal'
               fontFamily='OdibeeSans'
-              fontSize='30px'
+              fontSize={isHideNumbers ? '16px' : '30px'}
               fontWeight={400}
               height={30}
               num={stakedInCurrency}
+              textColor={isDisabled ? '#674394' : undefined}
               width='fit-content'
             />)
         }
@@ -118,7 +124,7 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
               decimalPoint={adaptiveDecimalPoint}
               decimals={[decimal ?? 0]}
               style={{
-                color: theme.palette.text.secondary,
+                color: isDisabled ? '#674394' : theme.palette.text.secondary,
                 fontFamily: 'Inter',
                 fontSize: '12px',
                 fontWeight: 500,
@@ -152,7 +158,8 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
-  const isDisabledColor = isDisabled ? '#809acb8c' : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
+  const disabledColor = isFullScreen ? '#674394' : '#809acb8c';
+  const adjustedColor = isDisabled ? disabledColor : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
 
   return (
     <Grid alignItems={isRow ? 'flex-start' : 'center'} container item
@@ -179,16 +186,16 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         }}
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: isRow ? '100%' : 'fit-content' }}>
-          <Icon color={isDisabledColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
+          <Icon color={adjustedColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
           {isRow && onExpand &&
-            <ArrowCircleDown color={isDisabledColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
-          <Typography color={isDisabledColor} sx={{ textWrap: 'nowrap' }} variant='B-1'>
+          <Typography color={adjustedColor} sx={{ textWrap: 'nowrap' }} variant='B-1'>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
-            <ArrowCircleDown color={isDisabledColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
         </Grid>
         {isFullScreen
           ? (
@@ -201,10 +208,10 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           : (
             <CryptoFiatBalance
               cryptoBalance={cryptoAmount}
-              cryptoProps={{ style: { color: isDisabledColor } }}
+              cryptoProps={{ style: { color: adjustedColor } }}
               decimal={decimal}
               fiatBalance={fiatAmount}
-              fiatProps={{ decimalColor: isDisabledColor, textColor: isDisabled ? '#809acb8c' : theme.palette.text.primary }}
+              fiatProps={{ decimalColor: adjustedColor, textColor: isDisabled ? '#809acb8c' : theme.palette.text.primary }}
               skeletonAlignment='flex-start'
               skeletonColor='none'
               style={{
@@ -234,6 +241,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           {buttonsArray.map((button, index) => (
             <TileActionButton
               Icon={button.Icon}
+              iconVariant={button.iconVariant}
               isDisabled={isDisabled}
               isFullScreen={isFullScreen}
               isRow={isRow}

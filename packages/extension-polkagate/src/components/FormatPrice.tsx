@@ -10,7 +10,7 @@ import CountUp from 'react-countup';
 import { useCurrency, useIsHideNumbers } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
 import { amountToHuman, getDecimal } from '../util/utils';
-import Dots, { type DotsStyle } from './Dots';
+import Dots, { type DotsVariant } from './Dots';
 
 interface Props {
   amount?: BN | null;
@@ -18,7 +18,7 @@ interface Props {
   decimalColor?: string;
   decimalPoint?: number;
   decimals?: number;
-  dotStyle?: DotsStyle;
+  dotStyle?: DotsVariant;
   fontFamily?: string;
   fontSize?: string;
   fontWeight?: number;
@@ -165,7 +165,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
   ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
 
   return (
-    <Grid item mt={mt} sx={{ height, ...style }} textAlign={textAlign}>
+    <Grid alignItems='center' container item mt={mt} sx={{ height, ...style }} textAlign={textAlign} width ='fit-content'>
       {isHideNumbers && !ignoreHide
         ? (
           <Dots
@@ -174,7 +174,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
             preText={mayCurrencySign}
             preTextFontSize={fontSize}
             preTextFontWeight={fontWeight}
-            style={dotStyle}
+            variant={dotStyle}
           />)
         : total !== undefined
           ? <Stack alignItems='baseline' direction='row' width='fit-content'>

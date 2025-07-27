@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ComponentProps } from 'react';
-import type { DotsStyle } from '@polkadot/extension-polkagate/src/components/Dots';
+import type { DotsVariant } from '@polkadot/extension-polkagate/src/components/Dots';
 import type { BN } from '@polkadot/util';
 
 import { Grid, Skeleton, useTheme } from '@mui/material';
@@ -67,7 +67,7 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
   const _priceProps = {
     commify: true,
     decimalColor: theme.palette.text.secondary,
-    dotStyle: 'normal' as DotsStyle,
+    dotStyle: 'normal' as DotsVariant,
     fontFamily: 'Inter',
     fontSize: '14px',
     fontWeight: 600,

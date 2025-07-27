@@ -5,7 +5,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid } from '@mui/material';
-import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade, Wallet } from 'iconsax-react';
+import { Add, Award, BuyCrypto, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade, Wallet } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { type BN } from '@polkadot/util';
@@ -39,10 +39,14 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
     <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '18px', display: 'flex', flexDirection: 'row', gap: '5px', overflow: 'hidden', p: '4px', position: 'relative' }} xs>
       <GlowBall />
       <StakingInfoTile
-        Icon={Moneys}
+        Icon={Award}
         buttonsArray={
           isPoolStaking
-            ? undefined
+            ? [{
+              Icon: Strongbox2,
+              onClick: popupOpener(StakingPopUps.CLAIM_REWARDS),
+              text: t('Withdraw')
+            }]
             : [{
               Icon: Timer,
               onClick: popupOpener(StakingPopUps.PENDING_REWARDS),
@@ -93,7 +97,8 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
       <StakingInfoTile
         Icon={Wallet}
         buttonsArray={[{
-          Icon: Wallet,
+          Icon: Add,
+          iconVariant: 'Linear',
           onClick: popupOpener(StakingPopUps.BOND_EXTRA),
           text: t('Stake more')
         }]}
