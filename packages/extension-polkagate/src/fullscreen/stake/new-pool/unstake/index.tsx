@@ -5,11 +5,10 @@ import { Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import GradientButton from '../../../../components/GradientButton';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { useChainInfo, useTranslation, useUnstakingPool } from '../../../../hooks';
 import FeeValue from '../../../../popup/staking/partial/FeeValue';
 import StakeAmountInput from '../../../../popup/staking/partial/StakeAmountInput';
 import TokenStakeStatus from '../../../../popup/staking/partial/TokenStakeStatus';
-import { useUnstakingPool } from '../../../../util/api/staking';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 

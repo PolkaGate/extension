@@ -8,11 +8,10 @@ import { People } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { usePools2, useSelectedAccount, useTranslation } from '../../../../hooks';
+import { useJoinPool, usePools2, useSelectedAccount, useTranslation } from '../../../../hooks';
 import { SORTED_BY } from '../../../../popup/staking/partial/PoolFilter';
 import { FetchPoolProgress } from '../../../../popup/staking/pool-new/joinPool/ChoosePool';
 import { VelvetBox } from '../../../../style';
-import { useJoinPool } from '../../../../util/api';
 import { PREFERRED_POOL_NAME } from '../../../../util/constants';
 import HomeLayout from '../../../components/layout';
 import PaginationRow from '../../../history/PaginationRow';

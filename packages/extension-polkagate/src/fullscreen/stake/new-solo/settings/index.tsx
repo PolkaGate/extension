@@ -3,9 +3,8 @@
 
 import React, { useCallback, useState } from 'react';
 
-import { useTranslation } from '../../../../hooks';
+import { useSoloSettings, useTranslation } from '../../../../hooks';
 import { Content } from '../../../../popup/staking/solo-new/settings';
-import { useSoloSettings } from '../../../../util/api/staking';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 

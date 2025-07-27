@@ -3,9 +3,8 @@
 
 import React, { useState } from 'react';
 
-import { useTranslation } from '../../../../hooks';
+import { useTranslation, useWithdrawClaimPool } from '../../../../hooks';
 import { Review } from '../../../../popup/staking/pool-new';
-import { useWithdrawClaimPool } from '../../../../util/api';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 

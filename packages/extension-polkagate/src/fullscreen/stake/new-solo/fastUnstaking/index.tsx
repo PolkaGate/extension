@@ -6,9 +6,8 @@ import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { GradientButton } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { useFastUnstaking, useTranslation } from '../../../../hooks';
 import { CheckEligibility, EligibilityItem, EligibilityStatus } from '../../../../popup/staking/solo-new/fast-unstake/FastUnstake';
-import { useFastUnstaking } from '../../../../util/api/staking';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 

@@ -9,8 +9,7 @@ import { Container, Grid, Link, Stack, Typography } from '@mui/material';
 import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { useChainInfo, useTranslation } from '../../../..//hooks';
-import { usePoolDetail } from '../../../..//util/api';
+import { useChainInfo, usePoolDetail, useTranslation } from '../../../..//hooks';
 import Subscan from '../../../../assets/icons/Subscan';
 import { DetailPanel, GradientButton, GradientDivider } from '../../../../components';
 import SnowFlake from '../../../../components/SVG/SnowFlake';

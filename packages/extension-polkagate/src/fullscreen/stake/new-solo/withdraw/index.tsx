@@ -3,8 +3,7 @@
 
 import React, { useState } from 'react';
 
-import { useTranslation } from '../../../../hooks';
-import { useWithdrawSolo } from '../../../../util/api';
+import { useTranslation, useWithdrawSolo } from '../../../../hooks';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 

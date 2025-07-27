@@ -11,9 +11,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawClaimPool } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
-import { useWithdrawClaimPool } from '../../../util/api/staking';
 import { isHexToBn } from '../../../util/utils';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';

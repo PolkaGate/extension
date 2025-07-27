@@ -10,9 +10,8 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useSelectedAccount, useTransactionFlow, useTranslation, useUnstakingPool } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { useUnstakingPool } from '../../../../util/api/staking';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';

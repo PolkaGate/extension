@@ -13,9 +13,8 @@ import { useNavigate, useParams } from 'react-router';
 import { BeatLoader } from 'react-spinners';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useSelectedAccount, useSoloSettings, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { useSoloSettings } from '../../../../util/api/staking';
 import { amountToHuman } from '../../../../util/utils';
 import PRadio from '../../components/Radio';
 import StakingActionButton from '../../partial/StakingActionButton';

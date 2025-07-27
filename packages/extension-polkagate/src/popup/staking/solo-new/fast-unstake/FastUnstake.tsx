@@ -9,9 +9,8 @@ import { SyncLoader } from 'react-spinners';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
-import { useBackground, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useFastUnstaking, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
-import { useFastUnstaking } from '../../../../util/api/staking';
 import StakingActionButton from '../../partial/StakingActionButton';
 import StakingMenu from '../../partial/StakingMenu';
 

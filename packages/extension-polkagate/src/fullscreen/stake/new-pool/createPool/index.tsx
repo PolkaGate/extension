@@ -7,12 +7,11 @@ import { Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { GradientButton } from '../../../../components';
-import { useChainInfo, useFormatted3, useTranslation } from '../../../../hooks';
+import { useChainInfo, useCreatePool, useFormatted3, useTranslation } from '../../../../hooks';
 import FeeValue from '../../../../popup/staking/partial/FeeValue';
 import StakeAmountInput from '../../../../popup/staking/partial/StakeAmountInput';
 import { PoolNameBox } from '../../../../popup/staking/pool-new/createPool';
 import UpdateRoles from '../../../../popup/staking/pool-new/createPool/UpdateRoles';
-import { useCreatePool } from '../../../../util/api/staking';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 

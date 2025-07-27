@@ -13,9 +13,8 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useBackground, useChainInfo, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
-import { useWithdrawSolo } from '../../../util/api/staking';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
