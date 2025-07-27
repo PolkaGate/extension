@@ -10,7 +10,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { DropSelect, GradientSwitch } from '../../../components';
+import { DropSelect, GradientSwitch, MySwitch } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import Search from '../../../popup/staking/components/Search';
 import { POSITION_TABS, type PositionsAction, type PositionsState, type StakingType } from '../util/utils';
@@ -124,15 +124,13 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
           width: state.tab === POSITION_TABS.POSITIONS ? '195px' : '300px'
         }}
       />
-      <Grid container item onClick={toggleTestnets} sx={{ alignItems: 'center', cursor: 'pointer', gap: '6px', width: 'fit-content' }}>
-        <GradientSwitch
-          checked={state.isTestnet}
-          onChange={noop}
-        />
-        <Typography color='text.secondary' variant='B-4'>
-          {t('Test Networks')}
-        </Typography>
-      </Grid>
+      <MySwitch
+        checked={state.isTestnet}
+        columnGap='6px'
+        label= {t('Test Networks')}
+        labelStyle={{ color: 'text.secondary', variant: 'B-4' }}
+        onChange={toggleTestnets}
+      />
     </Container>
   );
 }

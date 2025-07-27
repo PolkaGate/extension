@@ -3,7 +3,7 @@
 
 import type { SwitchProps } from '@mui/material/Switch';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, type TypographyOwnProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { EyeSlash } from 'iconsax-react';
@@ -16,6 +16,7 @@ import useIsDark from '../hooks/useIsDark';
 interface Props extends SwitchProps {
   columnGap?: string;
   label?: string;
+  labelStyle?: TypographyOwnProps;
   style?: React.CSSProperties;
   showHidden?: boolean;
 }
@@ -37,7 +38,7 @@ const HiddenIcon = () => {
   );
 };
 
-const MySwitch = ({ checked, columnGap, label, onChange, showHidden = false, style = {}, ...props }: Props) => {
+const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHidden = false, style = {}, ...props }: Props) => {
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
@@ -54,7 +55,7 @@ const MySwitch = ({ checked, columnGap, label, onChange, showHidden = false, sty
         showHidden={showHidden}
         {...props}
       />
-      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer' }} variant='B-1'>
+      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer' }} variant='B-1' {... labelStyle}>
         {label}
       </Typography>
     </Stack>
