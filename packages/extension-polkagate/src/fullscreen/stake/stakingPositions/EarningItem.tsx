@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PositionInfo } from '../../../util/types';
+
 import { Container, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import { Add, PercentageCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
@@ -26,7 +28,7 @@ const Staked = ({ balance, decimal, token }: StakedProps) => {
   const theme = useTheme();
 
   return (
-    <Grid container item sx={{ alignItems: 'center', gap: '6px', justifyContent: 'flex-end', minWidth: '150px', width: 'fit-content' }}>
+    <Grid container item sx={{ alignItems: 'center', gap: '6px', justifyContent: 'flex-start', minWidth: '160px', width: 'fit-content' }}>
       <Typography color='#AA83DC' variant='B-2'>
         {t('Available')}:
       </Typography>
@@ -58,7 +60,7 @@ const Staked = ({ balance, decimal, token }: StakedProps) => {
 
 const YieldBadge = ({ rate }: { rate: number | undefined }) => {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, p: '2px 6px', width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', width: 'fit-content' }}>
       <PercentageCircle color='#82FFA5' size='16' variant='Bold' />
       <Grid container item sx={{ fontSize: '14px', fontWeight: 600, gap: '3px', width: 'fit-content' }}>
         <span style={{ color: '#82FFA5' }}>up</span>
@@ -86,14 +88,16 @@ const StakeButton = ({ onClick }: { onClick: () => void }) => {
 interface Props {
   genesisHash: string;
   availableBalance: BN;
+  chainName: string;
   decimal: number;
   rate: number | undefined;
   token: string;
   address: string | undefined;
   popupOpener: PopupOpener;
+  setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function EarningItem ({ address, availableBalance, decimal, genesisHash, popupOpener, rate, token }: Props) {
+function EarningItem ({ address, availableBalance, chainName, decimal, genesisHash, popupOpener, rate, setSelectedPosition, token }: Props) {
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
   const onStake = useCallback(() => {
@@ -102,12 +106,19 @@ function EarningItem ({ address, availableBalance, decimal, genesisHash, popupOp
     }
 
     updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
-      .then(() => popupOpener(StakingPopUps.EASY_STAKE)())
+      .then(() => {
+        setSelectedPosition({
+          chainName,
+          genesisHash,
+          rate
+        } as PositionInfo);
+        popupOpener(StakingPopUps.STAKING_INFO)();
+      })
       .catch(console.error);
-  }, [address, genesisHash, popupOpener]);
+  }, [address, chainName, genesisHash, popupOpener, rate, setSelectedPosition]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
       <Staked balance={availableBalance} decimal={decimal} token={token} />
       <ChainIdentifier genesisHash={genesisHash} />

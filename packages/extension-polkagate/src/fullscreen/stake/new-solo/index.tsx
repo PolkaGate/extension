@@ -1,8 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PositionInfo } from '../../../util/types';
+
 import { Stack } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { type BN } from '@polkadot/util';
@@ -24,6 +26,8 @@ export default function SoloFullScreen (): React.ReactElement {
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
   const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, 'solo', true);
+
+  const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
@@ -58,6 +62,7 @@ export default function SoloFullScreen (): React.ReactElement {
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}
+            setSelectedPosition={setSelectedPosition}
             stakingInfo={stakingInfo}
             token={token}
             type='solo'
@@ -69,6 +74,8 @@ export default function SoloFullScreen (): React.ReactElement {
         genesisHash={genesisHash}
         popupCloser={popupCloser}
         popupOpener={popupOpener}
+        selectedPosition={selectedPosition}
+        setSelectedPosition={setSelectedPosition}
         stakingInfo={stakingInfo}
         stakingPopup={stakingPopup}
         toBeReleased={toBeReleased}

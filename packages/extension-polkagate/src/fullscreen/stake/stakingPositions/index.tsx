@@ -70,9 +70,10 @@ interface EarningOptionsProps {
   address: string | undefined;
   popupOpener: PopupOpener;
   state: PositionsState;
+  setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-const EarningOptions = ({ address, earningItems, popupOpener, rates, state }: EarningOptionsProps) => (
+const EarningOptions = ({ address, earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
   <>
     {earningItems?.map((token, index) => {
       const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
@@ -86,11 +87,13 @@ const EarningOptions = ({ address, earningItems, popupOpener, rates, state }: Ea
         <EarningItem
           address={address}
           availableBalance={availableBalance}
+          chainName={chainName}
           decimal={decimal}
           genesisHash={genesisHash}
           key={index}
           popupOpener={popupOpener}
           rate={info.rate}
+          setSelectedPosition={setSelectedPosition}
           token={tokenSymbol}
         />
       );
@@ -100,9 +103,10 @@ const EarningOptions = ({ address, earningItems, popupOpener, rates, state }: Ea
 
 interface Props {
   popupOpener: PopupOpener;
+  setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function StakingPositions ({ popupOpener }: Props) {
+function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   const selectedAccount = useSelectedAccount();
   const containerRef = useRef(null);
   const accountAssets = useAccountAssets(selectedAccount?.address);
@@ -197,6 +201,7 @@ function StakingPositions ({ popupOpener }: Props) {
               earningItems={earningItems}
               popupOpener={popupOpener}
               rates={rates}
+              setSelectedPosition={setSelectedPosition}
               state={state}
             />)
         }

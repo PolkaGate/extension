@@ -3,10 +3,12 @@
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
-import type { MyPoolInfo } from '../../../util/types';
+import type { MyPoolInfo, PositionInfo } from '../../../util/types';
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
+import StakingInfo from '../../../popup/staking/stakingInfo';
+import EasyStake from '../easyStake';
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import PoolDetail from './joinPool/PoolDetail';
@@ -26,9 +28,16 @@ interface Props {
   toBeReleased: DateAmount[] | undefined;
   popupOpener: PopupOpener;
   poolInfo: MyPoolInfo | null | undefined;
+  setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
+  selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+  const handleClose = useCallback(() => {
+    popupCloser();
+    setSelectedPosition(undefined);
+  }, [popupCloser, setSelectedPosition]);
+
   return useMemo(() => {
     switch (stakingPopup) {
       case StakingPopUps.NONE:
@@ -99,10 +108,28 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
             poolDetail={poolInfo}
           />);
 
+      case StakingPopUps.STAKING_INFO:
+        return (
+          <StakingInfo
+            onClose={handleClose}
+            onNext={popupOpener(StakingPopUps.EASY_STAKE)}
+            selectedPosition={selectedPosition}
+            setSelectedPosition={setSelectedPosition}
+          />);
+
+      case StakingPopUps.EASY_STAKE:
+        return (
+          <EasyStake
+            address={address}
+            onClose={popupCloser}
+            selectedPosition={selectedPosition}
+            setSelectedPosition={setSelectedPosition}
+          />);
+
       default:
         return null;
     }
-  }, [address, genesisHash, poolInfo, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased]);
+  }, [address, genesisHash, handleClose, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
 }
 
 export default React.memo(PopUpHandler);

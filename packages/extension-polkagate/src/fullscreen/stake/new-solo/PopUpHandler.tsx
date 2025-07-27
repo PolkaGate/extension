@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DateAmount, SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
+import type { PositionInfo } from '../../../util/types';
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
+import StakingInfo from '../../../popup/staking/stakingInfo';
+import EasyStake from '../easyStake';
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import BondExtra from './bondExtra';
@@ -23,9 +26,16 @@ interface Props {
   popupCloser: PopupCloser;
   stakingInfo: SoloStakingInfo;
   toBeReleased: DateAmount[] | undefined;
+  setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
+  selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+  const handleClose = useCallback(() => {
+    popupCloser();
+    setSelectedPosition(undefined);
+  }, [popupCloser, setSelectedPosition]);
+
   return useMemo(() => {
     switch (stakingPopup) {
       case StakingPopUps.NONE:
@@ -104,10 +114,28 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, staking
           />
         );
 
+      case StakingPopUps.STAKING_INFO:
+        return (
+          <StakingInfo
+            onClose={handleClose}
+            onNext={popupOpener(StakingPopUps.EASY_STAKE)}
+            selectedPosition={selectedPosition}
+            setSelectedPosition={setSelectedPosition}
+          />);
+
+      case StakingPopUps.EASY_STAKE:
+        return (
+          <EasyStake
+            address={address}
+            onClose={popupCloser}
+            selectedPosition={selectedPosition}
+            setSelectedPosition={setSelectedPosition}
+          />);
+
       default:
         return null;
     }
-  }, [address, genesisHash, popupCloser, popupOpener, stakingInfo, stakingPopup, toBeReleased]);
+  }, [address, genesisHash, handleClose, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
 }
 
 export default React.memo(PopUpHandler);

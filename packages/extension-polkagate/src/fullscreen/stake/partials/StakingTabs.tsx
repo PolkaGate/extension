@@ -4,6 +4,7 @@
 import type { Icon } from 'iconsax-react';
 import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 import type { UseStakingRewards } from '../../../hooks/useStakingRewards3';
+import type { PositionInfo } from '../../../util/types';
 
 import { Container, Stack, Typography } from '@mui/material';
 import { Discover, MagicStar, Wallet } from 'iconsax-react';
@@ -54,6 +55,7 @@ interface Props {
   token: string | undefined;
   popupOpener: PopupOpener;
   stakingInfo?: SoloStakingInfo;
+  setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
 enum STAKING_TABS {
@@ -63,7 +65,7 @@ enum STAKING_TABS {
   VALIDATORS
 }
 
-function StakingTabs ({ genesisHash, popupOpener, rewardInfo, stakingInfo, token, type }: Props) {
+function StakingTabs ({ genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
 
@@ -109,7 +111,7 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, stakingInfo, token
   const content = useMemo(() => {
     switch (tab) {
       case STAKING_TABS.STAKING_POSITIONS:
-        return <StakingPositions popupOpener={popupOpener} />;
+        return <StakingPositions popupOpener={popupOpener} setSelectedPosition={setSelectedPosition} />;
 
       case STAKING_TABS.REWARDS:
         return (
@@ -134,7 +136,7 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, stakingInfo, token
       default:
         return <></>;
     }
-  }, [genesisHash, popupOpener, rewardInfo, stakingInfo, tab, token, type]);
+  }, [genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, tab, token, type]);
 
   return (
     <Stack direction='column' sx={{ gap: '12px', px: '18px' }}>

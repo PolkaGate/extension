@@ -34,7 +34,8 @@ export enum StakingPopUps {
   REWARD_DESTINATION_CONFIG,
   CREATE_POOL,
   MY_POOL,
-  EASY_STAKE
+  EASY_STAKE,
+  STAKING_INFO
 }
 
 export type PopupOpener = (popup: StakingPopUps) => () => void;

@@ -1,8 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { PositionInfo } from '../../../util/types';
+
 import { Stack } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
@@ -23,6 +25,8 @@ export default function PoolFullScreen (): React.ReactElement {
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
   const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, 'pool', true);
+
+  const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
@@ -57,6 +61,7 @@ export default function PoolFullScreen (): React.ReactElement {
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}
+            setSelectedPosition={setSelectedPosition}
             token={token}
             type='pool'
           />
@@ -68,6 +73,8 @@ export default function PoolFullScreen (): React.ReactElement {
         poolInfo={stakingInfo.pool}
         popupCloser={popupCloser}
         popupOpener={popupOpener}
+        selectedPosition={selectedPosition}
+        setSelectedPosition={setSelectedPosition}
         stakingInfo={stakingInfo}
         stakingPopup={stakingPopup}
         toBeReleased={toBeReleased}
