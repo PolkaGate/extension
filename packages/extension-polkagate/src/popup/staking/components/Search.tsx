@@ -24,7 +24,9 @@ const SearchContainer = styled('div')(({ theme }) => ({
   width: '100%'
 }));
 
-const StyledInputBase = styled(InputBase)(({ inputColor, noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; inputColor: string | undefined; }) => ({
+const StyledInputBase = styled(InputBase, {
+  shouldForwardProp: (prop) => prop !== 'noSearchIcon' && prop !== 'theme' && prop !== 'inputColor'
+})(({ inputColor, noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; inputColor: string | undefined; }) => ({
   '& .MuiInputBase-input': {
     '&::placeholder': {
       color: inputColor ?? theme.palette.text.highlight,

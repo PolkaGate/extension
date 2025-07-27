@@ -23,7 +23,9 @@ interface AmountButtonInputProps {
   value: string;
 }
 
-const StyledButton = styled(Grid)(({ isExtension }: { isExtension: boolean }) => ({
+const StyledButton = styled(Grid, {
+  shouldForwardProp: (prop) => prop !== 'isExtension'
+})(({ isExtension }: { isExtension: boolean }) => ({
   '&:hover': {
     background: isExtension ? '#809ACB60' : '#3b295eff',
     transition: 'all 150ms ease-in-out'
@@ -51,7 +53,9 @@ const AmountButton = ({ buttonName, isExtension, onClick, value }: AmountButtonP
   );
 };
 
-const StyledTextField = styled(TextField)(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => ({
+const StyledTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== 'isExtension' && prop !== 'theme'
+})(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => ({
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& fieldset.MuiOutlinedInput-notchedOutline': {

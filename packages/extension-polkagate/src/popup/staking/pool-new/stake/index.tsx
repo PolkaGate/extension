@@ -13,7 +13,9 @@ import { BackWithLabel, FormatBalance2, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useIsExtensionPopup, useIsHovered, usePoolConst, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 
-const OptionBox = styled(Box)(({ isExtension, isSelected }: { isExtension: boolean, isSelected?: boolean; }) => ({
+const OptionBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'isExtension' && prop !== 'isSelected'
+})(({ isExtension, isSelected }: { isExtension: boolean, isSelected?: boolean; }) => ({
   backgroundColor: isExtension ? '#222540A6' : '#05091C',
   border: isExtension ? 'none' : isSelected ? '2px solid #FF4FB9' : '2px solid transparent',
   borderRadius: '14px',

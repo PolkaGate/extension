@@ -4,7 +4,7 @@
 import type { FetchedBalance, PositionInfo, Prices } from '../../../util/types';
 
 import { Stack } from '@mui/material';
-import React, { memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 
 import { FadeOnScroll } from '../../../components';
@@ -31,11 +31,11 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
       const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
-        return <></>;
+        return <Fragment key={index} />;
       }
 
       return (
-        <>
+        <Fragment key={index}>
           {pooledBalance && !pooledBalance?.isZero() && ['both', 'pool'].includes(state.stakingType) &&
             <PositionItem
               balance={pooledBalance}
@@ -58,7 +58,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
               token={token}
               type='solo'
             />}
-        </>
+        </Fragment>
       );
     })}
   </>
@@ -67,25 +67,23 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
 interface EarningOptionsProps {
   earningItems: PositionInfo[] | undefined;
   rates: Record<string, number> | undefined;
-  address: string | undefined;
   popupOpener: PopupOpener;
   state: PositionsState;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-const EarningOptions = ({ address, earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
+const EarningOptions = ({ earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
   <>
     {earningItems?.map((token, index) => {
       const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
       const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
-        return <></>;
+        return <Fragment key={index} />;
       }
 
       return (
         <EarningItem
-          address={address}
           availableBalance={availableBalance}
           chainName={chainName}
           decimal={decimal}
@@ -197,7 +195,6 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
             />)
           : (
             <EarningOptions
-              address={selectedAccount?.address}
               earningItems={earningItems}
               popupOpener={popupOpener}
               rates={rates}
