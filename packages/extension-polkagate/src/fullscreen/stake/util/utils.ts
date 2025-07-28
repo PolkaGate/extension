@@ -38,6 +38,16 @@ export enum StakingPopUps {
   STAKING_INFO
 }
 
+export interface SelectedEasyStakingType {
+  type: 'solo' | 'pool';
+  pool: PoolInfo | undefined;
+}
+export enum EasyStakeSide {
+  INPUT,
+  STAKING_TYPE,
+  SELECT_POOL
+}
+
 export type PopupOpener = (popup: StakingPopUps) => () => void;
 export type PopupCloser = () => void;
 
