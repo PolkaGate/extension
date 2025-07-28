@@ -551,7 +551,7 @@ export const useBondExtraSolo = (
     },
     {
       content: staked && bondExtraValue ? (staked as unknown as BN).add(bondExtraValue) : undefined,
-      title: t('Total Stake After'),
+      title: t('Total stake after'),
       withLogo: true
     }];
   }, [bondExtraValue, estimatedFee, staked, t]);
