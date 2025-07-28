@@ -5,7 +5,7 @@ import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
 import type { PopupCloser, Stats } from '../util/utils';
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
-import { Bank } from 'iconsax-react';
+import { Bank, Hierarchy, People, UserEdit } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
 import { GradientButton } from '../../../components';
@@ -38,9 +38,9 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
     { label: t('Min {{token}} to join a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minJoinBond, withLogo: true },
     { label: t('Min {{token}} to create a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minCreationBond, withLogo: true },
     { InfoIcon: Bank, label: t('Number of existing pools'), value: stakingInfo.poolStakingConsts?.lastPoolId.toString() },
-    { InfoIcon: Bank, label: t('Max possible pools'), value: getValue(stakingInfo.poolStakingConsts?.maxPools) },
-    { InfoIcon: Bank, label: t('Max possible pool members'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembers) },
-    { InfoIcon: Bank, label: t('Max pool members per pool'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembersPerPool) }
+    { InfoIcon: Hierarchy, label: t('Max possible pools'), value: getValue(stakingInfo.poolStakingConsts?.maxPools) },
+    { InfoIcon: People, label: t('Max possible pool members'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembers) },
+    { InfoIcon: UserEdit, label: t('Max pool members per pool'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembersPerPool) }
   ]), [getValue, stakingInfo.poolStakingConsts?.lastPoolId, stakingInfo.poolStakingConsts?.maxPoolMembers, stakingInfo.poolStakingConsts?.maxPoolMembersPerPool, stakingInfo.poolStakingConsts?.maxPools, stakingInfo.poolStakingConsts?.minCreationBond, stakingInfo.poolStakingConsts?.minJoinBond, t, token]);
 
   return (
