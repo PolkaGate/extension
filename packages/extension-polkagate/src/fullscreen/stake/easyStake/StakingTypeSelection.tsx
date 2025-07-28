@@ -1,0 +1,171 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { PoolInfo } from '../../../util/types';
+
+import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { ArrowRight2 } from 'iconsax-react';
+import React, { useCallback } from 'react';
+
+import { noop } from '@polkadot/util';
+
+import { FormatBalance2 } from '../../../components';
+import { useChainInfo, usePoolStakingInfo, useTranslation } from '../../../hooks';
+import PRadio from '../../../popup/staking/components/Radio';
+import { StakingInfoStack } from '../../../popup/staking/partial/NominatorsTable';
+import { PoolIdenticon } from '../../../popup/staking/partial/PoolIdenticon';
+import { isHexToBn } from '../../../util/utils';
+import StakingIcon from '../partials/StakingIcon';
+import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
+
+const LoadingPoolInformation = () => (
+  <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', display: 'flex', flexDirection: 'row', p: '4px', pl: '16px' }}>
+    <Skeleton animation='wave' height='24px' sx={{ borderRadius: '999px', transform: 'none', width: '24px' }} variant='text' />
+    <Stack direction='column' sx={{ gap: '4px', ml: '12px', width: 'fit-content' }}>
+      <Skeleton animation='wave' height='20px' sx={{ borderRadius: '6px', transform: 'none', width: '190px' }} variant='text' />
+      <Skeleton animation='wave' height='20px' sx={{ borderRadius: '6px', transform: 'none', width: '90px' }} variant='text' />
+    </Stack>
+    <Skeleton animation='wave' height='55px' sx={{ borderRadius: '6px', ml: 'auto', transform: 'none', width: '35px' }} variant='text' />
+  </Container>
+);
+
+interface SelectedPoolInformationProps {
+  genesisHash: string | undefined;
+  poolDetail: PoolInfo | undefined;
+  onClick: (event: React.MouseEvent) => void;
+}
+
+const SelectedPoolInformation = ({ genesisHash, onClick, poolDetail }: SelectedPoolInformationProps) => {
+  const theme = useTheme();
+  const { decimal, token } = useChainInfo(genesisHash);
+
+  return (
+    <>
+      {poolDetail
+        ? (
+          <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', p: '4px', pl: '16px' }}>
+            <PoolIdenticon
+              poolInfo={poolDetail}
+              size={24}
+            />
+            <Stack direction='column' sx={{ gap: '4px', mr: 'auto', width: 'fit-content' }}>
+              <Typography color='text.primary' variant='B-2'>
+                {poolDetail.metadata}
+              </Typography>
+              <FormatBalance2
+                decimals={[decimal ?? 0]}
+                style={{ ...theme.typography['B-4'], color: '#AA83DC', width: 'fit-content' }}
+                tokenColor='#AA83DC'
+                tokens={[token ?? '']}
+                value={isHexToBn(poolDetail.bondedPool?.points.toString() ?? '0')}
+              />
+            </Stack>
+            <Grid container item sx={{ p: '10px 20px', width: 'fit-content' }}>
+              <ArrowRight2 color='#AA83DC' size='18' variant='Bold' />
+            </Grid>
+          </Container>)
+        : <LoadingPoolInformation />}
+    </>
+  );
+};
+
+interface StakingTypeItemProps {
+  children: React.ReactNode;
+  type: 'solo' | 'pool';
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const StakingTypeItem = ({ children, isSelected, type }: StakingTypeItemProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack direction='column' sx={{ bgcolor: '#05091C', border: isSelected ? '2px solid #FF4FB9' : 'unset', borderRadius: '14px', cursor: 'pointer', gap: '8px', p: '6px', pt: '24px' }}>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, pb: '14px', px: '24px' }}>
+        <Grid container item sx={{ alignItems: 'center', flexWrap: 'nowrap', gap: '10px', width: 'fit-content' }}>
+          <PRadio
+            checked={isSelected}
+            circleSize={20}
+            onChange={noop}
+            value={type}
+          />
+          <Typography color={isSelected ? '#FF4FB9' : 'text.primary'} variant='B-3' width='max-content'>
+            {type === 'pool'
+              ? t('Pool Staking')
+              : t('Solo Staking')}
+          </Typography>
+        </Grid>
+        <StakingIcon noText style={{ width: 'fit-content' }} type={type} variant='people' />
+      </Container>
+      {children}
+    </Stack>
+  );
+};
+
+interface Props {
+  address: string | undefined;
+  genesisHash: string | undefined;
+  setSelectedStakingType: React.Dispatch<React.SetStateAction<SelectedEasyStakingType | undefined>>;
+  selectedStakingType: SelectedEasyStakingType | undefined;
+  setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
+}
+
+export default function StakingTypeSelection ({ address, genesisHash, selectedStakingType, setSelectedStakingType, setSide }: Props) {
+  const { t } = useTranslation();
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const onOptions = useCallback((type: 'pool' | 'solo') => () => {
+    type === 'pool' && setSelectedStakingType((perv) => ({
+      pool: perv?.pool,
+      type
+    }));
+
+    type === 'solo' && setSelectedStakingType({
+      pool: undefined,
+      type
+    });
+  }, [setSelectedStakingType]);
+
+  const openSelectPool = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    setSide(EasyStakeSide.SELECT_POOL);
+  }, [setSide]);
+
+  return (
+    <Stack direction='column' sx={{ gap: '8px', p: '18px' }}>
+      <StakingTypeItem
+        isSelected={selectedStakingType?.type === 'pool'}
+        onClick={onOptions('pool')}
+        type='pool'
+      >
+        <Stack direction='column'>
+          <Grid container item sx={{ alignItems: 'center', gap: '16px', pb: '24px', pl: '24px' }}>
+            <StakingInfoStack adjustedColorForTitle='#AA83DC' amount={stakingInfo.poolStakingConsts?.minJoinBond} decimal={decimal} title={t('Minimum Stake')} token={token} />
+            <StakingInfoStack adjustedColorForTitle='#AA83DC' text={t('Claim manually')} title={t('Rewards')} />
+          </Grid>
+          <SelectedPoolInformation
+            genesisHash={genesisHash}
+            onClick={openSelectPool}
+            poolDetail={selectedStakingType?.pool}
+          />
+        </Stack>
+      </StakingTypeItem>
+      <StakingTypeItem
+        isSelected={selectedStakingType?.type === 'solo'}
+        onClick={onOptions('solo')}
+        type='solo'
+      >
+        <Stack direction='column' sx={{ gap: '18px', pb: '24px', pl: '24px' }}>
+          <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+            {t('Advanced staking management')}
+          </Typography>
+          <Grid container item sx={{ alignItems: 'center', gap: '16px' }}>
+            <StakingInfoStack adjustedColorForTitle='#AA83DC' amount={stakingInfo.poolStakingConsts?.minJoinBond} decimal={decimal} title={t('Minimum Stake')} token={token} />
+            <StakingInfoStack adjustedColorForTitle='#AA83DC' text={t('Paid automatically')} title={t('Rewards')} />
+          </Grid>
+        </Stack>
+      </StakingTypeItem>
+    </Stack>
+  );
+}
