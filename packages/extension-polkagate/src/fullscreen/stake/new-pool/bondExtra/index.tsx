@@ -54,7 +54,7 @@ export default function BondExtra ({ address, genesisHash, onClose }: Props): Re
           decimal={decimal}
           genesisHash={genesisHash}
           style={{ mt: '8px' }}
-          text={t('Staked')}
+          text={t('Available to stake')}
           token={token}
         />
         <StakeAmountInput
