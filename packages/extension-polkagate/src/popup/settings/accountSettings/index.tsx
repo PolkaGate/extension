@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { DocumentDownload, Edit2, LogoutCurve, Notification, People,ShieldSecurity } from 'iconsax-react';
+import { DocumentDownload, Edit2, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
+import { updateMeta, windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { noop } from '@polkadot/util';
 
 import { AccountContext, ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
@@ -48,6 +48,7 @@ function AccountSettings (): React.ReactElement {
   const onDapps = useCallback(() => setPopup(ExtensionPopups.DAPPS), []);
   const onForget = useCallback(() => setPopup(ExtensionPopups.REMOVE), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
+  const onImport = useCallback(() => windowOpen('/account/have-wallet'), []);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -84,17 +85,17 @@ function AccountSettings (): React.ReactElement {
           title={t('Rename Account')}
         />
         <ActionCard
-          Icon={People}
+          Icon={ImportCurve}
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={noop}
+          onClick={onImport}
           style={{
             alignItems: 'center',
             height: '64px',
             mt: '8px'
           }}
-          title={t('Manage Profile')}
+          title={t('Import Account')}
         />
         <ActionCard
           Icon={ShieldSecurity}
