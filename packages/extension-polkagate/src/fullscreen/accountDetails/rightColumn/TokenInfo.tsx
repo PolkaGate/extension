@@ -211,8 +211,8 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
-  const onStaking = useCallback((type: string) => {
-    navigate(`/fullscreen-stake/${type}/${genesisHash}`);
+  const onStaking = useCallback((type: string) => () => {
+    navigate(`/fullscreen-stake/${type}/${genesisHash}`) as void;
   }, [genesisHash, navigate]);
 
   const stakings = useMemo(() => {
@@ -280,8 +280,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
                 decimal={token?.decimal}
                 iconSize='20'
                 iconVariant='Bold'
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick={() => onStaking('pool')}
+                onClick={onStaking('pool')}
                 priceId={token?.priceId}
                 title={t('Pool Staked')}
                 token={token?.token}
@@ -296,8 +295,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
                 decimal={token?.decimal}
                 iconSize='20'
                 iconVariant='Bold'
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick={() => onStaking('solo')}
+                onClick={onStaking('solo')}
                 priceId={token?.priceId}
                 title={t('Solo Staked')}
                 token={token?.token}

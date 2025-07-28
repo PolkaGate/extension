@@ -55,7 +55,7 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
         showHidden={showHidden}
         {...props}
       />
-      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer' }} variant='B-1' {... labelStyle}>
+      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer', width: 'max-content' }} variant='B-1' {... labelStyle}>
         {label}
       </Typography>
     </Stack>

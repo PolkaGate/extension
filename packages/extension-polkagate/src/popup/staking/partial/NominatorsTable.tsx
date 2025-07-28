@@ -51,9 +51,10 @@ export interface StakingInfoStackProps {
   text?: string | undefined;
   amount?: string | BN | Compact<INumber> | null | undefined;
   secondaryColor?: string;
+  adjustedColorForTitle?: string;
 }
 
-export const StakingInfoStack = memo(function StakingInfoStack ({ amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
+export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorForTitle, amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -78,7 +79,7 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ amount, decima
           {text}
         </Typography>
       }
-      <Typography color='text.highlight' textAlign='left' variant={isExtension ? 'B-4' : 'B-6'}>
+      <Typography color={adjustedColorForTitle ?? 'text.highlight'} textAlign='left' variant={isExtension ? 'B-4' : 'B-6'}>
         {title}
       </Typography>
     </Stack>

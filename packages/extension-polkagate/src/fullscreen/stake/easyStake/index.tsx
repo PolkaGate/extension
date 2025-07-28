@@ -15,14 +15,16 @@ import { useChainInfo, useEasyStake, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
 import getLogo2 from '../../../util/getLogo2';
 import StakingPopup from '../partials/StakingPopup';
-import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../util/utils';
+import { EasyStakeSide, FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, type SelectedEasyStakingType } from '../util/utils';
+// import SelectPool from './SelectPool';
+import StakingTypeSelection from './StakingTypeSelection';
 
-const StakingTypeOptionBox = ({ open }: { open: boolean; }) => {
+const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: boolean; onClick: () => void; selectedStakingType: SelectedEasyStakingType | undefined; }) => {
   const { t } = useTranslation();
 
   return (
     <Collapse in={open}>
-      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
+      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
           <People color='#AA83DC' size='24' style={{ marginRight: '6px' }} variant='Bulk' />
           <Typography color='text.primary' variant='B-3'>
@@ -30,11 +32,71 @@ const StakingTypeOptionBox = ({ open }: { open: boolean; }) => {
           </Typography>
           <ArrowRight2 color='#AA83DC' size='18' />
         </Container>
-        <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
-          {t('Recommended')}
-        </Typography>
+        {selectedStakingType?.type === 'pool' &&
+          <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
+            {t('Recommended')}
+          </Typography>}
       </Container>
     </Collapse>
+  );
+};
+
+interface InputPageProp {
+  genesisHash: string | undefined;
+  onMaxAmount: string | undefined;
+  onMinAmount: string | undefined;
+  errorMessage: string | undefined;
+  onChangeAmount: (value: string) => void;
+  availableBalanceToStake: BN | undefined;
+  amount: string | undefined;
+  onNext: () => void;
+  buttonDisable: boolean;
+  selectedStakingType: SelectedEasyStakingType | undefined;
+  setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
+}
+
+const InputPage = ({ amount, availableBalanceToStake, buttonDisable, errorMessage, genesisHash, onChangeAmount, onMaxAmount, onMinAmount, onNext, selectedStakingType, setSide }: InputPageProp) => {
+  const { t } = useTranslation();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+
+  const onTypeOption = useCallback(() => setSide(EasyStakeSide.STAKING_TYPE), [setSide]);
+
+  return (
+    <Stack direction='column' sx={{ p: '18px' }}>
+      <StakeAmountInput
+        buttonsArray={[{
+          buttonName: t('Max'),
+          value: onMaxAmount ?? '0'
+        },
+        {
+          buttonName: t('Min'),
+          value: onMinAmount ?? '0'
+        }]}
+        decimal={decimal}
+        errorMessage={errorMessage}
+        focused
+        onInputChange={onChangeAmount}
+        subAmount={{
+          amount: availableBalanceToStake,
+          decimal,
+          genesisHash,
+          logoInfo,
+          title: t('Available'),
+          token
+        }}
+        title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
+        titleInColor={` (${token?.toUpperCase() ?? '--'})`}
+      />
+      <StakingTypeOptionBox onClick={onTypeOption} open={!!amount} selectedStakingType={selectedStakingType} />
+      <GradientButton
+        disabled={buttonDisable}
+        isBusy={false}
+        onClick={onNext}
+        style={{ marginTop: '265px' }}
+        text={t('Next')}
+      />
+    </Stack>
   );
 };
 
@@ -47,21 +109,35 @@ interface Props {
 
 function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
-  const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
+  const { token } = useChainInfo(selectedPosition?.genesisHash, true);
 
   // amountAsBN,
   const { amount,
     availableBalanceToStake,
     buttonDisable,
     errorMessage,
+    initialPool,
     onChangeAmount,
     onMaxAmount,
     onMinAmount,
     setAmount } = useEasyStake(address, selectedPosition?.genesisHash);
 
+  const [side, setSide] = useState<EasyStakeSide>(EasyStakeSide.INPUT);
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
   const [BNamount, setBNamount] = useState<BN | null | undefined>(BN_ZERO);
+  const [selectedStakingType, setSelectedStakingType] = useState<SelectedEasyStakingType | undefined>(undefined);
   // const [isNextClicked, setNextIsClicked] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (selectedStakingType || !initialPool) {
+      return;
+    }
+
+    setSelectedStakingType({
+      pool: initialPool,
+      type: 'pool'
+    });
+  }, [initialPool, selectedStakingType]);
 
   useEffect(() => {
     if (BNamount === BN_ZERO) {
@@ -72,7 +148,6 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
     setBNamount(BN_ZERO);
   }, [BNamount, setAmount]);
 
-  const logoInfo = useMemo(() => getLogo2(selectedPosition?.genesisHash, token), [selectedPosition?.genesisHash, token]);
   const onNext = useCallback(() => setFlowStep(FULLSCREEN_STAKING_TX_FLOW.REVIEW), []);
   const handleClose = useCallback(() => {
     onClose();
@@ -91,40 +166,38 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
       transaction={undefined}
       transactionInformation={[]}
     >
-      <Stack direction='column' sx={{ p: '18px' }}>
-        <StakeAmountInput
-          buttonsArray={[{
-            buttonName: t('Max'),
-            value: onMaxAmount ?? '0'
-          },
-          {
-            buttonName: t('Min'),
-            value: onMinAmount ?? '0'
-          }]}
-          decimal={decimal}
-          errorMessage={errorMessage}
-          focused
-          onInputChange={onChangeAmount}
-          subAmount={{
-            amount: availableBalanceToStake,
-            decimal,
-            genesisHash: selectedPosition?.genesisHash,
-            logoInfo,
-            title: t('Available'),
-            token
-          }}
-          title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
-          titleInColor={` (${token?.toUpperCase() ?? '--'})`}
-        />
-        <StakingTypeOptionBox open={!!amount} />
-        <GradientButton
-          disabled={buttonDisable}
-          isBusy={false}
-          onClick={onNext}
-          style={{ marginTop: '265px' }}
-          text={t('Next')}
-        />
-      </Stack>
+      <>
+        {side === EasyStakeSide.INPUT &&
+          <InputPage
+            amount={amount}
+            availableBalanceToStake={availableBalanceToStake}
+            buttonDisable={buttonDisable}
+            errorMessage={errorMessage}
+            genesisHash={selectedPosition?.genesisHash}
+            onChangeAmount={onChangeAmount}
+            onMaxAmount={onMaxAmount}
+            onMinAmount={onMinAmount}
+            onNext={onNext}
+            selectedStakingType={selectedStakingType}
+            setSide={setSide}
+          />
+        }
+        {side === EasyStakeSide.STAKING_TYPE &&
+          <StakingTypeSelection
+            address={address}
+            genesisHash={selectedPosition?.genesisHash}
+            selectedStakingType={selectedStakingType}
+            setSelectedStakingType={setSelectedStakingType}
+            setSide={setSide}
+          />
+        }
+        {/* {side === EasyStakeSide.SELECT_POOL &&
+          <SelectPool
+            genesisHash={selectedPosition?.genesisHash}
+            setSelectedStakingType={setSelectedStakingType}
+          />
+        } */}
+      </>
     </StakingPopup>
   );
 }
