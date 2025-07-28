@@ -29,7 +29,9 @@ interface TokenDetailBoxProp {
 }
 const DISABLED_COLOR = '#674394'; // should be added to theme
 
-const TokenDetailBoxContainer = styled(Grid)(({ background, clickable }: { background: string, clickable: boolean }) => ({
+const TokenDetailBoxContainer = styled(Grid, {
+  shouldForwardProp: (prop) => prop !== 'background' && prop !== 'clickable'
+})(({ background, clickable }: { background: string, clickable: boolean }) => ({
   ':hover': clickable
     ? {
       background: '#2D1E4A',

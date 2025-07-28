@@ -11,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
 import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useTranslation } from '../../../hooks';
+import { useChainInfo, useTranslation } from '../../../hooks';
+import GovernanceModal from '../../components/GovernanceModal';
 import Receive from './Receive';
 
 interface ActionBoxProps {
@@ -48,9 +49,12 @@ interface Props {
 
 function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(ExtensionPopups.NONE);
+  const { chainName } = useChainInfo(genesisHash);
 
-  const onClick = useCallback(() => setOpen(ExtensionPopups.RECEIVE), []);
+  const [openModal, setOpen] = useState(ExtensionPopups.NONE);
+
+  const onReceiveClick = useCallback(() => setOpen(ExtensionPopups.RECEIVE), []);
+  const onGovernanceClick = useCallback(() => setOpen(ExtensionPopups.GOVERNANCE), []);
 
   return (
     <>
@@ -64,13 +68,13 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           <ActionBox
             Icon={ArrowCircleDown2}
             label={t('Receive')}
-            onClick={onClick}
+            onClick={onReceiveClick}
           />
-          {GOVERNANCE_CHAINS.includes(genesisHash ?? '') &&
+          {GOVERNANCE_CHAINS.includes(chainName?.toLocaleLowerCase() ?? '') &&
             <ActionBox
               Icon={MedalStar}
               label={t('Governance')}
-              path={`/governance/${address}/referenda`}
+              onClick={onGovernanceClick}
             />}
           {STAKING_CHAINS.includes(genesisHash ?? '') &&
             <ActionBox
@@ -86,12 +90,21 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
         </Stack>
       </VelvetBox>
       {
-        open === ExtensionPopups.RECEIVE &&
+        openModal === ExtensionPopups.RECEIVE &&
         <Receive
           address={address}
-          open={open === ExtensionPopups.RECEIVE}
+          open={openModal === ExtensionPopups.RECEIVE}
           setOpen={setOpen}
-        />}
+        />
+      }
+      {
+        openModal === ExtensionPopups.GOVERNANCE &&
+        <GovernanceModal
+          chainName={chainName}
+          open={openModal === ExtensionPopups.GOVERNANCE}
+          setOpen={setOpen}
+        />
+      }
     </>
   );
 }

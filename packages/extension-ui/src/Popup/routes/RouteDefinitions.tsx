@@ -10,7 +10,6 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
 import AccountsLists from '@polkadot/extension-polkagate/src/popup/accountsLists';
 import Home from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
-import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
 import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
@@ -47,17 +46,6 @@ const TOKEN_ROUTE: RouteConfig[] = [
 ];
 
 const DERIVE_ROUTES: RouteConfig[] = [
-  {
-    Component: Derive,
-    path: '/derive/:address/locked',
-    props: { isLocked: true },
-    trigger: 'derived-address-locked'
-  },
-  {
-    Component: Derive,
-    path: '/derive/:address',
-    trigger: 'derive-address'
-  },
   {
     Component: FullscreenDerive,
     path: '/derivefs/:address/',

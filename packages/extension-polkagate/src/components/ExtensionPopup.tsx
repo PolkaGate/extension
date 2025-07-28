@@ -120,11 +120,16 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
               </Typography>
             }
           </Grid>
-          {RightItem &&
+          {
+            RightItem &&
             <Grid alignItems='center' container item sx={{ position: 'absolute', pt: '15px', right: '15px', top: '5px', width: 'fit-content', zIndex: 2 }}>
               {RightItem}
-            </Grid>}
-          {!withoutTopBorder && <GradientDivider />}
+            </Grid>
+          }
+          {
+            !withoutTopBorder &&
+            <GradientDivider />
+          }
           <Gradient pt={pt} withoutBackground={withoutBackground} />
           <Box id='boxContainer' sx={{ maxHeight, overflow: 'hidden', overflowY: 'auto', position: 'relative', width: '100%' }}>
             {children}

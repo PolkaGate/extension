@@ -7,10 +7,11 @@ import React, { useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
-import { PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useManifest, useSelectedAccount, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
+import GovernanceModal from '../GovernanceModal';
 import Language from './Language';
 import LogoWithText from './LogoWithText';
 import MenuButton from './MenuButton';
@@ -38,7 +39,7 @@ function MainMenuColumn (): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
 
-  const [openReceive, setOpenReceive] = useState<boolean>(false);
+  const [openModal, setOpen] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   return (
     <Grid
@@ -68,7 +69,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={ArrowCircleDown2}
-        onClick={() => setOpenReceive(true)}
+        onClick={() => setOpen(ExtensionPopups.RECEIVE)}
         text={t('Receive')}
       />
       <MenuButton
@@ -78,6 +79,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={MedalStar}
+        onClick={() => setOpen(ExtensionPopups.GOVERNANCE)}
         text={t('Governance')}
       />
       <MenuButton
@@ -103,9 +105,17 @@ function MainMenuColumn (): React.ReactElement {
         <Language />
         <Socials buttonSize={24} columnGap='4px' iconSize={13.5} style={{ flexWrap: 'nowrap', width: 'fit-content' }} />
       </Stack>
-      {openReceive &&
+      {
+        openModal === ExtensionPopups.RECEIVE &&
         <ReceiveGeneral
-          setOpen={setOpenReceive}
+          setOpen={setOpen}
+        />
+      }
+      {
+        openModal === ExtensionPopups.GOVERNANCE &&
+        <GovernanceModal
+          open={ openModal === ExtensionPopups.GOVERNANCE}
+          setOpen={setOpen}
         />
       }
     </Grid>

@@ -11,7 +11,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 
-import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext } from '../../../components';
+import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext, Motion } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
 import useTransactionHistory2 from '../useTransactionHistory2';
@@ -99,12 +99,13 @@ function History (): React.ReactElement {
         onClick={onBack}
         text={t('Transaction History')}
       />
-      <HistoryTabs
-        selectedChain={selectedChain}
-        setTab={setTab}
-        tab={tab}
-      />
-      {savedSelectedChain !== undefined &&
+      <Motion variant='slide'>
+        <HistoryTabs
+          selectedChain={selectedChain}
+          setTab={setTab}
+          tab={tab}
+        />
+        {savedSelectedChain !== undefined &&
         <DropSelect
           defaultValue={savedSelectedChain ?? DEFAULT_SELECTED_OPTION.value}
           displayContentType='logo'
@@ -116,16 +117,17 @@ function History (): React.ReactElement {
           }}
           value={selectedChain}
         />}
-      <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '400px', mt: '10px', overflowY: 'auto', pb: '60px' }}>
-        <HistoryBox
-          historyItems={historyItemsToShow}
-          notReady={!selectedChain}
-          style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
+        <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '400px', mt: '10px', overflowY: 'auto', pb: '60px' }}>
+          <HistoryBox
+            historyItems={historyItemsToShow}
+            notReady={!selectedChain}
+            style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
+          />
+        </Grid>
+        <FadeOnScroll
+          containerRef={scrollContainerRef}
         />
-      </Grid>
-      <FadeOnScroll
-        containerRef={scrollContainerRef}
-      />
+      </Motion>
       <HomeMenu />
     </Container>
   );

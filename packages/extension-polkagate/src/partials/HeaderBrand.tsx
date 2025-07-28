@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Step } from '../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +15,6 @@ import InternetConnectivity from '../fullscreen/governance/InternetConnectivity'
 import useOutsideClick from '../hooks/useOutsideClick';
 import ConnectedDappIcon from './ConnectedDappIcon';
 import Menu from './Menu';
-import { AccountMenu } from '.';
 
 interface Props {
   _centerItem?: React.JSX.Element;
@@ -148,18 +146,19 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
   const setMenuRef = useRef(null);
 
   const [isMenuOpen, setOpenMenu] = useState(false);
-  const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
+  // const [isAccountMenuOpen, setShowAccountMenu] = useState(false);
 
   useOutsideClick([setIconRef, setMenuRef], (): void => {
     isMenuOpen && setOpenMenu(!isMenuOpen);
   });
 
   const _handleMenuClick = useCallback(() => {
-    if (address) {
-      setShowAccountMenu((open) => !open);
-    } else {
-      setOpenMenu((open) => !open);
-    }
+    console.log(address);
+    // if (address) {
+    //   setShowAccountMenu((open) => !open);
+    // } else {
+    //   setOpenMenu((open) => !open);
+    // }
   }, [address]);
 
   const _onClose = useCallback(() => {
@@ -215,13 +214,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
         isMenuOpen={isMenuOpen}
         setShowMenu={setOpenMenu}
       />
-      {address &&
-        <AccountMenu
-          address={address}
-          isMenuOpen={isAccountMenuOpen}
-          setShowMenu={setShowAccountMenu}
-        />
-      }
     </>
   );
 }

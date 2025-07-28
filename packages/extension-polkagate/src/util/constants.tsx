@@ -96,9 +96,17 @@ export const CROWDLOANS_CHAINS = [
 ];
 
 export const GOVERNANCE_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  WESTEND_GENESIS_HASH
+  'polkadot',
+  'kusama',
+  'westend',
+  'hydration',
+  'acala',
+  'astar',
+  'zeitgeist',
+  'interlay',
+  'centrifuge',
+  'phala',
+  'basilik'
 ];
 
 export const SOCIAL_RECOVERY_CHAINS = [
@@ -270,9 +278,10 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
-  NONE,
   LANGUAGE,
+  GOVERNANCE,
   NEW_NETWORK,
+  NONE,
   PASSWORD,
   PRIVACY,
   WARNING,
