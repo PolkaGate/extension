@@ -44,7 +44,7 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
       <MyTooltip color='#1c498a' content={text} notShow={!noText} placement='top'>
         <Grid alignItems='center' container item justifyContent='center' onClick={isDisabled ? noop : onClick} ref={containerRef}
           sx={{
-            ':hover': isDisabled ? {} : { bgcolor: theme.palette.text.highlight, borderColor: 'transparent' },
+            ':hover': isDisabled ? {} : { bgcolor: isFullScreen ? '#674394' : theme.palette.text.highlight, borderColor: 'transparent' },
             bgcolor: isFullScreen ? isDisabled ? '#1B133C' : '#2D1E4A' : '#110F2A',
             border: isRow ? 'none' : '2px solid #060518',
             borderRadius: '11px',
