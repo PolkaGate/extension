@@ -34,11 +34,11 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const color = useMemo(() => isExtension ? 'text.highlight' : '#AA83DC', [isExtension]);
 
   return (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', p: '12px 8px', rowGap: '12px' }}>
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#05091C' : 'transparent', borderRadius: '14px', p: isExtension ? '12px 8px' : '4px 8px', rowGap: '12px' }}>
       <Typography color={color} sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
         {t('Account')}
       </Typography>
-      <GradientDivider />
+      { isExtension && <GradientDivider />}
       <PolkaGateIdenticon address={selectedAccount?.address ?? ''} size={48} style={{ margin: 'auto' }} />
       <Typography color='text.primary' sx={{ maxWidth: '220px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', width: '100%' }} variant='B-3'>
         {selectedAccount?.name}
@@ -106,7 +106,7 @@ const ContentItem = ({ content, decimal, description, genesisHash, noDivider = f
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
-  const color = useMemo(() => isExtension ? 'text.highlight' : '#AA83DC', [isExtension]);
+  const color = useMemo(() => isExtension ? 'text.highlight' : '#BEAAD8', [isExtension]);
 
   return (
     <>
@@ -184,11 +184,13 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
+  const isExtension = useIsExtensionPopup();
 
   const isRow = useMemo(() => (pool && pool?.bondedPool?.state?.toString() !== 'Creating'), [pool]);
+  const fsStyle = isExtension ? {} : { bgcolor: '#05091C', borderRadius: '14px', gap: '7px', padding: '15px' };
 
   return (
-    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%' }}>
+    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1 }}>
       {showAccountBox && (isRow
         ? (
           <RowAccountBox
@@ -209,7 +211,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
           style={{ marginTop: '8px' }}
         />
       }
-      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle}}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem
             content={content}
