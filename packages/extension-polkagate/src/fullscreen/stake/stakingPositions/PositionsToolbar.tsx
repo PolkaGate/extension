@@ -8,9 +8,7 @@ import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Category2, People, Profile } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { noop } from '@polkadot/util';
-
-import { DropSelect, GradientSwitch, MySwitch } from '../../../components';
+import { DropSelect, MySwitch } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import Search from '../../../popup/staking/components/Search';
 import { POSITION_TABS, type PositionsAction, type PositionsState, type StakingType } from '../util/utils';
