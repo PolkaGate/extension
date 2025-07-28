@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { DocumentDownload, Edit2, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
+import { Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -98,6 +98,19 @@ function AccountSettings (): React.ReactElement {
           title={t('Import Account')}
         />
         <ActionCard
+          Icon={ExportCurve}
+          iconColor='#FF4FB9'
+          iconSize={24}
+          iconWithoutTransform
+          onClick={onExport}
+          style={{
+            alignItems: 'center',
+            height: '64px',
+            mt: '8px'
+          }}
+          title={t('Export Account')}
+        />
+        <ActionCard
           Icon={ShieldSecurity}
           iconColor='#FF4FB9'
           iconSize={24}
@@ -109,19 +122,6 @@ function AccountSettings (): React.ReactElement {
             mt: '8px'
           }}
           title={t('Websites Access')}
-        />
-        <ActionCard
-          Icon={DocumentDownload}
-          iconColor='#FF4FB9'
-          iconSize={24}
-          iconWithoutTransform
-          onClick={onExport}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
-          title={t('Export Account')}
         />
         <Stack alignItems='center' columnGap='5px' direction='row' onClick={onForget} sx={{ cursor: 'pointer', mt: '25px' }}>
           <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
