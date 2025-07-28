@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { People, UserOctagon } from 'iconsax-react';
 import React from 'react';
 
@@ -13,13 +13,15 @@ interface Props {
   type: 'solo' | 'pool';
   text?: string;
   variant?: 'nature' | 'people';
+  style?: SxProps<Theme>;
+  noText?: boolean;
 }
 
-export default function StakingIcon({ text, type, variant = 'nature' }: Props) {
+export default function StakingIcon ({ noText = false, style, text, type, variant = 'nature' }: Props) {
   const { t } = useTranslation();
 
   return (
-    <Grid alignItems={variant === 'people' ? 'center' : 'flex-start'} container item sx={{ columnGap: '6px', pl: '18px' }}>
+    <Grid alignItems={variant === 'people' ? 'center' : 'flex-start'} container item sx={{ columnGap: '6px', pl: '18px', ...style }}>
       {
         variant === 'people'
           ? <>
@@ -37,13 +39,14 @@ export default function StakingIcon({ text, type, variant = 'nature' }: Props) {
             }
           </>
       }
-      <Typography color='text.primary' textTransform='uppercase' variant='H-2'>
-        {
-          text ??
-          (type === 'solo'
-            ? t('Solo Staking')
-            : t('Pool Staking'))}
-      </Typography>
+      {!noText &&
+        <Typography color='text.primary' textTransform='uppercase' variant='H-2'>
+          {
+            text ??
+            (type === 'solo'
+              ? t('Solo Staking')
+              : t('Pool Staking'))}
+        </Typography>}
     </Grid>
   );
 }
