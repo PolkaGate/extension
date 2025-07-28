@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// @ts-nocheck
+//@ts-nocheck
 
 import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { MyIconTheme } from '../util/types';
 
 import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
@@ -17,7 +17,7 @@ import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { isValidAddress } from '../util/utils';
-import { ChainLogo, Identicon, Infotip, ShortAddress } from '.';
+import { ChainLogo, GlowCheck, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {
   accountInfo?: DeriveAccountInfo | null;
@@ -26,12 +26,12 @@ interface Props {
   charsCount?: number;
   columnGap?: string;
   direction?: 'row' | 'column';
-  charsCount?: number;
   genesisHash: string;
   identiconSize?: number;
   identiconStyle?: SxProps<Theme> | CSSProperties;
   identiconType?: string;
   inParentheses?: boolean;
+  isSelected?: boolean;
   judgement?: unknown;
   name?: string;
   nameStyle?: SxProps<Theme> | CSSProperties;
@@ -47,7 +47,7 @@ interface Props {
   withShortAddress?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -98,20 +98,27 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
     <Grid alignItems='center' container justifyContent='space-between' sx={{ maxWidth: '100%', width: 'fit-content', ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
         {!noIdenticon &&
-          <Grid item m='auto 0' pr='5px' sx={{ ...identiconStyle }} width='fit-content'>
-            {identiconType === 'polkagate'
-              ? <PolkaGateIdenticon
-                address={String(_formatted || address)}
-                size={identiconSize}
+          <Grid container item alignItems='center' m='auto 0' pr='5px' sx={{ ...identiconStyle }} width='fit-content'>
+            { isSelected
+              ? <GlowCheck
+                show={true}
+                size={`${identiconSize}px`}
+                timeout={100}
               />
-              : <Identicon
-                iconTheme={chain?.icon ?? 'polkadot'}
-                isSubId={!!_accountInfo?.identity?.displayParent}
-                judgement={_judgement}
-                prefix={chain?.ss58Format ?? 42}
-                size={identiconSize}
-                value={_formatted || address}
-              />}
+              : identiconType === 'polkagate'
+                ? <PolkaGateIdenticon
+                  address={String(_formatted || address)}
+                  size={identiconSize}
+                />
+                : <Identicon
+                  iconTheme={(chain?.icon ?? 'polkadot') as MyIconTheme}
+                  isSubId={!!_accountInfo?.identity?.displayParent}
+                  judgement={_judgement as RegExpMatchArray}
+                  prefix={chain?.ss58Format ?? 42}
+                  size={identiconSize}
+                  value={_formatted || address}
+                />
+            }
           </Grid>
         }
         <Grid container direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>

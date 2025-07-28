@@ -40,22 +40,11 @@ function AccountRowSimple ({ account, handleSelect, isFirstAccount, isFirstProfi
           <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
         }
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '100%' }}>
-          {
-            maybeSelected === account?.address || (isSelected && !maybeSelected)
-              ? <GlowCheck
-                show={true}
-                size='24px'
-                timeout={100}
-              />
-              : <PolkaGateIdenticon
-                address={account.address}
-                size={24}
-              />
-          }
           <Identity2
             address={account?.address}
             genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
-            noIdenticon
+            identiconSize={24}
+            isSelected={ maybeSelected === account?.address || (isSelected && !maybeSelected)}
             style={{ color: (isSelected) ? '#EAEBF1' : '#BEAAD8', variant: 'B-2' }}
           />
         </Stack>
