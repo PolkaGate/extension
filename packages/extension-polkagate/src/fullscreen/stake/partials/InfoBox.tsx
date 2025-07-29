@@ -10,7 +10,7 @@ import { type BN, isBn } from '@polkadot/util';
 
 import { ShowValue } from '../../../components';
 import AssetLogo from '../../../components/AssetLogo';
-import { useChainInfo } from '../../../hooks';
+import { useChainInfo, useIsExtensionPopup } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 import { amountToHuman } from '../../../util/utils';
 
@@ -24,14 +24,21 @@ interface InfoBoxProps {
 
 export const InfoBox = ({ InfoIcon, decimal, genesisHash, label, value }: InfoBoxProps) => {
   const { token } = useChainInfo(genesisHash, true);
+  const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
 
   return (
-    <Box sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '22px 24px', pr: '15px', rowGap: '6px', width: '154px' }}>
+    <Box sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '17px 24px', pr: '15px', rowGap: isExtension ? '6px' : 0, width: '154px' }}>
       <Grid alignItems='center' container gap='6px' item>
-        {InfoIcon && <InfoIcon color='#AA83DC' size='24' variant='Bulk' />}
-        {logoInfo && <AssetLogo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} />}
+        {
+          InfoIcon &&
+          <InfoIcon color='#AA83DC' size='24' variant='Bulk' />
+        }
+        {
+          logoInfo &&
+          <AssetLogo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} />
+        }
         <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
           {isBn(value)
             ? decimal && <>{amountToHuman(value, decimal)}</>

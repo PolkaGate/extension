@@ -38,6 +38,7 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
       minHeight={475}
       onClose={onClose}
       open
+      showBackIconAsClose
       title={t('On-chain staking info')}
       width={520}
     >
