@@ -3,12 +3,13 @@
 
 // @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
+import type { SelectedEasyStakingType } from '../fullscreen/stake/util/utils';
 import type { Content } from '../partials/Review';
 import type { MyPoolInfo, PoolInfo, RewardDestinationType } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
-import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_TEN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
@@ -17,7 +18,7 @@ import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/cr
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, isHexToBn } from '../util/utils';
 import { calcPrice } from './useYouHave2';
-import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, usePool2, usePoolStakingInfo, useSoloStakingInfo, useTokenPriceBySymbol, useTranslation } from '.';
+import { useAccountAssets, useChainInfo, useEstimatedFee2, useFormatted3, useIsExposed2, usePool2, usePoolConst, usePoolStakingInfo, useSoloStakingInfo, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '.';
 
 export const useUnstakingPool = (
   address: string | undefined,
@@ -1192,23 +1193,62 @@ export const usePoolDetail = (
 
 export const useEasyStake = (
   address: string | undefined,
-  genesisHash: string | undefined
+  genesisHash: string | undefined,
+  selectedStakingType: SelectedEasyStakingType | undefined
 ) => {
   const { t } = useTranslation();
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
-  const poolStakingInfo = usePoolStakingInfo(address, genesisHash);
-  const pool = usePool2(address, genesisHash, POLKAGATE_POOL_IDS[chainName ?? '']);
+  const poolStakingConsts = usePoolConst(genesisHash);
+  const stakingConsts = useStakingConsts2(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
 
-  console.log('pool:', pool);
+  const bond = api?.tx['staking']['bond'];// (value: Compact<u128>, payee: PalletStakingRewardDestination)
+  const batchAll = api?.tx['utility']['batchAll'];
+  const nominated = api?.tx['staking']['nominate'];
+  const join = api?.tx['nominationPools']['join']; // (amount, poolId)
 
-  const bondExtra = api?.tx['nominationPools']['bondExtra'];
+  const polkagateRelatedPool = useMemo(() => chainName ? POLKAGATE_POOL_IDS[chainName] : undefined, [chainName]);
+
+  const initialPool = usePool2(address, polkagateRelatedPool ? genesisHash : undefined, polkagateRelatedPool);
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
+  const [amountAsBN, setAmountAsBN] = useState<BN | undefined>(undefined);
   const [topStakingLimit, setTopStakingLimit] = useState<BN | undefined>(undefined);
 
-  console.log('amount:', amount);
+  const tx = useMemo(() => {
+    if (!selectedStakingType || !bond || !nominated || !batchAll || !join) {
+      return undefined;
+    }
+
+    if (selectedStakingType.type === 'solo' && selectedStakingType.validators) {
+      return batchAll([
+        bond(amountAsBN, 'Staked'),
+        nominated(selectedStakingType.validators)
+      ]);
+    }
+
+    if (selectedStakingType.type === 'pool' && selectedStakingType.pool) {
+      return join(amountAsBN, selectedStakingType.pool.poolId);
+    }
+
+    return undefined;
+  }, [amountAsBN, batchAll, bond, join, nominated, selectedStakingType]);
+  const fakeTx = join?.(BN_ZERO, BN_ZERO);
+
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? fakeTx);
+
+  const transactionInformation = useMemo(() => {
+    return [{
+      content: amountAsBN,
+      title: t('Amount'),
+      withLogo: true
+    },
+    {
+      content: estimatedFee,
+      title: t('Fee')
+    }];
+  }, [amountAsBN, estimatedFee, t]);
 
   const token = useMemo(() => {
     if (!accountAssets) {
@@ -1217,45 +1257,34 @@ export const useEasyStake = (
 
     return accountAssets.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0') ?? null;
   }, [accountAssets, genesisHash]);
-  const amountAsBN = useMemo(() => (amount && decimal) ? amountToMachine(amount, decimal) : BN_ZERO, [amount, decimal]);
   const availableBalanceToStake = useMemo(() => token?.freeBalance, [token?.freeBalance]);
 
-  const estimatedFee = useEstimatedFee2(genesisHash, formatted, bondExtra?.({ FreeBalance: availableBalanceToStake ?? BN_ONE }));
-
   const thresholds = useMemo(() => {
-    if (!decimal || !estimatedFee || !availableBalanceToStake || !poolStakingInfo.poolStakingConsts || !poolStakingInfo.stakingConsts) {
+    if (!decimal || !availableBalanceToStake || !poolStakingConsts || !stakingConsts || !estimatedFee) {
       return;
     }
 
-    const ED = poolStakingInfo.stakingConsts.existentialDeposit;
-    let maxAsBn = availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee);
+    const ED = stakingConsts.existentialDeposit;
+    let max = availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee);
 
-    let minAsBn = poolStakingInfo.poolStakingConsts.minJoinBond;
+    let min = poolStakingConsts.minJoinBond;
 
-    if (minAsBn.gt(maxAsBn)) {
-      minAsBn = maxAsBn = BN_ZERO;
+    if (min.gt(max)) {
+      min = max = BN_ZERO;
     }
 
-    setTopStakingLimit(maxAsBn);
-
-    const min = minAsBn.div(BN_TEN.muln(decimal)).toString();
-    const max = maxAsBn.div(BN_TEN.muln(decimal)).toString();
-    // const min = amountToHuman(minAsBn, decimal);
-    // const max = amountToHuman(maxAsBn, decimal);
-
     return { max, min };
-  }, [availableBalanceToStake, decimal, estimatedFee, poolStakingInfo.poolStakingConsts, poolStakingInfo.stakingConsts]);
+  }, [availableBalanceToStake, decimal, estimatedFee, poolStakingConsts, stakingConsts]);
 
-  const onMaxAmount = useMemo(() => thresholds?.max, [thresholds?.max]);
-  const onMinAmount = useMemo(() => thresholds?.min, [thresholds?.min]);
+  useEffect(() => {
+    if (!thresholds?.max || topStakingLimit) {
+      return;
+    }
 
-  // const onThresholdAmount = useCallback((maxMin: 'max' | 'min') => {
-  //   if (!thresholds || !decimal) {
-  //     return;
-  //   }
+    setTopStakingLimit(thresholds.max);
+  }, [thresholds?.max, topStakingLimit]);
 
-  //   return thresholds[maxMin];
-  // }, [thresholds, decimal]);
+  const onMaxMinAmount = useCallback((val: 'max' | 'min') => thresholds?.[val]?.toString(), [thresholds]);
 
   const errorMessage = useMemo(() => {
     if (token === null || availableBalanceToStake?.isZero()) {
@@ -1274,26 +1303,26 @@ export const useEasyStake = (
       return t('It is more than the available balance to stake.');
     }
 
-    if (amountAsBN.lt(poolStakingInfo.poolStakingConsts?.minJoinBond ?? BN_ZERO)) {
+    if (amountAsBN.lt(poolStakingConsts?.minJoinBond ?? BN_ZERO)) {
       return t('It is less than the minimum amount to join a pool.');
     }
 
     return undefined;
-  }, [amount, amountAsBN, availableBalanceToStake, poolStakingInfo.poolStakingConsts?.minJoinBond, t, token, topStakingLimit]);
+  }, [amount, amountAsBN, availableBalanceToStake, poolStakingConsts?.minJoinBond, t, token, topStakingLimit]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!decimal) {
       return;
     }
 
-    console.log('value:', value);
+    // These lines have commented because user can not enter long number!
+    // Already prevented in StakeAmountInput - onChange function
+    // if (value.length > decimal - 1) {
+    //   console.log(`The amount digits is more than decimal:${decimal}`);
+    //   return;
+    // }
 
-    if (value.length > decimal - 1) {
-      console.log(`The amount digits is more than decimal:${decimal}`);
-
-      return;
-    }
-
+    setAmountAsBN(amountToMachine(value, decimal));
     setAmount(value);
   }, [decimal]);
 
@@ -1306,12 +1335,14 @@ export const useEasyStake = (
   return {
     amount,
     amountAsBN,
-    availableBalanceToStake: poolStakingInfo.availableBalanceToStake,
+    availableBalanceToStake,
     buttonDisable,
     errorMessage,
+    initialPool,
     onChangeAmount,
-    onMaxAmount,
-    onMinAmount,
-    setAmount
+    onMaxMinAmount,
+    setAmount,
+    transactionInformation,
+    tx
   };
 };

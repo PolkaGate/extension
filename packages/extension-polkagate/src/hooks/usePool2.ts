@@ -19,7 +19,7 @@ interface WorkerMessage {
   results?: string;
 }
 
-export default function usePool2 (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
+export default function usePool2 (address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
 
   const formatted = useFormatted3(address, genesisHash);
@@ -33,8 +33,10 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       return;
     }
 
-    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted } });
-  }, [formatted, genesisHash, worker]);
+    // the sort in this object is important because the getPool use the params as they pass
+    // eslint-disable-next-line sort-keys
+    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted, id } });
+  }, [formatted, genesisHash, id, worker]);
 
   const handleWorkerMessages = useCallback(() => {
     if (!worker || !formatted) {
@@ -55,7 +57,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       }
 
       /** reset isFetching */
-      isFetching.fetching[String(formatted)][MY_POOL_SHARED_WORKER_KEY] = false;
+      isFetching.fetching[String(formatted)][id ? 'id' : MY_POOL_SHARED_WORKER_KEY] = false;
       isFetching.set(isFetching.fetching);
 
       if (!results || results === 'null') {
@@ -64,7 +66,8 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         return;
       }
 
-      if (functionName === MY_POOL_SHARED_WORKER_KEY) {
+      // if id is available there is no reason to save the pool information in the "MyPool" storage!
+      if (functionName === MY_POOL_SHARED_WORKER_KEY && !id) {
         const receivedMessage = JSON.parse(results) as MyPoolInfo;
 
         /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
@@ -98,10 +101,35 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     return () => {
       worker.removeEventListener('message', handleMessage);
     };
-  }, [formatted, isFetching, worker]);
+  }, [formatted, id, isFetching, worker]);
 
   useEffect(() => {
-    if (!formatted) {
+    if (!formatted || !id) {
+      !id && console.log('The getPool is calling to get the pool for a specific address on a specific network, which the other useEffect will handle it!');
+
+      return;
+    }
+
+    if (!isFetching.fetching[String(formatted)]?.['id']) {
+      if (!isFetching.fetching[String(formatted)]) {
+        isFetching.fetching[String(formatted)] = {}; // to initialize
+      }
+
+      isFetching.fetching[String(formatted)]['id'] = true;
+      isFetching.set(isFetching.fetching);
+
+      fetchPoolInformation();
+      handleWorkerMessages();
+    } else {
+      console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetching.fetching[String(formatted)]?.['length'], formatted, fetchPoolInformation]);
+
+  useEffect(() => {
+    if (!formatted || id) {
+      id && console.log('The getPool is calling for a specific pool id, which the other useEffect will handle it!');
+
       return;
     }
 
