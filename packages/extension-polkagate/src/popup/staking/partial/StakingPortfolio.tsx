@@ -44,7 +44,7 @@ const StakingIcon = ({ isFullScreen, type }: { isFullScreen: boolean; type: 'sol
     <Grid container item sx={{ bottom: isFullScreen ? '10px' : 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color='#809ACB40' size='32' />
-        : <Ice asPortfolio size='32' />
+        : <Ice asPortfolio isFullScreen size='32' />
       }
     </Grid>
   );
