@@ -44,7 +44,8 @@ export default function FastUnstaking ({ address, genesisHash, onClose }: Props)
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}
-      height={POPUP_HEIGHT}
+      maxHeight={POPUP_HEIGHT}
+      minHeight={POPUP_HEIGHT}
       onClose={onClose}
       setFlowStep={setFlowStep}
       title={t('Fast unstake')}

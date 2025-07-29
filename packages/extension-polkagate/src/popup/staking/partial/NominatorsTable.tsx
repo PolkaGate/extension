@@ -14,6 +14,7 @@ import { FormatBalance2 } from '../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';
+import PRadio from '../components/Radio';
 import ValidatorDetail from './ValidatorDetail';
 
 interface ValidatorIdentityProp {
@@ -88,9 +89,10 @@ interface ValidatorInfoProp {
   validatorInfo: ValidatorInformation;
   genesisHash: string;
   onDetailClick: () => void;
+  onSelect?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick, onSelect, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -110,9 +112,9 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick,
           {/* @ts-ignore */}
           <StakingInfoStack text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
         </Container>
-        {/* <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
-          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} /> // it is available in the design onFigma but has no functionality
-        </IconButton> */}
+        {onSelect &&
+          <PRadio onChange={onSelect} value={validatorInfo.accountId.toString()} />
+        }
       </Container>
     </Stack>
   );
@@ -121,9 +123,10 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick,
 interface NominatorsTableProp {
   genesisHash: string;
   validatorsInformation: ValidatorInformation[];
+  onSelect?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+function NominatorsTable ({ genesisHash, onSelect, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
@@ -138,6 +141,7 @@ function NominatorsTable ({ genesisHash, validatorsInformation }: NominatorsTabl
             genesisHash={genesisHash}
             key={index}
             onDetailClick={toggleValidatorDetail(validatorInfo)}
+            onSelect={onSelect}
             validatorInfo={validatorInfo}
           />
         ))}

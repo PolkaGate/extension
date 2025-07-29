@@ -45,9 +45,10 @@ interface Props {
   style?: SxProps<Theme> | CSSProperties;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
+  justSocials?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, justSocials = false, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -97,9 +98,9 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
   return (
     <Grid alignItems='center' container justifyContent='space-between' sx={{ maxWidth: '100%', width: 'fit-content', ...style }}>
       <Grid alignItems='center' container item xs={showChainLogo ? 11 : 12}>
-        {!noIdenticon &&
-          <Grid container item alignItems='center' m='auto 0' pr='5px' sx={{ ...identiconStyle }} width='fit-content'>
-            { isSelected
+        {!(noIdenticon || justSocials) &&
+          <Grid alignItems='center' container item m='auto 0' pr='5px' sx={{ ...identiconStyle }} width='fit-content'>
+            {isSelected
               ? <GlowCheck
                 show={true}
                 size={`${identiconSize}px`}
@@ -143,35 +144,37 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
                 {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
               </Grid>
             </Grid>
-            : <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant}>
-              {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
-              {_accountInfo?.identity?.display && !subIdOnly
-                ? _accountInfo?.identity.displayParent
-                  ? <span style={{ color: grey[500] }}>{_accountInfo?.identity?.display}</span>
-                  : _accountInfo?.identity?.display
-                : ''}
-              {_accountInfo?.identity.display && subIdOnly &&
+            : justSocials
+              ? <></>
+              : <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant}>
+                {_accountInfo?.identity.displayParent && !subIdOnly ? _accountInfo?.identity.displayParent + '/' : ''}
+                {_accountInfo?.identity?.display && !subIdOnly
+                  ? _accountInfo?.identity.displayParent
+                    ? <span style={{ color: grey[500] }}>{_accountInfo?.identity?.display}</span>
+                    : _accountInfo?.identity?.display
+                  : ''}
+                {_accountInfo?.identity.display && subIdOnly &&
                 _accountInfo?.identity?.display
-              }
-              {_accountInfo?.nickname
-                ? _accountInfo?.nickname
-                : ''
-              }
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name
-                ? name
-                : ''
-              }
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName
-                ? accountName
-                : ''
-              }
-              {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
-                ? showShortAddress && isValidAddress(String(_formatted))
-                  ? <ShortAddress address={_formatted} charsCount={charsCount} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
-                  : t('Unknown')
-                : ''
-              }
-            </Typography>
+                }
+                {_accountInfo?.nickname
+                  ? _accountInfo?.nickname
+                  : ''
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname) && name
+                  ? name
+                  : ''
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name) && accountName
+                  ? accountName
+                  : ''
+                }
+                {!(_accountInfo?.identity?.displayParent || _accountInfo?.identity?.display || _accountInfo?.nickname || name || accountName)
+                  ? showShortAddress && isValidAddress(String(_formatted))
+                    ? <ShortAddress address={_formatted} charsCount={charsCount} style={{ fontSize: style?.fontSize as string, justifyContent: 'flex-start' }} variant={style?.addressVariant ?? style?.variant ?? 'B-2'} />
+                    : t('Unknown')
+                  : ''
+                }
+              </Typography>
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>
