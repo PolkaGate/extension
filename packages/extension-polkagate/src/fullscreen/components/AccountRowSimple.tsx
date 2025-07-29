@@ -8,9 +8,7 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
 import React, { useCallback } from 'react';
 
-import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
-
-import { GlowCheck, Identity2 } from '../../components';
+import { Identity2 } from '../../components';
 
 interface Props {
   account: AccountWithChildren;

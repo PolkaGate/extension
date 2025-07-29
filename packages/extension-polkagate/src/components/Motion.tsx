@@ -12,6 +12,11 @@ const variants = {
     exit: { opacity: 0, transition: { duration: 0.2 } },
     initial: { opacity: 0 }
   },
+  flip: {
+    animate: { rotateY: 0, opacity: 1, transition: { duration: 0.5 } },
+    exit: { rotateY: -90, opacity: 0, transition: { duration: 0.5 } },
+    initial: { rotateY: 90, opacity: 0 }
+  },
   slide: {
     animate: { opacity: 1, transition: { duration: 0.3, ease: 'easeOut' }, x: 0 },
     exit: { opacity: 0, transition: { duration: 0.3, ease: 'easeIn' }, x: '-100%' },

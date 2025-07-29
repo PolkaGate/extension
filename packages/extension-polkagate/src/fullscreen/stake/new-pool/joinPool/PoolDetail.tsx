@@ -5,7 +5,7 @@
 
 import type { MyPoolInfo, PoolInfo } from '../../../../util/types';
 
-import { Container, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Link, Stack, Typography } from '@mui/material';
 import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 

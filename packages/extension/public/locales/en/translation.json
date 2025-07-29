@@ -1754,5 +1754,10 @@
   "Staked {{token}}": "",
   "Test Network": "",
   "Pool staking": "",
-  "Solo staking": ""
+  "Solo staking": "",
+  "Minimum Stake": "",
+  "Claim manually": "",
+  "Advanced staking management": "",
+  "Paid automatically": "",
+  "Claimable Rewards": ""
 }
