@@ -30,7 +30,7 @@ const TabItem = ({ count, isSelected, selector, text }: TabItemProps) => {
       <Typography color={color} variant='B-6'>
         {text}
       </Typography>
-      <Typography color='text.primary' sx={{ bgcolor: '#FFFFFF26', borderRadius: '999px', lineHeight: '13px', p: '6px' }} variant='B-1'>
+      <Typography color='text.primary' sx={{ bgcolor: isSelected ? '#EAEBF1' : '#FFFFFF26', borderRadius: '1024px', color: isSelected ? '#05091C' : '#AA83DC', minHeight: '18px', minWidth: '18px' }} variant='B-1'>
         {count}
       </Typography>
     </Grid>
