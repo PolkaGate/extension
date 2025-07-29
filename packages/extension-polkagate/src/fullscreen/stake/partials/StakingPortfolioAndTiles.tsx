@@ -135,11 +135,13 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, gen
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
       <StakingPortfolio
         buttons={[
-          {
-            Icon: Profile2User,
-            onClick: popupOpener(StakingPopUps.MY_POOL),
-            text: t('My pool')
-          },
+          ...(type === 'pool'
+            ? [{
+              Icon: Profile2User,
+              onClick: popupOpener(StakingPopUps.MY_POOL),
+              text: t('My pool')
+            }]
+            : []),
           {
             Icon: BuyCrypto,
             onClick: popupOpener(StakingPopUps.UNSTAKE),
