@@ -102,7 +102,11 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, setSelectedPositio
   const content = useMemo(() => {
     switch (tab) {
       case STAKING_TABS.STAKING_POSITIONS:
-        return <StakingPositions popupOpener={popupOpener} setSelectedPosition={setSelectedPosition} />;
+        return (
+          <StakingPositions
+            popupOpener={popupOpener}
+            setSelectedPosition={setSelectedPosition}
+          />);
 
       case STAKING_TABS.REWARDS:
         return (
