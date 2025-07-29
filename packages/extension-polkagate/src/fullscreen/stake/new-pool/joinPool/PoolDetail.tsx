@@ -188,7 +188,7 @@ const RightColumnContent = ({ commission, genesisHash, onClose, onSelect, poolDe
     <Stack direction='column' sx={{ gap: '12px', width: '200px' }}>
       <Stack direction='column' sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '27px', gap: '18px', p: '28px 22px' }}>
         <StakingInfoStackWithIcon
-          Icon={<SnowFlake color='#AA83DC' size='18' />}
+          Icon={<SnowFlake color='#AA83DC' size='19' />}
           amount={poolDetail?.bondedPool?.points}
           decimal={decimal}
           title={t('Staked')}
