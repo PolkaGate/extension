@@ -15,7 +15,7 @@ import VelvetBox from '../../../style/VelvetBox';
 import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTabBody';
 import Rewards from '../Rewards';
 import StakingPositions from '../stakingPositions';
-import { type PopupOpener, StakingPopUps } from '../util/utils';
+import { type PopupOpener } from '../util/utils';
 
 export interface StakingTabsHeaderItems {
   title: string;
@@ -96,17 +96,8 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, setSelectedPositio
       });
     }
 
-    if (type === 'pool') {
-      tabs.push({
-        Icon: Discover,
-        isSelected: false,
-        onClick: popupOpener(StakingPopUps.MY_POOL),
-        title: t('My Pool')
-      });
-    }
-
     return tabs;
-  }, [popupOpener, t, tab, tabSetter, type]);
+  }, [t, tab, tabSetter, type]);
 
   const content = useMemo(() => {
     switch (tab) {

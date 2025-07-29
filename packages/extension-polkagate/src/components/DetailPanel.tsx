@@ -15,11 +15,12 @@ interface LeftColumnProps {
   RightItem?: React.ReactNode;
   title?: string;
   dividerStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
   noDivider?: boolean;
   children: React.ReactElement;
 }
 
-function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, title }: LeftColumnProps) {
+function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, style = {}, title }: LeftColumnProps) {
   const CLoseIcon = showBackIconAsClose ? ChevronLeft : Close;
 
   const BoxStyle: SxProps<Theme> = useMemo(() => ({
@@ -30,8 +31,9 @@ function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButt
     bgcolor: '#1B133C',
     borderRadius: '32px',
     py: '20px',
-    width: '451px'
-  }), []);
+    width: '451px',
+    ...style
+  }), [style]);
 
   return (
     <Box sx={BoxStyle}>
@@ -89,6 +91,7 @@ interface Props {
   RightItem?: React.ReactNode;
   title?: string;
   dividerStyle?: React.CSSProperties;
+  leftColumnStyle?: React.CSSProperties;
   noDivider?: boolean;
 }
 
@@ -96,6 +99,7 @@ function DetailPanel ({ RightItem,
   TitleLogo,
   dividerStyle,
   leftColumnContent,
+  leftColumnStyle,
   maxHeight = 615,
   minHeight = 450,
   noCloseButton,
@@ -146,6 +150,7 @@ function DetailPanel ({ RightItem,
           noDivider={noDivider}
           onClose={onClose}
           showBackIconAsClose={showBackIconAsClose}
+          style={leftColumnStyle}
           title={title}
         >
           <>

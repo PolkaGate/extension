@@ -66,10 +66,8 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
           decimals={[decimal ?? 0]}
           style={{
             color: theme.palette.text.primary,
-            fontFamily: 'Inter',
-            fontSize: '12px',
-            fontWeight: 500,
-            width: 'max-content'
+            ...theme.typography[isExtension ? 'B-2' : 'B-6'],
+            width: 'max-content',
           }}
           tokens={[token ?? '']}
           value={amount}
@@ -79,7 +77,7 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
           {text}
         </Typography>
       }
-      <Typography color={adjustedColorForTitle ?? 'text.highlight'} textAlign='left' variant={isExtension ? 'B-4' : 'B-6'}>
+      <Typography color={adjustedColorForTitle ?? 'text.highlight'} textAlign='left' variant='B-4' >
         {title}
       </Typography>
     </Stack>

@@ -5,11 +5,13 @@
 
 import type { MyPoolInfo, PoolInfo } from '../../../../util/types';
 
-import { Container, Grid, Link, Stack, Typography } from '@mui/material';
+import { Container, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { useChainInfo, usePoolDetail, useTranslation } from '../../../..//hooks';
+import { noop } from '@polkadot/util';
+
+import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../..//hooks';
 import Subscan from '../../../../assets/icons/Subscan';
 import { DetailPanel, GradientButton, GradientDivider } from '../../../../components';
 import SnowFlake from '../../../../components/SVG/SnowFlake';
@@ -86,9 +88,15 @@ interface LeftColumnContentProps {
 
 const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genesisHash, handleCollapses, ids, poolDetail, poolStatus, roles, totalPoolRewardAsFiat }: LeftColumnContentProps) {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
+
+  const getIconColor = useCallback((id: string) =>
+    collapse[id] ? '#596AFF' : isExtension ? '#AA83DC' : '#FF4FB9'
+  ,
+  [collapse, isExtension]);
 
   return (
-    <Stack direction='column' sx={{ p: '18px', position: 'relative', width: '100%', zIndex: 1 }}>
+    <Stack direction='column' sx={{ position: 'relative', px: '18px', width: '100%', zIndex: 1 }}>
       <PoolIdentityDetail
         genesisHash={genesisHash}
         poolDetail={poolDetail!}
@@ -96,7 +104,7 @@ const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genes
       />
       <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
         <CollapseSection
-          TitleIcon={<FlashCircle color={collapse['Roles'] ? '#596AFF' : '#AA83DC'} size='18' variant='Bulk' />}
+          TitleIcon={<FlashCircle color={getIconColor('Roles')} size='18' variant='Bulk' />}
           onClick={handleCollapses('Roles')}
           open={collapse['Roles']}
           title={t('Roles')}
@@ -115,7 +123,7 @@ const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genes
           </Stack>
         </CollapseSection>
         <CollapseSection
-          TitleIcon={<CommandSquare color={collapse['Ids'] ? '#596AFF' : '#AA83DC'} size='18' variant='Bulk' />}
+          TitleIcon={<CommandSquare color={getIconColor('Ids')} size='18' variant='Bulk' />}
           onClick={handleCollapses('Ids')}
           open={collapse['Ids']}
           title={t('Ids')}
@@ -134,7 +142,7 @@ const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genes
           </Stack>
         </CollapseSection>
         <CollapseSection
-          TitleIcon={<People color={collapse['Members'] ? '#596AFF' : '#AA83DC'} size='15' variant='Bulk' />}
+          TitleIcon={<People color={getIconColor('Members')} size='15' variant='Bulk' />}
           onClick={handleCollapses('Members')}
           open={collapse['Members']}
           sideText={poolDetail?.bondedPool?.memberCounter.toString() ?? '0'}
@@ -148,7 +156,7 @@ const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genes
           />
         </CollapseSection>
         <CollapseSection
-          TitleIcon={<BuyCrypto color={collapse['Rewards'] ? '#596AFF' : '#AA83DC'} size='15' variant='Bulk' />}
+          TitleIcon={<BuyCrypto color={getIconColor('Rewards')} size='15' variant='Bulk' />}
           onClick={handleCollapses('Rewards')}
           open={collapse['Rewards']}
           title={t('Rewards')}
@@ -169,9 +177,10 @@ interface RightColumnContentProps {
   genesisHash: string | undefined;
   commission: number;
   onSelect?: () => void;
+  onClose?: () => void;
 }
 
-const RightColumnContent = ({ commission, genesisHash, onSelect, poolDetail }: RightColumnContentProps) => {
+const RightColumnContent = ({ commission, genesisHash, onClose, onSelect, poolDetail }: RightColumnContentProps) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -179,28 +188,31 @@ const RightColumnContent = ({ commission, genesisHash, onSelect, poolDetail }: R
     <Stack direction='column' sx={{ gap: '12px', width: '200px' }}>
       <Stack direction='column' sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '27px', gap: '18px', p: '28px 22px' }}>
         <StakingInfoStackWithIcon
-          Icon={<SnowFlake color='#AA83DC' size='24' />}
+          Icon={<SnowFlake color='#AA83DC' size='18' />}
           amount={poolDetail?.bondedPool?.points}
           decimal={decimal}
           title={t('Staked')}
+          titleColor='#AA83DC'
           token={token}
         />
         <StakingInfoStackWithIcon
           Icon={<DiscountCircle color='#AA83DC' size='24' variant='Bulk' />}
           text={String(commission) + '%'}
           title={t('Commission')}
+          titleColor='#AA83DC'
         />
         <StakingInfoStackWithIcon
           Icon={<People color='#AA83DC' size='24' variant='Bulk' />}
           text={poolDetail?.bondedPool?.memberCounter.toString()}
           title={t('Members')}
+          titleColor='#AA83DC'
         />
       </Stack>
-      {onSelect &&
+      {(onSelect || onClose) &&
         <GradientButton
-          onClick={onSelect}
+          onClick={onClose ?? onSelect ?? noop}
           style={{ width: '200px' }}
-          text={t('Choose')}
+          text={onClose ? t('Close') : t('Choose')}
         />}
     </Stack>
   );
@@ -251,16 +263,19 @@ export default function PoolDetail ({ genesisHash, onClose, onSelect, poolDetail
           totalPoolRewardAsFiat={totalPoolRewardAsFiat}
         />
       }
+      leftColumnStyle={{ width: '415px' }}
       maxHeight={690}
       onClose={onClose}
       rightColumnContent={
         <RightColumnContent
           commission={commission}
           genesisHash={genesisHash}
+          onClose={onClose}
           onSelect={onSelect ? handleSelect : undefined}
           poolDetail={poolDetail}
         />
       }
+      showBackIconAsClose={true}
       title={t('Pool Detail')}
     />
   );

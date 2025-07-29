@@ -36,17 +36,18 @@ interface StakingInfoStackWithIconProps {
   amount?: string | BN | Compact<INumber> | null | undefined;
   decimal?: number | undefined;
   title: string;
+  titleColor?: string;
   token?: string | undefined;
   text?: string | undefined;
 }
 
-export const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, token }: StakingInfoStackWithIconProps) => {
+export const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, titleColor, token }: StakingInfoStackWithIconProps) => {
   const isExtension = useIsExtensionPopup();
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: isExtension ? '6px' : '24px', m: 0, width: 'fit-content' }}>
       {Icon}
-      <StakingInfoStack amount={amount} decimal={decimal} text={text} title={title} token={token} />
+      <StakingInfoStack adjustedColorForTitle = {titleColor} amount={amount} decimal={decimal} text={text} title={title} token={token} />
     </Container>
   );
 };

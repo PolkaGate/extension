@@ -5,7 +5,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid } from '@mui/material';
-import { Add, Award, BuyCrypto, LockSlash, Moneys, Strongbox2, Timer, Timer1, Trade, Wallet } from 'iconsax-react';
+import { Add, Award, BuyCrypto, LockSlash, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade, Wallet } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { type BN } from '@polkadot/util';
@@ -135,6 +135,11 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, gen
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
       <StakingPortfolio
         buttons={[
+          {
+            Icon: Profile2User,
+            onClick: popupOpener(StakingPopUps.MY_POOL),
+            text: t('My pool')
+          },
           {
             Icon: BuyCrypto,
             onClick: popupOpener(StakingPopUps.UNSTAKE),
