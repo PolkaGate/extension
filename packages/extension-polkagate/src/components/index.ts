@@ -82,6 +82,7 @@ export { default as MatchPasswordField } from './MatchPasswordField';
 export { default as MenuItem } from './MenuItem';
 export { default as MnemonicSeed } from './MnemonicSeed';
 export { default as Motion } from './Motion';
+export { default as MySkeleton } from './MySkeleton';
 export { default as MySnackbar } from './MySnackbar';
 export { default as MySwitch } from './MySwitch';
 export { default as MyTextField } from './MyTextField';

@@ -3,14 +3,14 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
 import { type BN, noop } from '@polkadot/util';
 
-import { CryptoFiatBalance, FormatBalance2, FormatPrice, MyTooltip } from '../../../components';
-import { useIsHideNumbers, useIsHovered } from '../../../hooks';
+import { CryptoFiatBalance, FormatBalance2, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
+import { useIsDark, useIsHideNumbers, useIsHovered } from '../../../hooks';
 
 interface TileActionButtonProps {
   text: string;
@@ -20,11 +20,12 @@ interface TileActionButtonProps {
   noText?: boolean;
   isRow?: boolean;
   isDisabled?: boolean;
+  isLoading?: boolean;
   style?: SxProps<Theme>;
   isFullScreen?: boolean;
 }
 
-export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
@@ -37,7 +38,19 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
         : isFullScreen
           ? '#AA83DC'
           : theme.palette.text.highlight
-  , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
+    , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
+
+  const isLoadingOnFullscreen = isFullScreen && isLoading;
+
+  if (isLoadingOnFullscreen) {
+    return (
+      <MySkeleton
+        bgcolor='#1A1836'
+        height={38}
+        style={{ borderRadius: '11px', width: '100%' }}
+      />
+    );
+  }
 
   return (
     <>
@@ -62,7 +75,8 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
           {!noText &&
             <Typography color={color} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
               {text}
-            </Typography>}
+            </Typography>
+          }
         </Grid>
       </MyTooltip>
     </>
@@ -78,6 +92,8 @@ interface StakingFiatCryptoFSProps {
 
 const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: StakingFiatCryptoFSProps) => {
   const theme = useTheme();
+  const isDark = useIsDark();
+
   const { isHideNumbers } = useIsHideNumbers();
 
   const adaptiveDecimalPoint = useMemo(() => staked && decimal && (String(staked).length >= decimal - 1 ? 2 : 4), [decimal, staked]);
@@ -86,55 +102,53 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
 
   return (
     <Grid container item>
-      <Grid container item>
-        {staked === undefined
-          ? (
-            <Skeleton
-              animation='wave'
-              height='24px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '105px', my: '4px', transform: 'none', width: '100%' }}
-              variant='text'
-            />)
-          : (
-            <FormatPrice
-              commify
-              decimalColor={isDisabled ? '#674394' : '#fff'}
-              dotStyle='normal'
-              fontFamily='OdibeeSans'
-              fontSize={isHideNumbers ? '16px' : '30px'}
-              fontWeight={400}
-              height={30}
-              num={stakedInCurrency}
-              textColor={isDisabled ? '#674394' : undefined}
-              width='fit-content'
-            />)
-        }
-      </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-start'>
-        {staked === undefined
-          ? (
-            <Skeleton
-              animation='wave'
-              height='16px'
-              sx={{ borderRadius: '10px', fontWeight: 'bold', m: '6px 0 1px', maxWidth: '60px', transform: 'none', width: '100%' }}
-              variant='text'
-            />)
-          : (
-            <FormatBalance2
-              decimalPoint={adaptiveDecimalPoint}
-              decimals={[decimal ?? 0]}
-              style={{
-                color: isDisabled ? '#674394' : theme.palette.text.secondary,
-                fontFamily: 'Inter',
-                fontSize: '12px',
-                fontWeight: 500,
-                marginTop: '6px',
-                width: 'max-content'
-              }}
-              tokens={[token ?? '']}
-              value={staked}
-            />)}
-      </Grid>
+      {staked === undefined
+        ? <Stack direction='column'>
+          <MySkeleton
+            bgcolor={isDark ? '#946CC840' : '#99A1C440'}
+            style={{ margin: '4px 0' }}
+            width={48}
+          />
+          <MySkeleton
+            bgcolor={isDark ? '#946CC840' : '#99A1C440'}
+            style={{ margin: '4px 0' }}
+            width={77}
+          />
+          <MySkeleton
+            bgcolor={isDark ? '#1A1836' : '#99A1C440'}
+            style={{ marginTop: '6px' }}
+            width={48}
+          />
+        </Stack>
+        : <Stack direction='column'>
+          <FormatPrice
+            commify
+            decimalColor={isDisabled ? '#674394' : '#fff'}
+            dotStyle='normal'
+            fontFamily='OdibeeSans'
+            fontSize={isHideNumbers ? '16px' : '30px'}
+            fontWeight={400}
+            height={30}
+            num={stakedInCurrency}
+            textColor={isDisabled ? '#674394' : undefined}
+            width='fit-content'
+          />
+          <FormatBalance2
+            decimalPoint={adaptiveDecimalPoint}
+            decimals={[decimal ?? 0]}
+            style={{
+              color: isDisabled ? '#674394' : theme.palette.text.secondary,
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              fontWeight: 500,
+              marginTop: '6px',
+              width: 'max-content'
+            }}
+            tokens={[token ?? '']}
+            value={staked}
+          />
+        </Stack>
+      }
     </Grid>
   );
 };
@@ -153,13 +167,13 @@ export interface Props {
   isFullScreen?: boolean;
 }
 
-export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
+export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
   const theme = useTheme();
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
   const disabledColor = isFullScreen ? '#674394' : '#809acb8c';
-  const adjustedColor = isDisabled ? disabledColor : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
+  const adjustedColor = isDisabled ? disabledColor : isFullScreen ? '#BEAAD8' : theme.palette.text.highlight;
 
   return (
     <Grid alignItems={isRow ? 'flex-start' : 'center'} container item
@@ -181,7 +195,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           flexDirection: isRow ? 'column' : 'row',
           gap: isFullScreen ? '5px' : '10px',
           justifyContent: isRow ? 'space-between' : 'flex-start',
-          p: isFullScreen ? '14px' : '8px',
+          p: isFullScreen ? cryptoAmount === undefined ? '14px 14px 5px' : '14px' : '8px',
           width: '100%'
         }}
       >
@@ -191,11 +205,12 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />}
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
-          <Typography color={adjustedColor} sx={{ textWrap: 'nowrap' }} variant='B-1'>
+          <Typography color={adjustedColor} sx={{ mt: '4px', textWrap: 'nowrap' }} variant={isFullScreen ? 'B-2' : 'B-1'}>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
-            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />}
+            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />
+          }
         </Grid>
         {isFullScreen
           ? (
@@ -238,20 +253,23 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             width: isFullScreen ? '100%' : 'fit-content'
           }}
         >
-          {buttonsArray.map((button, index) => (
-            <TileActionButton
-              Icon={button.Icon}
-              iconVariant={button.iconVariant}
-              isDisabled={isDisabled}
-              isFullScreen={isFullScreen}
-              isRow={isRow}
-              key={index}
-              noText={buttonsArray.length > 1 && isRow}
-              onClick={button.onClick}
-              text={button.text}
-            />
-          ))}
-        </Container>}
+          {
+            buttonsArray.map((button, index) => (
+              <TileActionButton
+                Icon={button.Icon}
+                iconVariant={button.iconVariant}
+                isDisabled={isDisabled}
+                isFullScreen={isFullScreen}
+                isLoading={cryptoAmount === undefined}
+                isRow={isRow}
+                key={index}
+                noText={buttonsArray.length > 1 && isRow}
+                onClick={button.onClick}
+                text={button.text}
+              />
+            ))}
+        </Container>
+      }
       {isDisabled &&
         <Grid container item sx={{ bgcolor: '#0802144D', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 10 }} />
       }

@@ -58,7 +58,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         isFullScreen
         layoutDirection='row'
         style={{ minWidth: '146px', width: '146px' }}
-        title={isPoolStaking ? t('Claim Rewards') : t('Rewards paid')}
+        title={isPoolStaking ? t('Claimable Rewards') : t('Rewards paid')}
         token={token ?? ''}
       />
       <StakingInfoTile

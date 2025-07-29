@@ -282,20 +282,20 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
         token={token ?? ''}
       />
     );
-  } else {
-    return (
-      <FlatRewardTile
-        decimal={decimal}
-        disabled={isDisabled}
-        onClaimReward={onClaimReward}
-        onRewardChart={onRewardChart}
-        reward={reward}
-        rewardInCurrency={rewardInCurrency}
-        token={token}
-        totalClaimedReward={totalClaimedReward}
-        totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
-        type={type}
-      />
-    );
   }
+
+  return (
+    <FlatRewardTile
+      decimal={decimal}
+      disabled={isDisabled}
+      onClaimReward={onClaimReward}
+      onRewardChart={onRewardChart}
+      reward={reward}
+      rewardInCurrency={rewardInCurrency}
+      token={token}
+      totalClaimedReward={totalClaimedReward}
+      totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
+      type={type}
+    />
+  );
 }
