@@ -6,10 +6,10 @@ import type { AdvancedDropdownOption } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Category2, People, Profile } from 'iconsax-react';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import { DropSelect, MySwitch } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsTestnetEnabled, useTranslation } from '../../../hooks';
 import Search from '../../../popup/staking/components/Search';
 import { POSITION_TABS, type PositionsAction, type PositionsState, type StakingType } from '../util/utils';
 
@@ -78,12 +78,17 @@ interface Props {
 function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   const positionOptions: AdvancedDropdownOption[] = useMemo(() => ([
     { Icon: <Profile color='#AA83DC' size='20' variant='Bulk' />, text: t('Solo Staking'), value: 'solo' },
     { Icon: <People color='#AA83DC' size='20' variant='Bulk' />, text: t('Pool Staking'), value: 'pool' },
     { Icon: <Category2 color='#AA83DC' size='20' variant='Bulk' />, text: t('Solo and Pool Staking'), value: 'both' }
   ]), [t]);
+
+  useEffect(() => {
+    isTestnetEnabled && dispatch({ type: 'TOGGLE_TESTNET' });
+  }, [dispatch, isTestnetEnabled]);
 
   const setter = useCallback((selectedTab: POSITION_TABS) => () => dispatch({ payload: selectedTab, type: 'SET_TAB' }), [dispatch]);
   const stakingTypeHandler = useCallback((value: string | number) => dispatch({ payload: value as StakingType, type: 'SET_STAKING_TYPE' }), [dispatch]);
