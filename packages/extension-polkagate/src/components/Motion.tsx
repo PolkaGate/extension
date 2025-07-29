@@ -13,9 +13,9 @@ const variants = {
     initial: { opacity: 0 }
   },
   flip: {
-    animate: { rotateY: 0, opacity: 1, transition: { duration: 0.5 } },
-    exit: { rotateY: -90, opacity: 0, transition: { duration: 0.5 } },
-    initial: { rotateY: 90, opacity: 0 }
+    animate: { opacity: 1, rotateY: 0, transition: { duration: 0.5 } },
+    exit: { opacity: 0, rotateY: -90, transition: { duration: 0.5 } },
+    initial: { opacity: 0, rotateY: 90 }
   },
   slide: {
     animate: { opacity: 1, transition: { duration: 0.3, ease: 'easeOut' }, x: 0 },
