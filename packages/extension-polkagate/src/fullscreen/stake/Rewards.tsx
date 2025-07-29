@@ -145,7 +145,12 @@ interface RewardChartProps {
 const RewardChart = ({ rewardInfo }: RewardChartProps) => {
   return (
     <Box sx={{ height: '253px', width: '533px' }}>
-      <Bar data={rewardInfo.chartData} id='myCanvas' options={{ ...rewardInfo.chartOptions, maintainAspectRatio: false }} style={{ backgroundColor: '#05091C', borderRadius: '14px', padding: '4px' }} />
+      <Bar
+        data={rewardInfo.chartData}
+        id='myCanvas'
+        options={{ ...rewardInfo.chartOptions, maintainAspectRatio: false }}
+        style={{ backgroundColor: '#05091C', borderRadius: '14px', padding: '4px' }}
+      />
     </Box>
   );
 };
@@ -225,13 +230,13 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
   return (
     <Stack direction='column' sx={{ gap: '10px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb: '8px', px: '12px', width: '100%' }}>
-        <Typography color='text.secondary' textAlign='left' textTransform='uppercase' variant='B-1' width='48%'>
+        <Typography color='text.secondary' textAlign='left' variant='B-1' width='48%'>
           {t('Date')}
         </Typography>
-        <Typography color='text.secondary' textAlign='left' textTransform='uppercase' variant='B-1' width='22%'>
+        <Typography color='text.secondary' textAlign='left' variant='B-1' width='22%'>
           {t('Era')}
         </Typography>
-        <Typography color='text.secondary' textAlign='left' textTransform='uppercase' variant='B-1' width='30%'>
+        <Typography color='text.secondary' textAlign='left' variant='B-1' width='30%'>
           {t('Reward')}
         </Typography>
       </Container>
