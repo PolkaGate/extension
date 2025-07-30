@@ -6,7 +6,7 @@ import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AccountContext } from '../../components';
-import { useAlerts, useFullscreen, useTranslation } from '../../hooks';
+import { useAlerts, useTranslation } from '../../hooks';
 import HomeLayout from '../components/layout';
 import AccountList from './AccountList';
 import AccountsAdd from './AccountsAdd';
@@ -15,7 +15,6 @@ import PortfolioFullScreen from './PortfolioFullScreen';
 import TrendingAssets from './TrendingAssets';
 
 function HomePageFullScreen (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const navigate = useNavigate();
 

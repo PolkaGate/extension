@@ -15,7 +15,7 @@ import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/
 import { objectSpread } from '@polkadot/util';
 
 import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
-import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
+import { useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
@@ -34,7 +34,6 @@ enum STEP {
 }
 
 export default function ImportSeed (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const navigate = useNavigate();
 

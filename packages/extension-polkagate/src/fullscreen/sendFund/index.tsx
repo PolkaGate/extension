@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useFullscreen, useTeleport, useTranslation } from '../../hooks';
+import { useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import HomeLayout from '../components/layout';
 import Confirmation from '../manageProxies/Confirmation';
@@ -28,7 +28,6 @@ import { type Inputs } from './types';
 export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
 
-  useFullscreen();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);

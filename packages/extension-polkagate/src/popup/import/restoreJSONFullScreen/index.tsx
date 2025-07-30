@@ -19,7 +19,7 @@ import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
 import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import { useFullscreen, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
@@ -28,7 +28,6 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
 export default function RestoreJson (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();

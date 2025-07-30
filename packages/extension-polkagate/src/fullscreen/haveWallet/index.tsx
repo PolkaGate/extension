@@ -5,13 +5,12 @@ import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Check, ColorSwatch, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React from 'react';
 
-import { useFullscreen, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { OnboardTitle } from '../components';
 import AdaptiveLayout from '../components/layout/AdaptiveLayout';
 import CreationButton from './CreationButton';
 
 function HaveWallet (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
 

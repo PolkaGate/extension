@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useAccount, useChainInfo, useFullscreen, useTranslation, useUpdateSelectedAccount } from '../../hooks';
+import { useAccount, useChainInfo, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { PROXY_CHAINS } from '../../util/constants';
 import { NotSupportedBox } from '../components';
 import HomeLayout from '../components/layout';
@@ -21,7 +21,6 @@ import TransactionFlow from './TransactionFlow';
 import { type ProxyFlowStep } from './types';
 
 function ManageProxies (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
   const account = useAccount(address);
