@@ -1,16 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-/* eslint-disable react/jsx-first-prop-new-line */
-
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Sticker } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
+import { AssetLogo, FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
@@ -44,7 +41,7 @@ const StakingIcon = ({ isFullScreen, type }: { isFullScreen: boolean; type: 'sol
     <Grid container item sx={{ bottom: isFullScreen ? '10px' : 0, height: '32px', position: 'absolute', right: '20px', width: '32px' }}>
       {type === 'solo'
         ? <SnowFlake color={isFullScreen ? '#CB80BC' : '#809ACB40'} size='32' style={{ opacity: isFullScreen ? '30%' : 1 }} />
-        : <Ice asPortfolio isFullScreen ={isFullScreen} size='32' />
+        : <Ice asPortfolio isFullScreen={isFullScreen} size='32' />
       }
     </Grid>
   );
@@ -132,11 +129,10 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
       <Grid container item>
         {staked === undefined
           ? (
-            <Skeleton
-              animation='wave'
-              height='30px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', m: isFullScreen ? '13px 0 5px' : '5px 0 0', maxWidth: '245px', transform: 'none', width: '100%' }}
-              variant='text'
+            <MySkeleton
+              bgcolor='#BEAAD840'
+              height={25}
+              style={{ margin: isFullScreen ? '15px 0 8px' : '5px 0 0', maxWidth: '245px', width: '100%' }}
             />)
           : (
             <FormatPrice
@@ -156,11 +152,10 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
       <Grid alignItems='center' container item justifyContent='flex-start' sx={{ m: '-3px 0 6px', width: staked && isFullScreen ? 'fit-content' : '100%' }}>
         {staked === undefined
           ? (
-            <Skeleton
-              animation='wave'
-              height='16px'
-              sx={{ borderRadius: '10px', fontWeight: 'bold', m: '6px 0 1px', maxWidth: '75px', transform: 'none', width: '100%' }}
-              variant='text'
+            <MySkeleton
+              bgcolor='#BEAAD840'
+              height={16}
+              style={{ borderRadius: '10px', margin: '6px 0 1px', maxWidth: '75px', width: '100%' }}
             />)
           : (
             <FormatBalance2
