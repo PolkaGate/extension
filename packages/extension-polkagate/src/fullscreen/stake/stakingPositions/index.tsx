@@ -27,22 +27,22 @@ interface PositionOptionsProps {
 
 const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }: PositionOptionsProps) => (
   <>
-    {positionItems?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }, index) => {
+    {positionItems?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
       const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
-        return <Fragment key={index} />;
+        return <Fragment key={`${genesisHash}_${token}_fragment`} />;
       }
 
       return (
-        <Fragment key={index}>
+        <Fragment key={`${genesisHash}_${token}_fragment`}>
           {pooledBalance && !pooledBalance?.isZero() && ['both', 'pool'].includes(state.stakingType) &&
             <PositionItem
               balance={pooledBalance}
               decimal={decimal}
               genesisHash={genesisHash}
               isSelected={isSelected(genesisHash, 'pool')}
-              key={index}
+              key={`${genesisHash}_${token}_pool`}
               price={price}
               token={token}
               type='pool'
@@ -53,7 +53,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
               decimal={decimal}
               genesisHash={genesisHash}
               isSelected={isSelected(genesisHash, 'solo')}
-              key={index}
+              key={`${genesisHash}_${token}_solo`}
               price={price}
               token={token}
               type='solo'
@@ -74,12 +74,12 @@ interface EarningOptionsProps {
 
 const EarningOptions = ({ earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
   <>
-    {earningItems?.map((token, index) => {
+    {earningItems?.map((token) => {
       const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
       const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
-        return <Fragment key={index} />;
+        return <Fragment key={`${genesisHash}_${tokenSymbol}_fragment`} />;
       }
 
       return (
@@ -88,7 +88,7 @@ const EarningOptions = ({ earningItems, popupOpener, rates, setSelectedPosition,
           chainName={chainName}
           decimal={decimal}
           genesisHash={genesisHash}
-          key={index}
+          key={`${genesisHash}_${tokenSymbol}`}
           popupOpener={popupOpener}
           rate={info.rate}
           setSelectedPosition={setSelectedPosition}
