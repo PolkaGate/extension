@@ -58,7 +58,7 @@ export async function getPool (genesisHash, stakerAddress, id, port) {
   if (poolId === 0) {
     const members = await api.query['nominationPools']['poolMembers'](stakerAddress);
 
-    const member = members.isEmpty ? undefined : /** @type {PoolMember | null} */ (members.toPrimitive());
+    member = members.isEmpty ? undefined : /** @type {PoolMember | null} */ (members.toPrimitive());
 
     if (!member) {
       console.log(`can not find member for ${stakerAddress}`);

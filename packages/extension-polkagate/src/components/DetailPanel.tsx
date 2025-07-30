@@ -40,7 +40,7 @@ function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButt
       <Grid alignItems='center' container item>
         <IconButton
           onClick={onClose}
-          sx={{ background: '#BFA1FF26', borderRadius: '10px', height: '36px', left: '20px', position: 'absolute', visibility: noCloseButton ? 'hidden' : 'visible', width: '36px', zIndex: 2 }}
+          sx={{ background: '#BFA1FF26', borderRadius: '10px', height: '36px', left: '20px', position: 'absolute', top: noDivider ? '20px' : 'inherit', visibility: noCloseButton ? 'hidden' : 'visible', width: '36px', zIndex: 2 }}
         >
           <CLoseIcon sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
         </IconButton>
