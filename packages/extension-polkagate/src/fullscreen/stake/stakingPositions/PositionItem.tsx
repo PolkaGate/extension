@@ -6,7 +6,7 @@ import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 
-import { type BN } from '@polkadot/util';
+import { type BN, noop } from '@polkadot/util';
 
 import { ChainLogo, CryptoFiatBalance } from '../../../components';
 import { useChainInfo, useSelectedAccount } from '../../../hooks';
@@ -108,13 +108,13 @@ function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token
   }, [genesisHash, navigate, selectedAccount?.address, type]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isSelected ? '#6743944D' : '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+    <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#6743944D' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
       <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
       <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
       <ChainIdentifier genesisHash={genesisHash} />
       <Staked balance={balance} decimal={decimal} price={price} token={token} />
-      <ArrowButton onClick={onClick} />
+      <ArrowButton onClick={noop} />
     </Container>
   );
 }
