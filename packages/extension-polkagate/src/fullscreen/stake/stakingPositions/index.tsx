@@ -121,7 +121,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   const isSelected = useCallback((genesis: string, stakingType: string) => selectedGenesisHash === genesis && pathname.includes(stakingType), [pathname, selectedGenesisHash]);
 
   useEffect(() => {
-    if ((rates && allSuggestedValidators) || state.tab !== POSITION_TABS.EARNING) {
+    if ((rates && allSuggestedValidators) || state.tab !== POSITION_TABS.EXPLORE) {
       return;
     }
 
@@ -186,6 +186,12 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
       ? earning?.filter((item) => item?.tokenSymbol?.toLowerCase().includes(state.searchQuery))
       : earning;
   }, [earning, state.searchQuery]);
+
+  useEffect(() => {
+    (!positions || positions?.length === 0)
+      ? dispatch({ payload: POSITION_TABS.EXPLORE, type: 'SET_TAB' })
+      : dispatch({ payload: POSITION_TABS.POSITIONS, type: 'SET_TAB' });
+  }, [positions]);
 
   return (
     <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
