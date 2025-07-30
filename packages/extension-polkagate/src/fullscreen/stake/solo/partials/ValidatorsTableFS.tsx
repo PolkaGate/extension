@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FixedSizeList, type ListChildComponentProps } from 'react-window';
+import type { FixedSizeList, ListChildComponentProps } from 'react-window';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
