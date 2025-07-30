@@ -15,15 +15,16 @@ interface Props {
   genesisHash: string | undefined;
   setSelectedStakingType: React.Dispatch<React.SetStateAction<SelectedEasyStakingType | undefined>>;
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
+  suggestedValidators: string[] | undefined;
 }
 
-export default function SelectValidator ({ genesisHash, setSelectedStakingType, setSide }: Props) {
+export default function SelectValidator ({ genesisHash, setSelectedStakingType, setSide, suggestedValidators }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
   const stakingConsts = useStakingConsts2(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
-  const [newSelectedValidators, setNewSelectedValidators] = useState<string[]>([]);
+  const [newSelectedValidators, setNewSelectedValidators] = useState<string[] | undefined>(suggestedValidators);
 
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
 
@@ -35,13 +36,34 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
     return [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting];
   }, [validatorsInfo]);
 
-  const isLoading = useMemo(() => nominatedValidatorsInformation === undefined, [nominatedValidatorsInformation]);
-  const isLoaded = useMemo(() => nominatedValidatorsInformation && nominatedValidatorsInformation.length > 0, [nominatedValidatorsInformation]);
+  const validatorsToShow = useMemo(() => {
+    if (!nominatedValidatorsInformation) {
+      return undefined;
+    }
+
+    return nominatedValidatorsInformation.sort((val1, val2) => {
+      const aNominated = suggestedValidators?.includes(val1.accountId.toString());
+      const bNominated = suggestedValidators?.includes(val2.accountId.toString());
+
+      if (aNominated && !bNominated) {
+        return -1;
+      }
+
+      if (!aNominated && bNominated) {
+        return 1;
+      }
+
+      return 0;
+    });
+  }, [nominatedValidatorsInformation, suggestedValidators]);
+
+  const isLoading = useMemo(() => validatorsToShow === undefined, [validatorsToShow]);
+  const isLoaded = useMemo(() => validatorsToShow && validatorsToShow.length > 0, [validatorsToShow]);
 
   const onSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedAddress = event.target.value;
 
-    setNewSelectedValidators((prev) => {
+    newSelectedValidators && setNewSelectedValidators((prev) => {
       const current = prev || [];
 
       const existingIndex = newSelectedValidators.findIndex((val) => String(val) === String(selectedAddress));
@@ -63,17 +85,18 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
       }
     });
   }, [maximum, newSelectedValidators]);
+
   const onApply = useCallback(() => {
     setSelectedStakingType({
       pool: undefined,
       type: 'solo',
-      validators: undefined
+      validators: newSelectedValidators ?? []
     });
     setSide(EasyStakeSide.STAKING_TYPE);
-  }, [setSelectedStakingType, setSide]);
+  }, [newSelectedValidators, setSelectedStakingType, setSide]);
 
   return (
-    <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
+    <Stack direction='row' ref={refContainer} sx={{ maxHeight: '515px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
       {isLoading &&
         <Progress
           text={t("Loading the validators' list")}
@@ -83,11 +106,12 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
         <NominatorsTable
           genesisHash={genesisHash ?? ''}
           onSelect={onSelect}
-          validatorsInformation={nominatedValidatorsInformation ?? []}
+          selected={suggestedValidators}
+          validatorsInformation={validatorsToShow ?? []}
         />}
       <FadeOnScroll containerRef={refContainer} height='75px' ratio={0.6} />
       <StakingActionButton
-        disabled={true}
+        disabled={!newSelectedValidators?.length}
         onClick={onApply}
         style={{
           bottom: '15px',

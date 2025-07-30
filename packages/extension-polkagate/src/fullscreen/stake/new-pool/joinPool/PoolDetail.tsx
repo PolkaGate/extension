@@ -7,7 +7,7 @@ import type { MyPoolInfo, PoolInfo } from '../../../../util/types';
 
 import { Container, Grid, Link, Stack, Typography } from '@mui/material';
 import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { Fragment, memo, useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -114,10 +114,10 @@ const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genes
               const noDivider = Object.entries(roles).length === index + 1;
 
               return (
-                <>
+                <Fragment key={index}>
                   <RoleItem address={value} genesisHash={genesisHash} role={key} />
                   {!noDivider && <GradientDivider style={{ my: '8px' }} />}
-                </>
+                </Fragment>
               );
             })}
           </Stack>

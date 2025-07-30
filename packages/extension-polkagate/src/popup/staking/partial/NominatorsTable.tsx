@@ -8,13 +8,14 @@ import type { ValidatorInformation } from '../../../hooks/useValidatorsInformati
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import React, { memo, useCallback } from 'react';
+import React, { type CSSProperties, memo, useCallback, useMemo } from 'react';
+import { FixedSizeList as List } from 'react-window';
 
-import { FormatBalance2 } from '../../../components';
+import { FormatBalance2, GlowCheckbox } from '../../../components';
+import ValidatorInformationFS from '../../../fullscreen/stake/partials/ValidatorInformationFS';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';
-import PRadio from '../components/Radio';
 import ValidatorDetail from './ValidatorDetail';
 
 interface ValidatorIdentityProp {
@@ -68,7 +69,7 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
           style={{
             color: theme.palette.text.primary,
             ...theme.typography[isExtension ? 'B-2' : 'B-6'],
-            width: 'max-content',
+            width: 'max-content'
           }}
           tokens={[token ?? '']}
           value={amount}
@@ -78,7 +79,7 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
           {text}
         </Typography>
       }
-      <Typography color={adjustedColorForTitle ?? 'text.highlight'} textAlign='left' variant='B-4' >
+      <Typography color={adjustedColorForTitle ?? 'text.highlight'} textAlign='left' variant='B-4'>
         {title}
       </Typography>
     </Stack>
@@ -90,14 +91,26 @@ interface ValidatorInfoProp {
   genesisHash: string;
   onDetailClick: () => void;
   onSelect?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  style?: CSSProperties;
+  isSelected?: boolean;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick, onSelect, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const handleSelect = useCallback((_value: boolean) => {
+    const syntheticEvent = {
+      target: {
+        value: validatorInfo.accountId.toString()
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    onSelect?.(syntheticEvent);
+  }, [onSelect, validatorInfo.accountId]);
+
   return (
-    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '8px', width: '100%' }}>
+    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', mb: '4px', p: '8px', width: '100%', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
         <ValidatorIdentity validatorInfo={validatorInfo} />
         <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
@@ -113,20 +126,57 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, onDetailClick,
           <StakingInfoStack text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
         </Container>
         {onSelect &&
-          <PRadio onChange={onSelect} value={validatorInfo.accountId.toString()} />
+          <GlowCheckbox
+            changeState={handleSelect}
+            checked={isSelected}
+            style={{ m: 'auto', width: 'fit-content' }}
+          />
         }
       </Container>
     </Stack>
   );
 });
 
+interface ValidatorInformationHandlerProps {
+  genesisHash: string;
+  validatorDetail: ValidatorInformation | undefined;
+  toggleValidatorDetail: (validatorInfo: ValidatorInformation | undefined) => () => void;
+}
+
+const ValidatorInformationHandler = ({ genesisHash, toggleValidatorDetail, validatorDetail }: ValidatorInformationHandlerProps) => {
+  const isExtension = useIsExtensionPopup();
+
+  return useMemo(() => {
+    if (isExtension) {
+      return (
+        <ValidatorDetail
+          genesisHash={genesisHash}
+          handleClose={toggleValidatorDetail(undefined)}
+          validatorDetail={validatorDetail}
+        />);
+    }
+
+    if (!validatorDetail) {
+      return <></>;
+    }
+
+    return (
+      <ValidatorInformationFS
+        genesisHash={genesisHash}
+        onClose={toggleValidatorDetail(undefined)}
+        validator={validatorDetail}
+      />);
+  }, [genesisHash, isExtension, toggleValidatorDetail, validatorDetail]);
+};
+
 interface NominatorsTableProp {
   genesisHash: string;
   validatorsInformation: ValidatorInformation[];
   onSelect?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  selected?: string[];
 }
 
-function NominatorsTable ({ genesisHash, onSelect, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+function NominatorsTable ({ genesisHash, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
@@ -135,20 +185,33 @@ function NominatorsTable ({ genesisHash, onSelect, validatorsInformation }: Nomi
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', rowGap: '4px', width: '100%' }}>
-        {validatorsInformation.map((validatorInfo, index) => (
-          <ValidatorInfo
-            genesisHash={genesisHash}
-            key={index}
-            onDetailClick={toggleValidatorDetail(validatorInfo)}
-            onSelect={onSelect}
-            validatorInfo={validatorInfo}
-          />
-        ))}
+      <Stack direction='column' sx={{ height: 'fit-content', width: '100%' }}>
+        <List
+          height={515}
+          itemCount={validatorsInformation.length}
+          itemSize={102}
+          width='100%'
+        >
+          {({ index, style }: { index: number, style: CSSProperties }) => {
+            const validatorInfo = validatorsInformation[index];
+
+            return (
+              <div key={index} style={{ ...style }}>
+                <ValidatorInfo
+                  genesisHash={genesisHash}
+                  isSelected={selected ? selected.includes(validatorInfo.accountId.toString()) : undefined}
+                  onDetailClick={toggleValidatorDetail(validatorInfo)}
+                  onSelect={onSelect}
+                  validatorInfo={validatorInfo}
+                />
+              </div>
+            );
+          }}
+        </List>
       </Stack>
-      <ValidatorDetail
+      <ValidatorInformationHandler
         genesisHash={genesisHash}
-        handleClose={toggleValidatorDetail(undefined)}
+        toggleValidatorDetail={toggleValidatorDetail}
         validatorDetail={validatorDetail}
       />
     </>

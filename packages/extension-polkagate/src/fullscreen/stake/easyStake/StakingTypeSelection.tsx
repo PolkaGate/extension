@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PoolInfo } from '../../../util/types';
+import type { PoolInfo, PositionInfo } from '../../../util/types';
 
 import { Collapse, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, Discover } from 'iconsax-react';
@@ -136,18 +136,18 @@ const StakingTypeItem = ({ children, isSelected, onClick, type }: StakingTypeIte
 };
 
 interface Props {
-  genesisHash: string | undefined;
   setSelectedStakingType: React.Dispatch<React.SetStateAction<SelectedEasyStakingType | undefined>>;
   selectedStakingType: SelectedEasyStakingType | undefined;
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
   initialPool: PoolInfo | null | undefined;
+  selectedPosition: PositionInfo | undefined;
 }
 
-export default function StakingTypeSelection({ genesisHash, initialPool, selectedStakingType, setSelectedStakingType, setSide }: Props) {
+export default function StakingTypeSelection ({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: Props) {
   const { t } = useTranslation();
-  const poolStakingConsts = usePoolConst(genesisHash);
-  const stakingConsts = useStakingConsts2(genesisHash);
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const poolStakingConsts = usePoolConst(selectedPosition?.genesisHash);
+  const stakingConsts = useStakingConsts2(selectedPosition?.genesisHash);
+  const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
 
   const onOptions = useCallback((type: 'pool' | 'solo') => () => {
     type === 'pool' && setSelectedStakingType((perv) => ({
@@ -186,7 +186,7 @@ export default function StakingTypeSelection({ genesisHash, initialPool, selecte
             <StakingInfoStack adjustedColorForTitle='#AA83DC' text={t('Claim manually')} title={t('Rewards')} />
           </Grid>
           <SelectedPoolInformation
-            genesisHash={genesisHash}
+            genesisHash={selectedPosition?.genesisHash}
             onClick={openSelectPool}
             open={selectedStakingType?.type === 'pool'}
             poolDetail={selectedStakingType?.pool ?? initialPool}
@@ -211,7 +211,7 @@ export default function StakingTypeSelection({ genesisHash, initialPool, selecte
           <SelectedValidatorsInformation
             onClick={openSelectValidator}
             open={selectedStakingType?.type === 'solo'}
-            validators={[]}
+            validators={selectedPosition?.suggestedValidators}
           />
         </Stack>
       </StakingTypeItem>
