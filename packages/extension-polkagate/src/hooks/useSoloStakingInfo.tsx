@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
+import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
 import { useBalances2, useChainInfo, useCurrentEraIndex2, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
@@ -228,9 +229,19 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
         stakingConsts
       };
 
-      setSoloStakingInfo(info);
-      fetchingFlag.current = false;
-      needsStorageUpdate.current = true;
+      setSoloStakingInfo((pre) => ({
+        ...pre,
+        ...(Object.fromEntries(
+          Object.entries(info).filter(([_, v]) => v !== undefined)
+        ) as unknown as SoloStakingInfo)
+      }));
+
+      const allValuesPresent = Object.values(info).every((v) => v !== undefined);
+
+      if (allValuesPresent) {
+        fetchingFlag.current = false;
+        needsStorageUpdate.current = true;
+      }
     }
   }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts]);
 
@@ -244,9 +255,8 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
 
       const key = genesisHash + 'SoloStakingInfo' + address;
 
-      chrome.storage.local.set({ [key]: JSON.stringify(toSave) })
+      setStorage(key, toSave, true)
         .then(() => {
-          console.log('saved to storage');
           needsStorageUpdate.current = false;
         })
         .catch(console.error);
@@ -258,17 +268,16 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     if (!soloStakingInfo && genesisHash && address && currentEra !== undefined) {
       const key = genesisHash + 'SoloStakingInfo' + address;
 
-      chrome.storage.local.get(key, (result) => {
-        const raw = result?.[key] as string | undefined;
-        const parsed = raw ? JSON.parse(raw) as unknown as SavedSoloStakingInfo : null;
+      getStorage(key, true).then((parsed) => {
+        const parsedInfo = parsed as SavedSoloStakingInfo;
 
-        if (parsed && parsed.currentEra === currentEra) {
-          const revived = reviveSoloStakingInfoBNs(parsed);
+        if (parsedInfo?.currentEra === currentEra) {
+          const revived = reviveSoloStakingInfoBNs(parsedInfo);
 
           setSoloStakingInfo(revived);
           needsStorageUpdate.current = false;
         }
-      });
+      }).catch(console.error);
     }
   }, [address, currentEra, genesisHash, soloStakingInfo]);
 
