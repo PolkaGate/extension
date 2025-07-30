@@ -13,6 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { DecisionButtons } from '../../../components';
 import { useChainInfo, useEasyStake, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
+import { EXTENSION_NAME } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import StakingPopup from '../partials/StakingPopup';
 import { EasyStakeSide, FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, type SelectedEasyStakingType } from '../util/utils';
@@ -22,6 +23,8 @@ import StakingTypeSelection from './StakingTypeSelection';
 
 const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: boolean; onClick: () => void; selectedStakingType: SelectedEasyStakingType | undefined; }) => {
   const { t } = useTranslation();
+
+  const isRecommended = useMemo(() => selectedStakingType?.type === 'pool' && selectedStakingType.pool?.metadata?.toLowerCase().includes(EXTENSION_NAME.toLowerCase()), [selectedStakingType?.pool?.metadata, selectedStakingType?.type]);
 
   return (
     <Collapse in={open}>
@@ -33,7 +36,7 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: bo
           </Typography>
           <ArrowRight2 color='#AA83DC' size='18' />
         </Container>
-        {selectedStakingType?.type === 'pool' &&
+        {isRecommended &&
           <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
             {t('Recommended')}
           </Typography>}

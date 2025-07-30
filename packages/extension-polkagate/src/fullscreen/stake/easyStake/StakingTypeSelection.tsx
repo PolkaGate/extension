@@ -5,7 +5,7 @@ import type { PoolInfo, PositionInfo } from '../../../util/types';
 
 import { Collapse, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, Discover } from 'iconsax-react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -14,7 +14,7 @@ import { useChainInfo, usePoolConst, useStakingConsts2, useTranslation } from '.
 import PRadio from '../../../popup/staking/components/Radio';
 import { StakingInfoStack } from '../../../popup/staking/partial/NominatorsTable';
 import { PoolIdenticon } from '../../../popup/staking/partial/PoolIdenticon';
-import { isHexToBn } from '../../../util/utils';
+import { areArraysEqual, isHexToBn } from '../../../util/utils';
 import StakingIcon from '../partials/StakingIcon';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
@@ -33,9 +33,10 @@ interface SelectedValidatorsInformationProps {
   validators: string[] | undefined;
   onClick: (event: React.MouseEvent) => void;
   open: boolean;
+  isRecommended: boolean;
 }
 
-const SelectedValidatorsInformation = ({ onClick, open, validators }: SelectedValidatorsInformationProps) => {
+const SelectedValidatorsInformation = ({ isRecommended, onClick, open, validators }: SelectedValidatorsInformationProps) => {
   const { t } = useTranslation();
 
   return (
@@ -48,9 +49,10 @@ const SelectedValidatorsInformation = ({ onClick, open, validators }: SelectedVa
               <Typography color='text.primary' sx={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
                 {`${validators.length} ` + t('Validators')}
               </Typography>
-              <Typography color='#82FFA5' variant='B-5'>
-                {t('Recommended')}
-              </Typography>
+              {isRecommended &&
+                <Typography color='#82FFA5' variant='B-5'>
+                  {t('Recommended')}
+                </Typography>}
             </Stack>
             <Grid container item sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', p: '20px 10px', width: 'fit-content' }}>
               <ArrowRight2 color='#AA83DC' size='18' variant='Bold' />
@@ -149,6 +151,11 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
   const stakingConsts = useStakingConsts2(selectedPosition?.genesisHash);
   const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
 
+  const isRecommendedValidators = useMemo(() =>
+    !selectedStakingType?.validators ||
+    (selectedPosition?.suggestedValidators && selectedStakingType?.validators && areArraysEqual([selectedPosition.suggestedValidators, selectedStakingType.validators]))
+  , [selectedPosition?.suggestedValidators, selectedStakingType?.validators]);
+
   const onOptions = useCallback((type: 'pool' | 'solo') => () => {
     type === 'pool' && setSelectedStakingType((perv) => ({
       pool: perv?.pool,
@@ -209,6 +216,7 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
             </Grid>
           </Stack>
           <SelectedValidatorsInformation
+            isRecommended={!!isRecommendedValidators}
             onClick={openSelectValidator}
             open={selectedStakingType?.type === 'solo'}
             validators={selectedPosition?.suggestedValidators}
