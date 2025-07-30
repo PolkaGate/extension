@@ -124,9 +124,6 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
   const [BNamount, setBNamount] = useState<BN | null | undefined>(BN_ZERO);
   // const [isNextClicked, setNextIsClicked] = useState<boolean>(false);
 
-  console.log('initialPool:', initialPool);
-  console.log('selectedStakingType:', selectedStakingType);
-
   useEffect(() => {
     if (selectedStakingType || !initialPool) {
       return;

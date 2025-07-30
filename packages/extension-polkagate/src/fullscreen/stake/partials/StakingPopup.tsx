@@ -66,7 +66,7 @@ export default function StakingPopup ({ _onClose, _showCloseIcon, address, child
       noCloseButton={showCloseIcon === undefined}
       onClose={_onClose ?? handler}
       open
-      showBackIconAsClose={_showCloseIcon ? !_showCloseIcon : !showCloseIcon}
+      showBackIconAsClose={_showCloseIcon !== undefined ? !_showCloseIcon : !showCloseIcon}
       style={style}
       title={title}
     >
