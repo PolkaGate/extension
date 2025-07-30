@@ -169,7 +169,7 @@ export type StakingType = 'solo' | 'pool' | 'both';
 
 export enum POSITION_TABS {
   POSITIONS = 'positions',
-  EARNING = 'earning'
+  EXPLORE = 'explore'
 }
 
 export interface PositionsState {
