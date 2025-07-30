@@ -278,7 +278,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
         decimal={decimal ?? 0}
         fiatAmount={0}
         layoutDirection='row'
-        title={t('Rewards paid')}
+        title={t('Rewards earned')}
         token={token ?? ''}
       />
     );
