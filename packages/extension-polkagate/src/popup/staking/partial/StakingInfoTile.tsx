@@ -3,7 +3,7 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
-import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
@@ -25,7 +25,7 @@ interface TileActionButtonProps {
   isFullScreen?: boolean;
 }
 
-export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
@@ -38,7 +38,7 @@ export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = fals
         : isFullScreen
           ? '#AA83DC'
           : theme.palette.text.highlight
-    , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
+  , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
 
   const isLoadingOnFullscreen = isFullScreen && isLoading;
 
@@ -155,7 +155,8 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
 
 export interface Props {
   title: string;
-  Icon: Icon;
+  Icon?: Icon;
+  icon?: React.ReactNode;
   layoutDirection?: 'row' | 'column';
   cryptoAmount: BN | undefined;
   fiatAmount: number;
@@ -167,7 +168,7 @@ export interface Props {
   isFullScreen?: boolean;
 }
 
-export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
+export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
   const theme = useTheme();
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
@@ -200,9 +201,20 @@ export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount,
         }}
       >
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: isRow ? '100%' : 'fit-content' }}>
-          <Icon color={adjustedColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
-          {isRow && onExpand &&
-            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />}
+          {
+            icon &&
+            <Box color={adjustedColor} style={isFullScreen ? { alignItems: 'center', backgroundColor: '#2D1E4A', borderRadius: '999px', display: 'flex', height: '36px', justifyContent: 'center', padding: '8px', width: '36px' } : {}}>
+              {icon}
+            </Box>
+          }
+          {
+            Icon &&
+            <Icon color={adjustedColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
+          }
+          {
+            isRow && onExpand &&
+            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />
+          }
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
           <Typography color={adjustedColor} sx={{ mt: '4px', textWrap: 'nowrap' }} variant={isFullScreen ? 'B-2' : 'B-1'}>

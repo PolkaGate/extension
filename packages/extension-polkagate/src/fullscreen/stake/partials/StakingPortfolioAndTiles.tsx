@@ -5,9 +5,11 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid } from '@mui/material';
-import { Add, Award, BuyCrypto, LockSlash, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade, Wallet } from 'iconsax-react';
+import { Add, Award, BuyCrypto, LockSlash, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
+import Ice from '@polkadot/extension-polkagate/src/components/SVG/Ice';
+import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
@@ -95,7 +97,6 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         token={token ?? ''}
       />
       <StakingInfoTile
-        Icon={Wallet}
         buttonsArray={[{
           Icon: Add,
           iconVariant: 'Linear',
@@ -105,6 +106,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         cryptoAmount={availableBalanceToStake}
         decimal={decimal ?? 0}
         fiatAmount={availableBalanceToStake && decimal ? (Number(amountToHuman(availableBalanceToStake, decimal)) * tokenPrice) : 0}
+        icon={ isPoolStaking ? <Ice size='18' style={{ justifyContent: 'center' }} /> : <SnowFlake size='18' />}
         isFullScreen
         layoutDirection='row'
         style={{ minWidth: '194px', width: '194px' }}
