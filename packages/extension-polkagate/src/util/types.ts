@@ -973,6 +973,7 @@ export interface PositionInfo extends FetchedBalance, Chain {
   chainName: string;
   genesisHash: string;
   rate?: number;
+  suggestedValidators?: string[];
   // You can add additional properties here if needed
 }
 

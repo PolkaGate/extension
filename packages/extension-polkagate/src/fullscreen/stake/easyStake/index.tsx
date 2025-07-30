@@ -17,8 +17,8 @@ import getLogo2 from '../../../util/getLogo2';
 import StakingPopup from '../partials/StakingPopup';
 import { EasyStakeSide, FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, type SelectedEasyStakingType } from '../util/utils';
 import SelectPool from './SelectPool';
-import StakingTypeSelection from './StakingTypeSelection';
 import SelectValidator from './SelectValidator';
+import StakingTypeSelection from './StakingTypeSelection';
 
 const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: boolean; onClick: () => void; selectedStakingType: SelectedEasyStakingType | undefined; }) => {
   const { t } = useTranslation();
@@ -153,13 +153,23 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
   }, [onClose, setSelectedPosition]);
 
   const handleBack = useCallback(() => {
-    if (side === EasyStakeSide.INPUT) {
-      handleClose();
+    switch (side) {
+      case EasyStakeSide.INPUT:
+        handleClose();
+        break;
 
-      return;
+      case EasyStakeSide.SELECT_VALIDATORS:
+      case EasyStakeSide.SELECT_POOL:
+        setSide(EasyStakeSide.STAKING_TYPE);
+        break;
+
+      case EasyStakeSide.STAKING_TYPE:
+        setSide(EasyStakeSide.INPUT);
+        break;
+
+      default:
+        break;
     }
-
-    setSide((pervSide) => pervSide - 1);
   }, [handleClose, side]);
 
   const handleNext = useCallback(() => {
@@ -205,8 +215,8 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
         }
         {side === EasyStakeSide.STAKING_TYPE &&
           <StakingTypeSelection
-            genesisHash={selectedPosition?.genesisHash}
             initialPool={initialPool}
+            selectedPosition={selectedPosition}
             selectedStakingType={selectedStakingType}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
@@ -224,6 +234,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
             genesisHash={selectedPosition?.genesisHash}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
+            suggestedValidators={selectedPosition?.suggestedValidators}
           />
         }
         <DecisionButtons

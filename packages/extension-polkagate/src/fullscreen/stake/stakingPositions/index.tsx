@@ -67,16 +67,17 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
 interface EarningOptionsProps {
   earningItems: PositionInfo[] | undefined;
   rates: Record<string, number> | undefined;
+  allSuggestedValidators: Record<string, string[]> | undefined;
   popupOpener: PopupOpener;
   state: PositionsState;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-const EarningOptions = ({ earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
+const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
   <>
     {earningItems?.map((token) => {
       const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
-      const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
+      const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0, suggestedValidators: allSuggestedValidators?.[chainName.toLowerCase()] || [] } as PositionInfo;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
         return <Fragment key={`${genesisHash}_${tokenSymbol}_fragment`} />;
@@ -92,6 +93,7 @@ const EarningOptions = ({ earningItems, popupOpener, rates, setSelectedPosition,
           popupOpener={popupOpener}
           rate={info.rate}
           setSelectedPosition={setSelectedPosition}
+          suggestedValidators={info.suggestedValidators}
           token={tokenSymbol}
         />
       );
@@ -114,18 +116,20 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
 
   const [state, dispatch] = useReducer(positionsReducer, positionsInitialState);
   const [rates, setRates] = useState<Record<string, number> | undefined>(undefined);
+  const [allSuggestedValidators, setAllSuggestedValidators] = useState<Record<string, string[]> | undefined>(undefined);
 
   const isSelected = useCallback((genesis: string, stakingType: string) => selectedGenesisHash === genesis && pathname.includes(stakingType), [pathname, selectedGenesisHash]);
 
   useEffect(() => {
-    if (rates || state.tab !== POSITION_TABS.EARNING) {
+    if ((rates && allSuggestedValidators) || state.tab !== POSITION_TABS.EARNING) {
       return;
     }
 
     fetchStaking().then((res) => {
       setRates(res.rates);
+      setAllSuggestedValidators(res.validators);
     }).catch(console.error);
-  }, [rates, state.tab]);
+  }, [rates, state.tab, allSuggestedValidators]);
 
   const positions = useMemo(() =>
     accountAssets?.filter(({ pooledBalance, soloTotal }) => (soloTotal && !soloTotal.isZero()) || (pooledBalance && !pooledBalance.isZero()))
@@ -197,6 +201,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
             />)
           : (
             <EarningOptions
+              allSuggestedValidators={allSuggestedValidators}
               earningItems={earningItems}
               popupOpener={popupOpener}
               rates={rates}

@@ -4,15 +4,50 @@
 import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, type SxProps, type Theme,Typography } from '@mui/material';
+import { Container, IconButton, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 
-import { useChainInfo, useIsHovered, useTranslation } from '../../../hooks';
+import PoolDetailFS from '../../../fullscreen/stake/new-pool/joinPool/PoolDetail';
+import { useChainInfo, useIsExtensionPopup, useIsHovered, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
 import PRadio from '../components/Radio';
 import { StakingInfoStack } from './NominatorsTable';
 import PoolDetail from './PoolDetail';
 import { PoolIdenticon } from './PoolIdenticon';
+
+interface PoolDetailHandlerProps {
+  poolDetail: PoolInfo | undefined;
+  genesisHash: string | undefined;
+  comprehensive: boolean;
+  togglePoolDetail: (validatorInfo: PoolInfo | undefined) => () => void;
+}
+
+const PoolDetailHandler = ({ comprehensive, genesisHash, poolDetail, togglePoolDetail }: PoolDetailHandlerProps) => {
+  const isExtension = useIsExtensionPopup();
+
+  return useMemo(() => {
+    if (isExtension) {
+      return (
+        <PoolDetail
+          comprehensive={comprehensive}
+          genesisHash={genesisHash}
+          handleClose={togglePoolDetail(undefined)}
+          poolDetail={poolDetail}
+        />);
+    }
+
+    if (!poolDetail) {
+      return <></>;
+    }
+
+    return (
+      <PoolDetailFS
+        genesisHash={genesisHash}
+        onClose={togglePoolDetail(undefined)}
+        poolDetail={poolDetail}
+      />);
+  }, [comprehensive, genesisHash, isExtension, poolDetail, togglePoolDetail]);
+};
 
 export const PoolStashIdentity = memo(function MemoPoolStashIdentity ({ poolInfo, style }: { poolInfo: PoolInfo; style?: SxProps<Theme> }) {
   return (
@@ -21,7 +56,7 @@ export const PoolStashIdentity = memo(function MemoPoolStashIdentity ({ poolInfo
         poolInfo={poolInfo}
         size={24}
       />
-      <Typography id='poolMetadata' color='text.primary' sx={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
+      <Typography color='text.primary' id='poolMetadata' sx={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
         {poolInfo.metadata}
       </Typography>
     </Container>
@@ -111,7 +146,6 @@ interface PoolsTableProp {
   selected?: PoolInfo | undefined;
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
   comprehensive?: boolean; // if it is true all the information will be shown in the table
-
 }
 
 export default function PoolsTable ({ comprehensive, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
@@ -136,11 +170,11 @@ export default function PoolsTable ({ comprehensive, genesisHash, poolsInformati
           />
         ))}
       </Stack>
-      <PoolDetail
-        comprehensive={comprehensive}
+      <PoolDetailHandler
+        comprehensive={!!comprehensive}
         genesisHash={genesisHash}
-        handleClose={togglePoolDetail(undefined)}
         poolDetail={poolDetail}
+        togglePoolDetail={togglePoolDetail}
       />
     </>
   );

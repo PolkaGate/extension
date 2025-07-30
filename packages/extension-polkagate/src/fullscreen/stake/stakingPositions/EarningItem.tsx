@@ -90,23 +90,25 @@ interface Props {
   chainName: string;
   decimal: number;
   rate: number | undefined;
+  suggestedValidators: string[] | undefined;
   token: string;
   popupOpener: PopupOpener;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function EarningItem ({ availableBalance, chainName, decimal, genesisHash, popupOpener, rate, setSelectedPosition, token }: Props) {
+function EarningItem ({ availableBalance, chainName, decimal, genesisHash, popupOpener, rate, setSelectedPosition, suggestedValidators, token }: Props) {
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
   const onStake = useCallback(() => {
     setSelectedPosition({
       chainName,
       genesisHash,
-      rate
+      rate,
+      suggestedValidators
     } as PositionInfo);
 
     popupOpener(StakingPopUps.STAKING_INFO)();
-  }, [availableBalance, chainName, genesisHash, popupOpener, rate, setSelectedPosition]);
+  }, [chainName, genesisHash, popupOpener, rate, setSelectedPosition, suggestedValidators]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>

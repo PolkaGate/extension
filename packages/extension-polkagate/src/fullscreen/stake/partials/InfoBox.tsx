@@ -3,8 +3,8 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Box, Grid, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Box, Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import React, { type ReactNode, useMemo } from 'react';
 
 import { type BN, isBn } from '@polkadot/util';
 
@@ -17,19 +17,21 @@ import { amountToHuman } from '../../../util/utils';
 interface InfoBoxProps {
   value: number | string | BN | undefined;
   label: string;
-  decimal: number | undefined;
+  decimal?: number | undefined;
   InfoIcon?: Icon;
-  genesisHash?: string
+  genesisHash?: string;
+  style?: SxProps<Theme>;
+  Amount?: ReactNode;
 }
 
-export const InfoBox = ({ InfoIcon, decimal, genesisHash, label, value }: InfoBoxProps) => {
+export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, value }: InfoBoxProps) => {
   const { token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
 
   return (
-    <Box sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '17px 24px', pr: '15px', rowGap: isExtension ? '6px' : 0, width: '154px' }}>
+    <Box sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '17px 24px', pr: '15px', rowGap: isExtension ? '6px' : 0, width: '154px', ...style }}>
       <Grid alignItems='center' container gap='6px' item>
         {
           InfoIcon &&
@@ -39,10 +41,11 @@ export const InfoBox = ({ InfoIcon, decimal, genesisHash, label, value }: InfoBo
           logoInfo &&
           <AssetLogo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} />
         }
+        {Amount}
         <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
           {isBn(value)
             ? decimal && <>{amountToHuman(value, decimal)}</>
-            : <ShowValue value={value} width='50px' />
+            : !Amount && <ShowValue value={value} width='50px' />
           }
         </Typography>
       </Grid>
