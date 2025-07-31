@@ -9,7 +9,7 @@ import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect,
 
 import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, setStorage } from '../util';
-import { NAMES_IN_STORAGE } from '../util/constants';
+import { STORAGE_KEY } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 import { useFormatted3 } from '.';
 
@@ -83,13 +83,13 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         console.log('*** My pool info from worker is:', receivedMessage);
 
         // save my pool to local storage
-        getStorage(NAMES_IN_STORAGE.MY_POOL).then((res) => {
+        getStorage(STORAGE_KEY.MY_POOL).then((res) => {
           const last = res || {};
 
           receivedMessage.date = Date.now();
           (last as Record<string, MyPoolInfo>)[formatted] = receivedMessage;
 
-          setStorage(NAMES_IN_STORAGE.MY_POOL, last).catch(console.error);
+          setStorage(STORAGE_KEY.MY_POOL, last).catch(console.error);
         }).catch(console.error);
 
         setNewPool(receivedMessage);
@@ -165,7 +165,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     }
 
     /** load pool from storage */
-    getStorage(NAMES_IN_STORAGE.MY_POOL).then((res) => {
+    getStorage(STORAGE_KEY.MY_POOL).then((res) => {
       console.log('MyPools in local storage:', res);
 
       let myPool: MyPoolInfo | null | undefined;

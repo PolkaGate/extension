@@ -316,7 +316,7 @@ export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
-export const NAMES_IN_STORAGE = {
+export const STORAGE_KEY = {
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',

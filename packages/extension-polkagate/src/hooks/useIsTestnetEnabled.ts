@@ -4,14 +4,14 @@
 import { useEffect, useState } from 'react';
 
 import { getAndWatchStorage } from '../util';
-import { NAMES_IN_STORAGE } from '../util/constants';
+import { STORAGE_KEY } from '../util/constants';
 
 export default function useIsTestnetEnabled (): boolean | undefined {
   const [isTestnetEnabled, setTestnetIsEnabled] = useState<boolean>();
 
   useEffect(() => {
     getAndWatchStorage(
-      NAMES_IN_STORAGE.TEST_NET_ENABLED,
+      STORAGE_KEY.TEST_NET_ENABLED,
       setTestnetIsEnabled
     );
   }, []);

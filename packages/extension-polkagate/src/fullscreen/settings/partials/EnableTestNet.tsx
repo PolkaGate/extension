@@ -8,7 +8,7 @@ import { AccountContext } from '@polkadot/extension-polkagate/src/components/con
 import { MySwitch } from '@polkadot/extension-polkagate/src/components/index';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
-import { ExtensionPopups, NAMES_IN_STORAGE, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, STORAGE_KEY, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useTranslation } from '../../../components/translate';
 import useIsTestnetEnabled from '../../../hooks/useIsTestnetEnabled';
@@ -26,13 +26,13 @@ export default function EnableTestNet (): React.ReactElement {
   const onEnableTestNetClick = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     checked
       ? setShowTestnetWarning(ExtensionPopups.WARNING)
-      : setStorage(NAMES_IN_STORAGE.TEST_NET_ENABLED, false).catch(console.error);
+      : setStorage(STORAGE_KEY.TEST_NET_ENABLED, false).catch(console.error);
   }, []);
 
   const onEnableTestDone = useCallback(() => {
     setShowTestnetWarning(ExtensionPopups.NONE);
 
-    setStorage(NAMES_IN_STORAGE.TEST_NET_ENABLED, true).catch(console.error);
+    setStorage(STORAGE_KEY.TEST_NET_ENABLED, true).catch(console.error);
     accounts?.forEach(({ address, genesisHash }) => {
       if (genesisHash && TEST_NETS.includes(genesisHash)) {
         // NO TIE ANYMORE IN NEW DESIGN
@@ -44,10 +44,10 @@ export default function EnableTestNet (): React.ReactElement {
   return (
     <Stack direction='column'>
       <Typography
-        color={isExtension ? 'label.secondary' : 'text.primary' }
-        fontSize= {isExtension ? undefined : '22px'}
+        color={isExtension ? 'label.secondary' : 'text.primary'}
+        fontSize={isExtension ? undefined : '22px'}
         m={isExtension ? '5px 0 12px' : '40px 0 15px'}
-        sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} 
+        sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }}
         variant='H-4'
       >
         {t('Test Networks')}
@@ -55,7 +55,7 @@ export default function EnableTestNet (): React.ReactElement {
       <MySwitch
         checked={Boolean(isTestnetEnabled)}
         columnGap='8px'
-        label= {t('Show Test Networks')}
+        label={t('Show Test Networks')}
         onChange={onEnableTestNetClick}
       />
       <Warning

@@ -6,12 +6,12 @@ import '@polkadot/extension-inject/crossenv';
 import * as Sentry from '@sentry/react';
 
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { createView, Popup } from '@polkadot/extension-ui';
 
 (async () => {
   try {
-    const isDisabled = await getStorage(NAMES_IN_STORAGE.DISABLE_DIAGNOSTIC_REPORTS);
+    const isDisabled = await getStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS);
 
     if (!isDisabled) {
       const isProd = process.env['NODE_ENV'] === 'production';
