@@ -3,13 +3,13 @@
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
-import { Container, Skeleton, Typography, useTheme } from '@mui/material';
+import { Container, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { FormatBalance2, GlowCheckbox } from '../../../../components';
+import { FormatBalance2, GlowCheckbox, MySkeleton } from '../../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks';
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
@@ -119,14 +119,14 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
 
 const UndefinedItem = ({ noSocials = false }: { noSocials?: boolean }) => (
   <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}>
-    <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '300px' }} />
-    <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
-    <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
-    <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
-    <Skeleton animation='wave' height={20} sx={{ borderRadius: '20px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '130px' }} />
+    <MySkeleton height={20} style={{ borderRadius: '20px', width: '300px' }} />
+    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
     {!noSocials && <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
       {Array.from({ length: 4 }).map((_, index) =>
-        <Skeleton animation='wave' height={24} key={index} sx={{ borderRadius: '999px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '24px' }} />
+        <MySkeleton height={24} key={index} style={{ width: '24px' }} variant='rounded' />
       )}
     </Container>}
   </Container>
