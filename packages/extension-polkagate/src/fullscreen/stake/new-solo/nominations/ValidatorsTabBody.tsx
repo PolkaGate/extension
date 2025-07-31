@@ -61,7 +61,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
           text={t('Manage Validators')}
         />
       </TableToolbar>
-      <Stack direction='column' sx={{ gap: '2px', maxHeight: '270px', overflowY: 'auto', width: '100%' }}>
+      <Stack direction='column' sx={{ gap: '2px', maxHeight: 'calc(100vh - 535px)', overflowY: 'auto', width: '100%' }}>
         {isLoaded &&
           sortedAndFilteredValidators?.map((validator, index) => (
             <ValidatorInfo
