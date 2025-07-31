@@ -178,7 +178,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
                 <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
                 <StakingInfoStack text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
                 <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
-                <StakingInfoStack text={validatorAPY ?? '--'} title={t('APY')} />
+                <StakingInfoStack text={validatorAPY != null ? `${validatorAPY}%` : '...'} title={t('APY')} />
               </Container>
               <GradientDivider style={{ my: '12px' }} />
               <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>

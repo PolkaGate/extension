@@ -135,7 +135,7 @@ const RightColumnContent = ({ genesisHash, validator }: RightColumnContentProps)
         <InfoBox
           label={t('APY')}
           style={{ alignItems: 'flex-start', p: '16px', width: '128px' }}
-          value={validatorAPY ?? '---'}
+          value={validatorAPY != null ? `${validatorAPY}%` : '...'}
         />
       </VelvetBox>
     </>
