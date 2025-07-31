@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { UsePools } from '../../../../hooks/usePools2';
 import type { PoolInfo } from '../../../../util/types';
 
@@ -10,13 +8,12 @@ import { LinearProgress, Stack, type SxProps, type Theme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 import { useParams } from 'react-router';
 
-import { FadeOnScroll } from '../../../../components';
+import { FadeOnScroll, Progress } from '../../../../components';
 import { sortingFunctions } from '../../../../fullscreen/stake/util/utils';
 import { useTranslation } from '../../../../hooks';
 import { PREFERRED_POOL_NAME } from '../../../../util/constants';
 import { type PoolFilterState, SORTED_BY } from '../../partial/PoolFilter';
 import PoolsTable from '../../partial/PoolsTable';
-import Progress from '../../partial/Progress';
 import StakingActionButton from '../../partial/StakingActionButton';
 
 export const FetchPoolProgress = ({ numberOfFetchedPools, style, totalNumberOfPools }: { totalNumberOfPools: number | undefined; numberOfFetchedPools: number; style?: SxProps<Theme> }) => (
@@ -107,7 +104,7 @@ export default function ChoosePool ({ filter, onNext, pools, searchedQuery, sele
       <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'auto', px: '15px', width: '100%' }}>
         {incrementalPools === undefined &&
           <Progress
-            text={t('Loading pools')}
+            title={t('Loading pools')}
           />
         }
         {incrementalPools && poolsToShow && poolsToShow.length > 0 &&

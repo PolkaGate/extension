@@ -6,10 +6,9 @@ import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 import { Stack } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { FadeOnScroll } from '../../../components';
+import { FadeOnScroll, Progress } from '../../../components';
 import { usePools2, useTranslation } from '../../../hooks';
 import PoolsTable from '../../../popup/staking/partial/PoolsTable';
-import Progress from '../../../popup/staking/partial/Progress';
 import StakingActionButton from '../../../popup/staking/partial/StakingActionButton';
 import { FetchPoolProgress } from '../../../popup/staking/pool-new/joinPool/ChoosePool';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
@@ -47,7 +46,8 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
       <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'auto', px: '15px', width: '100%' }}>
         {incrementalPools === undefined &&
           <Progress
-            text={t('Loading pools')}
+            style={{ marginTop: '90px' }}
+            title={t('Loading pools')}
           />
         }
         {incrementalPools && poolsToShow && poolsToShow.length > 0 &&

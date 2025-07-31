@@ -7,12 +7,11 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { EmptyWarning } from '../../../../assets/icons/index';
-import { FadeOnScroll, Motion, NeonButton } from '../../../../components';
+import { FadeOnScroll, Motion, NeonButton, Progress } from '../../../../components';
 import { useBackground, useSelectedAccount, useSoloStakingInfo, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import NominationsBackButton from '../../partial/NominationsBackButton';
 import NominatorsTable from '../../partial/NominatorsTable';
-import Progress from '../../partial/Progress';
 import StakingMenu from '../../partial/StakingMenu';
 
 interface EmptyNominationProps {
@@ -89,7 +88,8 @@ export default function NominationsSetting (): React.ReactElement {
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
           {isLoading &&
             <Progress
-              text={t("Loading the validators' list")}
+              style={{ marginTop: '90px' }}
+              title={t("Loading the validators' list")}
             />
           }
           {isLoaded &&

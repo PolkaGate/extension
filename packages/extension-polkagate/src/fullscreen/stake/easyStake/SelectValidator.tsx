@@ -4,10 +4,9 @@
 import { Stack } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FadeOnScroll } from '../../../components';
+import { FadeOnScroll, Progress } from '../../../components';
 import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../../../hooks';
 import NominatorsTable from '../../../popup/staking/partial/NominatorsTable';
-import Progress from '../../../popup/staking/partial/Progress';
 import StakingActionButton from '../../../popup/staking/partial/StakingActionButton';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
@@ -99,7 +98,8 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
     <Stack direction='row' ref={refContainer} sx={{ maxHeight: '515px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
       {isLoading &&
         <Progress
-          text={t("Loading the validators' list")}
+          style={{ marginTop: '90px' }}
+          title={t("Loading the validators' list")}
         />
       }
       {isLoaded &&

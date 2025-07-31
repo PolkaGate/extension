@@ -13,7 +13,7 @@ import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
 
 import Subscan from '../../../assets/icons/Subscan';
-import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2 } from '../../../components';
+import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2, Progress } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../hooks';
@@ -25,7 +25,6 @@ import BlueGradient from '../stakingStyles/BlueGradient';
 import DetailGradientBox from '../stakingStyles/DetailGradientBox';
 import { StakingInfoStack } from './NominatorsTable';
 import { PoolIdenticon } from './PoolIdenticon';
-import Progress from './Progress';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
@@ -377,8 +376,9 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
     >
       {!poolDetail &&
         <Progress
-          loaderSize={40}
-          text={t('Loading pool information')}
+          size={40}
+          style={{ marginTop: '90px' }}
+          title={t('Loading pool information')}
         />
       }
       {poolDetail &&

@@ -10,7 +10,7 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, FormatBalance2, Identity2, Motion } from '../../components';
+import { AssetLogo, FormatBalance2, Identity2, Motion, Progress } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
@@ -258,28 +258,40 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
 };
 
 export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <Motion variant='slide'>
-      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
-        <Stack direction='column' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
-          <ChartHeader
-            genesisHash={genesisHash}
-            popupOpener={popupOpener}
-            rewardInfo={rewardInfo}
-            token={token}
-            type={type}
-          />
-          <RewardChart rewardInfo={rewardInfo} />
-        </Stack>
-        <Grid container item sx={{ maxHeight: '315px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
-          <RewardTable
-            descSortedRewards={rewardInfo.descSortedRewards ?? []}
-            expanded={rewardInfo.detail}
-            genesisHash={genesisHash}
-            onExpand={rewardInfo.expand}
-          />
-        </Grid>
-      </Container>
+      {
+        !rewardInfo?.descSortedRewards
+          ? (
+            <Progress
+              style={{ height: '315px' }}
+              title={t('Loading rewards details')}
+              withEllipsis
+            />)
+          : (
+            <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
+              <Stack direction='column' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
+                <ChartHeader
+                  genesisHash={genesisHash}
+                  popupOpener={popupOpener}
+                  rewardInfo={rewardInfo}
+                  token={token}
+                  type={type}
+                />
+                <RewardChart rewardInfo={rewardInfo} />
+              </Stack>
+              <Grid container item sx={{ maxHeight: '315px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
+                <RewardTable
+                  descSortedRewards={rewardInfo.descSortedRewards ?? []}
+                  expanded={rewardInfo.detail}
+                  genesisHash={genesisHash}
+                  onExpand={rewardInfo.expand}
+                />
+              </Grid>
+            </Container>)
+      }
     </Motion>
   );
 }

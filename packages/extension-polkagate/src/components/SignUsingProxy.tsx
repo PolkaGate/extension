@@ -12,11 +12,10 @@ import { noop } from '@polkadot/util';
 import { useIsBlueish, useTranslation } from '../hooks';
 import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
-import Progress from '../popup/staking/partial/Progress';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util/utils';
-import { AccountContext, FadeOnScroll, GradientButton, Identity2 } from '.';
+import { AccountContext, FadeOnScroll, GradientButton, Identity2, Progress } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const { t } = useTranslation();
@@ -202,7 +201,10 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
             </Typography>
           </Container>}
         {proxies === undefined &&
-          <Progress text={t('Loading proxy accounts')} />
+          <Progress
+            style={{ marginTop: '90px' }}
+            title={t('Loading proxy accounts')}
+          />
         }
         {isBlueish
           ? <StakingActionButton

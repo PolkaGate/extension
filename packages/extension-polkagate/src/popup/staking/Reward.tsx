@@ -10,11 +10,10 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useNavigate, useParams } from 'react-router';
 
-import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion } from '../../components';
+import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewards3, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
-import Progress from './partial/Progress';
 import StakingMenu from './partial/StakingMenu';
 
 interface RewardChartHeaderProps {
@@ -180,7 +179,10 @@ export default function StakingReward () {
           />
           <Stack direction='column' ref={containerRef} sx={{ height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
             {rewardInfo.status === 'loading' &&
-              <Progress text={t('Loading rewards')} />
+              <Progress
+                style={{ marginTop: '90px' }}
+                title={t('Loading rewards')}
+              />
             }
             {rewardInfo.status === 'ready' && rewardInfo.descSortedRewards &&
               <>

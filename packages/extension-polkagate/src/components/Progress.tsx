@@ -26,7 +26,7 @@ function Progress ({ direction = 'column', size = 15, style = {}, title, type = 
   const isBlueish = useIsBlueish();
 
   return (
-    <Stack direction={direction} sx={{ alignItems: 'center', gap: '50px', justifyContent: 'center', mt: '50px', width: '100%', ...style }}>
+    <Stack direction={direction} sx={{ alignItems: 'center', gap: '40px', justifyContent: 'center', mt: '50px', width: '100%', ...style }}>
       {type === 'beatLoader' &&
         <BeatLoader color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} cssOverride={{ alignSelf: 'center' }} loading size={size} speedMultiplier={0.6} />
       }
