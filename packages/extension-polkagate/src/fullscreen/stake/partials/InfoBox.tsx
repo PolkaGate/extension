@@ -45,7 +45,7 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
         <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
           {isBn(value)
             ? decimal && <>{amountToHuman(value, decimal)}</>
-            : !Amount && <ShowValue value={value} width='50px' />
+            : !Amount && <ShowValue value={value} width='75px' />
           }
         </Typography>
       </Grid>
