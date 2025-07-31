@@ -39,12 +39,20 @@ interface StakingBadgeProps {
 export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBadgeProps) => {
   const { t } = useTranslation();
 
+  const poolColor = isFullscreen ? ' #82FFA5' : '#A7DFB7';
+  const soloColor = '#809ACB';
+  const textColor = hasPoolStaking ? poolColor : soloColor;
+
+  const soloBgcolor = isFullscreen ? '#809ACB26' : '#C6AECC26';
+  const poolBgcolor = isFullscreen ? '#82FFA526' : '#A7DFB726';
+  const bgcolor = hasPoolStaking ? poolBgcolor : soloBgcolor;
+
   return (
-    <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: hasPoolStaking ? '#A7DFB726' : '#C6AECC26', borderRadius: '9px', p: '3px 5px', ...style }}>
+    <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor, borderRadius: '9px', p: '3px 5px', ...style }}>
       {hasPoolStaking
-        ? <I3Dcube color='#A7DFB7' size='14' variant='Bulk' />
-        : <SnowFlake color={isFullscreen ? '#AA83DC' : '#809ACB'} size='14' />}
-      <Typography color={hasPoolStaking ? '#A7DFB7' : isFullscreen ? '#AA83DC' : '#809ACB'} fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
+        ? <I3Dcube color={poolColor} size='14' variant='Bulk' />
+        : <SnowFlake color={soloColor} size='14' />}
+      <Typography color={textColor} fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
         {hasPoolStaking ? t('Pool staking') : t('Solo staking')}
       </Typography>
     </Stack>
