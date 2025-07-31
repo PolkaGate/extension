@@ -182,13 +182,17 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   }, [earning, state.searchQuery]);
 
   useEffect(() => {
-    (!positions || positions?.length === 0)
+    if (!positions) {
+      return;
+    }
+
+    (positions?.length === 0)
       ? dispatch({ payload: POSITION_TABS.EXPLORE, type: 'SET_TAB' })
       : dispatch({ payload: POSITION_TABS.POSITIONS, type: 'SET_TAB' });
   }, [positions]);
 
   return (
-    <Motion variant='slide'>
+    <Motion>
       <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
         <PositionsToolbar dispatch={dispatch} earningsCount={earning?.length} positionsCount={positions?.length} state={state} />
         <Stack direction='column' ref={containerRef} sx={{ gap: '4px', maxHeight: 'calc(100vh - 530px)', minHeight: '250px', overflow: 'auto', width: '100%' }}>
