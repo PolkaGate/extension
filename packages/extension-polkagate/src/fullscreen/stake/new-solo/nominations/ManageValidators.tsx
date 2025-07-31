@@ -185,7 +185,7 @@ function ManageValidators () {
                   systemSuggestion={systemSuggestion}
                 />
               </TableToolbar>
-              <Stack direction='column' sx={{ gap: '2px', width: '100%' }}>
+              <Stack direction='column' sx={{ gap: '2px', height: 'calc(100vh - 390px)', overflow: 'scroll', width: '100%' }}>
                 {isLoaded &&
                   itemsToShow?.map((validator, index) => (
                     <ValidatorInfo
