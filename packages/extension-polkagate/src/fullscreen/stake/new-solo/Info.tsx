@@ -35,14 +35,14 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
   return (
     <DraggableModal
       maxHeight={475}
-      minHeight={475}
+      minHeight={450}
       onClose={onClose}
       open
       showBackIconAsClose
       title={t('On-chain staking info')}
       width={520}
     >
-      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '8px', p: '20px', position: 'relative', zIndex: 1 }}>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '8px', p: '20px 20px 0', position: 'relative', zIndex: 1 }}>
         {stakingStats.map((stat, index) => (
           <InfoBox
             InfoIcon={stat.InfoIcon}

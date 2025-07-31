@@ -104,6 +104,7 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
           onChange={stakingTypeHandler}
           options={positionOptions}
           style={{
+            height: '44px',
             minWidth: '220px',
             width: 'fit-content'
           }}
@@ -122,8 +123,9 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
             border: '1px solid #BEAAD833',
             borderRadius: '12px',
             height: 'fit-content',
-            p: '6px'
+            p: '5.5px 6px'
           },
+          height: '44px',
           width: state.tab === POSITION_TABS.POSITIONS ? '195px' : '300px'
         }}
       />
