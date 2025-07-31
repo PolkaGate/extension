@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Sticker } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
@@ -54,7 +54,8 @@ interface ButtonsProps {
 
 const Buttons = ({ buttons, isFullScreen }: ButtonsProps) => {
   return (
-    <Grid alignItems='center' container item justifyContent='flex-start'
+    <Grid
+      alignItems='center' container item justifyContent='flex-start'
       sx={{
         bgcolor: isFullScreen ? '#1B133C' : 'transparent',
         border: isFullScreen ? '4px solid #1B133C' : 'none',
@@ -129,11 +130,17 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
       <Grid container item>
         {staked === undefined
           ? (
-            <MySkeleton
-              bgcolor='#BEAAD840'
-              height={25}
-              style={{ margin: isFullScreen ? '15px 0 8px' : '5px 0 0', maxWidth: '245px', width: '100%' }}
-            />)
+            <Stack direction='column'>
+              <MySkeleton
+                bgcolor='#BEAAD840'
+                style={{ margin: isFullScreen ? '5px 0 0px' : '5px 0 0', width: '258px' }}
+              />
+              <MySkeleton
+                bgcolor='#BEAAD840'
+                style={{ margin: isFullScreen ? '8px 0 8px' : '5px 0 0', width: '155px' }}
+              />
+            </Stack>
+          )
           : (
             <FormatPrice
               commify
@@ -154,8 +161,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
           ? (
             <MySkeleton
               bgcolor='#BEAAD840'
-              height={16}
-              style={{ borderRadius: '10px', margin: '6px 0 1px', maxWidth: '75px', width: '100%' }}
+              style={{ borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
             />)
           : (
             <FormatBalance2
