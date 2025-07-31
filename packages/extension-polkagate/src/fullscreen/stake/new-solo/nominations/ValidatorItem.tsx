@@ -67,7 +67,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
     <Container
       disableGutters
       onClick={onSelect}
-      sx={{ alignItems: 'center', bgcolor: isSelected ? '#AA83DC1A' : isAlreadySelected ? '#e0d6dc26' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}
+      sx={{ alignItems: 'center', bgcolor: isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}
     >
       {onSelect &&
         <GlowCheckbox
