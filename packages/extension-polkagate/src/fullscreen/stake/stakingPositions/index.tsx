@@ -76,7 +76,7 @@ interface EarningOptionsProps {
 const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
   <>
     {earningItems?.map((token) => {
-      const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
+      const { chainName, genesisHash, tokenSymbol } = token;
       const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0, suggestedValidators: allSuggestedValidators?.[chainName.toLowerCase()] || [] } as PositionInfo;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
@@ -85,16 +85,10 @@ const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rat
 
       return (
         <EarningItem
-          availableBalance={availableBalance}
-          chainName={chainName}
-          decimal={decimal}
-          genesisHash={genesisHash}
+          info={info}
           key={`${genesisHash}_${tokenSymbol}`}
           popupOpener={popupOpener}
-          rate={info.rate}
           setSelectedPosition={setSelectedPosition}
-          suggestedValidators={info.suggestedValidators}
-          token={tokenSymbol}
         />
       );
     })}

@@ -85,35 +85,25 @@ const StakeButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 interface Props {
-  genesisHash: string;
-  availableBalance: BN;
-  chainName: string;
-  decimal: number;
-  rate: number | undefined;
-  suggestedValidators: string[] | undefined;
-  token: string;
+  info: PositionInfo
   popupOpener: PopupOpener;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function EarningItem ({ availableBalance, chainName, decimal, genesisHash, popupOpener, rate, setSelectedPosition, suggestedValidators, token }: Props) {
+function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
+  const { availableBalance, decimal, genesisHash, rate, tokenSymbol } = info;
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
   const onStake = useCallback(() => {
-    setSelectedPosition({
-      chainName,
-      genesisHash,
-      rate,
-      suggestedValidators
-    } as PositionInfo);
+    setSelectedPosition(info);
 
     popupOpener(StakingPopUps.STAKING_INFO)();
-  }, [chainName, genesisHash, popupOpener, rate, setSelectedPosition, suggestedValidators]);
+  }, [info, popupOpener, setSelectedPosition]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
-      <Staked balance={availableBalance} decimal={decimal} token={token} />
+      <Staked balance={availableBalance} decimal={decimal} token={tokenSymbol} />
       <ChainIdentifier genesisHash={genesisHash} />
       <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
       <YieldBadge rate={rate} />

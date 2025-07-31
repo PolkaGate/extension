@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { BN } from '@polkadot/util';
 import type { PositionInfo } from '../../../util/types';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
@@ -12,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
 import { FormatBalance2, GradientButton } from '../../../components';
-import { usePoolConst, useStakingConst, useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, usePoolConst, useStakingConst, useTranslation } from '../../../hooks';
 import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
 import { remainingTime } from '../../../util/time';
@@ -27,20 +28,37 @@ interface Props {
   onClose?: () => void;
 }
 
+function AvailableBalance ({ availableBalance, decimal, isExtension, token }: { availableBalance: BN, decimal: number, isExtension: boolean, token: string }): React.ReactElement {
+  return (
+    <Box sx={{ alignContent: 'center', bgcolor: '#BFA1FF26', borderRadius: '12px', height: '32px', margin: isExtension ? 0 : '20px auto 0', position: isExtension ? 'absolute' : 'initial', px: '10px', right: '15px', width: 'fit-content' }}>
+      <Typography color='#BEAAD8' variant='B-2'>
+        <FormatBalance2
+          decimalPoint={2}
+          decimals={[decimal]}
+          tokens={[token]}
+          value={availableBalance}
+        />
+      </Typography>
+    </Box>
+  );
+}
+
 function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const poolConsts = usePoolConst(selectedPosition?.genesisHash);
   const stakingConsts = useStakingConst(selectedPosition?.genesisHash);
-  const _decimal = selectedPosition?.decimal || stakingConsts?.decimal || 1;
 
+  const _decimal = selectedPosition?.decimal || stakingConsts?.decimal || 1;
   const eraLength = remainingTime(poolConsts?.eraLength?.toNumber() ?? 0);
+
   const handleClose = useCallback(() => onClose ? onClose() : setSelectedPosition(undefined), [onClose, setSelectedPosition]);
   const goStaking = useCallback(() => onNext ? onNext() : navigate('/pool/' + selectedPosition?.genesisHash + '/stake') as void, [selectedPosition?.genesisHash, navigate, onNext]);
 
   return (
     <SharePopup
-      modalProps={{ noDivider: true }}
+      modalProps={{ noDivider: true, showBackIconAsClose: true }}
       onClose={handleClose}
       open
       popupProps={{
@@ -52,17 +70,14 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
       }}
     >
       <Stack direction='column' sx={{ p: '10px 10px 0', position: 'relative', width: '100%', zIndex: 1 }}>
-        <RedGradient style={{ right: '-3%' }} />
-        <Box sx={{ alignContent: 'center', bgcolor: '#BFA1FF26', borderRadius: '12px', height: '32px', position: 'absolute', px: '10px', right: '15px', width: 'fit-content' }}>
-          <Typography color='#BEAAD8' variant='B-2'>
-            <FormatBalance2
-              decimalPoint={2}
-              decimals={[_decimal]}
-              tokens={[selectedPosition?.tokenSymbol ?? '']}
-              value={selectedPosition?.availableBalance ?? BN_ZERO}
-            />
-          </Typography>
-        </Box>
+        <RedGradient style={{ right: '-3%', visibility: isExtension ? 'visible' : 'hidden' }} />
+        {isExtension &&
+          <AvailableBalance
+            availableBalance={selectedPosition?.availableBalance ?? BN_ZERO}
+            decimal={_decimal}
+            isExtension={true}
+            token={selectedPosition?.tokenSymbol ?? ''}
+          />}
         <Grid alignItems='center' columnGap='10px' container direction='column' item justifyContent={'center'}>
           <Box
             component='img'
@@ -78,14 +93,21 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
             selectedPosition={selectedPosition}
           />
         </Grid>
-        <Box sx={{ height: '255px', mt: '15px', overflow: 'auto', position: 'relative', width: '100%' }}>
+        {!isExtension &&
+          <AvailableBalance
+            availableBalance={selectedPosition?.availableBalance ?? BN_ZERO}
+            decimal={_decimal}
+            isExtension={false}
+            token={selectedPosition?.tokenSymbol ?? ''}
+          />}
+        <Stack direction='column' sx={{ height: '255px', mt: '15px', overflow: 'auto', position: 'relative', rowGap: isExtension ? '15px' : '20px', width: '100%' }}>
           {(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond) &&
-              <InfoRow
-                Icon={WalletMoney}
-                text1={'Stake anytime with as little as '}
-                text2={`${amountToHuman(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond, _decimal)} ${selectedPosition?.tokenSymbol}`}
-                text3={t('and start earning rewards actively within {{eraLength}}', { replace: { eraLength } })}
-              />}
+            <InfoRow
+              Icon={WalletMoney}
+              text1={'Stake anytime with as little as '}
+              text2={`${amountToHuman(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond, _decimal)} ${selectedPosition?.tokenSymbol}`}
+              text3={t('and start earning rewards actively within {{eraLength}}', { replace: { eraLength } })}
+            />}
           <InfoRow
             Icon={Clock}
             text1={'Unstake anytime, and redeem your funds '}
@@ -98,7 +120,7 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
             text2={` ${stakingConsts?.eraDuration} hours.`}
             text3={t('Rewards require manual claiming if you have staked in pools')}
           />
-        </Box>
+        </Stack>
         <GradientButton
           contentPlacement='center'
           disabled={false}
