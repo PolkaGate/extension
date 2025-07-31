@@ -319,5 +319,7 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 export const NAMES_IN_STORAGE = {
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   LOGIN_IFO: 'loginInfo',
+  MY_POOL: 'MyPool',
   TEST_NET_ENABLED: 'testnet_enabled'
+
 };

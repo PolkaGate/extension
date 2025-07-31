@@ -8,10 +8,11 @@ import type { MyPoolInfo } from '../util/types';
 import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 
 import { FetchingContext, WorkerContext } from '../components';
+import { getStorage, setStorage } from '../util';
+import { NAMES_IN_STORAGE } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 import { useFormatted3 } from '.';
 
-const MY_POOL_STORAGE_KEY = 'MyPool';
 const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 
 interface WorkerMessage {
@@ -82,15 +83,14 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         console.log('*** My pool info from worker is:', receivedMessage);
 
         // save my pool to local storage
-        chrome.storage.local.get(MY_POOL_STORAGE_KEY, (res) => {
-          const last = res?.[MY_POOL_STORAGE_KEY] || {};
+        getStorage(NAMES_IN_STORAGE.MY_POOL).then((res) => {
+          const last = res || {};
 
           receivedMessage.date = Date.now();
-          last[formatted] = receivedMessage;
+          (last as Record<string, MyPoolInfo>)[formatted] = receivedMessage;
 
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ [MY_POOL_STORAGE_KEY]: last });
-        });
+          setStorage(NAMES_IN_STORAGE.MY_POOL, last).catch(console.error);
+        }).catch(console.error);
 
         setNewPool(receivedMessage);
       }
@@ -165,10 +165,14 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     }
 
     /** load pool from storage */
-    chrome.storage.local.get(MY_POOL_STORAGE_KEY, (res) => {
+    getStorage(NAMES_IN_STORAGE.MY_POOL).then((res) => {
       console.log('MyPools in local storage:', res);
 
-      const myPool = res?.[MY_POOL_STORAGE_KEY]?.[formatted] as MyPoolInfo | null | undefined;
+      let myPool: MyPoolInfo | null | undefined;
+
+      if (res && typeof res === 'object' && formatted) {
+        myPool = (res as Record<string, MyPoolInfo | null | undefined>)[formatted];
+      }
 
       if (myPool !== undefined) {
         setSavedPool(myPool);
@@ -177,7 +181,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       }
 
       setSavedPool(undefined);
-    });
+    }).catch(console.error);
   }, [formatted]);
 
   return newPool ?? savedPool;
