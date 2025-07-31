@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router';
 
 import { noop } from '@polkadot/util';
 
-import { FadeOnScroll, GradientButton } from '../../../../components';
+import { FadeOnScroll, GradientButton, Motion } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
 import TableToolbar from '../../partials/TableToolbar';
@@ -25,7 +25,7 @@ interface Props {
 export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
-  
+
   const navigate = useNavigate();
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
@@ -49,22 +49,23 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash, navigate]);
 
   return (
-    <Stack direction='column' sx={{ width: '100%' }}>
-      <TableToolbar
-        onSearch={onSearch}
-        setSortBy={setSortConfig}
-        sortBy={sortConfig}
-        sortByObject={VALIDATORS_SORTED_BY}
-      >
-        <GradientButton
-          onClick={openValidatorManagement}
-          startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
-          style={{ height: '44px', padding: 0, width: '180px' }}
-          text={t('Manage Validators')}
-        />
-      </TableToolbar>
-      <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 535px)', overflowY: 'auto', width: '100%' }}>
-        {isLoaded &&
+    <Motion variant='slide'>
+      <Stack direction='column' sx={{ width: '100%' }}>
+        <TableToolbar
+          onSearch={onSearch}
+          setSortBy={setSortConfig}
+          sortBy={sortConfig}
+          sortByObject={VALIDATORS_SORTED_BY}
+        >
+          <GradientButton
+            onClick={openValidatorManagement}
+            startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
+            style={{ height: '44px', padding: 0, width: '180px' }}
+            text={t('Manage Validators')}
+          />
+        </TableToolbar>
+        <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 535px)', overflowY: 'auto', width: '100%' }}>
+          {isLoaded &&
           sortedAndFilteredValidators?.map((validator, index) => (
             <ValidatorInfo
               genesisHash={genesisHash}
@@ -73,10 +74,11 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
               validatorInfo={validator}
             />
           ))}
-        {isLoading && Array.from({ length: 10 }).map((_, index) => (<UndefinedItem key={index} />))}
-        {nothingToShow && <EmptyNomination />}
-        <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
+          {isLoading && Array.from({ length: 10 }).map((_, index) => (<UndefinedItem key={index} />))}
+          {nothingToShow && <EmptyNomination />}
+          <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
+        </Stack>
       </Stack>
-    </Stack>
+    </Motion>
   );
 }
