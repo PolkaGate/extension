@@ -229,21 +229,20 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
         stakingConsts
       };
 
-      setSoloStakingInfo((pre) => ({
-        ...pre,
-        ...(Object.fromEntries(
-          Object.entries(info).filter(([_, v]) => v !== undefined)
-        ) as unknown as SoloStakingInfo)
-      }));
+      const nonUndefinedInfo = Object.fromEntries(
+        Object.entries(info).filter(([_, v]) => v !== undefined)
+      );
 
-      const allValuesPresent = Object.values(info).every((v) => v !== undefined);
-
-      if (allValuesPresent) {
-        fetchingFlag.current = false;
-        needsStorageUpdate.current = true;
-      }
+      setSoloStakingInfo((pre) => ({ ...pre, ...nonUndefinedInfo }) as SoloStakingInfo);
+      fetchingFlag.current = false;
+      needsStorageUpdate.current = true;
     }
   }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts]);
+  useEffect(() => {
+    if (rewards) {
+      setSoloStakingInfo((pre) => ({ ...pre, rewards }) as SoloStakingInfo);
+    }
+  }, [rewards]);
 
   useEffect(() => {
     // Only save to storage when specifically needed
