@@ -36,8 +36,6 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   useEffect(() => {
     const fetchLoginInfo = async () => {
       chrome.storage.onChanged.addListener(function (changes, areaName) {
-        if (areaName === 'local' && NAMES_IN_STORAGE.LOGIN_IFO in changes) {
-          const newValue = changes[NAMES_IN_STORAGE.LOGIN_IFO].newValue as LoginInfo;
         if (areaName === 'local' && STORAGE_KEY.LOGIN_IFO in changes) {
           const newValue = changes[STORAGE_KEY.LOGIN_IFO].newValue as LoginInfo;
 
