@@ -5,12 +5,12 @@ import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
 import { Stack } from '@mui/material';
 import { Menu } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
 
 import { noop } from '@polkadot/util';
 
-import { GradientButton } from '../../../../components';
+import { FadeOnScroll, GradientButton } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
 import TableToolbar from '../../partials/TableToolbar';
@@ -24,6 +24,8 @@ interface Props {
 
 export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const refContainer = useRef<HTMLDivElement>(null);
+  
   const navigate = useNavigate();
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
@@ -61,7 +63,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
           text={t('Manage Validators')}
         />
       </TableToolbar>
-      <Stack direction='column' sx={{ gap: '2px', maxHeight: 'calc(100vh - 535px)', overflowY: 'auto', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 535px)', overflowY: 'auto', width: '100%' }}>
         {isLoaded &&
           sortedAndFilteredValidators?.map((validator, index) => (
             <ValidatorInfo
@@ -73,6 +75,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
           ))}
         {isLoading && Array.from({ length: 10 }).map((_, index) => (<UndefinedItem key={index} />))}
         {nothingToShow && <EmptyNomination />}
+        <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
       </Stack>
     </Stack>
   );
