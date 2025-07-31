@@ -68,7 +68,7 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
           decimals={[decimal ?? 0]}
           style={{
             color: theme.palette.text.primary,
-            ...theme.typography[isExtension ? 'B-2' : 'B-6'],
+            ...theme.typography[isExtension ? 'B-2' : 'B-4'],
             width: 'max-content'
           }}
           tokens={[token ?? '']}
