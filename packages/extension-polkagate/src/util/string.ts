@@ -99,3 +99,10 @@ export function convertToHyphenated (str: string) {
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-'); // Replace multiple hyphens with a single hyphen
 }
+
+/**
+ * Checks if the given string is a valid hex-encoded genesis hash.
+ */
+export function isValidGenesis (hash: string): boolean {
+  return hash.startsWith('0x') && hash.length === 66;
+}

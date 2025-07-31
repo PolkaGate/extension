@@ -5,9 +5,11 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
+import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ChainLogo, GlowCheck, GradientButton, SearchField } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
@@ -24,6 +26,8 @@ interface ChooseAccountMenuProps {
 
 export default function ChainListModal ({ externalOptions, handleClose, open, setSelectedChain }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+
   const selectedChains = useSelectedChains();
   const allChains = useGenesisHashOptions(false);
   const selectedAccount = useSelectedAccount();
@@ -62,27 +66,35 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
     setSearchKeyword(keyword);
   }, []);
 
-  const selectedChainsToList = useMemo(() => {
-    if (!selectedChains) {
+  const initialChainsGenesisHashes = useMemo(() => {
+    if (pathname?.includes('stake')) {
+      return STAKING_CHAINS;
+    }
+
+    return selectedChains;
+  }, [pathname, selectedChains]);
+
+  const chainsOptions = useMemo(() => {
+    if (!initialChainsGenesisHashes) {
       return [];
     }
 
-    return externalOptions ?? allChains.filter(({ value }) => selectedChains.includes(String(value)));
-  }, [allChains, externalOptions, selectedChains]);
+    return externalOptions ?? allChains.filter(({ value }) => initialChainsGenesisHashes.includes(String(value)));
+  }, [allChains, externalOptions, initialChainsGenesisHashes]);
 
-  const chainsToList = useMemo(() => {
-    if (!selectedChainsToList) {
+  const filteredChainsToList = useMemo(() => {
+    if (!chainsOptions) {
       return [];
     }
 
     if (!searchKeyword) {
-      return selectedChainsToList;
+      return chainsOptions;
     }
 
     const keyword = searchKeyword.trim().toLowerCase();
 
-    return selectedChainsToList.filter(({ text }) => text.toLowerCase().includes(keyword));
-  }, [searchKeyword, selectedChainsToList]);
+    return chainsOptions.filter(({ text }) => text.toLowerCase().includes(keyword));
+  }, [searchKeyword, chainsOptions]);
 
   const onItemClick = useCallback((text: string, value: string) => {
     setMayBeSelected({ text, value });
@@ -103,7 +115,7 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
         />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
-            {chainsToList.map(({ text, value }, index) => {
+            {filteredChainsToList.map(({ text, value }, index) => {
               return (
                 <Grid
                   alignItems='center'

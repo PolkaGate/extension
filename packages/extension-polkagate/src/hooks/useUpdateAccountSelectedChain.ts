@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { updateStorage } from '../util';
+import { isValidGenesis, updateStorage } from '../util';
 
 /**
  * Updates the selected chain for a given account address in storage and optionally changes the URL.
@@ -24,8 +24,23 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
   const location = useLocation();
   const navigate = useNavigate();
 
+  const adjustStakingPath = useCallback(async () => {
+    const pathParts = location.pathname.split('/');
+    const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
+
+    if (maybeGenesisIndex !== -1 && genesisHash) {
+      pathParts[maybeGenesisIndex] = genesisHash;
+    }
+
+    const newPath = pathParts.join('/');
+
+    return await navigate(newPath);
+  }, [location.pathname, genesisHash, navigate]);
+
   const changePath = useCallback(async () => {
     if (location.pathname.includes('/fullscreen-stake/')) {
+      adjustStakingPath();
+
       return;
     }
 

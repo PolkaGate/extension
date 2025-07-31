@@ -4,17 +4,10 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { setStorage } from '../util';
+import { isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
-
-/**
- * Checks if the given string is a valid hex-encoded genesis hash.
- */
-function isValidGenesis (hash: string): boolean {
-  return hash.startsWith('0x') && hash.length === 66;
-}
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
