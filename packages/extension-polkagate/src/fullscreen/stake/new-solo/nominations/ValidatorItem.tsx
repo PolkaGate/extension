@@ -103,7 +103,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
       />
       <InfoWithIcons
         StartIcon={ChartSquare}
-        text={validatorAPY ?? '--'}
+        text={validatorAPY ?? '...'}
         title={t('APY')}
       />
       {/* <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>

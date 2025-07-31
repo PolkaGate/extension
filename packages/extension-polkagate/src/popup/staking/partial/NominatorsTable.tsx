@@ -13,7 +13,7 @@ import { FixedSizeList as List } from 'react-window';
 
 import { FormatBalance2, GlowCheckbox } from '../../../components';
 import ValidatorInformationFS from '../../../fullscreen/stake/partials/ValidatorInformationFS';
-import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsBlueish, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toShortAddress } from '../../../util/utils';
 import ValidatorDetail from './ValidatorDetail';
@@ -24,6 +24,8 @@ interface ValidatorIdentityProp {
 }
 
 export const ValidatorIdentity = memo(function ValidatorIdentity ({ style, validatorInfo }: ValidatorIdentityProp) {
+  const isBlueish = useIsBlueish();
+
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
       <PolkaGateIdenticon
@@ -39,7 +41,7 @@ export const ValidatorIdentity = memo(function ValidatorIdentity ({ style, valid
           {validatorInfo.identity.displayParent ?? validatorInfo.identity.display}
         </Typography>}
       {validatorInfo.identity?.displayParent &&
-        <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '6px', p: '4px' }} variant='B-5'>
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', p: '4px' }} variant='B-5'>
           {validatorInfo.identity.display}
         </Typography>}
     </Container>
@@ -185,7 +187,7 @@ function NominatorsTable ({ genesisHash, onSelect, selected, validatorsInformati
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', width: '100%' }}>
+      <Stack direction='column' sx={{ height: 'fit-content', pb: '60px', width: '100%' }}>
         <List
           height={515}
           itemCount={validatorsInformation.length}
