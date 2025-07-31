@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-ignore
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
@@ -162,6 +163,7 @@ export default function ValidatorInformationFS ({ genesisHash, onClose, validato
       leftColumnContent={
         <LeftColumnContent
           genesisHash={genesisHash}
+          //@ts-ignore
           nominators={validator.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
           onClose={onClose}
         />
