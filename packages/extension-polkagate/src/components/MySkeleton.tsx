@@ -8,16 +8,17 @@ interface Props {
   bgcolor?: string;
   height?: number;
   style?: React.CSSProperties;
+  animation?: SkeletonProps['animation'];
   variant?: SkeletonProps['variant'];
   width?: number;
 }
 
-function MySkeleton ({ bgcolor, height = 12, style = {}, variant, width = 0 }: Props): React.ReactElement {
+function MySkeleton ({ animation, bgcolor, height = 12, style = {}, variant, width = 0 }: Props): React.ReactElement {
   const isDark = useTheme();
 
   return (
     <Skeleton
-      animation='wave'
+      animation={animation ?? 'wave'}
       height={height}
       sx={{
         bgcolor: bgcolor ?? (isDark ? '#946CC840' : '#99A1C440'),

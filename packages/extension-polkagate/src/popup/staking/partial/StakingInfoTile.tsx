@@ -47,7 +47,7 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
       <MySkeleton
         bgcolor='#1A1836'
         height={38}
-        style={{ borderRadius: '11px', width: '100%' }}
+        style={{ borderRadius: '11px', marginTop: '8px', width: '100%' }}
       />
     );
   }
@@ -260,7 +260,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             gap: isRow ? '2px' : '4px',
             minWidth: '104px',
             ml: isRow ? 'auto' : '8px',
-            mt: '8px',
+            mt: isFullScreen ? 0 : '8px',
             p: '2px',
             width: isFullScreen ? '100%' : 'fit-content'
           }}

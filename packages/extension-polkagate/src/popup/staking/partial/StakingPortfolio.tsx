@@ -49,10 +49,11 @@ const StakingIcon = ({ isFullScreen, type }: { isFullScreen: boolean; type: 'sol
 
 interface ButtonsProps {
   buttons: PortfolioActionButtonProps[];
+  isLoading?: boolean;
   isFullScreen?: boolean;
 }
 
-const Buttons = ({ buttons, isFullScreen }: ButtonsProps) => {
+const Buttons = ({ buttons, isFullScreen, isLoading }: ButtonsProps) => {
   return (
     <Grid
       alignItems='center' container item justifyContent='flex-start'
@@ -69,16 +70,33 @@ const Buttons = ({ buttons, isFullScreen }: ButtonsProps) => {
       }}
     >
       {isFullScreen && <GlowBall style={{ zIndex: -1 }} />}
-      {buttons.map(({ Icon, disabled, onClick, text }, index) => (
-        <PortfolioActionButton
-          Icon={Icon}
-          disabled={disabled}
-          isFullScreen={isFullScreen}
-          key={index}
-          onClick={onClick}
-          text={text}
-        />
-      ))}
+      {isLoading
+        ? (<Stack columnGap='10px' direction='row'>
+          <MySkeleton
+            bgcolor='#1A1836'
+            height={36}
+            style={{ borderRadius: '11px', margin: '4px 0', width: '137px' }}
+          />
+          <MySkeleton
+            bgcolor='#1A1836'
+            height={36}
+            style={{ borderRadius: '11px', margin: '4px 0', width: '137px' }}
+          />
+        </Stack>)
+        : (<>
+          {
+            buttons.map(({ Icon, disabled, onClick, text }, index) => (
+              <PortfolioActionButton
+                Icon={Icon}
+                disabled={disabled}
+                isFullScreen={isFullScreen}
+                key={index}
+                onClick={onClick}
+                text={text}
+              />))
+          }
+        </>)
+      }
     </Grid>
   );
 };
@@ -181,7 +199,11 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
               value={staked}
             />)}
       </Grid>
-      <Buttons buttons={buttons} isFullScreen={isFullScreen} />
+      <Buttons
+        buttons={buttons}
+        isFullScreen={isFullScreen}
+        isLoading={staked === undefined}
+      />
       <StakingIcon isFullScreen={isFullScreen} type={type} />
     </GlowBox>
   );
