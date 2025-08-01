@@ -36,7 +36,7 @@ interface Props {
   title: string;
 }
 
-function StakeUnstake ({ amountLabel, address, balance, errorMessage, estimatedFee, genesisHash, onClose, onInputChange, onMaxValue, setValue, title, transactionInformation, tx, value }: Props) {
+function StakeUnstake ({ address, amountLabel, balance, errorMessage, estimatedFee, genesisHash, onClose, onInputChange, onMaxValue, setValue, title, transactionInformation, tx, value }: Props) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
