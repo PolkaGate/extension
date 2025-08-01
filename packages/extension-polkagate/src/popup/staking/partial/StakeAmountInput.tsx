@@ -6,10 +6,10 @@
 import type { BN } from '@polkadot/util';
 import type { LogoInfo } from '../../../util/getLogo2';
 
-import { Collapse, Container, Grid, Skeleton, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
+import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { AssetLogo, FormatBalance2, GradientDivider, TwoToneText } from '../../../components';
+import { AssetLogo, FormatBalance2, GradientDivider, MySkeleton, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util/utils';
 
@@ -55,51 +55,57 @@ const AmountButton = ({ buttonName, isExtension, onClick, value }: AmountButtonP
 
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'isExtension' && prop !== 'theme'
-})(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    '&.Mui-focused': {
-      '& fieldset.MuiOutlinedInput-notchedOutline': {
-        backgroundColor: 'unset',
-        border: 'unset',
+})(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => {
+  const fontStyle = {
+    fontFamily: isExtension ? 'Inter' : 'OdibeeSans',
+    fontSize: isExtension ? '32px' : '30px',
+    fontWeight: isExtension ? 500 : 400
+  };
+
+  return ({
+    '& .MuiOutlinedInput-root': {
+      '&.Mui-focused': {
+        '& fieldset.MuiOutlinedInput-notchedOutline': {
+          backgroundColor: 'unset',
+          border: 'unset',
+          transition: 'all 150ms ease-out'
+        }
+      },
+      '&:hover': {
+        background: 'transparent',
         transition: 'all 150ms ease-out'
-      }
-    },
-    '&:hover': {
+      },
+      '&:hover fieldset': {
+        border: 'unset',
+        transition: 'all 150ms ease-out',
+        zIndex: 0
+      },
       background: 'transparent',
-      transition: 'all 150ms ease-out'
-    },
-    '&:hover fieldset': {
       border: 'unset',
+      color: theme.palette.text.primary,
+      fieldset: {
+        border: 'unset'
+      },
+      ...fontStyle,
+      height: '43px',
+      letterSpacing: '0.6px',
+      lineHeight: '140%',
       transition: 'all 150ms ease-out',
-      zIndex: 0
+      width: '100%'
     },
-    background: 'transparent',
-    border: 'unset',
-    color: theme.palette.text.primary,
-    fieldset: {
-      border: 'unset'
+    '& input': {
+      padding: '4px'
     },
-    fontSize: '32px',
-    fontWeight: 500,
-    height: '43px',
-    letterSpacing: '0.6px',
-    lineHeight: '140%',
-    transition: 'all 150ms ease-out',
-    width: '100%'
-  },
-  '& input': {
-    padding: '4px'
-  },
-  '& input::placeholder': {
-    alignItems: 'center',
-    color: isExtension ? theme.palette.text.highlight : '#AA83DC',
-    fontSize: '32px',
-    fontWeight: 500,
-    textAlign: 'left'
-  },
-  padding: '4px',
-  transition: 'all 150ms ease-out'
-}));
+    '& input::placeholder': {
+      alignItems: 'center',
+      color: isExtension ? theme.palette.text.highlight : '#AA83DC',
+      ...fontStyle,
+      textAlign: 'left'
+    },
+    padding: '4px',
+    transition: 'all 150ms ease-out'
+  });
+});
 
 interface SubAmountProps {
   amount: BN | undefined;
@@ -138,11 +144,8 @@ const SubAmount = ({ amount, decimal, genesisHash, isExtension, logoInfo, title,
               value={amount}
             />)
           : (
-            <Skeleton
-              animation='wave'
-              height='12px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '70px' }}
-              variant='text'
+            <MySkeleton
+              style={{ borderRadius: '50px', width: '70px' }}
             />
           )
         }
@@ -152,22 +155,23 @@ const SubAmount = ({ amount, decimal, genesisHash, isExtension, logoInfo, title,
 };
 
 interface Props {
-  style?: SxProps<Theme>;
-  title?: string;
-  titleInColor?: string;
   buttonsArray?: AmountButtonInputProps[];
-  focused?: boolean;
-  placeholder?: string;
-  onInputChange: (input: string) => void;
-  numberOnly?: boolean;
-  maxLength?: { integer: number; decimal: number };
+  decimal: number | undefined;
+  dividerStyle?: React.CSSProperties;
   enteredValue?: string;
   errorMessage?: string | undefined;
-  decimal: number | undefined;
+  focused?: boolean;
+  maxLength?: { integer: number; decimal: number };
+  numberOnly?: boolean;
+  onInputChange: (input: string) => void;
+  placeholder?: string;
+  style?: SxProps<Theme>;
   subAmount?: SubAmountProps;
+  title?: string;
+  titleInColor?: string;
 }
 
-export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
+export default function StakeAmountInput ({ buttonsArray = [], decimal, dividerStyle = {}, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -247,7 +251,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
             ))}
           </Grid>
         </Container>
-        <GradientDivider style={{ my: '6px' }} />
+        <GradientDivider style={{ my: '6px', ...dividerStyle }} />
         <StyledTextField
           autoComplete='off'
           autoFocus={focused}
@@ -271,7 +275,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, enteredV
           />
         }
       </Stack>
-      <Collapse in={!!errorMessage} sx={{ width: '100%' }}>
+      <Collapse in={!!errorMessage} sx={{ textAlign: 'left', width: '100%' }}>
         <Typography color='#FF4FB9' variant='B-1'>
           {errorMessage}
         </Typography>
