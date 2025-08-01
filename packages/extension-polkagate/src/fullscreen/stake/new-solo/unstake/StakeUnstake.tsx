@@ -32,10 +32,11 @@ interface Props {
   setValue: React.Dispatch<React.SetStateAction<BN | null | undefined>>;
   balance: BN | undefined;
   value: BN | null | undefined;
+  amountLabel: string;
   title: string;
 }
 
-function StakeUnstake ({ address, balance, errorMessage, estimatedFee, genesisHash, onClose, onInputChange, onMaxValue, setValue, title, transactionInformation, tx, value }: Props) {
+function StakeUnstake ({ amountLabel, address, balance, errorMessage, estimatedFee, genesisHash, onClose, onInputChange, onMaxValue, setValue, title, transactionInformation, tx, value }: Props) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
@@ -63,7 +64,7 @@ function StakeUnstake ({ address, balance, errorMessage, estimatedFee, genesisHa
           decimal={decimal}
           genesisHash={genesisHash}
           style={{ mt: '8px', p: '16px' }}
-          text={t('Staked')}
+          text={amountLabel}
           token={token}
         />
         <StakeAmountInput

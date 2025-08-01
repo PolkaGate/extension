@@ -28,6 +28,7 @@ function Unstake ({ address, genesisHash, onClose }: Props) {
   return (
     <StakeUnstake
       address={address}
+      amountLabel={t('Staked')}
       balance={staked}
       errorMessage={errorMessage}
       estimatedFee={estimatedFee}
