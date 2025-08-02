@@ -221,7 +221,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory }: ButtonsProp
   }, [address, chainName]);
 
   return (
-    <Stack direction='column' sx={{ gap: '8px', zIndex: 1 }}>
+    <Stack direction='column' sx={{ gap: '17px', mt: '5px', position: 'relative', zIndex: 1 }}>
       {
         goToHistory &&
         <NeonButton
