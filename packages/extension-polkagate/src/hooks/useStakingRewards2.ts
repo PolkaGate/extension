@@ -23,7 +23,7 @@ export async function getStakingReward (chainName: string, address: AccountId | 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + '.api.subscan.io/api/scan/total_reward', { address })
+      postData('https://' + chainName + '.api.subscan.io/api/scan/staking/total_reward', { address })
         .then((data: { message: string; data: { sum: string; }; }) => {
           if (data.message === 'Success') {
             const reward = data.data.sum;
@@ -33,6 +33,10 @@ export async function getStakingReward (chainName: string, address: AccountId | 
             console.log(`Fetching message ${data.message}`);
             resolve(null);
           }
+        })
+        .catch((error) => {
+          console.log('something went wrong while getting get Staking Total Rewards ', error);
+          resolve(null);
         });
     } catch (error) {
       console.log('something went wrong while getting get Staking Total Rewards ', error);

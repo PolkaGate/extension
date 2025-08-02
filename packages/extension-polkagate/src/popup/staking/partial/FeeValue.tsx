@@ -9,7 +9,7 @@ import { Container, Skeleton, Stack, Typography, useTheme } from '@mui/material'
 import React from 'react';
 
 import { FormatBalance2, GradientDivider } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 
 interface Props {
   feeValue: Balance | undefined;
@@ -20,11 +20,12 @@ interface Props {
 export default function FeeValue ({ decimal, feeValue, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   return (
     <Stack direction='column' sx={{ rowGap: '8px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <Typography color='text.highlight' variant='B-1'>
+        <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
           {t('Fee')}
         </Typography>
         {feeValue

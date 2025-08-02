@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { MySwitch } from '@polkadot/extension-polkagate/src/components/index';
 import { getAndWatchStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useTranslation } from '../../../components/translate';
 
@@ -16,11 +16,11 @@ export default function DiagnosticsReports (): React.ReactElement {
   const [isDisabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    getAndWatchStorage(NAMES_IN_STORAGE.DISABLE_DIAGNOSTIC_REPORTS, setDisabled);
+    getAndWatchStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS, setDisabled);
   }, []);
 
   const onDisableReports = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    setStorage(NAMES_IN_STORAGE.DISABLE_DIAGNOSTIC_REPORTS, checked).catch(console.error);
+    setStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS, checked).catch(console.error);
   }, []);
 
   return (
@@ -31,7 +31,7 @@ export default function DiagnosticsReports (): React.ReactElement {
       <MySwitch
         checked={Boolean(isDisabled)}
         columnGap='8px'
-        label= {t('Opt Out of Sending Diagnostic Reports')}
+        label={t('Opt Out of Sending Diagnostic Reports')}
         onChange={onDisableReports}
       />
     </Stack>

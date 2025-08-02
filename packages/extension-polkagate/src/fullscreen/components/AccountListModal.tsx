@@ -6,9 +6,7 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { Container, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import Progress from '@polkadot/extension-polkagate/src/popup/staking/partial/Progress';
-
-import { FadeOnScroll, GradientButton, SearchField } from '../../components';
+import { FadeOnScroll, GradientButton, Progress, SearchField } from '../../components';
 import { useCategorizedAccountsInProfiles, useFormatted3, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { VelvetBox } from '../../style';
 import ProfileTabsFS from '../home/ProfileTabsFS';
@@ -142,7 +140,10 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                     );
                   })}
                 </>
-                : <Progress text={t('Loading, please wait ...')} />
+                : <Progress
+                  style={{ marginTop: '90px' }}
+                  title={t('Loading, please wait ...')}
+                />
             }
           </Stack>
           <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />

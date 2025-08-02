@@ -65,15 +65,15 @@ function WaitScreen2 ({ isModal, setFlowStep }: Props): React.ReactElement {
   return (
     <>
       {isModal
-        ? <DraggableModal
-          onClose={onClose}
-          open={true}
-          style={{ minHeight: '300px' }}
-          title={t('Processing')}
-        >
-          <Content />
-
-        </DraggableModal>
+        ? (
+          <DraggableModal
+            onClose={onClose}
+            open={true}
+            style={{ minHeight: '300px' }}
+            title={t('Processing')}
+          >
+            <Content />
+          </DraggableModal>)
         : <Motion variant='slide'>
           <Content />
         </Motion>

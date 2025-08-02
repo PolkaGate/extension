@@ -11,7 +11,7 @@ export interface ValidatorInformation extends DeriveStakingQuery {
   identity: DeriveAccountRegistration | null | undefined;
 }
 
-interface MessageBody {
+export interface ValidatorsInformation {
   eraIndex: number;
   genesisHash: string;
   validatorsInformation: {
@@ -29,20 +29,20 @@ export default function useValidatorsInformation (genesisHash: string | undefine
   const worker = useContext(WorkerContext);
 
   const [fetching, setFetching] = useState<string | undefined>();
-  const [fetchedValidatorsInformation, setFetchedValidatorsInformation] = useState<MessageBody | undefined>(undefined);
-  const [savedValidatorsInformation, setSavedValidatorsInformation] = useState<MessageBody | undefined>(undefined);
+  const [fetchedValidatorsInformation, setFetchedValidatorsInformation] = useState<ValidatorsInformation | undefined>(undefined);
+  const [savedValidatorsInformation, setSavedValidatorsInformation] = useState<ValidatorsInformation | undefined>(undefined);
 
   const loadFromStorage = useCallback((key: string) => {
     chrome.storage.local.get('validatorsInfo', (res) => {
       const last = res?.['validatorsInfo'] as Record<string, string> ?? {};
 
-      const loaded = last[key] ? JSON.parse(last[key]) as MessageBody : undefined;
+      const loaded = last[key] ? JSON.parse(last[key]) as ValidatorsInformation : undefined;
 
       setSavedValidatorsInformation(loaded);
     });
   }, []);
 
-  const saveValidatorsInfoInStorage = useCallback((info: MessageBody) => {
+  const saveValidatorsInfoInStorage = useCallback((info: ValidatorsInformation) => {
     chrome.storage.local.get('validatorsInfo', (res) => {
       const last = res?.['validatorsInfo'] as Record<string, string> ?? {};
       const key = `${info.genesisHash}`;
@@ -88,7 +88,7 @@ export default function useValidatorsInformation (genesisHash: string | undefine
       }
 
       if (functionName === 'getValidatorsInformation') {
-        const receivedMessage = JSON.parse(results) as MessageBody;
+        const receivedMessage = JSON.parse(results) as ValidatorsInformation;
 
         setFetchedValidatorsInformation(receivedMessage);
         saveValidatorsInfoInStorage(receivedMessage);

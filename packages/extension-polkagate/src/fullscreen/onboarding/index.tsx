@@ -10,7 +10,7 @@ import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
-import { useFullscreen, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { createAccountExternal } from '../../messaging';
 import { setStorage } from '../../util';
 import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
@@ -36,8 +36,6 @@ function Onboarding (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-
-  useFullscreen();
 
   const onCreate = useCallback(() => navigate('/account/create'), [navigate]);
 

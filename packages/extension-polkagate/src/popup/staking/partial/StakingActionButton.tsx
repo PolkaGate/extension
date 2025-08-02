@@ -82,7 +82,7 @@ export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy
     <Button
       disabled={isButtonDisabled}
       onClick={onClick}
-      startIcon={startIcon}
+      startIcon={React.isValidElement(startIcon) ? startIcon : undefined}
       sx={{ ...GeneralButtonStyle, ...StartIconStyle, ...style } as SxProps<Theme>}
       variant='contained'
     >

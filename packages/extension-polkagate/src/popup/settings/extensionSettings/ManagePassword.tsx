@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { ActionButton, GradientButton, MatchPasswordField, Motion, PasswordInput } from '../../../components';
@@ -17,7 +17,7 @@ import WarningBox from '../partials/WarningBox';
 
 export const isPasswordCorrect = async (password: string, isHashed?: boolean) => {
   const hashedPassword = isHashed ? password : blake2AsHex(password, 256);
-  const info = await getStorage(NAMES_IN_STORAGE.LOGIN_IFO) as LoginInfo;
+  const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
 
   return info?.hashedPassword === hashedPassword;
 };
@@ -41,7 +41,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
   }, [passwordError]);
 
   useEffect(() => {
-    getStorage(NAMES_IN_STORAGE.LOGIN_IFO).then((info) => {
+    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => {
       setAlreadySetPassword((info as LoginInfo).status === LOGIN_STATUS.SET);
     }).catch(console.error);
   }, []);
@@ -64,7 +64,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
       return;
     }
 
-    setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET })
+    setStorage(STORAGE_KEY.LOGIN_IFO, { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET })
       .then(() => {
         setPasswordError(false);
         setShowSnackbar(true);

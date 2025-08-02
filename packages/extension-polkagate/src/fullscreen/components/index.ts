@@ -6,4 +6,5 @@ export { default as AccountChainSelect } from './AccountChainSelect';
 export { default as AccountProfileLabel } from './AccountProfileLabel';
 export { default as EmptyListBox } from './EmptyListBox';
 export { default as NotSupportedBox } from './NotSupportedBox';
+export { default as NoValidatorBox } from './NoValidatorBox';
 export { default as OnboardTitle } from './OnboardTitle';

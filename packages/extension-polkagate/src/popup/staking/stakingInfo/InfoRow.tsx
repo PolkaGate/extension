@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Icon } from 'iconsax-react';
 
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
+
+import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 
 interface Props {
   Icon: Icon;
@@ -15,16 +16,19 @@ interface Props {
 }
 
 function InfoRow ({ Icon, text1, text2, text3 }: Props): React.ReactElement {
+  const isExtension = useIsExtensionPopup();
+  const variant = isExtension ? 'B-3' : 'B-2';
+
   return (
-    <Stack alignItems='center' columnGap='10px' direction='row' my='10px'>
+    <Stack alignItems='center' columnGap='10px' direction='row'>
       <Stack
         alignItems='center' justifyContent='center' sx={{
-          width: 48,
-          height: 48,
+          backgroundImage: 'linear-gradient(180deg, #674394 0%, #4B2A75 50%, #171739 100%)',
           borderRadius: '16px',
+          height: 48,
           overflow: 'hidden',
           transform: 'rotate(-12deg)',
-          backgroundImage: 'linear-gradient(180deg, #674394 0%, #4B2A75 50%, #171739 100%)'
+          width: 48
         }}
         width='70px'
       >
@@ -36,9 +40,9 @@ function InfoRow ({ Icon, text1, text2, text3 }: Props): React.ReactElement {
         />
       </Stack>
       <Stack sx={{ flexFlow: 'wrap' }} width='290px'>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-3'>
+        <Typography color='#BEAAD8' textAlign='left' variant={variant}>
           {text1}
-          <Typography color='#AA83DC' variant='B-3'>
+          <Typography color='#AA83DC' variant={variant}>
             {text2}
           </Typography>
           {' '}{text3}

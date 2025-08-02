@@ -220,13 +220,13 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
               const showDivider = tokenDetail.assets.length !== index + 1;
 
               return (
-                <>
+                <React.Fragment key={`${index}_fragment`}>
                   <TokensItems
                     key={index}
                     tokenDetail={token}
                   />
                   {showDivider && <Divider sx={{ bgcolor: dividerColor, height: '1px', width: '100%' }} />}
-                </>
+                </React.Fragment>
               );
             })}
           </Grid>

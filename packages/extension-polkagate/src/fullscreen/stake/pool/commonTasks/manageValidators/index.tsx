@@ -19,7 +19,7 @@ import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constan
 import { BN } from '@polkadot/util';
 
 import { useTranslation } from '../../../../../components/translate';
-import { useFullscreen, usePool, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
+import { usePool, useStakingConsts, useValidators, useValidatorsIdentities } from '../../../../../hooks';
 import WaitScreen from '../../../../governance/partials/WaitScreen';
 import Confirmation from '../../../easyMode/Confirmation';
 import { STEPS } from '../../stake';
@@ -27,8 +27,6 @@ import InputPage from './InputPage';
 import Review from './Review';
 
 export default function ManageValidators(): React.ReactElement {
-  useFullscreen();
-
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const pool = usePool(address);

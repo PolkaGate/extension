@@ -10,11 +10,14 @@ import { type BN } from '@polkadot/util';
 
 import { CreatePoolIcon, JoinPoolIcon } from '../../../../assets/icons';
 import { BackWithLabel, FormatBalance2, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useIsHovered, usePoolConst, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useIsExtensionPopup, useIsHovered, usePoolConst, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 
-const OptionBox = styled(Box)(() => ({
-  backgroundColor: '#222540A6',
+const OptionBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'isExtension' && prop !== 'isSelected'
+})(({ isExtension, isSelected }: { isExtension: boolean, isSelected?: boolean; }) => ({
+  backgroundColor: isExtension ? '#222540A6' : '#05091C',
+  border: isExtension ? 'none' : isSelected ? '2px solid #FF4FB9' : '2px solid transparent',
   borderRadius: '14px',
   display: 'grid',
   padding: '16px 0 26px',
@@ -41,15 +44,17 @@ interface OptionProp {
   icon: string;
   value: BN | undefined;
   onClick: () => void;
+  isSelected?: boolean;
 }
 
-const Option = ({ decimal, icon, minimumText, onClick, title, token, value }: OptionProp) => {
+export const Option = ({ decimal, icon, isSelected, minimumText, onClick, title, token, value }: OptionProp) => {
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
   return (
-    <OptionBox onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', transform: hovered ? 'scale(1.02)' : 'scale(1)', transition: 'all 250ms ease-out' }}>
+    <OptionBox isExtension={isExtension} isSelected={isSelected} onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', transform: hovered ? 'scale(1.02)' : 'scale(1)', transition: 'all 250ms ease-out' }}>
       <Circle />
       <Box
         component='img'
@@ -60,7 +65,8 @@ const Option = ({ decimal, icon, minimumText, onClick, title, token, value }: Op
         <Typography color='text.primary' variant='B-3'>
           {title}
         </Typography>
-        <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '15px', transform: hovered ? 'translateX(4px)' : 'translateX(0)', transition: 'all 250ms ease-out' }} />
+        {isExtension &&
+          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '15px', transform: hovered ? 'translateX(4px)' : 'translateX(0)', transition: 'all 250ms ease-out' }} />}
       </Container>
       <Stack direction='column' sx={{ alignItems: 'center', gap: '4px', justifyContent: 'center', width: '100%' }}>
         <Typography color='text.highlight' variant='B-1'>

@@ -22,10 +22,10 @@ export default function EnableCamera (): React.ReactElement {
         color='label.secondary'
         mb='5px'
         mt='15px'
-        sx={{ display: 'block', textAlign: 'left' }}
+        sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }}
         variant='H-4'
       >
-        CAMERA ACCESS
+        {t('Camera Access')}
       </Typography>
       <Grid
         alignItems='center'

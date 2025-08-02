@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ComponentProps } from 'react';
-import type { DotsStyle } from '@polkadot/extension-polkagate/src/components/Dots';
+import type { DotsVariant } from '@polkadot/extension-polkagate/src/components/Dots';
 import type { BN } from '@polkadot/util';
 
-import { Grid, Skeleton, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
 import { useIsBlueish } from '../hooks';
-import { FormatBalance2, FormatPrice } from '.';
+import { FormatBalance2, FormatPrice, MySkeleton } from '.';
 
 type FormatPriceProps = ComponentProps<typeof FormatPrice>;
 type FormatBalance2Props = ComponentProps<typeof FormatBalance2>;
@@ -25,15 +25,6 @@ interface Props {
   whichFirst?: 'crypto' | 'fiat';
   skeletonColor?: string;
   skeletonAlignment?: 'flex-start' | 'flex-end';
-}
-
-function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
-  return (
-    <Skeleton
-      animation='wave'
-      height={12}
-      sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
-    />);
 }
 
 export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonAlignment = 'flex-end', skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
@@ -67,7 +58,7 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
   const _priceProps = {
     commify: true,
     decimalColor: theme.palette.text.secondary,
-    dotStyle: 'normal' as DotsStyle,
+    dotStyle: 'normal' as DotsVariant,
     fontFamily: 'Inter',
     fontSize: '14px',
     fontWeight: 600,

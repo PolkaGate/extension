@@ -6,7 +6,7 @@ import React from 'react';
 
 import { onboardingBackground } from '../../assets/img';
 import { TwoToneText } from '../../components';
-import { useManifest, useTranslation } from '../../hooks';
+import { useFullscreen, useManifest, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
 import LogoWithText from '../components/layout/LogoWithText';
@@ -46,6 +46,8 @@ function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
 }
 
 function OnboardingLayout ({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
+  useFullscreen();
+
   const { t } = useTranslation();
   const theme = useTheme();
 

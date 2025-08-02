@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, Clock, Data, Home, Triangle } from 'iconsax-react';
+import { ArrowCircleRight2, BuyCrypto, Clock, Data, Home, Triangle } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -33,9 +33,7 @@ function Breadcrumbs (): React.ReactElement {
 
   const isImport = useMemo(() => ['restore', 'attach', 'import'].some((keyword) => pathname.includes(keyword)), [pathname]);
 
-  const onImportClick = useCallback(() => {
-    navigate('/account/have-wallet');
-  }, [navigate]);
+  const onImportClick = useCallback(() => navigate('/account/have-wallet') as void, [navigate]);
 
   const showHome = useMemo(() => {
     const excludedPaths = ['/historyfs', '/proxyManagement', '/send', '/nft'];
@@ -47,7 +45,8 @@ function Breadcrumbs (): React.ReactElement {
     { check: (path: string) => path.includes('/historyfs'), icon: Clock, label: t('History') },
     { check: (path: string) => path.includes('/proxyManagement'), icon: Data, label: t('Proxy Management') },
     { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
-    { check: (path: string) => path.includes('/nft'), icon: Triangle, label: t('NFT') }
+    { check: (path: string) => path.includes('/nft'), icon: Triangle, label: t('NFT') },
+    { check: (path: string) => path.includes('/solo'), icon: BuyCrypto, label: t('Solo Staking') }
   ], [t]);
 
   const matchedBreadcrumb = useMemo(() => breadcrumbMap.find(({ check }) => check(pathname)), [breadcrumbMap, pathname]);

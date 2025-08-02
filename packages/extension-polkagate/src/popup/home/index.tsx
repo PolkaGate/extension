@@ -7,7 +7,7 @@ import semver from 'semver';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
@@ -58,7 +58,7 @@ export default function Home (): React.ReactElement {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
 
-    getStorage(NAMES_IN_STORAGE.LOGIN_IFO).then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
+    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
   }, []);
 
   return (

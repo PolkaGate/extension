@@ -5,8 +5,9 @@
  * @description  this component is used to show an account balance in some pages like contributeToCrowdloan
  * */
 
-import { Skeleton } from '@mui/material';
 import React from 'react';
+
+import MySkeleton from './MySkeleton';
 
 export interface Props {
   value: number | string | null | undefined;
@@ -15,15 +16,16 @@ export interface Props {
   width?: string;
 }
 
-export default function ShowValue({ height = 20, unit = '', value, width = '90px' }: Props): React.ReactElement<Props> {
+export default function ShowValue ({ height, unit = '', value, width = '90px' }: Props): React.ReactElement<Props> {
   return (
     <>
       {value !== undefined
-        ? <>{value}{' '}{unit}</>
-        : <Skeleton
-          animation='wave'
+        ? <>
+          {value}{' '}{unit}
+        </>
+        : <MySkeleton
           height={height}
-          sx={{ display: 'inline-block', transform: 'none', width: { width } }}
+          style= {{ width }}
         />
       }
     </>

@@ -395,7 +395,6 @@ export function NftPopup ({ info, onClose, setShowFullscreen }: Props): React.Re
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
-  console.log(info);
   useEffect(() => {
     const getUniqueGif = async () => {
       if (info.isNft || !info.mediaUri) {

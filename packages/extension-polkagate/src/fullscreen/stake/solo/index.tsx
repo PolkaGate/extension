@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Boy as BoyIcon } from '@mui/icons-material';

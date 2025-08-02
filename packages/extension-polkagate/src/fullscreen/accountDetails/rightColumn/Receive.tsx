@@ -142,9 +142,9 @@ function Receive ({ address, onClose, open, setOpen }: Props): React.ReactElemen
   }, [address, selectedChain]);
 
   const onCopy = useCallback(() => {
-    address && navigator.clipboard.writeText(address).catch((err) => console.error('Error copying text: ', err));
+    formattedAddress && navigator.clipboard.writeText(formattedAddress).catch((err) => console.error('Error copying text: ', err));
     setShowSnackbar(true);
-  }, [address]);
+  }, [formattedAddress]);
 
   const handleSnackbarClose = useCallback(() => setShowSnackbar(false), []);
   const _onClose = useCallback(() => {

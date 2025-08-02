@@ -5,7 +5,7 @@ import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Grid, IconButton, Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
 import { PRICE_VALIDITY_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
@@ -19,9 +19,8 @@ import { changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../fullscreen/home/part
 import { useCurrency, useIsHideNumbers, useYouHave } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import ConnectedDappIcon from '../../partials/ConnectedDappIcon';
-import Menu from '../../partials/Menu';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../util/api/getPrices';
-import { countDecimalPlaces, formatDecimal } from '../../util/utils';
+import { countDecimalPlaces, formatDecimal, noop } from '../../util/utils';
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
@@ -66,7 +65,6 @@ export default function YouHave (): React.ReactElement {
   };
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
-  const [isMenuOpen, setOpenMenu] = useState(false);
 
   const portfolioChange = useMemo(() => {
     if (!youHave?.change) {
@@ -79,7 +77,7 @@ export default function YouHave (): React.ReactElement {
   }, [youHave?.change]);
 
   const onMenuClick = useCallback(() => {
-    setOpenMenu((open) => !open);
+    noop();
   }, []);
 
   return (
@@ -167,10 +165,6 @@ export default function YouHave (): React.ReactElement {
         </Grid>
         <ConnectedDappIcon />
       </Grid>
-      <Menu
-        isMenuOpen={isMenuOpen}
-        setShowMenu={setOpenMenu}
-      />
       <Box
         alt='PolkaGate logo'
         component='img'

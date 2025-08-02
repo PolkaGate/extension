@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountStakingInfo, BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
 
@@ -31,7 +30,7 @@ interface Props {
   balances: BalancesInfo | undefined
 }
 
-export default function StakedSolo({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
+export default function StakedSolo ({ balances, refresh, setRefresh, setShow, stakingAccount }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

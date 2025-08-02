@@ -57,7 +57,7 @@ const TableItem = ({ account, decimal, token, totalStaked, withDivider }: Accoun
           tokens={[token ?? '']}
           value={account.value}
         />
-        <Typography color='text.primary' variant='B-4' sx={{ textAlign: 'right', width: '15%'}}>
+        <Typography color='text.primary' sx={{ textAlign: 'right', width: '15%' }} variant='B-4'>
           {percentage}%
         </Typography>
       </Container>
@@ -84,7 +84,7 @@ export default function AccountsTable ({ accounts, genesisHash, style, tableMaxH
   }
 
   return (
-    <Stack direction='column' sx={{ maxHeight: '275px', ...style }}>
+    <Stack direction='column' sx={{ maxHeight: '260px', pb: '20px', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', mb: '12px', width: '100%' }}>
         <Typography color='text.highlight' sx={{ letterSpacing: '1px', maxWidth: '45%', textAlign: 'left', textTransform: 'uppercase', width: '45%' }} variant='S-1'>
           {t('Accounts')}

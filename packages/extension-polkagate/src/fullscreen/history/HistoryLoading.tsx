@@ -1,20 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Skeleton } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import React from 'react';
+
+import { MySkeleton } from '@polkadot/extension-polkagate/src/components';
 
 import { logoWhiteTransparent } from '../../assets/logos';
 import { useIsDark } from '../../hooks/index';
 import { COLUMN_WIDTH } from './consts';
 
-function MySkeleton ({ bgcolor, width }: { bgcolor: string, width: number }): React.ReactElement {
-  return <Skeleton
-    animation='wave'
-    height={12}
-    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px` }}
-  />;
-}
 
 function Loading (): React.ReactElement {
   const isDark = useIsDark();

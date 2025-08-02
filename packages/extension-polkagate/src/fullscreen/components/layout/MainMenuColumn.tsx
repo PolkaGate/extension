@@ -74,6 +74,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
+        path={'/fullscreen-stake/solo/' + selectedGenesisHash}
         text={t('Staking')}
       />
       <MenuButton

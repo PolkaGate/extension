@@ -17,7 +17,7 @@ import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/
 
 import { AccountContext, GenesisHashOptionsContext, Label, ProfileInput, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
+import { useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata, tieAccount, updateMeta } from '../../../messaging';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
@@ -25,7 +25,6 @@ import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullsc
 import ProxiedTable from '../importProxied/ProxiedTable';
 
 function ImportProxiedFS (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);

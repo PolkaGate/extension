@@ -707,22 +707,30 @@ export function formatTimestamp (
   }
 }
 
-export function blockToDate (blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions) {
+export function blockToDate (blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions, iso?: boolean) {
   if (!blockNumber || !currentBlock) {
     return 'N/A';
   }
+
+  let date;
 
   if (blockNumber >= currentBlock) {
     const time = (blockNumber - currentBlock) * 6000;
     const now = Date.now();
 
-    return new Date(now + time).toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
+    date = new Date(now + time);
+  } else {
+    const diff = (currentBlock - blockNumber) * 6000;
+    const now = Date.now();
+
+    date = new Date(now - diff);
   }
 
-  const diff = (currentBlock - blockNumber) * 6000;
-  const now = Date.now();
+  if (iso) {
+    return date.toISOString();
+  }
 
-  return new Date(now - diff).toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // Remove zero balance records

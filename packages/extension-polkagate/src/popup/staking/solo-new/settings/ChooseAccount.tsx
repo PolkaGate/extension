@@ -7,8 +7,9 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { AccountContext, ExtensionPopup, GradientDivider, Identity2 } from '../../../../components';
+import { AccountContext, GradientDivider, Identity2 } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
+import { SharePopup } from '../../../../partials';
 import { getFormattedAddress } from '../../../../util/utils';
 import PRadio from '../../components/Radio';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -32,16 +33,18 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
   }, [setSpecificAccount]);
 
   return (
-    <ExtensionPopup
-      TitleIcon={UserOctagon}
-      darkBackground
-      handleClose={handleClose}
-      iconColor={theme.palette.text.highlight}
-      iconSize={26}
-      maxHeight='460px'
-      openMenu={openMenu}
+    <SharePopup
+      onClose={handleClose}
+      open={openMenu}
+      popupProps={{
+        TitleIcon: UserOctagon,
+        darkBackground: true,
+        iconColor: theme.palette.text.highlight,
+        iconSize: 26,
+        maxHeight: '460px',
+        withoutTopBorder: true
+      }}
       title={t('Accounts')}
-      withoutTopBorder
     >
       <Stack direction='column' sx={{ height: '460px', position: 'relative', rowGap: '24px', width: '100%' }}>
         <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
@@ -95,7 +98,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
           text={t('Close')}
         />
       </Stack>
-    </ExtensionPopup>
+    </SharePopup>
   );
 };
 

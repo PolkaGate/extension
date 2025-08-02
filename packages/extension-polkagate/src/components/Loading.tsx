@@ -12,7 +12,7 @@ import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPasswo
 import ForgotPassword from '../popup/passwordManagement/ForgotPassword';
 import Login from '../popup/passwordManagement/Login';
 import { LOGIN_STATUS, type LoginInfo } from '../popup/passwordManagement/types';
-import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, NAMES_IN_STORAGE } from '../util/constants';
+import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, STORAGE_KEY } from '../util/constants';
 import FlyingLogo from './FlyingLogo';
 
 interface Props {
@@ -116,11 +116,11 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      const info = await getStorage(NAMES_IN_STORAGE.LOGIN_IFO) as LoginInfo;
+      const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
 
       if (!info?.status) {
         /** To not asking for password setting for the onboarding time */
-        setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
+        setStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
 
         return setExtensionLock(false);
       }

@@ -4,9 +4,10 @@
 import { Grid } from '@mui/material';
 import React from 'react';
 
+import EnableTestNet from '@polkadot/extension-polkagate/src/fullscreen/settings/partials/EnableTestNet';
+
 import AutoLockTimer from './partials/AutoLockTimer';
 import EnableCamera from './partials/EnableCamera';
-import EnableTestNet from './partials/EnableTestNet';
 import Language from './partials/Language';
 
 function Main (): React.ReactElement {

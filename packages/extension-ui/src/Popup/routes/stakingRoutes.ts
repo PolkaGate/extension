@@ -4,8 +4,10 @@
 import type { RouteConfig } from './RouteDefinitions';
 
 import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
-import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/pool';
-import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/solo';
+import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool';
+import JoinPoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool/joinPool';
+import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo';
+import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/ManageValidators';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
 import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool-new';
@@ -80,11 +82,6 @@ export const STAKING_ROUTES: RouteConfig[] = [
     path: '/pool/:genesisHash/info',
     trigger: 'pool-staking-info'
   },
-  {
-    Component: PoolFS,
-    path: '/poolfs/:address',
-    trigger: 'pool-staking-fullscreen'
-  },
   // SOLO STAKING ROUTE
   {
     Component: PendingReward,
@@ -136,10 +133,26 @@ export const STAKING_ROUTES: RouteConfig[] = [
     path: '/solo/:genesisHash',
     trigger: 'solo-staking-index'
   },
+  // FULL SCREEN STAKING ROUTES
   {
     Component: SoloFS,
-    path: '/solofs/:address',
+    path: '/fullscreen-stake/solo/:genesisHash',
     trigger: 'solo-staking-fullscreen'
+  },
+  {
+    Component: ManageValidators,
+    path: '/fullscreen-stake/solo/manage-validator/:genesisHash',
+    trigger: 'solo-staking-manage-validator-fullscreen'
+  },
+  {
+    Component: PoolFS,
+    path: '/fullscreen-stake/pool/:genesisHash',
+    trigger: 'pool-staking-fullscreen'
+  },
+  {
+    Component: JoinPoolFS,
+    path: '/fullscreen-stake/pool/join-pool/:genesisHash',
+    trigger: 'join-pool-staking-fullscreen'
   },
   {
     Component: Stake,

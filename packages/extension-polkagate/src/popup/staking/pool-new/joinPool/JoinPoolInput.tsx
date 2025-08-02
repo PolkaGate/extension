@@ -4,16 +4,14 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { Balance } from '@polkadot/types/interfaces';
-import type { PoolStakingInfo } from '../../../../hooks/usePoolStakingInfo';
 import type { PoolInfo } from '../../../../util/types';
 
 import { Stack } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 
-import { type BN, BN_ZERO } from '@polkadot/util';
+import { type BN } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../../hooks';
-import { amountToMachine } from '../../../../util/utils';
 import FeeValue from '../../partial/FeeValue';
 import SelectedPool from '../../partial/SelectedPool';
 import StakeAmountInput from '../../partial/StakeAmountInput';
@@ -26,43 +24,22 @@ interface Props {
   onBack: () => void;
   genesisHash: string | undefined;
   errorMessage: string | undefined;
-  estimatedFee2: Balance | undefined;
-  stakingInfo: PoolStakingInfo;
-  formatted: string | undefined;
-  setBondAmount: React.Dispatch<React.SetStateAction<BN | undefined>>;
+  estimatedFee: Balance | undefined;
+  availableBalanceToStake: BN | undefined;
   bondAmount: BN | undefined;
+  onInputChange: (value: string | null | undefined) => void;
+  onMaxValue: string;
+  onMinValue: string;
 }
 
-export default function JoinPoolInput ({ bondAmount, errorMessage, estimatedFee2, formatted, genesisHash, onBack, onNext, selectedPool, setBondAmount, stakingInfo }: Props): React.ReactNode {
+export default function JoinPoolInput ({ availableBalanceToStake, bondAmount, errorMessage, estimatedFee, genesisHash, onBack, onInputChange, onMaxValue, onMinValue, onNext, selectedPool }: Props): React.ReactNode {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
-
-  const onMaxValue = useMemo(() => {
-    if (!formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts) {
-      return '0';
-    }
-
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
-  }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
-
-  const onMinValue = useMemo(() => {
-    if (!stakingInfo.poolStakingConsts) {
-      return '0';
-    }
-
-    return stakingInfo.poolStakingConsts?.minJoinBond.toString();
-  }, [stakingInfo.poolStakingConsts]);
-
-  const onInputChange = useCallback((value: string | null | undefined) => {
-    const valueAsBN = value ? amountToMachine(value, decimal) : BN_ZERO;
-
-    setBondAmount(valueAsBN);
-  }, [decimal, setBondAmount]);
 
   return (
     <Stack direction='column' sx={{ gap: '8px', px: '15px', width: '100%' }}>
       <TokenStakeStatus
-        amount={stakingInfo.availableBalanceToStake}
+        amount={availableBalanceToStake}
         decimal={decimal}
         genesisHash={genesisHash}
         style={{ mt: '8px' }}
@@ -91,7 +68,7 @@ export default function JoinPoolInput ({ bondAmount, errorMessage, estimatedFee2
       />
       <FeeValue
         decimal={decimal}
-        feeValue={estimatedFee2}
+        feeValue={estimatedFee}
         token={token}
       />
       <StakingActionButton

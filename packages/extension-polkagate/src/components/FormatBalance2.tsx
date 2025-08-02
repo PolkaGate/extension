@@ -97,7 +97,7 @@ function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimal
             color={style?.color}
             postText={tokens[0]}
             postTextStyle={style}
-            style='small'
+            variant='small'
           />
           : valueFormatted
             ? splitFormat(valueFormatted, decimalPoint, labelPost, isShort)

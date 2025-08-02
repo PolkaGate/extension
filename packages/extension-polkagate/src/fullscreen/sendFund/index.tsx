@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useFullscreen, useTeleport, useTranslation } from '../../hooks';
+import { useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import HomeLayout from '../components/layout';
 import Confirmation from '../manageProxies/Confirmation';
@@ -28,7 +28,6 @@ import { type Inputs } from './types';
 export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
 
-  useFullscreen();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
@@ -54,8 +53,7 @@ export default function SendFund (): React.ReactElement {
   }, []);
 
   const onCloseModal = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`);
+    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
   }, [address, assetId, genesisHash, navigate]);
 
   const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
@@ -133,30 +131,31 @@ export default function SendFund (): React.ReactElement {
         }
       </Grid>
       {inputStep !== INPUT_STEPS.SUMMARY
-        ? <DecisionButtons
-          cancelButton
-          direction='horizontal'
-          disabled={buttonDisable}
-          divider
-          dividerStyle={{
-            background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
-            height: '32px'
-          }}
-          onPrimaryClick={onNext}
-          onSecondaryClick={onBack}
-          primaryBtnText={!inputs?.amount || !isLoading ? t('Next') : t('Preparing, please wait ...')}
-          primaryButtonProps={{
-            style: { width: '85%' }
-          }}
-          secondaryBtnText={t('Back')}
-          secondaryButtonProps={{
-            StartIcon: ArrowLeft,
-            disabled: inputStep === INPUT_STEPS.SENDER,
-            iconVariant: 'Linear',
-            style: { width: '15%' }
-          }}
-          style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
-        />
+        ? (
+          <DecisionButtons
+            cancelButton
+            direction='horizontal'
+            disabled={buttonDisable}
+            divider
+            dividerStyle={{
+              background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+              height: '32px'
+            }}
+            onPrimaryClick={onNext}
+            onSecondaryClick={onBack}
+            primaryBtnText={!inputs?.amount || !isLoading ? t('Next') : t('Preparing, please wait ...')}
+            primaryButtonProps={{
+              style: { width: '85%' }
+            }}
+            secondaryBtnText={t('Back')}
+            secondaryButtonProps={{
+              StartIcon: ArrowLeft,
+              disabled: inputStep === INPUT_STEPS.SENDER,
+              iconVariant: 'Linear',
+              style: { width: '15%' }
+            }}
+            style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
+          />)
         : inputTransaction &&
         <SignArea3
           address={address}

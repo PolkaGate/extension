@@ -16,7 +16,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AddressInput, DecisionButtons, MyTextField } from '../../../components';
-import { useFullscreen, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { createAccountExternal } from '../../../messaging';
 
 export interface AccountInfo {
@@ -26,7 +26,6 @@ export interface AccountInfo {
 }
 
 export default function AddWatchOnlyFullScreen(): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
 
   const [isBusy, setIsBusy] = useState(false);

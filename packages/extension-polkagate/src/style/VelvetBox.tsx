@@ -6,7 +6,7 @@ import React from 'react';
 
 import { useIsDark } from '../hooks';
 
-const GlowBall = styled('div')({
+export const GlowBall = styled('div')({
   background: '#CC429D',
   borderRadius: '50%',
   filter: 'blur(25px)',

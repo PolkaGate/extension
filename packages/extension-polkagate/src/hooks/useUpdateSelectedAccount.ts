@@ -4,17 +4,10 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { setStorage } from '../util';
+import { isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
-
-/**
- * Checks if the given string is a valid hex-encoded genesis hash.
- */
-function isValidGenesis (hash: string): boolean {
-  return hash.startsWith('0x') && hash.length === 66;
-}
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
@@ -23,6 +16,10 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
   const savedSelectedChain = useAccountSelectedChain(address);
 
   const updatePathWithNewAddress = useCallback((newAddress: string) => {
+    if (location.pathname.includes('/fullscreen-stake/')) {
+      return;
+    }
+
     const pathParts = location.pathname.split('/');
 
     const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p));
@@ -43,7 +40,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
 
     const newPath = pathParts.join('/');
 
-    navigate(newPath);
+    navigate(newPath) as void;
   }, [location.pathname, navigate, savedSelectedChain]);
 
   const handleExit = useCallback(() => {

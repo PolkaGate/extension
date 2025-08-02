@@ -1,9 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
@@ -17,11 +17,52 @@ import { TEST_NETS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
 import { TokenBalanceDisplay } from '../home/partial/TokensAssetsBox';
 
+export const TestnetBadge = ({ style }: { style?: SxProps<Theme>; }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', mt: '5px', p: '3px 5px', ...style }}>
+      <HierarchySquare3 color='#3988FF' size='14' variant='Bulk' />
+      <Typography color='#3988FF' fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
+        {t('Test Network')}
+      </Typography>
+    </Stack>
+  );
+};
+
+interface StakingBadgeProps {
+  hasPoolStaking: boolean;
+  isFullscreen?: boolean;
+  style?: SxProps<Theme>;
+}
+
+export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBadgeProps) => {
+  const { t } = useTranslation();
+
+  const poolColor = isFullscreen ? ' #82FFA5' : '#A7DFB7';
+  const soloColor = '#809ACB';
+  const textColor = hasPoolStaking ? poolColor : soloColor;
+
+  const soloBgcolor = isFullscreen ? '#809ACB26' : '#C6AECC26';
+  const poolBgcolor = isFullscreen ? '#82FFA526' : '#A7DFB726';
+  const bgcolor = hasPoolStaking ? poolBgcolor : soloBgcolor;
+
+  return (
+    <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor, borderRadius: '9px', p: '3px 5px', ...style }}>
+      {hasPoolStaking
+        ? <I3Dcube color={poolColor} size='14' variant='Bulk' />
+        : <SnowFlake color={soloColor} size='14' />}
+      <Typography color={textColor} fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
+        {hasPoolStaking ? t('Pool staking') : t('Solo staking')}
+      </Typography>
+    </Stack>
+  );
+};
+
 interface Props {
   balance: BN;
   decimal: number;
   genesisHash: string;
-  key: number;
   isFirst: boolean;
   isLast: boolean;
   token: string;
@@ -29,8 +70,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, price, token, type }: Props): React.ReactElement {
-  const { t } = useTranslation();
+function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -40,28 +80,16 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
   const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`) as void, [genesisHash, navigate, type]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' key={key} onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
       <Stack alignItems='center' direction='row' justifyContent='start'>
         <ChainLogo genesisHash={genesisHash} size={36} />
         <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
           <Typography sx={{ mt: '-7px' }} variant='B-2'>
             {token}
           </Typography>
-          <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: hasPoolStaking ? '#A7DFB726' : '#C6AECC26', borderRadius: '9px', p: '3px 5px' }}>
-            {hasPoolStaking
-              ? <I3Dcube color='#A7DFB7' size='14' variant='Bulk' />
-              : <SnowFlake color='#809ACB' size='14' />}
-            <Typography color={hasPoolStaking ? '#A7DFB7' : '#809ACB'} fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
-              {hasPoolStaking ? 'Pool staking' : 'Solo staking'}
-            </Typography>
-          </Stack>
+          <StakingBadge hasPoolStaking={hasPoolStaking} />
           {isTestNet &&
-            <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', mt: '5px', p: '3px 5px' }}>
-              <HierarchySquare3 color='#3988FF' size='14' variant='Bulk' />
-              <Typography color='#3988FF' fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
-                {t('Testnet')}
-              </Typography>
-            </Stack>}
+            <TestnetBadge />}
         </Stack>
       </Stack>
       <TokenBalanceDisplay
@@ -147,7 +175,7 @@ export default function StakingPositions (): React.ReactElement {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
                 return (
-                  <>
+                  <Fragment key={`${index}_fragment`}>
                     {pooledBalance && !pooledBalance?.isZero() &&
                       <PositionRow
                         balance={pooledBalance}
@@ -172,7 +200,7 @@ export default function StakingPositions (): React.ReactElement {
                         token={token}
                         type='solo'
                       />}
-                  </>
+                  </Fragment>
                 );
               })}
               <FadeOnScroll containerRef={refContainer} />

@@ -86,7 +86,7 @@ const PoolClaimReward = ({ decimal, disabled, onClaimReward, reward, rewardInCur
         onClick={onClaimReward}
         startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
         style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
-        text={t('Claim rewards')}
+        text={t('Claim Rewards')}
       />
     </Container>
   );
@@ -278,24 +278,24 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
         decimal={decimal ?? 0}
         fiatAmount={0}
         layoutDirection='row'
-        title={t('Rewards paid')}
+        title={t('Rewards earned')}
         token={token ?? ''}
       />
     );
-  } else {
-    return (
-      <FlatRewardTile
-        decimal={decimal}
-        disabled={isDisabled}
-        onClaimReward={onClaimReward}
-        onRewardChart={onRewardChart}
-        reward={reward}
-        rewardInCurrency={rewardInCurrency}
-        token={token}
-        totalClaimedReward={totalClaimedReward}
-        totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
-        type={type}
-      />
-    );
   }
+
+  return (
+    <FlatRewardTile
+      decimal={decimal}
+      disabled={isDisabled}
+      onClaimReward={onClaimReward}
+      onRewardChart={onRewardChart}
+      reward={reward}
+      rewardInCurrency={rewardInCurrency}
+      token={token}
+      totalClaimedReward={totalClaimedReward}
+      totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
+      type={type}
+    />
+  );
 }

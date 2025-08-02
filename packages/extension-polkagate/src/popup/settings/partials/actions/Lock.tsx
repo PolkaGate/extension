@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
 import { updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useExtensionLockContext } from '../../../../context/ExtensionLockContext';
 import { useAutoLockPeriod, useIsDark, useIsLoginEnabled, useTranslation } from '../../../../hooks';
@@ -27,7 +27,7 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
       return;
     }
 
-    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
+    updateStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
       setExtensionLock(true);
       navigate('/') as void;
       lockExtension().catch(console.error);

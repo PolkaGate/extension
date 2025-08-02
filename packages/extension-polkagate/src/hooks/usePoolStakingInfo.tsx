@@ -99,7 +99,7 @@ export interface PoolStakingInfo {
 export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash, refresh, setRefresh);
-  const pool = usePool2(address, genesisHash);
+  const pool = usePool2(address, genesisHash, undefined, refresh, setRefresh);
   const poolStakingConsts = usePoolConst(genesisHash);
   const stakingConsts = useStakingConsts2(genesisHash);
 

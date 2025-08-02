@@ -11,7 +11,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import HistoryTabs from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryTabs';
 import useTransactionHistory2 from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory2';
 
-import { useChainInfo, useFullscreen, useSelectedAccount, useTranslation } from '../../hooks';
+import { useChainInfo, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import HomeLayout from '../components/layout';
 import { ALL_TYPES, ANY_STATUS, TAB } from './consts';
@@ -27,8 +27,6 @@ const DEFAULT_EXTRA_FILTERS = {
 
 function HistoryFs (): React.ReactElement {
   const { t } = useTranslation();
-
-  useFullscreen();
 
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);

@@ -7,7 +7,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { Box as BoxIcon } from '../../assets/icons';
@@ -50,7 +50,7 @@ function Content ({ setStep }: Props): React.ReactElement {
   const onUnlock = useCallback(async (): Promise<void> => {
     try {
       if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
-        await updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
+        await updateStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
         setHashedPassword(undefined);
         setExtensionLock(false);
       } else {
@@ -90,10 +90,10 @@ function Content ({ setStep }: Props): React.ReactElement {
       <MySwitch
         checked={isHideNumbers}
         columnGap='8px'
-        label= {t('Hide Balance')}
+        label={t('Hide Balance')}
         onChange={toggleHideNumbers}
         showHidden
-        style = {{ marginTop: '20px' }}
+        style={{ marginTop: '20px' }}
       />
       <DecisionButtons
         cancelButton

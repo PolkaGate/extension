@@ -5,12 +5,9 @@ import React from 'react';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
 
-import { useFullscreen } from '../../hooks';
 import { ResetContent } from './Reset';
 
 function ResetFS (): React.ReactElement {
-  useFullscreen();
-
   return (
     <OnboardingLayout childrenStyle={{ justifyContent: 'center', margin: '75px 0', width: '404px' }} showBread={false} showLeftColumn={false}>
       <ResetContent />

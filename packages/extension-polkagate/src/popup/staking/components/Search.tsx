@@ -5,7 +5,7 @@ import { alpha, Box, InputBase, styled, type SxProps, type Theme, useTheme } fro
 import { SearchNormal1 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 
 const SearchContainer = styled('div')(({ theme }) => ({
   '&:hover': {
@@ -24,10 +24,12 @@ const SearchContainer = styled('div')(({ theme }) => ({
   width: '100%'
 }));
 
-const StyledInputBase = styled(InputBase)(({ inputColor, noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; inputColor: string | undefined; }) => ({
+const StyledInputBase = styled(InputBase, {
+  shouldForwardProp: (prop) => prop !== 'noSearchIcon' && prop !== 'theme' && prop !== 'inputColor'
+})(({ inputColor, noSearchIcon, theme }: { noSearchIcon: boolean; theme: Theme; inputColor: string | undefined; }) => ({
   '& .MuiInputBase-input': {
     '&::placeholder': {
-      color: theme.palette.text.highlight,
+      color: inputColor ?? theme.palette.text.highlight,
       opacity: 1,
       ...theme.typography['B-2'],
       textAlign: 'left'
@@ -59,6 +61,7 @@ interface SearchProps {
 export default function Search ({ defaultValue, inputColor, limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   const [searchQuery, setSearchQuery] = useState(defaultValue ?? '');
 
@@ -115,7 +118,7 @@ export default function Search ({ defaultValue, inputColor, limits, noSearchIcon
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', width: '118px', ...style }}>
       <SearchContainer>
-        {!noSearchIcon && <SearchNormal1 color={theme.palette.text.highlight} size={16} />}
+        {!noSearchIcon && <SearchNormal1 color={isExtension ? theme.palette.text.highlight : '#AA83DC'} size={16} />}
         <StyledInputBase
           inputColor={inputColor}
           inputProps={{ 'aria-label': 'search' }}

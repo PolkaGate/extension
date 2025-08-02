@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 
-import { useFullscreen } from '../../../hooks';
 import LedgerOptions from './partials/LedgerOptions';
 import GenericApp from './generic';
 import LegacyApps from './legacy';
@@ -19,8 +18,6 @@ export enum MODE {
 }
 
 export default function ImportLedger (): React.ReactElement {
-  useFullscreen();
-
   const [mode, setMode] = useState<MODE>(MODE.INDEX);
 
   return (

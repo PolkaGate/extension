@@ -14,7 +14,6 @@ import { ActionContext, FullScreenIcon, Steps, VaadinIcon } from '../components'
 import InternetConnectivity from '../fullscreen/governance/InternetConnectivity';
 import useOutsideClick from '../hooks/useOutsideClick';
 import ConnectedDappIcon from './ConnectedDappIcon';
-import Menu from './Menu';
 
 interface Props {
   _centerItem?: React.JSX.Element;
@@ -210,10 +209,6 @@ function HeaderBrand({ _centerItem, address, backgroundDefault, fullScreenURL = 
           <Divider sx={{ bgcolor: 'secondary.main', height: '3px', margin: '5px auto', width: '138px' }} />
         }
       </Container>
-      <Menu
-        isMenuOpen={isMenuOpen}
-        setShowMenu={setOpenMenu}
-      />
     </>
   );
 }

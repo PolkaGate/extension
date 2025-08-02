@@ -4,14 +4,11 @@
 import React, { useCallback } from 'react';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
-import { useFullscreen } from '@polkadot/extension-polkagate/src/hooks';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import { ForgotPasswordContent } from './ForgotPassword';
 
 export default function ForgotPasswordFS (): React.ReactElement {
-  useFullscreen();
-
   const onClose = useCallback(() => {
     switchToOrOpenTab('/');
   }, []);
