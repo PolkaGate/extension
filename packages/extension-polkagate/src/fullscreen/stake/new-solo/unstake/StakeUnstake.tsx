@@ -89,7 +89,7 @@ function StakeUnstake ({ address, amountLabel, balance, errorMessage, estimatedF
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={!value || value.isZero() || !!errorMessage || !api}
+          disabled={!value || value.isZero() || !!errorMessage || !api || !balance}
           onPrimaryClick={onNext}
           onSecondaryClick={onClose}
           primaryBtnText={t('Next')}
