@@ -228,8 +228,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory }: ButtonsProp
           contentPlacement='center'
           onClick={goToHistory}
           style={{
-            height: '44px',
-            width: '345px'
+            height: '44px'
           }}
           text={t('History')}
         />
@@ -240,27 +239,24 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory }: ButtonsProp
           contentPlacement='center'
           onClick={backToHome}
           style={{
-            height: '44px',
-            width: '345px'
+            height: '44px'
           }}
           text={t('Staking Home')}
           variant='text'
         />
       }
-      <>
-        <GradientButton
-          onClick={goToExplorer}
-          startIconNode={
-            <Avatar
-              src={getLogo('subscan')}
-              sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
-              variant='square'
-            />
-          }
-          style={{ bottom: '17px', position: 'absolute', width: '88%', zIndex: 1 }}
-          text={t('View on Explorer')}
-        />
-      </>
+      <GradientButton
+        onClick={goToExplorer}
+        startIconNode={
+          <Avatar
+            src={getLogo('subscan')}
+            sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
+            variant='square'
+          />
+        }
+        style={{ zIndex: 1 }}
+        text={t('View on Explorer')}
+      />
     </Stack>
   );
 }

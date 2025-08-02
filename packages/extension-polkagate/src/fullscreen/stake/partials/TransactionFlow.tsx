@@ -6,7 +6,8 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../../../util/types';
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { isBn } from '@polkadot/util';
 
@@ -17,22 +18,24 @@ import Confirmation from './StakingConfirmation';
 
 interface Props {
   address: string | undefined;
-  setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
-  proxyTypeFilter: ProxyTypes[] | undefined;
   closeReview: () => void;
   flowStep: FullScreenTransactionFlow;
-  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   genesisHash: string;
-  transactionInformation: Content[];
-  showAccountBox?: boolean;
-  selectedProxy: Proxy | undefined;
-  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
-  showProxySelection: boolean;
-  setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose?: () => void;
   pool?: PoolInfo | undefined;
+  proxyTypeFilter: ProxyTypes[] | undefined;
+  selectedProxy: Proxy | undefined;
+  setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
+  setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
+  showAccountBox?: boolean;
+  showProxySelection: boolean;
+  setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  transactionInformation: Content[];
 }
 
-function TransactionFlow ({ address, closeReview, flowStep, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function TransactionFlow ({ address, closeReview, flowStep, genesisHash, onClose, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+  const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
   const transactionDetail = useMemo(() => {
@@ -55,6 +58,8 @@ function TransactionFlow ({ address, closeReview, flowStep, genesisHash, pool, p
 
     return _txInfo;
   }, [transactionInformation, txInfo]);
+
+  const goToHistory = useCallback(() => navigate('/historyfs') as void, [navigate]);
 
   return (
     <>
@@ -83,7 +88,9 @@ function TransactionFlow ({ address, closeReview, flowStep, genesisHash, pool, p
         flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
         <Confirmation
           address={address ?? ''}
+          backToHome={onClose}
           genesisHash={genesisHash}
+          goToHistory={goToHistory}
           transactionDetail={transactionDetail}
         />
       }

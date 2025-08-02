@@ -46,12 +46,13 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
     setFlowStep(FULLSCREEN_STAKING_TX_FLOW.NONE);
     setValue?.(undefined);
   }, [setFlowStep, setValue]);
-  const handleClosePopup = useCallback(() => {
+
+  const closeModal = useCallback(() => {
     onClose();
     closeReview();
   }, [closeReview, onClose]);
 
-  const { onClose: handler, showCloseIcon } = getCloseBehavior(flowStep, handleClosePopup, setFlowStep, !!children);
+  const { onClose: handler, showCloseIcon } = getCloseBehavior(flowStep, closeModal, setFlowStep, !!children);
 
   return (
     <DraggableModal
@@ -83,6 +84,7 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
               closeReview={closeReview}
               flowStep={flowStep}
               genesisHash={genesisHash}
+              onClose={ closeModal}
               pool={pool}
               proxyTypeFilter={[]}
               selectedProxy={selectedProxy}
