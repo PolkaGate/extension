@@ -29,9 +29,9 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
 
   const navigate = useNavigate();
 
-  const notNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
+  const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
 
-  const validatorsInfo = useValidatorsInformation(notNominated === false ? undefined : genesisHash);
+  const validatorsInfo = useValidatorsInformation(isNominated ? genesisHash : undefined);
 
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
@@ -53,7 +53,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
 
   return (
     <Motion variant='slide'>
-      {!validatorsInfo && isLoaded
+      {stakingInfo && !isNominated && !isLoading
         ? <NoValidatorBox style={{ height: '360px', paddingTop: '40px' }} />
         : <Stack direction='column' sx={{ width: '100%' }}>
           <TableToolbar
@@ -70,7 +70,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
             />
           </TableToolbar>
           <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', width: '100%' }}>
-            {!notNominated && isLoaded &&
+            {isNominated && isLoaded &&
               sortedAndFilteredValidators?.map((validator, index) => (
                 <ValidatorInfo
                   genesisHash={genesisHash}
@@ -79,13 +79,10 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
                   validatorInfo={validator}
                 />
               ))}
-            {!notNominated && isLoading &&
+            {isLoading &&
               Array.from({ length: 10 }).map((_, index) => (
                 <UndefinedItem key={index} />
               ))
-            }
-            {notNominated &&
-              <EmptyNomination />
             }
             <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
           </Stack>
