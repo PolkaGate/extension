@@ -4,6 +4,7 @@
 // @ts-ignore
 import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import type { Forcing } from '@polkadot/types/interfaces';
+// @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 import type { ExpandedRewards } from '../fullscreen/stake/solo/pending';
 import type { SelectedEasyStakingType } from '../fullscreen/stake/util/utils';
