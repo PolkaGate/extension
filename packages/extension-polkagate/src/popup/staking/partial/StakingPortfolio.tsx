@@ -10,7 +10,7 @@ import React, { useMemo } from 'react';
 import { AssetLogo, FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useChainInfo, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsExtensionPopup, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox } from '../../../style';
 import { GlowBall } from '../../../style/VelvetBox';
@@ -74,13 +74,13 @@ const Buttons = ({ buttons, isFullScreen, isLoading }: ButtonsProps) => {
         ? (<Stack columnGap='10px' direction='row'>
           <MySkeleton
             bgcolor='#1A1836'
-            height={36}
-            style={{ borderRadius: '11px', margin: '4px 0', width: '137px' }}
+            height={isFullScreen ? 36 : 31}
+            style={{ borderRadius: '11px', margin: isFullScreen ? '4px 0' : '0 0 1px', width: isFullScreen ? '137px' : '91px' }}
           />
           <MySkeleton
             bgcolor='#1A1836'
-            height={36}
-            style={{ borderRadius: '11px', margin: '4px 0', width: '137px' }}
+            height={isFullScreen ? 36 : 31}
+            style={{ borderRadius: '11px', margin: isFullScreen ? '4px 0' : '0 0 1px', width: isFullScreen ? '137px' : '121px' }}
           />
         </Stack>)
         : (<>
