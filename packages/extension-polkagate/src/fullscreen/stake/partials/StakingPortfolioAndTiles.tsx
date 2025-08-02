@@ -46,8 +46,9 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
           isPoolStaking
             ? [{
               Icon: Strongbox2,
+              iconVariant: 'Bold',
               onClick: popupOpener(StakingPopUps.CLAIM_REWARDS),
-              text: t('Withdraw')
+              text: t('Claim Now')
             }]
             : [{
               Icon: Timer,
@@ -59,8 +60,8 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
         isFullScreen
         layoutDirection='row'
-        style={{ minWidth: '146px', width: '146px' }}
-        title={isPoolStaking ? t('Claimable Rewards') : t('Rewards earned')}
+        style={{ minWidth: '157px', width: 'min-content' }}
+        title={isPoolStaking ? t('Unclaimed Rewards') : t('Rewards earned')}
         token={token ?? ''}
       />
       <StakingInfoTile
@@ -75,7 +76,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
         isFullScreen
         layoutDirection='row'
-        style={{ minWidth: '146px', width: '146px' }}
+        style={{ minWidth: '146px', width: 'min-content' }}
         title={t('Redeemable')}
         token={token ?? ''}
       />
@@ -92,7 +93,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         isFullScreen
         layoutDirection='row'
         onExpand={toBeReleased?.length ? popupOpener(StakingPopUps.UNLOCKING) : undefined}
-        style={{ minWidth: '146px', width: '146px' }}
+        style={{ minWidth: '146px', width: 'min-content' }}
         title={t('Unstaking')}
         token={token ?? ''}
       />
@@ -101,7 +102,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
           Icon: Add,
           iconVariant: 'Linear',
           onClick: popupOpener(StakingPopUps.BOND_EXTRA),
-          text: t('Stake more')
+          text: t('Stake More')
         }]}
         cryptoAmount={availableBalanceToStake}
         decimal={decimal ?? 0}
@@ -109,7 +110,7 @@ const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable
         icon={ isPoolStaking ? <Ice size='18' style={{ justifyContent: 'center' }} /> : <SnowFlake size='18' />}
         isFullScreen
         layoutDirection='row'
-        style={{ minWidth: '194px', width: '194px' }}
+        style={{ minWidth: '180px', width: 'min-content' }}
         title={t('Available to Stake')}
         token={token ?? ''}
       />

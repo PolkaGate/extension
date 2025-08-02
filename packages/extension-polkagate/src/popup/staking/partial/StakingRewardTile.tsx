@@ -86,7 +86,7 @@ const PoolClaimReward = ({ decimal, disabled, onClaimReward, reward, rewardInCur
         onClick={onClaimReward}
         startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
         style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
-        text={t('Claim rewards')}
+        text={t('Claim Rewards')}
       />
     </Container>
   );
