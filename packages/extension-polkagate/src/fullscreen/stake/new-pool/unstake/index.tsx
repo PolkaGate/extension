@@ -44,6 +44,7 @@ function Unstake ({ address, genesisHash, onClose }: Props) {
       onClose={onClose}
       setFlowStep={setFlowStep}
       setValue={setUnstakingValue}
+      showBack
       title={t('Unstaking')}
       transaction={tx}
       transactionInformation={transactionInformation}
