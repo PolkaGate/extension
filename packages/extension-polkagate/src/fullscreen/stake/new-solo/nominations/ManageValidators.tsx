@@ -113,10 +113,6 @@ function ManageValidators () {
       const existingIndex = current.findIndex(({ accountId }) => String(accountId) === String(validatorId));
 
       if (existingIndex >= 0) {
-        if (current.length >= maximum) {
-          return prev;
-        }
-
         // Remove if exists
         const newArray = [...current];
 
@@ -124,6 +120,11 @@ function ManageValidators () {
 
         return newArray;
       } else {
+        // check if the selection hit the maximum
+        if (current.length >= maximum) {
+          return prev;
+        }
+
         // Add if doesn't exist
         return [...current, validator];
       }
@@ -185,7 +186,7 @@ function ManageValidators () {
                   systemSuggestion={systemSuggestion}
                 />
               </TableToolbar>
-              <Stack direction='column' sx={{ gap: '2px', height: 'calc(100vh - 390px)', overflow: 'scroll', width: '100%' }}>
+              <Stack direction='column' sx={{ gap: '2px', height: 'calc(100vh - 390px)', overflow: 'auto', width: '100%' }}>
                 {isLoaded &&
                   itemsToShow?.map((validator, index) => (
                     <ValidatorInfo
