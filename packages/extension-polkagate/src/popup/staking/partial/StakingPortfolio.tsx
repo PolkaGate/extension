@@ -10,7 +10,7 @@ import React, { useMemo } from 'react';
 import { AssetLogo, FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useChainInfo, useIsExtensionPopup, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
+import { useChainInfo, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave2';
 import { GlowBox } from '../../../style';
 import { GlowBall } from '../../../style/VelvetBox';
