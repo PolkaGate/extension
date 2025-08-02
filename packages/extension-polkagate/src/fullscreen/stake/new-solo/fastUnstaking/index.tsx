@@ -37,7 +37,10 @@ export default function FastUnstaking ({ address, genesisHash, onClose }: Props)
   }, [flowStep, isEligible]);
 
   const onNext = useCallback(() => setFlowStep(FULLSCREEN_STAKING_TX_FLOW.REVIEW), []);
-  const closeReview = useCallback(() => setFlowStep(FULLSCREEN_STAKING_TX_FLOW.NONE), [setFlowStep]);
+  const closeReview = useCallback(() => {
+    setFlowStep(FULLSCREEN_STAKING_TX_FLOW.NONE);
+    onClose();
+  }, [onClose]);
 
   return (
     <StakingPopup
@@ -48,6 +51,7 @@ export default function FastUnstaking ({ address, genesisHash, onClose }: Props)
       minHeight={POPUP_HEIGHT}
       onClose={onClose}
       setFlowStep={setFlowStep}
+      showBack
       title={t('Fast unstake')}
       transaction={tx}
       transactionInformation={transactionInformation}
