@@ -63,7 +63,6 @@ interface Props {
   balance: BN;
   decimal: number;
   genesisHash: string;
-  key: number;
   isFirst: boolean;
   isLast: boolean;
   token: string;
@@ -71,7 +70,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, price, token, type }: Props): React.ReactElement {
+function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -81,7 +80,7 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, key, pri
   const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`) as void, [genesisHash, navigate, type]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' key={key} onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
       <Stack alignItems='center' direction='row' justifyContent='start'>
         <ChainLogo genesisHash={genesisHash} size={36} />
         <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
@@ -176,7 +175,7 @@ export default function StakingPositions (): React.ReactElement {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
                 return (
-                  <Fragment key={index}>
+                  <Fragment key={`${index}_fragment`}>
                     {pooledBalance && !pooledBalance?.isZero() &&
                       <PositionRow
                         balance={pooledBalance}

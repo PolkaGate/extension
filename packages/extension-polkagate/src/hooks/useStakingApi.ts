@@ -1421,7 +1421,7 @@ export const usePendingRewardsSolo = (
             ? progress.sessionProgress
             : progress.eraProgress);
 
-    return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
+    return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, undefined, true) : undefined;
   }, [currentBlock, forcing, historyDepth, progress]);
 
   const totalSelectedPending = useMemo(() => {
