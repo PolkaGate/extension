@@ -23,6 +23,7 @@ export default function ClaimReward ({ address, genesisHash, onClose }: Props): 
 
   return (
     <StakingPopup
+      _showCloseIcon={false}
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}
