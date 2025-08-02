@@ -46,7 +46,6 @@ function StakeUnstake ({ address, amountLabel, balance, errorMessage, estimatedF
 
   return (
     <StakingPopup
-      _showCloseIcon={false}
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}
@@ -54,6 +53,7 @@ function StakeUnstake ({ address, amountLabel, balance, errorMessage, estimatedF
       onClose={onClose}
       setFlowStep={setFlowStep}
       setValue={setValue}
+      showBack
       title={title}
       transaction={tx}
       transactionInformation={transactionInformation}

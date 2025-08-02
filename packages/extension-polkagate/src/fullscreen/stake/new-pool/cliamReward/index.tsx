@@ -23,12 +23,12 @@ export default function ClaimReward ({ address, genesisHash, onClose }: Props): 
 
   return (
     <StakingPopup
-      _showCloseIcon={false}
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onClose}
       setFlowStep={setFlowStep}
+      showBack
       title={t('Claim Reward')}
       transaction={tx}
       transactionInformation={transactionInformation}

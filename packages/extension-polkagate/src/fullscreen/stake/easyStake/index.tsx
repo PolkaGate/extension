@@ -185,7 +185,6 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
   return (
     <StakingPopup
       _onClose={side !== EasyStakeSide.INPUT ? handleBack : undefined}
-      _showCloseIcon={side === EasyStakeSide.INPUT && flowStep === FULLSCREEN_STAKING_TX_FLOW.NONE}
       address={address}
       flowStep={flowStep}
       genesisHash={selectedPosition?.genesisHash}
@@ -195,6 +194,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
       pool={selectedStakingType?.pool}
       setFlowStep={setFlowStep}
       setValue={setBNamount}
+      showBack={!(side === EasyStakeSide.INPUT && flowStep === FULLSCREEN_STAKING_TX_FLOW.NONE)}
       style={{ overflow: 'hidden', position: 'relative' }}
       title={t('Stake {{token}}', { replace: { token } })}
       transaction={tx}

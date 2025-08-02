@@ -9,7 +9,9 @@ import type { PoolInfo, Proxy } from '../../../util/types';
 
 import React, { useCallback, useState } from 'react';
 
-import { SelectedProxy } from '../../../components';
+import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
+
+import { Progress, SelectedProxy } from '../../../components';
 import { DraggableModal } from '../../../fullscreen/components/DraggableModal';
 import TransactionFlow from '../partials/TransactionFlow';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../util/utils';
@@ -30,10 +32,12 @@ interface Props {
   pool?: PoolInfo | undefined;
   style?: React.CSSProperties;
   _onClose?: () => void;
-  _showCloseIcon?: boolean | undefined;
+  showBack?: boolean | undefined;
 }
 
-export default function StakingPopup ({ _onClose, _showCloseIcon, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, setFlowStep, setValue, style, title, transaction, transactionInformation }: Props) {
+export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation }: Props) {
+  const { t } = useTranslation();
+
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
@@ -66,7 +70,7 @@ export default function StakingPopup ({ _onClose, _showCloseIcon, address, child
       noCloseButton={showCloseIcon === undefined}
       onClose={_onClose ?? handler}
       open
-      showBackIconAsClose={_showCloseIcon !== undefined ? !_showCloseIcon : !showCloseIcon}
+      showBackIconAsClose={showBack ?? !showCloseIcon}
       style={style}
       title={title}
     >
@@ -89,7 +93,11 @@ export default function StakingPopup ({ _onClose, _showCloseIcon, address, child
               transaction={transaction}
               transactionInformation={transactionInformation}
             />)
-          : <></>
+          : <Progress
+            style={{ paddingTop: '50px' }}
+            title = {t('Loading, please wait')}
+            withEllipsis
+          />
       }
     </DraggableModal>
   );
