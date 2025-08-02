@@ -53,7 +53,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
 
   return (
     <Motion variant='slide'>
-      {!validatorsInfo
+      {!validatorsInfo && isLoaded
         ? <NoValidatorBox style={{ height: '360px', paddingTop: '40px' }} />
         : <Stack direction='column' sx={{ width: '100%' }}>
           <TableToolbar
