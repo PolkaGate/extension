@@ -28,7 +28,10 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   const refContainer = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
-  const validatorsInfo = useValidatorsInformation(genesisHash);
+
+  const notNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
+
+  const validatorsInfo = useValidatorsInformation(notNominated === false ? undefined : genesisHash);
 
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
@@ -41,7 +44,6 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
 
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
   const isLoaded = useMemo(() => sortedAndFilteredValidators && sortedAndFilteredValidators.length > 0, [sortedAndFilteredValidators]);
-  const nothingToShow = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
 
   const onSearch = useCallback((input: string) => {
     setSearch(input);
@@ -67,8 +69,8 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
               text={t('Manage Validators')}
             />
           </TableToolbar>
-          <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 530px)', overflowY: 'auto', width: '100%' }}>
-            {isLoaded &&
+          <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', width: '100%' }}>
+            {!notNominated && isLoaded &&
               sortedAndFilteredValidators?.map((validator, index) => (
                 <ValidatorInfo
                   genesisHash={genesisHash}
@@ -77,13 +79,12 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
                   validatorInfo={validator}
                 />
               ))}
-            {
-              isLoading &&
+            {!notNominated && isLoading &&
               Array.from({ length: 10 }).map((_, index) => (
                 <UndefinedItem key={index} />
               ))
             }
-            {nothingToShow &&
+            {notNominated &&
               <EmptyNomination />
             }
             <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />

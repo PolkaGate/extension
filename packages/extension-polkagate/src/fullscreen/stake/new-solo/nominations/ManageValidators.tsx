@@ -12,7 +12,6 @@ import { noop } from '@polkadot/util';
 
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorsInformation, useValidatorSuggestion2 } from '../../../../hooks';
-import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
 import FooterControls from '../../partials/FooterControls';
@@ -43,7 +42,10 @@ function ManageValidators () {
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
 
   const nominatedValidatorsIds = useMemo(() => getNominatedValidatorsIds(stakingInfo), [stakingInfo]);
-  const nominatedValidatorsInformation = useMemo(() => getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds), [nominatedValidatorsIds, validatorsInfo]);
+
+  const nominatedValidatorsInformation = useMemo(() =>
+    getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds === null ? [] : nominatedValidatorsIds)
+  , [nominatedValidatorsIds, validatorsInfo]);
 
   const validatorsInformation = useMemo(() => {
     if (!validatorsInfo) {
@@ -139,7 +141,6 @@ function ManageValidators () {
 
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
   const isLoaded = useMemo(() => itemsToShow && itemsToShow.length > 0, [itemsToShow]);
-  const nothingToShow = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length === 0, [stakingInfo?.stakingAccount?.nominators]);
 
   const isNextDisabled = useMemo(() => {
     // If data is not yet loaded or no validators have been selected, disable the "Next" button
@@ -201,7 +202,6 @@ function ManageValidators () {
                   ))
                 }
                 {isLoading && Array.from({ length: DEFAULT_VALIDATORS_PER_PAGE }).map((_, index) => (<UndefinedItem key={index} />))}
-                {nothingToShow && <EmptyNomination />}
               </Stack>
               <PaginationRow
                 itemsPerPage={itemsPerPage}
