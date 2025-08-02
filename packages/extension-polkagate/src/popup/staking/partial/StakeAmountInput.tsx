@@ -7,7 +7,7 @@ import type { BN } from '@polkadot/util';
 import type { LogoInfo } from '../../../util/getLogo2';
 
 import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { AssetLogo, FormatBalance2, GradientDivider, MySkeleton, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
@@ -176,6 +176,15 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, dividerS
   const isExtension = useIsExtensionPopup();
 
   const [textFieldValue, setTextFieldValue] = useState<string | null | undefined>();
+  const [memorizedErrorMessage, setMemorizedErrorMessage] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (!errorMessage) {
+      return;
+    }
+
+    setMemorizedErrorMessage(errorMessage);
+  }, [errorMessage]);
 
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>, fromButtons?: boolean) => {
     if (fromButtons) {
@@ -277,7 +286,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, dividerS
       </Stack>
       <Collapse in={!!errorMessage} sx={{ textAlign: 'left', width: '100%' }}>
         <Typography color='#FF4FB9' variant='B-1'>
-          {errorMessage}
+          {memorizedErrorMessage}
         </Typography>
       </Collapse>
     </Stack>
