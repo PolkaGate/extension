@@ -60,45 +60,49 @@ function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, di
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: direction === 'vertical' ? 'column-reverse' : undefined, gap: direction === 'vertical' ? '18px' : '5px', justifyContent: 'space-between', position: 'relative', zIndex: 1, ...style }}>
       {cancelButton
-        ? <ActionButton
-          contentPlacement='center'
-          isBlueish={isBlueish}
-          onClick={onSecondaryClick}
-          style={{ height: '44px', width: secondaryWidth }}
-          text={secondaryBtnText}
-          {...secondaryButtonProps}
-        />
-        : <NeonButton
-          contentPlacement='center'
-          onClick={onSecondaryClick}
-          style={{ height: '44px', width: secondaryWidth }}
-          text={secondaryBtnText}
-        />
+        ? (
+          <ActionButton
+            contentPlacement='center'
+            isBlueish={isBlueish}
+            onClick={onSecondaryClick}
+            style={{ height: '44px', width: secondaryWidth }}
+            text={secondaryBtnText}
+            {...secondaryButtonProps}
+          />)
+        : (
+          <NeonButton
+            contentPlacement='center'
+            onClick={onSecondaryClick}
+            style={{ height: '44px', width: secondaryWidth }}
+            text={secondaryBtnText}
+          />)
       }
       {divider &&
         <GradientDivider isBlueish={isBlueish} orientation='vertical' style={{ height: '90%', mx: '8px', ...dividerStyle }} />
       }
       {isBlueish
-        ? <StakingActionButton
-          disabled={disabled}
-          isBusy={isBusy}
-          onClick={onPrimaryClick}
-          startIcon
-          style={{ flex: flexibleWidth ? 1 : 'none', width: primaryWidth, ...style }}
-          text={primaryBtnText}
-        />
-        : <GradientButton
-          disabled={disabled}
-          endIconNode={arrow
-            ? <ArrowForwardIosRoundedIcon sx={{ color: 'text.primary', fontSize: '13px', stroke: `${theme.palette.text.primary}`, strokeWidth: 1.1, zIndex: 10 }} />
-            : undefined}
-          isBusy={isBusy}
-          onClick={onPrimaryClick}
-          showChevron={showChevron}
-          style={{ flex: flexibleWidth ? 1 : 'none', height: '44px', width: primaryWidth }}
-          text={primaryBtnText}
-          {...primaryButtonProps}
-        />
+        ? (
+          <StakingActionButton
+            disabled={disabled}
+            isBusy={isBusy}
+            onClick={onPrimaryClick}
+            startIcon
+            style={{ flex: flexibleWidth ? 1 : 'none', width: primaryWidth, ...style }}
+            text={primaryBtnText}
+          />)
+        : (
+          <GradientButton
+            disabled={disabled}
+            endIconNode={arrow
+              ? <ArrowForwardIosRoundedIcon sx={{ color: 'text.primary', fontSize: '13px', stroke: `${theme.palette.text.primary}`, strokeWidth: 1.1, zIndex: 10 }} />
+              : undefined}
+            isBusy={isBusy}
+            onClick={onPrimaryClick}
+            showChevron={showChevron}
+            style={{ flex: flexibleWidth ? 1 : 'none', height: '44px', width: primaryWidth }}
+            text={primaryBtnText}
+            {...primaryButtonProps}
+          />)
       }
     </Container>
   );
