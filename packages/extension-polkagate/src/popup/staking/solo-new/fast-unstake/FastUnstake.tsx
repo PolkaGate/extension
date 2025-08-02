@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
-import { BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
+import { ActionButton, BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
 import { useBackground, useFastUnstaking, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -21,13 +21,15 @@ export const CheckEligibility = ({ loading }: { loading: boolean }) => {
 
   const style = isExtension
     ? { mt: '12px', px: '15px', rowGap: '8px', width: '100%' }
-    : { bgcolor: '#05091C', borderRadius: '14px', m: 'auto', mb: '23px', p: '16px', width: '100%' };
+    : { bgcolor: '#05091C', borderRadius: '14px', m: 'auto', mb: '23px', py: '18px', width: '100%' };
+
+  const adjustedColor = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
 
   return (
     <Stack direction='column' sx={style}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center' }}>
-        <SyncLoader color={theme.palette.text.highlight} loading={loading} size={4} speedMultiplier={0.6} />
-        <Typography color='text.highlight' variant='B-2'>
+        <SyncLoader color={adjustedColor} loading={loading} size={4} speedMultiplier={0.6} />
+        <Typography color={ adjustedColor } variant='B-2'>
           {t('Checking fast unstake eligibility')}
         </Typography>
       </Grid>
@@ -43,14 +45,17 @@ interface EligibilityItemProps {
 
 export const EligibilityItem = ({ done, text }: EligibilityItemProps) => {
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+
+  const adjustedColor = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', justifyContent: isExtension ? 'normal' : 'center' }}>
       {!done
-        ? <Grid sx={{ bgcolor: '#3E4065', borderRadius: '999px', height: '18px', width: '18px' }} />
+        ? <Grid sx={{ bgcolor: isExtension ? '#3E4065' : '#2D1E4A', borderRadius: '999px', height: '18px', width: '18px' }} />
         : <TickCircle color='#82FFA5' size='18' variant='Bold' />
       }
-      <Typography color={!done ? 'text.highlight' : '#82FFA5'} variant='B-2'>
+      <Typography color={!done ? adjustedColor : '#82FFA5'} variant='B-2'>
         {text}
       </Typography>
     </Container>
@@ -59,13 +64,16 @@ export const EligibilityItem = ({ done, text }: EligibilityItemProps) => {
 
 export const EligibilityStatus = ({ onBack, status }: { status: boolean | undefined, onBack: () => void }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
   const size = status === undefined ? '65px' : '80px';
+  const adjustedColor = isExtension ? theme.palette.text.highlight : theme.palette.text.secondary;
+  const Button = isExtension ? NeonButton : ActionButton;
 
   return (
     <Stack direction='column' sx={{ mt: '20px', px: isExtension ? '15px' : 0, rowGap: '8px', width: '100%' }}>
-      <Grid container item sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center' }}>
+      <Stack direction='column' sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center', width: '100%' }}>
         <Box
           component='img'
           src={(status === undefined ? HourGlass : WarningGif) as string}
@@ -73,24 +81,24 @@ export const EligibilityStatus = ({ onBack, status }: { status: boolean | undefi
         />
         {status === undefined &&
           <>
-            <Typography color='text.highlight' sx={{ mt: '12px', textAlign: 'center', width: '100%' }} variant='B-1'>
+            <Typography color={adjustedColor} sx={{ mt: '12px', textAlign: 'center', width: '100%' }} variant='B-1'>
               {t('Please wait a few seconds')}
             </Typography>
-            <Typography color='text.highlight' sx={{ textAlign: 'center', width: '100%' }} variant='B-1'>
+            <Typography color={adjustedColor} sx={{ textAlign: 'center', width: '100%' }} variant='B-1'>
               {t('and don’t close the extension')}
             </Typography>
           </>
         }
         {status === false &&
           <>
-            <Typography color='text.primary' sx={{ my: '6px', textAlign: 'center', width: '85%' }} variant='B-1'>
+            <Typography color={isExtension ? 'text.primary' : 'text.secondary'} sx={{ my: '6px', textAlign: 'center', width: '294px' }} variant='B-1'>
               {t('This account is not eligible for fast unstake, because the requirements (highlighted above) are not met')}
             </Typography>
           </>
         }
-      </Grid>
+      </Stack>
       {status === false &&
-        <NeonButton
+        <Button
           contentPlacement='center'
           onClick={onBack}
           style={{ height: '44px', marginTop: '10px', width: isExtension ? '345px' : '100%' }}
