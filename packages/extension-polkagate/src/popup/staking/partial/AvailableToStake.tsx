@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { type BN } from '@polkadot/util';
 
-import { FormatBalance2 } from '../../../components';
+import { FormatBalance2, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
@@ -60,11 +60,8 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
                 value={availableAmount}
               />)
             : (
-              <Skeleton
-                animation='wave'
-                height='12px'
-                sx={{ borderRadius: '50px', fontWeight: 'bold', my: '1px', transform: 'none', width: '125px' }}
-                variant='text'
+              <MySkeleton
+                style={{ margin: '4px 0', width: '125px' }}
               />
             )
           }
