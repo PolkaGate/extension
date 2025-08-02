@@ -13,6 +13,7 @@ import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import PoolDetail from './joinPool/PoolDetail';
 import BondExtra from './bondExtra';
+import ClaimReward from './cliamReward';
 import CreatePool from './createPool';
 import Info from './Info';
 import JoinCreatePool from './JoinCreatePool';
@@ -71,6 +72,14 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
       case StakingPopUps.WITHDRAW:
         return (
           <Withdraw
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />);
+
+      case StakingPopUps.CLAIM_REWARDS:
+        return (
+          <ClaimReward
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
