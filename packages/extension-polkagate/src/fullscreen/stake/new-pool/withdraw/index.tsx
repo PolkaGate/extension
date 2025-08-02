@@ -19,7 +19,7 @@ export default function Withdraw ({ address, genesisHash, onClose }: Props): Rea
 
   const { transactionInformation, tx } = useWithdrawClaimPool(address, genesisHash, Review.Withdraw);
 
-  const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
+  const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.REVIEW);
 
   return (
     <StakingPopup
