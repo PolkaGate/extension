@@ -266,7 +266,7 @@ export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, 
         !rewardInfo?.descSortedRewards
           ? (
             <Progress
-              style={{ height: '315px' }}
+              style={{ height: '310px' }}
               title={t('Loading rewards details')}
               withEllipsis
             />)
@@ -282,7 +282,7 @@ export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, 
                 />
                 <RewardChart rewardInfo={rewardInfo} />
               </Stack>
-              <Grid container item sx={{ maxHeight: '315px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
+              <Grid container item sx={{ maxHeight: '324px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
                 <RewardTable
                   descSortedRewards={rewardInfo.descSortedRewards ?? []}
                   expanded={rewardInfo.detail}

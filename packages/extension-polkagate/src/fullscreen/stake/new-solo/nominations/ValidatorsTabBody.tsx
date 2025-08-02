@@ -52,7 +52,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   return (
     <Motion variant='slide'>
       {!validatorsInfo
-        ? <NoValidatorBox style={{ height: '330px', paddingTop: '40px' }} />
+        ? <NoValidatorBox style={{ height: '360px', paddingTop: '40px' }} />
         : <Stack direction='column' sx={{ width: '100%' }}>
           <TableToolbar
             onSearch={onSearch}
@@ -67,7 +67,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
               text={t('Manage Validators')}
             />
           </TableToolbar>
-          <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 535px)', overflowY: 'auto', width: '100%' }}>
+          <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 530px)', overflowY: 'auto', width: '100%' }}>
             {isLoaded &&
               sortedAndFilteredValidators?.map((validator, index) => (
                 <ValidatorInfo
