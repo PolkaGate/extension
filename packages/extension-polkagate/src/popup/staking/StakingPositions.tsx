@@ -3,7 +3,7 @@
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
@@ -176,7 +176,7 @@ export default function StakingPositions (): React.ReactElement {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
                 return (
-                  <>
+                  <Fragment key={index}>
                     {pooledBalance && !pooledBalance?.isZero() &&
                       <PositionRow
                         balance={pooledBalance}
@@ -201,7 +201,7 @@ export default function StakingPositions (): React.ReactElement {
                         token={token}
                         type='solo'
                       />}
-                  </>
+                  </Fragment>
                 );
               })}
               <FadeOnScroll containerRef={refContainer} />
