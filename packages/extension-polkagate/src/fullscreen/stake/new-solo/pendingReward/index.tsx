@@ -29,11 +29,13 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
     tx } = usePendingRewardsSolo(address, genesisHash);
 
   const onNext = useCallback(() => setFlowStep(FULLSCREEN_STAKING_TX_FLOW.REVIEW), []);
-  const onBack = useCallback(() => setFlowStep(FULLSCREEN_STAKING_TX_FLOW.NONE), []);
+  const onBack = useCallback(() => {
+    setFlowStep(FULLSCREEN_STAKING_TX_FLOW.NONE);
+    onClose();
+  }, [onClose]);
 
   return (
     <StakingPopup
-      _showCloseIcon={false}
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}
