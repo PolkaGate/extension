@@ -1,23 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
-import type { Forcing } from '@polkadot/types/interfaces';
-
 import { Box, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, memo, useCallback, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { type BN, BN_ONE, BN_ZERO } from '@polkadot/util';
+import { type BN } from '@polkadot/util';
 
 import { Badge } from '../../../../assets/gif';
 import { BackWithLabel, DecisionButtons, FadeOnScroll, FormatBalance2, GradientDivider, Identity2, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useCurrentBlockNumber2, useEstimatedFee2, useFormatted3, usePendingRewards3, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useIsExtensionPopup, usePendingRewardsSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
-import { blockToDate } from '../../../../util/utils';
 import CheckBox from '../../components/CheckBox';
 
-const TABLE_HEIGHT = 290;
+const TABLE_HEIGHT = 300;
 const SKELETON_HEIGHT = 24;
 
 interface TableHeaderProp {
@@ -78,6 +74,7 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef(null);
+  const isExtension = useIsExtensionPopup();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const isIncluded = useCallback((info: ExpandedRewards): boolean => !!selectedToPayout.find((s) => s === info), [selectedToPayout]);
@@ -86,7 +83,7 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
 
   return (
     <Grid container item sx={{ position: 'relative' }}>
-      <Stack direction='column' ref={containerRef} sx={{ gap: '2px', height: TABLE_HEIGHT, maxHeight: TABLE_HEIGHT, overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
+      <Stack direction='column' ref={containerRef} sx={{ gap: isExtension ? '2px' : '4px', height: TABLE_HEIGHT, maxHeight: TABLE_HEIGHT, overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
         {expandedRewards === undefined &&
           Array.from({ length: 5 }).map((_, index) => (
             <StyledSkeleton key={index} />
@@ -104,8 +101,8 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
           const adaptiveDecimalPoint = value && decimal && (String(value).length >= decimal - 1 ? 2 : 4);
 
           return (
-            <>
-              <Container disableGutters key={index} sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+            <Fragment key={index}>
+              <Container disableGutters key={index} sx={{ alignItems: 'center', bgcolor: isExtension ? 'none' : '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', p: isExtension ? 0 : '5px 8px' }}>
                 <Grid container item sx={{ alignItems: 'center', gap: '6px' }} xs={4}>
                   <Grid item>
                     <CheckBox
@@ -151,8 +148,8 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
                   </Typography>
                 </Grid>
               </Container>
-              <GradientDivider isBlueish />
-            </>
+              {isExtension && <GradientDivider isBlueish />}
+            </Fragment>
           );
         })}
       </Stack>
@@ -160,6 +157,96 @@ const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selec
     </Grid>
   );
 };
+
+interface PendingRewardsUIProps {
+  adaptiveDecimalPoint: number | undefined;
+  eraToDate: (era: number) => string | undefined;
+  expandedRewards: ExpandedRewards[] | undefined;
+  onSelect: (info: ExpandedRewards, checked: boolean) => void;
+  onSelectAll: (checked: boolean) => void;
+  selectedToPayout: ExpandedRewards[];
+  totalSelectedPending: BN;
+  genesisHash: string | undefined;
+  openReview: () => void;
+  onBack: () => void;
+}
+
+export const PendingRewardsUI = memo(function MemoUI ({ adaptiveDecimalPoint, eraToDate, expandedRewards, genesisHash, onBack, onSelect, onSelectAll, openReview, selectedToPayout, totalSelectedPending }: PendingRewardsUIProps) {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
+  const { api, decimal, token } = useChainInfo(genesisHash);
+
+  return (
+    <Stack direction='column' sx={{ gap: '8px', p: '15px', pb: 0, width: '100%' }}>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? 'none' : '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', p: isExtension ? 0 : '10px', pr: isExtension ? '10px' : '36px' }}>
+        <Box
+          component='img'
+          src={Badge as string}
+          style={{
+            height: '64px',
+            width: '64px'
+          }}
+        />
+        <Typography color='text.highlight' textAlign='justify' variant='B-4'>
+          {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
+        </Typography>
+      </Container>
+      <GradientDivider isBlueish style={{ visibility: isExtension ? 'visible' : 'hidden' }} />
+      <TableHeader
+        checked={!!expandedRewards?.length && selectedToPayout?.length === expandedRewards?.length}
+        onSelectAll={onSelectAll}
+      />
+      <RewardsTable
+        eraToDate={eraToDate}
+        expandedRewards={expandedRewards}
+        genesisHash={genesisHash}
+        onSelect={onSelect}
+        selectedToPayout={selectedToPayout}
+      />
+      <Grid container item sx={{ bgcolor: isExtension ? 'none' : '#05091C', borderRadius: '14px', gap: '6px', p: isExtension ? 0 : '10px' }}>
+        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+          <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: '100px' }}>
+            <Typography color='text.highlight' variant='B-4'>
+              {t('Selected')}:
+            </Typography>
+            <Typography color='text.primary' variant='B-4'>
+              {selectedToPayout.length ?? 0}
+            </Typography>
+          </Container>
+          <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, maxWidth: '235px', width: '100%' }}>
+            <Typography color='text.highlight' variant='B-4'>
+              {t('Total')}:
+            </Typography>
+            <FormatBalance2
+              decimalPoint={adaptiveDecimalPoint}
+              decimals={[decimal ?? 0]}
+              style={{
+                color: theme.palette.text.primary,
+                ...theme.typography['B-2'],
+                textAlign: 'right',
+                width: 'max-content'
+              }}
+              tokens={[token ?? '']}
+              value={totalSelectedPending}
+            />
+          </Container>
+        </Container>
+        <DecisionButtons
+          cancelButton
+          direction='horizontal'
+          disabled={!selectedToPayout.length || !api}
+          divider
+          onPrimaryClick={openReview}
+          onSecondaryClick={onBack}
+          primaryBtnText={t('Next')}
+          secondaryBtnText={t('Cancel')}
+          style={{ height: '44px' }}
+        />
+      </Grid>
+    </Stack>
+  );
+});
 
 type ExpandedRewards = [
   eraIndex: string,
@@ -172,142 +259,21 @@ export default function SoloPendingReward () {
   useBackground('staking');
 
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const selectedAccount = useSelectedAccount();
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
-  const { api, decimal, token } = useChainInfo(genesisHash);
-  const currentBlock = useCurrentBlockNumber2(genesisHash);
-  const pendingRewards = usePendingRewards3(selectedAccount?.address, genesisHash);
 
-  const payoutStakers = api?.tx['staking']['payoutStakersByPage'];
-  const batch = api?.tx['utility']['batchAll'];
+  const { adaptiveDecimalPoint,
+    eraToDate,
+    expandedRewards,
+    onSelect,
+    onSelectAll,
+    selectedToPayout,
+    totalSelectedPending,
+    transactionInformation,
+    tx } = usePendingRewardsSolo(selectedAccount?.address, genesisHash);
 
-  const [progress, setProgress] = useState<DeriveSessionProgress>();
-  const [forcing, setForcing] = useState<Forcing>();
-  const [historyDepth, setHistoryDepth] = useState<BN>();
   const [review, setReview] = useState<boolean>(false);
-  const [selectedToPayout, setSelectedToPayout] = useState<ExpandedRewards[]>([]);
-  const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined>(undefined);
-
-  useEffect(() => {
-    if (!api?.derive?.staking) {
-      return;
-    }
-
-    api.derive.session.progress().then(setProgress).catch(console.error);
-    api.query['staking']['forceEra']().then((f) => setForcing(f as Forcing)).catch(console.error);
-
-    api.query['staking']?.['historyDepth']
-      ? api.query['staking']['historyDepth']().then((depth) => setHistoryDepth(depth as unknown as BN)).catch(console.error)
-      : setHistoryDepth(api.consts['staking']['historyDepth'] as unknown as BN);
-  }, [api?.consts, api?.derive.session, api?.derive?.staking, api?.query]);
-
-  useEffect(() => {
-    if (!pendingRewards) {
-      return;
-    }
-
-    const rewardsArray: [string, string, number, BN][] = Object.entries(pendingRewards || {}).reduce<[string, string, number, BN][]>(
-      (acc, [era, eraRewards]) => {
-        const eraRewardsArray = Object.entries(eraRewards || {}).reduce<[string, string, number, BN][]>(
-          (eraAcc, [validator, [page, amount]]) => {
-            eraAcc.push([era, validator, page, amount]);
-
-            return eraAcc;
-          }, []);
-
-        return acc.concat(eraRewardsArray);
-      }, []);
-
-    setExpandedRewards(rewardsArray);
-  }, [pendingRewards]);
-
-  const eraToDate = useCallback((era: number): string | undefined => {
-    if (!(currentBlock && historyDepth && era && forcing && progress && progress.sessionLength.gt(BN_ONE))) {
-      return undefined;
-    }
-
-    const EndEraInBlock =
-      (forcing.isForceAlways
-        ? progress.sessionLength
-        : progress.eraLength
-      ).mul(
-        historyDepth
-          .sub(progress.activeEra)
-          .addn(era)
-          .add(BN_ONE)
-      ).sub(
-        forcing.isForceAlways
-          ? progress.sessionProgress
-          : progress.eraProgress);
-
-    return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, { day: 'numeric', month: 'short' }) : undefined;
-  }, [currentBlock, forcing, historyDepth, progress]);
-
-  const totalSelectedPending = useMemo(() => {
-    if (!selectedToPayout?.length) {
-      return BN_ZERO;
-    }
-
-    return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => sum.add((value)[3]), BN_ZERO);
-  }, [selectedToPayout]);
-  const adaptiveDecimalPoint = totalSelectedPending && decimal && (String(totalSelectedPending).length >= decimal - 1 ? 2 : 4);
-
-  const tx = useMemo(() => {
-    if (!selectedToPayout || !payoutStakers || !batch) {
-      return undefined;
-    }
-
-    const call = selectedToPayout.length === 1
-      ? payoutStakers
-      : batch;
-
-    const params = selectedToPayout.length === 1
-      ? [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]]
-      : [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))];
-
-    return call(...params);
-  }, [batch, payoutStakers, selectedToPayout]);
-
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? payoutStakers, tx ? undefined : [selectedAccount?.address, BN_ZERO]);
-
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: totalSelectedPending,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    }];
-  }, [estimatedFee2, totalSelectedPending, t]);
-
-  const onSelectAll = useCallback((checked: boolean) => {
-    if (!checked && expandedRewards?.length) {
-      setSelectedToPayout([...expandedRewards]);
-    } else {
-      setSelectedToPayout([]);
-    }
-  }, [expandedRewards]);
-
-  const onSelect = useCallback((info: ExpandedRewards, checked: boolean) => {
-    if (!checked) {
-      setSelectedToPayout((prev) => prev.concat([info]));
-    } else {
-      const index = selectedToPayout.findIndex((s: ExpandedRewards) => s === info);
-
-      setSelectedToPayout((prev) => {
-        const newArray = [...prev];
-
-        newArray.splice(index, 1);
-
-        return newArray;
-      });
-    }
-  }, [selectedToPayout]);
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
   const openReview = useCallback(() => setReview(true), []);
@@ -335,71 +301,18 @@ export default function SoloPendingReward () {
             style={{ pb: 0 }}
             text={t('Pending Rewards')}
           />
-          <Stack direction='column' sx={{ gap: '8px', height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
-            <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', pr: '10px' }}>
-              <Box
-                component='img'
-                src={Badge as string}
-                style={{
-                  height: '64px',
-                  width: '64px'
-                }}
-              />
-              <Typography color='text.highlight' textAlign='justify' variant='B-4'>
-                {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
-              </Typography>
-            </Container>
-            <GradientDivider isBlueish />
-            <TableHeader
-              checked={!!expandedRewards?.length && selectedToPayout?.length === expandedRewards?.length}
-              onSelectAll={onSelectAll}
-            />
-            <RewardsTable
-              eraToDate={eraToDate}
-              expandedRewards={expandedRewards}
-              genesisHash={genesisHash}
-              onSelect={onSelect}
-              selectedToPayout={selectedToPayout}
-            />
-            <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-              <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: '100px' }}>
-                <Typography color='text.highlight' variant='B-4'>
-                  {t('Selected')}:
-                </Typography>
-                <Typography color='text.primary' variant='B-4'>
-                  {selectedToPayout.length ?? 0}
-                </Typography>
-              </Container>
-              <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, maxWidth: '235px', width: '100%' }}>
-                <Typography color='text.highlight' variant='B-4'>
-                  {t('Total')}:
-                </Typography>
-                <FormatBalance2
-                  decimalPoint={adaptiveDecimalPoint}
-                  decimals={[decimal ?? 0]}
-                  style={{
-                    color: theme.palette.text.primary,
-                    ...theme.typography['B-2'],
-                    textAlign: 'right',
-                    width: 'max-content'
-                  }}
-                  tokens={[token ?? '']}
-                  value={totalSelectedPending}
-                />
-              </Container>
-            </Container>
-            <DecisionButtons
-              cancelButton
-              direction='horizontal'
-              disabled={!selectedToPayout.length || !api}
-              divider
-              onPrimaryClick={openReview}
-              onSecondaryClick={onBack}
-              primaryBtnText={t('Next')}
-              secondaryBtnText={t('Cancel')}
-              style={{ height: '44px' }}
-            />
-          </Stack>
+          <PendingRewardsUI
+            adaptiveDecimalPoint={adaptiveDecimalPoint}
+            eraToDate={eraToDate}
+            expandedRewards={expandedRewards}
+            genesisHash={genesisHash}
+            onBack={onBack}
+            onSelect={onSelect}
+            onSelectAll={onSelectAll}
+            openReview={openReview}
+            selectedToPayout={selectedToPayout}
+            totalSelectedPending={totalSelectedPending}
+          />
         </Motion>
       </Grid>
     </>

@@ -13,6 +13,7 @@ import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils
 import BondExtra from './bondExtra';
 import FastUnstake from './fastUnstaking';
 import Info from './Info';
+import PendingRewards from './pendingReward';
 import Restake from './restake';
 import Settings from './settings';
 import Unstake from './unstake';
@@ -81,6 +82,15 @@ function PopUpHandler ({ address, genesisHash, popupCloser, popupOpener, selecte
       case StakingPopUps.WITHDRAW:
         return (
           <Withdraw
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
+
+      case StakingPopUps.PENDING_REWARDS:
+        return (
+          <PendingRewards
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
