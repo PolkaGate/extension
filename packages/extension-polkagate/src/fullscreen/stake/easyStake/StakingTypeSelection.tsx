@@ -157,17 +157,19 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
   , [selectedPosition?.suggestedValidators, selectedStakingType?.validators]);
 
   const onOptions = useCallback((type: 'pool' | 'solo') => () => {
-    type === 'pool' && setSelectedStakingType((perv) => ({
-      pool: perv?.pool,
-      type,
-      validators: undefined
-    }));
+    type === 'pool' &&
+      setSelectedStakingType((perv) => ({
+        pool: perv?.pool,
+        type,
+        validators: undefined
+      }));
 
-    type === 'solo' && setSelectedStakingType({
-      pool: undefined,
-      type,
-      validators: undefined
-    });
+    type === 'solo' &&
+      setSelectedStakingType({
+        pool: undefined,
+        type,
+        validators: undefined
+      });
   }, [setSelectedStakingType]);
 
   const openSelectPool = useCallback((event: React.MouseEvent) => {
