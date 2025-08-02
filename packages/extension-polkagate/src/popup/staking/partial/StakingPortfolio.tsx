@@ -7,7 +7,7 @@ import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme 
 import { Sticker } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { AssetLogo, FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
+import { AssetLogo, FormatBalance3, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
@@ -130,7 +130,6 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
   const tokenPrice = useTokenPrice2(genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const adaptiveDecimalPoint = useMemo(() => staked && decimal && (String(staked).length >= decimal - 1 ? 2 : 4), [decimal, staked]);
   const textColor = useMemo(() => isFullScreen ? '#AA83DC' : theme.palette.text.highlight, [isFullScreen, theme.palette.text.highlight]);
 
   const stakedInCurrency = useMemo(() => {
@@ -174,31 +173,26 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
             />)
         }
       </Grid>
-      <Grid alignItems='center' container item justifyContent='flex-start' sx={{ m: '-3px 0 6px', width: staked && isFullScreen ? 'fit-content' : '100%' }}>
-        {staked === undefined
-          ? (
-            <MySkeleton
-              bgcolor='#BEAAD840'
-              style={{ borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
-            />)
-          : (
-            <FormatBalance2
-              decimalPoint={adaptiveDecimalPoint}
-              decimals={[decimal ?? 0]}
-              style={{
-                backgroundColor: isFullScreen ? '#AA83DC26' : 'transparent',
-                borderRadius: '9px',
-                color: textColor,
-                fontFamily: 'Inter',
-                fontSize: isFullScreen ? '13px' : '12px',
-                fontWeight: 500,
-                padding: isFullScreen ? '3px 4px 1px' : 0,
-                width: 'max-content'
-              }}
-              tokens={[token ?? '']}
-              value={staked}
-            />)}
-      </Grid>
+      <FormatBalance3
+        balanceProps={{
+          decimal,
+          token,
+          value: staked
+        }}
+        balanceStyle={{
+          backgroundColor: isFullScreen ? '#AA83DC26' : 'transparent',
+          borderRadius: '9px',
+          color: textColor,
+          fontFamily: 'Inter',
+          fontSize: isFullScreen ? '13px' : '12px',
+          fontWeight: 500,
+          padding: isFullScreen ? '3px 4px 1px' : 0
+        }}
+        skeletonBgColor='#BEAAD840'
+        skeletonStyle={{ borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
+        style={{ margin: '-3px 0 6px', width: staked && isFullScreen ? 'fit-content' : '100%' }}
+        withSkeleton
+      />
       <Buttons
         buttons={buttons}
         isFullScreen={isFullScreen}

@@ -50,6 +50,7 @@ export { default as FadeOnScroll } from './FadeOnScroll';
 export { default as FadeOnScrollHorizontal } from './FadeOnScrollHorizontal';
 export { default as FormatBalance } from './FormatBalance';
 export { default as FormatBalance2 } from './FormatBalance2';
+export { default as FormatBalance3 } from './FormatBalance3';
 export { default as FormatPrice } from './FormatPrice';
 export { default as From } from './From';
 export { default as FullscreenChainNames } from './FullscreenChainNames';
