@@ -57,14 +57,18 @@ interface ValidatorInfoProp {
   reachedMaximum?: boolean;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo({ genesisHash, isAlreadySelected, isSelected, onSelect, reachedMaximum, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelected, isSelected, onSelect, reachedMaximum, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
   const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!(isHexToBn(validatorInfo?.stakingLedger.total as unknown as string))?.gtn(0));
 
   const [open, setOpen] = React.useState<boolean>(false);
 
-  const toggleValidatorDetail = useCallback(() => setOpen((isOpen) => !isOpen), []);
+  const openValidatorDetail = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    setOpen(true);
+  }, []);
+  const closeDetail = useCallback(() => setOpen(false), []);
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
 
@@ -80,7 +84,7 @@ const ValidatorInfo = memo(function ValidatorInfo({ genesisHash, isAlreadySelect
             changeState={noop}
             checked={isSelected}
             disabled={reachedMaximum}
-            style={{ mr: '10px', width: 'fit-content' }}
+            style={{ m: 0, mr: '10px', width: 'fit-content' }}
           />
         }
         <ValidatorIdentity
@@ -99,7 +103,7 @@ const ValidatorInfo = memo(function ValidatorInfo({ genesisHash, isAlreadySelect
           StartIcon={PercentageSquare}
           text={isNaN(commission) ? '---' : String(commission) + '%'}
           title={t('Commission')}
-          width='132px'
+          width='140px'
         />
         <InfoWithIcons
           StartIcon={Profile2User}
@@ -118,14 +122,15 @@ const ValidatorInfo = memo(function ValidatorInfo({ genesisHash, isAlreadySelect
           style={{ width: '130px' }}
           validatorDetail={validatorInfo}
         />
-        <IconButton onClick={toggleValidatorDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>
+        <IconButton onClick={openValidatorDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>
           <ArrowRight2 color='#AA83DC' size='14' variant='Bold' />
         </IconButton>
       </Container>
       {open &&
         <ValidatorInformationFS
           genesisHash={genesisHash}
-          onClose={toggleValidatorDetail}
+          onClose={closeDetail}
+          onSelect={onSelect}
           validator={validatorInfo}
         />}
     </>

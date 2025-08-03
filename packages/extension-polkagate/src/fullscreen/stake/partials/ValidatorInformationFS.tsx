@@ -7,9 +7,10 @@ import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { type CSSProperties, useCallback, useMemo } from 'react';
+import { FixedSizeList as List } from 'react-window';
 
-import { ActionButton, DetailPanel, FormatBalance2, Identity2 } from '../../../components';
+import { ActionButton, DetailPanel, FormatBalance2, GradientButton, Identity2 } from '../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import { getSubstrateAddress, isHexToBn } from '../../../util/utils';
@@ -72,15 +73,27 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
   return (
     <Stack direction='column' sx={{ gap: '6px', p: '50px 18px 0', width: '100%', zIndex: 1 }}>
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
-        {nominators.map((item, index) => (
-          <NominatorItem
-            genesisHash={genesisHash}
-            key={index}
-            nominator={item}
-          />
-        ))}
+        <List
+          height={515}
+          itemCount={nominators.length}
+          itemSize={80}
+          width='100%'
+        >
+          {({ index, style }: { index: number, style: CSSProperties }) => {
+            const item = nominators[index];
+
+            return (
+              <div key={index} style={style}>
+                <NominatorItem
+                  genesisHash={genesisHash}
+                  nominator={item}
+                />
+              </div>
+            );
+          }}
+        </List>
         {nominators.length === 0 &&
-          <Typography color='#AA83DC' sx={{ textAlign: 'center', pt: '25px', width: '100%' }} variant='B-2'>
+          <Typography color='#AA83DC' sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
             {t('No nominators')}
           </Typography>
         }
@@ -98,9 +111,10 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
 interface RightColumnContentProps {
   validator: ValidatorInformation;
   genesisHash: string | undefined;
+  onSelect?: () => void;
 }
 
-const RightColumnContent = ({ genesisHash, validator }: RightColumnContentProps) => {
+const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnContentProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
@@ -110,8 +124,8 @@ const RightColumnContent = ({ genesisHash, validator }: RightColumnContentProps)
   const valueUnit = ` (${getTokenUnit(validator.stakingLedger.total as unknown as BN, decimal ?? 0, token ?? '')})`;
 
   return (
-    <>
-      <VelvetBox childrenStyle={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px', maxWidth: '268px' }} style={{ height: 'fit-content', margin: 0, width: 'fit-content' }}>
+    <Stack direction='column' sx={{ gap: '12px', width: 'fit-content' }}>
+      <VelvetBox childrenStyle={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px', maxWidth: '260px' }} style={{ height: 'fit-content', margin: 0, width: 'fit-content' }}>
         <Typography color='text.secondary' p='14px' textAlign='left' variant='B-1' width='100%'>
           {t('Information')}
         </Typography>
@@ -148,17 +162,29 @@ const RightColumnContent = ({ genesisHash, validator }: RightColumnContentProps)
           value={validatorAPY != null ? `${validatorAPY}%` : '...'}
         />
       </VelvetBox>
-    </>
+      {onSelect &&
+        <GradientButton
+          onClick={onSelect}
+          style={{ width: '268px' }}
+          text={t('Choose')}
+        />}
+    </Stack>
   );
 };
 
 interface Props {
   onClose: () => void;
+  onSelect?: () => void;
   genesisHash: string | undefined;
   validator: ValidatorInformation;
 }
 
-export default function ValidatorInformationFS ({ genesisHash, onClose, validator }: Props) {
+export default function ValidatorInformationFS ({ genesisHash, onClose, onSelect, validator }: Props) {
+  const handleSelect = useCallback(() => {
+    onSelect?.();
+    onClose();
+  }, [onClose, onSelect]);
+
   return (
     <DetailPanel
       LeftItem={
@@ -184,6 +210,7 @@ export default function ValidatorInformationFS ({ genesisHash, onClose, validato
       rightColumnContent={
         <RightColumnContent
           genesisHash={genesisHash}
+          onSelect={onSelect ? handleSelect : undefined}
           validator={validator}
         />
       }
