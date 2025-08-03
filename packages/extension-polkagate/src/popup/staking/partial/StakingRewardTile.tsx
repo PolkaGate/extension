@@ -264,14 +264,14 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
         Icon={Award}
         buttonsArray={[
           {
-            Icon: Timer,
-            onClick: onClaimReward,
-            text: t('Pending Rewards')
-          },
-          {
             Icon: Graph,
             onClick: onRewardChart,
             text: t('Chart')
+          },
+          {
+            Icon: Timer,
+            onClick: onClaimReward,
+            text: t('Pending Rewards')
           }
         ]}
         cryptoAmount={reward}
