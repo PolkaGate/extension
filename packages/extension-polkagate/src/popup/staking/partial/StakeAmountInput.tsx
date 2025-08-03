@@ -110,6 +110,7 @@ const StyledTextField = styled(TextField, {
 interface SubAmountProps {
   amount: BN | undefined;
   title: string;
+  dividerStyle?: React.CSSProperties;
   token: string | undefined;
   genesisHash: string | undefined;
   decimal: number | undefined;
@@ -117,12 +118,12 @@ interface SubAmountProps {
   isExtension?: boolean;
 }
 
-const SubAmount = ({ amount, decimal, genesisHash, isExtension, logoInfo, title, token }: SubAmountProps) => {
+const SubAmount = ({ amount, decimal, dividerStyle, genesisHash, isExtension, logoInfo, title, token }: SubAmountProps) => {
   const theme = useTheme();
 
   return (
     <>
-      <GradientDivider style={{ my: '6px' }} />
+      <GradientDivider style={{ my: '6px', ...dividerStyle }} />
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', gap: '6px', justifyContent: 'space-start', pl: '10px', pt: '8px' }}>
         <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
           {title}
@@ -166,12 +167,13 @@ interface Props {
   onInputChange: (input: string) => void;
   placeholder?: string;
   style?: SxProps<Theme>;
+  bodyStyle?: React.CSSProperties;
   subAmount?: SubAmountProps;
   title?: string;
   titleInColor?: string;
 }
 
-export default function StakeAmountInput ({ buttonsArray = [], decimal, dividerStyle = {}, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
+export default function StakeAmountInput ({ bodyStyle = {}, buttonsArray = [], decimal, dividerStyle = {}, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -238,7 +240,7 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, dividerS
 
   return (
     <Stack direction='column' sx={style}>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%' }}>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%', ...bodyStyle }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant='B-1'>
             <TwoToneText
@@ -274,13 +276,8 @@ export default function StakeAmountInput ({ buttonsArray = [], decimal, dividerS
         />
         {subAmount &&
           <SubAmount
-            amount={subAmount.amount}
-            decimal={subAmount.decimal}
-            genesisHash={subAmount.genesisHash}
+            {...subAmount}
             isExtension={isExtension}
-            logoInfo={subAmount.logoInfo}
-            title={subAmount.title}
-            token={subAmount.token}
           />
         }
       </Stack>

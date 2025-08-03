@@ -12,11 +12,11 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 
 import { Progress, SelectedProxy } from '../../../components';
-import { DraggableModal } from '../../../fullscreen/components/DraggableModal';
+import { DraggableModal, type DraggableModalProps } from '../../../fullscreen/components/DraggableModal';
 import TransactionFlow from '../partials/TransactionFlow';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../util/utils';
 
-interface Props {
+interface Props extends Partial<DraggableModalProps>{
   address: string | undefined;
   title: string;
   genesisHash: string | undefined;
@@ -35,7 +35,7 @@ interface Props {
   showBack?: boolean | undefined;
 }
 
-export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation }: Props) {
+export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
@@ -69,6 +69,7 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
       maxHeight={maxHeight ?? 605}
       minHeight={ flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN ? 270 : minHeight ?? 605}
       noCloseButton={showCloseIcon === undefined}
+      {...rest}
       onClose={_onClose ?? handler}
       open
       showBackIconAsClose={showBack ?? !showCloseIcon}
