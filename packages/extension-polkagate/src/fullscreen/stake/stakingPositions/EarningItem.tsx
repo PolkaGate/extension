@@ -4,7 +4,7 @@
 import type { PositionInfo } from '../../../util/types';
 
 import { Container, Grid, Skeleton, Typography, useTheme } from '@mui/material';
-import { Add, PercentageCircle } from 'iconsax-react';
+import { PercentageCircle, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { type BN } from '@polkadot/util';
@@ -75,11 +75,11 @@ const StakeButton = ({ onClick }: { onClick: () => void }) => {
   const { t } = useTranslation();
 
   return (
-    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '8px', cursor: 'pointer', gap: '6px', justifyContent: 'center', p: '8px', width: 'fit-content' }}>
-      <Typography color='#82FFA5' variant='B-2'>
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '11px', cursor: 'pointer', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
+      <Trade color='#AA83DC' size='18' variant='Bulk' />
+      <Typography color='primary.main' variant='B-4'>
         {t('Stake')}
       </Typography>
-      <Add color='#82FFA580' size='20' />
     </Grid>
   );
 };
