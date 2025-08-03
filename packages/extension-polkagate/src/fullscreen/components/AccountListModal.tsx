@@ -93,6 +93,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
     <DraggableModal
       onClose={_handleClose}
       open={open}
+      showBackIconAsClose
       style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: ' 20px 10px 10px' }}
       title={t('Select account')}
     >
