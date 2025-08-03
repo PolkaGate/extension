@@ -54,7 +54,7 @@ const EstimatedRate = ({ rate, show }: {show: boolean, rate: number| undefined})
   const { t } = useTranslation();
 
   return (
-    <Stack direction='row' sx={{ display: show ? 'flex' : 'none', justifyContent: 'space-between', m: '20px 0 3px', px: '5px', width: '100%' }}>
+    <Stack direction='row' sx={{ display: show ? 'flex' : 'none', justifyContent: 'space-between', m: '17px 0 3px', px: '5px', width: '100%' }}>
       <Typography color='primary.main' variant='B-1'>
         {t('Estimated rewards')}
       </Typography>
