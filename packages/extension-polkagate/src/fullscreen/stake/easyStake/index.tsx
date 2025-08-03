@@ -130,9 +130,9 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
             availableBalanceToStake={availableBalanceToStake}
             errorMessage={errorMessage}
             genesisHash={selectedPosition?.genesisHash}
-            rate={selectedPosition?.rate}
             onChangeAmount={onChangeAmount}
             onMaxMinAmount={onMaxMinAmount}
+            rate={selectedPosition?.rate}
             selectedStakingType={selectedStakingType}
             setSide={setSide}
           />

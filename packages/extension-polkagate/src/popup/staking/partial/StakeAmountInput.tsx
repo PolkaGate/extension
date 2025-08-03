@@ -241,7 +241,7 @@ export default function StakeAmountInput ({ bodyStyle = {}, buttonsArray = [], d
   return (
     <Stack direction='column' sx={style}>
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%', ...bodyStyle }}>
-        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', px: '10px' }}>
           <Typography variant='B-1'>
             <TwoToneText
               backgroundColor={isExtension ? '#110F2A' : '#AA83DC26'}
