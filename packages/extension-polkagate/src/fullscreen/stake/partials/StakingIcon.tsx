@@ -12,12 +12,13 @@ import { useTranslation } from '../../../hooks';
 interface Props {
   type: 'solo' | 'pool';
   text?: string;
+  size?: string;
   variant?: 'nature' | 'people';
   style?: SxProps<Theme>;
   noText?: boolean;
 }
 
-export default function StakingIcon ({ noText = false, style, text, type, variant = 'nature' }: Props) {
+export default function StakingIcon ({ noText = false, size, style, text, type, variant = 'nature' }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -27,15 +28,15 @@ export default function StakingIcon ({ noText = false, style, text, type, varian
           ? <>
             {
               type === 'solo'
-                ? <UserOctagon color='#AA83DC' size='36' variant='Bulk' />
-                : <People color='#AA83DC' size='32' variant='Bulk' />
+                ? <UserOctagon color='#AA83DC' size={size ?? '36'} variant='Bulk' />
+                : <People color='#AA83DC' size={size ?? '32'} variant='Bulk' />
             }
           </>
           : <>
             {
               type === 'solo'
-                ? <SnowFlake size='36' />
-                : <Ice asPortfolio size='36' />
+                ? <SnowFlake size={size ?? '36'} />
+                : <Ice asPortfolio size={size ?? '36'} />
             }
           </>
       }
