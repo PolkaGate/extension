@@ -132,6 +132,7 @@ export default function Solo (): React.ReactElement {
                 Icon={Moneys}
                 buttonsArray={[{
                   Icon: Strongbox2,
+                  iconVariant: 'Bold',
                   onClick: onWithdraw,
                   text: t('Withdraw')
                 }]}

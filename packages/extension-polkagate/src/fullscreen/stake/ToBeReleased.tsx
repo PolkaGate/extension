@@ -28,6 +28,7 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
       minHeight={475}
       onClose={onClose}
       open
+      showBackIconAsClose
       title={t('Unstaking')}
     >
       <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
@@ -39,7 +40,7 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
             const noDivider = toBeReleased.length === index + 1;
 
             return (
-              <>
+              <React.Fragment key={index}>
                 <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '12px', mb: '4px', p: '10px' }}>
                   <Typography color='text.highlight' variant='B-1' width='fit-content'>
                     {formatTimestamp(info.date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
@@ -59,7 +60,7 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
                   />
                 </Grid>
                 {!noDivider && <GradientDivider style={{ my: '4px' }} />}
-              </>
+              </React.Fragment>
             );
           })}
         </Container>
