@@ -31,7 +31,7 @@ interface TileBoxProps {
   popupOpener: PopupOpener;
 }
 
-const TileBox = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) => {
+const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -165,7 +165,7 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, gen
         style={{ gap: '8px', margin: 0, width: '400px' }}
         type={type}
       />
-      <TileBox
+      <TileBoxes
         availableBalanceToStake={availableBalanceToStake}
         genesisHash={genesisHash}
         popupOpener={popupOpener}
