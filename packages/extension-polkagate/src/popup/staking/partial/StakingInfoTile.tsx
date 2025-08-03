@@ -3,6 +3,7 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
+import { ExpandMoreRounded } from '@mui/icons-material';
 import { Box, Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
@@ -174,7 +175,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
   const disabledColor = isFullScreen ? '#674394' : '#809acb8c';
-  const adjustedColor = isDisabled ? disabledColor : isFullScreen ? '#BEAAD8' : theme.palette.text.highlight;
+  const adjustedColor = isDisabled ? disabledColor : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
 
   return (
     <Grid alignItems={isRow ? 'flex-start' : 'center'} container item
@@ -213,7 +214,9 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           }
           {
             isRow && onExpand &&
-            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='22' style={{ cursor: 'pointer', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px' }} variant='Bulk' />
+            <Box onClick={onExpand} sx={{ alignItems: 'center', bgcolor: isFullScreen ? '#2D1E4A' : '#272A4A', borderRadius: '999px', cursor: 'pointer', display: 'flex', height: '20px', justifyContent: 'center', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px', width: '20px' }}>
+              <ExpandMoreRounded style={{ color: adjustedColor, fontSize: 18 }} />
+            </Box>
           }
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
