@@ -127,6 +127,7 @@ function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
 
   return (
     <SharePopup
+      modalProps={{ showBackIconAsClose: true }}
       modalStyle={{ minHeight: '400px', padding: '20px' }}
       onClose={handleClose}
       open={openMenu}
