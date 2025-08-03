@@ -104,7 +104,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
           const color = isBlock ? 'text.primary' : 'text.highlight';
 
           return (
-            <>
+            <React.Fragment key={index}>
               <Container disableGutters key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography color='text.highlight' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(title)}
@@ -134,7 +134,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
                 </Typography>
               </Container>
               {withDivider && <GradientDivider style={{ my: '5px' }} />}
-            </>
+            </React.Fragment>
           );
         })}
       </Stack>
