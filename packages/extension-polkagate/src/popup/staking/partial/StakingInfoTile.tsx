@@ -263,7 +263,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             gap: isRow ? '2px' : '4px',
             minWidth: '104px',
             ml: isRow ? 'auto' : '8px',
-            mt: isFullScreen ? 0 : '8px',
+            mt: isFullScreen ? 0 : '-4px',
             p: '2px',
             width: isFullScreen ? '100%' : 'fit-content'
           }}

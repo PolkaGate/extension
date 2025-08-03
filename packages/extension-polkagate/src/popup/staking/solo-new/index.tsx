@@ -3,24 +3,22 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { BuyCrypto, LockSlash, Moneys, Strongbox2, Timer1, Trade, UserOctagon } from 'iconsax-react';
+import { Grid, Typography, useTheme } from '@mui/material';
+import { BuyCrypto, Timer1, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
-import { amountToHuman } from '@polkadot/extension-polkagate/src/util/numberUtils';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useBackground, useChainInfo, usePrices, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
+import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import AvailableToStake from '../partial/AvailableToStake';
-import StakingInfoTile from '../partial/StakingInfoTile';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
-import StakingRewardTile from '../partial/StakingRewardTile';
 import ToBeReleased from '../partial/ToBeReleased';
+import Tiles from '../Tiles';
 
 const Back = () => {
   const { t } = useTranslation();
@@ -46,7 +44,6 @@ export default function Solo (): React.ReactElement {
 
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const pricesInCurrency = usePrices();
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);
@@ -60,15 +57,10 @@ export default function Solo (): React.ReactElement {
     selectedAccount?.address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: genesisHash }).catch(console.error);
   }, [genesisHash, selectedAccount?.address]);
 
-  const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
-
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
   const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
-
-  const StakingInfoTileCount = [redeemable, unlockingAmount].filter((amount) => amount && !amount?.isZero()).length; // equals and bigger than 1 means the tiles must be displayed in a row
-  const layoutDirection = useMemo((): 'row' | 'column' => StakingInfoTileCount >= 1 ? 'row' : 'column', [StakingInfoTileCount]);
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
@@ -117,49 +109,21 @@ export default function Solo (): React.ReactElement {
             style={{ mt: '20px' }}
             type='solo'
           />
-          <Container disableGutters sx={{ display: 'flex', flexDirection: layoutDirection, gap: '4px', mt: '20px', px: '15px', width: '100%' }}>
-            <StakingRewardTile
-              address={stakingInfo.rewardDestinationAddress}
-              genesisHash={genesisHash}
-              isDisabled={!rewards || rewards.isZero()}
-              layoutDirection={layoutDirection}
-              onClaimReward={onClaimReward}
-              reward={rewards}
-              type='solo'
-            />
-            {(redeemable?.isZero?.() === false || layoutDirection === 'row') &&
-              <StakingInfoTile
-                Icon={Moneys}
-                buttonsArray={[{
-                  Icon: Strongbox2,
-                  iconVariant: 'Bold',
-                  onClick: onWithdraw,
-                  text: t('Withdraw')
-                }]}
-                cryptoAmount={redeemable}
-                decimal={decimal ?? 0}
-                fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
-                layoutDirection={layoutDirection}
-                title={t('Redeemable')}
-                token={token ?? ''}
-              />}
-            {(unlockingAmount?.isZero?.() === false || layoutDirection === 'row') &&
-              <StakingInfoTile
-                Icon={LockSlash}
-                buttonsArray={[{
-                  Icon: Trade,
-                  onClick: onRestake,
-                  text: t('Restake')
-                }]}
-                cryptoAmount={unlockingAmount}
-                decimal={decimal ?? 0}
-                fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
-                layoutDirection={layoutDirection}
-                onExpand={toBeReleased?.length ? onExpand : undefined}
-                title={t('Unstaking')}
-                token={token ?? ''}
-              />}
-          </Container>
+          <Tiles
+            address={selectedAccount?.address}
+            asset={asset}
+            genesisHash={genesisHash}
+            onClaimReward={onClaimReward}
+            onExpand={onExpand}
+            onRestake={onRestake}
+            onWithdraw={onWithdraw}
+            redeemable={redeemable}
+            rewardDestinationAddress={stakingInfo.rewardDestinationAddress}
+            rewards={rewards}
+            toBeReleased={toBeReleased}
+            type='solo'
+            unlockingAmount={unlockingAmount}
+          />
           <AvailableToStake
             availableAmount={stakingInfo.availableBalanceToStake}
             decimal={decimal}
