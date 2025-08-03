@@ -28,6 +28,7 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
       minHeight={475}
       onClose={onClose}
       open
+      showBackIconAsClose
       title={t('Unstaking')}
     >
       <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
