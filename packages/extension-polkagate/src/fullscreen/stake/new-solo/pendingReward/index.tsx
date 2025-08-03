@@ -45,7 +45,7 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}
-      maxHeight={646}
+      maxHeight={649}
       onClose={onClose}
       setFlowStep={setFlowStep}
       showBack
@@ -80,7 +80,7 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
             selectedToPayout={selectedToPayout}
           />
         </Stack>
-        <Grid container item sx={{ bgcolor: '#05091C', borderRadius: '28px', gap: '16px', p: '16px', mt: '10px' }}>
+        <Grid container item sx={{ bgcolor: '#05091C', borderRadius: '28px', gap: '16px', mt: '10px', p: '16px' }}>
           <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: '130px' }}>
               <Typography color='#AA83DC' variant='B-4'>
