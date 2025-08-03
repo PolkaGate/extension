@@ -1,21 +1,41 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 // @ts-ignore
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import React, { type CSSProperties, useCallback, useMemo } from 'react';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import React, { type CSSProperties, memo, useCallback, useMemo, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 import { ActionButton, DetailPanel, FormatBalance2, GradientButton, Identity2 } from '../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
-import { VelvetBox } from '../../../style';
-import { getSubstrateAddress, isHexToBn } from '../../../util/utils';
+import { Email, Web, XIcon } from '../../../popup/settings/icons';
+import SocialIcon from '../../../popup/settings/partials/SocialIcon';
+import { PolkaGateIdenticon, VelvetBox } from '../../../style';
+import { getSubstrateAddress, isHexToBn, toShortAddress } from '../../../util/utils';
 import { getTokenUnit } from '../util/utils';
 import { InfoBox } from './InfoBox';
+
+const Socials = ({ accountInfo }: { accountInfo: DeriveAccountRegistration | undefined }) => {
+  return (
+    <Grid alignItems='center' columnGap='2px' container item sx={{ width: 'fit-content' }}>
+      {accountInfo?.email &&
+        <SocialIcon Icon={<Email color='#AA83DC' width='18px' />} link={`mailto:${accountInfo.email}`} size={24} />
+      }
+      {accountInfo?.web &&
+        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} link={accountInfo.web} size={24} />
+
+      }
+      {accountInfo?.twitter &&
+        <SocialIcon Icon={<XIcon color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={`https://twitter.com/${accountInfo.twitter}`} size={24} />
+      }
+    </Grid>
+  );
+};
 
 interface NominatorItemProps {
   nominator: SpStakingIndividualExposure;
@@ -27,6 +47,8 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined>(undefined);
+
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
       <Stack direction='column' sx={{ width: 'max-content' }}>
@@ -34,13 +56,14 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           address={getSubstrateAddress(nominator.who.toString())}
           genesisHash={genesisHash ?? ''}
           identiconSize={24}
+          returnIdentity={setAccountInfo}
           showShortAddress
           showSocial={false}
           style={{ width: '210px' }}
         />
         <Grid container item sx={{ alignItems: 'center', gap: '4px', ml: '30px', width: 'fit-content' }}>
           <Typography color='#AA83DC' textAlign='left' variant='B-4'>
-            {t('staked')}:
+            {t('Staked')}:
           </Typography>
           <FormatBalance2
             decimalPoint={2}
@@ -51,12 +74,7 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           />
         </Grid>
       </Stack>
-      <Identity2
-        address={nominator.who.toString()}
-        genesisHash={genesisHash ?? ''}
-        justSocials
-        style={{ width: '100px' }}
-      />
+      <Socials accountInfo={accountInfo} />
     </Container>
   );
 };
@@ -72,18 +90,21 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
 
   return (
     <Stack direction='column' sx={{ gap: '6px', p: '50px 18px 0', width: '100%', zIndex: 1 }}>
+      <Box
+        sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
+      />
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
         <List
           height={515}
           itemCount={nominators.length}
-          itemSize={80}
+          itemSize={82}
           width='100%'
         >
           {({ index, style }: { index: number, style: CSSProperties }) => {
             const item = nominators[index];
 
             return (
-              <div key={index} style={style}>
+              <div key={index} style={{ paddingBottom: '2px', ...style }}>
                 <NominatorItem
                   genesisHash={genesisHash}
                   nominator={item}
@@ -172,6 +193,29 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
   );
 };
 
+const ValidatorIdentity = memo(function ValidatorIdentity ({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', maxWidth: '310px', overflow: 'hidden', width: 'fit-content' }}>
+      <PolkaGateIdenticon
+        address={validatorInfo.accountId.toString()}
+        size={38}
+      />
+      {!validatorInfo.identity &&
+        <Typography color='text.primary' variant='H-2'>
+          {toShortAddress(validatorInfo.accountId)}
+        </Typography>}
+      {validatorInfo.identity &&
+        <Typography color='text.primary' variant='H-2'>
+          {validatorInfo.identity.displayParent ?? validatorInfo.identity.display}
+        </Typography>}
+      {validatorInfo.identity?.displayParent &&
+        <Typography color='#AA83DC' sx={{ bgcolor: '#AA83DC26', borderRadius: '6px', p: '4px' }} variant='B-5'>
+          {validatorInfo.identity.display}
+        </Typography>}
+    </Container>
+  );
+});
+
 interface Props {
   onClose: () => void;
   onSelect?: () => void;
@@ -188,13 +232,7 @@ export default function ValidatorInformationFS ({ genesisHash, onClose, onSelect
   return (
     <DetailPanel
       LeftItem={
-        <Identity2
-          address={getSubstrateAddress(validator.accountId.toString())}
-          genesisHash={genesisHash ?? ''}
-          identiconSize={38}
-          showShortAddress
-          showSocial={false}
-        />
+        <ValidatorIdentity validatorInfo={validator} />
       }
       leftColumnContent={
         <LeftColumnContent
@@ -214,6 +252,7 @@ export default function ValidatorInformationFS ({ genesisHash, onClose, onSelect
           validator={validator}
         />
       }
+      showBackIconAsClose
     />
   );
 }
