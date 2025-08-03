@@ -9,12 +9,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import uiSetting from '@polkadot/ui-settings';
 
-import { ExtensionPopup, GradientButton } from '../components';
-import { DraggableModal } from '../fullscreen/components/DraggableModal';
-import { useIsExtensionPopup, useSelectedLanguage, useTranslation } from '../hooks';
+import { GradientButton } from '../components';
+import { useSelectedLanguage, useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
 import { ExtensionPopups } from '../util/constants';
 import { getLanguageOptions, type LanguageOptions } from '../util/getLanguageOptions';
+import { SharePopup } from '.';
 
 interface Props {
   setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
@@ -57,7 +57,7 @@ const LanguageSelect = React.memo(
     return (
       <Grid container item justifyContent='center' sx={{ maxHeight: '380px', overflowY: 'auto' }}>
         {options.map(({ text, value }, index) => (
-          <>
+          <React.Fragment key={index}>
             <ListItem className={selectedLanguage === value ? 'selected' : ''} container item key={value} onClick={handleLanguageSelect(value as string)}>
               <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                 <Box
@@ -76,7 +76,7 @@ const LanguageSelect = React.memo(
             {index !== options.length - 1 &&
               <GradientDivider style={{ my: '5px' }} />
             }
-          </>
+          </React.Fragment>
         ))}
       </Grid>
     );
@@ -112,7 +112,7 @@ function Content ({ setPopup }: { setPopup: React.Dispatch<React.SetStateAction<
         style={{
           height: '44px',
           marginTop: '20px',
-          width: '345px'
+          width: '100%'
         }}
         text={t('Apply')}
       />
@@ -122,37 +122,23 @@ function Content ({ setPopup }: { setPopup: React.Dispatch<React.SetStateAction<
 
 function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const isExtension = useIsExtensionPopup();
 
-  const title = t('Select your language');
   const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
-    <>
-      {
-        isExtension
-          ? <ExtensionPopup
-            TitleIcon={Translate}
-            handleClose={handleClose}
-            openMenu={openMenu}
-            title={title}
-          >
-            <Content
-              setPopup={setPopup}
-            />
-          </ExtensionPopup>
-          : <DraggableModal
-            onClose={handleClose}
-            open={openMenu}
-            style={{ minHeight: '400px', padding: '20px' }}
-            title={title}
-          >
-            <Content
-              setPopup={setPopup}
-            />
-          </DraggableModal>
-      }
-    </>
+    <SharePopup
+      modalStyle={{ minHeight: '400px', padding: '20px' }}
+      onClose={handleClose}
+      open={openMenu}
+      popupProps={{
+        TitleIcon: Translate
+      }}
+      title={ t('Select your language')}
+    >
+      <Content
+        setPopup={setPopup}
+      />
+    </SharePopup>
   );
 }
 
