@@ -8,8 +8,6 @@ import { Firstline } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { noop } from '@polkadot/util';
-
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorsInformation, useValidatorSuggestion2 } from '../../../../hooks';
 import VelvetBox from '../../../../style/VelvetBox';
@@ -106,6 +104,8 @@ function ManageValidators () {
 
   const isSelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, newSelectedValidators), [newSelectedValidators]);
   const isAlreadySelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, nominatedValidatorsInformation), [nominatedValidatorsInformation]);
+  // in order to prevent checkbox being checked!
+  const reachedMaximum = useMemo(() => newSelectedValidators.length >= maximum, [maximum, newSelectedValidators.length]);
 
   const onSelect = useCallback((validator: ValidatorInformation) => () => {
     setNewSelectedValidators((prev) => {
@@ -195,8 +195,8 @@ function ManageValidators () {
                       isAlreadySelected={isAlreadySelected(validator)}
                       isSelected={isSelected(validator)}
                       key={index}
-                      onDetailClick={noop}
                       onSelect={onSelect(validator)}
+                      reachedMaximum={reachedMaximum}
                       validatorInfo={validator}
                     />
                   ))

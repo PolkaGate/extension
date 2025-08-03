@@ -3,9 +3,9 @@
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
-import { Container, Typography, useTheme } from '@mui/material';
-import { BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
-import React, { memo, useMemo } from 'react';
+import { Container, IconButton, Typography, useTheme } from '@mui/material';
+import { ArrowRight2, BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -14,6 +14,7 @@ import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
 import { isHexToBn } from '../../../../util/utils';
+import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 
 interface InfoProps extends StakingInfoStackProps {
   StartIcon: Icon;
@@ -24,7 +25,7 @@ const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal,
   const theme = useTheme();
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', width }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width }}>
       <StartIcon color='#AA83DC' size='20' style={{ minWidth: '20px' }} variant='Bulk' />
       <Typography color='#AA83DC' textAlign='left' variant='B-4'>
         {title}:
@@ -50,70 +51,84 @@ const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal,
 interface ValidatorInfoProp {
   validatorInfo: ValidatorInformation;
   genesisHash: string | undefined;
-  onDetailClick: () => void;
   isAlreadySelected?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
+  reachedMaximum?: boolean;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelected, isSelected, onSelect, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo({ genesisHash, isAlreadySelected, isSelected, onSelect, reachedMaximum, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
   const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!(isHexToBn(validatorInfo?.stakingLedger.total as unknown as string))?.gtn(0));
 
+  const [open, setOpen] = React.useState<boolean>(false);
+
+  const toggleValidatorDetail = useCallback(() => setOpen((isOpen) => !isOpen), []);
+
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
 
   return (
-    <Container
-      disableGutters
-      onClick={onSelect}
-      sx={{ alignItems: 'center', bgcolor: isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}
-    >
-      {onSelect &&
-        <GlowCheckbox
-          changeState={noop}
-          checked={isSelected}
-          style={{ mr: '10px', width: 'fit-content' }}
+    <>
+      <Container
+        disableGutters
+        onClick={onSelect}
+        sx={{ alignItems: 'center', bgcolor: isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '4px', pl: '10px' }}
+      >
+        {onSelect &&
+          <GlowCheckbox
+            changeState={noop}
+            checked={isSelected}
+            disabled={reachedMaximum}
+            style={{ mr: '10px', width: 'fit-content' }}
+          />
+        }
+        <ValidatorIdentity
+          style={{ m: 0, width: '300px' }}
+          validatorInfo={validatorInfo}
         />
-      }
-      <ValidatorIdentity
-        style={{ m: 0, width: '300px' }}
-        validatorInfo={validatorInfo}
-      />
-      <InfoWithIcons
-        StartIcon={BuyCrypto}
-        amount={validatorInfo.stakingLedger.total}
-        decimal={decimal}
-        title={t('Staked')}
-        token={token}
-        width='150px'
-      />
-      <InfoWithIcons
-        StartIcon={PercentageSquare}
-        text={isNaN(commission) ? '---' : String(commission) + '%'}
-        title={t('Commission')}
-        width='120px'
-      />
-      <InfoWithIcons
-        StartIcon={Profile2User}
-        // @ts-ignore
-        text={validatorInfo.exposureMeta?.nominatorCount}
-        title={t('Nominators')}
-        width='120px'
-      />
-      <InfoWithIcons
-        StartIcon={ChartSquare}
-        text={validatorAPY != null ? `${validatorAPY}%` : '...'}
-        title={t('APY')}
-      />
-      {/* <IconButton onClick={onDetailClick} sx={{ m: 0, p: '4px' }}>
-          <ArrowForwardIosIcon sx={{ color: 'text.primary', fontSize: '20px' }} /> // it is available in the design onFigma but has no functionality
-        </IconButton> */}
-      <ValidatorIdSocials
-        style={{ width: '130px' }}
-        validatorDetail={validatorInfo}
-      />
-    </Container>
+        <InfoWithIcons
+          StartIcon={BuyCrypto}
+          amount={validatorInfo.stakingLedger.total}
+          decimal={decimal}
+          title={t('Staked')}
+          token={token}
+          width='150px'
+        />
+        <InfoWithIcons
+          StartIcon={PercentageSquare}
+          text={isNaN(commission) ? '---' : String(commission) + '%'}
+          title={t('Commission')}
+          width='132px'
+        />
+        <InfoWithIcons
+          StartIcon={Profile2User}
+          // @ts-ignore
+          text={validatorInfo.exposureMeta?.nominatorCount}
+          title={t('Nominators')}
+          width='132px'
+        />
+        <InfoWithIcons
+          StartIcon={ChartSquare}
+          text={validatorAPY != null ? `${validatorAPY}%` : '...'}
+          title={t('APY')}
+          width='105px'
+        />
+        <ValidatorIdSocials
+          style={{ width: '130px' }}
+          validatorDetail={validatorInfo}
+        />
+        <IconButton onClick={toggleValidatorDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>
+          <ArrowRight2 color='#AA83DC' size='14' variant='Bold' />
+        </IconButton>
+      </Container>
+      {open &&
+        <ValidatorInformationFS
+          genesisHash={genesisHash}
+          onClose={toggleValidatorDetail}
+          validator={validatorInfo}
+        />}
+    </>
   );
 });
 

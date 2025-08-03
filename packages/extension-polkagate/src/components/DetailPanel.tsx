@@ -13,6 +13,7 @@ interface LeftColumnProps {
   noCloseButton?: boolean;
   TitleLogo?: React.ReactNode;
   RightItem?: React.ReactNode;
+  LeftItem?: React.ReactNode;
   title?: string;
   dividerStyle?: React.CSSProperties;
   style?: React.CSSProperties;
@@ -20,7 +21,7 @@ interface LeftColumnProps {
   children: React.ReactElement;
 }
 
-function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, style = {}, title }: LeftColumnProps) {
+function LeftColumn ({ LeftItem, RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, style = {}, title }: LeftColumnProps) {
   const CLoseIcon = showBackIconAsClose ? ChevronLeft : Close;
 
   const BoxStyle: SxProps<Theme> = useMemo(() => ({
@@ -30,6 +31,7 @@ function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButt
     backgroundSize: '100% auto',
     bgcolor: '#1B133C',
     borderRadius: '32px',
+    position: 'relative',
     py: '20px',
     width: '451px',
     ...style
@@ -57,6 +59,11 @@ function LeftColumn ({ RightItem, TitleLogo, children, dividerStyle, noCloseButt
         {RightItem &&
           <Grid alignItems='center' container item sx={{ position: 'absolute', right: '15px', top: '25px', width: 'fit-content', zIndex: 2 }}>
             {RightItem}
+          </Grid>
+        }
+        {LeftItem &&
+          <Grid alignItems='center' container item sx={{ left: '70px', position: 'absolute', top: '20px', width: 'fit-content', zIndex: 2 }}>
+            {LeftItem}
           </Grid>
         }
       </Grid>
@@ -89,13 +96,15 @@ interface Props {
   noCloseButton?: boolean;
   TitleLogo?: React.ReactNode;
   RightItem?: React.ReactNode;
+  LeftItem?: React.ReactNode;
   title?: string;
   dividerStyle?: React.CSSProperties;
   leftColumnStyle?: React.CSSProperties;
   noDivider?: boolean;
 }
 
-function DetailPanel ({ RightItem,
+function DetailPanel ({ LeftItem,
+  RightItem,
   TitleLogo,
   dividerStyle,
   leftColumnContent,
@@ -143,6 +152,7 @@ function DetailPanel ({ RightItem,
     <Modal onClose={_onClose} open={true} slotProps={{ backdrop: { style: { backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0, 0, 0, 0.73)' } } }}>
       <Container disableGutters sx={containerStyle}>
         <LeftColumn
+          LeftItem={LeftItem}
           RightItem={RightItem}
           TitleLogo={TitleLogo}
           dividerStyle={dividerStyle}

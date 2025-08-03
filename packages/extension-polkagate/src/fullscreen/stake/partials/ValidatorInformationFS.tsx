@@ -1,8 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-ignore
+// @ts-ignore
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -12,6 +13,7 @@ import { ActionButton, DetailPanel, FormatBalance2, Identity2 } from '../../../c
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import { getSubstrateAddress, isHexToBn } from '../../../util/utils';
+import { getTokenUnit } from '../util/utils';
 import { InfoBox } from './InfoBox';
 
 interface NominatorItemProps {
@@ -68,7 +70,7 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
   const { t } = useTranslation();
 
   return (
-    <Stack direction='column' sx={{ p: '50px 18px 0', width: '100%', zIndex: 1 }}>
+    <Stack direction='column' sx={{ gap: '6px', p: '50px 18px 0', width: '100%', zIndex: 1 }}>
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
         {nominators.map((item, index) => (
           <NominatorItem
@@ -77,6 +79,11 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
             nominator={item}
           />
         ))}
+        {nominators.length === 0 &&
+          <Typography color='#AA83DC' sx={{ textAlign: 'center', pt: '25px', width: '100%' }} variant='B-2'>
+            {t('No nominators')}
+          </Typography>
+        }
       </Stack>
       <ActionButton
         contentPlacement='center'
@@ -100,6 +107,7 @@ const RightColumnContent = ({ genesisHash, validator }: RightColumnContentProps)
 
   const commission = useMemo(() => String(Number(validator.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validator.validatorPrefs.commission) / (10 ** 7)) + '%', [validator.validatorPrefs.commission]);
   const validatorAPY = useValidatorApy(api, String(validator?.accountId), !!(isHexToBn(validator?.stakingLedger.total as unknown as string))?.gtn(0));
+  const valueUnit = ` (${getTokenUnit(validator.stakingLedger.total as unknown as BN, decimal ?? 0, token ?? '')})`;
 
   return (
     <>
@@ -115,10 +123,11 @@ const RightColumnContent = ({ genesisHash, validator }: RightColumnContentProps)
               style={{ ...theme.typography['H-2'], color: theme.palette.text.primary, width: 'fit-content' }}
               tokens={[token ?? '']}
               value={validator.stakingLedger.total}
+              withCurrency={false}
+              withSi={false}
             />
           }
-          // decimal={decimal}
-          label={t('Staked')}
+          label={t('Staked') + valueUnit}
           style={{ alignItems: 'flex-start', p: '16px', width: '128px' }}
           value={undefined}
         />
@@ -152,10 +161,11 @@ interface Props {
 export default function ValidatorInformationFS ({ genesisHash, onClose, validator }: Props) {
   return (
     <DetailPanel
-      RightItem={
+      LeftItem={
         <Identity2
           address={getSubstrateAddress(validator.accountId.toString())}
           genesisHash={genesisHash ?? ''}
+          identiconSize={38}
           showShortAddress
           showSocial={false}
         />
@@ -163,7 +173,7 @@ export default function ValidatorInformationFS ({ genesisHash, onClose, validato
       leftColumnContent={
         <LeftColumnContent
           genesisHash={genesisHash}
-          //@ts-ignore
+          // @ts-ignore
           nominators={validator.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
           onClose={onClose}
         />

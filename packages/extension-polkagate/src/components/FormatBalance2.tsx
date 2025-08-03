@@ -67,7 +67,7 @@ function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | strin
   const unitPost = withCurrency ? token : '';
 
   if (prefix.length > K_LENGTH) {
-    const [major, rest] = formatBalance(value, { decimals, withUnit: false }).split('.');
+    const [major, rest] = formatBalance(value, { decimals, withSi: withSi ?? true, withUnit: false }).split('.');
     const minor = rest.slice(0, decimalPoint);
     const unit = rest.slice(4);
 

@@ -8,12 +8,9 @@ import { Menu } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
 
-import { NoValidatorBox } from '@polkadot/extension-polkagate/src/fullscreen/components';
-import { noop } from '@polkadot/util';
-
 import { FadeOnScroll, GradientButton, Motion } from '../../../../components';
 import { useTranslation, useValidatorsInformation } from '../../../../hooks';
-import { EmptyNomination } from '../../../../popup/staking/solo-new/nominations/NominationsSetting';
+import { NoValidatorBox } from '../../../components';
 import TableToolbar from '../../partials/TableToolbar';
 import { getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
@@ -53,41 +50,40 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
 
   return (
     <Motion variant='slide'>
-      {stakingInfo && !isNominated && !isLoading
-        ? <NoValidatorBox style={{ height: '360px', paddingTop: '40px' }} />
-        : <Stack direction='column' sx={{ width: '100%' }}>
-          <TableToolbar
-            onSearch={onSearch}
-            setSortBy={setSortConfig}
-            sortBy={sortConfig}
-            sortByObject={VALIDATORS_SORTED_BY}
-          >
-            <GradientButton
-              onClick={openValidatorManagement}
-              startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
-              style={{ height: '44px', padding: 0, width: '180px' }}
-              text={t('Manage Validators')}
-            />
-          </TableToolbar>
-          <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', width: '100%' }}>
-            {isNominated && isLoaded &&
-              sortedAndFilteredValidators?.map((validator, index) => (
-                <ValidatorInfo
-                  genesisHash={genesisHash}
-                  key={index}
-                  onDetailClick={noop}
-                  validatorInfo={validator}
-                />
-              ))}
-            {isLoading &&
-              Array.from({ length: 10 }).map((_, index) => (
-                <UndefinedItem key={index} />
-              ))
-            }
-            <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
-          </Stack>
+      <Stack direction='column' sx={{ width: '100%' }}>
+        <TableToolbar
+          onSearch={onSearch}
+          setSortBy={setSortConfig}
+          sortBy={sortConfig}
+          sortByObject={VALIDATORS_SORTED_BY}
+        >
+          <GradientButton
+            onClick={openValidatorManagement}
+            startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
+            style={{ height: '44px', padding: 0, width: '180px' }}
+            text={t('Manage Validators')}
+          />
+        </TableToolbar>
+        <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', width: '100%' }}>
+          {isNominated && isLoaded &&
+            sortedAndFilteredValidators?.map((validator, index) => (
+              <ValidatorInfo
+                genesisHash={genesisHash}
+                key={index}
+                validatorInfo={validator}
+              />
+            ))}
+          {isNominated && isLoading &&
+            Array.from({ length: 10 }).map((_, index) => (
+              <UndefinedItem key={index} />
+            ))
+          }
+          {!isNominated &&
+            <NoValidatorBox style={{ height: '275px', paddingTop: '10px' }} />
+          }
+          <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
         </Stack>
-      }
+      </Stack>
     </Motion>
   );
 }

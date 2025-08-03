@@ -6,7 +6,7 @@ import type { PoolInfo } from '../../../util/types';
 
 import { useCallback, useState } from 'react';
 
-import { type BN, BN_ZERO, noop } from '@polkadot/util';
+import { type BN, BN_ZERO, formatBalance, noop } from '@polkadot/util';
 
 import { SORTED_BY } from '../../../popup/staking/partial/PoolFilter';
 import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
@@ -208,4 +208,14 @@ export function positionsReducer (state: PositionsState, action: PositionsAction
     default:
       return state;
   }
+}
+
+export function getTokenUnit (value: number | string | BN | bigint, decimals: number, token: string): string {
+  const formatted = formatBalance(value, { decimals, withSi: true, withUnit: token });
+
+  console.log('formatted:', formatted);
+
+  const match = formatted.match(/[\d,.]+\s*([a-zA-Z]+)$/);
+
+  return match?.[1] || '';
 }
