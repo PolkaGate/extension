@@ -52,7 +52,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
           const noDivider = toBeReleased.length === index + 1;
 
           return (
-            <>
+            <React.Fragment key={index}>
               <Grid alignItems='center' container item justifyContent='space-between' key={index}>
                 <Typography color='text.highlight' variant='B-1' width='fit-content'>
                   {formatTimestamp(info.date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
@@ -72,7 +72,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
                 />
               </Grid>
               {!noDivider && <GradientDivider style={{ my: '4px' }} />}
-            </>
+            </React.Fragment>
           );
         })}
         {onRestake &&
