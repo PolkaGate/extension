@@ -119,7 +119,8 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
-      handleWorkerMessages();
+
+      return handleWorkerMessages();
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
     }
@@ -142,7 +143,8 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
-      handleWorkerMessages();
+
+      return handleWorkerMessages();
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
     }
@@ -154,8 +156,10 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       console.log('refreshing ...');
 
       fetchPoolInformation();
-      handleWorkerMessages();
+
       setRefresh(false);
+
+      return handleWorkerMessages();
     }
   }, [fetchPoolInformation, handleWorkerMessages, refresh, setRefresh]);
 
