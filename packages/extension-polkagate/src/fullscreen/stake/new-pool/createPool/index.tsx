@@ -12,6 +12,7 @@ import FeeValue from '../../../../popup/staking/partial/FeeValue';
 import StakeAmountInput from '../../../../popup/staking/partial/StakeAmountInput';
 import { PoolNameBox } from '../../../../popup/staking/pool-new/createPool';
 import UpdateRoles from '../../../../popup/staking/pool-new/createPool/UpdateRoles';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -54,6 +55,7 @@ export default function CreatePool ({ address, genesisHash, onClose }: Props): R
       genesisHash={genesisHash}
       onClose={onClose}
       pool={poolToCreate}
+      proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
       setFlowStep={setFlowStep}
       setValue={setBondAmount as React.Dispatch<React.SetStateAction<BN | null | undefined>>}
       title={t('Create Pool')}

@@ -7,6 +7,7 @@ import React, { useCallback, useState } from 'react';
 import { Badge } from '../../../../assets/gif';
 import { DecisionButtons, FormatBalance2 } from '../../../../components';
 import { useChainInfo, usePendingRewardsSolo, useTranslation } from '../../../../hooks';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 import { RewardsTable, TableHeader } from './RewardsTable';
@@ -47,6 +48,7 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
       genesisHash={genesisHash}
       maxHeight={649}
       onClose={onClose}
+      proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
       showBack
       title={t('Pending Rewards')}

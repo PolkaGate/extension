@@ -16,6 +16,7 @@ import { useChainInfo, useTranslation } from '../../../../hooks';
 import FeeValue from '../../../../popup/staking/partial/FeeValue';
 import StakeAmountInput from '../../../../popup/staking/partial/StakeAmountInput';
 import TokenStakeStatus from '../../../../popup/staking/partial/TokenStakeStatus';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -51,6 +52,7 @@ function StakeUnstake ({ address, amountLabel, balance, errorMessage, estimatedF
       genesisHash={genesisHash}
       minHeight={520}
       onClose={onClose}
+      proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
       setValue={setValue}
       showBack

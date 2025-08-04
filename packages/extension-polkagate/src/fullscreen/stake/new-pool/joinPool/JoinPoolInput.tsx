@@ -19,6 +19,7 @@ import FeeValue from '../../../../popup/staking/partial/FeeValue';
 import SelectedPool from '../../../../popup/staking/partial/SelectedPool';
 import StakeAmountInput from '../../../../popup/staking/partial/StakeAmountInput';
 import TokenStakeStatus from '../../../../popup/staking/partial/TokenStakeStatus';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -53,6 +54,7 @@ export default function JoinPoolInput ({ address, availableBalanceToStake, bondA
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onBack}
+      proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
       setFlowStep={setFlowStep}
       setValue={setBondAmount as React.Dispatch<React.SetStateAction<BN | null | undefined>>}
       title={t('Stake more')}

@@ -13,6 +13,7 @@ import { useNavigate, useParams } from 'react-router';
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawClaimPool } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
+import { PROXY_TYPE } from '../../../util/constants';
 import { isHexToBn } from '../../../util/utils';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingMenu from '../partial/StakingMenu';
@@ -79,6 +80,7 @@ export default function Pool (): React.ReactElement {
     backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     review: review !== Review.None,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,

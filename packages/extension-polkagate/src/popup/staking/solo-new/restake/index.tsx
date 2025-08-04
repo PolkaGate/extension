@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router';
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useRestakeSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
+import { PROXY_TYPE } from '../../../../util/constants';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -48,6 +49,7 @@ export default function Restake (): React.ReactElement {
     backPathTitle: t('Re-staking'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,

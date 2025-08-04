@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 
 import { useTranslation, useWithdrawClaimPool } from '../../../../hooks';
 import { Review } from '../../../../popup/staking/pool-new';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -27,6 +28,7 @@ export default function ClaimReward ({ address, genesisHash, onClose }: Props): 
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onClose}
+      proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
       setFlowStep={setFlowStep}
       showBack
       title={t('Claim Reward')}

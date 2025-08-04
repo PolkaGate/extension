@@ -15,6 +15,7 @@ import { BeatLoader } from 'react-spinners';
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloSettings, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
+import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman } from '../../../../util/utils';
 import PRadio from '../../components/Radio';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -196,6 +197,7 @@ export default function Settings (): React.ReactElement {
     backPathTitle: t('Settings'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,

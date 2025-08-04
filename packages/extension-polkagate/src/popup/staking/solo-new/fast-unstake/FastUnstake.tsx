@@ -11,6 +11,7 @@ import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { ActionButton, BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
 import { useBackground, useFastUnstaking, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingActionButton from '../../partial/StakingActionButton';
 import StakingMenu from '../../partial/StakingMenu';
 
@@ -134,6 +135,7 @@ export default function FastUnstake (): React.ReactElement {
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,

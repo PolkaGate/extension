@@ -8,12 +8,11 @@ import { BuyCrypto, Timer1, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
-import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
-
 import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
+import { updateStorage } from '../../../util';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, PROXY_TYPE } from '../../../util/constants';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
@@ -77,6 +76,7 @@ export default function Solo (): React.ReactElement {
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
