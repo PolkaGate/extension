@@ -9,7 +9,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useManifest, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useManifest, useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
 import GovernanceModal from '../GovernanceModal';
 import Language from './Language';
@@ -38,6 +38,8 @@ function MainMenuColumn (): React.ReactElement {
   const version = useManifest()?.version;
   const selectedAccount = useSelectedAccount();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
+
+  const { maxPosition, maxPositionType } = useStakingPositions(selectedAccount?.address, true);
 
   const [openModal, setOpen] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
@@ -74,7 +76,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
-        path={'/fullscreen-stake/solo/' + selectedGenesisHash}
+        path={`/fullscreen-stake/${ maxPositionType ?? 'solo'}/${maxPosition?.genesisHash ?? selectedGenesisHash}`}
         text={t('Staking')}
       />
       <MenuButton

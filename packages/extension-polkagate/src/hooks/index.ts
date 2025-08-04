@@ -148,6 +148,7 @@ export * from './useStakingApi';
 export { default as useStakingConst } from './useStakingConst';
 export { default as useStakingConsts } from './useStakingConsts';
 export { default as useStakingConsts2 } from './useStakingConsts2';
+export { default as useStakingPositions } from './useStakingPositions';
 export { default as useStakingRewardDestinationAddress } from './useStakingRewardDestinationAddress';
 export { default as useStakingRewards } from './useStakingRewards';
 export { default as useStakingRewards2 } from './useStakingRewards2';
