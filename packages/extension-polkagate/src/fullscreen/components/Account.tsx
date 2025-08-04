@@ -3,7 +3,6 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
-import type { BN } from '@polkadot/util';
 import type { ItemInformation } from '../nft/utils/types';
 
 import { Box, Grid, Skeleton, Stack, Typography } from '@mui/material';
@@ -13,9 +12,10 @@ import { useNavigate } from 'react-router-dom';
 
 import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { SELECTED_ACCOUNT_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
+import { type BN,BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, FormatPrice, Identity2 } from '../../components';
 import { useAccountAssets, useCurrency, usePrices } from '../../hooks';
@@ -89,15 +89,20 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       return accountAssets;
     }
 
-    const sortedAssets = accountAssets
+    const nonZeroAssets = accountAssets.filter((_asset) =>
+      !getValue('total', _asset as unknown as BalancesInfo)?.isZero()
+    );
+
+    const { prices } = pricesInCurrencies;
+
+    const sortedAssets = nonZeroAssets
       .slice()
       .sort((a, b) => {
-        if (!a.price) {
-          return 0;
-        }
+        const aTotalBalance = getValue('total', a as unknown as BalancesInfo) ?? BN_ZERO;
+        const bTotalBalance = getValue('total', b as unknown as BalancesInfo) ?? BN_ZERO;
 
-        const aPrice = calculatePrice(a.totalBalance, a.decimal, pricesInCurrencies.prices?.[a.price]?.value ?? 0);
-        const bPrice = calculatePrice(b.totalBalance, b.decimal, pricesInCurrencies.prices?.[b.token]?.value ?? 0);
+        const aPrice = calculatePrice(aTotalBalance, a.decimal, prices?.[a.priceId]?.value ?? 0);
+        const bPrice = calculatePrice(bTotalBalance, b.decimal, prices?.[b.priceId]?.value ?? 0);
 
         return bPrice - aPrice;
       });
@@ -113,12 +118,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       }
     }
 
-    const nonZeroAssets = uniqueAssets.filter((_asset) =>
-      !getValue('total', _asset as unknown as BalancesInfo)?.isZero()
-    );
-
-
-    return nonZeroAssets;
+    return uniqueAssets;
   }, [accountAssets, calculatePrice, pricesInCurrencies]);
 
   useEffect(() => {
@@ -134,7 +134,10 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
       return;
     }
 
-    setStorage(SELECTED_ACCOUNT_IN_STORAGE, account.address).finally(() => navigate(`/nft/${account.address}`)).catch(console.error);
+    setStorage(STORAGE_KEY.SELECTED_ACCOUNT, account.address)
+      .finally(() =>
+        navigate(`/nft/${account.address}`) as void
+      ).catch(console.error);
   }, [account, navigate]);
 
   return (

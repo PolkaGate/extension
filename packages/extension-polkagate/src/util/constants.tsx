@@ -320,6 +320,7 @@ export const STORAGE_KEY = {
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  SELECTED_ACCOUNT: 'selectedAccount',
   TEST_NET_ENABLED: 'testnet_enabled'
 
 };
