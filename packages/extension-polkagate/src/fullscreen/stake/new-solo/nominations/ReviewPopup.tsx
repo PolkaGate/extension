@@ -6,6 +6,7 @@ import type { ValidatorInformation } from '../../../../hooks/useValidatorsInform
 import React, { useMemo, useState } from 'react';
 
 import { useChainInfo, useEstimatedFee2, useFormatted3, useTranslation } from '../../../../hooks';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -47,6 +48,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onClose}
+      proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
       title={t('Manage Validators')}
       transaction={tx}

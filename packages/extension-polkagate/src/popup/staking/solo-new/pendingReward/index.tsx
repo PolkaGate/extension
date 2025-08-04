@@ -9,6 +9,7 @@ import { Badge } from '../../../../assets/gif';
 import { BackWithLabel, DecisionButtons, FormatBalance2, GradientDivider, Motion } from '../../../../components';
 import { useBackground, useChainInfo, usePendingRewardsSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import { RewardsTable, TableHeader } from './RewardsTable';
 
 export default function PendingReward () {
@@ -42,6 +43,7 @@ export default function PendingReward () {
     backPathTitle: t('Payout rewards'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,

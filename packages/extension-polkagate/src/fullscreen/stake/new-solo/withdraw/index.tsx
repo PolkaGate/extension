@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 
 import { useTranslation, useWithdrawSolo } from '../../../../hooks';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -26,6 +27,7 @@ export default function Withdraw ({ address, genesisHash, onClose }: Props): Rea
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onClose}
+      proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
       title={t('Withdraw redeemable')}
       transaction={tx}

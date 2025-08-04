@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Motion } from '../../../../components';
 import { useBackground, useJoinPool, usePools2, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import JoinPoolBackButton from '../../partial/JoinPoolBackButton';
 import ChoosePool from './ChoosePool';
 import JoinPoolInput from './JoinPoolInput';
@@ -62,6 +63,7 @@ export default function JoinPool () {
     closeReview: onBack,
     genesisHash: genesisHash ?? '',
     pool: selectedPool,
+    proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     review: step === POOL_STEPS.REVIEW,
     stepCounter: { currentStep: 3, totalSteps: 3 },
     transactionInformation,

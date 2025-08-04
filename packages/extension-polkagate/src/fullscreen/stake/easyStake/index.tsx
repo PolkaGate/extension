@@ -10,6 +10,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { DecisionButtons } from '../../../components';
 import { useChainInfo, useEasyStake, useTranslation } from '../../../hooks';
+import { PROXY_TYPE } from '../../../util/constants';
 import StakingPopup from '../partials/StakingPopup';
 import { EasyStakeSide, FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, type SelectedEasyStakingType } from '../util/utils';
 import InputPage from './InputPage';
@@ -115,6 +116,11 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
       noDivider
       onClose={handleClose}
       pool={selectedStakingType?.pool}
+      proxyTypeFilter={
+        selectedStakingType?.type === 'pool'
+          ? PROXY_TYPE.NOMINATION_POOLS
+          : PROXY_TYPE.STAKING
+      }
       setFlowStep={setFlowStep}
       setValue={setBNamount}
       showBack

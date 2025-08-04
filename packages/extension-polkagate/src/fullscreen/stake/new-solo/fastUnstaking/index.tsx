@@ -8,6 +8,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { GradientButton } from '../../../../components';
 import { useFastUnstaking, useTranslation } from '../../../../hooks';
 import { CheckEligibility, EligibilityItem, EligibilityStatus } from '../../../../popup/staking/solo-new/fast-unstake/FastUnstake';
+import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 
@@ -50,6 +51,7 @@ export default function FastUnstaking ({ address, genesisHash, onClose }: Props)
       maxHeight={POPUP_HEIGHT}
       minHeight={POPUP_HEIGHT}
       onClose={onClose}
+      proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
       showBack
       title={t('Fast unstake')}

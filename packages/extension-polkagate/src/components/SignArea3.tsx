@@ -12,7 +12,7 @@ import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data, ScanBarcode, Warning2 } from 'iconsax-react';
-import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
@@ -107,7 +107,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-export default function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -325,3 +325,5 @@ export default function SignArea3 ({ address, direction, genesisHash, ledgerStyl
     </>
   );
 }
+
+export default memo(SignArea3);

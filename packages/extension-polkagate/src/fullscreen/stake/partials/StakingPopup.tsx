@@ -5,7 +5,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { Content } from '../../../partials/Review';
-import type { PoolInfo, Proxy } from '../../../util/types';
+import type { PoolInfo, Proxy, ProxyTypes } from '../../../util/types';
 
 import React, { useCallback, useState } from 'react';
 
@@ -33,9 +33,10 @@ interface Props extends Partial<DraggableModalProps>{
   style?: React.CSSProperties;
   _onClose?: () => void;
   showBack?: boolean | undefined;
+  proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
@@ -87,7 +88,7 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
               genesisHash={genesisHash}
               onClose={ closeModal}
               pool={pool}
-              proxyTypeFilter={[]}
+              proxyTypeFilter={proxyTypeFilter}
               selectedProxy={selectedProxy}
               setFlowStep={setFlowStep}
               setSelectedProxy={setSelectedProxy}
@@ -96,11 +97,12 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
               transaction={transaction}
               transactionInformation={transactionInformation}
             />)
-          : <Progress
-            style={{ paddingTop: '50px' }}
-            title = {t('Loading, please wait')}
-            withEllipsis
-          />
+          : (
+            <Progress
+              style={{ paddingTop: '50px' }}
+              title = {t('Loading, please wait')}
+              withEllipsis
+            />)
       }
     </DraggableModal>
   );
