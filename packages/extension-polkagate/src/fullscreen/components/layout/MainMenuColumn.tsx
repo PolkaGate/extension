@@ -76,7 +76,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
-        path={`/fullscreen-stake/${ maxPositionType ?? 'solo'}/${maxPosition?.genesisHash ?? selectedGenesisHash}`}
+        path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${maxPosition?.genesisHash ?? selectedGenesisHash}`}
         text={t('Staking')}
       />
       <MenuButton
