@@ -67,8 +67,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         return;
       }
 
-      // if id is available there is no reason to save the pool information in the "MyPool" storage!
-      if (functionName === MY_POOL_SHARED_WORKER_KEY && !id) {
+      if (functionName === MY_POOL_SHARED_WORKER_KEY) {
         const receivedMessage = JSON.parse(results) as MyPoolInfo;
 
         /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
@@ -83,7 +82,8 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         console.log('*** My pool info from worker is:', receivedMessage);
 
         // save my pool to local storage
-        getStorage(STORAGE_KEY.MY_POOL).then((res) => {
+        // if id is available there is no reason to save the pool information in the "MyPool" storage!
+        !id && getStorage(STORAGE_KEY.MY_POOL).then((res) => {
           const last = res || {};
 
           receivedMessage.date = Date.now();
