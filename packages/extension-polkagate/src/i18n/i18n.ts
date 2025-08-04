@@ -19,7 +19,7 @@ i18next
       escapeValue: false
     },
     keySeparator: false,
-    lng: uiSettings.i18nLang,
+    lng: uiSettings.i18nLang === 'default' ? 'en' : uiSettings.i18nLang,
     load: 'languageOnly',
     nsSeparator: false,
     returnEmptyString: false,
