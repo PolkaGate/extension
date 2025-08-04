@@ -1251,7 +1251,7 @@ export const useEasyStake = (
     },
     ...(selectedStakingType?.type === 'solo' && selectedStakingType.validators
       ? [{
-        content: selectedStakingType.validators.length,
+        content: selectedStakingType.validators.length.toString(),
         title: t('Validators')
       }]
       : []),
