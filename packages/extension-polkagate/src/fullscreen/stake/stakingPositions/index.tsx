@@ -5,10 +5,10 @@ import type { FetchedBalance, PositionInfo, Prices } from '../../../util/types';
 
 import { Stack } from '@mui/material';
 import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 
 import { FadeOnScroll, Motion } from '../../../components';
-import { useAccountAssets, useAccountSelectedChain, usePrices, useSelectedAccount } from '../../../hooks';
+import { useAccountAssets, usePrices, useSelectedAccount } from '../../../hooks';
 import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS, TEST_NETS } from '../../../util/constants';
 import { fetchStaking } from '../../../util/fetchStaking';
 import getChain from '../../../util/getChain';
@@ -104,15 +104,16 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   const selectedAccount = useSelectedAccount();
   const containerRef = useRef(null);
   const accountAssets = useAccountAssets(selectedAccount?.address);
-  const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
   const { pathname } = useLocation();
+  const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
+
   const pricesInCurrency = usePrices();
 
   const [state, dispatch] = useReducer(positionsReducer, positionsInitialState);
   const [rates, setRates] = useState<Record<string, number> | undefined>(undefined);
   const [allSuggestedValidators, setAllSuggestedValidators] = useState<Record<string, string[]> | undefined>(undefined);
 
-  const isSelected = useCallback((genesis: string, stakingType: string) => selectedGenesisHash === genesis && pathname.includes(stakingType), [pathname, selectedGenesisHash]);
+  const isSelected = useCallback((genesis: string, stakingType: string) => urlGenesisHash === genesis && pathname.includes(stakingType), [pathname, urlGenesisHash]);
 
   useEffect(() => {
     if ((rates && allSuggestedValidators) || state.tab !== POSITION_TABS.EXPLORE) {
