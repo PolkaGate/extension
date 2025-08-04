@@ -82,11 +82,13 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
       />
       <StakingInfoTile
         Icon={LockSlash}
-        buttonsArray={[{
-          Icon: Trade,
-          onClick: popupOpener(StakingPopUps.RESTAKE),
-          text: t('Restake')
-        }]}
+        buttonsArray={(type === 'solo'
+          ? [{
+            Icon: Trade,
+            onClick: popupOpener(StakingPopUps.RESTAKE),
+            text: t('Restake')
+          }]
+          : undefined)}
         cryptoAmount={unlockingAmount}
         decimal={decimal ?? 0}
         fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
