@@ -1212,9 +1212,9 @@ export const useEasyStake = (
   const nominated = api?.tx['staking']['nominate'];
   const join = api?.tx['nominationPools']['join']; // (amount, poolId)
 
-  const polkagateRelatedPool = useMemo(() => chainName ? POLKAGATE_POOL_IDS[chainName] : undefined, [chainName]);
+  const polkagatePool = useMemo(() => chainName ? POLKAGATE_POOL_IDS[chainName] : undefined, [chainName]);
 
-  const initialPool = usePool2(address, polkagateRelatedPool ? genesisHash : undefined, polkagateRelatedPool);
+  const initialPool = usePool2(address, polkagatePool ? genesisHash : undefined, polkagatePool);
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [amountAsBN, setAmountAsBN] = useState<BN | undefined>(undefined);
@@ -1238,6 +1238,7 @@ export const useEasyStake = (
 
     return undefined;
   }, [amountAsBN, batchAll, bond, join, nominated, selectedStakingType]);
+  // just a tx to estimate fee before users select their staking type
   const fakeTx = join?.(BN_ZERO, BN_ZERO);
 
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? fakeTx);
@@ -1248,11 +1249,17 @@ export const useEasyStake = (
       title: t('Amount'),
       withLogo: true
     },
+    ...(selectedStakingType?.type === 'solo' && selectedStakingType.validators
+      ? [{
+        content: selectedStakingType.validators.length,
+        title: t('Validators')
+      }]
+      : []),
     {
       content: estimatedFee,
       title: t('Fee')
     }];
-  }, [amountAsBN, estimatedFee, t]);
+  }, [amountAsBN, estimatedFee, selectedStakingType?.type, selectedStakingType?.validators, t]);
 
   const token = useMemo(() => {
     if (!accountAssets) {
@@ -1307,12 +1314,16 @@ export const useEasyStake = (
       return t('It is more than the available balance to stake.');
     }
 
-    if (amountAsBN.lt(poolStakingConsts?.minJoinBond ?? BN_ZERO)) {
+    if (selectedStakingType?.type === 'pool' && amountAsBN.lt(poolStakingConsts?.minJoinBond ?? BN_ZERO)) {
       return t('It is less than the minimum amount to join a pool.');
     }
 
+    if (selectedStakingType?.type === 'solo' && amountAsBN.lt(stakingConsts?.minNominatorBond ?? BN_ZERO)) {
+      return t('It is less than the minimum amount to be a staker.');
+    }
+
     return undefined;
-  }, [amount, amountAsBN, availableBalanceToStake, poolStakingConsts?.minJoinBond, t, token, topStakingLimit]);
+  }, [amount, amountAsBN, availableBalanceToStake, poolStakingConsts?.minJoinBond, selectedStakingType?.type, stakingConsts?.minNominatorBond, t, token, topStakingLimit]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!decimal) {
@@ -1331,8 +1342,8 @@ export const useEasyStake = (
   }, [decimal]);
 
   const buttonDisable = useMemo(() => {
-    return !amount || !amountAsBN || !topStakingLimit || parseFloat(amount) === 0 || amountAsBN.gt(topStakingLimit);
-  }, [amount, amountAsBN, topStakingLimit]);
+    return !amount || !amountAsBN || !topStakingLimit || parseFloat(amount) === 0 || amountAsBN.gt(topStakingLimit) || errorMessage;
+  }, [amount, amountAsBN, errorMessage, topStakingLimit]);
 
   // const buttonBusy = !inputs?.extraInfo?.amount && isNextClicked;
 

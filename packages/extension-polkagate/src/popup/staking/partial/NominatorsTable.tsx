@@ -187,11 +187,12 @@ function NominatorsTable ({ genesisHash, onSelect, selected, validatorsInformati
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', pb: '60px', width: '100%' }}>
+      <Stack direction='column' sx={{ height: 'fit-content', width: '100%' }}>
         <List
           height={515}
           itemCount={validatorsInformation.length}
           itemSize={102}
+          style={{ paddingBottom: '60px' }}
           width='100%'
         >
           {({ index, style }: { index: number, style: CSSProperties }) => {

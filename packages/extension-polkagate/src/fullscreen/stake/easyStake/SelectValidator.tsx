@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FadeOnScroll, Progress } from '../../../components';
 import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../../../hooks';
@@ -15,15 +15,32 @@ interface Props {
   setSelectedStakingType: React.Dispatch<React.SetStateAction<SelectedEasyStakingType | undefined>>;
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
   suggestedValidators: string[] | undefined;
+  selectedStakingType: SelectedEasyStakingType | undefined;
 }
 
-export default function SelectValidator ({ genesisHash, setSelectedStakingType, setSide, suggestedValidators }: Props) {
+export default function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
   const stakingConsts = useStakingConsts2(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
-  const [newSelectedValidators, setNewSelectedValidators] = useState<string[] | undefined>(suggestedValidators);
+  const [newSelectedValidators, setNewSelectedValidators] = useState<string[] | undefined>(undefined);
+
+  useEffect(() => {
+    if (newSelectedValidators) {
+      return;
+    }
+
+    if (selectedStakingType?.validators) {
+      setNewSelectedValidators(selectedStakingType.validators);
+
+      return;
+    }
+
+    if (!suggestedValidators) {
+      setNewSelectedValidators(suggestedValidators);
+    }
+  }, [newSelectedValidators, selectedStakingType?.validators, suggestedValidators]);
 
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
 
@@ -41,8 +58,8 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
     }
 
     return nominatedValidatorsInformation.sort((val1, val2) => {
-      const aNominated = suggestedValidators?.includes(val1.accountId.toString());
-      const bNominated = suggestedValidators?.includes(val2.accountId.toString());
+      const aNominated = newSelectedValidators?.includes(val1.accountId.toString());
+      const bNominated = newSelectedValidators?.includes(val2.accountId.toString());
 
       if (aNominated && !bNominated) {
         return -1;
@@ -54,7 +71,7 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
 
       return 0;
     });
-  }, [nominatedValidatorsInformation, suggestedValidators]);
+  }, [nominatedValidatorsInformation, newSelectedValidators]);
 
   const isLoading = useMemo(() => validatorsToShow === undefined, [validatorsToShow]);
   const isLoaded = useMemo(() => validatorsToShow && validatorsToShow.length > 0, [validatorsToShow]);
@@ -68,10 +85,6 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
       const existingIndex = newSelectedValidators.findIndex((val) => String(val) === String(selectedAddress));
 
       if (existingIndex >= 0) {
-        if (current.length >= maximum) {
-          return prev;
-        }
-
         // Remove if exists
         const newArray = [...current];
 
@@ -79,6 +92,11 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
 
         return newArray;
       } else {
+        // Don't add if it reached the maximum
+        if (current.length >= maximum) {
+          return prev;
+        }
+
         // Add if doesn't exist
         return [...current, selectedAddress];
       }
@@ -89,10 +107,10 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
     setSelectedStakingType({
       pool: undefined,
       type: 'solo',
-      validators: newSelectedValidators ?? []
+      validators: newSelectedValidators ?? suggestedValidators ?? []
     });
     setSide(EasyStakeSide.STAKING_TYPE);
-  }, [newSelectedValidators, setSelectedStakingType, setSide]);
+  }, [newSelectedValidators, setSelectedStakingType, setSide, suggestedValidators]);
 
   return (
     <Stack direction='row' ref={refContainer} sx={{ maxHeight: '515px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
@@ -106,7 +124,7 @@ export default function SelectValidator ({ genesisHash, setSelectedStakingType, 
         <NominatorsTable
           genesisHash={genesisHash ?? ''}
           onSelect={onSelect}
-          selected={suggestedValidators}
+          selected={newSelectedValidators}
           validatorsInformation={validatorsToShow ?? []}
         />}
       <FadeOnScroll containerRef={refContainer} height='75px' ratio={0.6} />

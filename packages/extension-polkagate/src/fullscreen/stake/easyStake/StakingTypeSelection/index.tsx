@@ -34,20 +34,24 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
   , [selectedPosition?.suggestedValidators, selectedStakingType?.validators]);
 
   const onOptions = useCallback((type: 'pool' | 'solo') => () => {
+    if (!selectedPosition || !initialPool) {
+      return;
+    }
+
     type === 'pool' &&
-      setSelectedStakingType((perv) => ({
-        pool: perv?.pool,
+      setSelectedStakingType({
+        pool: initialPool,
         type,
         validators: undefined
-      }));
+      });
 
     type === 'solo' &&
       setSelectedStakingType({
         pool: undefined,
         type,
-        validators: undefined
+        validators: selectedPosition.suggestedValidators
       });
-  }, [setSelectedStakingType]);
+  }, [initialPool, selectedPosition, setSelectedStakingType]);
 
   const openSelectPool = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
@@ -98,7 +102,7 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
             isRecommended={!!isRecommendedValidators}
             onClick={openSelectValidator}
             open={selectedStakingType?.type === 'solo'}
-            validators={selectedPosition?.suggestedValidators}
+            validators={selectedStakingType?.validators ?? selectedPosition?.suggestedValidators}
           />
         </Stack>
       </StakingTypeItem>

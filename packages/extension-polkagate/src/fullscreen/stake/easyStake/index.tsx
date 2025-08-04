@@ -156,6 +156,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
         {side === EasyStakeSide.SELECT_VALIDATORS &&
           <SelectValidator
             genesisHash={selectedPosition?.genesisHash}
+            selectedStakingType={selectedStakingType}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
             suggestedValidators={selectedPosition?.suggestedValidators}

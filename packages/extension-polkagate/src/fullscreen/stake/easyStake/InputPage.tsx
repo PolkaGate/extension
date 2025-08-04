@@ -25,7 +25,9 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: bo
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
           <People color='#AA83DC' size='24' style={{ marginRight: '6px' }} variant='Bulk' />
           <Typography color='text.primary' variant='B-3'>
-            {t('Pool Staking')}
+            {selectedStakingType?.type === 'pool'
+              ? t('Pool Staking')
+              : t('Solo Staking')}
           </Typography>
           <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
         </Container>
