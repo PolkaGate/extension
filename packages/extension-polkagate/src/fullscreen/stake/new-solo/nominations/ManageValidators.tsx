@@ -209,7 +209,7 @@ function ManageValidators () {
                 page={page}
                 setItemsPerPagePage={setItemsPerPagePage}
                 setPage={setPage}
-                totalItems={validatorsInformation?.length ?? 0}
+                totalItems={sortedValidatorsInformation?.length ?? 0}
               />
             </Stack>
           </VelvetBox>
