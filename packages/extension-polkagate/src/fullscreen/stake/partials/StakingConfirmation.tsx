@@ -11,7 +11,7 @@ import React, { useCallback, useMemo } from 'react';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
-import { useChainInfo, useCurrency, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { useChainInfo, useCurrency, useRouteRefresh, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
 import { amountToHuman, countDecimalPlaces, isValidAddress, toShortAddress } from '../../../util/utils';
@@ -270,6 +270,13 @@ interface Props {
 }
 
 export default function Confirmation ({ address, backToHome, genesisHash, goToHistory, transactionDetail }: Props) {
+  const refresh = useRouteRefresh();
+
+  const handleHome = useCallback(() => {
+    backToHome?.();
+    refresh();
+  }, [backToHome, refresh]);
+
   return (
     <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
       <Header genesisHash={genesisHash} transactionDetail={transactionDetail} />
@@ -279,7 +286,7 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
       />
       <Buttons
         address={address}
-        backToHome={backToHome}
+        backToHome={handleHome}
         genesisHash={genesisHash}
         goToHistory={goToHistory}
       />

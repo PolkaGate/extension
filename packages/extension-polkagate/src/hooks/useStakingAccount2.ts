@@ -32,7 +32,7 @@ export default function useStakingAccount2 (address: AccountId | string | undefi
   const { api, decimal, token } = useChainInfo(genesisHash);
   const stashId = useStashId2(address, genesisHash);
 
-  const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null>();
+  const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null | undefined>(undefined);
 
   const fetch = useCallback(async () => {
     if (!api || !stashId || !token || !decimal) {
@@ -69,22 +69,21 @@ export default function useStakingAccount2 (address: AccountId | string | undefi
   }, [api, stashId, token, decimal, genesisHash, refresh, setRefresh]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || refresh) {
       return;
     }
 
     fetch().catch(console.error);
-  }, [api, fetch, stashId]);
+  }, [api, fetch, refresh, stashId]);
 
-  // TODO - do we really need this, because the refresh is already a dependency for fetch function
+  useEffect(() => {
+    if (!api || !refresh) {
+      return;
+    }
 
-  // useEffect(() => {
-  //   if (!api) {
-  //     return;
-  //   }
-
-  //   refresh && fetch().catch(console.error);
-  // }, [api, fetch, refresh, stashId]);
+    setStakingInfo(undefined);
+    fetch().catch(console.error);
+  }, [api, fetch, refresh, stashId]);
 
   return stakingInfo;
 }

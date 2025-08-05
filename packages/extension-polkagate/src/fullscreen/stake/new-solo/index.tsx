@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 
 import { type BN } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePrices, useSelectedAccount, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSelectedAccount, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
@@ -18,10 +18,14 @@ import { useStakingPopups } from '../util/utils';
 import PopUpHandler from './PopUpHandler';
 
 export default function SoloFullScreen (): React.ReactElement {
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  useRouteRefresh(() => setRefresh(true));
+
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const { token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
+  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();

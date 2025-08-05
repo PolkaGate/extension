@@ -114,15 +114,10 @@ export default function usePoolStakingInfo (address: string | undefined, genesis
     const info = await getUnstakingAmount(api, pool);
 
     setSessionInfo(info);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, pool, refresh]);
+  }, [api, pool]);
 
   // Update session info whenever dependencies change
   useEffect(() => {
-    // if (pool === undefined) {
-    //   return;
-    // }
-
     fetchSessionInfo().catch(console.error);
   }, [fetchSessionInfo, pool]);
 

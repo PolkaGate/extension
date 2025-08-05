@@ -7,7 +7,7 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
 import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
@@ -17,10 +17,14 @@ import { useStakingPopups } from '../util/utils';
 import PopUpHandler from './PopUpHandler';
 
 export default function PoolFullScreen (): React.ReactElement {
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  useRouteRefresh(() => setRefresh(true));
+
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const { token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
+  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();

@@ -9,10 +9,9 @@ import type { PoolInfo, Proxy, ProxyTypes } from '../../../util/types';
 
 import React, { useCallback, useState } from 'react';
 
-import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
-
 import { Progress, SelectedProxy } from '../../../components';
 import { DraggableModal, type DraggableModalProps } from '../../../fullscreen/components/DraggableModal';
+import { useRouteRefresh, useTranslation } from '../../../hooks';
 import TransactionFlow from '../partials/TransactionFlow';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../util/utils';
 
@@ -38,6 +37,7 @@ interface Props extends Partial<DraggableModalProps>{
 
 export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
+  const refresh = useRouteRefresh();
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
@@ -51,7 +51,8 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
   const closeModal = useCallback(() => {
     onClose();
     closeReview();
-  }, [closeReview, onClose]);
+    flowStep === FULLSCREEN_STAKING_TX_FLOW.CONFIRMATION && refresh();
+  }, [closeReview, flowStep, onClose, refresh]);
 
   const { onClose: handler, showCloseIcon } = getCloseBehavior(flowStep, closeModal, setFlowStep, !!children);
 
@@ -86,7 +87,7 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
               closeReview={closeReview}
               flowStep={flowStep}
               genesisHash={genesisHash}
-              onClose={ closeModal}
+              onClose={closeModal}
               pool={pool}
               proxyTypeFilter={proxyTypeFilter}
               selectedProxy={selectedProxy}
