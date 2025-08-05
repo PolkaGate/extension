@@ -270,7 +270,7 @@ interface ButtonsProps {
   backToHome?: () => void;
 }
 
-function Buttons({ address, backToHome, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
+function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
@@ -323,7 +323,7 @@ function Buttons({ address, backToHome, genesisHash, goToHistory, isBlueish }: B
                 variant='square'
               />
             }
-            style={{ bottom: '17px', position: 'absolute', width: '88%', zIndex: 1 }}
+            style={{ bottom: '17px', position: 'absolute', width: '384px', zIndex: 1 }}
             text={t('View on Explorer')}
           />
         }
@@ -353,7 +353,7 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
   }, []);
 
   const Content = () => (
-    <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
+    <Stack direction='column' sx={{ gap: '8px', p: '15px 0', zIndex: 1 }}>
       <Header genesisHash={genesisHash} transactionDetail={transactionDetail} />
       <Detail
         genesisHash={genesisHash}

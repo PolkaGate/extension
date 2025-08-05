@@ -194,7 +194,7 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
             />
           ))}
         </Stack>
-        <FadeOnScroll containerRef={refContainer} height='70px' ratio={0.2} style={{ bottom: '58px' }} />
+        <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.05} style={{ bottom: '58px' }} />
         {noProxyAvailable &&
           <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center', mt: '90px' }}>
             <Warning2 color='#FF4FB9' size='22' style={{ height: 'fit-content' }} variant='Bold' />
