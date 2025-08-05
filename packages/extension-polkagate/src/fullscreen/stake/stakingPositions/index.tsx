@@ -195,7 +195,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   return (
     <Motion>
       <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-        <PositionsToolbar dispatch={dispatch} earningsCount={earning?.length} positionsCount={positions?.length} state={state} />
+        <PositionsToolbar dispatch={dispatch} earningsCount={earningItems?.length} positionsCount={positionItems?.length} state={state} />
         <Stack direction='column' ref={containerRef} sx={{ gap: '4px', maxHeight: 'calc(100vh - 530px)', minHeight: '288px', overflow: 'auto', width: '100%' }}>
           {state.tab === POSITION_TABS.POSITIONS
             ? (

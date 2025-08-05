@@ -6,10 +6,9 @@ import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 import { Stack } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { FadeOnScroll, Progress } from '../../../components';
+import { FadeOnScroll, GradientButton, Progress } from '../../../components';
 import { usePools2, useTranslation } from '../../../hooks';
 import PoolsTable from '../../../popup/staking/partial/PoolsTable';
-import StakingActionButton from '../../../popup/staking/partial/StakingActionButton';
 import { FetchPoolProgress } from '../../../popup/staking/pool-new/joinPool/ChoosePool';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
@@ -60,7 +59,7 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
             setSelectedPool={setSelectedPool}
           />
         }
-        <StakingActionButton
+        <GradientButton
           disabled={!selectedPool}
           onClick={onSelect}
           style={{
@@ -70,7 +69,8 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
             marginInline: '15px',
             position: 'absolute',
             right: '0',
-            width: 'calc(100% - 30px)'
+            width: 'calc(100% - 30px)',
+            zIndex: 10
           }}
           text={t('Select')}
         />

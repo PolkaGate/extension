@@ -34,7 +34,7 @@ export const SelectedPoolInformation = ({ genesisHash, onClick, open, poolDetail
               size={24}
             />
             <Stack direction='column' sx={{ ml: '10px', mr: 'auto', width: 'fit-content' }}>
-              <Typography color='text.primary' sx={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
+              <Typography color='text.primary' sx={{ maxWidth: '250px', overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
                 {poolDetail.metadata}
               </Typography>
               <FormatBalance2

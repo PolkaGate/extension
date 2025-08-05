@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { FadeOnScroll, Progress } from '../../../components';
+import { GradientButton, Progress } from '../../../components';
 import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../../../hooks';
 import NominatorsTable from '../../../popup/staking/partial/NominatorsTable';
-import StakingActionButton from '../../../popup/staking/partial/StakingActionButton';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
 interface Props {
@@ -20,7 +19,6 @@ interface Props {
 
 export default function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: Props) {
   const { t } = useTranslation();
-  const refContainer = useRef(null);
   const stakingConsts = useStakingConsts2(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
@@ -113,7 +111,7 @@ export default function SelectValidator ({ genesisHash, selectedStakingType, set
   }, [newSelectedValidators, setSelectedStakingType, setSide, suggestedValidators]);
 
   return (
-    <Stack direction='row' ref={refContainer} sx={{ maxHeight: '515px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
+    <Stack direction='row' sx={{ maxHeight: '515px', mt: '12px', overflowY: 'auto', position: 'relative', px: '15px', width: '100%', zIndex: 1 }}>
       {isLoading &&
         <Progress
           style={{ marginTop: '90px' }}
@@ -127,18 +125,18 @@ export default function SelectValidator ({ genesisHash, selectedStakingType, set
           selected={newSelectedValidators}
           validatorsInformation={validatorsToShow ?? []}
         />}
-      <FadeOnScroll containerRef={refContainer} height='75px' ratio={0.6} />
-      <StakingActionButton
+      <GradientButton
         disabled={!newSelectedValidators?.length}
         onClick={onApply}
         style={{
-          bottom: '15px',
+          bottom: '0',
           height: '44px',
           left: '0',
           marginInline: '15px',
           position: 'absolute',
           right: '0',
-          width: 'calc(100% - 30px)'
+          width: 'calc(100% - 30px)',
+          zIndex: 10
         }}
         text={t('Select')}
       />
