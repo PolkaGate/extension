@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -11,6 +10,7 @@ import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTa
 import { useTranslation } from '../hooks';
 import { showAccount } from '../messaging';
 import Label from './Label';
+import { sortAccounts } from './sortAccounts';
 import { AccountContext, Identity, PButton, Switch } from '.';
 
 type AccountTypeFilterType = ['Watch-Only' | 'Hardware' | 'QR'];
@@ -25,19 +25,6 @@ interface Props {
   setSelectedAccounts: React.Dispatch<React.SetStateAction<string[]>>;
   manageConnectedAccounts?: boolean;
 }
-
-export const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
-  const isASelected = selectedList.includes(accountA.address);
-  const isBSelected = selectedList.includes(accountB.address);
-
-  if (!isASelected && isBSelected) {
-    return -1;
-  } else if (isASelected && !isBSelected) {
-    return 1;
-  }
-
-  return 0;
-};
 
 function AccountsTable ({ accountTypeFilter, areAllCheck, label, manageConnectedAccounts, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();

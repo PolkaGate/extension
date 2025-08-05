@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { FormatPrice } from '../../components';
+import { FormatPrice, MySkeleton } from '../../components';
 import { useIsDark, usePortfolio, useTranslation } from '../../hooks';
 import DailyChange from '../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../style';
@@ -23,14 +23,12 @@ function PortfolioFullScreen (): React.ReactElement {
         <Typography color={isDark ? 'text.secondary' : '#291443'} sx={{ userSelect: 'none' }} variant='B-2'>
           {t('Total Portfolio')}
         </Typography>
-        <Grid container item sx={{ height: `${HEIGHT}px`, my: '8px' }}>
+        <Grid container item sx={{ height: `${HEIGHT}px`, m: '11px 0 5px' }}>
           {youHave?.portfolio === undefined
-            ? <Skeleton
-              animation='wave'
-              height='24px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
-              variant='text'
-            />
+            ? <Stack direction='column' rowGap='8px'>
+              <MySkeleton style={{ width: '258px' }} />
+              <MySkeleton style={{ width: '155px' }} />
+            </Stack>
             : <FormatPrice
               commify
               decimalColor={theme.palette.text.secondary}

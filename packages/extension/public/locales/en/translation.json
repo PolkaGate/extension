@@ -1769,5 +1769,6 @@
   "Unclaimed Rewards": "",
   "Estimated rewards": "",
   "year": "",
-  "No nominators": ""
+  "No nominators": "",
+  "It is less than the minimum amount to be a staker.": ""
 }

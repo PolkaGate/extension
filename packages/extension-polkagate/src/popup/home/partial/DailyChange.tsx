@@ -1,39 +1,28 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/TotalBalancePieChart';
 
-import { FormatPrice } from '../../../components';
+import { FormatPrice, MySkeleton } from '../../../components';
 import { useIsDark, useIsHideNumbers, usePortfolio } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
 
-function RenderSkeleton () {
-  return (
-    <Skeleton
-      animation='wave'
-      height='20px'
-      sx={{ bgcolor: '#BEAAD826', borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '122px' }}
-      variant='text'
-    />
-  );
-}
-
 interface DailyChangeProps {
   change?: number | null;
   address?: string;
-  style?: SxProps<Theme>;
+  style?: React.CSSProperties;
   textVariant?: string;
   iconSize?: number;
   showHours?: boolean;
   showPercentage?: boolean;
 }
 
-function DailyChange ({ address, change = null, iconSize = 15, showHours = true, showPercentage, style, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
+function DailyChange ({ address, change = null, iconSize = 15, showHours = true, showPercentage, style = {}, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const youHave = usePortfolio(address);
@@ -80,7 +69,7 @@ function DailyChange ({ address, change = null, iconSize = 15, showHours = true,
   , [changed, isDark]);
 
   if (changed === undefined) {
-    return <RenderSkeleton />;
+    return (<MySkeleton height={20} style={{ background: '#BEAAD826', width: style?.minWidth ?? '122px' }} />);
   }
 
   return (

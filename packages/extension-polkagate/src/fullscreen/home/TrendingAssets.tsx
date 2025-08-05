@@ -100,7 +100,7 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }
           iconSize={12}
           showHours={false}
           showPercentage
-          style={{ marginLeft: '5px', padding: '0px 2px' }}
+          style={{ marginLeft: '5px', minWidth: '57px', padding: '0px 2px' }}
           textVariant='B-4'
         />
       </Stack>

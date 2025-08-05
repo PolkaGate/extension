@@ -5,7 +5,7 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { ItemInformation } from '../nft/utils/types';
 
-import { Box, Grid, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 import { type BN,BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, FormatPrice, Identity2 } from '../../components';
+import { AssetLogo, FormatPrice, Identity2, MySkeleton } from '../../components';
 import { useAccountAssets, useCurrency, usePrices } from '../../hooks';
 import { setStorage } from '../../util';
 
@@ -179,16 +179,9 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         {accountAssets === undefined &&
           <Stack direction='row' spacing={0.1} sx={{ ml: '17px', position: 'relative' }}>
             {[1, 2, 3].map((index) => (
-              <Skeleton
-                animation='wave'
+              <MySkeleton
                 height={18}
                 key={index}
-                sx={{
-                  borderRadius: '50%',
-                  fontWeight: 'bold',
-                  transform: 'none'
-                }}
-                variant='text'
                 width={18}
               />
             ))}

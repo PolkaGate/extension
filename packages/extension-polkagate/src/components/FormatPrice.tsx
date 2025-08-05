@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
@@ -11,6 +11,7 @@ import { useCurrency, useIsHideNumbers } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
 import { amountToHuman, getDecimal } from '../util/utils';
 import Dots, { type DotsVariant } from './Dots';
+import MySkeleton from './MySkeleton';
 
 interface Props {
   amount?: BN | null;
@@ -214,11 +215,9 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
             }
           </Stack>
           : (
-            <Skeleton
-              animation='wave'
+            <MySkeleton
               height={skeletonHeight}
-              sx={{ borderRadius: '14px', fontWeight: 'bold', transform: 'none', width }}
-              variant='text'
+              style={{ borderRadius: '14px', width }}
             />)
       }
     </Grid>

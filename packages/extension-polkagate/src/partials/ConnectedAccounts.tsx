@@ -3,12 +3,12 @@
 
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid, Typography, type SxProps, type Theme } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme,Typography } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AccountContext, DecisionButtons, GradientDivider, GradientSwitch } from '../components';
-import { sortAccounts } from '../components/AccountsTable';
+import { sortAccounts } from '../components/sortAccounts';
 import { useTranslation } from '../hooks';
 import { approveAuthRequest, ignoreAuthRequest, updateAuthorization } from '../messaging';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
@@ -58,7 +58,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
       sortedAccountsRef.current = [...filtered].sort((a, b) => sortAccounts(a, b, selectedAccounts));
     }
 
-    return filtered; // .sort((a, b) => sortAccounts(a, b, selectedAccounts))
+    return filtered;
   }, [accounts, selectedAccounts]);
 
   const handleSelect = useCallback((address: string) => () => {

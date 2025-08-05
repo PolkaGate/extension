@@ -13,7 +13,7 @@ import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
@@ -158,7 +158,7 @@ export default function RestoreJson (): React.ReactElement {
         await handleRegularJson(file);
       }
 
-      await setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.ALL);
+      await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.ALL);
     } catch (error) {
       console.error(error);
       setIsPasswordError(true);

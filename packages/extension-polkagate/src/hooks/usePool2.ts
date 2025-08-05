@@ -39,7 +39,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted, id } });
   }, [formatted, genesisHash, id, worker]);
 
-  const handleWorkerMessages = useCallback(() => {
+  useEffect(() => {
     if (!worker || !formatted) {
       return;
     }
@@ -79,7 +79,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         receivedMessage.stashIdAccount.stakingLedger.active = isHexToBn(receivedMessage.stashIdAccount.stakingLedger.active).toString();
         receivedMessage.stashIdAccount.stakingLedger.total = isHexToBn(receivedMessage.stashIdAccount.stakingLedger.total).toString();
 
-        console.log('*** My pool info from worker is:', receivedMessage);
+        console.log('** My pool info from worker is:', receivedMessage);
 
         // save my pool to local storage
         // if id is available there is no reason to save the pool information in the "MyPool" storage!
@@ -119,8 +119,6 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
-
-      return handleWorkerMessages();
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
     }
@@ -143,8 +141,6 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
-
-      return handleWorkerMessages();
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
     }
@@ -158,10 +154,8 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       fetchPoolInformation();
 
       setRefresh(false);
-
-      return handleWorkerMessages();
     }
-  }, [fetchPoolInformation, handleWorkerMessages, refresh, setRefresh]);
+  }, [fetchPoolInformation, refresh, setRefresh]);
 
   useEffect(() => {
     if (!formatted) {
