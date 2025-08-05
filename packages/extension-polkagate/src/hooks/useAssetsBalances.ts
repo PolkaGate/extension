@@ -158,7 +158,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
   // The rest of the logic for fetching assets on mount and when dependencies change
   useEffect(() => {
-    if (!shouldFetchAssets || !worker || !addresses || addresses.length === 0 || workerCallsCount.current || isUpdate || !selectedChains || isTestnetEnabled === undefined) {
+    if (!shouldFetchAssets || !worker || !addresses || addresses.length === 0 || workerCallsCount.current || isUpdate || !selectedChains) {
       return;
     }
 
