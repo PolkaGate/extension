@@ -7,6 +7,8 @@ import { Stack } from '@mui/material';
 import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router';
 
+import { BN_ZERO } from '@polkadot/util';
+
 import { FadeOnScroll, Motion } from '../../../components';
 import { useAccountAssets, usePrices, useSelectedAccount } from '../../../hooks';
 import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS, TEST_NETS } from '../../../util/constants';
@@ -171,6 +173,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
       return {
         ...chain,
         ...nativeTokenBalance,
+        availableBalance: nativeTokenBalance ? nativeTokenBalance.availableBalance : BN_ZERO,
         chainName: sanitizeChainName(chain?.name || '') ?? 'Unknown'
       } as unknown as PositionInfo;
     }).filter((item) => !!item);
