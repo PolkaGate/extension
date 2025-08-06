@@ -148,6 +148,7 @@ export default function RestoreJson (): React.ReactElement {
     }
 
     setIsBusy(true);
+    let hadPasswordError = false;
 
     try {
       await resetOnForgotPassword();
@@ -162,9 +163,10 @@ export default function RestoreJson (): React.ReactElement {
     } catch (error) {
       console.error(error);
       setIsPasswordError(true);
+      hadPasswordError = true;
     } finally {
       setIsBusy(false);
-      switchToOrOpenTab('/', true);
+      !hadPasswordError && switchToOrOpenTab('/', true);
     }
   }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson]);
 
