@@ -18,10 +18,10 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
   return (
     <>
       {
-        Array.from({ length }).map((index) => (
+        Array.from({ length }).map((_, index) => (
           <Grid
             alignItems='center'
-            columnGap='15px' container item key={index as number} sx={{
+            columnGap='15px' container item key={index} sx={{
               background: '#05091C',
               bgcolor: '#05091C',
               borderRadius: '14px',
@@ -36,7 +36,7 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
             <MySkeleton
               bgcolor={isDark ? '#946CC840' : '#99A1C440'}
               height ={18}
-              style={{ borderRadius: '6px', position: 'absolute', top: '8px', right: '8px' }}
+              style={{ borderRadius: '6px', position: 'absolute', right: '8px', top: '8px' }}
               width={18}
             />
             <Avatar
