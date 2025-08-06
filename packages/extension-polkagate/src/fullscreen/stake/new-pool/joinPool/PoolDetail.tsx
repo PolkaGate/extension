@@ -210,9 +210,9 @@ const RightColumnContent = ({ commission, genesisHash, onClose, onSelect, poolDe
       </Stack>
       {(onSelect || onClose) &&
         <GradientButton
-          onClick={onClose ?? onSelect ?? noop}
+          onClick={onSelect ?? onClose ?? noop}
           style={{ width: '200px' }}
-          text={onClose ? t('Close') : t('Choose')}
+          text={onSelect ? t('Choose') : t('Close')}
         />}
     </Stack>
   );
@@ -245,7 +245,7 @@ export default function PoolDetail ({ genesisHash, onClose, onSelect, poolDetail
     onClose();
   }, [onClose, onSelect]);
 
-  if (poolDetail === null) {
+  if (!poolDetail) {
     return <></>;
   }
 

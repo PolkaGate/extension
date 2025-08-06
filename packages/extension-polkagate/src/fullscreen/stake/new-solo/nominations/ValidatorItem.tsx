@@ -3,7 +3,7 @@
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
-import { Container, IconButton, Typography, useTheme } from '@mui/material';
+import { Container, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
@@ -19,13 +19,14 @@ import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 interface InfoProps extends StakingInfoStackProps {
   StartIcon: Icon;
   width?: string;
+  style?: SxProps<Theme>;
 }
 
-const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal, text, title, token, width = '80px' }: InfoProps) {
+const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal, style, text, title, token, width = '80px' }: InfoProps) {
   const theme = useTheme();
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width }}>
+    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width, ...style }}>
       <StartIcon color='#AA83DC' size='20' style={{ minWidth: '20px' }} variant='Bulk' />
       <Typography color='#AA83DC' textAlign='left' variant='B-4'>
         {title}:

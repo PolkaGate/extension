@@ -4,13 +4,14 @@
 import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { Stack } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FadeOnScroll, GradientButton, Progress } from '../../../components';
+import { FadeOnScroll, GradientButton, Progress, SearchField } from '../../../components';
 import { usePools2, useTranslation } from '../../../hooks';
-import PoolsTable from '../../../popup/staking/partial/PoolsTable';
 import { FetchPoolProgress } from '../../../popup/staking/pool-new/joinPool/ChoosePool';
+import { PREFERRED_POOL_NAME } from '../../../util/constants';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
+import PoolsTable from './partials/PoolsTable';
 
 interface Props {
   genesisHash: string | undefined;
@@ -24,8 +25,30 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
   const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools2(genesisHash);
 
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>(undefined);
+  const [searchedQuery, setSearch] = useState<string>('');
 
-  const poolsToShow = incrementalPools;
+  const poolsToShow = useMemo(() => {
+    if (!incrementalPools) {
+      return incrementalPools;
+    }
+
+    let filtered = incrementalPools;
+
+    if (searchedQuery) {
+      filtered = filtered.filter((pool) => pool.metadata?.toLowerCase().includes(searchedQuery.toLowerCase()));
+    }
+
+    // 🚀 Bring "PolkaGate" pool to top
+    const index = filtered.findIndex((pool) => pool.metadata?.toLowerCase().includes(PREFERRED_POOL_NAME.toLowerCase()));
+
+    if (index !== -1) {
+      const [polkagatePool] = filtered.splice(index, 1);
+
+      filtered.unshift(polkagatePool);
+    }
+
+    return filtered;
+  }, [incrementalPools, searchedQuery]);
 
   const onSelect = useCallback(() => {
     setSelectedStakingType({
@@ -35,6 +58,10 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
     });
     setSide(EasyStakeSide.STAKING_TYPE);
   }, [selectedPool, setSelectedStakingType, setSide]);
+
+  const onSearch = useCallback((input: string) => {
+    setSearch(input);
+  }, []);
 
   return (
     <>
@@ -50,14 +77,25 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
           />
         }
         {incrementalPools && poolsToShow && poolsToShow.length > 0 &&
-          <PoolsTable
-            comprehensive={false}
-            genesisHash={genesisHash}
-            poolsInformation={poolsToShow}
-            selectable
-            selected={selectedPool}
-            setSelectedPool={setSelectedPool}
-          />
+          <>
+            <SearchField
+              onInputChange={onSearch}
+              placeholder='🔍 Search'
+              style={{
+                height: '44px',
+                marginBottom: '15px',
+                // maxWidth: '410px',
+                width: '410px'
+              }}
+            />
+            <PoolsTable
+              genesisHash={genesisHash}
+              poolsInformation={poolsToShow}
+              selectable
+              selected={selectedPool}
+              setSelectedPool={setSelectedPool}
+            />
+          </>
         }
         <GradientButton
           disabled={!selectedPool}
