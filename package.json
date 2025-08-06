@@ -70,7 +70,7 @@
     "@polkadot/types-support": "^16.4.2",
     "@polkadot/util": "^13.5.3",
     "@polkadot/util-crypto": "^13.5.3",
-    "@polkagate/apps-config": "^0.141.1",
+    "@polkagate/apps-config": "^0.144.6",
     "@sentry/react": "^9.40.0",
     "@sentry/webpack-plugin": "^4.0.0",
     "@substrate/connect": "^0.7.32",
