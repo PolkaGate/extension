@@ -91,7 +91,7 @@ const StyledTextField = styled(TextField, {
       letterSpacing: '0.6px',
       lineHeight: '140%',
       transition: 'all 150ms ease-out',
-      width: '100%'
+      width: '95%'
     },
     '& input': {
       padding: '4px'

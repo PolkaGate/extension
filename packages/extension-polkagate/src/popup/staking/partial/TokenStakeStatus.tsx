@@ -48,8 +48,8 @@ export default function TokenStakeStatus ({ amount, decimal, genesisHash, style,
             />)
           : (
             <MySkeleton
-              height= {14}
-              style={{ borderRadius: '50px', fontWeight: 600, width: '80px' }}
+              height= {16}
+              style={{ borderRadius: '50px', fontWeight: 600, marginBottom: '5px', width: '100px' }}
             />
           )
         }

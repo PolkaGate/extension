@@ -57,52 +57,50 @@ export default function Unstake (): React.ReactElement {
   });
 
   return transactionFlow || (
-    <>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
-        <Motion variant='slide'>
-          <BackWithLabel
-            onClick={onBack}
-            stepCounter={{ currentStep: 1, totalSteps: 2 }}
-            style={{ pb: 0 }}
-            text={t('Unstake')}
+    <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+      <Motion variant='slide'>
+        <BackWithLabel
+          onClick={onBack}
+          stepCounter={{ currentStep: 1, totalSteps: 2 }}
+          style={{ pb: 0 }}
+          text={t('Unstake')}
+        />
+        <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', px: '15px' }}>
+          <TokenStakeStatus
+            amount={staked}
+            decimal={decimal}
+            genesisHash={genesisHash}
+            style={{ mt: '8px' }}
+            text={t('Staked')}
+            token={token}
           />
-          <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', px: '15px' }}>
-            <TokenStakeStatus
-              amount={staked}
-              decimal={decimal}
-              genesisHash={genesisHash}
-              style={{ mt: '8px' }}
-              text={t('Staked')}
-              token={token}
-            />
-            <StakeAmountInput
-              buttonsArray={[{
-                buttonName: t('Max'),
-                value: onMaxValue
-              }]}
-              decimal={decimal}
-              errorMessage={errorMessage}
-              focused
-              onInputChange={onInputChange}
-              style={{ mb: '18px', mt: '18px' }}
-              title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
-              titleInColor={` (${token?.toUpperCase() ?? '--'})`}
-            />
-            <FeeValue
-              decimal={decimal}
-              feeValue={estimatedFee}
-              token={token}
-            />
-            <StakingActionButton
-              disabled={!unstakingValue || unstakingValue.isZero() || !!errorMessage || !api}
-              onClick={onNext}
-              style={{ marginTop: '24px' }}
-              text={t('Next')}
-            />
-          </Stack>
-        </Motion>
-      </Grid>
-    </>
+          <StakeAmountInput
+            buttonsArray={[{
+              buttonName: t('Max'),
+              value: onMaxValue
+            }]}
+            decimal={decimal}
+            errorMessage={errorMessage}
+            focused
+            onInputChange={onInputChange}
+            style={{ my: '18px' }}
+            title={t('Amount') + ` (${token?.toUpperCase() ?? '--'})`}
+            titleInColor={` (${token?.toUpperCase() ?? '--'})`}
+          />
+          <FeeValue
+            decimal={decimal}
+            feeValue={estimatedFee}
+            token={token}
+          />
+          <StakingActionButton
+            disabled={!unstakingValue || unstakingValue.isZero() || !!errorMessage || !api}
+            onClick={onNext}
+            style={{ marginTop: '24px' }}
+            text={t('Next')}
+          />
+        </Stack>
+      </Motion>
+    </Grid>
   );
 }
