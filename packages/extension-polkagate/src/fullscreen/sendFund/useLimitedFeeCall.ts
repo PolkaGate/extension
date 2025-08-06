@@ -169,7 +169,7 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
           ? [recipientAddress, false] // transferAll with keepalive = false
           : [recipientAddress, amountAsBN]) as unknown[];
 
-    return call(...params);
+    return params && call(...params);
   }, [genesisHash, assetToTransfer, recipientAddress, amountAsBN, call, senderChainName, inputs?.recipientChain?.text, isCrossChain, crossChainParams, isNonNativeToken, onChainCall?.section, parsedAssetId, transferType]);
 
   const calculateFee = useCallback((amount: Balance | BN, setFeeCall: React.Dispatch<React.SetStateAction<Balance | undefined>>) => {
