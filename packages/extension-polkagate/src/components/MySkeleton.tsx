@@ -19,12 +19,12 @@ function MySkeleton ({ animation, bgcolor, height = 12, style = {}, variant, wid
   return (
     <Skeleton
       animation={animation ?? 'wave'}
-      height={height}
       sx={{
         bgcolor: bgcolor ?? (isDark ? '#946CC840' : '#99A1C440'),
         borderRadius: '50px',
         display: 'inline-block',
         fontWeight: 'bold',
+        height: `${height}px`,
         transform: 'none',
         width: `${width}px`,
         ...style

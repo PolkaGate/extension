@@ -53,9 +53,6 @@ export default function Authorize (): React.ReactElement {
       authorizeRequestHandler={authorizeRequestHandler}
     />
     : <AuthFullScreenMode
-      onNextAuth={onNextAuth}
-      onPreviousAuth={onPreviousAuth}
-      requestIndex={requestIndex}
-      requests={requests}
+      authorizeRequestHandler={authorizeRequestHandler}
     />;
 }
