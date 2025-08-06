@@ -217,6 +217,7 @@ function NetworkSettings (): React.ReactElement {
           <AddButton />
         </Stack>
         <SearchField
+          focused
           onInputChange={onSearch}
           placeholder='🔍 Search networks'
           placeholderStyle={{ textAlign: 'left' }}
