@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
@@ -296,5 +296,5 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [address, currentEra, genesisHash, soloStakingInfo]);
 
-  return soloStakingInfo || soloStakingInfoLoaded || DEFAULT_VALUE;
+  return useMemo(() => soloStakingInfo || soloStakingInfoLoaded || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoLoaded]);
 }
