@@ -84,7 +84,6 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
               style={{
                 height: '44px',
                 marginBottom: '15px',
-                // maxWidth: '410px',
                 width: '410px'
               }}
             />

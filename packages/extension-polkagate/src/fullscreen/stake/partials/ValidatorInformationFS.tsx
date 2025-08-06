@@ -94,25 +94,26 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
         sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
       />
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
-        <List
-          height={515}
-          itemCount={nominators.length}
-          itemSize={82}
-          width='100%'
-        >
-          {({ index, style }: { index: number, style: CSSProperties }) => {
-            const item = nominators[index];
+        {nominators.length > 0 &&
+          <List
+            height={515}
+            itemCount={nominators.length}
+            itemSize={82}
+            width='100%'
+          >
+            {({ index, style }: { index: number, style: CSSProperties }) => {
+              const item = nominators[index];
 
-            return (
-              <div key={index} style={{ paddingBottom: '2px', ...style }}>
-                <NominatorItem
-                  genesisHash={genesisHash}
-                  nominator={item}
-                />
-              </div>
-            );
-          }}
-        </List>
+              return (
+                <div key={index} style={{ paddingBottom: '2px', ...style }}>
+                  <NominatorItem
+                    genesisHash={genesisHash}
+                    nominator={item}
+                  />
+                </div>
+              );
+            }}
+          </List>}
         {nominators.length === 0 &&
           <Typography color='#AA83DC' sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
             {t('No nominators')}
