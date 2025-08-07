@@ -11,9 +11,9 @@ import { createView, Popup } from '@polkadot/extension-ui';
 
 (async () => {
   try {
-    const isDisabled = await getStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS);
+    const disableDiagnostics = await getStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS);
 
-    if (!isDisabled) {
+    if (!disableDiagnostics) {
       const isProd = process.env['NODE_ENV'] === 'production';
 
       Sentry.init({
@@ -24,7 +24,7 @@ import { createView, Popup } from '@polkadot/extension-ui';
         ],
         release: process.env['EXTENSION_VERSION'],
         replaysOnErrorSampleRate: 1.0,
-        replaysSessionSampleRate: isProd ? 0.1 : 1,
+        replaysSessionSampleRate: isProd ? 0.1 : 0.2,
         tracePropagationTargets: [
           /^chrome-extension:\/\/mgojgfjhknpmlojihdpjikinpgcaadlj/,
           /^chrome-extension:\/\/ginchbkmljhldofnbjabmeophlhdldgp/
@@ -32,7 +32,7 @@ import { createView, Popup } from '@polkadot/extension-ui';
         tracesSampleRate: isProd ? 0.2 : 1.0
       });
     } else {
-      console.log('Sentry is disabled');
+      console.log('Diagnostic reporting is disabled by user preference.');
     }
   } catch (e) {
     console.error('Failed to initialize Sentry:', e);

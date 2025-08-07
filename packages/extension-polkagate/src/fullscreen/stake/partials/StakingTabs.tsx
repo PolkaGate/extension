@@ -83,7 +83,7 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, setSelectedPositio
         Icon: MagicStar,
         isSelected: tab === STAKING_TABS.REWARDS,
         onClick: tabSetter(STAKING_TABS.REWARDS),
-        title: type === 'solo' ? t('Rewards') : t('Claimed Rewards')
+        title: t('Rewards')
       }
     ];
 
