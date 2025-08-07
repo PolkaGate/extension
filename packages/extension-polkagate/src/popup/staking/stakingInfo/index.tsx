@@ -95,7 +95,7 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
         </Grid>
         {!isExtension &&
           <AvailableBalance
-            availableBalance={selectedPosition?.availableBalance ?? BN_ZERO}
+            availableBalance={selectedPosition?.freeBalance || selectedPosition?.availableBalance || BN_ZERO}
             decimal={_decimal}
             isExtension={false}
             token={selectedPosition?.tokenSymbol ?? ''}
