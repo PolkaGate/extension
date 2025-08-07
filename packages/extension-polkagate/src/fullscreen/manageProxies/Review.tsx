@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -16,7 +16,6 @@ import { CanPayErrorAlert, ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } fro
 import { useCanPayFeeAndDeposit, useChainInfo, useFormatted3, useTranslation } from '../../hooks';
 import { FLOATING_POINT_DIGIT, PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
-import { STEPS } from './consts';
 import { type ProxyFlowStep } from './types';
 
 interface Props {
