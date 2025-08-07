@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
+import type { StakingConsts } from '../../../util/types';
 
 import { ChevronRightRounded } from '@mui/icons-material';
 import { Collapse, Container, Stack, Typography } from '@mui/material';
-import { People } from 'iconsax-react';
+import { People, UserOctagon } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
@@ -14,7 +15,14 @@ import { EXTENSION_NAME } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
-const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: boolean; onClick: () => void; selectedStakingType: SelectedEasyStakingType | undefined; }) => {
+interface StakingTypeOptionBoxProps {
+  open: boolean;
+  onClick: () => void;
+  selectedStakingType: SelectedEasyStakingType | undefined;
+  stakingConsts: StakingConsts | null | undefined;
+}
+
+const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConsts }: StakingTypeOptionBoxProps) => {
   const { t } = useTranslation();
 
   const isRecommended = useMemo(() => selectedStakingType?.type === 'pool' && selectedStakingType.pool?.metadata?.toLowerCase().includes(EXTENSION_NAME.toLowerCase()), [selectedStakingType?.pool?.metadata, selectedStakingType?.type]);
@@ -23,36 +31,39 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType }: { open: bo
     <Collapse in={open}>
       <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
-          <People color='#AA83DC' size='24' style={{ marginRight: '6px' }} variant='Bulk' />
-          <Typography color='text.primary' variant='B-3'>
-            {selectedStakingType?.type === 'pool'
-              ? t('Pool Staking')
-              : t('Solo Staking')}
-          </Typography>
-          <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
+          {selectedStakingType?.type === 'pool'
+            ? <People color='#AA83DC' size='24' variant='Bulk' />
+            : <UserOctagon color='#AA83DC' size='24' variant='Bold' />}
+          <Stack direction='column' sx={{ gap: '4px', ml: '12px', width: 'fit-content' }}>
+            <Typography color='text.primary' textAlign='left' variant='B-3'>
+              {selectedStakingType?.type === 'pool'
+                ? t('Pool Staking')
+                : t('Solo Staking')}
+            </Typography>
+            {!isRecommended &&
+              <Typography color='#AA83DC' textAlign='left' variant='B-1'>
+                {selectedStakingType?.pool?.metadata}
+                {selectedStakingType?.validators && t('Validators: {{selected}} of {{threshold}}', {
+                  replace: {
+                    selected: selectedStakingType.validators.length,
+                    threshold: stakingConsts?.maxNominations || 16
+                  }
+                })}
+              </Typography>}
+          </Stack>
+          {isRecommended && <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />}
         </Container>
         {isRecommended &&
           <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
             {t('Recommended')}
           </Typography>}
+        {!isRecommended && <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />}
       </Container>
     </Collapse>
   );
 };
 
-interface InputPageProp {
-  genesisHash: string | undefined;
-  rate: number | undefined;
-  onMaxMinAmount: (val: 'max' | 'min') => string | undefined;
-  errorMessage: string | undefined;
-  onChangeAmount: (value: string) => void;
-  availableBalanceToStake: BN | undefined;
-  amount: string | undefined;
-  selectedStakingType: SelectedEasyStakingType | undefined;
-  setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
-}
-
-const EstimatedRate = ({ rate, show }: {show: boolean, rate: number| undefined}) => {
+const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined }) => {
   const { t } = useTranslation();
 
   return (
@@ -72,7 +83,21 @@ const EstimatedRate = ({ rate, show }: {show: boolean, rate: number| undefined})
   );
 };
 
-const InputPage = ({ amount, availableBalanceToStake, errorMessage, genesisHash, onChangeAmount, onMaxMinAmount, rate, selectedStakingType, setSide }: InputPageProp) => {
+interface InputPageProp {
+  genesisHash: string | undefined;
+  rate: number | undefined;
+  onMaxMinAmount: (val: 'max' | 'min') => string | undefined;
+  errorMessage: string | undefined;
+  onChangeAmount: (value: string) => void;
+  availableBalanceToStake: BN | undefined;
+  amount: string | undefined;
+  selectedStakingType: SelectedEasyStakingType | undefined;
+  setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
+  loading: boolean;
+  stakingConsts: StakingConsts | null | undefined;
+}
+
+const InputPage = ({ amount, availableBalanceToStake, errorMessage, genesisHash, loading, onChangeAmount, onMaxMinAmount, rate, selectedStakingType, setSide, stakingConsts }: InputPageProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
@@ -108,7 +133,13 @@ const InputPage = ({ amount, availableBalanceToStake, errorMessage, genesisHash,
         }}
         title={t('Enter amount')}
       />
-      <StakingTypeOptionBox onClick={onTypeOption} open={!!amount && parseFloat(amount) !== 0} selectedStakingType={selectedStakingType} />
+      {!loading &&
+        <StakingTypeOptionBox
+          onClick={onTypeOption}
+          open={!!amount && parseFloat(amount) !== 0}
+          selectedStakingType={selectedStakingType}
+          stakingConsts={stakingConsts}
+        />}
       <EstimatedRate
         rate={rate}
         show={!!amount && parseFloat(amount) !== 0}

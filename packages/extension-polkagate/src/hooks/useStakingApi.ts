@@ -11,6 +11,7 @@ import type { SelectedEasyStakingType } from '../fullscreen/stake/util/utils';
 import type { Content } from '../partials/Review';
 import type { MyPoolInfo, PoolInfo, RewardDestinationType } from '../util/types';
 
+import { People, UserOctagon } from 'iconsax-react';
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
 import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
@@ -1200,6 +1201,8 @@ export const useEasyStake = (
   genesisHash: string | undefined,
   selectedStakingType: SelectedEasyStakingType | undefined
 ) => {
+  const MAX_LETTER_THRESHOLD = 35;
+
   const { t } = useTranslation();
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
@@ -1243,23 +1246,33 @@ export const useEasyStake = (
 
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? fakeTx);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation = useMemo((): Content[] => {
     return [{
-      content: amountAsBN,
-      title: t('Amount'),
-      withLogo: true
+      content: address,
+      title: t('Account')
+    },
+    {
+      Icon: selectedStakingType?.type === 'pool' ? People : UserOctagon,
+      content: selectedStakingType?.type === 'pool' ? t('Pool Staking') : t('Solo Staking'),
+      title: t('Staking type')
     },
     ...(selectedStakingType?.type === 'solo' && selectedStakingType.validators
       ? [{
-        content: selectedStakingType.validators.length.toString(),
+        content: `${selectedStakingType.validators.length.toString()} / ${stakingConsts?.maxNominations}`,
         title: t('Validators')
+      }]
+      : []),
+    ...(selectedStakingType?.type === 'pool' && selectedStakingType.pool
+      ? [{
+        content: selectedStakingType.pool.metadata?.slice(0, MAX_LETTER_THRESHOLD),
+        title: t('Pool')
       }]
       : []),
     {
       content: estimatedFee,
       title: t('Fee')
     }];
-  }, [amountAsBN, estimatedFee, selectedStakingType?.type, selectedStakingType?.validators, t]);
+  }, [address, estimatedFee, selectedStakingType?.pool, selectedStakingType?.type, selectedStakingType?.validators, stakingConsts?.maxNominations, t]);
 
   const token = useMemo(() => {
     if (!accountAssets) {
@@ -1278,14 +1291,14 @@ export const useEasyStake = (
     const ED = stakingConsts.existentialDeposit;
     let max = availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee);
 
-    let min = poolStakingConsts.minJoinBond;
+    let min = !selectedStakingType || selectedStakingType.type === 'pool' ? poolStakingConsts.minJoinBond : stakingConsts.minNominatorBond;
 
     if (min.gt(max)) {
       min = max = BN_ZERO;
     }
 
     return { max, min };
-  }, [availableBalanceToStake, decimal, estimatedFee, poolStakingConsts, stakingConsts]);
+  }, [availableBalanceToStake, decimal, estimatedFee, poolStakingConsts, selectedStakingType, stakingConsts]);
 
   useEffect(() => {
     if (!thresholds?.max || topStakingLimit) {
@@ -1345,8 +1358,6 @@ export const useEasyStake = (
     return !amount || !amountAsBN || !topStakingLimit || parseFloat(amount) === 0 || amountAsBN.gt(topStakingLimit) || errorMessage;
   }, [amount, amountAsBN, errorMessage, topStakingLimit]);
 
-  // const buttonBusy = !inputs?.extraInfo?.amount && isNextClicked;
-
   return {
     amount,
     amountAsBN,
@@ -1357,6 +1368,7 @@ export const useEasyStake = (
     onChangeAmount,
     onMaxMinAmount,
     setAmount,
+    stakingConsts,
     transactionInformation,
     tx
   };

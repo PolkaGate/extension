@@ -8,8 +8,8 @@ import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
 import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import { InfoCircle } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import { type Icon as IconType,InfoCircle } from 'iconsax-react';
+import React, { memo, useMemo } from 'react';
 
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
@@ -70,7 +70,7 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   );
 };
 
-const DescriptionTip = ({ description }: { description: string | undefined }) => {
+export const DescriptionTip = ({ description }: { description: string | undefined }) => {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -93,6 +93,7 @@ export interface Content {
   description?: string;
   withLogo?: boolean;
   content: string | BN | null | undefined;
+  Icon?: IconType;
 }
 
 interface ContentItemProps extends Content {
@@ -102,7 +103,7 @@ interface ContentItemProps extends Content {
   noDivider?: boolean;
 }
 
-const ContentItem = ({ content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) => {
+export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
@@ -118,6 +119,7 @@ const ContentItem = ({ content, decimal, description, genesisHash, noDivider = f
           <DescriptionTip description={description} />
         </Stack>
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
+          {Icon && <Icon color='#AA83DC' size={18} variant='Bulk' />}
           {withLogo && <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />}
           {content
             ? isBn(content)
@@ -162,7 +164,7 @@ const ContentItem = ({ content, decimal, description, genesisHash, noDivider = f
       {!noDivider && <GradientDivider />}
     </>
   );
-};
+});
 
 export interface ReviewProps {
   closeReview: () => void;

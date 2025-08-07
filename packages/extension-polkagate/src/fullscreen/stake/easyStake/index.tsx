@@ -32,6 +32,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
   const [selectedStakingType, setSelectedStakingType] = useState<SelectedEasyStakingType | undefined>(undefined);
 
   const { amount,
+    amountAsBN,
     availableBalanceToStake,
     buttonDisable,
     errorMessage,
@@ -39,6 +40,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
     onChangeAmount,
     onMaxMinAmount,
     setAmount,
+    stakingConsts,
     transactionInformation,
     tx } = useEasyStake(address, selectedPosition?.genesisHash, selectedStakingType);
 
@@ -124,13 +126,11 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
     <EasyStakePopup
       _onClose={side !== EasyStakeSide.INPUT ? handleBack : undefined}
       address={address}
+      amount={amountAsBN?.toString()}
       flowStep={flowStep}
       genesisHash={selectedPosition?.genesisHash}
-      maxHeight={660}
-      minHeight={415}
-      noDivider={side === EasyStakeSide.INPUT}
+      noDivider={side === EasyStakeSide.INPUT && flowStep === FULLSCREEN_STAKING_TX_FLOW.NONE}
       onClose={handleClose}
-      pool={selectedStakingType?.pool}
       proxyTypeFilter={
         selectedStakingType?.type === 'pool'
           ? PROXY_TYPE.NOMINATION_POOLS
@@ -152,11 +152,13 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
             availableBalanceToStake={availableBalanceToStake}
             errorMessage={errorMessage}
             genesisHash={selectedPosition?.genesisHash}
+            loading={!initialPool}
             onChangeAmount={onChangeAmount}
             onMaxMinAmount={onMaxMinAmount}
             rate={selectedPosition?.rate}
             selectedStakingType={selectedStakingType}
             setSide={setSide}
+            stakingConsts={stakingConsts}
           />
         }
         {side === EasyStakeSide.STAKING_TYPE &&
@@ -188,6 +190,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
           cancelButton
           direction='vertical'
           disabled={side === EasyStakeSide.INPUT ? !!buttonDisable : false}
+          isBusy={!initialPool}
           onPrimaryClick={handleNext}
           onSecondaryClick={handleBack}
           primaryBtnText={side === EasyStakeSide.INPUT ? t('Continue') : t('Apply')}

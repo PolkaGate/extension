@@ -69,7 +69,7 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
         numberOfFetchedPools={numberOfFetchedPools}
         totalNumberOfPools={totalNumberOfPools}
       />
-      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'auto', px: '15px', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', minHeight: '450px', overflowY: 'auto', px: '15px', width: '100%' }}>
         {incrementalPools === undefined &&
           <Progress
             style={{ marginTop: '90px' }}

@@ -6,7 +6,7 @@ import type { TransactionDetail } from '../../../util/types';
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { CloseCircle, TickCircle } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
@@ -20,9 +20,10 @@ interface AmountProps {
   amount: string | undefined;
   genesisHash: string | undefined;
   token: string | undefined;
+  differentValueColor?: string;
 }
 
-const Amount = ({ amount, genesisHash, token }: AmountProps) => {
+export const Amount = memo(function MemoAmount ({ amount, differentValueColor, genesisHash, token }: AmountProps) {
   const { decimal, token: nativeToken } = useChainInfo(genesisHash, true);
   const _token = token ?? nativeToken;
   const price = useTokenPriceBySymbol(token, genesisHash);
@@ -57,12 +58,12 @@ const Amount = ({ amount, genesisHash, token }: AmountProps) => {
           {_token}
         </Typography>
       </Stack>
-      <Typography color='text.secondary' pl='3px' variant='B-4'>
+      <Typography color={differentValueColor ?? 'text.secondary'} pl='3px' variant='B-4'>
         {currency?.sign}{value}
       </Typography>
     </Stack>
   );
-};
+});
 
 interface HeaderProps {
   genesisHash: string | undefined;

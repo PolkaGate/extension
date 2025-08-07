@@ -12,11 +12,12 @@ import React, { useCallback, useState } from 'react';
 import { Progress, SelectedProxy } from '../../../../components';
 import { DraggableModal, type DraggableModalProps } from '../../../../fullscreen/components/DraggableModal';
 import { useRouteRefresh, useTranslation } from '../../../../hooks';
-import TransactionFlow from '../../partials/TransactionFlow';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../../util/utils';
+import EasyStakeTransactionFlow from './EasyStakeTransactionFlow';
 
 interface Props extends Partial<DraggableModalProps>{
   address: string | undefined;
+  amount: string | undefined;
   title: string;
   genesisHash: string | undefined;
   onClose: () => void;
@@ -24,18 +25,15 @@ interface Props extends Partial<DraggableModalProps>{
   setValue?: React.Dispatch<React.SetStateAction<BN | null | undefined>>;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   transactionInformation: Content[];
-  maxHeight?: number;
-  minHeight?: number;
   setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
   flowStep: FullScreenTransactionFlow;
-  pool?: PoolInfo | undefined;
   style?: React.CSSProperties;
   _onClose?: () => void;
   showBack?: boolean | undefined;
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function EasyStakePopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function EasyStakePopup ({ _onClose, address, amount, children, flowStep, genesisHash, minHeight, onClose, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 
@@ -68,8 +66,8 @@ export default function EasyStakePopup ({ _onClose, address, children, flowStep,
             }}
           />
       }
-      maxHeight={maxHeight ?? 605}
-      minHeight={ flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN ? 270 : minHeight ?? 605}
+      maxHeight={700}
+      minHeight={270}
       noCloseButton={showCloseIcon === undefined}
       {...rest}
       onClose={_onClose ?? handler}
@@ -82,13 +80,13 @@ export default function EasyStakePopup ({ _onClose, address, children, flowStep,
         ? children
         : transaction && genesisHash
           ? (
-            <TransactionFlow
+            <EasyStakeTransactionFlow
               address={address}
+              amount={amount}
               closeReview={closeReview}
               flowStep={flowStep}
               genesisHash={genesisHash}
               onClose={closeModal}
-              pool={pool}
               proxyTypeFilter={proxyTypeFilter}
               selectedProxy={selectedProxy}
               setFlowStep={setFlowStep}
