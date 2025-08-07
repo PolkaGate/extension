@@ -9,7 +9,7 @@ import type { DecisionButtonProps } from './DecisionButtons';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 
 import keyring from '@polkadot/ui-keyring';
@@ -74,7 +74,7 @@ export interface SignUsingPasswordProps {
   withCancel: boolean | undefined
 }
 
-export default function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -134,37 +134,42 @@ export default function SignUsingPassword ({ api, decisionButtonProps, direction
         style={{ margin: '6px 0 30px' }}
       />
       {withCancel
-        ? <DecisionButtons
-          cancelButton
-          direction={direction}
-          isBusy={isBusy}
-          onPrimaryClick={onConfirm}
-          onSecondaryClick={onCancel}
-          primaryBtnText={confirmText}
-          secondaryBtnText={t('Cancel')}
-          style={{ width: '100%' }}
-          {...decisionButtonProps}
-        />
+        ? (
+          <DecisionButtons
+            cancelButton
+            direction={direction}
+            isBusy={isBusy}
+            onPrimaryClick={onConfirm}
+            onSecondaryClick={onCancel}
+            primaryBtnText={confirmText}
+            secondaryBtnText={t('Cancel')}
+            style={{ width: '100%' }}
+            {...decisionButtonProps}
+          />)
         : <>
           {isBlueish
-            ? <StakingActionButton
-              disabled={!password || hasError}
-              isBusy={isBusy}
-              onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
-              startIcon
-              style={style}
-              text={confirmText}
-            />
-            : <GradientButton
-              disabled={!password || hasError}
-              isBusy={isBusy}
-              onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
-              style={style}
-              text={confirmText}
-            />
+            ? (
+              <StakingActionButton
+                disabled={!password || hasError}
+                isBusy={isBusy}
+                onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
+                startIcon
+                style={style}
+                text={confirmText}
+              />)
+            : (
+              <GradientButton
+                disabled={!password || hasError}
+                isBusy={isBusy}
+                onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
+                style={style}
+                text={confirmText}
+              />)
           }
         </>
       }
     </Stack>
   );
 }
+
+export default memo(SignUsingPassword);
