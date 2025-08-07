@@ -28,7 +28,7 @@ function ManageProxies (): React.ReactElement {
 
   useUpdateSelectedAccount(address);
 
-  const [step, setStep] = useState<ProxyFlowStep>(STEPS.CHECK);
+  const [step, setStep] = useState<ProxyFlowStep>(STEPS.INIT);
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | null | undefined>();
   const [depositedValue, setDepositedValue] = useState<BN | null | undefined>();
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
@@ -60,13 +60,11 @@ function ManageProxies (): React.ReactElement {
   }, []);
 
   useLayoutEffect(() => {
-    if (!genesisHash) {
-      setStep(STEPS.CHECK);
-    } else if (!PROXY_CHAINS.includes(genesisHash ?? '')) {
-      setStep(STEPS.UNSUPPORTED);
-    } else {
-      setStep(STEPS.MANAGE);
+    if (!PROXY_CHAINS.includes(genesisHash ?? '')) {
+      return setStep(STEPS.UNSUPPORTED);
     }
+
+    setStep(STEPS.INIT);
   }, [genesisHash, chain, refresh]);
 
   useEffect(() => {

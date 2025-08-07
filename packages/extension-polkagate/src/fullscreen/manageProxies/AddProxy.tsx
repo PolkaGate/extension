@@ -29,7 +29,7 @@ interface Props {
   setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
 }
 
-export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyItems, setStep, step, setNewDepositedValue }: Props): React.ReactElement {
+export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted3(proxiedAddress, chain?.genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress);
@@ -82,7 +82,7 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setProxyI
     proxyItems?.length && setProxyItems([...proxyItems.filter(({ status }) => status !== 'new')]);
     setNewDepositedValue(undefined);
 
-    setStep(STEPS.MANAGE);
+    setStep(STEPS.INIT);
   }, [proxyItems, setNewDepositedValue, setProxyItems, setStep]);
 
   const onAddProxy = useCallback(() => {
