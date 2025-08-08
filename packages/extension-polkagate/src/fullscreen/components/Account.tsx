@@ -151,7 +151,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         socialStyles={{ mt: 0 }}
         style={{ color: '#BEAAD8', variant, width: '100%' }}
       />
-      <Box sx={{ alignItems: 'end', display: 'flex', mt: '3px', position: 'relative' }}>
+      <Box sx={{ alignItems: 'end', display: 'flex', my: '3px', position: 'relative' }}>
         {/* Curve */}
         <Box
           sx={{
