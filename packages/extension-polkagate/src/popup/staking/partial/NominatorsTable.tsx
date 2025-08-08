@@ -41,7 +41,7 @@ export const ValidatorIdentity = memo(function ValidatorIdentity ({ style, valid
           {validatorInfo.identity.displayParent ?? validatorInfo.identity.display}
         </Typography>}
       {validatorInfo.identity?.displayParent &&
-        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', p: '4px' }} variant='B-5'>
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} variant='B-5'>
           {validatorInfo.identity.display}
         </Typography>}
     </Container>

@@ -1,19 +1,23 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
-import { Stack } from '@mui/material';
-import { Menu } from 'iconsax-react';
+import { Collapse, Stack } from '@mui/material';
+import { Menu, Star1, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
 
+import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
+
 import { FadeOnScroll, GradientButton, Motion } from '../../../../components';
-import { useTranslation, useValidatorsInformation } from '../../../../hooks';
+import { useTranslation } from '../../../../hooks';
 import { NoValidatorBox } from '../../../components';
 import TableToolbar from '../../partials/TableToolbar';
-import { getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
-import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
+import { LabelBar, Line, Validators } from './partials';
+import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
+import { UndefinedItem } from './ValidatorItem';
 
 interface Props {
   genesisHash: string | undefined;
@@ -23,18 +27,15 @@ interface Props {
 export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
-
   const navigate = useNavigate();
-
-  const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
-
-  const validatorsInfo = useValidatorsInformation(isNominated ? genesisHash : undefined);
 
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
+  const [notElectedCollapse, setNotElectedCollapse] = React.useState<boolean>(false);
 
-  const nominatedValidatorsIds = useMemo(() => getNominatedValidatorsIds(stakingInfo), [stakingInfo]);
-  const nominatedValidatorsInformation = useMemo(() => getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds), [nominatedValidatorsIds, validatorsInfo]);
+  const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
+
+  const { nominatedValidatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
 
   const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
   const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);
@@ -42,10 +43,27 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
   const isLoaded = useMemo(() => sortedAndFilteredValidators && sortedAndFilteredValidators.length > 0, [sortedAndFilteredValidators]);
 
-  const onSearch = useCallback((input: string) => {
-    setSearch(input);
-  }, []);
+  const { active, elected, nonElected } = useMemo(() => {
+    const elected: typeof nominatedValidatorsInformation = [];
+    const active: typeof nominatedValidatorsInformation = [];
+    const nonElected: typeof nominatedValidatorsInformation = [];
 
+    nominatedValidatorsInformation?.forEach((info) => {
+      const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
+
+      if (others?.length) {
+        const isActive = others?.find(({ who }) => who.toString() === stakingInfo?.stakingAccount?.accountId?.toString());
+
+        isActive ? active.push(info) : elected.push(info);
+      } else {
+        nonElected.push(info);
+      }
+    });
+
+    return { active, elected, nonElected };
+  }, [nominatedValidatorsInformation, stakingInfo?.stakingAccount?.accountId]);
+
+  const onSearch = useCallback((input: string) => setSearch(input), []);
   const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash, navigate]);
 
   return (
@@ -56,6 +74,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
           setSortBy={setSortConfig}
           sortBy={sortConfig}
           sortByObject={VALIDATORS_SORTED_BY}
+          style={{ padding: '18px 18px 8px' }}
         >
           <GradientButton
             onClick={openValidatorManagement}
@@ -64,25 +83,60 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
             text={t('Manage Validators')}
           />
         </TableToolbar>
-        <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', width: '100%' }}>
-          {isNominated && isLoaded &&
-            sortedAndFilteredValidators?.map((validator, index) => (
-              <ValidatorInfo
+        <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative', width: '100%' }}>
+          {isNominated && isLoaded && <>
+            <LabelBar
+              Icon={Star1}
+              color='#AA83DC'
+              count={elected.length + active.length}
+              isCollapsed
+              label={t('Elected')}
+            />
+            <Line
+              height={47 * (elected.length + active.length)}
+            />
+            <Validators
+              address={stakingInfo?.stakingAccount?.accountId?.toString()}
+              bgcolor='#2D1E4A'
+              genesisHash={genesisHash}
+              isActive={true}
+              validators={active}
+              withCurve
+            />
+            <Validators
+              bgcolor='#2D1E4A66'
+              genesisHash={genesisHash}
+              isActive={false}
+              validators={elected}
+              withCurve
+            />
+            <LabelBar
+              Icon={Timer}
+              color='#8E8E8E'
+              count={nonElected?.length}
+              isCollapsed= {notElectedCollapse}
+              label={t('Not Elected')}
+              setCollapse={setNotElectedCollapse}
+            />
+            <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ width: 'fit-content' }}>
+              <Validators
+                bgcolor='transparent'
                 genesisHash={genesisHash}
-                key={index}
-                validatorInfo={validator}
+                validators={nonElected}
               />
-            ))}
-          {isNominated && isLoading &&
+            </Collapse>
+          </>
+          }
+          {isNominated !== false && isLoading &&
             Array.from({ length: 10 }).map((_, index) => (
               <UndefinedItem key={index} />
             ))
           }
-          {!isNominated &&
+          {isNominated === false &&
             <NoValidatorBox style={{ height: '275px', paddingTop: '10px' }} />
           }
-          <FadeOnScroll containerRef={refContainer} height='24px' ratio={0.3} />
         </Stack>
+        <FadeOnScroll containerRef={refContainer} height='45px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
       </Stack>
     </Motion>
   );

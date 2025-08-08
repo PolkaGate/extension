@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
 import { Container, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -13,11 +14,11 @@ import { FormatBalance2, GlowCheckbox, MySkeleton } from '../../../../components
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks';
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
-import { isHexToBn } from '../../../../util/utils';
+import { toBN } from '../../../../util/utils';
 import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 
 interface InfoProps extends StakingInfoStackProps {
-  StartIcon: Icon;
+  StartIcon?: Icon;
   width?: string;
   style?: SxProps<Theme>;
 }
@@ -27,7 +28,10 @@ const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal,
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width, ...style }}>
-      <StartIcon color='#AA83DC' size='20' style={{ minWidth: '20px' }} variant='Bulk' />
+      {
+        StartIcon &&
+        <StartIcon color='#AA83DC' size='20' style={{ minWidth: '20px' }} variant='Bulk' />
+      }
       <Typography color='#AA83DC' textAlign='left' variant='B-4'>
         {title}:
       </Typography>
@@ -50,18 +54,24 @@ const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal,
 });
 
 interface ValidatorInfoProp {
-  validatorInfo: ValidatorInformation;
+  bgcolor?: string | undefined;
   genesisHash: string | undefined;
   isAlreadySelected?: boolean;
+  isActive?: boolean | undefined;
   isSelected?: boolean;
+  myShare?: number | undefined;
   onSelect?: () => void;
   reachedMaximum?: boolean;
+  validatorInfo: ValidatorInformation;
+  style?: React.CSSProperties;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelected, isSelected, onSelect, reachedMaximum, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isActive, isAlreadySelected, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!(isHexToBn(validatorInfo?.stakingLedger.total as unknown as string))?.gtn(0));
+
+  const totalStaked = toBN((validatorInfo?.exposureMeta as unknown as SpStakingPagedExposureMetadata)?.total ?? 0);
+  const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!totalStaked?.gtn(0));
 
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -72,13 +82,14 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
   const closeDetail = useCallback(() => setOpen(false), []);
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
+const isNotElected = isActive === undefined && !onSelect ;
 
   return (
     <>
       <Container
         disableGutters
         onClick={onSelect}
-        sx={{ alignItems: 'center', bgcolor: isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C', borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '4px', pl: '10px' }}
+        sx={{ alignItems: 'center', bgcolor: bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C'), borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '4px', pl: '10px', ...style }}
       >
         {onSelect &&
           <GlowCheckbox
@@ -88,13 +99,26 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
             style={{ m: 0, mr: '10px', width: 'fit-content' }}
           />
         }
+        {isActive !== undefined &&
+          <Typography sx={{ bgcolor: isActive ? '#82FFA526' : '#8E8E8E26', borderRadius: '6px', color: isActive ? '#82FFA5' : '#8E8E8E', lineHeight: '16px', minWidth: '54px', mr: '8px', px: '8px' }} variant='B-5'>
+            {isActive ? t('Active') : t('Inactive')}
+          </Typography>
+        }
         <ValidatorIdentity
-          style={{ m: 0, width: '300px' }}
+          style={{ m: 0, ml: isNotElected ? '15px' : 0, width: myShare ? '185px' : isNotElected ? '352px' : '305px' }}
           validatorInfo={validatorInfo}
         />
+        {
+          myShare &&
+          <InfoWithIcons
+            text={`${myShare}%`}
+            title={t('My Share')}
+            width='120px'
+          />
+        }
         <InfoWithIcons
           StartIcon={BuyCrypto}
-          amount={validatorInfo.stakingLedger.total}
+          amount={totalStaked}
           decimal={decimal}
           title={t('Staked')}
           token={token}
@@ -115,15 +139,15 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isAlreadySelec
         />
         <InfoWithIcons
           StartIcon={ChartSquare}
-          text={validatorAPY != null ? `${validatorAPY}%` : '...'}
+          text={validatorAPY != null ? `${validatorAPY}%` : '---'}
           title={t('APY')}
           width='105px'
         />
         <ValidatorIdSocials
-          style={{ width: '130px' }}
+          style={{ width: '125px' }}
           validatorDetail={validatorInfo}
         />
-        <IconButton onClick={openValidatorDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>
+        <IconButton onClick={openValidatorDetail} sx={{ bgcolor: bgcolor ? '#1B133C' : '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>
           <ArrowRight2 color='#AA83DC' size='14' variant='Bold' />
         </IconButton>
       </Container>

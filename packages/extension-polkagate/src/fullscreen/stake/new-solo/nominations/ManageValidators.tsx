@@ -8,15 +8,17 @@ import { Firstline } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
+
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
-import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorsInformation, useValidatorSuggestion2 } from '../../../../hooks';
+import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorSuggestion2 } from '../../../../hooks';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
 import FooterControls from '../../partials/FooterControls';
 import TableToolbar from '../../partials/TableToolbar';
 import ReviewPopup from './ReviewPopup';
 import SystemSuggestion from './SystemSuggestionButton';
-import { DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getNominatedValidatorsIds, getNominatedValidatorsInformation, getSortAndFilterValidators, isIncluded, onSort, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
+import { DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getSortAndFilterValidators, isIncluded, onSort, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 
 function ManageValidators () {
@@ -25,7 +27,8 @@ function ManageValidators () {
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const selectedAccount = useSelectedAccount();
   const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
-  const validatorsInfo = useValidatorsInformation(genesisHash);
+  const { nominatedValidatorsIds, nominatedValidatorsInformation, validatorsInfo, validatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
+
   const selectedBestValidators = useValidatorSuggestion2(validatorsInfo, genesisHash);
   const stakingConsts = useStakingConsts2(genesisHash);
 
@@ -38,20 +41,6 @@ function ManageValidators () {
   const [itemsPerPage, setItemsPerPagePage] = useState<string | number>(DEFAULT_VALIDATORS_PER_PAGE);
 
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
-
-  const nominatedValidatorsIds = useMemo(() => getNominatedValidatorsIds(stakingInfo), [stakingInfo]);
-
-  const nominatedValidatorsInformation = useMemo(() =>
-    getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds === null ? [] : nominatedValidatorsIds)
-  , [nominatedValidatorsIds, validatorsInfo]);
-
-  const validatorsInformation = useMemo(() => {
-    if (!validatorsInfo) {
-      return undefined;
-    }
-
-    return [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting];
-  }, [validatorsInfo]);
 
   const sortedValidatorsInformation = useMemo(() => {
     if (!validatorsInformation || !nominatedValidatorsInformation) {
