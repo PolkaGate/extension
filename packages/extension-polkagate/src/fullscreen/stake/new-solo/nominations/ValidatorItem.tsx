@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-ignore
 import type { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 

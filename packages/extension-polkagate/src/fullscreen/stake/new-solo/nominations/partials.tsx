@@ -3,6 +3,8 @@
 
 import type { Icon } from 'iconsax-react';
 import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
+import type { AccountId32 } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { SpStakingExposurePage, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 
 import { alpha, Box, Grid, IconButton, Stack, Typography } from '@mui/material';
@@ -91,7 +93,7 @@ export const Validators = React.memo(function Validators ({ address, bgcolor, ge
           let myShare;
 
           if (isActive && address) {
-            const mySupport = (validator.exposurePaged as unknown as SpStakingExposurePage).others.find(({ who }) => who.toString() === address)?.value;
+            const mySupport = (validator.exposurePaged as unknown as SpStakingExposurePage).others.find(({ who }: { who: AccountId32 }) => who.toString() === address)?.value;
 
             if (mySupport) {
               const PRECISION = 1_00;

@@ -1772,5 +1772,11 @@
   "No nominators": "",
   "It is less than the minimum amount to be a staker.": "",
   "List of pools": "",
-  "Start Staking": ""
+  "Start Staking": "",
+  "Validators: {{selected}} of {{threshold}}": "",
+  "Inactive": "",
+  "My Share": "",
+  "Elected": "",
+  "Not Elected": "",
+  "Staking type": ""
 }

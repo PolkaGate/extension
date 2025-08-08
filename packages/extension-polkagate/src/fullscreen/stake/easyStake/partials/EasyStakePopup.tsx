@@ -5,7 +5,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { Content } from '../../../../partials/Review';
-import type { PoolInfo, Proxy, ProxyTypes } from '../../../../util/types';
+import type { Proxy, ProxyTypes } from '../../../../util/types';
 
 import React, { useCallback, useState } from 'react';
 

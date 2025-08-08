@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountId32 } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
@@ -52,7 +54,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
       if (others?.length) {
-        const isActive = others?.find(({ who }) => who.toString() === stakingInfo?.stakingAccount?.accountId?.toString());
+        const isActive = others?.find(({ who }: { who: AccountId32 }) => who.toString() === stakingInfo?.stakingAccount?.accountId?.toString());
 
         isActive ? active.push(info) : elected.push(info);
       } else {
