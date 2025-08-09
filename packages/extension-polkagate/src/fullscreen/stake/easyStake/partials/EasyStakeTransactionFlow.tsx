@@ -44,10 +44,8 @@ function EasyStakeTransactionFlow ({ address, amount, closeReview, flowStep, gen
 
     const _txInfo = txInfo;
 
-    const txAmount = transactionInformation.find(({ itemKey }) => itemKey === 'amount');
-
-    if (txAmount?.content) {
-      _txInfo.amount = txAmount.content.toString();
+    if (amount) {
+      _txInfo.amount = amount;
     }
 
     const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
@@ -57,7 +55,7 @@ function EasyStakeTransactionFlow ({ address, amount, closeReview, flowStep, gen
     }
 
     return _txInfo;
-  }, [transactionInformation, txInfo]);
+  }, [amount, transactionInformation, txInfo]);
 
   const goToHistory = useCallback(() => navigate('/historyfs') as void, [navigate]);
 
