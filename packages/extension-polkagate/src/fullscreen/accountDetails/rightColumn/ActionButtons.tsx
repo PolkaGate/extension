@@ -4,7 +4,7 @@
 import type { Icon } from 'iconsax-react';
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, MedalStar, Triangle } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Record, Triangle } from 'iconsax-react';
 import React, { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,7 +72,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           />
           {GOVERNANCE_CHAINS.includes(chainName?.toLocaleLowerCase() ?? '') &&
             <ActionBox
-              Icon={MedalStar}
+              Icon={Record}
               label={t('Governance')}
               onClick={onGovernanceClick}
             />}

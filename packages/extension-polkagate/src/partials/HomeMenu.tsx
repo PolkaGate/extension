@@ -5,7 +5,7 @@ import type { Icon } from 'iconsax-react';
 import type { Pages } from '../popup/home/type';
 
 import { Container, Grid, styled, useTheme } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, MedalStar, Setting } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Record, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 
@@ -154,7 +154,7 @@ function HomeMenu (): React.ReactElement {
           <MenuItem ButtonIcon={ArrowCircleRight2} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ArrowCircleDown2} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
           <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'stakingIndex'} onClick={handleMenuClick('stakingIndex')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
-          <MenuItem ButtonIcon={MedalStar} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
+          <MenuItem ButtonIcon={Record} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
           <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
           <MenuItem ButtonIcon={Clock} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
           <MenuBackground mode={theme.palette.mode} />

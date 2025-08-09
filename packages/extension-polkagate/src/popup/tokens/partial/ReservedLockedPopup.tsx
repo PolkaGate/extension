@@ -7,7 +7,7 @@ import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CallMerge as CallMergeIcon } from '@mui/icons-material';
 import { Container, Grid, Typography } from '@mui/material';
-import { Bezier, Data, type Icon, Image, LikeDislike, MedalStar, Paperclip2, People, ProfileCircle, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
+import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
@@ -68,7 +68,7 @@ const reasonIcon = (reason: string): React.ReactNode => {
 
     case 'referenda':
     case 'governance':
-      return <MedalStar color='#AA83DC' size='24' variant='Bold' />;
+      return <Record color='#AA83DC' size='24' variant='Bulk' />;
 
     default:
       return null;

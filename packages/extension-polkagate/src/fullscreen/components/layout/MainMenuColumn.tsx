@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, Setting } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, Record, Setting } from 'iconsax-react';
 import React, { useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
@@ -80,7 +80,7 @@ function MainMenuColumn (): React.ReactElement {
         text={t('Staking')}
       />
       <MenuButton
-        Icon={MedalStar}
+        Icon={Record}
         onClick={() => setOpen(ExtensionPopups.GOVERNANCE)}
         text={t('Governance')}
       />

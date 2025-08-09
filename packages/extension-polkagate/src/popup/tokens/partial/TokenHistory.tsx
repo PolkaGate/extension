@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
+import type { Icon , IconProps} from 'iconsax-react';
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, IconButton, Typography } from '@mui/material';
-import { ArrowSwapHorizontal, MedalStar, Setting4 } from 'iconsax-react';
+import { ArrowSwapHorizontal, Record, Setting4 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useReducer, useState } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
@@ -59,13 +59,14 @@ interface FilterItemProps {
   name: string;
   onClick: () => void;
   checked: boolean;
+  iconVariant?: IconProps['variant'];
 }
 
-const FilterItem = ({ Icon, Logo, checked, name, onClick }: FilterItemProps) => {
+const FilterItem = ({ Icon, Logo, checked, iconVariant, name, onClick }: FilterItemProps) => {
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ columnGap: '8px', width: 'fit-content' }}>
-        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant='Outline' />}
+        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant={ iconVariant ?? 'Outline'} />}
         {Logo}
         <Typography color='text.primary' variant='B-1'>
           {name}
@@ -114,8 +115,9 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
             onClick={onFilters('transfer')}
           />
           <FilterItem
-            Icon={MedalStar}
+            Icon={Record}
             checked={filter.governance}
+            iconVariant='Bulk'
             name={t('Governance')}
             onClick={onFilters('governance')}
           />
