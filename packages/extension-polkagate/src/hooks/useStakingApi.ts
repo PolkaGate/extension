@@ -82,15 +82,17 @@ export const useUnstakingPool = (
 
   const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? unbonded?.(formatted ?? address ?? '', unstakingValue ?? BN_ONE));
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: unstakingValue,
       description: t('This amount will be redeemable on {{redeemDate}}, and your rewards will be automatically claimed.', { replace: { redeemDate } }),
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -243,14 +245,16 @@ export const useUnstakingSolo = (
     return undefined;
   }, [api, isStopStaking, staked, stakingInfo.stakingConsts, t, unstakingValue]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: unstakingValue,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -315,14 +319,16 @@ export const useRestakeSolo = (
 
     return undefined;
   }, [api, rebondValue, t, unlockingAmount]);
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: rebondValue,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -402,14 +408,16 @@ export const useWithdrawClaimPool = (
 
   const estimatedFee = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, review === Review.Reward ? claimPayout : redeem, review === Review.Reward ? undefined : param ?? [0]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: review === Review.Reward ? myClaimable : redeemable,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     (review === Review.Reward
@@ -488,11 +496,13 @@ export const useWithdrawSolo = (
   const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: redeemable,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -548,11 +558,13 @@ export const useBondExtraSolo = (
   const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: bondExtraValue,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -639,14 +651,16 @@ export const useFastUnstaking = (
 
   const checkDone = useMemo(() => eligibilityCheck.every(({ status }) => status !== undefined), [eligibilityCheck]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: staked as unknown as BN,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -692,14 +706,16 @@ export const useBondExtraPool = (
 
   const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? bondExtra?.({ FreeBalance: bondAmount ?? BN_ONE }));
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: bondAmount,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     },
     {
@@ -831,13 +847,14 @@ export const useSoloSettings = (
   const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
   const nextDisabled = useMemo(() => rewardDestinationType === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount), [rewardDestinationAddress, rewardDestinationType, specificAccount]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: rewardDestinationType === 'Others' ? (specificAccount ?? rewardDestinationAddress ?? stashId) : 'Staked',
       title: t('Reward destination')
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     }];
   }, [estimatedFee, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId, t]);
@@ -887,14 +904,16 @@ export const useJoinPool = (
 
   const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? join?.(bondAmount, selectedPool?.poolId ?? 0));
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: bondAmount,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     }];
   }, [bondAmount, estimatedFee, t]);
@@ -1042,9 +1061,10 @@ export const useCreatePool = (
 
   const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? setMetadata?.(BN_FIVE, initName));
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     }];
   }, [estimatedFee, t]);
@@ -1246,7 +1266,7 @@ export const useEasyStake = (
 
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? fakeTx);
 
-  const transactionInformation = useMemo((): Content[] => {
+  const transactionInformation: Content[] = useMemo((): Content[] => {
     return [{
       content: address,
       title: t('Account')
@@ -1270,6 +1290,7 @@ export const useEasyStake = (
       : []),
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     }];
   }, [address, estimatedFee, selectedStakingType?.pool, selectedStakingType?.type, selectedStakingType?.validators, stakingConsts?.maxNominations, t]);
@@ -1475,14 +1496,16 @@ export const usePendingRewardsSolo = (
 
   const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? payoutStakers, tx ? undefined : [address, BN_ZERO]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: totalSelectedPending,
+      itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
     },
     {
       content: estimatedFee,
+      itemKey: 'fee',
       title: t('Fee')
     }];
   }, [estimatedFee, totalSelectedPending, t]);

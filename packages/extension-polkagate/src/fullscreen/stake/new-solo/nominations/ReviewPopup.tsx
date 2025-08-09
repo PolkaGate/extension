@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Content } from '@polkadot/extension-polkagate/partials/Review';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
 import React, { useMemo, useState } from 'react';
@@ -28,13 +29,14 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, nominate, [params]);
 
-  const transactionInformation = useMemo(() => {
+  const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: newSelectedValidators.length.toString(),
       title: t('Validators')
     },
     {
       content: estimatedFee2,
+      itemKey: 'fee',
       title: t('Fee')
     }];
   }, [estimatedFee2, newSelectedValidators.length, t]);

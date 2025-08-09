@@ -33,7 +33,7 @@ interface Props extends Partial<DraggableModalProps>{
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function EasyStakePopup ({ _onClose, address, amount, children, flowStep, genesisHash, minHeight, onClose, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function EasyStakePopup ({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 

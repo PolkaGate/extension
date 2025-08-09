@@ -10,8 +10,6 @@ import type { Proxy, ProxyTypes, TxInfo } from '../../../../util/types';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isBn } from '@polkadot/util';
-
 import { WaitScreen2 } from '../../../../partials';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../../util/constants';
 import Confirmation from '../../partials/StakingConfirmation';
@@ -46,15 +44,16 @@ function EasyStakeTransactionFlow ({ address, amount, closeReview, flowStep, gen
 
     const _txInfo = txInfo;
 
-    // The first item is always amount or the reward destination account address,
-    // So by checking that if it is a BN number we can retrieve the amount value
-    if (isBn(transactionInformation[0].content)) {
-      _txInfo.amount = transactionInformation[0].content.toString();
+    const txAmount = transactionInformation.find(({ itemKey }) => itemKey === 'amount');
+
+    if (txAmount?.content) {
+      _txInfo.amount = txAmount.content.toString();
     }
 
-    // The second item of this array is always the fee amount
-    if (isBn(transactionInformation[1].content)) {
-      _txInfo.fee = transactionInformation[1].content.toString();
+    const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
+
+    if (txFee?.content) {
+      _txInfo.fee = txFee.content.toString();
     }
 
     return _txInfo;

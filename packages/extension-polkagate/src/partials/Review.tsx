@@ -94,6 +94,7 @@ export interface Content {
   withLogo?: boolean;
   content: string | BN | null | undefined;
   Icon?: IconType;
+  itemKey?: 'fee' | 'amount';
 }
 
 interface ContentItemProps extends Content {
