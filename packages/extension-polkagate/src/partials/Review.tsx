@@ -8,7 +8,7 @@ import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
 import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import { type Icon as IconType,InfoCircle } from 'iconsax-react';
+import { type Icon as IconType, InfoCircle } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
 import { type BN, isBn, noop } from '@polkadot/util';
@@ -120,8 +120,12 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
           <DescriptionTip description={description} />
         </Stack>
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
-          {Icon && <Icon color='#AA83DC' size={18} variant='Bulk' />}
-          {withLogo && <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />}
+          {Icon &&
+          <Icon color='#AA83DC' size={18} variant='Bulk' />
+          }
+          {withLogo &&
+          <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+          }
           {content
             ? isBn(content)
               ? (
@@ -146,7 +150,6 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
                     identiconSize={22}
                     showShortAddress
                     style={{ variant: 'B-1' }}
-                    withShortAddress
                   />)
                 : <Typography color='text.primary' variant='B-1'>
                   {content}
@@ -162,7 +165,9 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
           }
         </Stack>
       </Stack>
-      {!noDivider && <GradientDivider />}
+      {!noDivider &&
+      <GradientDivider />
+      }
     </>
   );
 });
@@ -214,7 +219,7 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
           style={{ marginTop: '8px' }}
         />
       }
-      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle}}>
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle }}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem
             content={content}
