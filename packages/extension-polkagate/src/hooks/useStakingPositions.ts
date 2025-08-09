@@ -18,47 +18,46 @@ export default function useStakingPositions (address: string | undefined, withMa
     accountAssets?.filter(({ pooledBalance, soloTotal }) => (soloTotal && !soloTotal.isZero()) || (pooledBalance && !pooledBalance.isZero()))
   , [accountAssets]);
 
-  const maxPosition = useMemo(() => {
+  const { maxPosition, maxPositionType } = useMemo(() => {
     if (!positions?.length || !pricesInCurrency || !withMax) {
-      return undefined;
+      return {
+        maxPosition: undefined,
+        maxPositionType: undefined
+      };
     }
 
     const { prices } = pricesInCurrency;
 
-    return positions.reduce((max, current) => {
-      const { value: priceValue1 = 0 } = prices[max.priceId] ?? {};
+    const initMax = {
+      position: {} as FetchedBalance,
+      valueInCurrency: 0
+    };
 
-      const maxValue = max.soloTotal?.gt(max.pooledBalance || BN_ZERO)
-        ? max.soloTotal
-        : max.pooledBalance;
-
-      const maxValueInCurrency = parseFloat(amountToHuman(maxValue, max.decimal)) * (priceValue1 ?? 0);
-
-      const { value: priceValue2 = 0 } = prices[current.priceId] ?? {};
+    const foundedMax = positions.slice().reduce((max, current) => {
+      const { value: price = 0 } = prices[current.priceId] ?? {};
       const currentValue = current.soloTotal?.gt(current.pooledBalance || BN_ZERO)
         ? current.soloTotal
         : current.pooledBalance;
 
-      const currentValueInCurrency = parseFloat(amountToHuman(currentValue, current.decimal)) * (priceValue2 ?? 0);
+      const currentValueInCurrency = parseFloat(amountToHuman(currentValue, current.decimal)) * (price ?? 0);
 
-      return currentValueInCurrency > maxValueInCurrency ? current : max;
-    });
+      return currentValueInCurrency > max.valueInCurrency
+        ? {
+          position: current,
+          valueInCurrency: currentValueInCurrency
+        }
+        : max;
+    }, initMax);
+
+    const type = (foundedMax.position.soloTotal || BN_ZERO).gt((foundedMax.position.pooledBalance || BN_ZERO))
+      ? 'solo'
+      : 'pool';
+
+    return {
+      maxPosition: foundedMax.position,
+      maxPositionType: type as 'solo' | 'pool'
+    };
   }, [positions, pricesInCurrency, withMax]);
-
-  const maxPositionType = useMemo(() => {
-    if (!maxPosition || !pricesInCurrency) {
-      return undefined;
-    }
-
-    const { prices } = pricesInCurrency;
-
-    const { value: priceValue1 = 0 } = prices[maxPosition.priceId] ?? {};
-
-    const maxSoloInCurrency = parseFloat(amountToHuman(maxPosition.soloTotal, maxPosition.decimal)) * (priceValue1 ?? 0);
-    const maxPoolInCurrency = parseFloat(amountToHuman(maxPosition.pooledBalance, maxPosition.decimal)) * (priceValue1 ?? 0);
-
-    return maxSoloInCurrency > maxPoolInCurrency ? 'solo' : 'pool';
-  }, [maxPosition, pricesInCurrency]);
 
   return { maxPosition, maxPositionType, positions };
 }
