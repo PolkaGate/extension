@@ -296,6 +296,8 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [address, currentEra, genesisHash, soloStakingInfo]);
 
+  // Refresh staking-related state when the chain changes,
+  // which also changes the token value.
   useEffect(() => {
     if (!soloStakingInfo && !soloStakingInfoLoaded) {
       return;

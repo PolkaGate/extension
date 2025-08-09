@@ -37,9 +37,12 @@ export default function SoloFullScreen (): React.ReactElement {
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
   , [accountAssets, genesisHash]);
 
-  const notStaked = useMemo(() => (accountAssets && asset === undefined) || selectedPosition === null, [accountAssets, asset, selectedPosition]);
+  const notStaked = useMemo(() => (
+    Boolean(accountAssets === null || (accountAssets && asset === undefined)) ||
+    (asset?.soloTotal && asset.soloTotal.isZero())
+  ), [accountAssets, asset]);
 
-  const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
+  const tokenPrice = useMemo(() => pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0, [asset?.priceId, pricesInCurrency?.prices]);
 
   const { availableBalanceToStake, redeemable, rewards, staked, toBeReleased, unlockingAmount } = useMemo(() => {
     if (notStaked) {
