@@ -30,31 +30,31 @@ export default function useStakingPositions (address: string | undefined, withMa
 
     const initMax = {
       position: {} as FetchedBalance,
-      valueInCurrency: 0
+      valueInCurrency: -1
     };
 
-    const foundedMax = positions.slice().reduce((max, current) => {
+    const foundMax = positions.slice().reduce((max, current) => {
       const { value: price = 0 } = prices[current.priceId] ?? {};
       const currentValue = current.soloTotal?.gt(current.pooledBalance || BN_ZERO)
         ? current.soloTotal
         : current.pooledBalance;
 
-      const currentValueInCurrency = parseFloat(amountToHuman(currentValue, current.decimal)) * (price ?? 0);
+      const valueInCurrency = parseFloat(amountToHuman(currentValue, current.decimal)) * (price ?? 0);
 
-      return currentValueInCurrency > max.valueInCurrency
+      return valueInCurrency > max.valueInCurrency
         ? {
           position: current,
-          valueInCurrency: currentValueInCurrency
+          valueInCurrency
         }
         : max;
     }, initMax);
 
-    const type = (foundedMax.position.soloTotal || BN_ZERO).gt((foundedMax.position.pooledBalance || BN_ZERO))
+    const type = (foundMax.position.soloTotal || BN_ZERO).gt((foundMax.position.pooledBalance || BN_ZERO))
       ? 'solo'
       : 'pool';
 
     return {
-      maxPosition: foundedMax.position,
+      maxPosition: foundMax.position,
       maxPositionType: type as 'solo' | 'pool'
     };
   }, [positions, pricesInCurrency, withMax]);
