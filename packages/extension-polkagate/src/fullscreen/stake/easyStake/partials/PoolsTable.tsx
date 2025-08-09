@@ -30,7 +30,7 @@ function PoolsTable ({ genesisHash, poolsInformation, selectable, selected, setS
 
   return (
     <>
-      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', rowGap: '4px', width: '100%' }}>
+      <Stack direction='column' sx={{ height: 'fit-content', mb: '75px', rowGap: '2px', width: '100%' }}>
         {poolsInformation.map((poolInfo, index) => (
           <PoolItem
             genesisHash={genesisHash}

@@ -28,17 +28,17 @@ function ValidatorsTable ({ genesisHash, onSelect, selected, validatorsInformati
     <>
       <Stack direction='column' sx={{ height: 'fit-content', width: '100%' }}>
         <List
-          height={500}
+          height={474}
           itemCount={validatorsInformation.length}
-          itemSize={96}
-          style={{ paddingBottom: '60px' }}
+          itemSize={84}
+          style={{ paddingBottom: '15px' }}
           width='100%'
         >
           {({ index, style }: { index: number, style: CSSProperties }) => {
             const validatorInfo = validatorsInformation[index];
 
             return (
-              <div key={index} style={{ marginBottom: '6px', ...style }}>
+              <div key={index} style={{ ...style }}>
                 <ValidatorItem
                   genesisHash={genesisHash}
                   isSelected={selected ? selected.includes(validatorInfo.accountId.toString()) : undefined}

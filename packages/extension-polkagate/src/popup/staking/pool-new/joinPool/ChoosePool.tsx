@@ -16,9 +16,9 @@ import { type PoolFilterState, SORTED_BY } from '../../partial/PoolFilter';
 import PoolsTable from '../../partial/PoolsTable';
 import StakingActionButton from '../../partial/StakingActionButton';
 
-export const FetchPoolProgress = ({ numberOfFetchedPools, style, totalNumberOfPools }: { totalNumberOfPools: number | undefined; numberOfFetchedPools: number; style?: SxProps<Theme> }) => (
+export const FetchPoolProgress = ({ hideOnComplete, numberOfFetchedPools, style, totalNumberOfPools }: { hideOnComplete?: boolean, totalNumberOfPools: number | undefined; numberOfFetchedPools: number; style?: SxProps<Theme> }) => (
   <LinearProgress
-    sx={{ color: '#82FFA5', height: '2px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%', ...style }}
+    sx={{ color: '#82FFA5', display: hideOnComplete && numberOfFetchedPools === totalNumberOfPools ? 'none' : 'inherit', height: '2px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%', ...style }}
     value={totalNumberOfPools ? numberOfFetchedPools * 100 / totalNumberOfPools : 0}
     variant='determinate'
   />

@@ -3,9 +3,8 @@
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack } from '@mui/material';
-import { BuyCrypto, PercentageSquare, Profile2User } from 'iconsax-react';
+import { ArrowRight2, BuyCrypto, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo, useCallback, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -49,12 +48,12 @@ function ValidatorItem ({ genesisHash, isSelected, onDetailClick, onSelect, sele
   }, [onSelect, validatorInfo]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: isSelected ? '#FF4FB926' : '#05091C', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
+    <Stack direction='column' sx={{ bgcolor: isSelected ? '#FF4FB926' : '#05091C', borderRadius: '14px', p: '8px 4px 8px 8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
       <Container
         disableGutters
         onClick={selectable ? handleContainerClick : noop}
         ref={containerRef}
-        sx={{ alignItems: 'center', cursor: selectable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}
+        sx={{ alignItems: 'center', cursor: selectable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
       >
         {selectable &&
           <GlowCheckbox
@@ -63,12 +62,12 @@ function ValidatorItem ({ genesisHash, isSelected, onDetailClick, onSelect, sele
             style={{ height: '18px', mr: '6px', width: '18px' }}
           />}
         <ValidatorIdentity validatorInfo={validatorInfo} />
-        <IconButton onClick={handleOnDetail} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
-          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
+        <IconButton onClick={handleOnDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', height: '34px', width: '34px' }}>
+          <ArrowRight2 color='#AA83DC' size='16' variant='Bold' />
         </IconButton>
       </Container>
-      <GradientDivider style={{ my: '4px' }} />
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-around', py: '5.5px' }}>
+      <GradientDivider />
+      <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', py: '5.5px' }}>
         <InfoWithIcons
           StartIcon={BuyCrypto}
           amount={validatorInfo.stakingLedger.total}

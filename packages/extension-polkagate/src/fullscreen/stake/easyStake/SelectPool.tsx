@@ -6,7 +6,7 @@ import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 import { Stack } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FadeOnScroll, GradientButton, Progress, SearchField } from '../../../components';
+import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
 import { usePools2, useTranslation } from '../../../hooks';
 import { FetchPoolProgress } from '../../../popup/staking/pool-new/joinPool/ChoosePool';
 import { PREFERRED_POOL_NAME } from '../../../util/constants';
@@ -63,13 +63,18 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
     setSearch(input);
   }, []);
 
+  const onClear = useCallback(() => {
+    setSelectedPool(undefined);
+  }, []);
+
   return (
     <>
       <FetchPoolProgress
+        hideOnComplete
         numberOfFetchedPools={numberOfFetchedPools}
         totalNumberOfPools={totalNumberOfPools}
       />
-      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', minHeight: '450px', overflowY: 'auto', px: '15px', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '620px', minHeight: '620px', overflowY: 'auto', px: '15px', width: '100%' }}>
         {incrementalPools === undefined &&
           <Progress
             style={{ marginTop: '90px' }}
@@ -83,7 +88,7 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
               placeholder='🔍 Search'
               style={{
                 height: '44px',
-                marginBottom: '15px',
+                margin: '17px 0 18px',
                 width: '410px'
               }}
             />
@@ -96,23 +101,31 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
             />
           </>
         }
-        <GradientButton
+        <DecisionButtons
+          cancelButton
+          direction='horizontal'
           disabled={!selectedPool}
-          onClick={onSelect}
+          divider
+          dividerStyle={{ background: 'linear-gradient(180deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' }}
+          onPrimaryClick={onSelect}
+          onSecondaryClick={onClear}
+          primaryBtnText={t('Next')}
+          secondaryBtnText={t('Clear')}
+          secondaryButtonProps={{ style: { width: '134px' } }}
           style={{
             bottom: '15px',
+            display: 'flex',
+            flexDirection: 'row-reverse',
             height: '44px',
             left: '0',
-            marginInline: '15px',
             position: 'absolute',
             right: '0',
-            width: 'calc(100% - 30px)',
+            width: '94%',
             zIndex: 10
           }}
-          text={t('Select')}
         />
       </Stack>
-      <FadeOnScroll containerRef={refContainer} height='110px' ratio={0.5} />
+      <FadeOnScroll containerRef={refContainer} height='110px' ratio={0.7} />
     </>
   );
 }

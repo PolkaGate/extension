@@ -3,9 +3,8 @@
 
 import type { PoolInfo } from '../../../../util/types';
 
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack } from '@mui/material';
-import { BuyCrypto, PercentageSquare, Profile2User } from 'iconsax-react';
+import { ArrowRight2, BuyCrypto, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -63,7 +62,7 @@ function PoolItem ({ genesisHash, onDetailClick, poolInfo, selectable, selected,
   }, [isSelected, onSelect, poolInfo]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: isSelected ? '#1C1D38' : '#110F2A', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
+    <Stack direction='column' sx={{ bgcolor: isSelected ? '#FF4FB926' : '#05091C', borderRadius: '14px', p: '8px 0 8px 8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
       <Container
         disableGutters
         onClick={selectable ? handleContainerClick : noop}
@@ -79,12 +78,12 @@ function PoolItem ({ genesisHash, onDetailClick, poolInfo, selectable, selected,
             value={JSON.stringify(poolInfo)}
           />}
         <PoolStashIdentity poolInfo={poolInfo} style={{ '> span#poolMetadata': { maxWidth: 'calc(100% - 34px)' }, m: 0, width: `calc(100% - ${(selectable ? 20 : 0) + 36 + OFFSET}px)` }} />
-        <IconButton onClick={handleOnDetail} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
-          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
+        <IconButton onClick={handleOnDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', height: '34px', width: '34px' }}>
+          <ArrowRight2 color='#AA83DC' size='16' variant='Bold' />
         </IconButton>
       </Container>
-      <GradientDivider style={{ my: '4px' }} />
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-around', py: '5.5px' }}>
+      <GradientDivider />
+      <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', p: '5.5px 0 5.5px 8px' }}>
         <InfoWithIcons
           StartIcon={BuyCrypto}
           amount={poolInfo.bondedPool?.points}

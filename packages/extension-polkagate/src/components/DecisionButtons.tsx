@@ -18,7 +18,6 @@ export interface DecisionButtonProps {
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
   divider?: boolean;
-  dividerBackground?: string;
   flexibleWidth?: boolean;
   isBusy?: boolean | undefined;
   onPrimaryClick: () => unknown;

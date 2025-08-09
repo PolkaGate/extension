@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { GradientButton, Progress, SearchField } from '../../../components';
+import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
 import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../../../hooks';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 import ValidatorsTable from './partials/ValidatorsTable';
@@ -19,6 +19,8 @@ interface Props {
 
 function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: Props) {
   const { t } = useTranslation();
+  const refContainer = useRef(null);
+
   const stakingConsts = useStakingConsts2(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
@@ -78,12 +80,13 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
     }
 
     let filtered = validatorsToShow;
+    const lowerCaseKeyword = searchedQuery.toLowerCase(); // do a lowe case comparison
 
-    if (searchedQuery) {
+    if (lowerCaseKeyword) {
       filtered = filtered.filter(({ accountId, identity }) =>
-        accountId.toString().includes(searchedQuery) ||
-        (identity?.display?.toLowerCase() ?? '').includes(searchedQuery) ||
-        (identity?.displayParent?.toLowerCase() ?? '').includes(searchedQuery)
+        accountId.toString().toLowerCase().includes(lowerCaseKeyword) ||
+        (identity?.display?.toLowerCase() ?? '').includes(lowerCaseKeyword) ||
+        (identity?.displayParent?.toLowerCase() ?? '').includes(lowerCaseKeyword)
       );
     }
 
@@ -133,22 +136,27 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
     setSide(EasyStakeSide.STAKING_TYPE);
   }, [newSelectedValidators, setSelectedStakingType, setSide, suggestedValidators]);
 
+  const onClear = useCallback(() => {
+    setNewSelectedValidators(undefined);
+  }, []);
+
   return (
-    <Stack direction='column' sx={{ height: 'fit-content', minHeight: '500px', mt: '12px', position: 'relative', px: '15px', width: '100%', zIndex: 1 }}>
-      {isLoading &&
+    <>
+      <Stack direction='column' ref = {refContainer} sx={{ height: 'fit-content', maxHeight: '620px', minHeight: '620px', mt: '12px', position: 'relative', px: '15px', width: '100%', zIndex: 1 }}>
+        {isLoading &&
         <Progress
           style={{ marginTop: '90px' }}
           title={t("Loading the validators' list")}
         />
-      }
-      {isLoaded &&
+        }
+        {isLoaded &&
         <>
           <SearchField
             onInputChange={onSearch}
             placeholder='🔍 Search'
             style={{
               height: '44px',
-              marginBottom: '15px',
+              margin: '17px 0 18px',
               width: '410px'
             }}
           />
@@ -159,22 +167,32 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
             validatorsInformation={filtered ?? []}
           />
         </>}
-      <GradientButton
-        disabled={!newSelectedValidators?.length}
-        onClick={onApply}
-        style={{
-          bottom: '0',
-          height: '44px',
-          left: '0',
-          marginInline: '15px',
-          position: 'absolute',
-          right: '0',
-          width: 'calc(100% - 30px)',
-          zIndex: 10
-        }}
-        text={t('Select')}
-      />
-    </Stack>
+        <DecisionButtons
+          cancelButton
+          direction='horizontal'
+          disabled={!newSelectedValidators?.length}
+          divider
+          dividerStyle={{ background: 'linear-gradient(180deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' }}
+          onPrimaryClick={onApply}
+          onSecondaryClick={onClear}
+          primaryBtnText={!newSelectedValidators?.length ? t('Next') : t('{{count}} validator{{plural}} selected', { replace: { count: newSelectedValidators?.length, plural: newSelectedValidators?.length === 1 ? '' : 's' } })}
+          secondaryBtnText={t('Clear')}
+          secondaryButtonProps={{ style: { width: '134px' } }}
+          style={{
+            bottom: '15px',
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            height: '44px',
+            left: '0',
+            position: 'absolute',
+            right: '0',
+            width: '94%',
+            zIndex: 10
+          }}
+        />
+      </Stack>
+      <FadeOnScroll containerRef={refContainer} height='110px' ratio={0.7} />
+    </>
   );
 }
 
