@@ -182,7 +182,7 @@ const DEFAULT_VALUE = {
  * @returns Consolidated staking information including available balance, rewards, and more
  */
 export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
-  const { api, chainName } = useChainInfo(genesisHash);
+  const { api, chainName, token } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash);
   const currentEra = useCurrentEraIndex2(genesisHash);
   const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
@@ -214,10 +214,10 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     setSessionInfo(info);
     needsStorageUpdate.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, stakingAccount, refresh]);
+  }, [api?.genesisHash, stakingAccount, refresh]);
 
   useEffect(() => {
-    if (fetchingFlag.current || !sessionInfo) {
+    if (fetchingFlag.current && !sessionInfo) {
       fetchSessionInfo().catch(console.error);
     }
   }, [fetchSessionInfo, sessionInfo]);
@@ -295,6 +295,21 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
       }).catch(console.error);
     }
   }, [address, currentEra, genesisHash, soloStakingInfo]);
+
+  useEffect(() => {
+    if (!soloStakingInfo && !soloStakingInfoLoaded) {
+      return;
+    }
+
+    if (token?.toLowerCase() !== (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token.toLowerCase()) {
+      console.log('reset on change');
+      fetchingFlag.current = true;
+      setSoloStakingInfoLoaded(undefined);
+      setSoloStakingInfo(undefined);
+      setSessionInfo(undefined);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [soloStakingInfo?.stakingConsts?.token, soloStakingInfoLoaded?.stakingConsts?.token, token]);
 
   return useMemo(() => soloStakingInfo || soloStakingInfoLoaded || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoLoaded]);
 }
