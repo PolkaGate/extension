@@ -435,15 +435,15 @@ export const useWithdrawClaimPool = (
       })];
   }, [transferable, estimatedFee, redeemable, review, myClaimable, t]);
   const tx = useMemo(() => {
-    if (review === Review.None) {
-      return undefined;
-    } else if (review === Review.Reward && claimPayout) {
+    if (review === Review.Reward && claimPayout) {
       return claimPayout();
-    } else if (review === Review.Withdraw && redeem && param) {
-      return redeem(...param);
-    } else {
-      return undefined;
     }
+
+    if (review === Review.Withdraw && redeem && param) {
+      return redeem(...param);
+    }
+
+    return undefined;
   }, [review, claimPayout, redeem, param]);
 
   return {
