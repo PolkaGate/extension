@@ -39,11 +39,11 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
 
   const baseOption = useMemo(() => {
     return [
-      {
-        Icon: User,
-        text: t('Manage Identity'),
-        value: `/manageIdentity/${address}`
-      },
+      // {
+      //   Icon: User,
+      //   text: t('Manage Identity'),
+      //   value: `/manageIdentity/${address}`
+      // },
       {
         Icon: Data,
         text: t('Manage proxies'),
