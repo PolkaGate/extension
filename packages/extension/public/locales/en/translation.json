@@ -1778,5 +1778,6 @@
   "My Share": "",
   "Elected": "",
   "Not Elected": "",
-  "Staking type": ""
+  "Staking type": "",
+  "{{count}} validator{{plural}} selected": ""
 }
