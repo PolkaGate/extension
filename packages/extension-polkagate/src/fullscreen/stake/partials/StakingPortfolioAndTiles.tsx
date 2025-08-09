@@ -131,9 +131,10 @@ interface Props {
   availableBalanceToStake: BN | undefined;
   tokenPrice: number;
   popupOpener: PopupOpener;
+  disabled?: boolean;
 }
 
-export default function StakingPortfolioAndTiles ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
+export default function StakingPortfolioAndTiles ({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -160,6 +161,7 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, gen
             }]
             : [])
         ]}
+        disabled={disabled}
         genesisHash={genesisHash as unknown as string}
         isFullScreen
         onInfo={popupOpener(StakingPopUps.INFO)}

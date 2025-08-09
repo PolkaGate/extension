@@ -7,7 +7,7 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { type BN } from '@polkadot/util';
+import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSelectedAccount, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
 import HomeLayout from '../../components/layout';
@@ -37,13 +37,31 @@ export default function SoloFullScreen (): React.ReactElement {
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
   , [accountAssets, genesisHash]);
 
+  const notStaked = useMemo(() => (accountAssets && asset === undefined) || selectedPosition === null, [accountAssets, asset, selectedPosition]);
+
   const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
 
-  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active as unknown as BN | undefined, [stakingInfo.stakingAccount?.stakingLedger.active]);
-  const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
-  const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
-  const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
-  const rewards = useMemo(() => stakingInfo.rewards, [stakingInfo.rewards]);
+  const { availableBalanceToStake, redeemable, rewards, staked, toBeReleased, unlockingAmount } = useMemo(() => {
+    if (notStaked) {
+      return {
+        availableBalanceToStake: BN_ZERO,
+        redeemable: BN_ZERO,
+        rewards: BN_ZERO,
+        staked: BN_ZERO,
+        toBeReleased: [],
+        unlockingAmount: BN_ZERO
+      };
+    }
+
+    const staked = stakingInfo.stakingAccount?.stakingLedger.active as unknown as BN | undefined;
+    const redeemable = stakingInfo.stakingAccount?.redeemable;
+    const toBeReleased = stakingInfo.sessionInfo?.toBeReleased;
+    const unlockingAmount = stakingInfo.sessionInfo?.unlockingAmount;
+    const rewards = stakingInfo.rewards;
+    const availableBalanceToStake = stakingInfo.availableBalanceToStake;
+
+    return { availableBalanceToStake, redeemable, rewards, staked, toBeReleased, unlockingAmount };
+  }, [notStaked, stakingInfo.availableBalanceToStake, stakingInfo.rewards, stakingInfo.sessionInfo?.toBeReleased, stakingInfo.sessionInfo?.unlockingAmount, stakingInfo.stakingAccount?.redeemable, stakingInfo.stakingAccount?.stakingLedger.active]);
 
   return (
     <>
@@ -51,7 +69,8 @@ export default function SoloFullScreen (): React.ReactElement {
         <Stack columnGap='8px' direction='column' sx={{ height: '685px' }}>
           <StakingIcon type='solo' variant='people' />
           <StakingPortfolioAndTiles
-            availableBalanceToStake={stakingInfo.availableBalanceToStake}
+            availableBalanceToStake={availableBalanceToStake}
+            disabled={notStaked}
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             redeemable={redeemable}
@@ -63,6 +82,7 @@ export default function SoloFullScreen (): React.ReactElement {
             unlockingAmount={unlockingAmount}
           />
           <StakingTabs
+            disabled={notStaked}
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}

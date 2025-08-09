@@ -10,6 +10,8 @@ import { Container, Stack, Typography } from '@mui/material';
 import { Discover, MagicStar, Wallet } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTabBody';
@@ -26,17 +28,19 @@ export interface StakingTabsHeaderItems {
 
 interface StakingTabsHeaderProps {
   items: StakingTabsHeaderItems[];
+  disabled?: boolean;
 }
 
-const StakingTabsHeader = ({ items }: StakingTabsHeaderProps) => {
+const StakingTabsHeader = ({ disabled, items }: StakingTabsHeaderProps) => {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '32px' }}>
       {items.map(({ Icon, isSelected, onClick, title }, index) => {
         const iconColor = isSelected ? '#AA83DC' : '#674394';
         const textColor = isSelected ? '#EAEBF1' : '#674394';
+        const isDisabled = index > 0 && disabled;
 
         return (
-          <Container disableGutters key={index} onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '8px', m: 0, p: '4px', width: 'fit-content' }}>
+          <Container disableGutters key={index} onClick={isDisabled ? noop : onClick} sx={{ alignItems: 'center', cursor: isDisabled ? 'default' : 'pointer', display: 'flex', flexDirection: 'row', gap: '8px', m: 0, p: '4px', width: 'fit-content' }}>
             <Icon color={iconColor} size='24' variant='Bulk' />
             <Typography color={textColor} textTransform='uppercase' variant='H-2'>
               {title}
@@ -56,6 +60,7 @@ interface Props {
   popupOpener: PopupOpener;
   stakingInfo?: SoloStakingInfo;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
+  disabled?: boolean;
 }
 
 enum STAKING_TABS {
@@ -65,7 +70,7 @@ enum STAKING_TABS {
   VALIDATORS
 }
 
-function StakingTabs ({ genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
+function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
 
@@ -135,7 +140,7 @@ function StakingTabs ({ genesisHash, popupOpener, rewardInfo, setSelectedPositio
 
   return (
     <Stack direction='column' sx={{ gap: '12px', px: '18px' }}>
-      <StakingTabsHeader items={tabItems} />
+      <StakingTabsHeader disabled={disabled} items={tabItems} />
       <VelvetBox>
         {content}
       </VelvetBox>

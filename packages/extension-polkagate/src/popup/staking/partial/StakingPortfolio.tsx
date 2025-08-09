@@ -51,9 +51,10 @@ interface ButtonsProps {
   buttons: PortfolioActionButtonProps[];
   isLoading?: boolean;
   isFullScreen?: boolean;
+  disabled?: boolean;
 }
 
-const Buttons = ({ buttons, isFullScreen, isLoading }: ButtonsProps) => {
+const Buttons = ({ buttons, disabled, isFullScreen, isLoading }: ButtonsProps) => {
   return (
     <Grid
       alignItems='center' container item justifyContent='flex-start'
@@ -97,6 +98,12 @@ const Buttons = ({ buttons, isFullScreen, isLoading }: ButtonsProps) => {
           }
         </>)
       }
+      {disabled &&
+        <>
+          <GlowBall />
+          <Grid sx={{ bgcolor: '#1b133cab', inset: 0, position: 'absolute' }} />
+        </>
+      }
     </Grid>
   );
 };
@@ -122,9 +129,10 @@ interface Props {
   buttons?: PortfolioActionButtonProps[];
   isFullScreen?: boolean;
   onInfo?: () => void;
+  disabled?: boolean;
 }
 
-export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScreen = false, onInfo, staked, style, type }: Props): React.ReactElement {
+export default function StakingPortfolio ({ buttons = [], disabled, genesisHash, isFullScreen = false, onInfo, staked, style, type }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
@@ -195,6 +203,7 @@ export default function StakingPortfolio ({ buttons = [], genesisHash, isFullScr
       />
       <Buttons
         buttons={buttons}
+        disabled={disabled}
         isFullScreen={isFullScreen}
         isLoading={staked === undefined}
       />

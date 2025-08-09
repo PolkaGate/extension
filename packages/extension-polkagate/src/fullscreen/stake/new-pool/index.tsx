@@ -7,6 +7,8 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { BN_ZERO } from '@polkadot/util';
+
 import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
 import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
@@ -36,13 +38,31 @@ export default function PoolFullScreen (): React.ReactElement {
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
   , [accountAssets, genesisHash]);
 
+  const notStaked = useMemo(() => (accountAssets && asset === undefined) || selectedPosition === null, [accountAssets, asset, selectedPosition]);
+
   const tokenPrice = pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0;
 
-  const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
-  const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
-  const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
-  const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
-  const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
+  const { availableBalanceToStake, myClaimable, redeemable, staked, toBeReleased, unlockingAmount } = useMemo(() => {
+    if (notStaked) {
+      return {
+        availableBalanceToStake: BN_ZERO,
+        myClaimable: BN_ZERO,
+        redeemable: BN_ZERO,
+        staked: BN_ZERO,
+        toBeReleased: [],
+        unlockingAmount: BN_ZERO
+      };
+    }
+
+    const staked = isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0');
+    const redeemable = stakingInfo.sessionInfo?.redeemAmount;
+    const toBeReleased = stakingInfo.sessionInfo?.toBeReleased;
+    const unlockingAmount = stakingInfo.sessionInfo?.unlockingAmount;
+    const myClaimable = isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0');
+    const availableBalanceToStake = stakingInfo.availableBalanceToStake;
+
+    return { availableBalanceToStake, myClaimable, redeemable, staked, toBeReleased, unlockingAmount };
+  }, [notStaked, stakingInfo.availableBalanceToStake, stakingInfo.pool?.member?.points, stakingInfo.pool?.myClaimable, stakingInfo.sessionInfo?.redeemAmount, stakingInfo.sessionInfo?.toBeReleased, stakingInfo.sessionInfo?.unlockingAmount]);
 
   return (
     <>
@@ -50,7 +70,8 @@ export default function PoolFullScreen (): React.ReactElement {
         <Stack columnGap='8px' direction='column' sx={{ height: '685px' }}>
           <StakingIcon type='pool' variant='people' />
           <StakingPortfolioAndTiles
-            availableBalanceToStake={stakingInfo.availableBalanceToStake}
+            availableBalanceToStake={availableBalanceToStake}
+            disabled={notStaked}
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             redeemable={redeemable}
@@ -62,6 +83,7 @@ export default function PoolFullScreen (): React.ReactElement {
             unlockingAmount={unlockingAmount}
           />
           <StakingTabs
+            disabled={notStaked}
             genesisHash={genesisHash}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}

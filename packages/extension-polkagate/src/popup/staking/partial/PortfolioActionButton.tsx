@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import type { Icon } from 'iconsax-react';
 
 import { Grid, Typography } from '@mui/material';
