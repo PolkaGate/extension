@@ -190,10 +190,9 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
           cancelButton
           direction='vertical'
           disabled={side === EasyStakeSide.INPUT ? !!buttonDisable : false}
-          isBusy={!initialPool}
           onPrimaryClick={handleNext}
           onSecondaryClick={handleBack}
-          primaryBtnText={side === EasyStakeSide.INPUT ? t('Continue') : t('Apply')}
+          primaryBtnText={!initialPool ? t('Loading ...') : side === EasyStakeSide.INPUT ? t('Continue') : t('Apply')}
           secondaryBtnText={t('Back')}
           style={{ display: [EasyStakeSide.SELECT_POOL, EasyStakeSide.SELECT_VALIDATORS].includes(side) ? 'none' : 'flex', paddingInline: '18px' }}
         />
