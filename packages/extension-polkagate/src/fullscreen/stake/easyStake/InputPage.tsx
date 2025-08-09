@@ -6,8 +6,10 @@ import type { StakingConsts } from '../../../util/types';
 
 import { ChevronRightRounded } from '@mui/icons-material';
 import { Collapse, Container, Stack, Typography } from '@mui/material';
-import { People, UserOctagon } from 'iconsax-react';
+import { People } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
+
+import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
@@ -33,7 +35,8 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
           {selectedStakingType?.type === 'pool'
             ? <People color='#AA83DC' size='24' variant='Bulk' />
-            : <UserOctagon color='#AA83DC' size='24' variant='Bold' />}
+            : <SnowFlake color='#AA83DC' size='24' />
+          }
           <Stack direction='column' sx={{ gap: '4px', ml: '12px', width: 'fit-content' }}>
             <Typography color='text.primary' textAlign='left' variant='B-3'>
               {selectedStakingType?.type === 'pool'
@@ -51,13 +54,17 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
                 })}
               </Typography>}
           </Stack>
-          {isRecommended && <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />}
+          {isRecommended &&
+            <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
+          }
         </Container>
         {isRecommended &&
           <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
             {t('Recommended')}
           </Typography>}
-        {!isRecommended && <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />}
+        {!isRecommended &&
+          <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
+        }
       </Container>
     </Collapse>
   );
