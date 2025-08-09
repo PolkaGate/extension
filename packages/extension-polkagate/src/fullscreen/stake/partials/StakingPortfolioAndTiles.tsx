@@ -5,7 +5,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid } from '@mui/material';
-import { Add, Award, BuyCrypto, LockSlash, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
+import { Add, Award, Coin, LockSlash, MedalStar, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import Ice from '@polkadot/extension-polkagate/src/components/SVG/Ice';
@@ -45,7 +45,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
         buttonsArray={
           isPoolStaking
             ? [{
-              Icon: Strongbox2,
+              Icon: MedalStar,
               iconVariant: 'Bold',
               onClick: popupOpener(StakingPopUps.CLAIM_REWARDS),
               text: t('Claim Now')
@@ -148,7 +148,7 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, gen
             }]
             : []),
           {
-            Icon: BuyCrypto,
+            Icon: Coin,
             onClick: popupOpener(StakingPopUps.UNSTAKE),
             text: t('Unstake')
           },

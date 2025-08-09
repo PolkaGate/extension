@@ -4,7 +4,7 @@
 import type { BN } from '@polkadot/util';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { BuyCrypto, Timer1, UserOctagon } from 'iconsax-react';
+import { Coin, Timer1, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -95,7 +95,7 @@ export default function Solo (): React.ReactElement {
           />
           <StakingPortfolio
             buttons={[{
-              Icon: BuyCrypto,
+              Icon: Coin,
               onClick: onUnstake,
               text: t('Unstake')
             },

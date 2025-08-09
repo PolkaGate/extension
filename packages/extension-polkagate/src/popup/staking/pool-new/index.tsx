@@ -6,7 +6,7 @@
 import type { BN } from '@polkadot/util';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { BuyCrypto, People } from 'iconsax-react';
+import { Coin, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -99,7 +99,7 @@ export default function Pool (): React.ReactElement {
           />
           <StakingPortfolio
             buttons={[{
-              Icon: BuyCrypto,
+              Icon: Coin,
               onClick: onUnstake,
               text: t('Unstake')
             }]}
