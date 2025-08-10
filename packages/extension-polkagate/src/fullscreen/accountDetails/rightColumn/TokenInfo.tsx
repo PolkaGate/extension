@@ -6,7 +6,7 @@ import type { BN } from '@polkadot/util';
 import type { BalancesInfo, FetchedBalance } from '../../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
-import { Coin, Lock1, Trade, UserOctagon } from 'iconsax-react';
+import { Coin, Lock1, People, Trade, UserOctagon } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -274,12 +274,12 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             {
               stakings?.hasPoolStake &&
               <TokenDetailBox
-                Icon={UserOctagon}
+                Icon={People}
                 amount={stakings.maybePoolStake}
                 background='#05091C'
                 decimal={token?.decimal}
                 iconSize='20'
-                iconVariant='Bold'
+                iconVariant='Bulk'
                 onClick={onStaking('pool')}
                 priceId={token?.priceId}
                 title={t('Pool Staked')}
