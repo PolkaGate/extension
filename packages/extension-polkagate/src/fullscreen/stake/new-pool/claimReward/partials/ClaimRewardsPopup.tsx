@@ -11,8 +11,8 @@ import type { RestakeRewardTogglerProps } from './RestakeRewardToggler';
 import React, { useCallback, useState } from 'react';
 
 import { Progress, SelectedProxy } from '../../../../../components';
-import { DraggableModal, type DraggableModalProps } from '../../../../components/DraggableModal';
 import { useRouteRefresh, useTranslation } from '../../../../../hooks';
+import { DraggableModal, type DraggableModalProps } from '../../../../components/DraggableModal';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../../../util/utils';
 import ClaimRewardsTransactionFlow from './ClaimRewardsTransactionFlow';
 
@@ -34,7 +34,7 @@ interface Props extends Partial<DraggableModalProps>, RestakeRewardTogglerProps 
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function ClaimRewardsPopup({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, restake, setFlowStep, setRestake, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function ClaimRewardsPopup ({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, restake, setFlowStep, setRestake, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 
@@ -84,7 +84,7 @@ export default function ClaimRewardsPopup({ _onClose, address, amount, children,
             <ClaimRewardsTransactionFlow
               address={address}
               amount={amount}
-              closeReview={closeReview}
+              closeReview={closeModal}
               flowStep={flowStep}
               genesisHash={genesisHash}
               onClose={closeModal}
