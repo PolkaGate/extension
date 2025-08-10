@@ -64,7 +64,7 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
           />
         ))}
         <Stack direction='column' sx={{ alignItems: 'flex-start', bgcolor: '#05091C', borderRadius: '14px', gap: '6px', p: '12px', width: '100%' }}>
-          <Typography color={theme.palette.text.highlight} variant='B-4' width='fit-content'>
+          <Typography color={theme.palette.primary.main} variant='B-4' width='fit-content'>
             {t('To leave a pool as a member')}:
           </Typography>
           <Typography color={theme.palette.text.primary} pl='20px' variant='B-4'>
@@ -72,7 +72,7 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
           </Typography>
         </Stack>
         <Stack direction='column' sx={{ alignItems: 'flex-start', bgcolor: '#05091C', borderRadius: '14px', gap: '6px', p: '12px', width: '100%' }}>
-          <Typography color={theme.palette.text.highlight} variant='B-4' width='fit-content'>
+          <Typography color={theme.palette.primary.main} variant='B-4' width='fit-content'>
             {t('To leave a pool as an owner')}:
           </Typography>
           <Typography color={theme.palette.text.primary} pl='20px' variant='B-4'>
