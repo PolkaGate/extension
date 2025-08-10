@@ -18,7 +18,6 @@ import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
-import { Review } from '../popup/staking/pool-new';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, isHexToBn } from '../util/utils';
@@ -367,10 +366,9 @@ export const useRestakeSolo = (
   };
 };
 
-export const useWithdrawClaimPool = (
+export const useWithdrawPool = (
   address: string | undefined,
-  genesisHash: string | undefined,
-  review: Review
+  genesisHash: string | undefined
 ) => {
   const { t } = useTranslation();
 
@@ -380,7 +378,6 @@ export const useWithdrawClaimPool = (
   const accountAssets = useAccountAssets(address);
 
   const redeem = api?.tx['nominationPools']['withdrawUnbonded'];
-  const claimPayout = api?.tx['nominationPools']['claimPayout'];
 
   const [param, setParam] = useState<[string, number] | null | undefined>(null);
 
@@ -390,7 +387,6 @@ export const useWithdrawClaimPool = (
     return getValue('transferable', asset);
   }, [accountAssets, genesisHash]);
   const redeemable = useMemo(() => stakingInfo.sessionInfo?.redeemAmount, [stakingInfo.sessionInfo?.redeemAmount]);
-  const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
 
   useEffect(() => {
     if (!api || param !== null || !formatted) {
@@ -406,11 +402,19 @@ export const useWithdrawClaimPool = (
     }).catch(console.error);
   }, [api, formatted, param]);
 
-  const estimatedFee = useEstimatedFee2(review && param ? genesisHash ?? '' : undefined, formatted, review === Review.Reward ? claimPayout : redeem, review === Review.Reward ? undefined : param ?? [0]);
+  const tx = useMemo(() => {
+    if (redeem && param) {
+      return redeem(...param);
+    }
+
+    return undefined;
+  }, [redeem, param]);
+
+  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
-      content: review === Review.Reward ? myClaimable : redeemable,
+      content: redeemable,
       itemKey: 'amount',
       title: t('Amount'),
       withLogo: true
@@ -420,36 +424,65 @@ export const useWithdrawClaimPool = (
       itemKey: 'fee',
       title: t('Fee')
     },
-    (review === Review.Reward
-      ? {
-        content: myClaimable && transferable ? transferable.add(myClaimable) : undefined,
-        description: t('Available balance after claiming rewards'),
-        title: t('Available balance after'),
-        withLogo: true
-      }
-      : {
-        content: redeemable && transferable ? transferable.add(redeemable) : undefined,
-        description: t('Available balance after redeemable withdrawal'),
-        title: t('Available balance after'),
-        withLogo: true
-      })];
-  }, [transferable, estimatedFee, redeemable, review, myClaimable, t]);
+    {
+      content: redeemable && transferable ? transferable.add(redeemable) : undefined,
+      description: t('Available balance after redeemable withdrawal'),
+      title: t('Available balance after'),
+      withLogo: true
+    }];
+  }, [transferable, estimatedFee, redeemable, t]);
+
+  return {
+    redeemable,
+    transactionInformation,
+    tx
+  };
+};
+
+export const useClaimRewardPool = (
+  address: string | undefined,
+  genesisHash: string | undefined,
+  restake: boolean
+) => {
+  const { t } = useTranslation();
+
+  const formatted = useFormatted3(address, genesisHash);
+  const { api } = useChainInfo(genesisHash);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
+
+  const claimPayout = api?.tx['nominationPools']['claimPayout'];
+  const bondExtra = api?.tx['nominationPools']['bondExtra'];
+
+  const myClaimable = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'), [stakingInfo.pool]);
+
   const tx = useMemo(() => {
-    if (review === Review.Reward && claimPayout) {
+    if (!restake && claimPayout) {
       return claimPayout();
     }
 
-    if (review === Review.Withdraw && redeem && param) {
-      return redeem(...param);
+    if (restake && bondExtra && myClaimable) {
+      return bondExtra({ Rewards: myClaimable });
     }
 
     return undefined;
-  }, [review, claimPayout, redeem, param]);
+  }, [bondExtra, claimPayout, myClaimable, restake]);
+
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx);
+
+  const transactionInformation: Content[] = useMemo(() => {
+    return [{
+      content: address,
+      title: t('Account')
+    },
+    {
+      content: estimatedFee,
+      itemKey: 'fee',
+      title: t('Fee')
+    }];
+  }, [address, t, estimatedFee]);
 
   return {
-    claimPayout,
     myClaimable,
-    redeemable,
     transactionInformation,
     tx
   };

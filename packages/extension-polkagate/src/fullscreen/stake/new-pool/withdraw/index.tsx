@@ -3,8 +3,7 @@
 
 import React, { useState } from 'react';
 
-import { useTranslation, useWithdrawClaimPool } from '../../../../hooks';
-import { Review } from '../../../../popup/staking/pool-new';
+import { useTranslation, useWithdrawPool } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
@@ -18,7 +17,7 @@ interface Props {
 export default function Withdraw ({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const { transactionInformation, tx } = useWithdrawClaimPool(address, genesisHash, Review.Withdraw);
+  const { transactionInformation, tx } = useWithdrawPool(address, genesisHash);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.REVIEW);
 

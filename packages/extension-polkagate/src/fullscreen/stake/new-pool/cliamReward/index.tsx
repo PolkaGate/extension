@@ -3,11 +3,10 @@
 
 import React, { useState } from 'react';
 
-import { useTranslation, useWithdrawClaimPool } from '../../../../hooks';
-import { Review } from '../../../../popup/staking/pool-new';
+import { useClaimRewardPool, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
-import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
+import ClaimRewardsPopup from './partials/ClaimRewardsPopup';
 
 interface Props {
   address: string | undefined;
@@ -18,20 +17,25 @@ interface Props {
 export default function ClaimReward ({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
-  const { transactionInformation, tx } = useWithdrawClaimPool(address, genesisHash, Review.Reward);
+  const [restake, setRestake] = useState<boolean>(false);
+
+  const { myClaimable, transactionInformation, tx } = useClaimRewardPool(address, genesisHash, restake);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.REVIEW);
 
   return (
-    <StakingPopup
+    <ClaimRewardsPopup
       address={address}
+      amount={myClaimable?.toString()}
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onClose}
       proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
+      restake={restake}
       setFlowStep={setFlowStep}
+      setRestake={setRestake}
       showBack
-      title={t('Claim Reward')}
+      title={t('Review')}
       transaction={tx}
       transactionInformation={transactionInformation}
     />
