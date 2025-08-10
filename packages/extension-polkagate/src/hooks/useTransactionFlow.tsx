@@ -22,9 +22,13 @@ interface UseTransactionFlowProps {
   proxyTypeFilter?: ProxyTypes[] | undefined;
   address: string | undefined;
   pool?: PoolInfo | undefined;
+  restakeReward?: boolean;
+  amount?: string;
+  setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
+  showAccountBox?: boolean;
 }
 
-export default function useTransactionFlow ({ address, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, review, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow ({ address, amount, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, review, setRestakeReward, showAccountBox, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }
@@ -32,11 +36,15 @@ export default function useTransactionFlow ({ address, backPathTitle, closeRevie
   return (
     <TransactionFlow
       address={address}
+      amount={amount}
       backPathTitle={backPathTitle}
       closeReview={closeReview}
       genesisHash={genesisHash}
       pool={pool}
       proxyTypeFilter={proxyTypeFilter}
+      restakeReward={restakeReward}
+      setRestakeReward={setRestakeReward}
+      showAccountBox={showAccountBox}
       stepCounter={stepCounter}
       transaction={tx}
       transactionInformation={transactionInformation}

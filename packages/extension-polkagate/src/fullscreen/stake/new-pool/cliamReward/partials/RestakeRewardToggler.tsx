@@ -8,7 +8,7 @@ import React, { useCallback } from 'react';
 import { noop } from '@polkadot/util';
 
 import { GradientSwitch } from '../../../../../components';
-import { useTranslation } from '../../../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../../../hooks';
 
 export interface RestakeRewardTogglerProps {
   restake: boolean;
@@ -17,11 +17,12 @@ export interface RestakeRewardTogglerProps {
 
 export default function RestakeRewardToggler ({ restake, setRestake }: RestakeRewardTogglerProps) {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
 
   const toggler = useCallback(() => setRestake((isChecked) => !isChecked), [setRestake]);
 
   return (
-    <Container disableGutters onClick={toggler} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '12px', m: 0, p: '24px 18px' }}>
+    <Container disableGutters onClick={toggler} sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '12px', m: 0, mt: '8px', p: '24px 18px' }}>
       <MagicStar color={restake ? '#AA83DC' : '#674394'} size='24' variant='Bold' />
       <Stack direction='column' sx={{ alignItems: 'flex-start', ml: 0, mr: 'auto', width: 'fit-content' }}>
         <Typography color={restake ? 'text.primary' : '#AA83DC'} variant='B-3'>

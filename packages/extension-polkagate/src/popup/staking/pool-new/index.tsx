@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawClaimPool } from '../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import { PROXY_TYPE } from '../../../util/constants';
 import { isHexToBn } from '../../../util/utils';
@@ -53,12 +53,16 @@ export default function Pool (): React.ReactElement {
   const accountAssets = useAccountAssets(selectedAccount?.address);
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
+  const [restakeReward, setRestakeReward] = useState<boolean>(false);
   const [review, setReview] = useState<Review>(Review.None);
 
+  const { redeemable,
+    transactionInformation: withdrawTransactionInformation,
+    tx: withdrawTx } = useWithdrawPool(selectedAccount?.address, genesisHash);
+
   const { myClaimable,
-    redeemable,
-    transactionInformation,
-    tx } = useWithdrawClaimPool(selectedAccount?.address, genesisHash, review);
+    transactionInformation: rewardTransactionInformation,
+    tx: rewardTx } = useClaimRewardPool(selectedAccount?.address, genesisHash, restakeReward);
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
@@ -66,6 +70,27 @@ export default function Pool (): React.ReactElement {
   const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
+
+  const { transactionInformation, tx } = useMemo(() => {
+    if (review === Review.Withdraw) {
+      return {
+        transactionInformation: withdrawTransactionInformation,
+        tx: withdrawTx
+      };
+    }
+
+    if (review === Review.Reward) {
+      return {
+        transactionInformation: rewardTransactionInformation,
+        tx: rewardTx
+      };
+    }
+
+    return {
+      transactionInformation: [],
+      tx: undefined
+    };
+  }, [review, rewardTransactionInformation, rewardTx, withdrawTransactionInformation, withdrawTx]);
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
@@ -77,11 +102,15 @@ export default function Pool (): React.ReactElement {
 
   const transactionFlow = useTransactionFlow({
     address: selectedAccount?.address,
+    amount: myClaimable?.toString(),
     backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
     genesisHash: genesisHash ?? '',
     proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
+    restakeReward: review === Review.Reward ? restakeReward : undefined,
     review: review !== Review.None,
+    setRestakeReward: review === Review.Reward ? setRestakeReward : undefined,
+    showAccountBox: !(review === Review.Reward),
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
     tx

@@ -20,6 +20,7 @@ import { UserDashboardHeader, WaitScreen2 } from '.';
 export interface TransactionFlowProps {
   closeReview: () => void;
   genesisHash: string;
+  amount?: string;
   transactionInformation: Content[];
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   backPathTitle: string;
@@ -27,9 +28,12 @@ export interface TransactionFlowProps {
   proxyTypeFilter: ProxyTypes[] | undefined;
   address: string | undefined;
   pool: PoolInfo | undefined;
+  restakeReward?: boolean;
+  setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
+  showAccountBox?: boolean;
 }
 
-export default function TransactionFlow ({ address, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ address, amount, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -82,15 +86,19 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
+            amount={amount}
             closeReview={closeReview}
             genesisHash={genesisHash}
             pool={pool}
             proxyTypeFilter={proxyTypeFilter}
+            restakeReward={restakeReward}
             selectedProxy={selectedProxy}
             setFlowStep={setFlowStep}
+            setRestakeReward={setRestakeReward}
             setSelectedProxy={setSelectedProxy}
             setShowProxySelection={setShowProxySelection}
             setTxInfo={setTxInfo}
+            showAccountBox={showAccountBox}
             showProxySelection={showProxySelection}
             transaction={transaction}
             transactionInformation={transactionInformation}

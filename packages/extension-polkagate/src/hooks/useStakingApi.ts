@@ -479,7 +479,7 @@ export const useClaimRewardPool = (
       itemKey: 'fee',
       title: t('Fee')
     }];
-  }, [address, t, estimatedFee]);
+  }, [t, address, estimatedFee]);
 
   return {
     myClaimable,

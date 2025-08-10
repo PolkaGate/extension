@@ -15,6 +15,8 @@ import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
 import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip, SignArea3 } from '../components';
+import RestakeRewardToggler from '../fullscreen/stake/new-pool/cliamReward/partials/RestakeRewardToggler';
+import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/cliamReward/partials/Review';
 import { useChainInfo, useFormatted3, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
@@ -175,6 +177,7 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
 export interface ReviewProps {
   closeReview: () => void;
   genesisHash: string;
+  amount?: string;
   proxyTypeFilter: ProxyTypes[] | undefined;
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
@@ -186,9 +189,11 @@ export interface ReviewProps {
   transactionInformation: Content[];
   pool?: PoolInfo | undefined;
   showAccountBox?: boolean;
+  restakeReward?: boolean;
+  setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
@@ -199,6 +204,14 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1 }}>
+      {!showAccountBox && setRestakeReward && restakeReward !== undefined &&
+        <RewardHeaderAmount
+          amount={amount}
+          genesisHash={genesisHash}
+          style={{ bgcolor: '#110F2A', borderRadius: '14px', p: '24px' }}
+          token={token}
+        />
+      }
       {showAccountBox && (isRow
         ? (
           <RowAccountBox
@@ -234,6 +247,12 @@ export default function Review ({ closeReview, genesisHash, pool, proxyTypeFilte
           />
         ))}
       </Grid>
+      {setRestakeReward && restakeReward !== undefined &&
+        <RestakeRewardToggler
+          restake={restakeReward}
+          setRestake={setRestakeReward}
+        />
+      }
       {pool && !isRow &&
         <PoolItem
           genesisHash={genesisHash}
