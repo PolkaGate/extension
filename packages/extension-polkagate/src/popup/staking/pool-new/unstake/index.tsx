@@ -85,6 +85,7 @@ export default function Unstake (): React.ReactElement {
               }]}
               decimal={decimal}
               errorMessage={errorMessage}
+              focused
               onInputChange={onInputChange}
               style={{ mb: '18px', mt: '8px' }}
               title={t('Amount')}
