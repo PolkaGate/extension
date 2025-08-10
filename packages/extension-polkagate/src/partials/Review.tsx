@@ -15,8 +15,8 @@ import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
 import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MyTooltip, SignArea3 } from '../components';
-import RestakeRewardToggler from '../fullscreen/stake/new-pool/cliamReward/partials/RestakeRewardToggler';
-import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/cliamReward/partials/Review';
+import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
+import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted3, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
@@ -40,7 +40,7 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
       <Typography color={color} sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
         {t('Account')}
       </Typography>
-      { isExtension && <GradientDivider />}
+      {isExtension && <GradientDivider />}
       <PolkaGateIdenticon address={selectedAccount?.address ?? ''} size={48} style={{ margin: 'auto' }} />
       <Typography color='text.primary' sx={{ maxWidth: '220px', overflow: 'hidden', textAlign: 'center', textOverflow: 'ellipsis', width: '100%' }} variant='B-3'>
         {selectedAccount?.name}
@@ -61,7 +61,7 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
         address={selectedAccount?.address}
         addressStyle={{ color: isExtension ? 'text.highlight' : '#AA83DC' }}
         charsCount={12}
-        columnGap= '5px'
+        columnGap='5px'
         genesisHash={genesisHash ?? ''}
         identiconSize={36}
         showShortAddress
@@ -106,7 +106,7 @@ interface ContentItemProps extends Content {
   noDivider?: boolean;
 }
 
-export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) {
+export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
@@ -123,10 +123,10 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
         </Stack>
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
           {Icon &&
-          <Icon color='#AA83DC' size={18} variant='Bulk' />
+            <Icon color='#AA83DC' size={18} variant='Bulk' />
           }
           {withLogo &&
-          <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+            <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
           }
           {content
             ? isBn(content)
@@ -168,7 +168,7 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
         </Stack>
       </Stack>
       {!noDivider &&
-      <GradientDivider />
+        <GradientDivider />
       }
     </>
   );
@@ -193,7 +193,7 @@ export interface ReviewProps {
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();

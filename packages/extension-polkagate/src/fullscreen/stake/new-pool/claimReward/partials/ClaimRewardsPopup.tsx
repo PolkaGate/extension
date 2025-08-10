@@ -11,7 +11,7 @@ import type { RestakeRewardTogglerProps } from './RestakeRewardToggler';
 import React, { useCallback, useState } from 'react';
 
 import { Progress, SelectedProxy } from '../../../../../components';
-import { DraggableModal, type DraggableModalProps } from '../../../../../fullscreen/components/DraggableModal';
+import { DraggableModal, type DraggableModalProps } from '../../../../components/DraggableModal';
 import { useRouteRefresh, useTranslation } from '../../../../../hooks';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../../../util/utils';
 import ClaimRewardsTransactionFlow from './ClaimRewardsTransactionFlow';
@@ -34,7 +34,7 @@ interface Props extends Partial<DraggableModalProps>, RestakeRewardTogglerProps 
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function ClaimRewardsPopup ({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, restake, setFlowStep, setRestake, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function ClaimRewardsPopup({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, restake, setFlowStep, setRestake, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 
@@ -59,13 +59,13 @@ export default function ClaimRewardsPopup ({ _onClose, address, amount, children
     <DraggableModal
       RightItem={
         selectedProxy && genesisHash &&
-          <SelectedProxy
-            genesisHash={genesisHash}
-            signerInformation={{
-              onClick: () => setShowProxySelection(true),
-              selectedProxyAddress
-            }}
-          />
+        <SelectedProxy
+          genesisHash={genesisHash}
+          signerInformation={{
+            onClick: () => setShowProxySelection(true),
+            selectedProxyAddress
+          }}
+        />
       }
       maxHeight={700}
       minHeight={270}
@@ -102,7 +102,7 @@ export default function ClaimRewardsPopup ({ _onClose, address, amount, children
           : (
             <Progress
               style={{ paddingTop: '50px' }}
-              title = {t('Loading, please wait')}
+              title={t('Loading, please wait')}
               withEllipsis
             />)
       }

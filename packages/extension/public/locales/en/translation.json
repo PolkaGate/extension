@@ -1779,5 +1779,7 @@
   "Elected": "",
   "Not Elected": "",
   "Staking type": "",
-  "{{count}} validator{{plural}} selected": ""
+  "{{count}} validator{{plural}} selected": "",
+  "Restake rewards": "",
+  "Your tokens will return to stake": ""
 }

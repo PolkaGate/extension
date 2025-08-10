@@ -3,7 +3,7 @@
 
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { FullScreenTransactionFlow } from '../../../../../fullscreen/stake/util/utils';
+import type { FullScreenTransactionFlow } from '../../../util/utils';
 import type { Content } from '../../../../../partials/Review';
 import type { Proxy, ProxyTypes, TxInfo } from '../../../../../util/types';
 import type { RestakeRewardTogglerProps } from './RestakeRewardToggler';
@@ -34,7 +34,7 @@ interface Props extends RestakeRewardTogglerProps {
   transactionInformation: Content[];
 }
 
-function ClaimRewardsTransactionFlow ({ address, amount, closeReview, flowStep, genesisHash, onClose, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function ClaimRewardsTransactionFlow({ address, amount, closeReview, flowStep, genesisHash, onClose, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 

@@ -13,7 +13,7 @@ import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import PoolDetail from './joinPool/PoolDetail';
 import BondExtra from './bondExtra';
-import ClaimReward from './cliamReward';
+import ClaimReward from './claimReward';
 import CreatePool from './createPool';
 import Info from './Info';
 import JoinCreatePool from './JoinCreatePool';
@@ -33,7 +33,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandler({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   const handleClose = useCallback(() => {
     popupCloser();
     setSelectedPosition(undefined);
