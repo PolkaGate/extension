@@ -175,7 +175,8 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
   const disabledColor = isFullScreen ? '#674394' : '#809acb8c';
-  const adjustedColor = isDisabled ? disabledColor : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
+  const adjustedIconColor = isDisabled ? disabledColor : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
+  const adjustedTextColor = isDisabled ? disabledColor : isFullScreen ? '#BEAAD8' : theme.palette.text.highlight;
 
   return (
     <Grid alignItems={isRow ? 'flex-start' : 'center'} container item
@@ -204,27 +205,27 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: isRow ? '100%' : 'fit-content' }}>
           {
             icon &&
-            <Box color={adjustedColor} style={isFullScreen ? { alignItems: 'center', backgroundColor: '#2D1E4A', borderRadius: '999px', display: 'flex', height: '36px', justifyContent: 'center', padding: '8px', width: '36px' } : {}}>
+            <Box color={adjustedIconColor} style={isFullScreen ? { alignItems: 'center', backgroundColor: '#2D1E4A', borderRadius: '999px', display: 'flex', height: '36px', justifyContent: 'center', padding: '8px', width: '36px' } : {}}>
               {icon}
             </Box>
           }
           {
             Icon &&
-            <Icon color={adjustedColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
+            <Icon color={adjustedIconColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
           }
           {
             isRow && onExpand &&
             <Box onClick={onExpand} sx={{ alignItems: 'center', bgcolor: isFullScreen ? '#2D1E4A' : '#272A4A', borderRadius: '999px', cursor: 'pointer', display: 'flex', height: '20px', justifyContent: 'center', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px', width: '20px' }}>
-              <ExpandMoreRounded style={{ color: adjustedColor, fontSize: 18 }} />
+              <ExpandMoreRounded style={{ color: adjustedIconColor, fontSize: 18 }} />
             </Box>
           }
         </Grid>
         <Grid alignItems='center' container item sx={{ flexWrap: 'nowrap' }} xs>
-          <Typography color={adjustedColor} sx={{ mt: '4px', textWrap: 'nowrap' }} variant={isFullScreen ? 'B-2' : 'B-1'}>
+          <Typography color={adjustedTextColor} sx={{ mt: '4px', textWrap: 'nowrap' }} variant={isFullScreen ? 'B-2' : 'B-1'}>
             {title}
           </Typography>
           {layoutDirection === 'column' && onExpand &&
-            <ArrowCircleDown color={adjustedColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />
+            <ArrowCircleDown color={adjustedIconColor} onClick={onExpand} size='20' style={{ cursor: 'pointer', marginLeft: '4px' }} variant='Bulk' />
           }
         </Grid>
         {isFullScreen
@@ -238,10 +239,10 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
           : (
             <CryptoFiatBalance
               cryptoBalance={cryptoAmount}
-              cryptoProps={{ style: { color: adjustedColor } }}
+              cryptoProps={{ style: { color: adjustedIconColor } }}
               decimal={decimal}
               fiatBalance={fiatAmount}
-              fiatProps={{ decimalColor: adjustedColor, textColor: isDisabled ? '#809acb8c' : theme.palette.text.primary }}
+              fiatProps={{ decimalColor: adjustedIconColor, textColor: isDisabled ? '#809acb8c' : theme.palette.text.primary }}
               skeletonAlignment='flex-start'
               skeletonColor='none'
               style={{
