@@ -4,7 +4,7 @@
 import type { Icon } from 'iconsax-react';
 import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-//@ts-ignore
+// @ts-ignore
 import type { SpStakingExposurePage, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 
 import { alpha, Box, Grid, IconButton, Stack, Typography } from '@mui/material';
@@ -28,7 +28,7 @@ export function LabelBar ({ Icon, color, count, isCollapsed, label, setCollapse 
   }, [setCollapse]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', lineHeight: '45px', m: '10px 0 2px', p: '0  6px 0 13px', width: '99%' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={onClick} sx={{ bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', lineHeight: '45px', m: '10px 0 2px', p: '0  6px 0 13px', width: '99%' }}>
       <Stack alignItems='center' columnGap='4px' direction='row'>
         <Icon color={color} size='18' variant='Bulk' />
         <Typography sx={{ color: 'text.primary' }} variant='B-2'>
@@ -38,7 +38,7 @@ export function LabelBar ({ Icon, color, count, isCollapsed, label, setCollapse 
           {count || 0}
         </Typography>
       </Stack>
-      <IconButton onClick={onClick} sx={{ '&:hover': { bgcolor: '#8E6ACF' }, bgcolor: '#AA83DC', borderRadius: '8px', height: '36px', width: '34px' }}>
+      <IconButton sx={{ '&:hover': { bgcolor: '#8E6ACF' }, bgcolor: '#AA83DC', borderRadius: '8px', height: '36px', width: '34px' }}>
         <ArrowDown2
           color='#05091C'
           size='14' style={{
