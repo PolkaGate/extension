@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-ignore
-import type { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
+// @ts-ignore
+import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
 import { Container, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -71,7 +71,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
-  const totalStaked = toBN((validatorInfo?.exposureMeta as unknown as SpStakingPagedExposureMetadata)?.total ?? 0);
+  const totalStaked = toBN((validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal ?? 0);
   const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!totalStaked?.gtn(0));
 
   const [open, setOpen] = React.useState<boolean>(false);
@@ -83,7 +83,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
   const closeDetail = useCallback(() => setOpen(false), []);
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
-const isNotElected = isActive === undefined && !onSelect ;
+  const isNotElected = isActive === undefined && !onSelect;
 
   return (
     <>
