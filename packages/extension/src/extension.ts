@@ -37,7 +37,7 @@ import { createView, Popup } from '@polkadot/extension-ui';
   } catch (e) {
     console.error('Failed to initialize Sentry:', e);
   }
-
-  // Start the extension UI
-  createView(Popup);
 })().catch(console.error);
+
+// Start the extension UI
+createView(Popup);
