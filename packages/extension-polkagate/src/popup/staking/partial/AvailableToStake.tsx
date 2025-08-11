@@ -61,7 +61,7 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
               />)
             : (
               <MySkeleton
-                style={{ margin: '4px 0', width: '125px' }}
+                style={{ margin: '4px 0', width: '100px' }}
               />
             )
           }
