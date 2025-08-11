@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { SignArea3 } from '../../../../../components';
-import { useChainInfo, useSelectedAccount, useTranslation } from '../../../../../hooks';
+import { useChainInfo, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../../../hooks';
 import { ContentItem, type ReviewProps } from '../../../../../partials/Review';
 import { Amount } from '../../../partials/StakingConfirmation';
 import RestakeRewardToggler, { type RestakeRewardTogglerProps } from './RestakeRewardToggler';
@@ -19,15 +19,17 @@ interface RewardHeaderAmountProps {
 
 export const RewardHeaderAmount = ({ amount, genesisHash, style, token }: RewardHeaderAmountProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
 
   return (
     <Stack sx={{ alignItems: 'center', ...style }}>
-      <Typography color='#AA83DC' variant='B-2'>
+      <Typography color={isExtension ? theme.palette.text.highlight : '#AA83DC'} variant='B-2'>
         {t('Claim Rewards')}
       </Typography>
       <Amount
         amount={amount}
-        differentValueColor='#AA83DC'
+        differentValueColor={isExtension ? theme.palette.text.highlight : '#AA83DC'}
         genesisHash={genesisHash}
         token={token}
       />
