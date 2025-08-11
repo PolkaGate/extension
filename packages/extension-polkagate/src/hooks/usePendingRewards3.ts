@@ -230,7 +230,7 @@ export default function usePendingRewards3 (address: string | undefined, genesis
     for (let i = 0; i < claimedRewards.length; i++) {
       const claimed = claimedRewards[i].isEmpty
         ? null
-        : claimedRewards[i].toPrimitive() as unknown as string[];
+        : claimedRewards[i].toPrimitive() as unknown as number[];
 
       const pages = (claimed || []);
 
@@ -238,7 +238,7 @@ export default function usePendingRewards3 (address: string | undefined, genesis
       const exposedPage = getExposedPage(eraIndex, validatorAddress, allExposures);
 
       // if payout page has not yet been claimed
-      if (!pages.includes(String(exposedPage))) {
+      if (exposedPage !== undefined && !pages.includes(exposedPage)) {
         if (unclaimedRewards?.[eraIndex]) {
           unclaimedRewards[eraIndex].push(validatorAddress);
         } else {
