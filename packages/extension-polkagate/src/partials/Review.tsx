@@ -7,7 +7,7 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
-import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { type Icon as IconType, InfoCircle } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
@@ -106,7 +106,7 @@ interface ContentItemProps extends Content {
   noDivider?: boolean;
 }
 
-export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) {
+export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
@@ -191,7 +191,7 @@ export interface ReviewProps {
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Review({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
