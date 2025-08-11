@@ -130,7 +130,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
               const noDivider = accountsToShow.length === index + 1;
 
               return (
-                <>
+                <React.Fragment key={index}>
                   <Grid alignItems='center' container item justifyContent='space-between' key={index} py='8px'>
                     <Grid alignItems='center' container item sx={{ columnGap: '8px', width: 'fit-content' }}>
                       <PolkaGateIdenticon
@@ -147,7 +147,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
                     />
                   </Grid>
                   {!noDivider && <GradientDivider />}
-                </>
+                </React.Fragment>
               );
             })}
           </Container>
