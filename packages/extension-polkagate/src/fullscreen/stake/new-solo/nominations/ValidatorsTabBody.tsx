@@ -93,7 +93,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
                 Icon={Star1}
                 color='#AA83DC'
                 count={elected.length + active.length}
-                isCollapsed
+                isCollapsed={electedCollapse}
                 label={t('Elected')}
                 setCollapse={setElectedCollapse}
               />
