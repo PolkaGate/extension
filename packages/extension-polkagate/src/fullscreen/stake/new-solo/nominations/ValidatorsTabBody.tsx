@@ -34,6 +34,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
   const [notElectedCollapse, setNotElectedCollapse] = React.useState<boolean>(false);
+  const [electedCollapse, setElectedCollapse] = React.useState<boolean>(true);
 
   const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
 
@@ -85,49 +86,55 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
             text={t('Manage Validators')}
           />
         </TableToolbar>
-        <Stack direction='column' ref={refContainer} sx={{ gap: '2px', maxHeight: 'calc(100vh - 531px)', mixHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative', width: '100%' }}>
-          {isNominated && isLoaded && <>
-            <LabelBar
-              Icon={Star1}
-              color='#AA83DC'
-              count={elected.length + active.length}
-              isCollapsed
-              label={t('Elected')}
-            />
-            <Line
-              height={47 * (elected.length + active.length)}
-            />
-            <Validators
-              address={stakingInfo?.stakingAccount?.accountId?.toString()}
-              bgcolor='#2D1E4A'
-              genesisHash={genesisHash}
-              isActive={true}
-              validators={active}
-              withCurve
-            />
-            <Validators
-              bgcolor='#2D1E4A66'
-              genesisHash={genesisHash}
-              isActive={false}
-              validators={elected}
-              withCurve
-            />
-            <LabelBar
-              Icon={Timer}
-              color='#8E8E8E'
-              count={nonElected?.length}
-              isCollapsed= {notElectedCollapse}
-              label={t('Not Elected')}
-              setCollapse={setNotElectedCollapse}
-            />
-            <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ width: 'fit-content' }}>
-              <Validators
-                bgcolor='transparent'
-                genesisHash={genesisHash}
-                validators={nonElected}
+        <Stack direction='column' ref={refContainer} sx={{ maxHeight: 'calc(100vh - 531px)', minHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative', width: '100%' }}>
+          {isNominated && isLoaded &&
+            <>
+              <LabelBar
+                Icon={Star1}
+                color='#AA83DC'
+                count={elected.length + active.length}
+                isCollapsed
+                label={t('Elected')}
+                setCollapse={setElectedCollapse}
               />
-            </Collapse>
-          </>
+              <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={electedCollapse} style={{ minHeight: 'auto' }} sx={{ width: 'fit-content' }}>
+                <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', width: '100%' }}>
+                  <Line
+                    height={47 * (elected.length + active.length)}
+                  />
+                  <Validators
+                    address={stakingInfo?.stakingAccount?.accountId?.toString()}
+                    bgcolor='#2D1E4A'
+                    genesisHash={genesisHash}
+                    isActive={true}
+                    validators={active}
+                    withCurve
+                  />
+                  <Validators
+                    bgcolor='#2D1E4A66'
+                    genesisHash={genesisHash}
+                    isActive={false}
+                    validators={elected}
+                    withCurve
+                  />
+                </Stack>
+              </Collapse>
+              <LabelBar
+                Icon={Timer}
+                color='#8E8E8E'
+                count={nonElected?.length}
+                isCollapsed={notElectedCollapse}
+                label={t('Not Elected')}
+                setCollapse={setNotElectedCollapse}
+              />
+              <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto', width: 'fit-content' }}>
+                <Validators
+                  bgcolor='transparent'
+                  genesisHash={genesisHash}
+                  validators={nonElected}
+                />
+              </Collapse>
+            </>
           }
           {isNominated !== false && isLoading &&
             Array.from({ length: 10 }).map((_, index) => (
