@@ -123,13 +123,13 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           decimal={decimal}
           title={t('Staked')}
           token={token}
-          width='150px'
+          width='160px'
         />
         <InfoWithIcons
           StartIcon={PercentageSquare}
           text={isNaN(commission) ? '---' : String(commission) + '%'}
-          title={t('Commission')}
-          width='140px'
+          title={t('Comm.')}
+          width='130px'
         />
         <InfoWithIcons
           StartIcon={Profile2User}
