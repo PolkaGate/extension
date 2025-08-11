@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, BuyCrypto, Clock, Data, Home, Triangle } from 'iconsax-react';
+import { ArrowCircleRight2, Home, Money3 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { noop } from '@polkadot/util';
 
-import { useTranslation } from '../../../hooks';
+import { useAccountSelectedChain, useSelectedAccount, useTranslation } from '../../../hooks';
 
 function BreadcrumbItem ({ icon: Icon, label, onClick = noop }: { icon: React.ElementType; label: string; onClick?: () => void }): React.ReactElement {
   return (
@@ -29,6 +29,9 @@ function BreadcrumbItem ({ icon: Icon, label, onClick = noop }: { icon: React.El
 function Breadcrumbs (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const selectedAccount = useSelectedAccount();
+  const genesisHash = useAccountSelectedChain(selectedAccount?.address);
+
   const navigate = useNavigate();
 
   const isImport = useMemo(() => ['restore', 'attach', 'import'].some((keyword) => pathname.includes(keyword)), [pathname]);
@@ -42,14 +45,19 @@ function Breadcrumbs (): React.ReactElement {
   }, [pathname]);
 
   const breadcrumbMap = useMemo(() => [
-    { check: (path: string) => path.includes('/historyfs'), icon: Clock, label: t('History') },
-    { check: (path: string) => path.includes('/proxyManagement'), icon: Data, label: t('Proxy Management') },
+    { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
+    { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
     { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
-    { check: (path: string) => path.includes('/nft'), icon: Triangle, label: t('NFT') },
-    { check: (path: string) => path.includes('/solo'), icon: BuyCrypto, label: t('Solo Staking') }
-  ], [t]);
+    { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
+    { check: (path: string) => path.includes('/solo'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
+    { check: (path: string) => path.includes('/pool'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` }
+  ], [genesisHash, selectedAccount?.address, t]);
 
   const matchedBreadcrumb = useMemo(() => breadcrumbMap.find(({ check }) => check(pathname)), [breadcrumbMap, pathname]);
+
+  const onClick = useCallback(() => {
+    matchedBreadcrumb?.redirect && navigate(matchedBreadcrumb?.redirect || '/') as void;
+  }, [matchedBreadcrumb, navigate]);
 
   return (
     <Stack columnGap='20px' direction='row' sx={{ height: '24px', m: '20px' }}>
@@ -62,7 +70,7 @@ function Breadcrumbs (): React.ReactElement {
         </Typography>
       }
       {matchedBreadcrumb &&
-        <BreadcrumbItem icon={matchedBreadcrumb.icon} label={matchedBreadcrumb.label} onClick={noop} />
+        <BreadcrumbItem icon={matchedBreadcrumb.icon} label={matchedBreadcrumb.label} onClick={onClick} />
       }
     </Stack>
   );
