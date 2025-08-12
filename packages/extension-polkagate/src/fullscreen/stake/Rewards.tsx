@@ -203,6 +203,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
         </Typography>
         <Identity2
           address={reward.address}
+          charsCount={10}
           genesisHash={genesisHash ?? ''}
           identiconSize={24}
           style={{
