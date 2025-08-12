@@ -175,7 +175,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
     <Collapse collapsedSize='48px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block' }}>
       <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '6px', pl: '18px', transition: 'all 150ms ease-out', width: '100%' }}>
         <Typography color='text.primary' textAlign='left' variant='B-2' width='40%'>
-          {new Date(reward.timeStamp * 1000).toDateString()}
+          {new Date(reward.timeStamp * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-2' width='15%'>
           {reward.era}
