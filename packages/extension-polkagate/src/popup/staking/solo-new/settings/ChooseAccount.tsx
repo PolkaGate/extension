@@ -3,7 +3,7 @@
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, UserOctagon } from 'iconsax-react';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { Fragment, useCallback, useContext, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -51,12 +51,12 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
           {t('My Accounts')}
         </Typography>
         <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflowY: 'auto', rowGap: '12px' }}>
-          {accounts.map(({ address }) => {
+          {accounts.map(({ address }, index) => {
             const formatted = getFormattedAddress(address, chain, chain?.ss58Format ?? 0);
             const checked = formatted === specificAccount;
 
             return (
-              <>
+              <Fragment key={index}>
                 <Container disableGutters key={address} onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
@@ -81,7 +81,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
                   />
                 </Container>
                 <GradientDivider />
-              </>
+              </Fragment>
             );
           })}
         </Stack>
