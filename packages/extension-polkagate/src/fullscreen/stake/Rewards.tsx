@@ -194,11 +194,11 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           value={reward.amount}
         />
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '36px', width: '36px' }}>
-          <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
+          <ArrowDown2 color='#AA83DC' size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
         </Grid>
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', m: '6px', p: '8px 12px', position: 'relative', width: 'calc(100% - 12px)' }}>
-        <Typography color='text.highlight' variant='B-1' width='fit-content'>
+        <Typography color='#AA83DC' variant='B-1' width='fit-content'>
           {t('Received from')}:
         </Typography>
         <Identity2
