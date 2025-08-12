@@ -41,6 +41,7 @@ export default function Settings ({ address, genesisHash, onClose }: Props) {
       onClose={onClose}
       proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
+      showBack
       title={t('Settings')}
       transaction={tx}
       transactionInformation={transactionInformation}

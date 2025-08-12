@@ -7,12 +7,11 @@ import React, { Fragment, useCallback, useContext, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { AccountContext, GradientDivider, Identity2 } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { AccountContext, GradientDivider, Identity2, VariantButton } from '../../../../components';
+import { useChainInfo, useIsBlueish, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
 import { getFormattedAddress } from '../../../../util/utils';
 import PRadio from '../../components/Radio';
-import StakingActionButton from '../../partial/StakingActionButton';
 
 interface ChooseAccountMenuProps {
   openMenu: boolean;
@@ -25,6 +24,7 @@ interface ChooseAccountMenuProps {
 const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAccount, specificAccount }: ChooseAccountMenuProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isBlueish = useIsBlueish();
   const { accounts } = useContext(AccountContext);
   const { chain } = useChainInfo(genesisHash, true);
 
@@ -85,16 +85,10 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
             );
           })}
         </Stack>
-        <StakingActionButton
+        <VariantButton
+          isBlueish={isBlueish}
           onClick={handleClose}
-          style={{
-            bottom: '10px',
-            height: '44px',
-            left: '0',
-            position: 'absolute',
-            right: '0',
-            width: '100%'
-          }}
+          style={{ bottom: '10px', height: '44px', left: '0', position: 'absolute', right: '0', width: '100%' }}
           text={t('Close')}
         />
       </Stack>
@@ -103,12 +97,13 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
 };
 
 interface Props {
+  isBlueish: boolean| undefined;
   genesisHash: string | undefined;
   setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
   specificAccount: string | undefined;
 }
 
-export default function ChooseAccount ({ genesisHash, setSpecificAccount, specificAccount }: Props): React.ReactElement {
+export default function ChooseAccount ({ genesisHash, isBlueish, setSpecificAccount, specificAccount }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
@@ -120,13 +115,13 @@ export default function ChooseAccount ({ genesisHash, setSpecificAccount, specif
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
         <Identity2
           address={specificAccount}
-          addressStyle={{ color: '#809ACB', fontSize: '12px', fontWeight: 500 }}
+          addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main', fontSize: '12px', fontWeight: 500 }}
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
           style={{ addressVariant: 'B-4', 'div div#socials': { mt: 0 }, variant: 'B-2' }}
           withShortAddress
         />
-        <ArrowCircleDown color={theme.palette.text.highlight} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
+        <ArrowCircleDown color={ isBlueish ? theme.palette.text.highlight : theme.palette.primary.main } onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
       </Container>
       <ChooseAccountMenu
         genesisHash={genesisHash}

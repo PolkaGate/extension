@@ -1781,5 +1781,7 @@
   "Staking type": "",
   "{{count}} validator{{plural}} selected": "",
   "Restake rewards": "",
-  "Your tokens will return to stake": ""
+  "Your tokens will return to stake": "",
+  "Comm.": "",
+  "nominated": ""
 }

@@ -140,6 +140,7 @@ export { default as TwoButtons } from './TwoButtons';
 export { default as TwoToneText } from './TwoToneText';
 export { default as VaadinIcon } from './VaadinIcon';
 export { default as ValidatedInput } from './ValidatedInput';
+export { default as VariantButton } from './VariantButton';
 export { default as Waiting } from './Waiting';
 export { default as Warning } from './Warning';
 export { default as WrongPasswordAlert } from './WrongPasswordAlert';

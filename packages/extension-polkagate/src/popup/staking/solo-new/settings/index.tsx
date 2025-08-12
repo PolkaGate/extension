@@ -12,13 +12,12 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { BeatLoader } from 'react-spinners';
 
-import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useSelectedAccount, useSoloSettings, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { BackWithLabel, Motion, VariantButton } from '../../../../components';
+import { useBackground, useChainInfo, useIsBlueish, useSelectedAccount, useSoloSettings, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
 import { PROXY_TYPE } from '../../../../util/constants';
 import { amountToHuman } from '../../../../util/utils';
 import PRadio from '../../components/Radio';
-import StakingActionButton from '../../partial/StakingActionButton';
 import StakingMenu from '../../partial/StakingMenu';
 import ChooseAccount from './ChooseAccount';
 
@@ -63,39 +62,42 @@ const OptionBox = ({ disabled, rewardDestinationType, setRewardDestinationType }
 };
 
 interface SpecificAccountOptionProps {
+  ED: BN | undefined;
+  disabled: boolean;
   genesisHash: string | undefined;
+  isBlueish: boolean | undefined;
+  onNext: () => void;
   setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
   specificAccount: string | undefined;
   showOption: boolean;
-  onNext: () => void;
-  ED: BN | undefined;
-  disabled: boolean;
 }
 
-const SpecificAccountOption = ({ ED, disabled, genesisHash, onNext, setSpecificAccount, showOption, specificAccount }: SpecificAccountOptionProps) => {
+const SpecificAccountOption = ({ ED, disabled, genesisHash, isBlueish, onNext, setSpecificAccount, showOption, specificAccount }: SpecificAccountOptionProps) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   return (
     <Stack direction='column' sx={{ height: showOption ? 'auto' : 0, opacity: showOption ? 1 : 0, rowGap: '10px', transition: showOption ? 'all 150ms ease-out' : 'unset' }}>
-      <Typography color='text.highlight' variant='B-2' width='fit-content'>
+      <Typography color={isBlueish ? 'text.highlight' : '#674394'} variant='B-2' width='fit-content'>
         {t('Specific account')}
       </Typography>
       <ChooseAccount
         genesisHash={genesisHash}
+        isBlueish={isBlueish}
         setSpecificAccount={setSpecificAccount}
         specificAccount={specificAccount}
       />
       <Container disableGutters sx={{ columnGap: '8px', display: 'flex' }}>
-        <Warning2 color='#596AFF' size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
-        <Typography color='text.highlight' textAlign='left' variant='B-4'>
+        <Warning2 color={isBlueish ? '#596AFF' : '#FF4FB9' } size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {t('The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount', { replace: { ED: ED ? amountToHuman(ED, decimal) : '--', token } })}
         </Typography>
       </Container>
-      <StakingActionButton
+      <VariantButton
         disabled={disabled}
+        isBlueish={isBlueish}
         onClick={onNext}
-        style={{ marginTop: '10px' }}
+        style={{ ...(isBlueish ? { marginTop: '10px' } : { bottom: '15px', position: 'absolute', width: '92%' }) }}
         text={t('Next')}
       />
     </Stack>
@@ -104,18 +106,20 @@ const SpecificAccountOption = ({ ED, disabled, genesisHash, onNext, setSpecificA
 
 const SetToStaked = ({ onNext, showOption }: { onNext: () => void; showOption: boolean; }) => {
   const { t } = useTranslation();
+  const isBlueish = useIsBlueish();
 
   return (
     <Stack direction='column' sx={{ height: showOption ? 'auto' : 0, opacity: showOption ? 1 : 0, transition: showOption ? 'all 150ms ease-out' : 'unset', width: '100%' }}>
       <Container disableGutters sx={{ columnGap: '8px', display: 'flex' }}>
-        <Warning2 color='#596AFF' size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
-        <Typography color='text.highlight' textAlign='left' variant='B-4'>
+        <Warning2 color={isBlueish ? '#596AFF' : '#FF4FB9' } size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {t('The reward amount will be automatically added to your staked amount.')}
         </Typography>
       </Container>
-      <StakingActionButton
+      <VariantButton
+        isBlueish={isBlueish}
         onClick={onNext}
-        style={{ marginTop: '10px' }}
+        style={{ ...(isBlueish ? { marginTop: '10px' } : { bottom: '15px', position: 'absolute', width: '92%' }) }}
         text={t('Next')}
       />
     </Stack>
@@ -125,6 +129,7 @@ const SetToStaked = ({ onNext, showOption }: { onNext: () => void; showOption: b
 interface ContentProps {
   ED: BN | undefined;
   changeToStake: boolean;
+  isBlueish?: boolean;
   nextDisabled: boolean;
   rewardDestinationAddress: string | undefined;
   rewardDestinationType: RewardDestinationType | undefined;
@@ -135,7 +140,7 @@ interface ContentProps {
   setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export const Content = ({ ED, changeToStake, genesisHash, nextDisabled, onNext, rewardDestinationAddress, rewardDestinationType, setRewardDestinationType, setSpecificAccount, specificAccount }: ContentProps) => {
+export const Content = ({ ED, changeToStake, genesisHash, isBlueish, nextDisabled, onNext, rewardDestinationAddress, rewardDestinationType, setRewardDestinationType, setSpecificAccount, specificAccount }: ContentProps) => {
   const theme = useTheme();
 
   return (
@@ -146,12 +151,13 @@ export const Content = ({ ED, changeToStake, genesisHash, nextDisabled, onNext, 
         setRewardDestinationType={setRewardDestinationType}
       />
       {rewardDestinationType === undefined
-        ? <BeatLoader color={theme.palette.text.highlight} cssOverride={{ alignSelf: 'center', marginTop: '20px' }} loading size={15} speedMultiplier={0.6} />
+        ? <BeatLoader color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} cssOverride={{ alignSelf: 'center', marginTop: '20px' }} loading size={15} speedMultiplier={0.6} />
         : <>
           <SpecificAccountOption
             ED={ED}
             disabled={nextDisabled}
             genesisHash={genesisHash}
+            isBlueish={isBlueish}
             onNext={onNext}
             setSpecificAccount={setSpecificAccount}
             showOption={rewardDestinationType === 'Others'}
@@ -174,6 +180,7 @@ export default function Settings (): React.ReactElement {
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
+  const isBlueish = useIsBlueish();
 
   const [review, setReview] = useState<boolean>(false);
 
@@ -206,7 +213,7 @@ export default function Settings (): React.ReactElement {
 
   return transactionFlow || (
     <>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ position: 'relative', zIndex: 1 }}>
         <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
@@ -219,6 +226,7 @@ export default function Settings (): React.ReactElement {
             ED={ED}
             changeToStake={changeToStake}
             genesisHash={genesisHash}
+            isBlueish={isBlueish}
             nextDisabled={nextDisabled}
             onNext={onNext}
             rewardDestinationAddress={rewardDestinationAddress}
