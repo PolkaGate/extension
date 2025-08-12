@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
 import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useStakingPositions, useTranslation } from '../../../hooks';
 import GovernanceModal from '../../components/GovernanceModal';
 import Receive from './Receive';
 
@@ -25,10 +25,10 @@ interface ActionBoxProps {
 function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
 
-  const _onClick = useCallback(async () => {
+  const _onClick = useCallback(() => {
     onClick
       ? onClick()
-      : path && await navigate(path);
+      : path && navigate(path) as void;
   }, [navigate, onClick, path]);
 
   return (
@@ -50,6 +50,7 @@ interface Props {
 function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash);
+  const { maxPosition, maxPositionType } = useStakingPositions(address, true);
 
   const [openModal, setOpen] = useState(ExtensionPopups.NONE);
 
@@ -80,11 +81,11 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
             <ActionBox
               Icon={BuyCrypto}
               label={t('Staking')}
-              path={`/stake/${address}`}
+              path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${maxPosition?.genesisHash ?? genesisHash}`}
             />}
           <ActionBox
             Icon={Triangle}
-            label={t('NFT album')}
+            label={t('NFT Album')}
             path={`/nft/${address}`}
           />
         </Stack>
