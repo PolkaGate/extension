@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ActiveElement, Chart, ChartData, ChartEvent, PluginChartOptions } from 'chart.js';
+import type { ActiveElement, BubbleDataPoint, Chart, ChartData, ChartEvent, ChartTypeRegistry, PluginChartOptions, Point } from 'chart.js';
 import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../util/types';
 
 import { useTheme } from '@mui/material';
@@ -27,6 +27,38 @@ ChartJS.register(
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 const DAYS_TO_SHOW = 10;
+
+interface GradientObject {
+  x: number;
+  width: number;
+}
+
+type ChartType = Chart<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown>;
+
+const createGradient = (ctx: CanvasRenderingContext2D, element: GradientObject, isHover: boolean) => {
+  // Check if element and required properties exist
+  if (!element || typeof element.x !== 'number' || typeof element.width !== 'number') {
+    return '#DC45A0'; // Fallback solid color
+  }
+
+  const { width, x } = element;
+
+  // Ensure values are finite numbers
+  if (!isFinite(x) || !isFinite(width) || width <= 0) {
+    return '#DC45A0'; // Fallback solid color
+  }
+
+  const gradient = ctx.createLinearGradient(x - width + 6, 1, x + width - 14, 0);
+
+  const blueColor = isHover ? '#8A1AC7' : '#6E00B1';
+  const redColor = isHover ? '#C849A8' : '#DC45A0';
+
+  gradient.addColorStop(0, blueColor); // Bright pink at left
+  gradient.addColorStop(0.5, redColor); // Mid pink-purple
+  gradient.addColorStop(1, blueColor); // Deep purple at right
+
+  return gradient;
+};
 
 export interface UseStakingRewards {
   chartData: ChartData<'bar', string[] | undefined, string>;
@@ -258,6 +290,9 @@ export default function useStakingRewards3 (address: string | undefined, genesis
   const chartOptions = {
     aspectRatio: 1.4,
     onHover: (_: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
+      const meta = chart.getDatasetMeta(0);
+      const ctx = chart.ctx;
+
       if (activeElements.length > 0) {
         // A bar is being hovered
         const hoveredIndex = activeElements[0].index;
@@ -279,15 +314,22 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         expand(matchingReward ? JSON.stringify(matchingReward) : undefined);
 
         // Set colors: hovered bar gets hover color, others get semi-transparent
-        dataset.backgroundColor = dataset.data.map((_, index: number) =>
-          index === hoveredIndex ? '#809ACB' : '#596AFF80'
-        );
+        dataset.backgroundColor = dataset.data.map((_, index: number) => {
+          const element = meta.data[index] as unknown as GradientObject;
+
+          return index === hoveredIndex ? createGradient(ctx, element, true) : createGradient(ctx, element, false);
+        });
       } else {
         // No bar is being hovered - reset all bars to normal color
         const dataset = chart.data.datasets[0];
 
         expand(undefined); // Reset detail when no bar is hovered
-        dataset.backgroundColor = '#596AFF'; // Normal color for all bars
+        // dataset.backgroundColor = '#596AFF'; // Normal color for all bars
+        dataset.backgroundColor = dataset.data.map((_, index: number) => {
+          const element = meta.data[index] as unknown as GradientObject;
+
+          return createGradient(ctx, element, false);
+        });
       }
 
       // Update the chart without animation for smooth effect
@@ -317,7 +359,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         labels: dataToShow?.[pageIndex][0] || [],
         position: 'top',
         ticks: {
-          color: theme.palette.text.highlight,
+          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
           font: { family: 'Inter', size: 12, weight: 'bold' }
         }
       },
@@ -329,7 +371,10 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         grid: {
           color: isFullScreen ? '#2D1E4A59' : 'transparent'
         },
-        ticks: { color: theme.palette.text.highlight, font: { family: 'Inter', size: 12, weight: 'bold' } }
+        ticks: {
+          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
+          font: { family: 'Inter', size: 12, weight: 'bold' }
+        }
       },
       y: {
         border: {
@@ -350,12 +395,34 @@ export default function useStakingRewards3 (address: string | undefined, genesis
   const chartData: ChartData<'bar', string[] | undefined, string> = {
     datasets: [
       {
-        backgroundColor: '#596AFF',
+        backgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
+          const chart = context.chart;
+          const { ctx } = chart;
+          const meta = chart.getDatasetMeta(0);
+          const element = meta.data[context.dataIndex] as unknown as GradientObject;
+
+          if (!element) {
+            return '#596AFF'; // Fallback color
+          }
+
+          return createGradient(ctx, element, false);
+        },
         barThickness: 28,
         borderRadius: 12,
         borderSkipped: false,
         data: dataToShow?.[pageIndex][0],
-        hoverBackgroundColor: '#809ACB',
+        hoverBackgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
+          const chart = context.chart;
+          const { ctx } = chart;
+          const meta = chart.getDatasetMeta(0);
+          const element = meta.data[context.dataIndex] as unknown as GradientObject;
+
+          if (!element) {
+            return '#809ACB'; // Fallback color
+          }
+
+          return createGradient(ctx, element, true);
+        },
         label: token
       }
     ],
