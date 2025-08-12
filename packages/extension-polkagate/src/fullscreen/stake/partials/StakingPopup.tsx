@@ -5,7 +5,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { Content } from '../../../partials/Review';
-import type { PoolInfo, Proxy, ProxyTypes } from '../../../util/types';
+import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes } from '../../../util/types';
 
 import React, { useCallback, useState } from 'react';
 
@@ -33,9 +33,10 @@ interface Props extends Partial<DraggableModalProps>{
   _onClose?: () => void;
   showBack?: boolean | undefined;
   proxyTypeFilter: ProxyTypes[] | undefined;
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function StakingPopup ({ _onClose, address, children, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function StakingPopup ({ _onClose, address, children, extraDetailConfirmationPage, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 
@@ -85,6 +86,7 @@ export default function StakingPopup ({ _onClose, address, children, flowStep, g
             <TransactionFlow
               address={address}
               closeReview={closeReview}
+              extraDetailConfirmationPage={extraDetailConfirmationPage}
               flowStep={flowStep}
               genesisHash={genesisHash}
               onClose={closeModal}

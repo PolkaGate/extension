@@ -219,6 +219,7 @@ function ManageValidators () {
           genesisHash={genesisHash}
           newSelectedValidators={newSelectedValidators}
           onClose={toggleReview}
+          stakingConsts={stakingInfo.stakingConsts}
         />
       }
     </>

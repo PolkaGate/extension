@@ -177,6 +177,8 @@ export interface TransactionDetail extends TxResult {
   extra?: Record<string, string>
 }
 
+export type ExtraDetailConfirmationPage = Partial<TransactionDetail>;
+
 export interface TxInfo extends TransactionDetail {
   api: ApiPromise;
   chain: Chain;

@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
-import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../../../util/types';
+import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes, TxInfo } from '../../../util/types';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -30,9 +30,10 @@ interface Props {
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transactionInformation: Content[];
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-function TransactionFlow ({ address, closeReview, flowStep, genesisHash, onClose, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
@@ -55,8 +56,8 @@ function TransactionFlow ({ address, closeReview, flowStep, genesisHash, onClose
       _txInfo.fee = txFee.content.toString();
     }
 
-    return _txInfo;
-  }, [transactionInformation, txInfo]);
+    return { ..._txInfo, ...extraDetailConfirmationPage };
+  }, [extraDetailConfirmationPage, transactionInformation, txInfo]);
 
   const goToHistory = useCallback(() => navigate('/historyfs') as void, [navigate]);
 

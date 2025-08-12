@@ -11,7 +11,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
-import { useChainInfo, useCurrency, useRouteRefresh, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
 import { amountToHuman, countDecimalPlaces, isValidAddress, toShortAddress } from '../../../util/utils';
@@ -65,6 +65,25 @@ export const Amount = memo(function MemoAmount ({ amount, differentValueColor, g
   );
 });
 
+const ValidatorsConfirm = ({ genesisHash, nominators }: { genesisHash: string | undefined; nominators: string[] }) => {
+  const { t } = useTranslation();
+  const stakingConst = useStakingConsts2(genesisHash);
+
+  return (
+    <Stack alignItems='flex-end' direction='row' pb='30px' pt='12px'>
+      <Typography color='text.primary' lineHeight='normal' variant='H-1'>
+        {nominators.length}
+      </Typography>
+      <Typography color='#AA83DC' variant='H-3'>
+        {`/ ${stakingConst?.maxNominations ?? 16}`}
+      </Typography>
+      <Typography color='text.secondary' pl='3px' variant='H-3'>
+        {t('nominated')}
+      </Typography>
+    </Stack>
+  );
+};
+
 interface HeaderProps {
   genesisHash: string | undefined;
   transactionDetail: TransactionDetail;
@@ -73,7 +92,7 @@ interface HeaderProps {
 const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
   const { t } = useTranslation();
 
-  const { amount, description, success, token } = transactionDetail;
+  const { amount, description, nominators, success, token } = transactionDetail;
 
   return (
     <GlowBox style={{ m: 0, width: '100%' }}>
@@ -91,11 +110,18 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
               : success ? t('Completed') : t('Failed')
           }
         </Typography>
-        <Amount
-          amount={amount}
-          genesisHash={genesisHash}
-          token={token}
-        />
+        {nominators &&
+          <ValidatorsConfirm
+            genesisHash={genesisHash}
+            nominators={nominators}
+          />
+        }
+        {amount &&
+          <Amount
+            amount={amount}
+            genesisHash={genesisHash}
+            token={token}
+          />}
       </Stack>
     </GlowBox>
   );

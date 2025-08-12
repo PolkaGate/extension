@@ -3,6 +3,7 @@
 
 import type { Content } from '@polkadot/extension-polkagate/partials/Review';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
+import type { StakingConsts } from '../../../../util/types';
 
 import React, { useMemo, useState } from 'react';
 
@@ -16,9 +17,10 @@ interface Props {
   genesisHash: string | undefined;
   onClose: () => void;
   newSelectedValidators: ValidatorInformation[];
+  stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function ReviewPopup ({ address, genesisHash, newSelectedValidators, onClose }: Props): React.ReactElement {
+export default function ReviewPopup ({ address, genesisHash, newSelectedValidators, onClose, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
@@ -31,7 +33,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
-      content: newSelectedValidators.length.toString(),
+      content: `${newSelectedValidators.length} / ${stakingConsts?.maxNominations ?? 16}`,
       title: t('Validators')
     },
     {
@@ -39,14 +41,20 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
       itemKey: 'fee',
       title: t('Fee')
     }];
-  }, [estimatedFee2, newSelectedValidators.length, t]);
+  }, [estimatedFee2, newSelectedValidators.length, stakingConsts?.maxNominations, t]);
   const tx = useMemo(() => nominate?.(params), [params, nominate]);
+  const extraDetailConfirmationPage = useMemo(() => {
+    const nominators = newSelectedValidators.map(({ accountId }) => accountId.toString());
+
+    return { nominators };
+  }, [newSelectedValidators]);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.REVIEW);
 
   return (
     <StakingPopup
       address={address}
+      extraDetailConfirmationPage={extraDetailConfirmationPage}
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={onClose}
