@@ -3,10 +3,10 @@
 
 import type { PoolInfo, PositionInfo } from '../../../../util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { useChainInfo, usePoolConst, useStakingConsts2, useTranslation } from '../../../../hooks';
+import { useChainInfo, useIsExtensionPopup, usePoolConst, useStakingConsts2, useTranslation } from '../../../../hooks';
 import { StakingInfoStack } from '../../../../popup/staking/partial/NominatorsTable';
 import { areArraysEqual } from '../../../../util/utils';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../../util/utils';
@@ -14,7 +14,7 @@ import { SelectedPoolInformation } from './SelectedPoolInformation';
 import { SelectedValidatorsInformation } from './SelectedValidatorsInformation';
 import { StakingTypeItem } from './StakingTypeItem';
 
-interface Props {
+export interface StakingTypeSelectionProps {
   setSelectedStakingType: React.Dispatch<React.SetStateAction<SelectedEasyStakingType | undefined>>;
   selectedStakingType: SelectedEasyStakingType | undefined;
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
@@ -22,11 +22,15 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-export default function StakingTypeSelection ({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: Props) {
+export default function StakingTypeSelection ({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: StakingTypeSelectionProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const poolStakingConsts = usePoolConst(selectedPosition?.genesisHash);
   const stakingConsts = useStakingConsts2(selectedPosition?.genesisHash);
   const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
+  const isExtension = useIsExtensionPopup();
+
+  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   const isRecommendedValidators = useMemo(() =>
     !selectedStakingType?.validators ||
@@ -72,8 +76,8 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
       >
         <Stack direction='column'>
           <Grid container item sx={{ alignItems: 'center', gap: '16px', pb: '24px', pl: '24px' }}>
-            <StakingInfoStack adjustedColorForTitle='#AA83DC' amount={poolStakingConsts?.minJoinBond} decimal={decimal} title={t('Minimum Stake')} token={token} />
-            <StakingInfoStack adjustedColorForTitle='#AA83DC' text={t('Claim manually')} title={t('Rewards')} />
+            <StakingInfoStack adjustedColorForTitle={textColor} amount={poolStakingConsts?.minJoinBond} decimal={decimal} title={t('Minimum Stake')} token={token} />
+            <StakingInfoStack adjustedColorForTitle={textColor} text={t('Claim manually')} title={t('Rewards')} />
           </Grid>
           <SelectedPoolInformation
             genesisHash={selectedPosition?.genesisHash}
@@ -90,12 +94,12 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
       >
         <Stack direction='column'>
           <Stack direction='column' sx={{ gap: '18px', pb: '24px', pl: '24px' }}>
-            <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+            <Typography color={textColor} textAlign='left' variant='B-4'>
               {t('Advanced staking management')}
             </Typography>
             <Grid container item sx={{ alignItems: 'center', gap: '16px' }}>
-              <StakingInfoStack adjustedColorForTitle='#AA83DC' amount={stakingConsts?.minNominatorBond} decimal={decimal} title={t('Minimum Stake')} token={token} />
-              <StakingInfoStack adjustedColorForTitle='#AA83DC' text={t('Paid automatically')} title={t('Rewards')} />
+              <StakingInfoStack adjustedColorForTitle={textColor} amount={stakingConsts?.minNominatorBond} decimal={decimal} title={t('Minimum Stake')} token={token} />
+              <StakingInfoStack adjustedColorForTitle={textColor} text={t('Paid automatically')} title={t('Rewards')} />
             </Grid>
           </Stack>
           <SelectedValidatorsInformation

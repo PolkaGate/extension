@@ -12,6 +12,6 @@ export default function useIsBlueish (): boolean {
       return false;
     }
 
-    return pathname.includes('/solo/') || pathname.includes('/pool/') || pathname.includes('stakingReward') || pathname.includes('pendingReward');
+    return pathname.includes('/solo/') || pathname.includes('/pool/') || pathname.includes('stakingReward') || pathname.includes('pendingReward') || pathname.includes('easyStake');
   }, [pathname]);
 }

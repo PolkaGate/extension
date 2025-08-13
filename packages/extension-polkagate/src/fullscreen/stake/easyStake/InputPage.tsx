@@ -5,13 +5,13 @@ import type { BN } from '@polkadot/util';
 import type { StakingConsts } from '../../../util/types';
 
 import { ChevronRightRounded } from '@mui/icons-material';
-import { Collapse, Container, Stack, Typography } from '@mui/material';
+import { Collapse, Container, Stack, Typography, useTheme } from '@mui/material';
 import { People } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
 
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
 import { EXTENSION_NAME } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
@@ -26,16 +26,20 @@ interface StakingTypeOptionBoxProps {
 
 const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConsts }: StakingTypeOptionBoxProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
+
+  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   const isRecommended = useMemo(() => selectedStakingType?.type === 'pool' && selectedStakingType.pool?.metadata?.toLowerCase().includes(EXTENSION_NAME.toLowerCase()), [selectedStakingType?.pool?.metadata, selectedStakingType?.type]);
 
   return (
     <Collapse in={open}>
-      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
+      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
           {selectedStakingType?.type === 'pool'
-            ? <People color='#AA83DC' size='24' variant='Bulk' />
-            : <SnowFlake color='#AA83DC' size='24' />
+            ? <People color={textColor} size='24' variant='Bulk' />
+            : <SnowFlake color={textColor} size='24' />
           }
           <Stack direction='column' sx={{ gap: '4px', ml: '12px', width: 'fit-content' }}>
             <Typography color='text.primary' textAlign='left' variant='B-3'>
@@ -44,7 +48,7 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
                 : t('Solo Staking')}
             </Typography>
             {!isRecommended &&
-              <Typography color='#AA83DC' textAlign='left' variant='B-1'>
+              <Typography color={textColor} textAlign='left' variant='B-1'>
                 {selectedStakingType?.pool?.metadata}
                 {selectedStakingType?.validators && t('Validators: {{selected}} of {{threshold}}', {
                   replace: {
@@ -90,7 +94,7 @@ const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined
   );
 };
 
-interface InputPageProp {
+export interface InputPageProp {
   genesisHash: string | undefined;
   rate: number | undefined;
   onMaxMinAmount: (val: 'max' | 'min') => string | undefined;

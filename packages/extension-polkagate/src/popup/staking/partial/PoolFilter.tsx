@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Box, Container, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Flash, People } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 
@@ -251,17 +251,19 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
         />
         <GradientDivider style={{ my: '14px' }} />
       </Stack>
-      <DecisionButtons
-        direction='vertical'
-        onPrimaryClick={onApply}
-        onSecondaryClick={onReset}
-        primaryBtnText={t('Apply')}
-        secondaryBtnText={t('Reset all')}
-        style={{
-          height: '106px',
-          width: '100%'
-        }}
-      />
+      <Grid container item sx={{ mt: '60px' }}>
+        <DecisionButtons
+          direction='vertical'
+          onPrimaryClick={onApply}
+          onSecondaryClick={onReset}
+          primaryBtnText={t('Apply')}
+          secondaryBtnText={t('Reset all')}
+          style={{
+            height: '44px',
+            width: '100%'
+          }}
+        />
+      </Grid>
     </ExtensionPopup>
   );
 }
