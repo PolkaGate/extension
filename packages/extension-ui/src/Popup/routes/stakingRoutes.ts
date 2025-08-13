@@ -10,6 +10,7 @@ import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo'
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/ManageValidators';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
 import EarningOptions from '@polkadot/extension-polkagate/src/popup/staking/EarningOptions';
+import EasyStake from '@polkadot/extension-polkagate/src/popup/staking/easyStake';
 import Pool from '@polkadot/extension-polkagate/src/popup/staking/pool-new';
 import PoolBondExtra from '@polkadot/extension-polkagate/src/popup/staking/pool-new/bondExtra';
 import CreatePool from '@polkadot/extension-polkagate/src/popup/staking/pool-new/createPool';
@@ -40,6 +41,11 @@ export const STAKING_ROUTES: RouteConfig[] = [
     Component: EarningOptions,
     path: '/stakingIndex-options',
     trigger: 'staking-index-options'
+  },
+  {
+    Component: EasyStake,
+    path: '/easyStake/:genesisHash',
+    trigger: 'easy-stake'
   },
   {
     Component: StakingReward,
