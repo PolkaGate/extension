@@ -27,7 +27,7 @@ interface Props {
   setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput ({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -176,7 +176,7 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
             borderRadius: '12px',
             height: '44px'
           }}
-          value={enteredAddress}
+          value={enteredAddress ?? ''}
         />
         {invalidAddress && !setIsError &&
           <Typography color='warning.main' sx={{ textAlign: 'left' }} variant='B-1'>

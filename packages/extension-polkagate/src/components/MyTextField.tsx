@@ -230,7 +230,7 @@ export default function MyTextField ({ Icon, disabled, errorMessage, focused = f
         placeholder={placeholder}
         theme={theme}
         type={_inputType}
-        value={inputValue}
+        value={inputValue ?? ''}
       />
       {errorMessage &&
         <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
