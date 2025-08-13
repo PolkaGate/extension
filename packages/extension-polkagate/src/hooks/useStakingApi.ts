@@ -7,7 +7,6 @@ import type { Forcing } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 import type { ExpandedRewards } from '../fullscreen/stake/solo/pending';
-import type { SelectedEasyStakingType } from '../fullscreen/stake/util/utils';
 import type { Content } from '../partials/Review';
 import type { MyPoolInfo, PoolInfo, RewardDestinationType } from '../util/types';
 
@@ -16,6 +15,7 @@ import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
 import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
+import { EasyStakeSide, type SelectedEasyStakingType } from '../fullscreen/stake/util/utils';
 import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
@@ -1251,8 +1251,7 @@ export const usePoolDetail = (
 
 export const useEasyStake = (
   address: string | undefined,
-  genesisHash: string | undefined,
-  selectedStakingType: SelectedEasyStakingType | undefined
+  genesisHash: string | undefined
 ) => {
   const MAX_LETTER_THRESHOLD = 35;
 
@@ -1275,6 +1274,20 @@ export const useEasyStake = (
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [amountAsBN, setAmountAsBN] = useState<BN | undefined>(undefined);
   const [topStakingLimit, setTopStakingLimit] = useState<BN | undefined>(undefined);
+  const [side, setSide] = useState<EasyStakeSide>(EasyStakeSide.INPUT);
+  const [selectedStakingType, setSelectedStakingType] = useState<SelectedEasyStakingType | undefined>(undefined);
+
+  useEffect(() => {
+    if (selectedStakingType || !initialPool) {
+      return;
+    }
+
+    setSelectedStakingType({
+      pool: initialPool,
+      type: 'pool',
+      validators: undefined
+    });
+  }, [initialPool, selectedStakingType, setSelectedStakingType]);
 
   const tx = useMemo(() => {
     if (!selectedStakingType || !bond || !nominated || !batchAll || !join) {
@@ -1421,7 +1434,11 @@ export const useEasyStake = (
     initialPool,
     onChangeAmount,
     onMaxMinAmount,
+    selectedStakingType,
     setAmount,
+    setSelectedStakingType,
+    setSide,
+    side,
     stakingConsts,
     transactionInformation,
     tx

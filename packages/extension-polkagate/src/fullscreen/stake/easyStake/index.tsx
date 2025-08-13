@@ -11,7 +11,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { DecisionButtons } from '../../../components';
 import { useChainInfo, useEasyStake, useTranslation } from '../../../hooks';
 import { PROXY_TYPE } from '../../../util/constants';
-import { EasyStakeSide, FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, type SelectedEasyStakingType } from '../util/utils';
+import { EasyStakeSide, FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../util/utils';
 import EasyStakePopup from './partials/EasyStakePopup';
 import InputPage from './InputPage';
 import SelectPool from './SelectPool';
@@ -29,8 +29,6 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
   const { t } = useTranslation();
   const { token } = useChainInfo(selectedPosition?.genesisHash);
 
-  const [selectedStakingType, setSelectedStakingType] = useState<SelectedEasyStakingType | undefined>(undefined);
-
   const { amount,
     amountAsBN,
     availableBalanceToStake,
@@ -39,26 +37,17 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
     initialPool,
     onChangeAmount,
     onMaxMinAmount,
+    selectedStakingType,
     setAmount,
+    setSelectedStakingType,
+    setSide,
+    side,
     stakingConsts,
     transactionInformation,
-    tx } = useEasyStake(address, selectedPosition?.genesisHash, selectedStakingType);
+    tx } = useEasyStake(address, selectedPosition?.genesisHash);
 
-  const [side, setSide] = useState<EasyStakeSide>(EasyStakeSide.INPUT);
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
   const [BNamount, setBNamount] = useState<BN | null | undefined>(BN_ZERO);
-
-  useEffect(() => {
-    if (selectedStakingType || !initialPool) {
-      return;
-    }
-
-    setSelectedStakingType({
-      pool: initialPool,
-      type: 'pool',
-      validators: undefined
-    });
-  }, [initialPool, selectedStakingType]);
 
   useEffect(() => {
     if (BNamount === BN_ZERO) {
@@ -94,7 +83,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
       default:
         break;
     }
-  }, [handleClose, side]);
+  }, [handleClose, setSide, side]);
 
   const handleNext = useCallback(() => {
     if (side === EasyStakeSide.INPUT) {
@@ -104,7 +93,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
     }
 
     setSide((pervSide) => pervSide - 1);
-  }, [onNext, side]);
+  }, [onNext, setSide, side]);
 
   const title = useMemo(() => {
     switch (side) {
