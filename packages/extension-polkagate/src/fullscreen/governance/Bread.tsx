@@ -29,7 +29,7 @@ export default function Bread({ address, postId, setSelectedSubMenu, subMenu, to
   }, [setSelectedSubMenu, subMenu]);
 
   const backToTopMenu = useCallback(() => {
-    address && topMenu && navigate(`/governance/${address}/${topMenu}`);
+    address && topMenu && navigate(`/governance/${address}/${topMenu}`) as void;
     setSelectedSubMenu('All');
   }, [address, navigate, setSelectedSubMenu, topMenu]);
 
