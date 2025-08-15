@@ -12,3 +12,7 @@ export { default as NoNFT } from './NoNFT.svg';
 export { default as onboardingBackground } from './onboardingBackground.svg';
 export { default as user } from './user.png';
 export { default as Item1 } from './welcomeItems/Item1.svg';
+export { default as welcomeScreen1 } from './welcomeItems/welcomeScreen1.png';
+export { default as welcomeScreen2 } from './welcomeItems/welcomeScreen2.png';
+export { default as welcomeScreen3 } from './welcomeItems/welcomeScreen3.png';
+export { default as welcomeScreen4 } from './welcomeItems/welcomeScreen4.png';
