@@ -352,7 +352,7 @@ function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | 
             {info.name ?? t('unknown')}
           </Typography>
         </Stack>
-        <Typography color='#EAEBF1' sx={{ '> p': { m: 0 }, maxHeight: '120px', mt: '30px', overflow: 'scroll', px: '20px', width: '100%' }} textAlign='justify' variant='B-5'>
+        <Typography color='#EAEBF1' sx={{ '> p': { m: 0 }, maxHeight: '120px', mt: '30px', overflow: 'auto', px: '20px', width: '100%' }} textAlign='justify' variant='B-5'>
           <ReactMarkdown
             components={{
               // eslint-disable-next-line @typescript-eslint/no-unused-vars

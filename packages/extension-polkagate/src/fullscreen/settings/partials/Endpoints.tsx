@@ -183,7 +183,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
     >
       <Stack direction='column'>
         <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-          <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflowY: 'scroll', position: 'relative' }}>
+          <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflowY: 'auto', position: 'relative' }}>
             <MySwitch
               checked={mayBeEnabled}
               columnGap='8px'
