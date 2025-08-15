@@ -34,7 +34,7 @@ const DropContentContainer = styled(Grid, {
   width: preferredWidth ? `${preferredWidth}px` : 'fit-content'
 }));
 
-const ContentDisplayContainer = styled(Grid)(({ isSelectedItem, style }: { isSelectedItem: boolean, style: React.CSSProperties }) => ({
+const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })(({ isSelectedItem, style }: { isSelectedItem: boolean, style: React.CSSProperties }) => ({
   '&:hover': { background: '#6743944D' },
   alignItems: 'center',
   background: isSelectedItem ? '#6743944D' : 'transparent',
