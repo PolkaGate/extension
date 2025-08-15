@@ -80,18 +80,27 @@ function Indicators ({ currentIndex, onClick }: { currentIndex: number, onClick:
 
 function Slides ({ currentIndex }: { currentIndex: number }) {
   return (
-    <Grid container sx={{ transform: `translateX(-${currentIndex * 100}%)`, transition: 'transform 500ms ease-in-out', width: '100%' }} wrap='nowrap'>
+    <Grid container sx={{ height: '100%', position: 'relative', width: '100%' }}>
       {carouselItems.map((item, index) => (
         <Box
           component='img'
           key={index}
           src={item as string}
           sx={{
-            flex: '0 0 100%',
             height: 'auto',
+            left: 0,
             maxHeight: '693px',
             objectFit: 'contain',
-            width: '100%'
+            opacity: index === currentIndex ? 1 : 0,
+            position: 'absolute',
+            top: 0,
+            width: '100%',
+            transform: index === currentIndex
+              ? 'translateX(0)'
+              : index < currentIndex
+                ? 'translateX(-10%)'
+                : 'translateX(10%)',
+            transition: 'opacity 600ms ease, transform 600ms ease'
           }}
         />
       ))}
@@ -103,7 +112,7 @@ function Subtitles ({ index, subTitles }: { index: number, subTitles: { Icon: Ic
   const Icon = subTitles[index].Icon;
 
   return (
-    <Stack direction='column' rowGap='20px' sx={{ bottom: '22px', left: '30px', position: 'absolute', width: '49%', zIndex: 100 }}>
+    <Stack direction='column' rowGap='20px' sx={{ bottom: '22px', left: '30px', position: 'absolute', width: '48%', zIndex: 100 }}>
       <Icon color='#EAEBF1' size={32} variant='Bold' />
       <Typography color='#FFFFFF' display='block' lineHeight='115%' textAlign='left' textTransform='uppercase' variant='H-2'>
         {subTitles[index].title}

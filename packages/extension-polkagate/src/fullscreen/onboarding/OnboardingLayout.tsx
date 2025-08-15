@@ -87,7 +87,7 @@ function OnboardingLayout ({ children, childrenStyle = {}, showBread = true, sho
             showLeftColumn &&
             <CarouselFs />
           }
-          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '40px 0 0 130px', position: 'relative', width: '582px', ...childrenStyle }}>
+          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '62px 0 0 130px', position: 'relative', width: '582px', ...childrenStyle }}>
             {children}
           </Grid>
           <SocialRow showLeftColumn={showLeftColumn} />
