@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, Record, Setting } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
 import React, { useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
@@ -60,7 +60,7 @@ function MainMenuColumn (): React.ReactElement {
       <Shining />
       <LogoWithText style={{ marginBottom: '20px', zIndex: 10 }} />
       <MenuButton
-        Icon={Home}
+        Icon={Home3}
         path='/'
         text={t('Home')}
       />

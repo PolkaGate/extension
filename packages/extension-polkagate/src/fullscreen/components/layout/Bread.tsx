@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, Home, Money3 } from 'iconsax-react';
+import { ArrowCircleRight2, Home3, Money3 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -62,7 +62,7 @@ function Breadcrumbs (): React.ReactElement {
   return (
     <Stack columnGap='20px' direction='row' sx={{ height: '24px', m: '20px' }}>
       {showHome && (
-        <BreadcrumbItem icon={Home} label={t('Home')} />
+        <BreadcrumbItem icon={Home3} label={t('Home')} />
       )}
       {isImport &&
         <Typography color='#AA83DC' onClick={onImportClick} sx={{ cursor: 'pointer' }} variant='B-2'>
