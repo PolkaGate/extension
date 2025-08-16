@@ -29,6 +29,7 @@ export default function EasyStakeReviewHeader ({ amount, genesisHash, isExtensio
         amount={amount}
         differentValueColor={color}
         genesisHash={genesisHash}
+        isExtension={isExtension}
         token={token}
       />
     </Stack>
