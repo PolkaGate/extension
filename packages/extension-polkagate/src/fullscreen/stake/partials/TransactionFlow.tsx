@@ -31,9 +31,10 @@ interface Props {
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transactionInformation: Content[];
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
+  reviewHeader?: React.ReactNode;
 }
 
-function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, reviewHeader, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
@@ -69,6 +70,7 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
           genesisHash={genesisHash}
           pool={pool}
           proxyTypeFilter={proxyTypeFilter}
+          reviewHeader={reviewHeader}
           selectedProxy={selectedProxy}
           setFlowStep={setFlowStep as React.Dispatch<React.SetStateAction<TransactionFlowStep>>}
           setSelectedProxy={setSelectedProxy}

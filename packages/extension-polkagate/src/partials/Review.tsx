@@ -232,7 +232,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
           style={{ marginTop: '8px' }}
         />
       }
-      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '140px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle }}>
+      <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '170px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle }}>
         {transactionInformation.map(({ content, description, title, withLogo }, index) => (
           <ContentItem
             content={content}

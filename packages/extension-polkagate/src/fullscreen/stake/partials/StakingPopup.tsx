@@ -34,9 +34,11 @@ interface Props extends Partial<DraggableModalProps>{
   showBack?: boolean | undefined;
   proxyTypeFilter: ProxyTypes[] | undefined;
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
+  reviewHeader?: React.ReactNode;
+  showAccountBoxInReview?: boolean;
 }
 
-export default function StakingPopup ({ _onClose, address, children, extraDetailConfirmationPage, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, setFlowStep, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function StakingPopup ({ _onClose, address, children, extraDetailConfirmationPage, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, reviewHeader, setFlowStep, setValue, showAccountBoxInReview, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 
@@ -92,10 +94,12 @@ export default function StakingPopup ({ _onClose, address, children, extraDetail
               onClose={closeModal}
               pool={pool}
               proxyTypeFilter={proxyTypeFilter}
+              reviewHeader={reviewHeader}
               selectedProxy={selectedProxy}
               setFlowStep={setFlowStep}
               setSelectedProxy={setSelectedProxy}
               setShowProxySelection={setShowProxySelection}
+              showAccountBox={showAccountBoxInReview}
               showProxySelection={showProxySelection}
               transaction={transaction}
               transactionInformation={transactionInformation}
