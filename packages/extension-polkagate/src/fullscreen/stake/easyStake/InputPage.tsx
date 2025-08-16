@@ -76,10 +76,13 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
 
 const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined }) => {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
+
+  const textColor = useMemo(() => isExtension ? 'text.highlight' : 'primary.main', [isExtension]);
 
   return (
     <Stack direction='row' sx={{ display: show ? 'flex' : 'none', justifyContent: 'space-between', m: '17px 0 3px', px: '5px', width: '100%' }}>
-      <Typography color='primary.main' variant='B-1'>
+      <Typography color={textColor} variant='B-1'>
         {t('Estimated rewards')}
       </Typography>
       <Stack direction='row' sx={{ columnGap: '5px', justifyContent: 'end', width: 'fit-content' }}>

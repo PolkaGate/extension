@@ -39,8 +39,8 @@ export default function StakingIcon ({ noText = false, size, style, text, type, 
           : <>
             {
               type === 'solo'
-                ? <SnowFlake size={size ?? '36'} />
-                : <Ice asPortfolio size={size ?? '36'} />
+                ? <SnowFlake color={textColor} size={size ?? '36'} />
+                : <Ice asPortfolio color={textColor} size={size ?? '36'} />
             }
           </>
       }
