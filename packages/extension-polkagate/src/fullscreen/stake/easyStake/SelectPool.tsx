@@ -65,6 +65,7 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
 
   const onClear = useCallback(() => {
     setSelectedPool(undefined);
+    setSearch('');
   }, []);
 
   return (
@@ -81,25 +82,25 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
             title={t('Loading pools')}
           />
         }
+        {incrementalPools !== undefined &&
+          <SearchField
+            onInputChange={onSearch}
+            placeholder='🔍 Search'
+            style={{
+              height: '44px',
+              margin: '17px 0 18px',
+              width: '410px'
+            }}
+          />
+        }
         {incrementalPools && poolsToShow && poolsToShow.length > 0 &&
-          <>
-            <SearchField
-              onInputChange={onSearch}
-              placeholder='🔍 Search'
-              style={{
-                height: '44px',
-                margin: '17px 0 18px',
-                width: '410px'
-              }}
-            />
-            <PoolsTable
-              genesisHash={genesisHash}
-              poolsInformation={poolsToShow}
-              selectable
-              selected={selectedPool}
-              setSelectedPool={setSelectedPool}
-            />
-          </>
+          <PoolsTable
+            genesisHash={genesisHash}
+            poolsInformation={poolsToShow}
+            selectable
+            selected={selectedPool}
+            setSelectedPool={setSelectedPool}
+          />
         }
         <DecisionButtons
           cancelButton
