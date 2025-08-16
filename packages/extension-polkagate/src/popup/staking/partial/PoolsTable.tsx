@@ -4,7 +4,7 @@
 import type { PoolInfo } from '../../../util/types';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 
 import PoolDetailFS from '../../../fullscreen/stake/new-pool/joinPool/PoolDetail';
@@ -14,6 +14,7 @@ import PRadio from '../components/Radio';
 import { StakingInfoStack } from './NominatorsTable';
 import PoolDetail from './PoolDetail';
 import { PoolIdenticon } from './PoolIdenticon';
+import { ArrowRight2 } from 'iconsax-react';
 
 interface PoolDetailHandlerProps {
   poolDetail: PoolInfo | undefined;
@@ -76,6 +77,7 @@ interface PoolInfoProp {
 
 export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, status, style }: PoolInfoProp) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef(null);
   const isHovered = useIsHovered(containerRef);
@@ -131,8 +133,8 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
             <StakingInfoStack secondaryColor='#3988FF' text={status} title={t('Status')} />
           }
         </Container>
-        {!status && <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
-          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
+        {!status && <IconButton onClick={onDetailClick} sx={{ m: 0, p: '6px' }}>
+          <ArrowRight2 color='#fff' size='20' />
         </IconButton>}
       </Container>
     </Stack>
