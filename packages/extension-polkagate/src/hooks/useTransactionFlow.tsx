@@ -26,9 +26,10 @@ interface UseTransactionFlowProps {
   amount?: string;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   showAccountBox?: boolean;
+  reviewHeader?: React.ReactNode;
 }
 
-export default function useTransactionFlow ({ address, amount, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, review, setRestakeReward, showAccountBox, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow ({ address, amount, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }
@@ -43,6 +44,7 @@ export default function useTransactionFlow ({ address, amount, backPathTitle, cl
       pool={pool}
       proxyTypeFilter={proxyTypeFilter}
       restakeReward={restakeReward}
+      reviewHeader={reviewHeader}
       setRestakeReward={setRestakeReward}
       showAccountBox={showAccountBox}
       stepCounter={stepCounter}

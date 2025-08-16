@@ -189,9 +189,10 @@ export interface ReviewProps {
   showAccountBox?: boolean;
   restakeReward?: boolean;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
+  reviewHeader?: React.ReactNode;
 }
 
-export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
@@ -202,6 +203,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1 }}>
+      {reviewHeader}
       {!showAccountBox && setRestakeReward && restakeReward !== undefined &&
         <RewardHeaderAmount
           amount={amount}
