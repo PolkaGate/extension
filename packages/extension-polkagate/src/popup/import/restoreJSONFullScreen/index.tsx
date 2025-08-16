@@ -227,7 +227,7 @@ export default function RestoreJson (): React.ReactElement {
                 variant='contained'
               />
             }
-            <Stack direction='column' sx={{ display: 'block', maxHeight: 'calc(100vh - 600px)', overflowY: 'auto' }}>
+            <Stack direction='column' sx={{ display: 'block', maxHeight: 'calc(100vh - 665px)', overflowY: 'auto' }}>
               {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
                 const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
 

@@ -62,7 +62,7 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
       onClose={handleClose}
       open
       popupProps={{
-        maxHeight: '500px',
+        maxHeight: '505px',
         openMenu: !!selectedPosition,
         px: 0,
         style: { position: 'relative' },
