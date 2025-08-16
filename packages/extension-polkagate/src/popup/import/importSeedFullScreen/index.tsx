@@ -171,6 +171,7 @@ export default function ImportSeed (): React.ReactElement {
                 <MyTextField
                   focused
                   iconSize={18}
+                  inputValue={path}
                   onTextChange={setPath}
                   placeholder='//'
                   style={{ margin: '15px 0 15px', width: '70%' }}
@@ -197,6 +198,7 @@ export default function ImportSeed (): React.ReactElement {
               Icon={User}
               focused
               iconSize={18}
+              inputValue={name}
               onTextChange={onNameChange}
               placeholder={t('Enter account name')}
               style={{ margin: '20px 0 20px' }}

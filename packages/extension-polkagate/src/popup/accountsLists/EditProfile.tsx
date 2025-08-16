@@ -108,6 +108,7 @@ function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
               Icon={Folder}
               focused
               iconSize={18}
+              inputValue={maybeNewName}
               onEnterPress={onNext}
               onTextChange={onNameChange}
               placeholder={profileLabel}

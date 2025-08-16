@@ -70,6 +70,7 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
           Icon={User}
           focused
           iconSize={18}
+          inputValue={ newName }
           onEnterPress={onRename}
           onTextChange={onNameChange}
           placeholder={t('Enter your name')}

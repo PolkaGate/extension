@@ -155,6 +155,7 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDep
               Icon={Clock}
               iconSize={18}
               inputType='number'
+              inputValue={delay}
               onEnterPress={onAddProxy}
               onTextChange={onDelayChange}
               placeholder={'0'}

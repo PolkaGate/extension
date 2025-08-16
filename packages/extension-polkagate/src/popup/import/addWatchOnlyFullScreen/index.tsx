@@ -80,6 +80,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
         <MyTextField
           Icon={User}
           iconSize={18}
+          inputValue={name}
           onEnterPress = {onAdd}
           onTextChange={onNameChange}
           placeholder={t('Enter account name')}

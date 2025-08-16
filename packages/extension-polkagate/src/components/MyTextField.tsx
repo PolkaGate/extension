@@ -148,7 +148,7 @@ interface Props {
   focused?: boolean;
   iconSize?: number;
   inputType?: string;
-  inputValue?: string | number;
+  inputValue: string | number | undefined | null;
   maxLength?: number;
   mode?: 'small' | 'large';
   onEnterPress?: () => void;

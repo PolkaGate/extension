@@ -189,6 +189,7 @@ export default function ImportSeed (): React.ReactElement {
               Icon={User}
               focused
               iconSize={18}
+              inputValue={name}
               onTextChange={onNameChange}
               placeholder={t('Enter account name')}
               style={{ margin: '20px 0 20px' }}
