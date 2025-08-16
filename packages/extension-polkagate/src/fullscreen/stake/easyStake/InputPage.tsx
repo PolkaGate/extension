@@ -79,6 +79,7 @@ const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined
   const isExtension = useIsExtensionPopup();
 
   const textColor = useMemo(() => isExtension ? 'text.highlight' : 'primary.main', [isExtension]);
+  const yearColor = useMemo(() => isExtension ? '#809acb8c' : '#674394', [isExtension]);
 
   return (
     <Stack direction='row' sx={{ display: show ? 'flex' : 'none', justifyContent: 'space-between', m: '17px 0 3px', px: '5px', width: '100%' }}>
@@ -89,7 +90,7 @@ const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined
         <Typography color='#82FFA5' variant='B-1'>
           {rate}%
         </Typography>
-        <Typography color='#674394' variant='B-1'>
+        <Typography color={yearColor} variant='B-1'>
           / {t('year')}
         </Typography>
       </Stack>
