@@ -5,7 +5,7 @@ import type { PoolInfo } from '../../../../util/types';
 
 import { Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { FormatBalance2 } from '../../../../components';
 import { useChainInfo } from '../../../../hooks';
@@ -18,11 +18,14 @@ interface SelectedPoolInformationProps {
   poolDetail: PoolInfo | null | undefined;
   onClick: (event: React.MouseEvent) => void;
   open: boolean;
+  isExtension: boolean;
 }
 
-export const SelectedPoolInformation = ({ genesisHash, onClick, open, poolDetail }: SelectedPoolInformationProps) => {
+export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, open, poolDetail }: SelectedPoolInformationProps) => {
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash);
+
+  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
     <Collapse in={open}>
@@ -39,14 +42,14 @@ export const SelectedPoolInformation = ({ genesisHash, onClick, open, poolDetail
               </Typography>
               <FormatBalance2
                 decimals={[decimal ?? 0]}
-                style={{ ...theme.typography['B-4'], color: '#AA83DC', width: 'fit-content' }}
-                tokenColor='#AA83DC'
+                style={{ ...theme.typography['B-4'], color: textColor, width: 'fit-content' }}
+                tokenColor={textColor}
                 tokens={[token ?? '']}
                 value={isHexToBn(poolDetail.bondedPool?.points.toString() ?? '0')}
               />
             </Stack>
             <Grid container item sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', p: '20px 10px', width: 'fit-content' }}>
-              <ArrowRight2 color='#AA83DC' size='18' variant='Bold' />
+              <ArrowRight2 color={textColor} size='18' variant='Bold' />
             </Grid>
           </Container>)
         : <LoadingPoolInformation />}

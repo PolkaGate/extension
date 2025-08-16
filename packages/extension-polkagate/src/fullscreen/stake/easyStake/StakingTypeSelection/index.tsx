@@ -81,6 +81,7 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
           </Grid>
           <SelectedPoolInformation
             genesisHash={selectedPosition?.genesisHash}
+            isExtension={isExtension}
             onClick={openSelectPool}
             open={selectedStakingType?.type === 'pool'}
             poolDetail={selectedStakingType?.pool ?? initialPool}
@@ -103,6 +104,7 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
             </Grid>
           </Stack>
           <SelectedValidatorsInformation
+            isExtension={isExtension}
             isRecommended={!!isRecommendedValidators}
             onClick={openSelectValidator}
             open={selectedStakingType?.type === 'solo'}

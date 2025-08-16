@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { People, UserOctagon } from 'iconsax-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 
 interface Props {
   type: 'solo' | 'pool';
@@ -20,6 +20,10 @@ interface Props {
 
 export default function StakingIcon ({ noText = false, size, style, text, type, variant = 'nature' }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isExtension = useIsExtensionPopup();
+
+  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
   return (
     <Grid alignItems={variant === 'people' ? 'center' : 'flex-start'} container item sx={{ columnGap: '6px', pl: '18px', ...style }}>
@@ -28,8 +32,8 @@ export default function StakingIcon ({ noText = false, size, style, text, type, 
           ? <>
             {
               type === 'solo'
-                ? <UserOctagon color='#AA83DC' size={size ?? '36'} variant='Bulk' />
-                : <People color='#AA83DC' size={size ?? '32'} variant='Bulk' />
+                ? <UserOctagon color={textColor} size={size ?? '36'} variant='Bulk' />
+                : <People color={textColor} size={size ?? '32'} variant='Bulk' />
             }
           </>
           : <>
