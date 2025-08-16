@@ -54,7 +54,7 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
   const eraLength = remainingTime(poolConsts?.eraLength?.toNumber() ?? 0);
 
   const handleClose = useCallback(() => onClose ? onClose() : setSelectedPosition(undefined), [onClose, setSelectedPosition]);
-  const goStaking = useCallback(() => onNext ? onNext() : navigate('/pool/' + selectedPosition?.genesisHash + '/stake') as void, [selectedPosition?.genesisHash, navigate, onNext]);
+  const goStaking = useCallback(() => onNext ? onNext() : navigate('/easyStake/' + selectedPosition?.genesisHash) as void, [navigate, onNext, selectedPosition?.genesisHash]);
 
   return (
     <SharePopup

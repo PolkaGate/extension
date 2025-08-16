@@ -176,9 +176,10 @@ interface NominatorsTableProp {
   validatorsInformation: ValidatorInformation[];
   onSelect?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   selected?: string[];
+  height?: number;
 }
 
-function NominatorsTable ({ genesisHash, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+function NominatorsTable ({ genesisHash, height = 515, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
@@ -189,7 +190,7 @@ function NominatorsTable ({ genesisHash, onSelect, selected, validatorsInformati
     <>
       <Stack direction='column' sx={{ height: 'fit-content', width: '100%' }}>
         <List
-          height={515}
+          height={height}
           itemCount={validatorsInformation.length}
           itemSize={102}
           style={{ paddingBottom: '60px' }}

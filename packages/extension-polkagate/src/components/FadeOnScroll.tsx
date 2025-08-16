@@ -11,7 +11,8 @@ interface FaderProps {
   style?: React.CSSProperties;
 }
 interface Props extends FaderProps {
-  containerRef: React.RefObject<HTMLElement>;
+  containerRef: React.RefObject<HTMLElement> | null;
+  showAnyway?: boolean;
 }
 
 const Fader = styled('div', {
@@ -35,7 +36,7 @@ const Fader = styled('div', {
   };
 });
 
-function FadeOnScroll ({ containerRef, height, ratio, style }: Props) {
+function FadeOnScroll ({ containerRef, height, ratio, showAnyway = false, style }: Props) {
   const [isScrollable, setIsScrollable] = useState<boolean>(false);
   const [showFade, setShowFade] = useState<boolean>(false);
 
@@ -43,8 +44,12 @@ function FadeOnScroll ({ containerRef, height, ratio, style }: Props) {
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   useEffect(() => {
+    if (showAnyway) {
+      return;
+    }
+
     const checkScroll = () => {
-      const container = containerRef.current;
+      const container = containerRef?.current;
 
       if (container) {
         const hasScroll = container.scrollHeight > container.clientHeight;
@@ -55,7 +60,7 @@ function FadeOnScroll ({ containerRef, height, ratio, style }: Props) {
       }
     };
 
-    const container = containerRef.current;
+    const container = containerRef?.current;
 
     if (container) {
       // Initial check
@@ -89,9 +94,9 @@ function FadeOnScroll ({ containerRef, height, ratio, style }: Props) {
     }
 
     return undefined;
-  }, [containerRef]);
+  }, [containerRef, showAnyway]);
 
-  if (!isScrollable) {
+  if (!isScrollable && !showAnyway) {
     return null;
   }
 
@@ -99,7 +104,7 @@ function FadeOnScroll ({ containerRef, height, ratio, style }: Props) {
     <Fader
       height={height}
       ratio={ratio}
-      showFade={showFade}
+      showFade={showAnyway || showFade}
       style={style}
     />
   );

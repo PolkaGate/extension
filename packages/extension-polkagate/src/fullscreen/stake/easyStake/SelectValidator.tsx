@@ -9,7 +9,7 @@ import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 import ValidatorsTable from './partials/ValidatorsTable';
 
-interface Props {
+export interface SelectValidatorProps {
   genesisHash: string | undefined;
   setSelectedStakingType: React.Dispatch<React.SetStateAction<SelectedEasyStakingType | undefined>>;
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
@@ -17,7 +17,7 @@ interface Props {
   selectedStakingType: SelectedEasyStakingType | undefined;
 }
 
-function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: Props) {
+function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
 
@@ -80,7 +80,7 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
     }
 
     let filtered = validatorsToShow;
-    const lowerCaseKeyword = searchedQuery.toLowerCase(); // do a lowe case comparison
+    const lowerCaseKeyword = searchedQuery.toLowerCase();
 
     if (lowerCaseKeyword) {
       filtered = filtered.filter(({ accountId, identity }) =>
@@ -136,9 +136,7 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
     setSide(EasyStakeSide.STAKING_TYPE);
   }, [newSelectedValidators, setSelectedStakingType, setSide, suggestedValidators]);
 
-  const onClear = useCallback(() => {
-    setNewSelectedValidators(undefined);
-  }, []);
+  const onClear = useCallback(() => setNewSelectedValidators([]), []);
 
   return (
     <>
