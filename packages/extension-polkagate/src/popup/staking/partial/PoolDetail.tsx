@@ -9,8 +9,8 @@ import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
-import React, { memo, useCallback, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router';
+import React, { Fragment, memo, useCallback, useMemo, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
 import Subscan from '../../../assets/icons/Subscan';
 import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2, Progress } from '../../../components';
@@ -86,6 +86,9 @@ interface PoolIdentityDetailProps {
 const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const isOnEasyStake = useMemo(() => pathname.includes('easyStake'), [pathname]);
 
   const { bgcolor, textColor } = useMemo(() => {
     const status = poolDetail.bondedPool?.state.toString();
@@ -98,7 +101,8 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
   // Navigate to the staking reward chart using the stash ID,
   // since we're specifically interested in rewards associated with the stash id of the pool (i.e., pool rewards).
   const stashId = poolDetail?.stashIdAccount?.accountId.toString() ?? '';
-  const onRewardChart = useCallback(() => navigate('/stakingReward/' + stashId + '/' + genesisHash + '/stash') as void, [genesisHash, navigate, stashId]);
+  // Used for easy stake, if true it comes from easy stake
+  const onRewardChart = useCallback(() => navigate('/stakingReward/' + stashId + '/' + genesisHash + '/stash', { state: isOnEasyStake }) as void, [genesisHash, isOnEasyStake, navigate, stashId]);
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
@@ -428,10 +432,10 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
                       const noDivider = Object.entries(roles).length === index + 1;
 
                       return (
-                        <>
+                        <Fragment key={index}>
                           <RoleItem address={value} genesisHash={genesisHash} role={key} />
                           {!noDivider && <GradientDivider style={{ my: '8px' }} />}
-                        </>
+                        </Fragment>
                       );
                     })}
                   </Stack>
