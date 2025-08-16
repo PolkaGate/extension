@@ -11,15 +11,15 @@ import { SelectedContext } from '../components';
 export default function useAccountSelectedChain (address: string | undefined): HexString | undefined | null {
   const [genesisHash, setGenesisHash] = useState<HexString | null>();
 
-  const { selected: { chains } } = useContext(SelectedContext);
+  const { selected } = useContext(SelectedContext);
 
   useEffect(() => {
-    if (!address || !chains) {
+    if (!address || !selected) {
       return;
     }
 
-    setGenesisHash(chains?.[address] as HexString | undefined ?? POLKADOT_GENESIS);
-  }, [address, chains]);
+    setGenesisHash(selected?.chains?.[address] as HexString | undefined ?? POLKADOT_GENESIS);
+  }, [address, selected]);
 
   return genesisHash;
 }

@@ -45,7 +45,7 @@ function Onboarding (): React.ReactElement {
     createAccountExternal('Demo account', DEMO_ACCOUNT, undefined)
       .then(() => {
         setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
-        navigate('/');
+        navigate('/') as void;
       })
       .catch((error: Error) => {
         console.error(error);
@@ -75,7 +75,7 @@ function Onboarding (): React.ReactElement {
           style={{
             borderRadius: '18px',
             height: '48px',
-            marginTop: '25px',
+            marginTop: '5px',
             paddingLeft: '100px',
             width: '100%'
           }}

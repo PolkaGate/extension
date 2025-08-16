@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Link, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Link, Typography } from '@mui/material';
 import React from 'react';
 
 import { onboardingBackground } from '../../assets/img';
-import { TwoToneText } from '../../components';
+import { CarouselFs } from '../../components';
 import { useFullscreen, useManifest, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
@@ -48,17 +48,14 @@ function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
 function OnboardingLayout ({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
   useFullscreen();
 
-  const { t } = useTranslation();
-  const theme = useTheme();
-
   return (
     <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
       <Grid alignItems='flex-start' container sx={{ bgcolor: '#05091C', borderRadius: '24px', minHeight: '788px', height: '100vh', p: '12px', position: 'relative', width: '1440px' }}>
-        <LogoWithText style ={{ borderRadius: '32px', left: '0', padding: '15px', position: 'absolute', top: '0', zIndex: 10 }} />
+        <LogoWithText style={{ borderRadius: '32px', left: '0', padding: '15px', position: 'absolute', top: '0', zIndex: 10 }} />
         <Grid
           alignItems='flex-start'
           container
-          justifyContent={showLeftColumn ? 'start' : 'center' }
+          justifyContent={showLeftColumn ? 'start' : 'center'}
           sx={{
             backgroundImage: `url(${onboardingBackground})`,
             backgroundPosition: 'top',
@@ -88,23 +85,9 @@ function OnboardingLayout ({ children, childrenStyle = {}, showBread = true, sho
           }
           {
             showLeftColumn &&
-            <Grid container item sx={{ background: 'linear-gradient(90deg, rgba(197, 151, 255, 0.0125) 0%, rgba(91, 31, 166, 0.15) 50.06%, rgba(197, 151, 255, 0.05) 100%)', borderRadius: '24px', height: 'calc(100% - 68px)', minHeight: '693px', m: '5px', position: 'relative', width: '582px' }}>
-              <Grid item sx={{ bottom: '100px', ml: '10%', position: 'absolute', width: '50%' }}>
-                <Typography color='#FFFFFF' display='block' lineHeight='100%' textAlign='left' textTransform='uppercase' variant='H-1'>
-                  <TwoToneText
-                    color = {theme.palette.primary.main}
-                    style={{ lineHeight: '107%' }}
-                    text={t('We appreciate your choice in selecting PolkaGate!')}
-                    textPartInColor={t('PolkaGate!')}
-                  />
-                </Typography>
-                <Typography color='#BEAAD8' display='block' fontSize='14px' pt='15px' variant='B-1'>
-                  {t('as your gateway to the Polkadot ecosystem! ')}
-                </Typography>
-              </Grid>
-            </Grid>
+            <CarouselFs />
           }
-          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '40px 0 0 100px', position: 'relative', width: '582px', ...childrenStyle }}>
+          <Grid container item sx={{ borderRadius: '24px', display: 'block', height: '693px', m: '62px 0 0 130px', position: 'relative', width: '582px', ...childrenStyle }}>
             {children}
           </Grid>
           <SocialRow showLeftColumn={showLeftColumn} />

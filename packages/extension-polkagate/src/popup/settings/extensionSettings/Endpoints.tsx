@@ -124,7 +124,7 @@ function Endpoints (): React.ReactElement {
               <MySwitch
                 checked={isAutoMode}
                 columnGap='8px'
-                label={t('Auto Mode')}
+                label={t('Auto Node Selection')}
                 onChange={onChangeEndpoint}
                 value={AUTO_MODE.value}
               />

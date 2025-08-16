@@ -30,6 +30,7 @@ export { default as Button } from './Button';
 export { default as ButtonWithCancel } from './ButtonWithCancel';
 export { default as CanPayErrorAlert } from './CanPayErrorAlert';
 export { default as Carousel } from './Carousel';
+export { default as CarouselFs } from './CarouselFs';
 export { default as Chain } from './Chain';
 export { default as ChainLogo } from './ChainLogo';
 export { default as Checkbox2 } from './Checkbox2';
