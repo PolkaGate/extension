@@ -6,8 +6,8 @@ import type { INumber } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { ArrowRight2 } from 'iconsax-react';
 import React, { type CSSProperties, memo, useCallback, useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -89,15 +89,16 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
 });
 
 interface ValidatorInfoProp {
-  validatorInfo: ValidatorInformation;
   genesisHash: string;
+  isBlueish?: boolean;
+  isSelected?: boolean;
   onDetailClick: () => void;
   onSelect?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  validatorInfo: ValidatorInformation;
   style?: CSSProperties;
-  isSelected?: boolean;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isBlueish, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -112,28 +113,29 @@ const ValidatorInfo = memo(function ValidatorInfo ({ genesisHash, isSelected, on
   }, [onSelect, validatorInfo.accountId]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', mb: '4px', p: '8px', width: '100%', ...style }}>
+    <Stack direction='column' sx={{ bgcolor: isSelected ? '#BFA1FF26' : '#110F2A', borderRadius: '14px', mb: '4px', p: '8px', width: '100%', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
-        <ValidatorIdentity validatorInfo={validatorInfo} />
-        <IconButton onClick={onDetailClick} sx={{ bgcolor: '#809ACB26', borderRadius: '12px', m: 0, p: '1px 6px' }}>
-          <MoreHorizIcon sx={{ color: 'text.highlight', fontSize: '24px' }} />
+        <Stack columnGap='5px' direction='row'>
+          {onSelect &&
+            <GlowCheckbox
+              changeState={handleSelect}
+              checked={isSelected}
+              isBlueish={isBlueish}
+              style={{ m: 'auto', width: 'fit-content' }}
+            />
+          }
+          <ValidatorIdentity validatorInfo={validatorInfo} />
+        </Stack>
+        <IconButton onClick={onDetailClick} sx={{ m: 0, py: '6px' }}>
+          <ArrowRight2 color='#fff' size='20' />
         </IconButton>
       </Container>
       <GradientDivider style={{ my: '4px' }} />
       <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-          <StakingInfoStack amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
-          <StakingInfoStack text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
-          {/* @ts-ignore */}
-          <StakingInfoStack text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
-        </Container>
-        {onSelect &&
-          <GlowCheckbox
-            changeState={handleSelect}
-            checked={isSelected}
-            style={{ m: 'auto', width: 'fit-content' }}
-          />
-        }
+        <StakingInfoStack amount={validatorInfo.stakingLedger.total} decimal={decimal} title={t('Staked')} token={token} />
+        <StakingInfoStack text={String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
+        {/* @ts-ignore */}
+        <StakingInfoStack text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />
       </Container>
     </Stack>
   );
@@ -180,6 +182,8 @@ interface NominatorsTableProp {
 }
 
 function NominatorsTable ({ genesisHash, height = 515, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+  const isBlueish = useIsBlueish();
+
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {
@@ -192,7 +196,7 @@ function NominatorsTable ({ genesisHash, height = 515, onSelect, selected, valid
         <List
           height={height}
           itemCount={validatorsInformation.length}
-          itemSize={102}
+          itemSize={108}
           style={{ paddingBottom: '60px' }}
           width='100%'
         >
@@ -203,6 +207,7 @@ function NominatorsTable ({ genesisHash, height = 515, onSelect, selected, valid
               <div key={index} style={{ ...style }}>
                 <ValidatorInfo
                   genesisHash={genesisHash}
+                  isBlueish={isBlueish}
                   isSelected={selected ? selected.includes(validatorInfo.accountId.toString()) : undefined}
                   onDetailClick={toggleValidatorDetail(validatorInfo)}
                   onSelect={onSelect}
