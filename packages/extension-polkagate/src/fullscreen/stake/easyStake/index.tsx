@@ -189,7 +189,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={side === EasyStakeSide.INPUT ? !!buttonDisable : false}
+          disabled={side === EasyStakeSide.INPUT ? !!buttonDisable || !initialPool : false}
           onPrimaryClick={handleNext}
           onSecondaryClick={handleBack}
           primaryBtnText={!initialPool ? t('Loading ...') : side === EasyStakeSide.INPUT ? t('Continue') : t('Apply')}
