@@ -21,13 +21,16 @@ interface AmountProps {
   genesisHash: string | undefined;
   token: string | undefined;
   differentValueColor?: string;
+  isExtension?: boolean;
 }
 
-export const Amount = memo(function MemoAmount ({ amount, differentValueColor, genesisHash, token }: AmountProps) {
+export const Amount = memo(function MemoAmount ({ amount, differentValueColor, genesisHash, isExtension, token }: AmountProps) {
   const { decimal, token: nativeToken } = useChainInfo(genesisHash, true);
   const _token = token ?? nativeToken;
   const price = useTokenPriceBySymbol(token, genesisHash);
   const currency = useCurrency();
+
+  const textColor = useMemo(() => isExtension ? 'text.highlight' : 'text.secondary', [isExtension]);
 
   const amountInHuman = amountToHuman((amount ?? '0'), decimal);
 
@@ -51,10 +54,10 @@ export const Amount = memo(function MemoAmount ({ amount, differentValueColor, g
         <Typography color='text.primary' lineHeight='normal' variant='H-1'>
           {integerPart}
         </Typography>
-        <Typography color='text.secondary' variant='H-3'>
+        <Typography color={textColor} variant='H-3'>
           {decimalToShow}
         </Typography>
-        <Typography color='text.secondary' pl='3px' variant='H-3'>
+        <Typography color={textColor} pl='3px' variant='H-3'>
           {_token}
         </Typography>
       </Stack>
