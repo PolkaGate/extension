@@ -3,8 +3,8 @@
 
 import type { PoolInfo } from '../../../util/types';
 
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, IconButton, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 
 import PoolDetailFS from '../../../fullscreen/stake/new-pool/joinPool/PoolDetail';
@@ -14,7 +14,6 @@ import PRadio from '../components/Radio';
 import { StakingInfoStack } from './NominatorsTable';
 import PoolDetail from './PoolDetail';
 import { PoolIdenticon } from './PoolIdenticon';
-import { ArrowRight2 } from 'iconsax-react';
 
 interface PoolDetailHandlerProps {
   poolDetail: PoolInfo | undefined;
@@ -77,7 +76,6 @@ interface PoolInfoProp {
 
 export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, status, style }: PoolInfoProp) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef(null);
   const isHovered = useIsHovered(containerRef);
