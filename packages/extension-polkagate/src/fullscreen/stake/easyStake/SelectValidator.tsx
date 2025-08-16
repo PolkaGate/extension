@@ -136,7 +136,10 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
     setSide(EasyStakeSide.STAKING_TYPE);
   }, [newSelectedValidators, setSelectedStakingType, setSide, suggestedValidators]);
 
-  const onClear = useCallback(() => setNewSelectedValidators([]), []);
+  const onClear = useCallback(() => {
+    setNewSelectedValidators([]);
+    setSearch('');
+  }, []);
 
   return (
     <>

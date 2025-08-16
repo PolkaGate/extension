@@ -131,9 +131,11 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
             <StakingInfoStack secondaryColor='#3988FF' text={status} title={t('Status')} />
           }
         </Container>
-        {!status && <IconButton onClick={onDetailClick} sx={{ m: 0, p: '6px' }}>
-          <ArrowRight2 color='#fff' size='20' />
-        </IconButton>}
+        {!status &&
+          <IconButton onClick={onDetailClick} sx={{ m: 0, p: '6px' }}>
+            <ArrowRight2 color='#fff' size='20' />
+          </IconButton>
+        }
       </Container>
     </Stack>
   );
