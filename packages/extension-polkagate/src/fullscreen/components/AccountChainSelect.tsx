@@ -73,12 +73,83 @@ enum MODAL_TO_OPEN {
   NONE
 }
 
-export default function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement {
+function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
+  const isDark = useIsDark();
+  const selectedAccount = useSelectedAccount();
+  const genesisHash = useAccountSelectedChain(selectedAccount?.address);
+
+  return (
+    <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
+      sx={{
+        alignItems: 'center',
+        bgcolor: isDark ? '#2D1E4A80' : '#CCD2EA',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        display: 'flex',
+        height: '28px',
+        justifyContent: 'center',
+        width: '28px'
+      }}
+    >
+      <ChainLogo
+        genesisHash={genesisHash ?? POLKADOT_GENESIS}
+        size={20}
+      />
+    </Box>
+  );
+}
+
+function AccountSelect ({ noSelection = false, onClick }: { noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
   const selectedAccount = useSelectedAccount();
-  const genesisHash = useAccountSelectedChain(selectedAccount?.address);
+
+  return (
+    <Grid container direction='row' item onClick={onClick(MODAL_TO_OPEN.ACCOUNTS)}
+      sx={{
+        alignItems: 'center',
+        columnGap: '5px',
+        cursor: noSelection ? 'default' : 'pointer',
+        flexWrap: 'nowrap',
+        height: 'fit-content',
+        justifyContent: 'space-between',
+        p: '3px 4px',
+        pr: 0,
+        transition: 'all 250ms ease-out',
+        width: '110px'
+      }}
+    >
+      <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ width: '79%' }}>
+        <AccountsIcon
+          accountsLength={accounts.length}
+          address={selectedAccount?.address}
+          noSelection={noSelection}
+        />
+        <ScrollingTextBox
+          text={selectedAccount?.name ?? ''}
+          textStyle={{
+            color: 'text.primary',
+            ...theme.typography['B-2']
+          }}
+          width={noSelection ? 120 : 65}
+        />
+      </Stack>
+      {
+        !noSelection &&
+        <ArrowDown2
+          color={isDark ? '#AA83DC' : '#8F97B8'}
+          size='18'
+          style={{ transition: 'all 250ms ease-out ' }}
+          variant='Bold'
+        />
+      }
+    </Grid>
+  );
+}
+
+export default function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement {
+  const isDark = useIsDark();
 
   const [modalToOpen, setModalToOpen] = React.useState<MODAL_TO_OPEN>(MODAL_TO_OPEN.NONE);
 
@@ -103,60 +174,8 @@ export default function AccountChainSelect ({ noSelection = false }: Props): Rea
           width: '145px'
         }}
       >
-        <Grid container direction='row' item onClick={onClick(MODAL_TO_OPEN.ACCOUNTS)}
-          sx={{
-            alignItems: 'center',
-            columnGap: '5px',
-            cursor: noSelection ? 'default' : 'pointer',
-            flexWrap: 'nowrap',
-            height: 'fit-content',
-            justifyContent: 'space-between',
-            p: '3px 4px',
-            pr: 0,
-            transition: 'all 250ms ease-out',
-            width: '110px'
-          }}
-        >
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ width: '79%' }}>
-            <AccountsIcon
-              accountsLength={accounts.length}
-              address={selectedAccount?.address}
-              noSelection={noSelection}
-            />
-            <ScrollingTextBox
-              text={selectedAccount?.name ?? ''}
-              textStyle={{
-                color: 'text.primary',
-                ...theme.typography['B-2']
-              }}
-              width={noSelection ? 120 : 65}
-            />
-          </Stack>
-          {!noSelection &&
-            <ArrowDown2
-              color={isDark ? '#AA83DC' : '#8F97B8'}
-              size='18'
-              style={{ transition: 'all 250ms ease-out ' }}
-              variant='Bold'
-            />}
-        </Grid>
-        <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
-          sx={{
-            alignItems: 'center',
-            bgcolor: isDark ? '#2D1E4A80' : '#CCD2EA',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            display: 'flex',
-            height: '28px',
-            justifyContent: 'center',
-            width: '28px'
-          }}
-        >
-          <ChainLogo
-            genesisHash={genesisHash ?? POLKADOT_GENESIS}
-            size={20}
-          />
-        </Box>
+        <AccountSelect noSelection={noSelection} onClick={onClick} />
+        <ChainSwitcher onClick={onClick} />
       </Container>
       <AccountListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}

@@ -10,7 +10,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { amountToHuman } from '../util/numberUtils';
 import { useAccountAssets, usePrices } from '.';
 
-export default function useStakingPositions (address: string | undefined, withMax?: boolean): { positions: FetchedBalance[] | undefined | null, maxPosition: FetchedBalance | undefined, maxPositionType: 'solo' | 'pool' | undefined } {
+export default function useStakingPositions (address: string | undefined, active?: boolean): { positions: FetchedBalance[] | undefined | null, maxPosition: FetchedBalance | undefined, maxPositionType: 'solo' | 'pool' | undefined } {
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
 
@@ -19,7 +19,7 @@ export default function useStakingPositions (address: string | undefined, withMa
   , [accountAssets]);
 
   const { maxPosition, maxPositionType } = useMemo(() => {
-    if (!positions?.length || !pricesInCurrency || !withMax) {
+    if (!positions?.length || !pricesInCurrency || !active) {
       return {
         maxPosition: undefined,
         maxPositionType: undefined
@@ -57,7 +57,7 @@ export default function useStakingPositions (address: string | undefined, withMa
       maxPosition: foundMax.position,
       maxPositionType: type as 'solo' | 'pool'
     };
-  }, [positions, pricesInCurrency, withMax]);
+  }, [positions, pricesInCurrency, active]);
 
   return { maxPosition, maxPositionType, positions };
 }
