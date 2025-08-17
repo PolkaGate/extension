@@ -49,7 +49,7 @@ export default function NominationsBackButton ({ style }: Props) {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
-  const onChange = useCallback(() => windowOpen('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash]);
+  const onChange = useCallback(() => windowOpen('/fullscreen-stake/solo/manage-validator/' + genesisHash) as unknown as void, [genesisHash]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '15px', width: '100%', ...style }}>

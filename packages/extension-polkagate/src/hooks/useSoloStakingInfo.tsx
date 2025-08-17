@@ -198,6 +198,8 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   const needsStorageUpdate = useRef(false);
   // Tracks when it is done with fetching solo staking information
   const fetchingFlag = useRef(true);
+  // Tracks when it is done with fetching rewards
+  const rewardsFetchingFlag = useRef(true);
 
   useEffect(() => {
     if (refresh) {
@@ -247,10 +249,11 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
 
   useEffect(() => {
-    if (rewards) {
+    if (rewards && soloStakingInfo && rewardsFetchingFlag.current) {
+      rewardsFetchingFlag.current = false;
       setSoloStakingInfo((pre) => ({ ...pre, rewards }) as SoloStakingInfo);
     }
-  }, [rewards]);
+  }, [rewards, soloStakingInfo]);
 
   // Update rewards separately as they might come later
   useEffect(() => {
