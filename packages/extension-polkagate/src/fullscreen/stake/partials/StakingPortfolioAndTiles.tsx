@@ -17,7 +17,6 @@ import { calcPrice } from '../../../hooks/useYouHave';
 import StakingInfoTile from '../../../popup/staking/partial/StakingInfoTile';
 import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
 import { GlowBall } from '../../../style/VelvetBox';
-import { amountToHuman } from '../../../util/utils';
 import { type PopupOpener, StakingPopUps } from '../util/utils';
 
 interface TileBoxProps {
