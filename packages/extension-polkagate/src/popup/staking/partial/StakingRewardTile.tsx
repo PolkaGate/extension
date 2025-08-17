@@ -139,6 +139,24 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
 
   const height = type === 'pool' ? '170px' : '140px';
 
+  const { totalRewardCurrency, totalRewardFiat } = useMemo(() => {
+    if (!totalClaimedRewardInCurrency || !totalClaimedReward) {
+      return { totalRewardCurrency: undefined, totalRewardFiat: undefined };
+    }
+
+    if (type === 'solo') {
+      return {
+        totalRewardCurrency: rewardInCurrency,
+        totalRewardFiat: reward
+      };
+    }
+
+    return {
+      totalRewardCurrency: totalClaimedRewardInCurrency,
+      totalRewardFiat: totalClaimedReward
+    };
+  }, [reward, rewardInCurrency, totalClaimedReward, totalClaimedRewardInCurrency, type]);
+
   return (
     <Stack direction='column' sx={{ borderRadius: '14px', height, overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
@@ -153,7 +171,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
             </Typography>
           </Container>
           <Grid alignItems='center' container item justifyContent='start' sx={{ height: '40px' }}>
-            {totalClaimedRewardInCurrency === undefined
+            {totalRewardCurrency === undefined
               ? (
                 <Stack direction='column' sx={{ width: '100%' }}>
                   <MySkeleton style={{ marginTop: '5px', maxWidth: '245px', width: '100%' }} />
@@ -169,14 +187,14 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                   fontSize='40px'
                   fontWeight={400}
                   height={40}
-                  num={totalClaimedRewardInCurrency}
+                  num={totalRewardCurrency}
                   width='fit-content'
                   withSmallDecimal
                 />)
             }
           </Grid>
           <Grid alignItems='center' container item justifyContent='flex-start' sx={{ height: '20px', m: '-3px 0 6px' }}>
-            {totalClaimedReward === undefined
+            {totalRewardFiat === undefined
               ? (
                 <MySkeleton style={{ maxWidth: '75px', width: '100%' }} />
               )
@@ -192,7 +210,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                     width: 'max-content'
                   }}
                   tokens={[token ?? '']}
-                  value={totalClaimedReward}
+                  value={totalRewardFiat}
                 />)}
           </Grid>
         </Stack>
@@ -233,6 +251,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
+  // Pool total earned rewards
   const { totalClaimedReward } = useStakingRewards3(address, genesisHash, type);
 
   const rewardInCurrency = useMemo(() => {
@@ -243,6 +262,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
     return calcPrice(tokenPrice.price, reward, decimal);
   }, [decimal, tokenPrice, pricesInCurrency, reward]);
 
+  // Pool total earned rewards
   const totalClaimedRewardInCurrency = useMemo(() => {
     if (!totalClaimedReward || !pricesInCurrency || !tokenPrice || !decimal) {
       return undefined;

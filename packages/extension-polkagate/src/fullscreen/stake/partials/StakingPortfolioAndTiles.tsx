@@ -13,6 +13,7 @@ import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlak
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
+import { calcPrice } from '../../../hooks/useYouHave';
 import StakingInfoTile from '../../../popup/staking/partial/StakingInfoTile';
 import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
 import { GlowBall } from '../../../style/VelvetBox';
@@ -57,7 +58,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
             }]}
         cryptoAmount={rewards}
         decimal={decimal ?? 0}
-        fiatAmount={rewards && decimal ? (Number(amountToHuman(rewards, decimal)) * tokenPrice) : 0}
+        fiatAmount={rewards && decimal ? calcPrice(tokenPrice, rewards, decimal) : 0}
         isFullScreen
         layoutDirection='row'
         style={{ minWidth: '157px', width: 'min-content' }}
@@ -73,7 +74,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
         }]}
         cryptoAmount={redeemable}
         decimal={decimal ?? 0}
-        fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
+        fiatAmount={redeemable && decimal ? calcPrice(tokenPrice, redeemable, decimal) : 0}
         isFullScreen
         layoutDirection='row'
         style={{ minWidth: '146px', width: 'min-content' }}
@@ -91,7 +92,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
           : undefined)}
         cryptoAmount={unlockingAmount}
         decimal={decimal ?? 0}
-        fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
+        fiatAmount={unlockingAmount && decimal ? calcPrice(tokenPrice, unlockingAmount, decimal) : 0}
         isFullScreen
         layoutDirection='row'
         onExpand={toBeReleased?.length ? popupOpener(StakingPopUps.UNLOCKING) : undefined}
@@ -108,7 +109,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
         }]}
         cryptoAmount={availableBalanceToStake}
         decimal={decimal ?? 0}
-        fiatAmount={availableBalanceToStake && decimal ? (Number(amountToHuman(availableBalanceToStake, decimal)) * tokenPrice) : 0}
+        fiatAmount={availableBalanceToStake && decimal ? calcPrice(tokenPrice, availableBalanceToStake, decimal) : 0}
         icon={ isPoolStaking ? <Ice size='18' style={{ justifyContent: 'center' }} /> : <SnowFlake size='18' />}
         isFullScreen
         layoutDirection='row'
