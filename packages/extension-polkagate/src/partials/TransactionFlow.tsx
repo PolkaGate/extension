@@ -58,6 +58,10 @@ export default function TransactionFlow ({ address, amount, backPathTitle, close
       _txInfo.amount = txAmount.content.toString();
     }
 
+    if (amount) {
+      _txInfo.amount = amount;
+    }
+
     const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
 
     if (txFee?.content) {
@@ -65,7 +69,7 @@ export default function TransactionFlow ({ address, amount, backPathTitle, close
     }
 
     return _txInfo;
-  }, [transactionInformation, txInfo]);
+  }, [amount, transactionInformation, txInfo]);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
