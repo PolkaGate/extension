@@ -30,7 +30,6 @@ export default function SoloFullScreen (): React.ReactElement {
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
   const rewardInfo = useStakingRewards3(address, genesisHash, 'solo', true);
 
-  console.log('rewardInfo',rewardInfo)
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
   const asset = useMemo(() =>

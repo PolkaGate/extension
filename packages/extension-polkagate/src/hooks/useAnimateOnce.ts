@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface AnimateOnceConfig {
@@ -22,9 +24,9 @@ type Timer = ReturnType<typeof setTimeout>;
  * @param config - Configuration options for the animation
  * @returns animate: boolean - Current animation state
  */
-export default function useAnimateOnce(condition: boolean | undefined, config = {} as AnimateOnceConfig): boolean {
+export default function useAnimateOnce (condition: boolean | undefined, config = {} as AnimateOnceConfig): boolean {
   const [animate, setAnimate] = useState(false);
-  const timeoutRef = useRef<Timer>();
+  const timeoutRef = useRef<Timer>(null);
 
   const { delay = DEFAULT_DELAY, duration = DEFAULT_DURATION, onComplete, onStart } = config;
 

@@ -177,7 +177,7 @@ function TextContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValu
 
 interface DropContentProps {
   contentDropWidth: number | undefined;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   Icon: React.ElementType | React.JSX.Element | undefined;
   displayContentType?: 'logo' | 'text' | 'icon' | 'account' | 'iconOption';
   options: AdvancedDropdownOption[];

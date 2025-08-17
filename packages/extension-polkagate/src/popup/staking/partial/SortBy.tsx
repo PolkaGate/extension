@@ -61,7 +61,7 @@ function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
 }
 
 interface DropContentProps {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   open: boolean;
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;

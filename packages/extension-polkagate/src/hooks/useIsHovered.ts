@@ -3,7 +3,7 @@
 
 import { type RefObject, useEffect, useState } from 'react';
 
-export default function useIsHovered (containerRef: RefObject<HTMLElement> | null): boolean {
+export default function useIsHovered (containerRef: RefObject<HTMLElement | HTMLDivElement | null> | null): boolean {
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {

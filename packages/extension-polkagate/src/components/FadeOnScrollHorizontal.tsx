@@ -11,7 +11,7 @@ interface FaderProps {
   style?: React.CSSProperties;
 }
 interface Props extends FaderProps {
-  containerRef: React.RefObject<HTMLElement>;
+  containerRef: React.RefObject<HTMLElement | HTMLDivElement | null>;
 }
 
 const Fader = styled('div', {

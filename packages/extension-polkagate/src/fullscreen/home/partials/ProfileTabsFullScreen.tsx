@@ -26,7 +26,7 @@ function ProfileTabsFullScreen ({ orderedAccounts }: Props): React.ReactElement 
   const [isContentReady, setIsContentReady] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const checkTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const checkTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
   const isHovered = useIsHovered(scrollContainerRef);
 
   const profilesToShow = useMemo(() => {

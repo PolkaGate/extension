@@ -58,7 +58,7 @@ function Row ({ assetId, genesisHash, setSelectedAsset, token }: { assetId: stri
 
 interface DropContentProps {
   assets: FetchedBalance[]
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   contentDropWidth?: number | undefined;
   open: boolean;
   setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>>

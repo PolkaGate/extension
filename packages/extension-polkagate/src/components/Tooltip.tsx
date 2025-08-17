@@ -21,7 +21,7 @@ interface CustomTooltipProps {
   | 'top-end'
   | 'top-start'
   | 'top';
-  targetRef: RefObject<HTMLElement> | null;
+  targetRef: RefObject<HTMLElement | null> | null;
   positionAdjustment?: {
     top?: number;
     left?: number;

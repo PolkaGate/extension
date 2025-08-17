@@ -22,8 +22,8 @@ interface Props {
   withReset?: boolean;
 }
 
-export default function InputFilter({ autoFocus = true, disabled, fontSize = '18px', label, onChange, placeholder, theme, value, withReset = false }: Props) {
-  const inputRef: React.RefObject<HTMLInputElement> | null = useRef(null);
+export default function InputFilter ({ autoFocus = true, disabled, fontSize = '18px', label, onChange, placeholder, theme, value, withReset = false }: Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);

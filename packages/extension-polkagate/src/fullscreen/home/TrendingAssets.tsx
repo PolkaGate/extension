@@ -166,7 +166,11 @@ function TrendingAssets (): React.ReactElement {
                   asset={asset}
                   key={index}
                   // eslint-disable-next-line react/jsx-no-bind
-                  ref={(el) => (el && (cardRefs.current[index] = el))}
+                  ref={(el) => {
+                    if (el) {
+                      cardRefs.current[index] = el;
+                    }
+                  }}
                 />
               );
             })}

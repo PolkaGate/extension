@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
 
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -44,7 +43,7 @@ export interface TransactionHistoryOutput {
   governanceTx: object & RecordTabStatusGov;
 }
 
-export default function useTransactionHistory(address: string | undefined, tabIndex: TAB_MAP): TransactionHistoryOutput {
+export default function useTransactionHistory (address: string | undefined, tabIndex: TAB_MAP): TransactionHistoryOutput {
   const { chain, chainName, decimal, formatted } = useInfo(address);
 
   const [fetchedTransferHistoriesFromSubscan, setFetchedTransferHistoriesFromSubscan] = React.useState<TransactionDetail[] | []>([]);
@@ -52,19 +51,19 @@ export default function useTransactionHistory(address: string | undefined, tabIn
   const [tabHistory, setTabHistory] = useState<TransactionDetail[] | null>([]);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
-  function stateReducer(state: object, action: RecordTabStatus) {
+  function stateReducer (state: object, action: RecordTabStatus) {
     return Object.assign({}, state, action);
   }
 
-  function stateReducerGov(state: object, action: RecordTabStatusGov) {
+  function stateReducerGov (state: object, action: RecordTabStatusGov) {
     return Object.assign({}, state, action);
   }
 
   const [transfersTx, setTransfersTx] = useReducer(stateReducer, INITIAL_STATE);
   const [governanceTx, setGovernanceTx] = useReducer(stateReducerGov, INITIAL_STATE);
-  const observerInstance = useRef<IntersectionObserver>();
-  const receivingTransfers = useRef<RecordTabStatus>();
-  const receivingGovernance = useRef<RecordTabStatusGov>();
+  const observerInstance = useRef<IntersectionObserver | null>(null);
+  const receivingTransfers = useRef<RecordTabStatus | null>(null);
+  const receivingGovernance = useRef<RecordTabStatusGov | null>(null);
 
   receivingTransfers.current = transfersTx;
   receivingGovernance.current = governanceTx;

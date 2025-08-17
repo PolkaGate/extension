@@ -1,10 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-import { RefObject, useCallback, useEffect } from 'react';
+import type { RefObject } from 'react';
 
-export default function useOutsideClick(refs: RefObject<HTMLDivElement>[], callback: () => void): void {
+import { useCallback, useEffect } from 'react';
+
+export default function useOutsideClick (refs: RefObject<HTMLDivElement | null>[], callback: () => void): void {
   const handleClick = useCallback((e: MouseEvent): void => {
     refs.every(({ current }) =>
       current &&

@@ -25,8 +25,8 @@ export default function useTransactionHistory (address: AccountId | string | und
   const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
 
   // Previous values for comparison to detect changes
-  const prevAddressRef = useRef<string | undefined>();
-  const prevGenesisHashRef = useRef<string | undefined>();
+  const prevAddressRef = useRef<string | undefined>('');
+  const prevGenesisHashRef = useRef<string | undefined>('');
 
   const [receivedTx, dispatchReceived] = useReducer(receivedReducer, INITIAL_STATE as RecordTabStatus);
   const [extrinsicsTx, dispatchExtrinsics] = useReducer(extrinsicsReducer, INITIAL_STATE as RecordTabStatusGov);
@@ -34,7 +34,7 @@ export default function useTransactionHistory (address: AccountId | string | und
   // Refs for latest state values
   const receivedStateRef = useRef<RecordTabStatus>(receivedTx);
   const extrinsicsStateRef = useRef<RecordTabStatusGov>(extrinsicsTx);
-  const observerInstance = useRef<IntersectionObserver>();
+  const observerInstance = useRef<IntersectionObserver>(null);
   const initialFetchDoneRef = useRef<{ received: boolean; extrinsics: boolean }>({
     extrinsics: false,
     received: false
