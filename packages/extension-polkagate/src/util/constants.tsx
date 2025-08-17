@@ -6,7 +6,6 @@ import type { ProxyTypes } from './types';
 export const EXTENSION_NAME = 'PolkaGate';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const SUPPORT_EMAIL = 'support@polkagate.xyz';
-export const NEW_VERSION_ALERT = 'alert_v0.6.1';
 
 export const POLKADOT_SLIP44 = 354;
 
