@@ -5,7 +5,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { StepCounterType } from '../components/BackWithLabel';
 import type { Content } from '../partials/Review';
-import type { PoolInfo, ProxyTypes } from '../util/types';
+import type { ExtraDetailConfirmationPage, PoolInfo, ProxyTypes } from '../util/types';
 
 import React from 'react';
 
@@ -23,13 +23,13 @@ interface UseTransactionFlowProps {
   address: string | undefined;
   pool?: PoolInfo | undefined;
   restakeReward?: boolean;
-  amount?: string;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   showAccountBox?: boolean;
   reviewHeader?: React.ReactNode;
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function useTransactionFlow ({ address, amount, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }
@@ -37,9 +37,9 @@ export default function useTransactionFlow ({ address, amount, backPathTitle, cl
   return (
     <TransactionFlow
       address={address}
-      amount={amount}
       backPathTitle={backPathTitle}
       closeReview={closeReview}
+      extraDetailConfirmationPage={extraDetailConfirmationPage}
       genesisHash={genesisHash}
       pool={pool}
       proxyTypeFilter={proxyTypeFilter}

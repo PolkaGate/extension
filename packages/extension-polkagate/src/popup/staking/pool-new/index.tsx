@@ -102,9 +102,9 @@ export default function Pool (): React.ReactElement {
 
   const transactionFlow = useTransactionFlow({
     address: selectedAccount?.address,
-    amount: myClaimable?.toString(),
     backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
+    extraDetailConfirmationPage: { amount: review === Review.Reward ? myClaimable?.toString() : undefined },
     genesisHash: genesisHash ?? '',
     proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     restakeReward: review === Review.Reward ? restakeReward : undefined,

@@ -163,14 +163,19 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
       };
     }
 
-    const stakingPath = pathname.startsWith('/pool/') ? 'pool' : 'solo';
-    const redirectPath = `/${stakingPath}/${genesisHash}`;
+    let stakingPath = pathname.startsWith('/pool/') ? 'pool' : 'solo';
+    let redirectPath = `/${stakingPath}/${genesisHash}`;
+
+    if (pathname.includes('easyStake') && transactionDetail.extra?.['easyStakingType']) {
+      stakingPath = transactionDetail.extra['easyStakingType'];
+      redirectPath = `/${stakingPath}/${genesisHash}`;
+    }
 
     return {
       redirectPath,
       redirectToSamePath: pathname === redirectPath
     };
-  }, [pathname, genesisHash]);
+  }, [genesisHash, pathname, transactionDetail.extra]);
 
   const goToHistory = useCallback(() => {
     updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })

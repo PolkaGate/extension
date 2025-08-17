@@ -4,7 +4,7 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { StepCounterType } from '../components/BackWithLabel';
-import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
+import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
@@ -20,7 +20,6 @@ import { UserDashboardHeader, WaitScreen2 } from '.';
 export interface TransactionFlowProps {
   closeReview: () => void;
   genesisHash: string;
-  amount?: string;
   transactionInformation: Content[];
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
   backPathTitle: string;
@@ -32,9 +31,10 @@ export interface TransactionFlowProps {
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   showAccountBox?: boolean;
   reviewHeader?: React.ReactNode;
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function TransactionFlow ({ address, amount, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -58,18 +58,14 @@ export default function TransactionFlow ({ address, amount, backPathTitle, close
       _txInfo.amount = txAmount.content.toString();
     }
 
-    if (amount) {
-      _txInfo.amount = amount;
-    }
-
     const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
 
     if (txFee?.content) {
       _txInfo.fee = txFee.content.toString();
     }
 
-    return _txInfo;
-  }, [amount, transactionInformation, txInfo]);
+    return { ..._txInfo, ...extraDetailConfirmationPage };
+  }, [extraDetailConfirmationPage, transactionInformation, txInfo]);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
@@ -91,7 +87,7 @@ export default function TransactionFlow ({ address, amount, backPathTitle, close
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
-            amount={amount}
+            amount={extraDetailConfirmationPage?.amount}
             closeReview={closeReview}
             genesisHash={genesisHash}
             pool={pool}

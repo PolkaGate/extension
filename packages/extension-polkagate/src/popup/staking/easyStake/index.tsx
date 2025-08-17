@@ -60,9 +60,9 @@ export default function EasyStake () {
 
   const transactionFlow = useTransactionFlow({
     address,
-    amount: amountAsBN?.toString(),
     backPathTitle: t('Stake {{token}}', { replace: { token } }),
     closeReview,
+    extraDetailConfirmationPage: { amount: amountAsBN?.toString(), extra: { easyStakingType: selectedStakingType?.type ?? '' } }, // Used in confirmation page to return to the correct staking home page (pool/solo)
     genesisHash: genesisHash ?? '',
     proxyTypeFilter: selectedStakingType?.type === 'pool' ? PROXY_TYPE.NOMINATION_POOLS : PROXY_TYPE.STAKING,
     review,
