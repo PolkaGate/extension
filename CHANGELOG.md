@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.36.4](https://github.com/polkagate/extension/compare/v0.36.3...v0.36.4) (2025-06-04)
+
+
+### Bug Fixes
+
+* fix ledger signing issue due to new weird on-chain metadata version ([#1754](https://github.com/polkagate/extension/issues/1754)) ([86abbc2](https://github.com/polkagate/extension/commit/86abbc26618fa50732aa51b5f3e83918671267f5)), closes [#1753](https://github.com/polkagate/extension/issues/1753)
+
 ## [0.36.3](https://github.com/polkagate/extension/compare/v0.36.2...v0.36.3) (2025-04-08)
 
 

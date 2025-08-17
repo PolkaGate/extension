@@ -11,6 +11,49 @@ export interface News {
 
 export const news: News[] = [
   {
+    version: '0.36.4',
+    features: [
+      'Fix Ledger Signing Issue: Resolved an issue with Ledger signing to ensure a smoother user experience',
+      'Upcoming UI Redesign: PolkaGate is getting a fresh new look—stay tuned for exciting updates!'
+    ]
+  },
+  {
+    version: '0.36.3',
+    features: [
+      'Upgrade Ledger dependencies: Update the Ledger dependencies to the latest versions for improved performance and security.',
+      'Upcoming UI Redesign: PolkaGate is getting a fresh new look—stay tuned for exciting updates!'
+    ]
+  },
+  {
+    version: '0.36.2',
+    features: [
+      'Address minor issues: Fix the issue where the available balance was incorrectly set to 0 in the Polkadot API derive, along with other known issues.',
+      'Upcoming UI Redesign: PolkaGate is getting a fresh new look—stay tuned for exciting updates!'
+    ]
+  },
+  {
+    version: '0.36.1',
+    features: [
+      'Address minor issues: Resolve known problems to enhance the user experience and ensure compatibility with recent chain upgrades.',
+      'UI Redesign Incoming: PolkaGate is getting a brand-new look—stay tuned for the upcoming update!'
+    ]
+  },
+  {
+    version: '0.36.0',
+    features: [
+      'Pool Migration Support: Enable users to vote on governance using their staked funds in pools on Kusama and Polkadot.',
+      'UI Redesign Incoming: PolkaGate is getting a brand-new look—stay tuned for the upcoming update!'
+    ]
+  },
+  {
+    version: '0.35.2',
+    features: [
+      'Pool Migration Support: Enable users to vote on governance using their staked funds in pools on Kusama.',
+      'Send Page Fix: Resolve issue where the asset ID was undefined when balances were not yet fetched.',
+      'UI Redesign Incoming: PolkaGate is getting a brand-new look—stay tuned for the upcoming update!'
+    ]
+  },
+  {
     version: '0.34.0',
     features: [
       'Filter Inaccessible Endpoints: Exclude unresponsive RPC nodes to ensure smoother and more reliable connections.',
