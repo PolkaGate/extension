@@ -179,9 +179,10 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
   }, [address, genesisHash, navigate]);
 
   const backToStakingHome = useCallback(() =>
-    close && redirectToSamePath ? close() : navigate(redirectPath, { replace: true })
-  ,
-  [close, navigate, redirectPath, redirectToSamePath]);
+    close && redirectToSamePath
+      ? close()
+      : navigate(redirectPath, { replace: true }) as void
+  , [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;

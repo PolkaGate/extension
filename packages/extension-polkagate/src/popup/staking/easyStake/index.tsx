@@ -60,6 +60,7 @@ export default function EasyStake () {
 
   const transactionFlow = useTransactionFlow({
     address,
+    amount: amountAsBN?.toString(),
     backPathTitle: t('Stake {{token}}', { replace: { token } }),
     closeReview,
     genesisHash: genesisHash ?? '',
