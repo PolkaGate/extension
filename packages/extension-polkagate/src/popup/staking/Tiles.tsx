@@ -79,7 +79,7 @@ function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestak
             decimal={decimal ?? 0}
             fiatAmount={0}
             layoutDirection={layoutDirection}
-            title={t('Rewards earned')}
+            title={t('Rewards Earned')}
             token={token ?? ''}
           />)
       }
