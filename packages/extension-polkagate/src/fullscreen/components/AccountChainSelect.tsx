@@ -7,6 +7,7 @@ import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
+import { useParams } from 'react-router';
 
 import { useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
@@ -76,7 +77,9 @@ enum MODAL_TO_OPEN {
 function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const isDark = useIsDark();
   const selectedAccount = useSelectedAccount();
-  const genesisHash = useAccountSelectedChain(selectedAccount?.address);
+  const { genesisHash: maybeGenesisFromPath } = useParams<{ genesisHash: string }>();
+  const savedGenesis = useAccountSelectedChain(selectedAccount?.address);
+  const genesisHash = maybeGenesisFromPath ?? savedGenesis;
 
   return (
     <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
