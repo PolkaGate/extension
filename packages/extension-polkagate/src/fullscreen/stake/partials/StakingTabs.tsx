@@ -126,7 +126,6 @@ function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelec
       case STAKING_TABS.VALIDATORS:
         return (
           <ValidatorsTabBody
-            genesisHash={genesisHash}
             stakingInfo={stakingInfo}
           />);
 

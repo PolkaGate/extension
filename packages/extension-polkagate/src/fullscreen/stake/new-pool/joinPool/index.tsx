@@ -136,7 +136,7 @@ function JoinPool () {
   const isSelected = useCallback((poolItem: PoolInfo) => selectedPool?.poolId === poolItem.poolId, [selectedPool?.poolId]);
   const selectPool = useCallback((poolItem: PoolInfo) => () => setSelectedPool(poolItem), [setSelectedPool]);
   const onReset = useCallback(() => setSelectedPool(undefined), [setSelectedPool]);
-  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/pool/' + genesisHash) as void, [genesisHash, navigate]);
+  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/pool/' + selectedAccount?.address + '/' + genesisHash) as void, [genesisHash, navigate, selectedAccount?.address]);
   const togglePopup = useCallback(() => setShowPopup((onPopup) => !onPopup), []);
 
   return (

@@ -114,7 +114,7 @@ export default function AppRoutes () {
   useEffect(() => {
     const handler = (message: TabProps, _sender: unknown, sendResponse: (response: unknown) => void) => {
       if (message?.type === 'NAVIGATE_TO') {
-        navigate(`/${message.payload}`);
+        navigate(`/${message.payload}`) as void;
         sendResponse({ success: true });
       }
     };

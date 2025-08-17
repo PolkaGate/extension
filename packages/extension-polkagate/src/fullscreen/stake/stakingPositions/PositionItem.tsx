@@ -4,12 +4,12 @@
 import { Container, Grid, Typography } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { type BN, noop } from '@polkadot/util';
 
 import { ChainLogo, CryptoFiatBalance } from '../../../components';
-import { useChainInfo, useSelectedAccount } from '../../../hooks';
+import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { updateStorage } from '../../../util';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, TEST_NETS } from '../../../util/constants';
@@ -92,20 +92,20 @@ interface Props extends TokenInfoProps {
 }
 
 function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
-  const selectedAccount = useSelectedAccount();
+  const { address } = useParams<{ address: string; genesisHash: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
   const onClick = useCallback(() => {
-    if (!selectedAccount?.address) {
+    if (!address) {
       return;
     }
 
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: genesisHash })
-      .then(() => navigate('/fullscreen-stake/' + type + '/' + genesisHash) as void)
+    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+      .then(() => navigate('/fullscreen-stake/' + type + '/' + address + '/' + genesisHash) as void)
       .catch(console.error);
-  }, [genesisHash, navigate, selectedAccount?.address, type]);
+  }, [genesisHash, navigate, address, type]);
 
   return (
     <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>

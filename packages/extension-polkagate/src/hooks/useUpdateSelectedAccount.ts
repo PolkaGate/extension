@@ -8,21 +8,24 @@ import { isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
+import { useStakingPositions } from '.';
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
 
   const savedSelectedChain = useAccountSelectedChain(address);
+  const isStakingPath = location.pathname.includes('/fullscreen-stake/');
+  const { maxPosition, maxPositionType } = useStakingPositions(address, isStakingPath);
 
   const updatePathWithNewAddress = useCallback((newAddress: string) => {
-    if (location.pathname.includes('/fullscreen-stake/')) {
-      return;
-    }
+    // if (location.pathname.includes('/fullscreen-stake/')) {
+    //   return;
+    // }
 
     const pathParts = location.pathname.split('/');
 
-    const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p));
+    const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p)); // since we put address before genesis in the paths
     const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
 
     // Validate expected path format
@@ -32,16 +35,28 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    if (savedSelectedChain && maybeGenesisIndex !== -1) {
-      pathParts[maybeGenesisIndex] = savedSelectedChain;
+    if (maybeGenesisIndex !== -1) {
+      if (isStakingPath && maxPosition) {
+        pathParts[maybeGenesisIndex] = maxPosition?.genesisHash;
+      } else if (savedSelectedChain) {
+        pathParts[maybeGenesisIndex] = savedSelectedChain;
+      }
     }
 
     pathParts[maybeAddressIndex] = newAddress;
 
-    const newPath = pathParts.join('/');
+    let newPath = pathParts.join('/');
+
+    if (isStakingPath && maxPositionType) {
+      const opposite = maxPositionType === 'solo' ? 'pool' : 'solo';
+
+      if (!newPath.includes(maxPositionType) && newPath.includes(opposite)) {
+        newPath = newPath.replace(opposite, maxPositionType);
+      }
+    }
 
     navigate(newPath) as void;
-  }, [location.pathname, navigate, savedSelectedChain]);
+  }, [isStakingPath, location.pathname, maxPosition, maxPositionType, navigate, savedSelectedChain]);
 
   const handleExit = useCallback(() => {
     if (!address) {

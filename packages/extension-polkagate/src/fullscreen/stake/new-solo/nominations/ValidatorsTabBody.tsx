@@ -9,7 +9,7 @@ import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 import { Collapse, Stack } from '@mui/material';
 import { Menu, Star1, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 
@@ -22,13 +22,13 @@ import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY }
 import { UndefinedItem } from './ValidatorItem';
 
 interface Props {
-  genesisHash: string | undefined;
   stakingInfo: SoloStakingInfo | undefined;
 }
 
-export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props): React.ReactElement {
+export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
   const navigate = useNavigate();
 
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
@@ -67,7 +67,7 @@ export default function ValidatorsTabBody ({ genesisHash, stakingInfo }: Props):
   }, [nominatedValidatorsInformation, stakingInfo?.stakingAccount?.accountId]);
 
   const onSearch = useCallback((input: string) => setSearch(input), []);
-  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + genesisHash) as void, [genesisHash, navigate]);
+  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
 
   return (
     <Motion variant='slide'>

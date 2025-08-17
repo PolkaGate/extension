@@ -96,6 +96,7 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
       case StakingPopUps.JOIN_CREATE_POOL:
         return (
           <JoinCreatePool
+            address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
             popupOpener={popupOpener}

@@ -38,10 +38,10 @@ export default function Solo (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
+  const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
@@ -50,11 +50,11 @@ export default function Solo (): React.ReactElement {
   const { asset,
     redeemable,
     transactionInformation,
-    tx } = useWithdrawSolo(selectedAccount?.address, genesisHash, review);
+    tx } = useWithdrawSolo(address, genesisHash, review);
 
   useEffect(() => {
-    selectedAccount?.address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: genesisHash }).catch(console.error);
-  }, [genesisHash, selectedAccount?.address]);
+    address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
+  }, [genesisHash, address]);
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
@@ -72,7 +72,7 @@ export default function Solo (): React.ReactElement {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -110,7 +110,7 @@ export default function Solo (): React.ReactElement {
             type='solo'
           />
           <Tiles
-            address={selectedAccount?.address}
+            address={address}
             asset={asset}
             genesisHash={genesisHash}
             onClaimReward={onClaimReward}

@@ -81,7 +81,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
             <ActionBox
               Icon={BuyCrypto}
               label={t('Staking')}
-              path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${maxPosition?.genesisHash ?? genesisHash}`}
+              path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${address}/${maxPosition?.genesisHash ?? genesisHash}`}
             />}
           <ActionBox
             Icon={Triangle}
