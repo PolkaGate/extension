@@ -287,7 +287,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     return `${firstMonth} ${firstDay} - ${lastMonth} ${lastDay}`;
   }, [dataToShow, weeksRewards, pageIndex]);
 
-  const chartOptions = {
+  const chartOptions = useMemo(() => ({
     aspectRatio: 1.4,
     onHover: (_: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
       const meta = chart.getDatasetMeta(0);
@@ -317,18 +317,25 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         dataset.backgroundColor = dataset.data.map((_, index: number) => {
           const element = meta.data[index] as unknown as GradientObject;
 
-          return index === hoveredIndex ? createGradient(ctx, element, true) : createGradient(ctx, element, false);
+          if (isFullScreen) {
+            return index === hoveredIndex ? createGradient(ctx, element, true) : createGradient(ctx, element, false);
+          }
+
+          return index === hoveredIndex ? '#809ACB' : '#596AFF80';
         });
       } else {
         // No bar is being hovered - reset all bars to normal color
         const dataset = chart.data.datasets[0];
 
         expand(undefined); // Reset detail when no bar is hovered
-        // dataset.backgroundColor = '#596AFF'; // Normal color for all bars
         dataset.backgroundColor = dataset.data.map((_, index: number) => {
           const element = meta.data[index] as unknown as GradientObject;
 
-          return createGradient(ctx, element, false);
+          if (isFullScreen) {
+            return createGradient(ctx, element, false);
+          }
+
+          return '#596AFF';
         });
       }
 
@@ -390,9 +397,9 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         }
       }
     }
-  } as unknown as PluginChartOptions<'bar'>;
+  }), [dataToShow, descSortedRewards, isFullScreen, pageIndex, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
 
-  const chartData: ChartData<'bar', string[] | undefined, string> = {
+  const chartData: ChartData<'bar', string[] | undefined, string> = useMemo(() => ({
     datasets: [
       {
         backgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
@@ -401,7 +408,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
           const meta = chart.getDatasetMeta(0);
           const element = meta.data[context.dataIndex] as unknown as GradientObject;
 
-          if (!element) {
+          if (!element || !isFullScreen) {
             return '#596AFF'; // Fallback color
           }
 
@@ -417,7 +424,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
           const meta = chart.getDatasetMeta(0);
           const element = meta.data[context.dataIndex] as unknown as GradientObject;
 
-          if (!element) {
+          if (!element || !isFullScreen) {
             return '#809ACB'; // Fallback color
           }
 
@@ -427,7 +434,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
       }
     ],
     labels: dataToShow?.[pageIndex][1]
-  };
+  }), [dataToShow, isFullScreen, pageIndex, token]);
 
   const onNextPeriod = useCallback(() => {
     pageIndex && setPageIndex(pageIndex - 1);
