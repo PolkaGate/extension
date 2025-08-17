@@ -111,7 +111,9 @@ const RewardSetting = ({ genesisHash, popupOpener, token, type }: RewardSettingP
           {token}
         </Typography>
       </Container>
-      {type === 'solo' && <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />}
+      {type === 'solo' &&
+       <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />
+      }
     </Container>
   );
 };
@@ -199,20 +201,24 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', m: '6px', p: '8px 12px', position: 'relative', width: 'calc(100% - 12px)' }}>
         <Typography color='#AA83DC' variant='B-1' width='fit-content'>
-          {t('Received from')}:
+          {t('Reward source')}
         </Typography>
-        <Identity2
-          address={reward.address}
-          charsCount={10}
-          genesisHash={genesisHash ?? ''}
-          identiconSize={24}
-          style={{
-            color: theme.palette.text.primary,
-            variant: 'B-1',
-            width: '330px'
-          }}
-          withShortAddress
-        />
+        {reward.poolId
+          ? <Typography color={theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-4' width='fit-content'>
+            {t('Pool #{{poolId}}', { poolId: reward.poolId })}
+          </Typography>
+          : <Identity2
+            address={reward.address}
+            charsCount={10}
+            genesisHash={genesisHash ?? ''}
+            identiconSize={24}
+            style={{
+              color: theme.palette.text.primary,
+              variant: 'B-1',
+              width: '330px'
+            }}
+            withShortAddress
+          />}
       </Container>
     </Collapse>
   );

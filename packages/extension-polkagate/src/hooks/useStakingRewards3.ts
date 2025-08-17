@@ -111,6 +111,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
             amount,
             era: i.era,
             event: i.event_id,
+            poolId: i.pool_id,
             timeStamp: i.block_timestamp
           } as ClaimedRewardInfo;
         });

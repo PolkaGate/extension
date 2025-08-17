@@ -89,7 +89,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
         <Typography color='text.highlight' variant='B-1' width='fit-content'>
-          {t('Received from')}:
+          {t('Reward source')}
         </Typography>
         <Identity2
           address={reward.address}

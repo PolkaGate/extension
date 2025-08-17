@@ -607,6 +607,7 @@ export interface ClaimedRewardInfo {
   era: number;
   amount: BN;
   date?: string;
+  poolId?: number;
   timeStamp: number;
 }
 
