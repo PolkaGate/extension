@@ -9,7 +9,7 @@ import { faRightToBracket, faSquarePlus } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '../../../../hooks';
 import { HeaderBrand, SubTitle } from '../../../../partials';
@@ -22,9 +22,9 @@ interface Props {
   balances: DeriveBalancesAll | undefined;
 }
 
-export default function StakeInitialChoice ({ address, api, balances, consts }: Props): React.ReactElement {
+export default function StakeInitialChoice({ address, api, balances, consts }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const freeBalance = balances?.freeBalance;
@@ -34,24 +34,16 @@ export default function StakeInitialChoice ({ address, api, balances, consts }: 
   const [joinWarningText, setJoinWarningText] = useState<string | undefined>();
 
   const backToIndex = useCallback(() => {
-    history.push({
-      pathname: `/pool/${address}`
-    });
-  }, [address, history]);
+    navigate(`/pool/${address}`);
+  }, [address, navigate]);
 
   const joinPool = useCallback(() => {
-    history.push({
-      pathname: `/pool/join/${address}`,
-      state: { api, availableBalance: freeBalance, consts }
-    });
-  }, [address, api, freeBalance, history, consts]);
+    navigate(`/pool/join/${address}`, { state: { api, availableBalance: freeBalance, consts } });
+  }, [address, api, freeBalance, navigate, consts]);
 
   const createPool = useCallback(() => {
-    history.push({
-      pathname: `/pool/create/${address}`,
-      state: { api, availableBalance: freeBalance, consts }
-    });
-  }, [address, api, freeBalance, history, consts]);
+    navigate(`/pool/create/${address}`, { state: { api, availableBalance: freeBalance, consts }});
+  }, [address, api, freeBalance, navigate, consts]);
 
   useEffect(() => {
     if (!consts || !freeBalance) {

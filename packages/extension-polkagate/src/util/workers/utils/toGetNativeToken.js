@@ -14,8 +14,10 @@ export async function toGetNativeToken (addresses, api, chainName) {
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
 
   const systemBalance = await Promise.all(addresses.map((address) => api.query.system.account(address)));
+  const existentialDeposit = api.consts.balances.existentialDeposit;
 
   addresses.forEach((address, index) => {
+    balances[index].ED = existentialDeposit;
     balances[index].frozenBalance = systemBalance[index].data.frozen;
 
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);

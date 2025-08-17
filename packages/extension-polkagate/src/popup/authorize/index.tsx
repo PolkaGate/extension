@@ -1,14 +1,25 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import type { AuthorizeRequest } from '@polkadot/extension-base/background/types';
+
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AuthorizeReqContext } from '../../components';
 import { useIsExtensionPopup } from '../../hooks';
-import AuthExtensionMode from './AuthExtensionMode';
+import { ConnectedDapp } from '../../partials';
 import AuthFullScreenMode from './AuthFullScreenMode';
 
-export default function Authorize(): React.ReactElement {
+export interface AuthorizeRequestHandlerProp {
+  currentIndex: number;
+  request: AuthorizeRequest;
+  onNext: () => void;
+  onPrevious: () => void;
+  hasBanner: boolean;
+  totalRequests: number;
+}
+
+export default function Authorize (): React.ReactElement {
   const isExtensionMode = useIsExtensionPopup();
   const extensionMode = window.location.pathname.includes('notification');
   const requests = useContext(AuthorizeReqContext);
@@ -28,17 +39,20 @@ export default function Authorize(): React.ReactElement {
     setRequestIndex((index) => index > 0 ? index - 1 : requests.length - 1);
   }, [requests.length]);
 
+  const authorizeRequestHandler: AuthorizeRequestHandlerProp = useMemo(() => ({
+    currentIndex: requestIndex,
+    hasBanner: requests.length > 1,
+    onNext: onNextAuth,
+    onPrevious: onPreviousAuth,
+    request: requests[requestIndex],
+    totalRequests: requests.length
+  }), [onNextAuth, onPreviousAuth, requestIndex, requests]);
+
   return extensionMode || isExtensionMode
-    ? <AuthExtensionMode
-      onNextAuth={onNextAuth}
-      onPreviousAuth={onPreviousAuth}
-      requestIndex={requestIndex}
-      requests={requests}
+    ? <ConnectedDapp
+      authorizeRequestHandler={authorizeRequestHandler}
     />
     : <AuthFullScreenMode
-      onNextAuth={onNextAuth}
-      onPreviousAuth={onPreviousAuth}
-      requestIndex={requestIndex}
-      requests={requests}
+      authorizeRequestHandler={authorizeRequestHandler}
     />;
 }

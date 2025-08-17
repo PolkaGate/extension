@@ -1,38 +1,36 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
+import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
-import { Address, InputFileWithLabel, Password, TwoButtons, VaadinIcon, Warning, WrongPasswordAlert } from '../../../components';
-import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useTranslation } from '../../../hooks';
+import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
+import { useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
-import { pgBoxShadow } from '../../../util/utils';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
-export default function RestoreJson(): React.ReactElement {
-  useFullscreen();
+export default function RestoreJson (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
@@ -50,9 +48,9 @@ export default function RestoreJson(): React.ReactElement {
 
   const areAllSelected = useMemo(() =>
     selectedAccountsInfo.length === accountsInfo.length
-    , [selectedAccountsInfo.length, accountsInfo.length]);
+  , [selectedAccountsInfo.length, accountsInfo.length]);
 
-  const handleCheck = useCallback((_event: React.ChangeEvent<HTMLInputElement>, address: string) => {
+  const handleCheck = useCallback((_event: boolean, address: string) => {
     const selectedAccount = accountsInfo.find((account) => account.address === address);
 
     if (!selectedAccount) {
@@ -135,7 +133,7 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     await batchRestore(encryptFile, password);
-    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now() })));
+    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null })));
 
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
@@ -150,6 +148,7 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     setIsBusy(true);
+    let hadPasswordError = false;
 
     try {
       await resetOnForgotPassword();
@@ -160,13 +159,14 @@ export default function RestoreJson(): React.ReactElement {
         await handleRegularJson(file);
       }
 
-      await setStorage('profile', PROFILE_TAGS.ALL);
-      openOrFocusTab('/', true);
+      await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.ALL);
     } catch (error) {
       console.error(error);
       setIsPasswordError(true);
+      hadPasswordError = true;
     } finally {
       setIsBusy(false);
+      !hadPasswordError && switchToOrOpenTab('/', true);
     }
   }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson]);
 
@@ -183,131 +183,116 @@ export default function RestoreJson(): React.ReactElement {
     setPassword('');
   }, []);
 
-  const onCancel = useCallback(() => window.close(), []);
+  const onCancel = useCallback(() => navigate('/'), [navigate]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
+    <AdaptiveLayout style={{ maxWidth: '600px' }}>
+      <OnboardTitle
+        label={t('Restore from file')}
+        labelPartInColor='from file'
+        url='/account/have-wallet'
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '10%' }}>
-          <Title
-            height='100px'
-            logo={
-              <VaadinIcon icon='vaadin:file-text' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            }
-            text={t('Restore from file')}
-          />
-          {stepOne &&
-            <Typography fontSize='16px' fontWeight={400} width='100%'>
-              {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
-            </Typography>
-          }
-          {isPasswordError && !stepOne &&
-            <WrongPasswordAlert />
-          }
-          {!stepOne && accountsInfo.length &&
-            <>
-              <Typography fontSize='16px' fontWeight={400} sx={{ mt: '10px' }} width='100%'>
-                {accountsInfo?.length === 1
-                  ? t('Import the account into the extension')
-                  : t('Select accounts to import into the extension')
-                }
-              </Typography>
-              <Grid
-                container
-                direction='column'
-                sx={{ '> .tree:first-child': { borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }, '> .tree:last-child': { border: 'none', borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }, border: '0.5px solid', borderColor: 'secondary.light', borderRadius: '5px', boxShadow: pgBoxShadow(theme), display: 'block', maxHeight: parent.innerHeight * 2 / 5, overflowY: 'scroll' }}
-              >
-                {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
-                  const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
-
-                  return (
-                    <Address
-                      address={address}
-                      check={isSelected}
-                      className='tree'
-                      genesisHash={genesisHash}
-                      handleCheck={handleCheck}
-                      key={`${index}:${address}`}
-                      name={name}
-                      showCheckbox={showCheckbox}
-                      style={{
-                        border: 'none',
-                        borderBottom: '1px solid',
-                        borderBottomColor: 'secondary.light',
-                        borderRadius: 'none',
-                        m: 0,
-                        width: '100%'
-                      }}
-                      type={type}
-                    />
-                  );
-                })}
-              </Grid>
-              {showCheckbox &&
-                <Grid item onClick={onSelectDeselectAll} width='fit-content'>
-                  <Typography
-                    fontSize='16px'
-                    fontWeight={400}
-                    sx={{ color: theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main', cursor: 'pointer', textAlign: 'left', textDecorationLine: 'underline', ml: '10px', mt: '5px', userSelect: 'none', width: 'fit-content' }}
-                  >
-                    {areAllSelected ? t('Deselect All') : t('Select All')}
-                  </Typography>
-                </Grid>
+      <Stack direction='column' sx={{ position: 'relative', width: '500px' }}>
+        {stepOne &&
+          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left', width: '369px' }} variant='B-1'>
+            {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
+          </Typography>
+        }
+        {!stepOne && accountsInfo.length &&
+          <>
+            <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left' }} variant='B-1' width='100%'>
+              {accountsInfo?.length === 1
+                ? t('Import the account into the extension')
+                : t('Select accounts to import into the extension')
               }
-            </>
-          }
-          <InputFileWithLabel
-            accept={acceptedFormats}
-            isError={isFileError}
-            label={stepOne ? t('Upload your file') : t('File name')}
-            labelStyle={{ marginBlock: '20px', width: '100%' }}
-            onChange={onChangeFile}
-            reset={stepOne}
-            style={{ m: '7px 0', width: '100%' }}
+            </Typography>
+            {showCheckbox &&
+              <ActionButton
+                contentPlacement='center'
+                onClick={onSelectDeselectAll}
+                style={{
+                  '& .MuiButton-startIcon': {
+                    marginRight: '0px'
+                  },
+                  borderRadius: '8px',
+                  height: '32px',
+                  marginBottom: '10px',
+                  width: 'fit-content'
+                }}
+                text={{
+                  firstPart: areAllSelected
+                    ? t('Deselect all ({{num}}) accounts', { replace: { num: accountsInfo.length } })
+                    : t('Select all ({{num}}) accounts', { replace: { num: accountsInfo.length } })
+                }}
+                variant='contained'
+              />
+            }
+            <Stack direction='column' sx={{ display: 'block', maxHeight: 'calc(100vh - 665px)', overflowY: 'auto' }}>
+              {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
+                const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
+
+                return (
+                  <Address
+                    address={address}
+                    check={isSelected}
+                    className='tree'
+                    genesisHash={genesisHash}
+                    handleCheck={handleCheck}
+                    key={`${index}:${address}`}
+                    name={name}
+                    showCheckbox={showCheckbox}
+                    style={{
+                      borderRadius: '12px',
+                      mb: '10px',
+                      mt: 0,
+                      width: '100%'
+                    }}
+                    type={type}
+                  />
+                );
+              })}
+            </Stack>
+          </>
+        }
+        <InputFile
+          accept={acceptedFormats}
+          isError={isFileError}
+          onBack={onBack}
+          onChange={onChangeFile}
+          reset={stepOne}
+          style={{ m: '15px 0', width: '369px' }}
+        />
+        {isFileError &&
+          <Warning
+            isDanger
+            theme={theme}
+          >
+            {t('Invalid Json file')}
+          </Warning>
+        }
+        {requirePassword && !stepOne &&
+          <PasswordInput
+            focused
+            hasError={isPasswordError}
+            onEnterPress={onRestore}
+            onPassChange={passChange}
+            style={{ marginTop: '15px' }}
+            title={t('Password for this file')}
           />
-          {isFileError && (
-            <Warning
-              isDanger
-              theme={theme}
-            >
-              {t('Invalid Json file')}
-            </Warning>
-          )}
-          {requirePassword && !stepOne && (
-            <Grid container item>
-              <Password
-                isError={isPasswordError}
-                isFocused
-                label={t('Password for this file')}
-                onChange={passChange}
-                onEnter={onRestore}
-                style={{ marginTop: '15px', width: '100%' }}
-              />
-            </Grid>
-          )}
-          <Grid container item justifyContent='flex-end' pt='15px'>
-            <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
-              <TwoButtons
-                disabled={stepOne || !password || isPasswordError || (showCheckbox && selectedAccountsInfo.length === 0)}
-                isBusy={isBusy}
-                mt='1px'
-                onPrimaryClick={onRestore}
-                onSecondaryClick={stepOne
-                  ? onCancel
-                  : onBack}
-                primaryBtnText={t('Restore')}
-                secondaryBtnText={stepOne
-                  ? t('Cancel')
-                  : t('Back')}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+        }
+        <DecisionButtons
+          cancelButton
+          direction='horizontal'
+          disabled={stepOne || !password || isPasswordError || (showCheckbox && selectedAccountsInfo.length === 0)}
+          isBusy={isBusy}
+          onPrimaryClick={onRestore}
+          onSecondaryClick={stepOne ? onCancel : onBack}
+          primaryBtnText={t('Restore')}
+          secondaryBtnText={stepOne ? t('Cancel') : t('Back')}
+          showChevron
+          style={{ flexDirection: 'row-reverse', margin: '15px 0 0', width: '74%' }}
+        />
+      </Stack>
+    </AdaptiveLayout>
   );
 }

@@ -1,10 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 /**
- * @description to show rewards chart
- * */
+* @description to show rewards chart
+* */
 import type { RewardInfo, SubscanRewardInfo } from '../../../../util/types';
 
 import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
@@ -20,7 +19,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Identity, Progress } from '../../../../components';
 import { useInfo, useTranslation } from '../../../../hooks';
 import getRewardsSlashes from '../../../../util/api/getRewardsSlashes';
-import { MAX_REWARDS_TO_SHOW } from '../../../../util/constants';
 import { amountToHuman } from '../../../../util/utils';
 
 ChartJS.register(
@@ -210,7 +208,7 @@ export default function RewardsChart({ address, rewardDestinationAddress }: Prop
   }, [aggregatedRewards, formateDate]);
 
   useEffect((): void => {
-    rewardDestinationAddress && chainName && getRewardsSlashes(chainName, 0, MAX_REWARDS_TO_SHOW, String(rewardDestinationAddress)).then((r) => {
+    rewardDestinationAddress && chainName && getRewardsSlashes(chainName, String(rewardDestinationAddress), 'claimed').then((r) => {
       const list = r?.data.list as SubscanRewardInfo[];
       const rewardsFromSubscan: RewardInfo[] | undefined = list?.map((i: SubscanRewardInfo): RewardInfo => {
         return {

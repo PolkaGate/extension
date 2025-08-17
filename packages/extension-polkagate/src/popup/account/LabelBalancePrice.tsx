@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable header/header */
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description

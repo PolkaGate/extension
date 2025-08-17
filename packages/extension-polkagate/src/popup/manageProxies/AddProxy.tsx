@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -19,7 +18,7 @@ import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   showAddProxy: boolean;
   setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;

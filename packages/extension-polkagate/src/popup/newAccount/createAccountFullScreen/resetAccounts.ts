@@ -1,14 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-import { getStorage, type LoginInfo, updateStorage } from '../../../components/Loading';
+import { getStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { forgetAccount } from '../../../messaging';
+import { LOGIN_STATUS, type LoginInfo } from '../../passwordManagement/types';
 
 export const resetOnForgotPassword = async () => {
-  const info = await getStorage('loginInfo') as LoginInfo;
+  const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
 
-  if (info?.status === 'forgot' && info?.addressesToForget) {
+  if (info?.status === LOGIN_STATUS.FORGOT && info?.addressesToForget) {
     return await resetAccounts(info.addressesToForget);
   }
 
@@ -17,7 +19,7 @@ export const resetOnForgotPassword = async () => {
 
 const resetAccounts = async (addresses: string[]): Promise<boolean> => {
   try {
-    await updateStorage('loginInfo', { status: 'reset' });
+    await updateStorage(STORAGE_KEY.LOGIN_IFO, { status: 'reset' });
 
     // Map and execute forgetAccount for each address
     const promises = addresses.map((address) => forgetAccount(address));

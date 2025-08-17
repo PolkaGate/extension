@@ -1,31 +1,29 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { HexString } from '@polkadot/util/types';
-
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Stack, Typography } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
+import { User } from 'iconsax-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
+import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { FULLSCREEN_WIDTH } from '@polkadot/extension-polkagate/src/util/constants';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { Address, GenesisHashOptionsContext, InputWithLabel, TextAreaWithLabel, TwoButtons, VaadinIcon, Warning } from '../../../components';
-import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
+import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
+import { useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
-import Passwords2 from '../../newAccount/createAccountFullScreen/components/Passwords2';
+import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
+import MyPhraseArea from '../importSeedFullScreen/MyPhraseArea';
 
 export interface AccountInfo {
   address: string;
@@ -33,29 +31,26 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportRawSeed(): React.ReactElement {
-  useFullscreen();
+enum STEP {
+  SEED,
+  DETAIL
+}
+
+export default function ImportSeed (): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const genesisOptions = useContext(GenesisHashOptionsContext);
+  const navigate = useNavigate();
 
   const [isBusy, setIsBusy] = useState(false);
-  const [seed, setSeed] = useState<string | null>(null);
+  const [seed, setSeed] = useState<string>('');
   const [error, setError] = useState<string | undefined>();
-  const [genesis, setGenesis] = useState('');
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [address, setAddress] = useState('');
   const [type, setType] = useState(DEFAULT_TYPE);
-  const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string | null>();
+  const [name, setName] = useState<string | undefined>();
+  const [password, setPassword] = useState<string>();
+  const [step, setStep] = useState(STEP.SEED);
 
   const chain = useMetadata(account?.genesis, true);
-
-  const showAddress = useMemo(() => !!account?.address, [account]);
-
-  useEffect((): void => {
-    setGenesis(genesisOptions[1].value as string); // to set the polkadot as the default selected chain
-  }, [genesisOptions]);
 
   useEffect((): void => {
     setType(
@@ -73,7 +68,7 @@ export default function ImportRawSeed(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!seed || !name || !password) {
+    if (!seed) {
       setAccount(null);
       setError(undefined);
 
@@ -100,14 +95,14 @@ export default function ImportRawSeed(): React.ReactElement {
       setError(undefined);
       setAddress(pair.address);
       setAccount(
-        objectSpread<AccountInfo>({}, validatedAccount, { genesis, type })
+        objectSpread<AccountInfo>({}, validatedAccount, { POLKADOT_GENESIS, type })
       );
     } catch (error) {
       setAddress('');
       setAccount(null);
       setError(`${error}`);
     }
-  }, [t, genesis, seed, setAccount, type, name, password]);
+  }, [t, seed, setAccount, type, name, password]);
 
   const onImport = useCallback(async (): Promise<void> => {
     // this should always be the case
@@ -115,10 +110,10 @@ export default function ImportRawSeed(): React.ReactElement {
       setIsBusy(true);
       await resetOnForgotPassword();
 
-      createAccountSuri(name, password, account.suri, type, account.genesis as HexString)
+      createAccountSuri(name, password, account.suri, type)
         .then(() => {
-          setStorage('profile', PROFILE_TAGS.LOCAL).catch(console.error);
-          openOrFocusTab('/', true);
+          setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
+          switchToOrOpenTab('/', true);
         })
         .catch((error): void => {
           setIsBusy(false);
@@ -127,115 +122,102 @@ export default function ImportRawSeed(): React.ReactElement {
     }
   }, [account, name, password, type]);
 
-  const pasteSeed = useCallback(() => {
-    navigator.clipboard.readText().then((clipText) => {
-      setSeed(clipText);
-    }).catch(console.error);
-  }, []);
-
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
   }, []);
 
-  const onPassChange = useCallback((pass: string | null): void => {
-    setPassword(pass);
+  const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
+  const onContinue = useCallback(() => {
+    setStep(STEP.DETAIL);
   }, []);
 
-  const onCancel = useCallback(() => window.close(), []);
+  const onBack = useCallback(() => {
+    if (step === STEP.DETAIL) {
+      setStep(STEP.SEED);
+    } else {
+      setSeed('');
+      setAccount(null);
+      setAddress('');
+      setType(DEFAULT_TYPE);
+      setName(undefined);
+      setPassword('');
+      setError(undefined);
+      navigate('/account/have-wallet');
+    }
+  }, [navigate, step]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
+    <AdaptiveLayout style={{ maxWidth: '600px' }}>
+      <OnboardTitle
+        label={t('Import from raw seed')}
+        labelPartInColor='raw seed'
+        onBack={onBack}
       />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', position: 'relative', px: '10%' }}>
-          <Title
-            height='100px'
-            logo={
-              <VaadinIcon icon='vaadin:book-dollar' style={{ color: `${theme.palette.text.primary}`, height: '25px', width: '25px' }} />
-            }
-            text={t('Import from raw seed')}
-          />
-          <Typography fontSize='16px' fontWeight={400} width='100%'>
-            {t('Enter your account\'s raw seed to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
-          </Typography>
-          <Grid container item sx={{ '> div textarea': { height: '55px' }, mt: '20px', position: 'relative' }}>
-            <TextAreaWithLabel
-              fontSize='18px'
-              height='70px'
-              isError={!!error}
-              isFocused
+      <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px' }}>
+        {step === STEP.SEED &&
+          <>
+            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+              {t('Enter your account\'s raw seed to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
+            </Typography>
+            <MyPhraseArea
+              isCorrect={!!account?.address && !error}
               label={t('Raw seed starting with 0x')}
-              onChange={setSeed}
-              rowsCount={1}
-              style={{ width: '100%' }}
-              value={seed || ''}
+              seed={seed}
+              setSeed={setSeed}
             />
-            <IconButton
-              onClick={pasteSeed}
-              sx={{ bottom: '10px', p: 0, position: 'absolute', right: '10px' }}
-            >
-              <ContentPasteIcon sx={{ color: 'secondary.light', fontSize: '25px' }} />
-            </IconButton>
-          </Grid>
-          {!!error && !!seed &&
-            <Grid alignItems='center' container height='35px' pl='15px'>
-              <Warning
-                className='seedError'
-                isBelowInput
-                isDanger
-                theme={theme}
-              >
+            {!!error && !!seed &&
+              <Typography color='#FF4FB9' sx={{ textAlign: 'left', width: '70%' }} variant='B-1'>
                 {error}
-              </Warning>
-            </Grid>
-          }
-          <Collapse in={showAddress}>
-            <Grid container item sx={{ mt: '15px' }}>
-              <Address
-                address={account?.address}
-                backgroundColor='background.main'
-                className='addr'
-                genesisHash={account?.genesis}
-                margin='0px'
-                name={name}
-                showCopy={!!account?.address}
-                style={{ width: '100%' }}
-              />
-            </Grid>
-          </Collapse>
-          <Grid container sx={{ mt: '15px' }}>
-            <InputWithLabel
-              isError={name === null || name?.length === 0}
-              label={t('Choose a name for this account')}
-              onChange={onNameChange}
-              value={name ?? ''}
+              </Typography>
+            }
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
+              disabled={!!error || !seed}
+              onPrimaryClick={onContinue}
+              onSecondaryClick={onBack}
+              primaryBtnText={t('Continue')}
+              secondaryBtnText={t('Cancel')}
+              showChevron
+              style={{ flexDirection: 'row-reverse', height: '48px', margin: '15px 0 0', width: '74%' }}
             />
-          </Grid>
-          <Passwords2
-            firstPassStyle={{ marginBlock: '10px' }}
-            label={t('Password for this account (more than 5 characters)')}
-            onChange={onPassChange}
-            onEnter={password && name && !error && !!seed ? onImport : () => null}
-          />
-          <Grid container item justifyContent='flex-end' mt='50px'>
-            <Grid container item sx={{ '> div': { m: 0, width: '100%' } }} xs={7}>
-              <TwoButtons
-                disabled={!password || !name || !address || !account}
-                isBusy={isBusy}
-                mt='1px'
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onPrimaryClick={onImport}
-                onSecondaryClick={onCancel}
-                primaryBtnText={t('Import')}
-                secondaryBtnText={t('Cancel')}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+          </>
+        }
+        {step === STEP.DETAIL &&
+          <Motion style={{ width: '370px' }} variant='slide'>
+            <MyTextField
+              Icon={User}
+              focused
+              iconSize={18}
+              inputValue={name}
+              onTextChange={onNameChange}
+              placeholder={t('Enter account name')}
+              style={{ margin: '20px 0 20px' }}
+              title={t('Choose a name for this account')}
+            />
+            <MatchPasswordField
+              onSetPassword={(password && name && !error && !!seed) ? onImport : undefined}
+              setConfirmedPassword={setPassword}
+              spacing='20px'
+              style={{ marginBottom: '20px' }}
+              title1={t('Password for this account')}
+              title2={t('Repeat the password')}
+            />
+            <DecisionButtons
+              cancelButton
+              direction='horizontal'
+              disabled={!password || !name || !address || !account}
+              isBusy={isBusy}
+              onPrimaryClick={onImport}
+              onSecondaryClick={onCancel}
+              primaryBtnText={t('Import')}
+              secondaryBtnText={t('Cancel')}
+              showChevron
+              style={{ flexDirection: 'row-reverse', marginTop: '15px', position: 'absolute', width: 'inherit' }}
+            />
+          </Motion>
+        }
+      </Stack>
+    </AdaptiveLayout>
   );
 }

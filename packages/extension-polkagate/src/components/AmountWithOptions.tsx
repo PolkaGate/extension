@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { MAX_AMOUNT_LENGTH } from '../util/constants';
-import { fixFloatingPoint } from '../util/utils';
+import { formatDecimal } from '../util/utils';
 import InputWithLabel from './InputWithLabel';
 
 interface Props {
@@ -28,7 +27,7 @@ interface Props {
 export default function AmountWithOptions({ disabled, inputWidth, label, labelFontSize = '14px', onChangeAmount, onPrimary, onSecondary, primaryBtnText, secondaryBtnText, style, textSpace = '10px', value }: Props): React.ReactElement {
   const theme = useTheme();
   const _onChange = useCallback((value: string) => {
-    onChangeAmount(fixFloatingPoint(value));
+    onChangeAmount(formatDecimal(value));
   }, [onChangeAmount]);
 
   const disabledFunction = useCallback(() => null, []);

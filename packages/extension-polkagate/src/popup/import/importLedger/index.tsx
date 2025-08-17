@@ -1,17 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import { Grid } from '@mui/material';
 import React, { useState } from 'react';
 
-import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen } from '../../../hooks';
-import GenericApp from './GenericApp';
-import LedgerOptions from './LedgerOptions';
-import LegacyApps from './LegacyApps';
-import MigrationApp from './MigrationApp';
+import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
+
+import LedgerOptions from './partials/LedgerOptions';
+import GenericApp from './generic';
+import LegacyApps from './legacy';
+import MigrationApp from './migration';
 
 export enum MODE {
   INDEX,
@@ -20,24 +17,13 @@ export enum MODE {
   MIGRATION
 }
 
-export default function ImportLedger(): React.ReactElement {
-  useFullscreen();
-
+export default function ImportLedger (): React.ReactElement {
   const [mode, setMode] = useState<MODE>(MODE.INDEX);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader
-        noAccountDropDown
-        noChainSwitch
-      />
+    <AdaptiveLayout style= {{ maxWidth: '600px', minHeight: '693px' }}>
       {mode === MODE.INDEX &&
         <LedgerOptions
-          setMode={setMode}
-        />
-      }
-      {mode === MODE.LEGACY &&
-        <LegacyApps
           setMode={setMode}
         />
       }
@@ -51,6 +37,11 @@ export default function ImportLedger(): React.ReactElement {
           setMode={setMode}
         />
       }
-    </Grid>
+      {mode === MODE.LEGACY &&
+        <LegacyApps
+          setMode={setMode}
+        />
+      }
+    </AdaptiveLayout>
   );
 }

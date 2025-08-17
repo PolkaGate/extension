@@ -1,23 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from './utils/types';
 
-import { faGem } from '@fortawesome/free-solid-svg-icons';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import NftManager from '../../class/nftManager';
-import { Warning } from '../../components';
-import { useApiWithChain2, useFullscreen, useTranslation } from '../../hooks';
+import { useApiWithChain2, useTranslation } from '../../hooks';
 import { getAssetHubByChainName } from '../../hooks/useReferendum';
-import FullScreenHeader from '../governance/FullScreenHeader';
-import Bread from '../partials/Bread';
-import { Title } from '../sendFund/InputPage';
+import HomeLayout from '../components/layout';
 import Filters from './components/Filters';
 import NftList from './components/NftList';
 import { SUPPORTED_NFT_CHAINS } from './utils/constants';
@@ -25,26 +19,31 @@ import { fetchItemMetadata } from './utils/util';
 
 enum STEPS {
   CHECK_SCREEN,
-  INDEX,
-  UNSUPPORTED
+  INDEX
 }
 
-function NFT(): React.ReactElement {
-  useFullscreen();
-  const nftManager = React.useMemo(() => new NftManager(), []);
-
+function NFT (): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
+
+  const nftManager = React.useMemo(() => new NftManager(), []);
 
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
   const [step, setStep] = useState<STEPS>(STEPS.CHECK_SCREEN);
   const [itemsToShow, setItemsToShow] = useState<ItemInformation[] | null | undefined>(undefined);
 
   useEffect(() => {
+    if (!address) {
+      return;
+    }
+
     const myNfts = nftManager.get(address);
 
     setNfts(myNfts);
+
+    if (!myNfts || myNfts?.length === 0) {
+      setItemsToShow(null);
+    }
 
     const handleNftUpdate = (updatedAddress: string, updatedNfts: ItemInformation[]) => {
       if (updatedAddress === address) {
@@ -79,7 +78,7 @@ function NFT(): React.ReactElement {
   }, [address, reset]);
 
   useEffect(() => {
-    if (nfts) {
+    if (nfts && address) {
       setStep(STEPS.INDEX);
 
       nfts.forEach((nft) => {
@@ -94,49 +93,38 @@ function NFT(): React.ReactElement {
   }, [address, nfts]);
 
   return (
-    <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
-      <FullScreenHeader noChainSwitch page='nft' />
-      <Grid container item justifyContent='center' sx={{ bgcolor: 'backgroundFL.secondary', height: 'calc(100vh - 70px)', maxWidth: '1282px', overflow: 'scroll' }}>
-        <Grid container item sx={{ display: 'block', px: '5%' }}>
-          <Bread />
-          <Title
-            height='100px'
-            icon={faGem}
-            padding='0px'
-            text={t('NFT Album')}
+    <HomeLayout
+      childrenStyle={{ paddingLeft: '25px', position: 'relative', zIndex: 1 }}
+    >
+      <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start' sx={{ width: '100%' }}>
+        <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase' }} variant='H-2'>
+          {t('NFT Album')}
+        </Typography>
+        {!!itemsToShow?.length &&
+          <Typography color='warning.main' sx={{ bgcolor: '#FF4FB926', borderRadius: '12px', height: '25px', minWidth: '38px', textAlign: 'center' }} variant='B-3'>
+            {itemsToShow?.length}
+          </Typography>
+        }
+      </Stack>
+      {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
+        <>
+          <Typography color='text.secondary' sx={{ mt: '7px' }} variant='B-4'>
+            {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
+          </Typography>
+          {
+            nfts && !!nfts.length &&
+            <Filters
+              items={nfts}
+              setItemsToShow={setItemsToShow}
+            />
+          }
+          <NftList
+            apis={apis}
+            nfts={itemsToShow}
           />
-          {step === STEPS.UNSUPPORTED &&
-            <Grid alignItems='center' container direction='column' display='block' item>
-              <Grid container item justifyContent='center' sx={{ '> div.belowInput': { m: 0 }, height: '30px', m: 'auto', pt: '50px', width: '70%' }}>
-                <Warning
-                  fontSize='16px'
-                  fontWeight={500}
-                  isBelowInput
-                  theme={theme}
-                >
-                  {t('The chosen blockchain does not support NFTs/Uniques.')}
-                </Warning>
-              </Grid>
-            </Grid>
-          }
-          {[STEPS.INDEX, STEPS.CHECK_SCREEN].includes(step) &&
-            <>
-              <Typography fontSize='14px' fontWeight={400}>
-                {t('Here, you can view all your created or owned NFTs and unique items. Click on any to enlarge, access more details, and view in fullscreen mode.')}
-              </Typography>
-              <Filters
-                items={nfts}
-                setItemsToShow={setItemsToShow}
-              />
-              <NftList
-                apis={apis}
-                nfts={itemsToShow}
-              />
-            </>
-          }
-        </Grid>
-      </Grid>
-    </Grid>
+        </>
+      }
+    </HomeLayout>
   );
 }
 

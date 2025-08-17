@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { MyPoolInfo, TxInfo } from '../../../../util/types';
@@ -12,7 +11,7 @@ import { faLock, faLockOpen, faTrashCan } from '@fortawesome/free-solid-svg-icon
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 
 import { AccountWithProxyInConfirmation } from '../../../../components';
@@ -23,7 +22,7 @@ import Confirmation from '../partials/Confirmation';
 import { STEPS } from '../stake';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   formatted: string;
   pool: MyPoolInfo;

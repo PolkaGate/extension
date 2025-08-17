@@ -1,20 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { SxProps } from '@mui/material';
-import type { ApiPromise } from '@polkadot/api';
 import type { DeriveStakingQuery } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
-import type { MyPoolInfo, PoolStakingConsts, StakingConsts, ValidatorInfo } from '../../../../util/types';
+import type { ValidatorInfo } from '../../../../util/types';
 
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BN } from '@polkadot/util';
 
@@ -27,20 +24,12 @@ import Review from '../../partial/SelectValidatorsReview';
 import ValidatorsTable from '../../partial/ValidatorsTable';
 import RemoveValidators from './remove';
 
-interface State {
-  api: ApiPromise | undefined;
-  pathname: string;
-  poolConsts: PoolStakingConsts | undefined;
-  stakingConsts: StakingConsts | undefined
-  pool: MyPoolInfo | undefined;
-}
-
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const api = useApi(address, state?.api);
   const chain = useChain(address);
 
@@ -77,11 +66,8 @@ export default function Index(): React.ReactElement {
   }, [pool]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: state?.pathname ?? `/pool/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate(state?.pathname ?? `/pool/${address}`, { state: { ...state } });
+  }, [address, navigate, state]);
 
   const goToSelectValidator = useCallback(() => {
     setShowSelectValidator(true);

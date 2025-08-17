@@ -9,10 +9,14 @@ import { useEffect, useState } from 'react';
 
 import { BN_ONE } from '@polkadot/util';
 
-import { useInfo } from '.';
+import { useApi } from '.';
 
-export default function useEstimatedFee(address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
-  const { api } = useInfo(address);
+export default function useEstimatedFee (
+  address: string | undefined,
+  call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>,
+  params?: unknown[] | (() => unknown)[]
+): Balance | undefined {
+  const api = useApi(address);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 

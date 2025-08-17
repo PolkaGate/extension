@@ -1,0 +1,113 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { Icon } from 'iconsax-react';
+
+import { Stack, Typography } from '@mui/material';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Record, Triangle } from 'iconsax-react';
+import React, { memo, useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
+import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+
+import { useChainInfo, useStakingPositions, useTranslation } from '../../../hooks';
+import GovernanceModal from '../../components/GovernanceModal';
+import Receive from './Receive';
+
+interface ActionBoxProps {
+  Icon: Icon;
+  label: string;
+  path?: string;
+  onClick?: () => void;
+}
+
+function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
+  const navigate = useNavigate();
+
+  const _onClick = useCallback(() => {
+    onClick
+      ? onClick()
+      : path && navigate(path) as void;
+  }, [navigate, onClick, path]);
+
+  return (
+    <Stack direction='column' justifyContent='start' onClick={_onClick} rowGap='7px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '100%', minWidth: '90px', px: '10px', transition: 'all 250ms ease-out', width: '100%' }}>
+      <Icon color='#AA83DC' size='24' style={{ marginTop: '20px' }} variant='Bulk' />
+      <Typography sx={{ display: 'flex', fontWeight: 700, width: '100%' }} variant='B-2'>
+        {label}
+      </Typography>
+    </Stack>
+  );
+}
+
+interface Props {
+  address: string | undefined;
+  genesisHash: string | undefined;
+  assetId: string | undefined;
+}
+
+function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
+  const { t } = useTranslation();
+  const { chainName } = useChainInfo(genesisHash);
+  const { maxPosition, maxPositionType } = useStakingPositions(address, true);
+
+  const [openModal, setOpen] = useState(ExtensionPopups.NONE);
+
+  const onReceiveClick = useCallback(() => setOpen(ExtensionPopups.RECEIVE), []);
+  const onGovernanceClick = useCallback(() => setOpen(ExtensionPopups.GOVERNANCE), []);
+
+  return (
+    <>
+      <VelvetBox style={{ margin: '10px 15px 0', width: 'auto' }}>
+        <Stack columnGap='5px' direction='row' sx={{ height: '86px', width: '100%' }}>
+          <ActionBox
+            Icon={ArrowCircleRight2}
+            label={t('Send')}
+            path={`/send/${address}/${genesisHash}/${assetId}`}
+          />
+          <ActionBox
+            Icon={ArrowCircleDown2}
+            label={t('Receive')}
+            onClick={onReceiveClick}
+          />
+          {GOVERNANCE_CHAINS.includes(chainName?.toLocaleLowerCase() ?? '') &&
+            <ActionBox
+              Icon={Record}
+              label={t('Governance')}
+              onClick={onGovernanceClick}
+            />}
+          {STAKING_CHAINS.includes(genesisHash ?? '') &&
+            <ActionBox
+              Icon={BuyCrypto}
+              label={t('Staking')}
+              path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${address}/${maxPosition?.genesisHash ?? genesisHash}`}
+            />}
+          <ActionBox
+            Icon={Triangle}
+            label={t('NFT Album')}
+            path={`/nft/${address}`}
+          />
+        </Stack>
+      </VelvetBox>
+      {
+        openModal === ExtensionPopups.RECEIVE &&
+        <Receive
+          address={address}
+          open={openModal === ExtensionPopups.RECEIVE}
+          setOpen={setOpen}
+        />
+      }
+      {
+        openModal === ExtensionPopups.GOVERNANCE &&
+        <GovernanceModal
+          chainName={chainName}
+          open={openModal === ExtensionPopups.GOVERNANCE}
+          setOpen={setOpen}
+        />
+      }
+    </>
+  );
+}
+
+export default memo(ActionButtons);

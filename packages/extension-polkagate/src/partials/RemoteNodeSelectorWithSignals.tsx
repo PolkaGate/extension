@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { SignalCellular0BarOutlined as LightClientEndpointIcon, SignalCellularAlt as Signal3BarIcon, SignalCellularAlt1Bar as Signal1BarIcon, SignalCellularAlt2Bar as Signal2BarIcon } from '@mui/icons-material';
 import { Divider, Grid, Popover, Skeleton, Typography, useTheme } from '@mui/material';

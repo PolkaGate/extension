@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description
@@ -29,7 +28,7 @@ import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../u
 import TxDetail from './TxDetail';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   amount: BN;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   show: boolean;

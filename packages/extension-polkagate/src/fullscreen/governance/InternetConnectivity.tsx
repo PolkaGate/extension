@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import WifiOffIcon from '@mui/icons-material/WifiOff';
 import React, { useEffect, useState } from 'react';
 

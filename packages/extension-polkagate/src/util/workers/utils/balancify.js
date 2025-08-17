@@ -6,16 +6,16 @@ import { BN_ZERO } from '@polkadot/util';
 
 export function balancify (balances) {
   const base = {
+    ED: String(balances.ED),
     availableBalance: String(balances.availableBalance),
     freeBalance: String(balances.freeBalance),
-    frozenBalance: String(balances.frozen ?? balances.frozenBalance),
+    frozenBalance: String(balances.frozenBalance),
     lockedBalance: String(balances.lockedBalance),
     reservedBalance: String(balances.reservedBalance),
     vestedBalance: String(balances.vestedBalance),
     vestedClaimable: String(balances.vestedClaimable),
     vestingLocked: String(balances.vestingLocked),
     vestingTotal: String(balances.vestingTotal),
-    // votingBalance: String(balances.votingBalance)
     votingBalance: String(balances.freeBalance.add(balances?.reservedBalance || BN_ZERO)) // after pool migration the voting balance returned fro api is not correct
   };
 
@@ -25,6 +25,7 @@ export function balancify (balances) {
 
   if (balances.pooledBalance) {
     base.pooledBalance = String(balances.pooledBalance);
+    base.poolReward = String(balances.poolReward);
   }
 
   return JSON.stringify(base);
@@ -32,6 +33,7 @@ export function balancify (balances) {
 
 export function balancifyAsset (balances) {
   return JSON.stringify({
+    ED: String(balances.ED),
     availableBalance: String(balances.free),
     freeBalance: String(balances.free),
     frozenBalance: String(balances.frozen),

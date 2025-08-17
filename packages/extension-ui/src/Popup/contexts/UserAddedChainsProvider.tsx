@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { UserAddedChainContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { getStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 
-export default function UserAddedChainsProvider({ children }: { children: React.ReactNode }) {
+export default function UserAddedChainsProvider ({ children }: { children: React.ReactNode }) {
   const [userAddedChainCtx, setUserAddedChainCtx] = useState<UserAddedChains>({});
 
   useEffect((): void => {

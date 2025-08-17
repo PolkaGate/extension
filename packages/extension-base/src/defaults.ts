@@ -1,19 +1,22 @@
 // Copyright 2019-2025 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/onboarding'] as const;
+const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/historyfs', '/onboarding'] as const;
 // Added for PolkaGate
 const START_WITH_PATH = [
   '/account/',
   '/accountfs/',
+  '/derivefs/',
+  '/fullscreen-stake/',
   '/import/',
   '/governance/',
   '/manageIdentity/',
-  '/send/',
-  '/stake/',
-  '/socialRecovery/',
   '/nft/',
-  '/derivefs/'
+  '/proxyManagement/',
+  '/send/',
+  '/settingsfs/',
+  '/stake/',
+  '/socialRecovery/'
 ] as const;
 
 const ROOT_PATH = [

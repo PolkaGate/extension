@@ -18,7 +18,7 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 
 export const COIN_GECKO_PRICE_CHANGE_DURATION = 24;
 
-export default async function getPrices(priceIds: string[], currencyCode = 'usd') {
+export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
   console.log(' getting prices for:', priceIds.sort());
 
   const revisedPriceIds = priceIds.map((item) => (EXTRA_PRICE_IDS[item] || item));
@@ -28,15 +28,22 @@ export default async function getPrices(priceIds: string[], currencyCode = 'usd'
   const outputObjectPrices: PricesType = {};
 
   for (const [key, value] of Object.entries(prices)) {
-    outputObjectPrices[key] = { change: value[`${currencyCode}_24h_change`] as number, value: value[currencyCode] as number };
+    outputObjectPrices[key] = {
+      change: value[`${currencyCode}_24h_change`] as number,
+      value: value[currencyCode] as number
+    };
   }
 
-  const price = { currencyCode, date: Date.now(), prices: outputObjectPrices };
+  const price = {
+    currencyCode,
+    date: Date.now(),
+    prices: outputObjectPrices
+  };
 
   return price;
 }
 
-function getReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
+function getReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
   return request.get(api, {
     data,
     ...option

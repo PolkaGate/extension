@@ -1,23 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-
 import { AccountContext, AddressInput, PButton } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import getAllAddresses from '../../../../util/getAllAddresses';
-import { DraggableModal } from '../../../governance/components/DraggableModal';
+import { DraggableModal } from '../../../components/DraggableModal';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   chain?: Chain;
   formatted?: string;
   nominatorId: string | undefined;

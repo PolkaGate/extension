@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type React from 'react';
 import type { Chain } from '../../../extension-chains/src/types';
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
@@ -14,11 +15,12 @@ const endpoints = createWsEndpoints();
 
 export interface LogoInfo {
   logo?: string | undefined;
+  logoSquare?: string | undefined;
   color?: string | undefined;
   subLogo?: string;
 }
 
-export default function getLogo2(info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {

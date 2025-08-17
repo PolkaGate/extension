@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
@@ -11,7 +10,7 @@ import { useAccount, useTranslation } from '../../hooks';
 import { deriveAccount } from '../../messaging';
 import CreateNewDerivedAccount from '../../popup/newAccount/deriveAccount/modal/CreateNewDerivedAccount';
 import SelectParent from '../../popup/newAccount/deriveAccount/modal/SelectParent';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {

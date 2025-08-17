@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BalancesInfo, MyPoolInfo } from '../../../util/types';
 
@@ -27,7 +26,7 @@ import PoolCommonTasks from './partials/PoolCommonTasks';
 import { MODAL_IDS } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setShow: React.Dispatch<React.SetStateAction<number>>;
   balances: BalancesInfo | undefined;
   pool: MyPoolInfo | null | undefined;

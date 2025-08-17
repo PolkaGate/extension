@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
+//@ts-nocheck
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types/submittable';
@@ -20,11 +20,11 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { DraggableModal } from '../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import SelectProxyModal2 from '../fullscreen/governance/components/SelectProxyModal2';
 import { useAccountDisplay, useInfo, useProxies, useTranslation } from '../hooks';
-import Qr from '../popup/signing/Qr';
-import { CMD_MORTAL } from '../popup/signing/Request';
+import Qr from '../popup/signing/Request/Qr';
+import { CMD_MORTAL } from '../popup/signing/types';
 import { send } from '../util/api';
 import { getSubstrateAddress, saveAsHistory } from '../util/utils';
 import SignWithLedger from './SignWithLedger';
@@ -32,7 +32,7 @@ import SignWithPassword from './SignWithPassword';
 import { PButton, Progress, TwoButtons, Warning } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   maybeApi?: ApiPromise;
   call: SubmittableExtrinsicFunction<'promise', AnyTuple> | undefined | SubmittableExtrinsic<'promise', ISubmittableResult>;
   disabled?: boolean;
@@ -304,17 +304,15 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
       {isLedger
         ? <SignWithLedger
           address={address}
-          alertText={alertText}
           api={api}
           from={from}
           handleTxResult={handleTxResult}
           onSecondaryClick={onSecondaryClick}
           onSignature={onSignature}
           payload={payload}
-          ptx={ptx}
-          setStep={setStep}
+          preparedTransaction={ptx}
+          setFlowStep={setStep}
           signerPayload={signerPayload}
-          steps={steps}
         />
         : showQrSign
           ? <SignWithQR />
@@ -395,7 +393,6 @@ export default function SignArea({ address, call, disabled, extraInfo, isPasswor
               {formatted && (account?.genesisHash || api?.genesisHash?.toHex()) && payload
                 ? <Qr
                   address={formatted}
-                  buttonLeft='0px'
                   cmd={CMD_MORTAL}
                   genesisHash={account?.genesisHash || api?.genesisHash?.toHex() as string}
                   onSignature={onSignature}

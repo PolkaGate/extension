@@ -1,21 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { AccountsOrder } from '@polkadot/extension-polkagate/src/util/types';
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Collapse, Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { VaadinIcon } from '../../components/index';
 import { setStorage } from '../../components/Loading';
-import { useProfileAccounts, useTranslation } from '../../hooks';
+import { useIsHovered, useProfileAccounts, useTranslation } from '../../hooks';
 import { showAccount } from '../../messaging';
 import { getProfileColor } from '../../util/utils';
 
 interface Props {
-  orderedAccounts: AccountsOrder[] | undefined;
+  orderedAccounts: AccountJson[] | undefined;
   text: string;
   index: number;
   isSelected: boolean;
@@ -25,15 +25,16 @@ interface Props {
 const COLLAPSED_SIZE = '20px';
 const HIDDEN_PERCENT = '50%';
 
-function ProfileTab({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
+function ProfileTab ({ index, isContainerHovered, isSelected, orderedAccounts, text }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const containerRef = useRef(null);
+  const isHovered = useIsHovered(containerRef);
 
   const profileAccounts = useProfileAccounts(orderedAccounts, text);
 
   /** set by user click on a profile tab */
   const [toHideAll, setToHideAll] = useState<boolean>();
-  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
   const shadow = useMemo(() => isDarkMode ? '0px 0px 2px 1px rgba(255, 255, 255, 0.10)' : '0px 0px 2px 1px rgba(000, 000, 000, 0.13)', [isDarkMode]);
@@ -43,21 +44,21 @@ function ProfileTab({ index, isContainerHovered, isSelected, orderedAccounts, te
 
   /** Save the current selected tab in local storage on tab click */
   const onClick = useCallback(() => {
-    setStorage('profile', text).catch(console.error);
+    setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, text).catch(console.error);
     isSelected && setToHideAll(!toHideAll);
   }, [toHideAll, text, isSelected]);
 
   /** check to see if all accounts in a profile is hidden */
   const areAllProfileAccountsHidden = useMemo(() => {
     const isHidden = profileAccounts?.length
-      ? profileAccounts.every(({ account }) => account.isHidden)
+      ? profileAccounts.every(({ isHidden }) => isHidden)
       : undefined;
 
     return isHidden;
   }, [profileAccounts]);
 
-  const hideAccounts = useCallback((accounts: AccountsOrder[]) => {
-    toHideAll !== undefined && accounts.forEach(({ account: { address } }) => {
+  const hideAccounts = useCallback((accounts: AccountJson[]) => {
+    toHideAll !== undefined && accounts.forEach(({ address }) => {
       showAccount(address, !toHideAll).catch(console.error);
     });
   }, [toHideAll]);
@@ -71,18 +72,14 @@ function ProfileTab({ index, isContainerHovered, isSelected, orderedAccounts, te
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideAccounts, profileAccounts?.length, toHideAll]);
 
-  const onMouseEnter = useCallback(() => setIsHovered(true), []);
-  const onMouseLeave = useCallback(() => setIsHovered(false), []);
-
   return (
     <Grid container item sx={{ transform: !isContainerHovered && !isSelected ? `translateY(${HIDDEN_PERCENT})` : undefined, transition: 'transform 0.75s', width: 'fit-content' }}>
       <Collapse
         collapsedSize={COLLAPSED_SIZE}
         in={visibleContent}
         onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
         orientation='horizontal'
+        ref={containerRef}
         sx={{
           '&:hover': { boxShadow: shadowOnHover },
           border: 2,

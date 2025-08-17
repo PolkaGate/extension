@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import { Grid } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -10,11 +8,11 @@ import { ButtonWithCancel, NewAddress } from '../../components';
 import { useAccountName, useTranslation } from '../../hooks';
 import { editAccount } from '../../messaging';
 import { Name } from '../../partials';
-import { DraggableModal } from '../governance/components/DraggableModal';
+import { DraggableModal } from '../components/DraggableModal';
 import SimpleModalTitle from './SimpleModalTitle';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
@@ -38,7 +36,7 @@ export default function RenameModal({ address, setDisplayPopup }: Props): React.
   }, []);
 
   const _changeName = useCallback(() => {
-    newName &&
+    newName && address &&
       editAccount(address, newName)
         .catch(console.error);
 

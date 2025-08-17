@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 /**
  * @description
  * this component opens Select Validators page
@@ -24,7 +22,7 @@ import { DEFAULT_FILTERS, SYSTEM_SUGGESTION_TEXT } from '../../../../util/consta
 import ValidatorsTableFS from './ValidatorsTableFS';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   nominatedValidatorsIds?: string[] | null | undefined;
   stashId: AccountId | string | undefined;
   stakingConsts: StakingConsts | null | undefined;
@@ -53,14 +51,14 @@ const TableSubInfoWithClear = ({ maxSelectable, onClearSelection, selectedCount 
   );
 };
 
-export default function SelectValidators({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
+export default function SelectValidators ({ address, newSelectedValidators, nominatedValidatorsIds, setNewSelectedValidators, staked, stakingConsts, stashId, tableHeight }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const allValidatorsInfo = useValidators(address);
   const selectedBestValidators = useValidatorSuggestion(address);
 
-  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo && allValidatorsInfo.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
+  const allValidatorsAccountIds = useMemo(() => allValidatorsInfo?.current.concat(allValidatorsInfo.waiting)?.map((v) => v.accountId), [allValidatorsInfo]);
   const allValidatorsIdentities = useValidatorsIdentities(address, allValidatorsAccountIds);
   const allValidators = useMemo(() => allValidatorsInfo?.current?.concat(allValidatorsInfo.waiting)?.filter((v) => v.validatorPrefs.blocked as unknown as boolean === false || v.validatorPrefs.blocked?.isFalse), [allValidatorsInfo]);
 
@@ -213,9 +211,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
   return (
     <>
       {allValidators === undefined || !nominatedValidatorsIds === undefined
-        ? <Waiting
-          height={_tableHeight - 250}
-        />
+        ? <Waiting height={_tableHeight - 250} />
         : <>
           <Grid container sx={{ justifyContent: 'flex-start' }}>
             <Grid alignItems='center' container item ml='2%' pr='3%' width='29%'>
@@ -245,7 +241,7 @@ export default function SelectValidators({ address, newSelectedValidators, nomin
               <FilterIcon sx={{ color: 'secondary.light' }} />
             </Grid>
             <Grid item xs={12}>
-              {validatorsToList &&
+              {validatorsToList && address &&
                 <ValidatorsTableFS
                   address={address}
                   allValidatorsIdentities={allValidatorsIdentities}

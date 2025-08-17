@@ -3,7 +3,7 @@
 
 import type { TransferRequest } from '../types';
 
-import request from 'umi-request';
+import { postReq } from './getTXsHistory';
 
 const nullObject = {
   code: 0,
@@ -15,15 +15,15 @@ const nullObject = {
   message: 'Success'
 } as unknown as TransferRequest;
 
-export function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
+export async function getTxTransfers (chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
   if (!chainName) {
-    return Promise.resolve(nullObject);
+    return (await Promise.resolve(nullObject));
   }
 
   let network = chainName.toLowerCase();
 
   if (network === 'pendulum') {
-    return Promise.resolve(nullObject);
+    return (await Promise.resolve(nullObject));
   }
 
   if (network === 'westendassethub') {
@@ -34,15 +34,14 @@ export function getTxTransfers(chainName: string, address: string, pageNum: numb
     network = `assethub-${network.replace(/assethub/, '')}`;
   }
 
-  return postReq(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
+  const transferRequest = await postReq<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
     address,
-    // from_block: 8658091,
-    // to_block: 8684569,
+    direction: 'received',
     page: pageNum,
     row: pageSize
   });
-}
 
-function postReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
-  return request.post(api, { data, ...option });
+  transferRequest.for = `${address} - ${chainName}`;
+
+  return transferRequest;
 }

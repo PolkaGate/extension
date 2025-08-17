@@ -1,14 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, useTheme } from '@mui/material';
-import React, { useContext } from 'react';
+import { Avatar, Box } from '@mui/material';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
+import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { convertToCamelCase } from '../fullscreen/governance/utils/util';
-import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
+import { useIsDark } from '../hooks';
+import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
@@ -17,18 +21,109 @@ interface Props {
   chainName?: string;
   genesisHash?: string | undefined | null;
   logo?: string;
+  logoRoundness?: string;
+  showSquare?: boolean;
   size?: number;
+  style?: React.CSSProperties;
+  token?: string;
 }
 
-function ChainLogo({ chainName, genesisHash, logo, size = 25 }: Props): React.ReactElement<Props> {
-  const theme = useTheme();
+function normalizeToWordSet (str: string): Set<string> {
+  // Split PascalCase or space-separated
+  const words = str
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // split camelCase
+    .split(/[\s_]+/) // split by space or underscore
+    .map((word) => word.toLowerCase())
+    .filter(Boolean);
+
+  return new Set(words);
+}
+
+function haveSameWords (str1: string, str2: string): boolean {
+  const set1 = normalizeToWordSet(str1);
+  const set2 = normalizeToWordSet(str2);
+
+  if (set1.size !== set2.size) {
+    return false;
+  }
+
+  for (const word of set1) {
+    if (!set2.has(word)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {}, token }: Props): React.ReactElement<Props> {
+  const isDark = useIsDark();
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [isDarkLogo, setIsDarkLogo] = useState(false);
+
   const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
   const options = useContext(GenesisHashOptionsContext);
 
-  const foundChainName = options.find(({ text, value }) => value === genesisHash || text === chainName)?.text;
+  const foundChainName = options.find(({ text, value }) => value === genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
+
   const _chainName = sanitizeChainName(foundChainName || chainName);
-  const _logo = logo || getLogo2(_chainName)?.logo;
-  const filter = (CHAINS_WITH_BLACK_LOGO.includes(_chainName || '') && theme.palette.mode === 'dark') ? 'invert(1)' : '';
+  const chainLogoInfo = getLogo2(_chainName);
+  const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
+
+  const filter = isDark
+    ? isDarkLogo && CHAINS_WITH_BLACK_LOGO.includes(_chainName)
+      ? 'invert(0.2) brightness(2)'
+      : TOKENS_WITH_BLACK_LOGO.includes(token ?? '')
+        ? 'invert(1)'
+        : ''
+    : '';
+
+  useEffect(() => {
+    const img = imgRef.current;
+
+    if (!img) {
+      return;
+    }
+
+    const handleLoad = () => {
+      const canvas = document.createElement('canvas');
+
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0);
+
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let totalBrightness = 0;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+        const brightness = (r + g + b) / 3;
+
+        totalBrightness += brightness;
+      }
+
+      const avgBrightness = totalBrightness / (data.length / 4);
+
+      if (avgBrightness < 20) {
+        setIsDarkLogo(true);
+      }
+    };
+
+    if (img.complete) {
+      handleLoad();
+    } else {
+      img.onload = handleLoad;
+    }
+  }, [_logo]);
+
+  const borderRadius = showSquare ? 0 : logoRoundness;
 
   return (
     <>
@@ -36,12 +131,14 @@ function ChainLogo({ chainName, genesisHash, logo, size = 25 }: Props): React.Re
         ? <>
           {_logo.startsWith('data:')
             ? <Avatar
+              imgProps={{ ref: imgRef }}
               src={_logo}
               sx={{
-                borderRadius: '50%',
+                borderRadius,
                 filter,
                 height: size,
-                width: size
+                width: size,
+                ...style
               }}
               variant='square'
             />
@@ -50,26 +147,42 @@ function ChainLogo({ chainName, genesisHash, logo, size = 25 }: Props): React.Re
               icon={fas[convertToCamelCase(_logo)]}
               style={{
                 border: '0.5px solid',
-                borderRadius: '50%',
+                borderRadius,
                 filter,
                 height: size,
-                width: size
+                width: size,
+                ...style
               }}
             />
           }
         </>
-        : <Avatar
-          sx={{
-            bgcolor: maybeUserAddedChainColor,
-            borderRadius: '50%',
-            fontSize: size * 0.7,
-            height: size,
-            width: size
-          }}
-          variant='square'
-        >
-          {_chainName?.charAt(0)?.toUpperCase() || ''}
-        </Avatar>
+        : _chainName
+          ? <Avatar
+            imgProps={{ ref: imgRef }}
+            sx={{
+              bgcolor: maybeUserAddedChainColor,
+              borderRadius,
+              fontSize: size * 0.7,
+              height: size,
+              width: size,
+              ...style
+            }}
+            variant='square'
+          >
+            {_chainName?.charAt(0)?.toUpperCase() || ''}
+          </Avatar>
+          : <Box
+            component='img'
+            src={logoWhiteTransparent as string}
+            sx={{
+              bgcolor: isDark ? '#292247' : '#CFD5F0',
+              borderRadius: '999px',
+              filter: isDark ? 'brightness(0.4)' : 'brightness(0.9)',
+              height: size,
+              p: '4px',
+              width: size
+            }}
+          />
       }
     </>
   );

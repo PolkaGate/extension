@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
@@ -54,6 +53,7 @@ const NetworkList = React.memo(function NetworkList({ address, chains, selectedC
       return;
     }
 
+        //NO TIE ANYMORE IN NEW DESIGN
     tieAccount(address, net.value as HexString).catch(console.error);
     setSelectedChainName(net.text);
   }, [address, isTestnetDisabled, setAnchorEl, setSelectedChainName]);

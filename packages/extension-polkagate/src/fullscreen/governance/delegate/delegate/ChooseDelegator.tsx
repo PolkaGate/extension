@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { DelegateInformation } from '..';
 
@@ -97,7 +96,7 @@ export default function ChooseDelegator({ setDelegateInformation, setStep }: Pro
         <AccountInputWithIdentity
           address={delegatorAddress}
           chain={chain}
-          helperText={t<string>('Enter the account address that you want to delegate to')}
+          // helperText={t<string>('Enter the account address that you want to delegate to')}
           ignoreAddress={String(myFormattedAddress)}
           label={t('Delegate to Account')}
           setAddress={setDelegatorAddress}

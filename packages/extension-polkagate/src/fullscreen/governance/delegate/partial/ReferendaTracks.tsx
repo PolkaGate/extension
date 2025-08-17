@@ -4,7 +4,6 @@
 //@ts-nocheck
 
 /* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
 import type { Lock } from '../../../../hooks/useAccountLocks';

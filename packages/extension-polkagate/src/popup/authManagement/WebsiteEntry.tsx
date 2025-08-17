@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/handlers/State';
 

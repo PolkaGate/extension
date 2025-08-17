@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
@@ -300,7 +299,6 @@ export function Delegate({ address, open, setOpen, showDelegationNote }: Props):
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your delegating status...')}
-            showCube
           />
         }
         {step === STEPS.INDEX &&

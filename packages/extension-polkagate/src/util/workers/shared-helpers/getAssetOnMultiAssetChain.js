@@ -1,6 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
+import { getAssetsObject } from '@paraspell/sdk-pjs';
+
+import { toTitleCase } from '../../string';
 import { getSubstrateAddress } from '../../utils';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
@@ -37,26 +41,45 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
     const storageKey = entry[0].toString();
 
     // @ts-ignore
-    const foundAsset = assetsToBeFetched.find((_asset) => {
+    let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
       const currencyId = _asset?.extras?.['currencyIdScale'].replace('0x', '');
 
       return currencyId && storageKey.endsWith(currencyId);
     });
 
     const balance = entry[1];
-    // @ts-ignore
-    const totalBalance = balance.free.add(balance.reserved);
 
-    if (foundAsset) {
+    if (!maybeAssetInfo) {
+      const assetObj = getAssetsObject(toTitleCase(chainName));
+
+      if (assetObj) {
+        const maybeAssetId = entry[0].toHuman()[1].replace(/,/g, '');
+
+        const assets = assetObj.nativeAssets.concat(assetObj.otherAssets);
+        maybeAssetInfo = assets.find(({ assetId }) => assetId === maybeAssetId);
+
+        if (maybeAssetInfo) {
+          maybeAssetInfo.id = maybeAssetInfo.assetId;
+          maybeAssetInfo.decimal = maybeAssetInfo.decimals;
+          console.log(' found:', maybeAssetInfo);
+        }
+      }
+    }
+
+    if (maybeAssetInfo) {
+      // @ts-ignore
+      const totalBalance = balance.free.add(balance.reserved);
+
       const asset = {
-        assetId: foundAsset.id,
+        ED: maybeAssetInfo?.extras?.existentialDeposit ?? maybeAssetInfo?.existentialDeposit,
+        assetId: maybeAssetInfo.id,
         balanceDetails: balancifyAsset(balance),
         chainName,
-        decimal: foundAsset.decimal,
+        decimal: maybeAssetInfo.decimal,
         formatted,
         genesisHash: api.genesisHash.toString(),
-        priceId: foundAsset?.priceId,
-        token: foundAsset.symbol,
+        priceId: maybeAssetInfo?.priceId,
+        token: maybeAssetInfo.symbol,
         totalBalance: String(totalBalance)
       };
 

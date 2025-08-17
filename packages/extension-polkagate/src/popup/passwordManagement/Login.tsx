@@ -2,32 +2,64 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable react/jsx-max-props-per-line */
 
-import { Grid, Typography, useTheme } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Box, Container, Grid, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
-import { noop } from '@polkadot/util';
+import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { blake2AsHex } from '@polkadot/util-crypto';
 
-import { Password, PButton, WrongPasswordAlert } from '../../components';
-import HideBalance from '../../components/SVG/HideBalance';
+import { Box as BoxIcon } from '../../assets/icons';
+import { DecisionButtons, GradientBox, MySwitch, PasswordInput } from '../../components';
+import { updateStorage } from '../../components/Loading';
+import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
-import { useIsExtensionPopup, useIsHideNumbers, useTranslation } from '../../hooks';
+import { useBackground, useIsExtensionPopup, useIsHideNumbers, useTranslation } from '../../hooks';
+import { Version } from '../../partials';
+import { RedGradient } from '../../style';
+import { isPasswordCorrect } from '../settings/extensionSettings/ManagePassword';
 import { STEPS } from './constants';
+import Header from './Header';
+import { LOGIN_STATUS } from './types';
 
 interface Props {
-  isPasswordError: boolean;
-  onPassChange: (pass: string | null) => void;
-  onUnlock: () => Promise<void>;
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Login({ isPasswordError, onPassChange, onUnlock, setStep }: Props): React.ReactElement {
+function Content ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
-
   const isPopup = useIsExtensionPopup();
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
+  const { setExtensionLock } = useExtensionLockContext();
+
+  const [hashedPassword, setHashedPassword] = useState<string>();
+  const [isPasswordError, setIsPasswordError] = useState(false);
+
+  const onPassChange = useCallback((pass: string | null): void => {
+    if (!pass) {
+      return setHashedPassword(undefined);
+    }
+
+    setIsPasswordError(false);
+    const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
+
+    setHashedPassword(hashedPassword);
+  }, []);
+
+  const onUnlock = useCallback(async (): Promise<void> => {
+    try {
+      if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
+        await updateStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
+        setHashedPassword(undefined);
+        setExtensionLock(false);
+      } else {
+        setIsPasswordError(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [hashedPassword, setExtensionLock]);
 
   const onForgotPassword = useCallback((): void => {
     if (isPopup) {
@@ -39,49 +71,68 @@ function Login({ isPasswordError, onPassChange, onUnlock, setStep }: Props): Rea
   }, [isPopup, setStep]);
 
   return (
+    <Grid container item justifyContent='start' sx={{ p: '18px 32px 32px' }}>
+      <Box
+        component='img'
+        src={BoxIcon as string}
+        sx={{ height: '145px', m: '17px auto 7px', width: '140px' }}
+      />
+      <Typography sx={{ mb: '15px', textAlign: 'center', width: '100%' }} textTransform='uppercase' variant='H-2'>
+        {t('login')}
+      </Typography>
+      <PasswordInput
+        focused
+        hasError={isPasswordError}
+        onEnterPress={onUnlock}
+        onPassChange={onPassChange}
+        title={t('Enter your password')}
+      />
+      <MySwitch
+        checked={isHideNumbers}
+        columnGap='8px'
+        label={t('Hide Balance')}
+        onChange={toggleHideNumbers}
+        showHidden
+        style={{ marginTop: '20px' }}
+      />
+      <DecisionButtons
+        cancelButton
+        direction='vertical'
+        disabled={!hashedPassword}
+        onPrimaryClick={onUnlock}
+        onSecondaryClick={onForgotPassword}
+        primaryBtnText={t('Unlock')}
+        secondaryBtnText={t('Forgot password')}
+        style={{
+          height: '44px',
+          marginTop: '80px',
+          width: '100%'
+        }}
+      />
+    </Grid>
+  );
+}
+
+function Login ({ setStep }: Props): React.ReactElement {
+  const isExtensionPopup = useIsExtensionPopup();
+
+  useBackground('drops');
+
+  return (
     <>
-      <Grid container sx={{ my: '10px' }}>
-        <Grid alignItems='center' direction='column' item onClick={toggleHideNumbers} sx={{ '&:hover': { opacity: 1 }, cursor: 'pointer', display: 'flex', opacity: 0.5, position: 'absolute', pt: '3px', right: '35px', top: '15px' }}>
-          <HideBalance
-            hide={isHideNumbers}
-            lightColor={theme.palette.secondary.light}
-            onClick={noop}
-            size={25}
-          />
-          <Typography sx={{ color: 'secondary.light', fontSize: '12px', fontWeight: 500, userSelect: 'none' }}>
-            {isHideNumbers ? t('Show numbers') : t('Hide numbers')}
-          </Typography>
-        </Grid>
-        {isPasswordError &&
-          <WrongPasswordAlert bgcolor={theme.palette.mode === 'dark' ? 'black' : 'white'} />
-        }
-      </Grid>
-      <Grid container justifyContent='center' sx={{ display: 'block', px: '10%' }}>
-        <Typography fontSize={16}>
-          {t('Please enter your password to proceed.')}
-        </Typography>
-        <Password
-          isFocused={true}
-          onChange={onPassChange}
-          onEnter={onUnlock}
-          style={{ marginBottom: '5px', marginTop: '5px' }}
-        />
-        <PButton
-          _ml={0}
-          _mt='20px'
-          _onClick={onUnlock}
-          _width={100}
-          text={t('Unlock')}
-        />
-        <PButton
-          _ml={0}
-          _mt='10px'
-          _onClick={onForgotPassword}
-          _variant='text'
-          _width={100}
-          text={t('Forgot password?')}
-        />
-      </Grid>
+      {isExtensionPopup
+        ? <Container disableGutters sx={{ position: 'relative' }}>
+          <Header />
+          <GradientBox noGradient style={{ height: '496px', m: 'auto', mt: '8px', width: '359px' }}>
+            <RedGradient style={{ right: '-8%', top: '20px', zIndex: -1 }} />
+            <Content setStep={setStep} />
+          </GradientBox>
+          <Version />
+        </Container>
+        : <OnboardingLayout childrenStyle={{ justifyContent: 'center', margin: '40px 0', width: '434px' }} showBread={false} showLeftColumn={false}>
+          <Content setStep={setStep} />
+        </OnboardingLayout>
+      }
     </>
   );
 }

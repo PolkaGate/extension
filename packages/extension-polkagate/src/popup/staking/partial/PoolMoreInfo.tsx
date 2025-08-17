@@ -1,12 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/src/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { FormattedAddressState, MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
+import type { MemberPoints, MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { ArrowForwardIos as ArrowForwardIosIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Collapse, Grid, IconButton, Typography, useTheme } from '@mui/material';
@@ -15,7 +13,7 @@ import { Circle } from 'better-react-spinkit';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import { BN, BN_ONE } from '@polkadot/util';
 
@@ -44,7 +42,7 @@ interface CollapseProps {
 }
 
 interface InsidersProps {
-  address: string;
+  address: string | undefined;
   poolToShow: MyPoolInfo;
   setShowClaimCommission?: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
@@ -215,7 +213,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
   const { t } = useTranslation();
   const isExtensionPopup = useIsExtensionPopup();
 
-  const { address } = useParams<FormattedAddressState>();
+  const { address } = useParams();
   const { formatted } = useInfo(address);
   const poolToShow = usePool(address, poolId, false, pool);
   const [itemToShow, setShow] = useState<TabTitles>('None');
@@ -334,7 +332,7 @@ export default function PoolMoreInfo({ api, chain, pool, poolId, setShowPoolInfo
         ? <SlidePopUp show={showPoolInfo}>
           {page}
         </SlidePopUp>
-        : <DraggableModal blurBackdrop minHeight={650} onClose={_closeMenu} open={showPoolInfo} pt={0} px={0}>
+        : <DraggableModal blurBackdrop minHeight={650} onClose={_closeMenu} open={showPoolInfo}>
           {page}
         </DraggableModal>
       }

@@ -1,15 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
-import type { ApiPromise } from '@polkadot/api';
-import type { AccountStakingInfo, StakingConsts } from '../../../../util/types';
-
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
@@ -21,21 +16,21 @@ import { MAX_AMOUNT_LENGTH, STAKING_CHAINS } from '../../../../util/constants';
 import { amountToHuman, amountToMachine } from '../../../../util/utils';
 import Review from './Review';
 
-interface State {
-  api: ApiPromise | undefined;
-  pathname: string;
-  stakingConsts: StakingConsts | undefined;
-  stakingAccount: AccountStakingInfo | undefined;
-  unlockingAmount: BN | undefined;
-}
+// interface State {
+//   api: ApiPromise | undefined;
+//   pathname: string;
+//   stakingConsts: StakingConsts | undefined;
+//   stakingAccount: AccountStakingInfo | undefined;
+//   unlockingAmount: BN | undefined;
+// }
 
-export default function Index(): React.ReactElement {
+export default function Index (): React.ReactElement {
   const { t } = useTranslation();
-  const { state } = useLocation<State>();
+  const { state } = useLocation();
   const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const { api, chain, decimal, formatted, token } = useInfo(address);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useUnSupportedNetwork(address, STAKING_CHAINS);
   const stakingAccount = useStakingAccount(formatted, state?.stakingAccount);
@@ -83,11 +78,8 @@ export default function Index(): React.ReactElement {
   }, [unlockingAmount, t, amountAsBN]);
 
   const onBackClick = useCallback(() => {
-    history.push({
-      pathname: `/solo/${address}`,
-      state: { ...state }
-    });
-  }, [address, history, state]);
+    navigate(`/solo/${address}`, { state: { ...state } });
+  }, [address, navigate, state]);
 
   const onChangeAmount = useCallback((value: string) => {
     if (!decimal) {

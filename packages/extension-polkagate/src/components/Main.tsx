@@ -3,14 +3,18 @@
 
 import React from 'react';
 
+import { useBackground } from '../hooks';
+
 interface Props {
   children: React.ReactNode;
-  className?: string;
 }
 
-export default function Main({ children, className }: Props): React.ReactElement<Props> {
+export default function Main ({ children }: Props): React.ReactElement<Props> {
+  const background = useBackground();
+
   return (
-    <main className={className}>
+    <main id='main' style={{ height: '100%', width: '100%' }}>
+      {background}
       {children}
     </main>
   );

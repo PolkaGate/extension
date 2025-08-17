@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 import type { Vote } from '../myVote/util';
@@ -187,7 +186,6 @@ export default function Index({ address, cantModify, hasVoted, myVote, notVoted,
         {step === STEPS.CHECK_SCREEN &&
           <WaitScreen
             defaultText={t('Checking your voting status...')}
-            showCube
           />
         }
         {step === STEPS.INDEX &&

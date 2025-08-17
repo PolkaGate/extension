@@ -7,10 +7,9 @@ import { Chance } from 'chance';
 import { useCallback, useContext, useMemo } from 'react';
 
 import { AlertContext } from '../components';
+import { TIME_TO_REMOVE_ALERT } from '../util/constants';
 
-export const TIME_TO_REMOVE_ALERT = 5000; // 5 secs
-
-export default function useAlerts() {
+export default function useAlerts () {
   const { alerts, setAlerts } = useContext(AlertContext);
 
   const random = useMemo(() => new Chance(), []);

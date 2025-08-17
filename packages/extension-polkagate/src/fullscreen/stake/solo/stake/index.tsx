@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Payee, ValidatorInfo } from 'extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
@@ -45,7 +44,7 @@ const Warn = ({ text }: { text: string }) => {
   );
 };
 
-export default function SoloStake({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
+export default function SoloStake ({ inputs, onBack, setInputs, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { api, decimal, formatted, genesisHash, token } = useInfo(address);

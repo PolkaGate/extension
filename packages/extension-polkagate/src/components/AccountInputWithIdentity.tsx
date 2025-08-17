@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Chain } from '@polkadot/extension-chains/types';
 
@@ -21,11 +20,10 @@ interface Props {
   setAddress: React.Dispatch<React.SetStateAction<string | undefined | null>>;
   ignoreAddress?: string
   name?: string;
-  helperText?: string;
   disabled?: boolean;
 }
 
-export default function AccountInputWithIdentity({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity ({ address, chain, disabled, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
@@ -40,11 +38,9 @@ export default function AccountInputWithIdentity({ address, chain, disabled, hel
         allAddresses={allAddresses}
         chain={chain}
         disabled={disabled}
-        helperText={helperText}
         label={label}
         placeHolder={t<string>('Paste the address here')}
         setAddress={setAddress}
-        showIdenticon={false}
       />
       {address && chain &&
         <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: theme.palette.secondary.light, borderTop: 0, fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em', maxWidth: '100%', mt: '-4px', pl: '7px', pt: '8px' }} xs={12}>

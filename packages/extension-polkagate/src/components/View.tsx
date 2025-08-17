@@ -14,10 +14,9 @@ import { chooseTheme, ColorContext, Main } from '.';
 
 interface Props {
   children: React.ReactNode;
-  className?: string;
 }
 
-function View({ children, className }: Props): React.ReactElement<Props> {
+function View ({ children }: Props): React.ReactElement<Props> {
   const [mode, setMode] = useState<PaletteMode>(chooseTheme());
 
   useEffect(() => {
@@ -54,7 +53,7 @@ function View({ children, className }: Props): React.ReactElement<Props> {
       <ThemeProvider theme={theme}>
         <CssBaseline enableColorScheme />
         <BodyTheme theme={theme} />
-        <Main className={className}>
+        <Main>
           {children}
         </Main>
       </ThemeProvider>
@@ -65,14 +64,35 @@ function View({ children, className }: Props): React.ReactElement<Props> {
 const BodyTheme = createGlobalStyle<{ theme: Theme }>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
+    position: relative; /* Add position relative to body */
   }
+  
   div#root{
-   background-color: ${(props) => props.theme.palette.background.default};
+    background-color: ${(props) => props.theme.palette.background.default};
   }
+  
   * {
-    scrollbar-width: none;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: ${(props) => props.theme.palette.label.primary} transparent;
+    
     &::-webkit-scrollbar {
-      display: none;
+      width: 8px;
+      height: 8px;
+      position: absolute; /* Add absolute positioning to scrollbar */
+      right: 0;
+      top: 0;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: ${(props) => props.theme.palette.label.primary};
+      border-radius: 4px;
+      position: absolute; /* Add absolute positioning to scrollbar thumb */
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      position: absolute; /* Add absolute positioning to scrollbar track */
+      right: 0;
     }
   }
 `;

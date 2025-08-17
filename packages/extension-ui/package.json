@@ -29,7 +29,6 @@
     "@polkadot/keyring": "latest",
     "@polkadot/networks": "latest",
     "@polkadot/react-identicon": "latest",
-    "@polkadot/react-qr": "^3.6.6",
     "@polkadot/types": "latest",
     "@polkadot/types-augment": "latest",
     "@polkadot/ui-keyring": "latest",
@@ -43,9 +42,8 @@
     "react-dropzone": "^11.7.1",
     "react-i18next": "^11.17.0",
     "react-is": "^18.1.0",
-    "react-router": "^5.3.3",
-    "react-router-dom": "^5.3.3",
-    "styled-components": "^5.3.5",
+    "react-router-dom": "^7.4.1",
+    "styled-components": "^6.1.13",
     "tslib": "^2.6.2"
   },
   "devDependencies": {

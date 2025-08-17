@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
@@ -67,7 +66,7 @@ function FullScreenHeader({ _otherComponents, noAccountDropDown = false, noChain
   const onAccountChange = useCallback((selectedAddress: string) => {
     switch (page) {
       case 'proxyManagement':
-        return onAction(`/fullscreenProxyManagement/${selectedAddress}`);
+        return onAction(`/proxyManagement/${selectedAddress}`);
       case 'governance':
         return onAction(`/governance/${selectedAddress}/${`${topMenu ?? ''}`}/${postId ?? ''}`);
       case 'manageIdentity':

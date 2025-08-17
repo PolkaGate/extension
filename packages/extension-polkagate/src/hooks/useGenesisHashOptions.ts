@@ -11,7 +11,7 @@ import chains from '../util/chains';
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function useGenesisHashOptions(showAnyChain = true): DropdownOption[] {
+export default function useGenesisHashOptions (showAnyChain = true): DropdownOption[] {
   const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
   const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
 
@@ -28,7 +28,7 @@ export default function useGenesisHashOptions(showAnyChain = true): DropdownOpti
     }
   }, []);
 
-  const hashes = useMemo(() => {
+  return useMemo(() => {
     const allChains = [
       // put the relay chains at the top
       ...chains.filter(({ chain }) => chain.includes(RELAY_CHAIN))
@@ -58,6 +58,4 @@ export default function useGenesisHashOptions(showAnyChain = true): DropdownOpti
 
     return allChains;
   }, [metadataChains, showAnyChain]);
-
-  return hashes;
 }

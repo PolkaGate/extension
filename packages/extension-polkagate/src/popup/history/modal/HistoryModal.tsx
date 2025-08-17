@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TransactionDetail } from '../../../util/types';
 
@@ -10,7 +9,7 @@ import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Progress } from '../../../components';
-import { DraggableModal } from '../../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../../fullscreen/components/DraggableModal';
 import SimpleModalTitle from '../../../fullscreen/partials/SimpleModalTitle';
 import { useInfo, useTranslation } from '../../../hooks';
 import HistoryTabs, { TAB_MAP } from '../HistoryTabs';
@@ -19,7 +18,7 @@ import HistoryDetailModal from './HistoryDetailModal';
 import HistoryItemModal from './HistoryItemModal';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   setDisplayPopup: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 

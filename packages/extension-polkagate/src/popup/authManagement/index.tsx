@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
 import { Grid } from '@mui/material';
@@ -10,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { ActionContext } from '../../components';
-import { DraggableModal } from '../../fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '../../fullscreen/components/DraggableModal';
 import SimpleModalTitle from '../../fullscreen/partials/SimpleModalTitle';
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import { getAuthList } from '../../messaging';

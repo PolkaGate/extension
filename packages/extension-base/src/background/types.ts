@@ -58,6 +58,7 @@ export interface AccountJson extends KeyringPair$Meta {
   profile?: string;
   stakingAccount?: string;
   addedTime?: number; // for DApp authorization check
+  selected?: boolean
 }
 
 export type AccountWithChildren = AccountJson & {

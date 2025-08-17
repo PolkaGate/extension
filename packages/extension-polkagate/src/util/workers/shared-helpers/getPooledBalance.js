@@ -12,18 +12,19 @@ export async function getPooledBalance(api, address) {
   const member = response?.unwrapOr(undefined);
 
   if (!member) {
-    return BN_ZERO;
+    return { pooledBalance: BN_ZERO };
   }
 
   const poolId = member.poolId;
   const accounts = poolId && getPoolAccounts(api, poolId);
 
   if (!accounts) {
-    return BN_ZERO;
+    return { pooledBalance: BN_ZERO };
   }
 
-  const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
+  const [bondedPool, metadata, stashIdAccount, myClaimable] = await Promise.all([
     api.query.nominationPools.bondedPools(poolId),
+    api.query.nominationPools.metadata(poolId),
     api.derive.staking.account(accounts.stashId),
     api.call.nominationPoolsApi.pendingRewards(address)
   ]);
@@ -39,5 +40,15 @@ export async function getPooledBalance(api, address) {
     unlockingValue = unlockingValue.add(value);
   });
 
-  return active.add(rewards).add(unlockingValue);
+  const poolName = metadata.length
+    ? metadata.isUtf8
+      ? metadata.toUtf8()
+      : metadata.toString()
+    : null;
+
+  return {
+    poolName,
+    poolReward: rewards,
+    pooledBalance: active.add(unlockingValue)
+  };
 }

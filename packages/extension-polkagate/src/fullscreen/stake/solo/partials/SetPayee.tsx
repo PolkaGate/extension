@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

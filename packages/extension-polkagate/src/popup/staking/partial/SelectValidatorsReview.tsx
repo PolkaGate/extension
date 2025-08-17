@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 /**
  * @description
  * this component opens unstake review page
@@ -29,7 +27,7 @@ import TxDetail from './TxDetail';
 import ValidatorsTable from './ValidatorsTable';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   allValidatorsIdentities: DeriveAccountInfo[] | null | undefined
   api: ApiPromise | undefined;
   newSelectedValidators: ValidatorInfo[]
@@ -40,7 +38,7 @@ interface Props {
   staked: BN;
 }
 
-export default function Review({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
+export default function Review ({ address, allValidatorsIdentities, api, newSelectedValidators, poolId, setShow, show, staked, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { chain, decimal, formatted, token } = useInfo(address);

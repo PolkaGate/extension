@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { Proxy, ProxyItem, TxInfo } from '../../../../util/types';
 
@@ -18,7 +17,7 @@ import { useAccountDisplay, useBalances, useEstimatedFee, useInfo, useProxies, u
 import { ThroughProxy } from '../../../../partials';
 import { getValue } from '../../../../popup/account/util';
 import { PROXY_TYPE } from '../../../../util/constants';
-import { DraggableModal } from '../../components/DraggableModal';
+import { DraggableModal } from '../../../components/DraggableModal';
 import SelectProxyModal2 from '../../components/SelectProxyModal2';
 import WaitScreen from '../../partials/WaitScreen';
 import { type Track } from '../../utils/types';

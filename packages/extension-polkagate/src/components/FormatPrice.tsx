@@ -3,36 +3,46 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
-import { useCurrency } from '../hooks';
+import { useCurrency, useIsHideNumbers } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
-import { amountToHuman, fixFloatingPoint, getDecimal } from '../util/utils';
+import { amountToHuman, getDecimal } from '../util/utils';
+import Dots, { type DotsVariant } from './Dots';
+import MySkeleton from './MySkeleton';
 
 interface Props {
   amount?: BN | null;
+  commify?: boolean;
+  decimalColor?: string;
   decimalPoint?: number;
   decimals?: number;
-  commify?: boolean;
+  dotStyle?: DotsVariant;
+  fontFamily?: string;
   fontSize?: string;
   fontWeight?: number;
+  height?: number;
+  ignoreHide?: boolean; // ignore hide numbers
   lineHeight?: number;
   mt?: string;
   num?: number | string;
   price?: number | null,
   sign?: string;
+  style?: React.CSSProperties;
   skeletonHeight?: number;
   textAlign?: 'left' | 'right';
   textColor?: string;
-  height?: number;
   width?: string;
   withCountUp?: boolean;
   withSmallDecimal?: boolean;
 }
 
-export function nFormatter(num: number, decimalPoint: number) {
+const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
+const SMALL_DECIMALS_FONT_SIZE_REDUCTION = 20;
+
+export function nFormatter (num: number, decimalPoint: number) {
   const lookup = [
     { symbol: '', value: 1 },
     { symbol: 'k', value: 1e3 },
@@ -55,22 +65,41 @@ export function nFormatter(num: number, decimalPoint: number) {
   return item ? (num / item.value).toFixed(decimalPoint).replace(rx, '$1') + item.symbol : '0';
 }
 
-const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
-const SMALL_DECIMALS_FONT_SIZE_REDUCTION = 20;
-
 const DecimalPart = ({ value, withCountUp }: { value: string | number, withCountUp: boolean | undefined }) => (
   withCountUp
-    ? <CountUp
-      duration={1}
-      end={Number(getDecimal(value))}
-      prefix={'.'}
-    />
+    ? (
+      <CountUp
+        duration={1}
+        end={Number(getDecimal(value))}
+        prefix={'.'}
+      />)
     : <>{`.${getDecimal(value)}`}</>
 );
 
-function FormatPrice({ amount, commify, decimalPoint = 2, decimals, fontSize, fontWeight, height, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+export function formatDecimalWithCommas (_number: number | string, decimalDigit = 2, commify?: boolean) {
+  const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
+  const dotIndex = sNumber.indexOf('.');
+
+  if (dotIndex < 0) {
+    const integerPart = sNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas for thousands
+
+    return { decimalPart: '', integerPart }; // No decimal part
+  }
+
+  let integerDigits = sNumber.slice(0, dotIndex);
+  const fractionalDigits = decimalDigit === 0 ? '' : sNumber.slice(dotIndex + 1, dotIndex + decimalDigit + 1);
+
+  if (commify) {
+    integerDigits = integerDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas for thousands
+  }
+
+  return { decimalPart: fractionalDigits, integerPart: integerDigits };
+}
+
+function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, height, ignoreHide, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
   const theme = useTheme();
+  const { isHideNumbers } = useIsHideNumbers();
 
   const total = useMemo(() => {
     if (num !== undefined) {
@@ -108,56 +137,88 @@ function FormatPrice({ amount, commify, decimalPoint = 2, decimals, fontSize, fo
     return `${Math.round(reducedSize)}px`;
   }, []);
 
+  const { decimalPart, integerPart } = formatDecimalWithCommas(total as number, _decimalPoint, commify);
+
+  const mayCurrencySign = sign || currency?.sign || '';
+  const formattedTotal = useMemo(() => (
+    <>
+      {mayCurrencySign}
+      <span>
+        {integerPart.split(',').map((part, idx, arr) => (
+          <React.Fragment key={idx}>
+            <span key={`number-${idx}`} style={{ color: textColor }}>
+              {part}
+            </span>
+            {idx < arr.length - 1 && (
+              <span key={`comma-${idx}`} style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
+                ,
+              </span>
+            )}
+          </React.Fragment>
+        ))}
+        {decimalPart && (
+          <span style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
+            {'.'}{decimalPart}
+          </span>
+        )}
+      </span>
+    </>
+  ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
+
   return (
-    <Grid
-      item
-      mt={mt}
-      sx={{ height }}
-      textAlign={textAlign}
-    >
-      {total !== undefined
-        ? <Stack
-          alignItems='baseline'
-          direction='row'
-        >
-          <Typography
-            fontSize={fontSize}
-            fontWeight={fontWeight}
-            lineHeight={lineHeight}
-            sx={{ color: textColor }}
-          >
-            {withCountUp
-              ? <CountUp
-                decimals={_decimalPoint}
-                duration={1}
-                end={parseFloat(String(total))}
-                prefix={sign || currency?.sign || ''}
-              />
-              : <>
-                {sign || currency?.sign || ''}{commify ? fixFloatingPoint(total as number, _decimalPoint, true) : nFormatter(total as number, _decimalPoint)}
-              </>
-            }
-          </Typography>
-          {withSmallDecimal && Number(total) > 0 &&
+    <Grid alignItems='center' container item mt={mt} sx={{ height, ...style }} textAlign={textAlign} width ='fit-content'>
+      {isHideNumbers && !ignoreHide
+        ? (
+          <Dots
+            color={textColor}
+            decimalColor={decimalColor}
+            preText={mayCurrencySign}
+            preTextFontSize={fontSize}
+            preTextFontWeight={fontWeight}
+            variant={dotStyle}
+          />)
+        : total !== undefined
+          ? <Stack alignItems='baseline' direction='row' width='fit-content'>
             <Typography
-              fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
+              fontFamily={fontFamily}
+              fontSize={fontSize}
               fontWeight={fontWeight}
               lineHeight={lineHeight}
-              sx={{ color: theme.palette.secondary.contrastText }}
+              sx={{ color: textColor }}
             >
-              <DecimalPart
-                value={total}
-                withCountUp={withCountUp}
-              />
+              {withCountUp
+                ? (
+                  <CountUp
+                    decimals={_decimalPoint}
+                    duration={1}
+                    end={parseFloat(String(total))}
+                    prefix={sign || currency?.sign || ''}
+                  />)
+                : <>
+                  {formattedTotal}
+                </>
+              }
             </Typography>
-          }
-        </Stack>
-        : <Skeleton
-          animation='wave'
-          height={skeletonHeight}
-          sx={{ fontWeight: 'bold', transform: 'none', width }}
-          variant='text'
-        />
+            {withSmallDecimal && Number(total) > 0 &&
+              <Typography
+                fontFamily={fontFamily}
+                fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
+                fontWeight={fontWeight}
+                lineHeight={lineHeight}
+                sx={{ color: decimalColor || theme.palette.secondary.contrastText }}
+              >
+                <DecimalPart
+                  value={total}
+                  withCountUp={withCountUp}
+                />
+              </Typography>
+            }
+          </Stack>
+          : (
+            <MySkeleton
+              height={skeletonHeight}
+              style={{ borderRadius: '14px', width }}
+            />)
       }
     </Grid>
   );

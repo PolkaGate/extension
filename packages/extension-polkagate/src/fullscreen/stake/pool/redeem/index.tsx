@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { TxInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
@@ -11,7 +10,7 @@ import { faCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 

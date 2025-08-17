@@ -24,10 +24,11 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
       return;
     }
 
-    balanceInfo.forEach(({ address, balances, pooledBalance, soloTotal }) => {
-      const genesisHash = api.genesisHash.toString();
-      const isMigrated = MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash);
-      const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(isMigrated ? BN_ZERO : pooledBalance);
+    const genesisHash = api.genesisHash.toString();
+    const isMigrationEnabled = MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash);
+
+    balanceInfo.forEach(({ address, balances, poolName, poolReward, pooledBalance, soloTotal }) => {
+      const totalBalance = balances.freeBalance.add(balances.reservedBalance).add(isMigrationEnabled ? BN_ZERO : pooledBalance);
 
       const priceId = TEST_NETS.includes(genesisHash)
         ? undefined
@@ -36,10 +37,11 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
       // @ts-ignore
       results[address] = [{ // since some chains may have more than one asset hence we use an array here! even thought its not needed for relay chains but just to be as a general rule.
         assetId: NATIVE_TOKEN_ASSET_ID,
-        balanceDetails: balancify({ ...balances, pooledBalance, soloTotal }),
+        balanceDetails: balancify({ ...balances, poolReward, pooledBalance, soloTotal }),
         chainName,
         decimal: api.registry.chainDecimals[0],
         genesisHash,
+        poolName,
         priceId,
         token: api.registry.chainTokens[0],
         totalBalance: String(totalBalance)

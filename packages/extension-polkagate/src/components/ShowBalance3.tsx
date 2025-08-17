@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description  this component is used to show an account balance in some pages like contributeToCrowdloan

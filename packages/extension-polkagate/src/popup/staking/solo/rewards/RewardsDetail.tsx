@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
-// @ts-nocheck
-/* eslint-disable react/jsx-max-props-per-line */
 
 /**
  * @description to show rewards chart
@@ -17,7 +16,7 @@ import { Bar } from 'react-chartjs-2';
 import { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { ModalTitle } from '@polkadot/extension-polkagate/src/fullscreen/stake/solo/commonTasks/configurePayee';
 import { BN, BN_ZERO } from '@polkadot/util';
 

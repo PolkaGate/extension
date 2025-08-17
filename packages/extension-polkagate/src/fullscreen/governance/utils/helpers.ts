@@ -157,7 +157,7 @@ export interface FilteredVotes {
 
 export const isFinished = (referendum: Referendum | undefined) => referendum?.status ? FINISHED_REFERENDUM_STATUSES.includes(referendum.status) : undefined;
 
-export async function getReferendumStatistics(chainName: string, type: 'referenda' | 'fellowship'): Promise<Statistics | null> {
+export async function getReferendumStatistics (chainName: string, type: 'referenda' | 'fellowship' | undefined): Promise<Statistics | null> {
   // console.log('Getting ref stat from sb ... ');
 
   return new Promise((resolve) => {
@@ -394,13 +394,13 @@ interface RefListSb {
   }[];
 }
 
-export async function getReferendumsListSb(chainName: string, type: 'referenda' | 'fellowship', listingLimit = 30): Promise<RefListSb | null> {
+export async function getReferendumsListSb (chainName: string, type: 'referenda' | 'fellowship' | undefined, listingLimit = 30): Promise<RefListSb | null> {
   console.log('Getting ref list from sb ...');
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + `.api.subscan.io/api/scan/${type.toLowerCase()}/referendums`,
+      postData('https://' + chainName + `.api.subscan.io/api/scan/${type?.toLowerCase()}/referendums`,
         {
           // page:1,
           row: listingLimit

@@ -8,7 +8,7 @@
  * this component shows an account information in detail
  * */
 
-import type { BalancesInfo } from '../../util/types';
+import type { BalancesInfo, FetchedBalance } from '../../util/types';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
@@ -19,7 +19,14 @@ function isEmptyObject (obj: object): boolean {
   return Object.keys(obj).length === 0;
 }
 
-export const getValue = (type: string, balances: BalancesInfo | null | undefined): BN | undefined => {
+/**
+ * Retrieves a specific balance value from the provided `balances` object based on the given `type`.
+ *
+ * @param {string} type - The type of balance to retrieve (e.g., 'total', 'available', 'reserved').
+ * @param {BalancesInfo | null | undefined} balances - The balance information object.
+ * @returns {BN | undefined} The requested balance as a `BN` instance, or `undefined` if `balances` is null/empty.
+ */
+export const getValue = (type: string, balances: BalancesInfo | FetchedBalance | null | undefined): BN | undefined => {
   if (!balances || isEmptyObject(balances)) {
     return;
   }
@@ -56,7 +63,7 @@ export const getValue = (type: string, balances: BalancesInfo | null | undefined
     case ('reserved'):
       return balances.reservedBalance;
     case ('others'):
-      return balances.lockedBalance.add(balances.vestingTotal);
+      return (balances.lockedBalance ?? BN_ZERO).add(balances.vestingTotal ?? BN_ZERO);
     case ('free'):
     case ('free balance'):
       return balances.freeBalance;

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -12,14 +11,14 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import { Divider, Grid, IconButton, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/governance/components/DraggableModal';
+import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 
 import { SlidePopUp } from '../../../../../components';
 import { useInfo, useIsExtensionPopup, useTranslation } from '../../../../../hooks';
 import ValidatorsTable from '../../../partial/ValidatorsTable';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   selectedValidators: ValidatorInfo[];

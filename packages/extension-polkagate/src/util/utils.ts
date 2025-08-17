@@ -10,6 +10,7 @@ import type { Text } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 import type { HexString } from '@polkadot/util/types';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
 import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
@@ -26,23 +27,25 @@ interface Meta {
 
 export const upperCaseFirstChar = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export function isValidAddress(_address: string | undefined): boolean {
+export function isValidAddress (address: string | undefined): boolean {
   try {
+    if (!address || address === 'undefined') {
+      return false;
+    }
+
     encodeAddress(
-      isHex(_address)
-        ? hexToU8a(_address)
-        : decodeAddress(_address)
+      isHex(address)
+        ? hexToU8a(address)
+        : decodeAddress(address)
     );
 
     return true;
-  } catch (error) {
-    console.log(error);
-
+  } catch {
     return false;
   }
 }
 
-function countLeadingZerosInFraction(numStr: string) {
+function countLeadingZerosInFraction (numStr: string) {
   const match = numStr.match(/\.(0+)/);
 
   if (match) {
@@ -52,19 +55,19 @@ function countLeadingZerosInFraction(numStr: string) {
   return 0;
 }
 
-export function countDecimalPlaces(n: number) {
+export function countDecimalPlaces (n: number) {
   const match = n.toString().match(/\.(\d+)/);
 
   return match ? match[1].length : 0;
 }
 
-export function getDecimal(n: string | number, count = 2) {
+export function getDecimal (n: string | number, count = 2) {
   const decimalPart = n.toString().split('.')[1];
 
   return decimalPart ? decimalPart.slice(0, count) : 0;
 }
 
-export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+export function formatDecimal (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
 
   // make number positive if it is negative
@@ -95,7 +98,7 @@ export function fixFloatingPoint(_number: number | string, decimalDigit = FLOATI
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
-export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
+export function amountToHuman (_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
   if (!_amount || !_decimals) {
     return '';
   }
@@ -104,10 +107,10 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
 
   const x = 10 ** _decimals;
 
-  return fixFloatingPoint(Number(_amount) / x, decimalDigits, commify);
+  return formatDecimal(Number(_amount) / x, decimalDigits, commify);
 }
 
-export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
+export function amountToMachine (amount: string | undefined, decimal: number | undefined): BN {
   if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }
@@ -130,14 +133,14 @@ export function amountToMachine(amount: string | undefined, decimal: number | un
   return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
 }
 
-export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
+export function getSubstrateAddress (address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -168,7 +171,7 @@ export const accountName = (accounts: AccountJson[], address: string | undefined
   return accounts.find((acc) => acc.address === addr)?.name;
 };
 
-export function prepareMetaData(chain: Chain | null | string, label: string, metaData: unknown): string {
+export function prepareMetaData (chain: Chain | null | string, label: string, metaData: unknown): string {
   const chainName = sanitizeChainName((chain as Chain)?.name) ?? chain;
 
   if (label === 'balances') {
@@ -203,7 +206,7 @@ export const getWebsiteFavicon = (url: string | undefined): string => {
   return 'https://s2.googleusercontent.com/s2/favicons?domain=' + url;
 };
 
-export function remainingTime(blocks: number, noMinutes?: boolean): string {
+export function remainingTime (blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
@@ -246,7 +249,7 @@ export function remainingTime(blocks: number, noMinutes?: boolean): string {
   return time;
 }
 
-export function remainingTimeCountDown(seconds: number | undefined): string {
+export function remainingTimeCountDown (seconds: number | undefined): string {
   if (!seconds || seconds <= 0) {
     return 'finished';
   }
@@ -262,17 +265,17 @@ export function remainingTimeCountDown(seconds: number | undefined): string {
   return d + h + m + s;
 }
 
-function splitSingle(value: string[], sep: string): string[] {
+function splitSingle (value: string[], sep: string): string[] {
   return value.reduce((result: string[], value: string): string[] => {
     return value.split(sep).reduce((result: string[], value: string) => result.concat(value), result);
   }, []);
 }
 
-function splitParts(value: string): string[] {
+function splitParts (value: string): string[] {
   return ['[', ']'].reduce((result: string[], sep) => splitSingle(result, sep), [value]);
 }
 
-export function formatMeta(meta?: Meta): string[] | null {
+export function formatMeta (meta?: Meta): string[] | null {
   if (!meta?.docs.length) {
     return null;
   }
@@ -289,7 +292,11 @@ export function formatMeta(meta?: Meta): string[] | null {
   return parts;
 }
 
-export function toShortAddress(address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+export function toShortAddress (address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+  if (!address) {
+    return '';
+  }
+
   address = String(address);
 
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
@@ -310,7 +317,7 @@ export const isEqual = (a1: unknown[] | null, a2: unknown[] | null): boolean => 
   return JSON.stringify(a1Sorted) === JSON.stringify(a2Sorted);
 };
 
-export function saveAsHistory(formatted: string, info: TransactionDetail) {
+export function saveAsHistory (formatted: string, info: TransactionDetail) {
   chrome.storage.local.get('history', (res) => {
     const k = `${formatted}`;
     const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
@@ -326,7 +333,7 @@ export function saveAsHistory(formatted: string, info: TransactionDetail) {
   });
 }
 
-export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage (formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
     chrome.storage.local.get('history', (res) => {
       const k = `${formatted}`;
@@ -367,7 +374,7 @@ export const isWss = (input: string | undefined): boolean => {
     return false;
   }
 
-  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(\/[\w\d-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
+  const urlRegex = /^wss:\/\/([\w\d-]+\.)+[\w\d-]{2,}(:\d+)?(\/[\w\d\-._~:/?#\[\]@!$&'()*+,;=]*)?$/i;
 
   return urlRegex.test(input);
 };
@@ -426,7 +433,7 @@ export const getPriceIdByChainName = (chainName?: string, useAddedChains?: UserA
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
 
-export function areArraysEqual<T>(arrays: T[][]): boolean {
+export function areArraysEqual<T> (arrays: T[][]): boolean {
   if (arrays.length < 2) {
     return true; // Single array or empty input is considered equal
   }
@@ -449,7 +456,7 @@ export function areArraysEqual<T>(arrays: T[][]): boolean {
   );
 }
 
-export function extractBaseUrl(url: string | undefined) {
+export function extractBaseUrl (url: string | undefined) {
   try {
     if (!url) {
       return;
@@ -465,7 +472,7 @@ export function extractBaseUrl(url: string | undefined) {
   }
 }
 
-export async function updateRecentChains(addressKey: string, genesisHashKey: string) {
+export async function updateRecentChains (addressKey: string, genesisHashKey: string) {
   try {
     const result = await new Promise<{ RecentChains?: RecentChainsType }>((resolve) => chrome.storage.local.get('RecentChains', resolve));
     const accountsAndChains = result.RecentChains ?? {};
@@ -498,7 +505,7 @@ export async function updateRecentChains(addressKey: string, genesisHashKey: str
   }
 }
 
-export async function fastestConnection(endpoints: DropdownOption[]): Promise<FastestConnectionType> {
+export async function fastestConnection (endpoints: DropdownOption[]): Promise<FastestConnectionType> {
   try {
     const urls = endpoints.map(({ value }) => ({ value: value as string }));
     const { api, connections } = await fastestEndpoint(urls);
@@ -598,4 +605,159 @@ export const addressToChain = (address: string) => {
     chainName: chain?.chain,
     genesisHash: chain?.genesisHash
   };
+};
+
+/**
+ * Format options for the timestamp display
+ */
+export type TimestampPart = 'weekday' | 'month' | 'day' | 'year' | 'hours' | 'minutes' | 'seconds' | 'ampm';
+
+/**
+ * Formats a timestamp with customizable output based on the parts you want to include.
+ *
+ * @param {number|string|Date} timestamp - The timestamp to format. Can be:
+ *   - number: milliseconds since epoch (e.g., 1723026480000)
+ *   - string: a date string parsable by the Date constructor (e.g., "2024-08-06T19:48:00")
+ *   - Date: a JavaScript Date object
+ *
+ * @param {TimestampPart[] | undefined} [parts] - Array of timestamp parts to include in the output:
+ *   - If undefined or empty, returns the full formatted date
+ *   - Available parts: 'weekday', 'month', 'day', 'year', 'hours', 'minutes', 'seconds', 'ampm'
+ *
+ * @param {string} [separator=", "] - The separator to use between parts
+ *
+ * @returns {string} The formatted date string including only the specified parts
+ *
+ * @example
+ * // Returns something like "Tue, Aug 6, 2024, 7:48:00 PM"
+ * formatTimestamp(1723026480000);
+ *
+ * @example
+ * // Returns something like "Aug 6 7"
+ * formatTimestamp(1723026480000, ['month', 'day', 'hours']);
+ *
+ * @example
+ * // Returns something like "Aug-6-2024"
+ * formatTimestamp(1723026480000, ['month', 'day', 'year'], '-');
+ */
+export function formatTimestamp (
+  timestamp: number | string | Date,
+  parts?: TimestampPart[]
+): string {
+  const date = new Date(timestamp);
+
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const components: Record<TimestampPart, string | number> = {
+    ampm: date.getHours() >= 12 ? 'PM' : 'AM',
+    day: date.getDate(),
+    hours: date.getHours() % 12 || 12,
+    minutes: date.getMinutes().toString().padStart(2, '0'),
+    month: months[date.getMonth()],
+    seconds: date.getSeconds().toString().padStart(2, '0'),
+    weekday: weekdays[date.getDay()],
+    year: date.getFullYear()
+  };
+
+  if (!parts || parts.length === 0) {
+    // Default full date-time
+    return `${components.weekday}, ${components.month} ${components.day}, ${components.year}, ${components.hours}:${components.minutes}:${components.seconds} ${components.ampm}`;
+  }
+
+  const dateParts: string[] = [];
+  const timeParts: string[] = [];
+
+  parts.forEach((part) => {
+    if (['weekday', 'month', 'day', 'year'].includes(part)) {
+      if (part === 'month' && parts.includes('day')) {
+        // Let 'month' and 'day' group together like "Apr 13"
+        if (!dateParts.includes(`${components.month} ${components.day}`)) {
+          dateParts.push(`${components.month} ${components.day}`);
+        }
+      } else if (part === 'day' && parts.includes('month')) {
+        // Already handled above
+      } else {
+        dateParts.push(String(components[part]));
+      }
+    } else {
+      // time parts
+      timeParts.push(part);
+    }
+  });
+
+  // Format time block smartly
+  let timeString = '';
+
+  if (timeParts.length > 0) {
+    const hours = timeParts.includes('hours') ? components.hours : '';
+    const minutes = timeParts.includes('minutes') ? `:${components.minutes}` : '';
+    const seconds = timeParts.includes('seconds') ? `:${components.seconds}` : '';
+    const ampm = timeParts.includes('ampm') ? ` ${components.ampm}` : '';
+
+    timeString = `${hours}${minutes}${seconds}${ampm}`.trim();
+  }
+
+  if (dateParts.length > 0 && timeString) {
+    return `${dateParts.join(' ')}, ${timeString}`;
+  } else if (dateParts.length > 0) {
+    return dateParts.join(' ');
+  } else {
+    return timeString;
+  }
+}
+
+export function blockToDate (blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions, iso?: boolean) {
+  if (!blockNumber || !currentBlock) {
+    return 'N/A';
+  }
+
+  let date;
+
+  if (blockNumber >= currentBlock) {
+    const time = (blockNumber - currentBlock) * 6000;
+    const now = Date.now();
+
+    date = new Date(now + time);
+  } else {
+    const diff = (currentBlock - blockNumber) * 6000;
+    const now = Date.now();
+
+    date = new Date(now - diff);
+  }
+
+  if (iso) {
+    return date.toISOString();
+  }
+
+  return date.toLocaleDateString('en-US', option ?? { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// Remove zero balance records
+export const removeZeroBalanceRecords = (toBeSavedAssets: SavedAssets): SavedAssets => {
+  const _toBeSavedAssets = { ...toBeSavedAssets };
+  const balances = (_toBeSavedAssets)?.balances || [];
+
+  Object.entries(balances).forEach(([address, assetsPerChain]) => {
+    Object.entries(assetsPerChain).forEach(([genesisHash, fetchedBalance]) => {
+      const toBeDeletedIndexes: string[] = [];
+
+      fetchedBalance.forEach(({ token, totalBalance }) => {
+        if (new BN(totalBalance).isZero()) {
+          toBeDeletedIndexes.push(token);
+        }
+      });
+      toBeDeletedIndexes.forEach((_token) => {
+        const index = _toBeSavedAssets.balances[address][genesisHash].findIndex(({ token }) => _token === token);
+
+        index >= 0 && _toBeSavedAssets.balances[address][genesisHash].splice(index, 1);
+      });
+
+      if (!_toBeSavedAssets.balances[address][genesisHash].length) {
+        delete _toBeSavedAssets.balances[address][genesisHash];
+      }
+    });
+  });
+
+  return _toBeSavedAssets;
 };

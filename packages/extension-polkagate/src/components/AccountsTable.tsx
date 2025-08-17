@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -12,6 +10,7 @@ import { openOrFocusTab } from '../fullscreen/accountDetails/components/CommonTa
 import { useTranslation } from '../hooks';
 import { showAccount } from '../messaging';
 import Label from './Label';
+import { sortAccounts } from './sortAccounts';
 import { AccountContext, Identity, PButton, Switch } from '.';
 
 type AccountTypeFilterType = ['Watch-Only' | 'Hardware' | 'QR'];
@@ -27,20 +26,7 @@ interface Props {
   manageConnectedAccounts?: boolean;
 }
 
-const sortAccounts = (accountA: AccountJson, accountB: AccountJson, selectedList: string[]): number => {
-  const isASelected = selectedList.includes(accountA.address);
-  const isBSelected = selectedList.includes(accountB.address);
-
-  if (!isASelected && isBSelected) {
-    return -1;
-  } else if (isASelected && !isBSelected) {
-    return 1;
-  }
-
-  return 0;
-};
-
-function AccountsTable({ accountTypeFilter, areAllCheck, label, manageConnectedAccounts, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
+function AccountsTable ({ accountTypeFilter, areAllCheck, label, manageConnectedAccounts, maxHeight = '112px', selectedAccounts, setSelectedAccounts, style }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -98,7 +84,7 @@ function AccountsTable({ accountTypeFilter, areAllCheck, label, manageConnectedA
   return (
     <Grid container item sx={{ position: 'relative', ...style }}>
       <Label label={label ?? t('Accounts')} style={{ fontWeight: 300, position: 'relative', width: '100%' }}>
-        <Grid container direction='column' sx={{ '> div:not(:last-child:not(:only-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '68px', overflowY: 'scroll', textAlign: 'center' }}>
+        <Grid container direction='column' sx={{ '> div:not(:last-child:not(:only-child))': { borderBottom: '1px solid', borderBottomColor: 'secondary.light' }, bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', maxHeight, minHeight: '68px', overflowY: 'auto', textAlign: 'center' }}>
           <Grid container item sx={{ '> div:not(:last-child)': { borderRight: '1px solid', borderRightColor: 'secondary.light' }, textAlign: 'center' }} xs={12}>
             <Grid item xs={8}>
               <Typography fontSize='14px' fontWeight={400} lineHeight='25px'>

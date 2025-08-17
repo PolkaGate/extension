@@ -19,7 +19,7 @@ export interface NftItemsWorker {
 const nftManager = new NftManager();
 const NFT_FUNCTION_NAME = 'getNFTs';
 
-export default function useNFT(accountsFromContext: AccountJson[] | null) {
+export default function useNFT (accountsFromContext: AccountJson[] | null) {
   const { t } = useTranslation();
   const { notify } = useAlerts();
   const worker = useWorker();
@@ -42,7 +42,6 @@ export default function useNFT(accountsFromContext: AccountJson[] | null) {
 
       if (!NFTs) {
         notify(t('Unable to fetch NFT/Unique items!'), 'info');
-        // setFetching(false);
 
         return;
       }
@@ -52,22 +51,17 @@ export default function useNFT(accountsFromContext: AccountJson[] | null) {
       try {
         parsedNFTsInfo = JSON.parse(NFTs) as NftItemsWorker;
 
-        // console.log('All fetched NFTs:', parsedNFTsInfo);
-
         if (parsedNFTsInfo.functionName !== NFT_FUNCTION_NAME) {
           return;
         }
       } catch (error) {
         console.error('Failed to parse NFTs JSON:', error);
-        // setFetching(false);
 
         return;
       }
 
       // Save all fetched items to Chrome storage
       saveToStorage(parsedNFTsInfo.results);
-
-      // setFetching(false);
     };
 
     worker.addEventListener('message', handleMessage);

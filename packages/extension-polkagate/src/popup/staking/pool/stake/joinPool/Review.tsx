@@ -1,36 +1,35 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
-/* eslint-disable react/jsx-max-props-per-line */
+// @ts-nocheck
 
 /**
  * @description
  * this component opens join pool review page
  * */
 
+import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { BN } from '@polkadot/util';
+import type { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { ApiPromise } from '@polkadot/api';
 import keyring from '@polkadot/ui-keyring';
-import { BN } from '@polkadot/util';
 
 import { AccountHolderWithProxy, ActionContext, ChainLogo, FormatBalance, PasswordUseProxyConfirm, Popup, WrongPasswordAlert } from '../../../../../components';
 import { useAccountDisplay, useChain, useFormatted, useProxies, useTranslation } from '../../../../../hooks';
 import { Confirmation, HeaderBrand, SubTitle, WaitScreen } from '../../../../../partials';
 import { broadcast } from '../../../../../util/api';
 import { PROXY_TYPE } from '../../../../../util/constants';
-import type { PoolInfo, Proxy, ProxyItem, TxInfo } from '../../../../../util/types';
 import { amountToHuman, getSubstrateAddress, saveAsHistory } from '../../../../../util/utils';
 import ShowPool from '../../../partial/ShowPool';
 import JoinPoolTxDetail from './partials/JoinPoolTxDetail';
 
 interface Props {
   api: ApiPromise;
-  address: string;
+  address: string | undefined;
   showReview: boolean;
   setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
   joinAmount?: BN;

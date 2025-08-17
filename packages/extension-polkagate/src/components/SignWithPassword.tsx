@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
@@ -18,7 +17,7 @@ import { signAndSend } from '../util/api';
 import { Identity, Password, TwoButtons } from '.';
 
 interface Props {
-  address: string;
+  address: string | undefined;
   disabled?: boolean;
   isPasswordError?: boolean;
   onSecondaryClick: () => void;

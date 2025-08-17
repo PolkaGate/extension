@@ -7,10 +7,11 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { AccountContext, AccountsAssetsContext, AlertContext, GenesisHashOptionsContext, UserAddedChainContext, WorkerContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import useAssetsBalances, { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
+import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
-export default function AccountAssetProvider({ children }: { children: React.ReactNode }) {
+export default function AccountAssetProvider ({ children }: { children: React.ReactNode }) {
   const { accounts } = useContext(AccountContext);
   const genesisHashOptions = useContext(GenesisHashOptionsContext);
   const { setAlerts } = useContext(AlertContext);

@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { BalancesInfo } from '../../../util/types';
@@ -21,7 +19,7 @@ import { amountToHuman, amountToMachine } from '../../../util/utils';
 import { STEPS } from '..';
 
 interface Props {
-  address: string
+  address: string | undefined;
   balances: BalancesInfo | undefined;
   inputs: StakingInputs | undefined;
   setStep: React.Dispatch<React.SetStateAction<number>>;

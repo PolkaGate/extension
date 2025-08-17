@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { HexString } from '@polkadot/util/types';
 
@@ -15,18 +13,18 @@ import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/acc
 import Bread from '@polkadot/extension-polkagate/src/fullscreen/partials/Bread';
 import { Title } from '@polkadot/extension-polkagate/src/fullscreen/sendFund/InputPage';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
+import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, GenesisHashOptionsContext, Label, ProfileInput, SelectChain, TwoButtons, VaadinIcon } from '../../../components';
 import FullScreenHeader from '../../../fullscreen/governance/FullScreenHeader';
-import { useFullscreen, useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
+import { useInfo, useProxiedAccounts, useTranslation } from '../../../hooks';
 import { createAccountExternal, getMetadata, tieAccount, updateMeta } from '../../../messaging';
 import { FULLSCREEN_WIDTH, PROXY_CHAINS, WESTEND_GENESIS_HASH } from '../../../util/constants';
 import getLogo from '../../../util/getLogo';
 import AddressDropdownFullScreen from '../../newAccount/deriveFromAccountsFullscreen/AddressDropdownFullScreen';
 import ProxiedTable from '../importProxied/ProxiedTable';
 
-function ImportProxiedFS(): React.ReactElement {
-  useFullscreen();
+function ImportProxiedFS (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { accounts } = useContext(AccountContext);
@@ -40,7 +38,7 @@ function ImportProxiedFS(): React.ReactElement {
     accounts
       .filter(({ isExternal, isHardware, isQR }) => !isExternal || isQR || isHardware)
       .map(({ address, genesisHash, name }): [string, string | null, string | undefined] => [address, genesisHash || null, name])
-    , [accounts]);
+  , [accounts]);
 
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(undefined);
   const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
@@ -67,7 +65,7 @@ function ImportProxiedFS(): React.ReactElement {
 
   const onChangeGenesis = useCallback((genesisHash?: string | null) => {
     setSelectedProxied([]);
-
+    // NO TIE ANYMORE IN NEW DESIGN
     genesisHash && tieAccount(selectedAddress ?? '', genesisHash as HexString)
       .then(() => getMetadata(genesisHash, true))
       .then(setChain)
@@ -108,7 +106,7 @@ function ImportProxiedFS(): React.ReactElement {
     setIsBusy(true);
     createProxids().then(() => {
       setIsBusy(false);
-      setStorage('profile', profileName || PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+      setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, profileName || PROFILE_TAGS.WATCH_ONLY).catch(console.error);
       openOrFocusTab('/', true);
     }).catch(console.error);
   }, [createProxids, profileName]);

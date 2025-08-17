@@ -1,18 +1,29 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { ItemAvatarProp } from '../utils/types';
 
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { OpenInFull as OpenInFullIcon } from '@mui/icons-material';
-import { Avatar, Grid, IconButton, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import { Avatar, Grid, useTheme } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
-import { ALT_NFT_BGCOLOR_DARK, ALT_NFT_BGCOLOR_LIGHT } from '../utils/constants';
-import { WithLoading } from './Details';
+import { Progress } from '@polkadot/extension-polkagate/src/components/index';
+
+import { PREVIEW_SIZE } from '../utils/constants';
+
+const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.ReactElement }) => (
+  <>
+    {!loaded &&
+      <Progress
+        gridSize={50}
+        pt={0}
+        type='grid'
+      />
+    }
+    {children}
+  </>
+);
 
 const SIZE = {
   large: {
@@ -20,25 +31,22 @@ const SIZE = {
     width: '320px'
   },
   small: {
-    height: '220px',
-    width: '188px'
+    height: PREVIEW_SIZE,
+    width: PREVIEW_SIZE
   }
 };
 
-export default function ItemAvatar({ image, onFullscreen, size = 'small' }: ItemAvatarProp): React.ReactElement {
+export default function ItemAvatar ({ image, size = 'small' }: ItemAvatarProp): React.ReactElement {
   const theme = useTheme();
   const [showLoading, setShowLoading] = useState<boolean>(true);
-
-  const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
 
   const onLoad = useCallback(() => {
     setShowLoading(false);
   }, []);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDarkMode ? ALT_NFT_BGCOLOR_DARK : ALT_NFT_BGCOLOR_LIGHT, borderRadius: size === 'small' ? '10px 10px 5px 5px' : '10px', height: SIZE[size].height, overflow: 'hidden', width: SIZE[size].width }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ borderRadius: size === 'small' ? '10px 10px 5px 5px' : '10px', height: SIZE[size].height, overflow: 'hidden', width: SIZE[size].width }}>
       {image &&
-        <>
           <WithLoading
             loaded={!showLoading}
           >
@@ -47,36 +55,19 @@ export default function ItemAvatar({ image, onFullscreen, size = 'small' }: Item
               onLoad={onLoad}
               src={image}
               sx={{
+                borderRadius: '22px',
                 display: showLoading ? 'none' : 'initial',
-                height: '100%',
+                height: '200px',
                 img: {
                   objectFit: 'contain',
                   objectPosition: 'center'
                 },
                 pointerEvents: 'none',
-                width: '100%'
+                width: '200px'
               }}
               variant='square'
             />
           </WithLoading>
-          {onFullscreen && (
-            <IconButton
-              onClick={onFullscreen}
-              sx={{
-                '&:hover': {
-                  backgroundColor: 'rgba(0,0,0,0.7)'
-                },
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                bottom: 8,
-                color: 'white',
-                position: 'absolute',
-                right: 8
-              }}
-            >
-              <OpenInFullIcon />
-            </IconButton>
-          )}
-        </>
       }
       {image === null &&
         <FontAwesomeIcon

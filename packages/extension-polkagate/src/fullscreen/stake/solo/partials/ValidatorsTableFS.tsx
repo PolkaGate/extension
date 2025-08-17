@@ -1,15 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
+import type { FixedSizeList, ListChildComponentProps } from 'react-window';
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { StakingConsts, ValidatorInfo } from '../../../../util/types';
 
 import { alpha, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-// @ts-ignore
 import { FixedSizeList as List } from 'react-window';
 
 import { useInfo } from '@polkadot/extension-polkagate/src/hooks';
@@ -20,6 +18,7 @@ import { VaadinIcon } from '../../../../components';
 import ShowValidator from './ShowValidator';
 
 interface Props {
+  address: string | undefined;
   activeValidators?: ValidatorInfo[] | undefined;
   allValidatorsIdentities?: DeriveAccountInfo[] | null | undefined;
   formatted?: AccountId | string;
@@ -27,18 +26,17 @@ interface Props {
   height?: number;
   isSelected?: (v: ValidatorInfo) => boolean;
   maxSelected?: boolean;
+  nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
   style?: SxProps<Theme> | undefined;
   staked: BN | undefined;
   stakingConsts?: StakingConsts | null | undefined;
   showCheckbox?: boolean;
   validatorsToList: ValidatorInfo[] | null | undefined;
-  address: string;
-  nominatedValidatorsIds?: string[] | AccountId[] | null | undefined;
 }
 
-export default function ValidatorsTableFS({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
+export default function ValidatorsTableFS ({ activeValidators, address, allValidatorsIdentities, formatted, handleCheck, height, isSelected, maxSelected, nominatedValidatorsIds, showCheckbox, staked, stakingConsts, style, validatorsToList }: Props): React.ReactElement {
   const theme = useTheme();
-  const ref = useRef();
+  const ref = useRef<FixedSizeList>(null);
   const { api, chain, decimal, token } = useInfo(address);
 
   const [showValidatorInfo, setShowValidatorInfo] = useState<boolean>(false);
@@ -87,13 +85,13 @@ export default function ValidatorsTableFS({ activeValidators, address, allValida
       <Grid container direction='column' sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'secondary.light', borderRadius: '5px', display: 'block', minHeight: '59px', scrollBehavior: 'smooth', textAlign: 'center' }}>
         {validatorsToList?.length && validatorsToList?.length !== 0 &&
           <List
-            height={height}
+            height={height || 200}
             itemCount={validatorsToList?.length}
             itemSize={45}
             ref={ref}
             width={'100%'}
           >
-            {({ index, key, style }: { index: number, key: number, style: any[] }) => {
+            {({ index, style }: ListChildComponentProps) => {
               const v = validatorsToList[index];
               const isActive = !!activeValidators?.find((av) => v.accountId === av?.accountId);
               const isOversubscribed = overSubscribed(v);
@@ -102,7 +100,7 @@ export default function ValidatorsTableFS({ activeValidators, address, allValida
               const isNominated = !!nominatedValidatorsIds?.find((n) => n === v.accountId);
 
               return (
-                <Grid container item key={key} sx={{ backgroundColor: isNominated ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2) : undefined, borderBottom: '1px solid', borderBottomColor: 'secondary.light', overflowY: 'scroll', ...style }}>
+                <Grid container item sx={{ backgroundColor: isNominated ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.4 : 0.2) : undefined, borderBottom: '1px solid', borderBottomColor: 'secondary.light', overflowY: 'scroll', ...style }}>
                   <ShowValidator
                     accountInfo={accountInfo}
                     api={api}

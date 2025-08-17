@@ -1,33 +1,31 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-max-props-per-line */
-
 import type { YouHaveType } from '../../hooks/useYouHave';
 
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { Box, Grid, IconButton, Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
+
+import { PRICE_VALIDITY_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { logoBlack, logoWhite } from '../../assets/logos';
 import { FormatPrice, Infotip2 } from '../../components';
 import HideBalance from '../../components/SVG/HideBalance';
-import Currency from '../../fullscreen/homeFullScreen/partials/Currency';
-import { changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../fullscreen/homeFullScreen/partials/TotalBalancePieChart';
+import Currency from '../../fullscreen/home/partials/Currency';
+import { changeSign, PORTFOLIO_CHANGE_DECIMAL } from '../../fullscreen/home/partials/TotalBalancePieChart';
 import { useCurrency, useIsHideNumbers, useYouHave } from '../../hooks';
-import { PRICE_VALIDITY_PERIOD } from '../../hooks/usePrices';
 import useTranslation from '../../hooks/useTranslation';
 import ConnectedDappIcon from '../../partials/ConnectedDappIcon';
-import Menu from '../../partials/Menu';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../util/api/getPrices';
-import { countDecimalPlaces, fixFloatingPoint } from '../../util/utils';
+import { countDecimalPlaces, formatDecimal, noop } from '../../util/utils';
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
-export default function YouHave(): React.ReactElement {
+export default function YouHave (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const youHave = useYouHave();
@@ -67,20 +65,19 @@ export default function YouHave(): React.ReactElement {
   };
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
-  const [isMenuOpen, setOpenMenu] = useState(false);
 
   const portfolioChange = useMemo(() => {
     if (!youHave?.change) {
       return 0;
     }
 
-    const value = fixFloatingPoint(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
+    const value = formatDecimal(youHave.change, PORTFOLIO_CHANGE_DECIMAL, false, true);
 
     return parseFloat(value);
   }, [youHave?.change]);
 
   const onMenuClick = useCallback(() => {
-    setOpenMenu((open) => !open);
+    noop();
   }, []);
 
   return (
@@ -168,10 +165,6 @@ export default function YouHave(): React.ReactElement {
         </Grid>
         <ConnectedDappIcon />
       </Grid>
-      <Menu
-        isMenuOpen={isMenuOpen}
-        setShowMenu={setOpenMenu}
-      />
       <Box
         alt='PolkaGate logo'
         component='img'

@@ -1,6 +1,5 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -20,7 +19,7 @@ i18next
       escapeValue: false
     },
     keySeparator: false,
-    lng: uiSettings.i18nLang,
+    lng: uiSettings.i18nLang === 'default' ? 'en' : uiSettings.i18nLang,
     load: 'languageOnly',
     nsSeparator: false,
     returnEmptyString: false,

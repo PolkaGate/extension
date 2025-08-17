@@ -1,42 +1,42 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
 /* eslint-disable header/header */
 
 import type BN from 'bn.js';
 import type { Compact } from '@polkadot/types';
+import type { INumber } from '@polkadot/types-codec/types';
 
-import React, { useMemo } from 'react';
+import React, { type CSSProperties, useMemo } from 'react';
 
 import { formatBalance, isString } from '@polkadot/util';
 
-import { useTranslation } from '../hooks';
+import { useIsHideNumbers, useTranslation } from '../hooks';
 import { FLOATING_POINT_DIGIT } from '../util/constants';
+import { Dots } from '.';
 
-interface Props {
+type LabelPost = string | React.ReactNode
+export interface FormatBalanceProps {
   decimals: number[],
   tokens: string[],
   children?: React.ReactNode;
-  className?: string;
   format?: [number, string];
   formatIndex?: number;
   isShort?: boolean;
   label?: React.ReactNode;
   labelPost?: LabelPost;
-  value?: Compact<any> | BN | string | null | 'all';
+  value?: Compact<INumber> | BN | string | null; // 'all'
   valueFormatted?: string;
+  style?: CSSProperties;
   withCurrency?: boolean;
   withSi?: boolean;
   decimalPoint?: number;
+  tokenColor?: string;
 }
 
-// for million, 2 * 3-grouping + comma
-const M_LENGTH = 6 + 1;
 const K_LENGTH = 3 + 1;
 
-type LabelPost = string | React.ReactNode
-
-function getFormat(decimals: number[], tokens: string[], formatIndex = 0): [number, string] {
+function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [number, string] {
   return [
     formatIndex < decimals.length
       ? decimals[formatIndex]
@@ -47,59 +47,70 @@ function getFormat(decimals: number[], tokens: string[], formatIndex = 0): [numb
   ];
 }
 
-function createElement(prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number): React.ReactNode {
-  return <>{`${prefix}${isShort ? '' : '.'}`}{!isShort && <span className='ui--FormatBalance-postfix'>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span className='ui--FormatBalance-unit'> {unit}</span>{label}</>;
+function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number, tokenColor?: string | undefined): React.ReactNode {
+  const trimmedPostfix = postfix?.replace(/0+$/, '') || '';
+  const maybeTilde = postfix && parseFloat(trimmedPostfix) > parseFloat(trimmedPostfix.slice(0, decimalPoint)) ? '~' : '';
+
+  return <>{`${maybeTilde}${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span style={{ color: tokenColor ?? 'inherit' }}> {unit}</span>{label}</>;
 }
 
-function splitFormat(value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
+function splitFormat (value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
   const [prefix, postfixFull] = value.split('.');
   const [postfix, unit] = postfixFull.split(' ');
 
   return createElement(prefix, postfix, unit, label, isShort, decimalPoint);
 }
 
-function applyFormat(decimalPoint: number, value: Compact<any> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost): React.ReactNode {
+function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost, tokenColor?: string | undefined): React.ReactNode {
   const [prefix, postfix] = formatBalance(value, { decimals, forceUnit: '-', withSi: false }).split('.');
   const isShort = _isShort || (withSi && prefix.length >= K_LENGTH);
   const unitPost = withCurrency ? token : '';
 
   if (prefix.length > K_LENGTH) {
-    const [major, rest] = formatBalance(value, { decimals, withUnit: false }).split('.');
-    const minor = rest.substr(0, decimalPoint);
-    const unit = rest.substr(4);
+    const [major, rest] = formatBalance(value, { decimals, withSi: withSi ?? true, withUnit: false }).split('.');
+    const minor = rest.slice(0, decimalPoint);
+    const unit = rest.slice(4);
 
-    return <>{major}.<span className='ui--FormatBalance-postfix'>{minor}</span><span className='ui--FormatBalance-unit'>{unit}{unit ? unitPost : ` ${unitPost}`}</span>{labelPost || ''}</>;
+    return <>{major}.<span>{minor}</span><span style={{ color: tokenColor ?? 'inherit' }}>{unit}{unit ? unitPost : ` ${unitPost}`}</span>{labelPost || ''}</>;
   }
 
-  return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint);
+  return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint, tokenColor);
 }
 
-function FormatBalance({ children, className = '', decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, tokens, value, valueFormatted, withCurrency, withSi }: Props): React.ReactElement<Props> {
+function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokenColor, tokens, value, valueFormatted, withCurrency, withSi }: FormatBalanceProps): React.ReactElement<FormatBalanceProps> {
   const { t } = useTranslation();
+  const { isHideNumbers } = useIsHideNumbers();
 
-  const formatInfo = useMemo(
-    () => format || getFormat(decimals, tokens, formatIndex),
-    [decimals, tokens, format, formatIndex]
-  );
+  const formatInfo = useMemo(() =>
+    format || getFormat(decimals, tokens, formatIndex)
+  , [decimals, tokens, format, formatIndex]);
 
-  // labelPost here looks messy, however we ensure we have one less text node
   return (
-    <div className={`ui--FormatBalance ${className}`}>
-      {label ? <>{label}&nbsp;</> : ''}
-      <span
-        className='ui--FormatBalance-value'
-        data-testid='balance-summary'
-      >{
-          valueFormatted
+    <div style={{ ...style }}>
+      {label
+        ? <>{label}&nbsp;</>
+        : ''
+      }
+      <span>
+        {isHideNumbers
+          ? <Dots
+            color={style?.color}
+            postText={tokens[0]}
+            postTextStyle={style}
+            variant='small'
+          />
+          : valueFormatted
             ? splitFormat(valueFormatted, decimalPoint, labelPost, isShort)
             : value
               ? value === 'all'
-                ? <>{t<string>('everything')}{labelPost || ''}</>
-                : applyFormat(decimalPoint, value, formatInfo, withCurrency, withSi, isShort, labelPost)
+                ? <>{t('everything')}{labelPost || ''}</>
+                : applyFormat(decimalPoint, value, formatInfo, withCurrency, withSi, isShort, labelPost, tokenColor)
               : isString(labelPost)
                 ? `-${labelPost}`
                 : labelPost
-        }</span>{children}
+        }
+      </span>
+      {children}
     </div>
   );
 }
