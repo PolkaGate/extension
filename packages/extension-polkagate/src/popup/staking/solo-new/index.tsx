@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useBackground, useChainInfo, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
+import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { updateStorage } from '../../../util';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, PROXY_TYPE } from '../../../util/constants';
@@ -38,7 +38,8 @@ export default function Solo (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const address = useSelectedAccount()?.address;
+  const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
