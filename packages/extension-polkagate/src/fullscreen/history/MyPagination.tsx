@@ -1,9 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Pagination, PaginationItem } from '@mui/material';
+import { Pagination, PaginationItem, type PaginationRenderItemParams } from '@mui/material';
 import { ArrowLeft2, ArrowRight2 } from 'iconsax-react';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 interface Props {
   page: number;
@@ -12,11 +12,25 @@ interface Props {
 }
 
 function MyPagination ({ count, page, setPage }: Props): React.ReactElement {
+  const onChange = useCallback((_: unknown, value: number) => setPage(value), [setPage]);
+
+  const renderFunction = useCallback((item: PaginationRenderItemParams) => (
+    <PaginationItem
+      {...item}
+      slots={{
+        next: () => <ArrowRight2 color='#AA83DC' size='16px' variant='Bold' />,
+        previous: () => <ArrowLeft2 color='#AA83DC' size='16px' variant='Bold' />
+      }}
+    />
+  ), []);
+
   return (
     <Pagination
       color='primary'
-      onChange={(_, value) => setPage(value)}
+      count={count}
+      onChange={onChange}
       page={page}
+      renderItem={renderFunction}
       shape='rounded'
       sx={{
         '& .MuiPaginationItem-root': {
@@ -37,17 +51,6 @@ function MyPagination ({ count, page, setPage }: Props): React.ReactElement {
         }
       }}
       variant='outlined'
-      count={count}
-      // eslint-disable-next-line react/jsx-no-bind
-      renderItem={(item) => (
-        <PaginationItem
-          {...item}
-          slots={{
-            next: () => <ArrowRight2 color='#AA83DC' size='16px' variant='Bold' />,
-            previous: () => <ArrowLeft2 color='#AA83DC' size='16px' variant='Bold' />
-          }}
-        />
-      )}
     />
   );
 }

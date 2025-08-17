@@ -100,21 +100,21 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
           InputProps={{
             endAdornment: (
               <InputAdornment position='end' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
-                {addWithQr && !disabled &&
-                  <ScanBarcode color='#AA83DC' onClick={openQrScanner} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
-                }
-                {addWithQr && !disabled &&
-                  <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
-                }
-                {withSelect && !disabled &&
-                  <>
-                    <ArrowCircleDown color='#AA83DC' onClick={onOpenAccountList} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
-                    <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
-                  </>
-                }
-                {!disabled &&
+                {!disabled && <>
+                  {addWithQr &&
+                    <>
+                      <ScanBarcode color='#AA83DC' onClick={openQrScanner} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
+                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                    </>
+                  }
+                  {!!withSelect &&
+                    <>
+                      <ArrowCircleDown color='#AA83DC' onClick={onOpenAccountList} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
+                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                    </>
+                  }
                   <Document color='#AA83DC' onClick={pasteAddress} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
-                }
+                </>}
                 {/* icon={enteredAddress || address ? faXmarkCircle : faPaste} */}
               </InputAdornment>
             ),
@@ -144,6 +144,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
           }}
           autoComplete='off'
           onChange={handleInputAddress}
+          // eslint-disable-next-line react/jsx-no-bind
           onFocus={() => setFocus(true)}
           placeholder={placeHolder ?? t('Enter your account ID')}
           sx={{
@@ -175,7 +176,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
             borderRadius: '12px',
             height: '44px'
           }}
-          value={enteredAddress}
+          value={enteredAddress ?? ''}
         />
         {invalidAddress && !setIsError &&
           <Typography color='warning.main' sx={{ textAlign: 'left' }} variant='B-1'>

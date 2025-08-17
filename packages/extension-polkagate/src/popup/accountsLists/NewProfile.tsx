@@ -97,6 +97,7 @@ function NewProfile ({ defaultMode, setPopup }: Props): React.ReactElement {
               Icon={Folder}
               focused
               iconSize={18}
+              inputValue={profileName}
               onEnterPress={onNext}
               onTextChange={onNameChange}
               placeholder={t('Enter a name')}

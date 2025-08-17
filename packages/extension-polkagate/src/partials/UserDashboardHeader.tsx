@@ -16,9 +16,10 @@ interface Props {
   noSelection?: boolean;
   signerInformation?: SignerInformation;
   genesisHash?: string | null | undefined;
+  fullscreenURL?: string;
 }
 
-function UserDashboardHeader ({ genesisHash, homeType, noSelection = false, signerInformation }: Props) {
+function UserDashboardHeader ({ fullscreenURL, genesisHash, homeType, noSelection = false, signerInformation }: Props) {
   const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
 
   return (
@@ -40,7 +41,7 @@ function UserDashboardHeader ({ genesisHash, homeType, noSelection = false, sign
           <SelectedProxy genesisHash={genesisHash} signerInformation={signerInformation} />
         }
       </Grid>
-      <FullscreenModeButton />
+      <FullscreenModeButton url={fullscreenURL} />
     </Container>
   );
 }

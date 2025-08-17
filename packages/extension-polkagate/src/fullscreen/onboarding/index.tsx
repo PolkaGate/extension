@@ -10,7 +10,7 @@ import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
-import { useFullscreen, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { createAccountExternal } from '../../messaging';
 import { setStorage } from '../../util';
 import { DEMO_ACCOUNT, PROFILE_TAGS } from '../../util/constants';
@@ -37,8 +37,6 @@ function Onboarding (): React.ReactElement {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  useFullscreen();
-
   const onCreate = useCallback(() => navigate('/account/create'), [navigate]);
 
   const onAddAccount = useCallback(() => navigate('/account/have-wallet'), [navigate]);
@@ -47,7 +45,7 @@ function Onboarding (): React.ReactElement {
     createAccountExternal('Demo account', DEMO_ACCOUNT, undefined)
       .then(() => {
         setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
-        navigate('/');
+        navigate('/') as void;
       })
       .catch((error: Error) => {
         console.error(error);
@@ -77,7 +75,7 @@ function Onboarding (): React.ReactElement {
           style={{
             borderRadius: '18px',
             height: '48px',
-            marginTop: '25px',
+            marginTop: '5px',
             paddingLeft: '100px',
             width: '100%'
           }}

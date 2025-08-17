@@ -5,7 +5,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { Lock as LockGif } from '../../assets/gif';
 import { GradientBox, GradientButton, MatchPasswordField } from '../../components';
@@ -34,7 +34,7 @@ function Content ({ isFullscreen, setStep }: Props): React.ReactElement {
       return;
     }
 
-    await setStorage(NAMES_IN_STORAGE.LOGIN_IFO, { hashedPassword: password, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET });
+    await setStorage(STORAGE_KEY.LOGIN_IFO, { hashedPassword: password, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET });
     setExtensionLock(true);
     setStep(STEPS.SHOW_LOGIN);
   }, [password, setExtensionLock, setStep]);

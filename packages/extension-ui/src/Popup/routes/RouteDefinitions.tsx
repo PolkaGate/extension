@@ -10,7 +10,6 @@ import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
 import AccountsLists from '@polkadot/extension-polkagate/src/popup/accountsLists';
 import Home from '@polkadot/extension-polkagate/src/popup/home/ManageHome';
-import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
 import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
 import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
 import PhishingDetected from '@polkadot/extension-polkagate/src/popup/PhishingDetected';
@@ -42,14 +41,6 @@ const TOKEN_ROUTE: RouteConfig[] = [
     Component: Token,
     path: '/token/:genesisHash/:paramAssetId/',
     trigger: 'token'
-  }
-];
-
-const DERIVE_ROUTES: RouteConfig[] = [
-  {
-    Component: FullscreenDerive,
-    path: '/derivefs/:address/',
-    trigger: 'fullscreen-account-derive'
   }
 ];
 
@@ -110,7 +101,6 @@ const ALL_ROUTES: RouteConfig[] = [
   ...STAKING_ROUTES,
   ...IMPORT_ROUTES,
   ...FEATURE_ROUTES,
-  ...DERIVE_ROUTES,
   ...PASSWORD_ROUTES,
   ...ROOT_ROUTES,
   ...SETTINGS_ROUTES,
@@ -124,7 +114,7 @@ export default function AppRoutes () {
   useEffect(() => {
     const handler = (message: TabProps, _sender: unknown, sendResponse: (response: unknown) => void) => {
       if (message?.type === 'NAVIGATE_TO') {
-        navigate(`/${message.payload}`);
+        navigate(`/${message.payload}`) as void;
         sendResponse({ success: true });
       }
     };

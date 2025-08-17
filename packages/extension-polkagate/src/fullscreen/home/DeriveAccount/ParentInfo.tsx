@@ -130,6 +130,7 @@ function ParentInfo ({ genesisHash, newParentAddress, onClose, parentAccount, pa
         Icon={Hashtag}
         errorMessage={pathError}
         iconSize={18}
+        inputValue={suriPath}
         onTextChange={onSuriPathChange}
         placeholder={defaultPath}
         style={{ margin: '25px 0 0' }}

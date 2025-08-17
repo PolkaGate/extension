@@ -4,13 +4,11 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { StepCounterType } from '../components/BackWithLabel';
-import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
+import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-
-import { isBn } from '@polkadot/util';
 
 import { BackWithLabel, Motion } from '../components';
 import { useBackground, useTranslation } from '../hooks';
@@ -29,9 +27,14 @@ export interface TransactionFlowProps {
   proxyTypeFilter: ProxyTypes[] | undefined;
   address: string | undefined;
   pool: PoolInfo | undefined;
+  restakeReward?: boolean;
+  setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
+  showAccountBox?: boolean;
+  reviewHeader?: React.ReactNode;
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function TransactionFlow ({ address, backPathTitle, closeReview, genesisHash, pool, proxyTypeFilter, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -49,19 +52,20 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
 
     const _txInfo = txInfo;
 
-    // The first item is always amount or the reward destination account address,
-    // So by checking that if it is a BN number we can retrieve the amount value
-    if (isBn(transactionInformation[0].content)) {
-      _txInfo.amount = transactionInformation[0].content.toString();
+    const txAmount = transactionInformation.find(({ itemKey }) => itemKey === 'amount');
+
+    if (txAmount?.content) {
+      _txInfo.amount = txAmount.content.toString();
     }
 
-    // The second item of this array is always the fee amount
-    if (isBn(transactionInformation[1].content)) {
-      _txInfo.fee = transactionInformation[1].content.toString();
+    const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
+
+    if (txFee?.content) {
+      _txInfo.fee = txFee.content.toString();
     }
 
-    return _txInfo;
-  }, [transactionInformation, txInfo]);
+    return { ..._txInfo, ...extraDetailConfirmationPage };
+  }, [extraDetailConfirmationPage, transactionInformation, txInfo]);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
@@ -83,15 +87,20 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
+            amount={extraDetailConfirmationPage?.amount}
             closeReview={closeReview}
             genesisHash={genesisHash}
             pool={pool}
             proxyTypeFilter={proxyTypeFilter}
+            restakeReward={restakeReward}
+            reviewHeader={reviewHeader}
             selectedProxy={selectedProxy}
             setFlowStep={setFlowStep}
+            setRestakeReward={setRestakeReward}
             setSelectedProxy={setSelectedProxy}
             setShowProxySelection={setShowProxySelection}
             setTxInfo={setTxInfo}
+            showAccountBox={showAccountBox}
             showProxySelection={showProxySelection}
             transaction={transaction}
             transactionInformation={transactionInformation}

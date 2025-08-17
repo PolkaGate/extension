@@ -7,14 +7,14 @@ import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Dialog, Grid, Link, Slide, Stack, Typography } from '@mui/material';
+import { Container, Dialog, Grid, Link, Slide, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import Riot from '@polkadot/extension-polkagate/src/assets/icons/Riot';
 import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
 
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
-import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
+import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util/utils';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
@@ -36,21 +36,25 @@ interface ValidatorDetailProps {
 
 interface ValidatorIdSocialsProps {
   validatorDetail: ValidatorInformation;
+  style?: SxProps<Theme>;
 }
 
-const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
-  const bgColor = '#FFFFFF1A';
+export const ValidatorIdSocials = ({ style, validatorDetail }: ValidatorIdSocialsProps) => {
+  const isBlueish = useIsBlueish();
+
+  const bgColor = isBlueish ? '#FFFFFF1A' : '#AA83DC26';
+  const color = isBlueish ? '#809ACB' : '#AA83DC';
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%' }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%', ...style }}>
       {validatorDetail.identity?.discord &&
-        <SocialIcon Icon={<Discord color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Discord color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.email &&
-        <SocialIcon Icon={<Email color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Email color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.github &&
-        <SocialIcon Icon={<Github color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Github color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {(validatorDetail.identity?.matrix || validatorDetail.identity?.riot) &&
         <Link
@@ -61,17 +65,17 @@ const ValidatorIdSocials = ({ validatorDetail }: ValidatorIdSocialsProps) => {
           underline='none'
         >
           <Riot
-            color='#809ACB'
+            color={color}
             height={15}
             width={15}
           />
         </Link>
       }
       {validatorDetail.identity?.twitter &&
-        <SocialIcon Icon={<XIcon color='#809ACB' width='13px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<XIcon color={color} width='13px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
       {validatorDetail.identity?.web &&
-        <SocialIcon Icon={<Web color='#809ACB' width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+        <SocialIcon Icon={<Web color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
       }
     </Container>
   );
@@ -161,7 +165,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
             <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: 0, position: 'relative', zIndex: 1 }}>
             <BlueGradient style={{ top: '-120px' }} />
             <DetailGradientBox />
             <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
@@ -174,7 +178,7 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
                 <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
                 <StakingInfoStack text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
                 <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
-                <StakingInfoStack text={validatorAPY ?? '--'} title={t('APY')} />
+                <StakingInfoStack text={validatorAPY != null ? `${validatorAPY}%` : '...'} title={t('APY')} />
               </Container>
               <GradientDivider style={{ my: '12px' }} />
               <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>

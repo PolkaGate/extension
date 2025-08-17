@@ -60,6 +60,7 @@ const convertId = (id) => ({
  * @param {MessagePort } port
  */
 export default async function getValidatorsInformation (genesisHash, port) {
+  // make connection to the relay chain Polkadot/Kusama/testnets
   const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
   const { api, connections } = await fastestEndpoint(endpoints);
   const chainName = getChainName(genesisHash);
@@ -68,13 +69,18 @@ export default async function getValidatorsInformation (genesisHash, port) {
 
   try {
     const [electedInfo, waitingInfo, currentEra] = await Promise.all([
-      api.derive.staking.electedInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureErasStakersLegacy: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
-      api.derive.staking.waitingInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureErasStakersLegacy: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
+      api.derive.staking.electedInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
+      api.derive.staking.waitingInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
       api.query['staking']['currentEra']()
     ]);
 
+    console.log('electedInfo, waitingInfo, currentEra fetched successfully');
+
+    // Close the initial connections to the relay chain
     closeWebsockets(connections);
 
+    // Start connect to the People chain endpoints in order to fetch identities
+    console.log('Connecting to People chain endpoints...');
     const endpoints = getChainEndpoints(chainName);
     const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(endpoints);
 

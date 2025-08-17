@@ -11,7 +11,7 @@ import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import ThemeChanger from '../fullscreen/governance/partials/ThemeChanger';
 import { useIsLoginEnabled, useTranslation } from '../hooks';
 import { lockExtension } from '../messaging';
-import { NAMES_IN_STORAGE, NO_PASS_PERIOD } from '../util/constants';
+import { STORAGE_KEY, NO_PASS_PERIOD } from '../util/constants';
 
 const TLFActions = () => {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ const TLFActions = () => {
   const { setExtensionLock } = useExtensionLockContext();
 
   const onLockExtension = useCallback((): void => {
-    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
+    updateStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now() - NO_PASS_PERIOD }).then(() => {
       setExtensionLock(true);
       lockExtension().catch(console.error);
     }).catch(console.error);

@@ -4,28 +4,28 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { setStorage } from '../util';
+import { isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
-
-/**
- * Checks if the given string is a valid hex-encoded genesis hash.
- */
-function isValidGenesis (hash: string): boolean {
-  return hash.startsWith('0x') && hash.length === 66;
-}
+import { useStakingPositions } from '.';
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
 
   const savedSelectedChain = useAccountSelectedChain(address);
+  const isStakingPath = location.pathname.includes('/fullscreen-stake/');
+  const { maxPosition, maxPositionType } = useStakingPositions(address, isStakingPath);
 
   const updatePathWithNewAddress = useCallback((newAddress: string) => {
+    // if (location.pathname.includes('/fullscreen-stake/')) {
+    //   return;
+    // }
+
     const pathParts = location.pathname.split('/');
 
-    const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p));
+    const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p)); // since we put address before genesis in the paths
     const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
 
     // Validate expected path format
@@ -35,16 +35,28 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    if (savedSelectedChain && maybeGenesisIndex !== -1) {
-      pathParts[maybeGenesisIndex] = savedSelectedChain;
+    if (maybeGenesisIndex !== -1) {
+      if (isStakingPath && maxPosition) {
+        pathParts[maybeGenesisIndex] = maxPosition?.genesisHash;
+      } else if (savedSelectedChain) {
+        pathParts[maybeGenesisIndex] = savedSelectedChain;
+      }
     }
 
     pathParts[maybeAddressIndex] = newAddress;
 
-    const newPath = pathParts.join('/');
+    let newPath = pathParts.join('/');
 
-    navigate(newPath);
-  }, [location.pathname, navigate, savedSelectedChain]);
+    if (isStakingPath && maxPositionType) {
+      const opposite = maxPositionType === 'solo' ? 'pool' : 'solo';
+
+      if (!newPath.includes(maxPositionType) && newPath.includes(opposite)) {
+        newPath = newPath.replace(opposite, maxPositionType);
+      }
+    }
+
+    navigate(newPath) as void;
+  }, [isStakingPath, location.pathname, maxPosition, maxPositionType, navigate, savedSelectedChain]);
 
   const handleExit = useCallback(() => {
     if (!address) {

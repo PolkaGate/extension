@@ -5,7 +5,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import { BackWithLabel, DecisionButtons, GlowCheckbox, GradientBox } from '../../components';
@@ -23,7 +23,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export function ForgotPasswordContent ({ onClose }: { onClose: () => void}): React.ReactElement<Props> {
+export function ForgotPasswordContent({ onClose }: { onClose: () => void }): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
   const isExtension = useIsExtensionPopup();
@@ -31,7 +31,7 @@ export function ForgotPasswordContent ({ onClose }: { onClose: () => void}): Rea
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
 
   const onConfirmForgotPassword = useCallback(() => {
-    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { status: LOGIN_STATUS.FORGOT }).then(() => {
+    updateStorage(STORAGE_KEY.LOGIN_IFO, { status: LOGIN_STATUS.FORGOT }).then(() => {
       setExtensionLock(false);
       !isExtension && switchToOrOpenTab('/reset-wallet', true);
     }).catch(console.error);
@@ -58,9 +58,9 @@ export function ForgotPasswordContent ({ onClose }: { onClose: () => void}): Rea
       />
       <DecisionButtons
         cancelButton
-        direction={ isExtension ? 'horizontal' : 'vertical'}
+        direction={isExtension ? 'horizontal' : 'vertical'}
         disabled={!acknowledged}
-        divider={ isExtension }
+        divider={isExtension}
         onPrimaryClick={onConfirmForgotPassword}
         onSecondaryClick={onClose}
         primaryBtnText={t('Next')}

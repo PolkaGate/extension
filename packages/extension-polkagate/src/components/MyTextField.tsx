@@ -148,7 +148,7 @@ interface Props {
   focused?: boolean;
   iconSize?: number;
   inputType?: string;
-  inputValue?: string | number;
+  inputValue: string | number | undefined | null;
   maxLength?: number;
   mode?: 'small' | 'large';
   onEnterPress?: () => void;
@@ -230,7 +230,7 @@ export default function MyTextField ({ Icon, disabled, errorMessage, focused = f
         placeholder={placeholder}
         theme={theme}
         type={_inputType}
-        value={inputValue}
+        value={inputValue ?? ''}
       />
       {errorMessage &&
         <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>

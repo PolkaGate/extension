@@ -8,10 +8,11 @@ import type { MyPoolInfo } from '../util/types';
 import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 
 import { FetchingContext, WorkerContext } from '../components';
+import { getStorage, setStorage } from '../util';
+import { STORAGE_KEY } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 import { useFormatted3 } from '.';
 
-const MY_POOL_STORAGE_KEY = 'MyPool';
 const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 
 interface WorkerMessage {
@@ -19,7 +20,7 @@ interface WorkerMessage {
   results?: string;
 }
 
-export default function usePool2 (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
+export default function usePool2 (address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
 
   const formatted = useFormatted3(address, genesisHash);
@@ -33,10 +34,12 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       return;
     }
 
-    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted } });
-  }, [formatted, genesisHash, worker]);
+    // the sort in this object is important because the getPool use the params as they pass
+    // eslint-disable-next-line sort-keys
+    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted, id } });
+  }, [formatted, genesisHash, id, worker]);
 
-  const handleWorkerMessages = useCallback(() => {
+  useEffect(() => {
     if (!worker || !formatted) {
       return;
     }
@@ -55,7 +58,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       }
 
       /** reset isFetching */
-      isFetching.fetching[String(formatted)][MY_POOL_SHARED_WORKER_KEY] = false;
+      isFetching.fetching[String(formatted)][id ? 'id' : MY_POOL_SHARED_WORKER_KEY] = false;
       isFetching.set(isFetching.fetching);
 
       if (!results || results === 'null') {
@@ -76,18 +79,18 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
         receivedMessage.stashIdAccount.stakingLedger.active = isHexToBn(receivedMessage.stashIdAccount.stakingLedger.active).toString();
         receivedMessage.stashIdAccount.stakingLedger.total = isHexToBn(receivedMessage.stashIdAccount.stakingLedger.total).toString();
 
-        console.log('*** My pool info from worker is:', receivedMessage);
+        console.log('** My pool info from worker is:', receivedMessage);
 
         // save my pool to local storage
-        chrome.storage.local.get(MY_POOL_STORAGE_KEY, (res) => {
-          const last = res?.[MY_POOL_STORAGE_KEY] || {};
+        // if id is available there is no reason to save the pool information in the "MyPool" storage!
+        !id && getStorage(STORAGE_KEY.MY_POOL).then((res) => {
+          const last = res || {};
 
           receivedMessage.date = Date.now();
-          last[formatted] = receivedMessage;
+          (last as Record<string, MyPoolInfo>)[formatted] = receivedMessage;
 
-          // eslint-disable-next-line no-void
-          void chrome.storage.local.set({ [MY_POOL_STORAGE_KEY]: last });
-        });
+          setStorage(STORAGE_KEY.MY_POOL, last).catch(console.error);
+        }).catch(console.error);
 
         setNewPool(receivedMessage);
       }
@@ -98,10 +101,34 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     return () => {
       worker.removeEventListener('message', handleMessage);
     };
-  }, [formatted, isFetching, worker]);
+  }, [formatted, id, isFetching, worker]);
 
   useEffect(() => {
-    if (!formatted) {
+    if (!formatted || !id) {
+      !id && console.log('The getPool is calling to get the pool for a specific address on a specific network, which the other useEffect will handle it!');
+
+      return;
+    }
+
+    if (!isFetching.fetching[String(formatted)]?.['id']) {
+      if (!isFetching.fetching[String(formatted)]) {
+        isFetching.fetching[String(formatted)] = {}; // to initialize
+      }
+
+      isFetching.fetching[String(formatted)]['id'] = true;
+      isFetching.set(isFetching.fetching);
+
+      fetchPoolInformation();
+    } else {
+      console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetching.fetching[String(formatted)]?.['length'], formatted, fetchPoolInformation]);
+
+  useEffect(() => {
+    if (!formatted || id) {
+      id && console.log('The getPool is calling for a specific pool id, which the other useEffect will handle it!');
+
       return;
     }
 
@@ -114,7 +141,6 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
-      handleWorkerMessages();
     } else {
       console.log(`getPool is already called for ${formatted}, hence doesn't need to call it again!`);
     }
@@ -126,10 +152,10 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       console.log('refreshing ...');
 
       fetchPoolInformation();
-      handleWorkerMessages();
+
       setRefresh(false);
     }
-  }, [fetchPoolInformation, handleWorkerMessages, refresh, setRefresh]);
+  }, [fetchPoolInformation, refresh, setRefresh]);
 
   useEffect(() => {
     if (!formatted) {
@@ -137,10 +163,14 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
     }
 
     /** load pool from storage */
-    chrome.storage.local.get(MY_POOL_STORAGE_KEY, (res) => {
+    getStorage(STORAGE_KEY.MY_POOL).then((res) => {
       console.log('MyPools in local storage:', res);
 
-      const myPool = res?.[MY_POOL_STORAGE_KEY]?.[formatted] as MyPoolInfo | null | undefined;
+      let myPool: MyPoolInfo | null | undefined;
+
+      if (res && typeof res === 'object' && formatted) {
+        myPool = (res as Record<string, MyPoolInfo | null | undefined>)[formatted];
+      }
 
       if (myPool !== undefined) {
         setSavedPool(myPool);
@@ -149,7 +179,7 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
       }
 
       setSavedPool(undefined);
-    });
+    }).catch(console.error);
   }, [formatted]);
 
   return newPool ?? savedPool;

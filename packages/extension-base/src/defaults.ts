@@ -7,6 +7,7 @@ const START_WITH_PATH = [
   '/account/',
   '/accountfs/',
   '/derivefs/',
+  '/fullscreen-stake/',
   '/import/',
   '/governance/',
   '/manageIdentity/',

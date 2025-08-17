@@ -69,6 +69,7 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
         Icon={User}
         focused
         iconSize={18}
+        inputValue={name}
         onTextChange={onNameChange}
         placeholder={t('Enter account name')}
         style={{ margin: '40px 0 20px' }}

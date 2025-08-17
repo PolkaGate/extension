@@ -22,7 +22,7 @@ enum STEPS {
   INDEX
 }
 
-function NFT(): React.ReactElement {
+function NFT (): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

@@ -10,6 +10,7 @@ import TwoToneText from './TwoToneText';
 interface Props {
   checked?: boolean;
   disabled?: boolean;
+  isBlueish?: boolean | undefined;
   label?: string;
   labelPartInColor?: string;
   changeState: (value: boolean) => void;
@@ -18,7 +19,7 @@ interface Props {
   iconStyle?: SxProps<Theme> | undefined;
 }
 
-function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {}, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
+function GlowCheckbox({ changeState, checked = false, disabled, iconStyle = {}, isBlueish, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
@@ -47,11 +48,13 @@ function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {},
         : state
           ? '#FF4FB9'
           : '#674394'
-      : state
-        ? '#FF4FB9'
-        : '#674394',
+      : isBlueish
+        ? '#809ACB4D'
+        : state
+          ? '#FF4FB9'
+          : '#674394',
     border: '2px solid',
-    borderColor: '#AA83DC',
+    borderColor: isBlueish ? '#809ACB' : '#AA83DC',
     borderRadius: '6px',
     height: '18px',
     opacity: disabled ? 0.3 : 1,

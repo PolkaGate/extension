@@ -18,7 +18,7 @@ import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
-import { useFullscreen, useMetadata, useTranslation } from '../../../hooks';
+import { useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
@@ -37,7 +37,6 @@ enum STEP {
 }
 
 export default function ImportSeed (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -190,6 +189,7 @@ export default function ImportSeed (): React.ReactElement {
               Icon={User}
               focused
               iconSize={18}
+              inputValue={name}
               onTextChange={onNameChange}
               placeholder={t('Enter account name')}
               style={{ margin: '20px 0 20px' }}

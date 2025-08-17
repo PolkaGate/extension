@@ -13,13 +13,13 @@ import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
 import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import { useFullscreen, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
@@ -28,7 +28,6 @@ import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
 
 export default function RestoreJson (): React.ReactElement {
-  useFullscreen();
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -149,6 +148,7 @@ export default function RestoreJson (): React.ReactElement {
     }
 
     setIsBusy(true);
+    let hadPasswordError = false;
 
     try {
       await resetOnForgotPassword();
@@ -159,13 +159,14 @@ export default function RestoreJson (): React.ReactElement {
         await handleRegularJson(file);
       }
 
-      await setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.ALL);
+      await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.ALL);
     } catch (error) {
       console.error(error);
       setIsPasswordError(true);
+      hadPasswordError = true;
     } finally {
       setIsBusy(false);
-      switchToOrOpenTab('/', true);
+      !hadPasswordError && switchToOrOpenTab('/', true);
     }
   }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson]);
 
@@ -226,7 +227,7 @@ export default function RestoreJson (): React.ReactElement {
                 variant='contained'
               />
             }
-            <Stack direction='column' sx={{ display: 'block', maxHeight: 'calc(100vh - 600px)', overflowY: 'auto' }}>
+            <Stack direction='column' sx={{ display: 'block', maxHeight: 'calc(100vh - 665px)', overflowY: 'auto' }}>
               {accountsInfo.map(({ address, genesisHash, name, type = DEFAULT_TYPE }, index) => {
                 const isSelected = !!selectedAccountsInfo.find(({ address: _address }) => _address === address);
 

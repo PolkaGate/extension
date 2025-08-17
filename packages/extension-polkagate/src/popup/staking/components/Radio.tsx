@@ -133,7 +133,15 @@ export default function PRadio ({ boxStyle = {}, checked, circleSize = 18, isHov
           value={value}
           {...props}
         />
-        <Typography color={checked ? isBlueish ? 'text.highlight' : 'text.secondary' : 'text.primary'} sx={labeStyle} variant='B-2'>
+        <Typography
+          color={
+            checked
+              ? isBlueish
+                ? 'text.highlight'
+                : 'text.secondary'
+              : 'text.primary'
+          } sx={labeStyle} variant='B-2'
+        >
           {label}
         </Typography>
       </label>

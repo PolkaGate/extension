@@ -3,16 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { BN } from '@polkadot/util';
-
 import { Grid, Stack } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useRestakeSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { amountToMachine } from '../../../../util/utils';
+import { PROXY_TYPE } from '../../../../util/constants';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -25,73 +23,33 @@ export default function Restake (): React.ReactElement {
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
 
-  const rebond = api?.tx['staking']['rebond'];
+  const { errorMessage,
+    estimatedFee,
+    onInputChange,
+    onMaxValue,
+    rebondValue,
+    setRebondValue,
+    transactionInformation,
+    tx,
+    unlockingAmount } = useRestakeSolo(selectedAccount?.address, genesisHash);
 
-  const [rebondValue, setRebondValue] = useState<BN | null | undefined>();
   const [review, setReview] = useState<boolean>(false);
 
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, rebond, [rebondValue]);
-
-  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
-  const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
-  const errorMessage = useMemo(() => {
-    if (!unlockingAmount || unlockingAmount.isZero() || !rebondValue || rebondValue.isZero() || !api) {
-      return undefined;
-    }
-
-    if (rebondValue.gt(unlockingAmount)) {
-      return t('It is more than unstaking amount.');
-    }
-
-    return undefined;
-  }, [api, rebondValue, t, unlockingAmount]);
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: rebondValue,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    },
-    {
-      content: rebondValue && staked ? (staked as unknown as BN).add(rebondValue) : undefined,
-      title: t('Total stake after'),
-      withLogo: true
-    }
-    ];
-  }, [estimatedFee2, rebondValue, staked, t]);
-  const tx = useMemo(() => rebond?.(rebondValue), [rebond, rebondValue]);
-
-  const onInputChange = useCallback((value: string | null | undefined) => {
-    const valueAsBN = value ? amountToMachine(value, decimal) : null;
-
-    setRebondValue(valueAsBN);
-  }, [decimal]);
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
-  const onMaxValue = useMemo(() => {
-    if (!unlockingAmount || !decimal) {
-      return '0';
-    }
-
-    return unlockingAmount.toString();
-  }, [decimal, unlockingAmount]);
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => {
     setReview(false);
     setRebondValue(undefined);
-  }, []);
+  }, [setRebondValue]);
 
   const transactionFlow = useTransactionFlow({
     address: selectedAccount?.address,
     backPathTitle: t('Re-staking'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
@@ -101,7 +59,7 @@ export default function Restake (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}
@@ -133,7 +91,7 @@ export default function Restake (): React.ReactElement {
             />
             <FeeValue
               decimal={decimal}
-              feeValue={estimatedFee2}
+              feeValue={estimatedFee}
               token={token}
             />
             <StakingActionButton

@@ -3,7 +3,7 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
-import { ArrowCircleDown2, Data, DocumentDownload, Edit, LogoutCurve, Setting4, User } from 'iconsax-react';
+import { ArrowCircleDown2, Data, DocumentDownload, Edit, LogoutCurve, Setting4 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
@@ -39,11 +39,11 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
 
   const baseOption = useMemo(() => {
     return [
-      {
-        Icon: User,
-        text: t('Manage Identity'),
-        value: `/manageIdentity/${address}`
-      },
+      // {
+      //   Icon: User,
+      //   text: t('Manage Identity'),
+      //   value: `/manageIdentity/${address}`
+      // },
       {
         Icon: Data,
         text: t('Manage proxies'),

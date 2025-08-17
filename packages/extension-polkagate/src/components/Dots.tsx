@@ -4,7 +4,7 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import React, { type CSSProperties } from 'react';
 
-export type DotsStyle = 'big' | 'small' | 'normal';
+export type DotsVariant = 'big' | 'small' | 'normal';
 
 interface Props {
   color?: string;
@@ -14,24 +14,24 @@ interface Props {
   postTextStyle?: CSSProperties;
   preTextFontSize?: string | undefined;
   preTextFontWeight?: number | undefined;
-  style?: DotsStyle
+  variant?: DotsVariant
 }
 
-const Dots = ({ color, decimalColor, postText, postTextStyle, preText, preTextFontSize, preTextFontWeight, style }: Props) => {
+const Dots = ({ color, decimalColor, postText, postTextStyle, preText, preTextFontSize, preTextFontWeight, variant }: Props) => {
   const theme = useTheme();
 
-  const [height1, size1, weight1] = style === 'big'
+  const [height1, size1, weight1] = variant === 'big'
     ? [35, 40, 900]
-    : style === 'small'
+    : variant === 'small'
       ? [12, 12, 500]
       : [12, 14, 600];
-  const [height2, size2, weight2] = style === 'big' ? [30, 25, 400] : [12, 20, 400];
+  const [height2, size2, weight2] = variant === 'big' ? [30, 25, 400] : [12, 20, 400];
 
   const DigitsInDot = ({ isDecimal, side }: { side: 'left' | 'right', isDecimal?: boolean }) => (
-    <Typography sx={{ color: isDecimal ? decimalColor : undefined, fontFamily: 'Inter', fontSize: `${size1}px`, fontWeight: weight1, lineHeight: `${height1}px`, paddingLeft: style === 'big' ? '5px' : 0 }}>
-      {style === 'big'
+    <Typography sx={{ color: isDecimal ? decimalColor : undefined, fontFamily: 'Inter', fontSize: `${size1}px`, fontWeight: weight1, lineHeight: `${height1}px`, paddingLeft: variant === 'big' ? '5px' : 0 }}>
+      {variant === 'big'
         ? '• •'
-        : style === 'small'
+        : variant === 'small'
           ? '••'
           : side === 'left'
             ? <span>•<span style={{ color: decimalColor }}>,</span>•••</span>
@@ -40,7 +40,7 @@ const Dots = ({ color, decimalColor, postText, postTextStyle, preText, preTextFo
     </Typography>
   );
 
-  const fontFamily = style === 'big' ? 'OdibeeSans' : 'Inter';
+  const fontFamily = variant === 'big' ? 'OdibeeSans' : 'Inter';
 
   return (
     <Stack alignItems='baseline' direction='row' sx={{ color }}>
@@ -48,10 +48,10 @@ const Dots = ({ color, decimalColor, postText, postTextStyle, preText, preTextFo
         {preText}
       </Typography>
       <DigitsInDot side='left' />
-      <Typography px='3px' sx={{ color: color || theme.palette.text.secondary, fontFamily, fontSize: `${size2}px`, fontWeight: weight2, lineHeight: `${height2}px`, px: style === 'big' ? '5px' : 0 }}>
+      <Typography px='3px' sx={{ color: color || theme.palette.text.secondary, fontFamily, fontSize: `${size2}px`, fontWeight: weight2, lineHeight: `${height2}px`, px: variant === 'big' ? '5px' : 0 }}>
         .
       </Typography>
-      <DigitsInDot isDecimal={style !== 'big'} side='right' />
+      <DigitsInDot isDecimal={variant !== 'big'} side='right' />
       {postText &&
         <Typography sx={{ ...postTextStyle }}>
           &nbsp;{postText}

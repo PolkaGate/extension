@@ -3,12 +3,13 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { KeyringPair } from '@polkadot/keyring/types';
-import type { BN } from '@polkadot/util';
 import type { Proxy, TxResult } from '../types';
+
+import { BN } from '@polkadot/util';
 
 import { signAndSend } from './';
 
-export async function createPool(
+export async function createPool (
   api: ApiPromise,
   depositor: string | null,
   signer: KeyringPair,

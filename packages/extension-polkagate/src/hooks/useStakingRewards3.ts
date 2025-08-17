@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ActiveElement, Chart, ChartData, ChartEvent, PluginChartOptions } from 'chart.js';
+import type { ActiveElement, BubbleDataPoint, Chart, ChartData, ChartEvent, ChartTypeRegistry, PluginChartOptions, Point } from 'chart.js';
 import type { ClaimedRewardInfo, SubscanClaimedRewardInfo } from '../util/types';
 
 import { useTheme } from '@mui/material';
@@ -28,7 +28,39 @@ ChartJS.register(
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 const DAYS_TO_SHOW = 10;
 
-interface useStakingRewardsProps {
+interface GradientObject {
+  x: number;
+  width: number;
+}
+
+type ChartType = Chart<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown>;
+
+const createGradient = (ctx: CanvasRenderingContext2D, element: GradientObject, isHover: boolean) => {
+  // Check if element and required properties exist
+  if (!element || typeof element.x !== 'number' || typeof element.width !== 'number') {
+    return '#DC45A0'; // Fallback solid color
+  }
+
+  const { width, x } = element;
+
+  // Ensure values are finite numbers
+  if (!isFinite(x) || !isFinite(width) || width <= 0) {
+    return '#DC45A0'; // Fallback solid color
+  }
+
+  const gradient = ctx.createLinearGradient(x - width + 6, 1, x + width - 14, 0);
+
+  const blueColor = isHover ? '#8A1AC7' : '#6E00B1';
+  const redColor = isHover ? '#C849A8' : '#DC45A0';
+
+  gradient.addColorStop(0, blueColor); // Bright pink at left
+  gradient.addColorStop(0.5, redColor); // Mid pink-purple
+  gradient.addColorStop(1, blueColor); // Deep purple at right
+
+  return gradient;
+};
+
+export interface UseStakingRewards {
   chartData: ChartData<'bar', string[] | undefined, string>;
   dateInterval: string | undefined;
   descSortedRewards: ClaimedRewardInfo[] | undefined;
@@ -41,9 +73,11 @@ interface useStakingRewardsProps {
   status: 'loading' | 'error' | 'ready';
 }
 
-export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool'): useStakingRewardsProps {
+export default function useStakingRewards3 (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
   const theme = useTheme();
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
+
+  const INTERVAL_PERIOD = useMemo(() => isFullScreen ? 15 : DAYS_TO_SHOW, [isFullScreen]);
 
   const [claimedRewardsInfo, setClaimedRewardsInfo] = useState<ClaimedRewardInfo[] | null | undefined>();
   const [weeksRewards, setWeekRewards] = useState<{ amount: BN, amountInHuman: string, date: string, timestamp: number, }[][]>();
@@ -77,6 +111,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
             amount,
             era: i.era,
             event: i.event_id,
+            poolId: i.pool_id,
             timeStamp: i.block_timestamp
           } as ClaimedRewardInfo;
         });
@@ -160,11 +195,11 @@ export default function useStakingRewards3 (address: string | undefined, genesis
 
     // These lines filter dates from previous years within the same week.
     const biggestDate = Math.max(...rewardsDetailInAWeek.map(({ timeStamp }) => timeStamp));
-    const thresholdDate = biggestDate - (ONE_DAY_IN_SECONDS * (DAYS_TO_SHOW + 2)); // +2 for buffer
+    const thresholdDate = biggestDate - (ONE_DAY_IN_SECONDS * (INTERVAL_PERIOD + 2)); // +2 for buffer
     const filteredRewardsDetail = rewardsDetailInAWeek.filter(({ timeStamp }) => timeStamp >= thresholdDate);
 
     return filteredRewardsDetail.reverse();
-  }, [ascSortedRewards, formateDate, pageIndex, weeksRewards]);
+  }, [INTERVAL_PERIOD, ascSortedRewards, formateDate, pageIndex, weeksRewards]);
 
   useEffect(() => {
     if (!aggregatedRewards?.length) {
@@ -174,9 +209,9 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     const rewardPeriods = [];
     const sliced: [string[], string[]][] = [];
 
-    // Group data into DAYS_TO_SHOW periods starting from the most recent date
-    for (let i = aggregatedRewards.length - 1; i >= 0; i -= DAYS_TO_SHOW) {
-      const startIndex = Math.max(0, i - DAYS_TO_SHOW + 1);
+    // Group data into INTERVAL_PERIOD periods starting from the most recent date
+    for (let i = aggregatedRewards.length - 1; i >= 0; i -= INTERVAL_PERIOD) {
+      const startIndex = Math.max(0, i - INTERVAL_PERIOD + 1);
       const endIndex = i + 1;
 
       rewardPeriods.push(aggregatedRewards.slice(startIndex, endIndex));
@@ -186,8 +221,8 @@ export default function useStakingRewards3 (address: string | undefined, genesis
       const periodRewardsAmount: string[] = [];
       const periodRewardsLabel: string[] = [];
 
-      // Fill in the DAYS_TO_SHOW period
-      for (let i = 0; i < DAYS_TO_SHOW; i++) {
+      // Fill in the INTERVAL_PERIOD period
+      for (let i = 0; i < INTERVAL_PERIOD; i++) {
         if (period[i]?.date) {
           periodRewardsAmount.push(period[i].amountInHuman);
           // Remove month name from the formatted date before adding to label
@@ -220,7 +255,7 @@ export default function useStakingRewards3 (address: string | undefined, genesis
 
     setDataToShow(sliced);
     setWeekRewards(rewardPeriods);
-  }, [aggregatedRewards, formateDate]);
+  }, [INTERVAL_PERIOD, aggregatedRewards, formateDate]);
 
   const dateInterval = useMemo(() => {
     if (!dataToShow?.length || !weeksRewards?.length) {
@@ -253,9 +288,12 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     return `${firstMonth} ${firstDay} - ${lastMonth} ${lastDay}`;
   }, [dataToShow, weeksRewards, pageIndex]);
 
-  const chartOptions = {
+  const chartOptions = useMemo(() => ({
     aspectRatio: 1.4,
     onHover: (_: ChartEvent, activeElements: ActiveElement[], chart: Chart) => {
+      const meta = chart.getDatasetMeta(0);
+      const ctx = chart.ctx;
+
       if (activeElements.length > 0) {
         // A bar is being hovered
         const hoveredIndex = activeElements[0].index;
@@ -277,15 +315,29 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         expand(matchingReward ? JSON.stringify(matchingReward) : undefined);
 
         // Set colors: hovered bar gets hover color, others get semi-transparent
-        dataset.backgroundColor = dataset.data.map((_, index: number) =>
-          index === hoveredIndex ? '#809ACB' : '#596AFF80'
-        );
+        dataset.backgroundColor = dataset.data.map((_, index: number) => {
+          const element = meta.data[index] as unknown as GradientObject;
+
+          if (isFullScreen) {
+            return index === hoveredIndex ? createGradient(ctx, element, true) : createGradient(ctx, element, false);
+          }
+
+          return index === hoveredIndex ? '#809ACB' : '#596AFF80';
+        });
       } else {
         // No bar is being hovered - reset all bars to normal color
         const dataset = chart.data.datasets[0];
 
         expand(undefined); // Reset detail when no bar is hovered
-        dataset.backgroundColor = '#596AFF'; // Normal color for all bars
+        dataset.backgroundColor = dataset.data.map((_, index: number) => {
+          const element = meta.data[index] as unknown as GradientObject;
+
+          if (isFullScreen) {
+            return createGradient(ctx, element, false);
+          }
+
+          return '#596AFF';
+        });
       }
 
       // Update the chart without animation for smooth effect
@@ -302,6 +354,10 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     responsive: true,
     scales: {
       topAxis: {
+        border: {
+          dash: [2, 1],
+          display: false
+        },
         grid: {
           color: 'transparent',
           drawOnChartArea: false,
@@ -311,44 +367,75 @@ export default function useStakingRewards3 (address: string | undefined, genesis
         labels: dataToShow?.[pageIndex][0] || [],
         position: 'top',
         ticks: {
-          color: theme.palette.text.highlight,
+          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
           font: { family: 'Inter', size: 12, weight: 'bold' }
         }
       },
       x: {
-        grid: {
-          borderColor: 'transparent',
-          color: 'transparent',
-          tickColor: 'transparent'
+        border: {
+          dash: [2, 1],
+          display: false
         },
-        ticks: { color: theme.palette.text.highlight, font: { family: 'Inter', size: 12, weight: 'bold' } }
+        grid: {
+          color: isFullScreen ? '#2D1E4A59' : 'transparent'
+        },
+        ticks: {
+          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
+          font: { family: 'Inter', size: 12, weight: 'bold' }
+        }
       },
       y: {
-        display: false, // Hide y-axis completely
+        border: {
+          dash: [2, 1],
+          display: false
+        },
+        display: !!isFullScreen, // Hide y-axis completely on extension mode
         grid: {
-          drawBorder: false // Remove y-axis border
+          color: isFullScreen ? '#2D1E4A59' : 'transparent'
         },
         ticks: {
           display: false
         }
       }
     }
-  } as unknown as PluginChartOptions<'bar'>;
+  }), [dataToShow, descSortedRewards, isFullScreen, pageIndex, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
 
-  const chartData: ChartData<'bar', string[] | undefined, string> = {
+  const chartData: ChartData<'bar', string[] | undefined, string> = useMemo(() => ({
     datasets: [
       {
-        backgroundColor: '#596AFF',
+        backgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
+          const chart = context.chart;
+          const { ctx } = chart;
+          const meta = chart.getDatasetMeta(0);
+          const element = meta.data[context.dataIndex] as unknown as GradientObject;
+
+          if (!element || !isFullScreen) {
+            return '#596AFF'; // Fallback color
+          }
+
+          return createGradient(ctx, element, false);
+        },
         barThickness: 28,
         borderRadius: 12,
         borderSkipped: false,
         data: dataToShow?.[pageIndex][0],
-        hoverBackgroundColor: '#809ACB',
+        hoverBackgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
+          const chart = context.chart;
+          const { ctx } = chart;
+          const meta = chart.getDatasetMeta(0);
+          const element = meta.data[context.dataIndex] as unknown as GradientObject;
+
+          if (!element || !isFullScreen) {
+            return '#809ACB'; // Fallback color
+          }
+
+          return createGradient(ctx, element, true);
+        },
         label: token
       }
     ],
     labels: dataToShow?.[pageIndex][1]
-  };
+  }), [dataToShow, isFullScreen, pageIndex, token]);
 
   const onNextPeriod = useCallback(() => {
     pageIndex && setPageIndex(pageIndex - 1);

@@ -1,25 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
-// @ts-ignore
-import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
-
 import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { BN_FIVE, BN_ZERO } from '@polkadot/util';
-
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useCreatePool, useFormatted3, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
-import { amountToMachine } from '../../../../util/utils';
+import { PROXY_TYPE } from '../../../../util/constants';
 import Search from '../../components/Search';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
-import UpdateRoles, { type RolesState, updateRoleReducer } from './UpdateRoles';
+import UpdateRoles from './UpdateRoles';
 
 interface PoolNameBoxProp {
   onInputChange: (input: string) => void;
@@ -27,23 +20,25 @@ interface PoolNameBoxProp {
   enteredValue: string | undefined;
 }
 
-const PoolNameBox = ({ enteredValue, initName, onInputChange }: PoolNameBoxProp) => {
+export const PoolNameBox = ({ enteredValue, initName, onInputChange }: PoolNameBoxProp) => {
   const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
 
   return useMemo(() =>
-    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', gap: '12px', p: '15px' }}>
+    <Stack direction='column' sx={{ bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', p: isExtension ? '15px' : 0 }}>
       <Typography color='text.primary' textAlign='left' variant='B-1'>
         {t('Pool Name')}
       </Typography>
       <Search
         defaultValue={enteredValue}
+        inputColor='#BEAAD8'
         noSearchIcon
         onSearch={onInputChange}
         placeholder={initName}
         style={{ '> div': { backgroundColor: '#2224424D', border: '1px solid #2E2B52', borderRadius: '12px', height: 'fit-content', p: '6px' }, width: '100%' }}
       />
     </Stack>
-  , [enteredValue, initName, onInputChange, t]);
+  , [enteredValue, initName, isExtension, onInputChange, t]);
 };
 
 export default function CreatePool () {
@@ -55,131 +50,31 @@ export default function CreatePool () {
   const navigate = useNavigate();
   const { api, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted3(selectedAccount?.address, genesisHash);
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
 
-  const create = api?.tx['nominationPools']['create'];
-  const batch = api?.tx['utility']['batch'];
-  const setMetadata = api?.tx['nominationPools']['setMetadata'];
-
-  const poolId = useMemo(() => {
-    if (!stakingInfo.poolStakingConsts?.lastPoolId) {
-      return undefined;
-    } else {
-      return stakingInfo.poolStakingConsts.lastPoolId.addn(1);
-    }
-  }, [stakingInfo.poolStakingConsts?.lastPoolId]);
-
-  const initName = useMemo(() => {
-    const initialName = 'PolkaGate - ';
-    const lastPoolId = poolId?.toString() ?? undefined;
-
-    return initialName + lastPoolId;
-  }, [poolId]);
-
-  const INITIAL_POOL_FILTER_STATE: RolesState = useMemo(() => ({
-    bouncer: formatted ?? selectedAccount?.address,
-    depositor: formatted ?? selectedAccount?.address ?? '', // can not be undefined nor null, so we use an empty string
-    nominator: formatted ?? selectedAccount?.address,
-    root: formatted ?? selectedAccount?.address
-  }), [formatted, selectedAccount?.address]);
+  const { bondAmount,
+    errorMessage,
+    initName,
+    onInputAmountChange,
+    onMaxValue,
+    onMetadataInputChange,
+    onMinValue,
+    poolId,
+    poolMetadata,
+    poolToCreate,
+    roles,
+    setBondAmount,
+    setRoles,
+    transactionInformation,
+    tx } = useCreatePool(selectedAccount?.address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
-  const [poolMetadata, setPoolMetadata] = useState<string | undefined>(undefined);
-  const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
-  const [roles, setRoles] = useReducer(updateRoleReducer, INITIAL_POOL_FILTER_STATE);
 
-  useEffect(() => {
-    if (formatted) {
-      setRoles(INITIAL_POOL_FILTER_STATE);
-    }
-  }, [INITIAL_POOL_FILTER_STATE, formatted]);
-
-  const errorMessage = useMemo(() => {
-    if (!bondAmount || !stakingInfo.availableBalanceToStake) {
-      return undefined;
-    }
-
-    if (stakingInfo.availableBalanceToStake.isZero()) {
-      return t('Not enough amount to stake more.');
-    }
-
-    if (bondAmount.gt(stakingInfo.availableBalanceToStake ?? BN_ZERO)) {
-      return t('It is more than the available balance to stake.');
-    }
-
-    if (bondAmount.lt(stakingInfo.poolStakingConsts?.minCreationBond ?? BN_ZERO)) {
-      return t('It is less than the minimum amount to create a pool.');
-    }
-
-    return undefined;
-  }, [bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minCreationBond, t]);
-
-  const tx = useMemo(() => {
-    if (!create || !bondAmount || !setMetadata || !batch || !poolId) {
-      return undefined;
-    }
-
-    return batch([
-      create(bondAmount, roles.root, roles.nominator, roles.bouncer),
-      setMetadata(poolId, poolMetadata || initName)
-    ]);
-  }, [batch, bondAmount, create, initName, poolId, poolMetadata, roles.bouncer, roles.nominator, roles.root, setMetadata]);
-
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? setMetadata?.(BN_FIVE, initName));
-
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: estimatedFee2,
-      title: t('Fee')
-    }];
-  }, [estimatedFee2, t]);
-
-  const onMaxValue = useMemo(() => {
-    if (!formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts) {
-      return '0';
-    }
-
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
-  }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
-
-  const onMinValue = useMemo(() => {
-    if (!stakingInfo.poolStakingConsts) {
-      return '0';
-    }
-
-    return stakingInfo.poolStakingConsts?.minCreationBond.toString();
-  }, [stakingInfo.poolStakingConsts]);
-
-  const poolToCreate = useMemo(() => ({
-    bondedPool: {
-      memberCounter: 1,
-      points: bondAmount,
-      roles: {
-        bouncer: roles.bouncer,
-        depositor: roles.depositor,
-        nominator: roles.nominator,
-        root: roles.root
-      },
-      state: 'Creating' as unknown as PalletNominationPoolsPoolState
-    },
-    metadata: poolMetadata || initName,
-    poolId,
-    rewardPool: null
-  }) as unknown as PoolInfo, [bondAmount, roles.bouncer, roles.depositor, roles.nominator, roles.root, poolMetadata, initName, poolId]);
-
-  const onInputAmountChange = useCallback((value: string | null | undefined) => {
-    const valueAsBN = value ? amountToMachine(value, decimal) : BN_ZERO;
-
-    setBondAmount(valueAsBN);
-  }, [decimal, setBondAmount]);
-
-  const onInputChange = useCallback((input: string) => setPoolMetadata(input), []);
   const onBack = useCallback(() => navigate('/pool/' + genesisHash + '/stake') as void, [genesisHash, navigate]);
   const openReview = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => {
     setReview((onReview) => !onReview);
     setBondAmount(undefined);
-  }, []);
+  }, [setBondAmount]);
 
   const transactionFlow = useTransactionFlow({
     address: selectedAccount?.address,
@@ -187,6 +82,7 @@ export default function CreatePool () {
     closeReview,
     genesisHash: genesisHash ?? '',
     pool: poolToCreate,
+    proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
@@ -207,7 +103,7 @@ export default function CreatePool () {
           <PoolNameBox
             enteredValue={poolMetadata}
             initName={initName}
-            onInputChange={onInputChange}
+            onInputChange={onMetadataInputChange}
           />
           <StakeAmountInput
             buttonsArray={[{

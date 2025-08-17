@@ -102,6 +102,7 @@ function ChildInfo ({ genesisHash, maybeChidAccount, parentAddress, parentPasswo
           Icon={User}
           focused
           iconSize={18}
+          inputValue={childName}
           onTextChange={onNameChange}
           placeholder={t('New name')}
           style={{ margin: '25px 0 0' }}

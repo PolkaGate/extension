@@ -6,9 +6,8 @@ import { ArrowCircleLeft, Repeat } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { noop } from '@polkadot/util';
-
 import { useIsHovered, useTranslation } from '../../../hooks';
+import { windowOpen } from '../../../messaging';
 
 interface SettingButtonProps {
   text?: string;
@@ -50,6 +49,7 @@ export default function NominationsBackButton ({ style }: Props) {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
+  const onChange = useCallback(() => windowOpen('/fullscreen-stake/solo/manage-validator/' + genesisHash) as unknown as void, [genesisHash]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '15px', width: '100%', ...style }}>
@@ -62,7 +62,7 @@ export default function NominationsBackButton ({ style }: Props) {
       <SettingButton
         Icon={<Repeat color={theme.palette.text.highlight} size='18' variant='Bulk' />}
         disabled={false}
-        onClick={noop}
+        onClick={onChange}
         text={t('Change')}
       />
     </Container>

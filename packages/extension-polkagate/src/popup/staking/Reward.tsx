@@ -8,13 +8,12 @@ import { Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/mat
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
-import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion } from '../../components';
+import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewards3, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
-import Progress from './partial/Progress';
 import StakingMenu from './partial/StakingMenu';
 
 interface RewardChartHeaderProps {
@@ -90,19 +89,26 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
         <Typography color='text.highlight' variant='B-1' width='fit-content'>
-          {t('Received from')}:
+          {t('Reward source')}
         </Typography>
-        <Identity2
-          address={reward.address}
-          genesisHash={genesisHash ?? ''}
-          identiconSize={24}
-          style={{
-            color: theme.palette.text.primary,
-            variant: 'B-1',
-            width: '200px'
-          }}
-          withShortAddress
-        />
+        {reward.poolId
+          ? <Typography color={theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-5' width='fit-content'>
+            {t('Pool #{{poolId}}', { poolId: reward.poolId })}
+          </Typography>
+          : <Identity2
+            address={reward.address}
+            addressStyle={{ color: 'text.highlight' }}
+            genesisHash={genesisHash ?? ''}
+            identiconSize={24}
+            style={{
+              addressVariant: 'B-4',
+              color: theme.palette.text.primary,
+              variant: 'B-1',
+              width: '200px'
+            }}
+            withShortAddress
+            />
+        }
       </Container>
     </Collapse>
   );
@@ -153,6 +159,7 @@ export default function StakingReward () {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { state } = useLocation() as { state: boolean }; // used for easy stake extension mode, if true it comes from easy stake
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { address, genesisHash, type } = useParams<{ address: string; genesisHash: string; type: string }>();
@@ -166,7 +173,11 @@ export default function StakingReward () {
   const _type = type === 'solo' ? 'solo' : 'pool';
 
   // Navigate back to the appropriate staking overview page based on the normalized type
-  const onBack = useCallback(() => navigate('/' + _type + '/' + genesisHash) as void, [genesisHash, navigate, _type]);
+  const onBack = useCallback(() => (
+    state
+      ? navigate('/easyStake/' + genesisHash) as void
+      : navigate('/' + _type + '/' + genesisHash) as void
+  ), [state, navigate, genesisHash, _type]);
 
   return (
     <>
@@ -180,7 +191,10 @@ export default function StakingReward () {
           />
           <Stack direction='column' ref={containerRef} sx={{ height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
             {rewardInfo.status === 'loading' &&
-              <Progress text={t('Loading rewards')} />
+              <Progress
+                style={{ marginTop: '90px' }}
+                title={t('Loading rewards')}
+              />
             }
             {rewardInfo.status === 'ready' && rewardInfo.descSortedRewards &&
               <>

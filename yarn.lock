@@ -4258,9 +4258,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^0.141.1":
-  version: 0.141.1
-  resolution: "@polkagate/apps-config@npm:0.141.1"
+"@polkagate/apps-config@npm:^0.144.6":
+  version: 0.144.6
+  resolution: "@polkagate/apps-config@npm:0.144.6"
   dependencies:
     "@acala-network/type-definitions": "npm:5.1.2"
     "@bifrost-finance/type-definitions": "npm:1.11.3"
@@ -4307,7 +4307,7 @@ __metadata:
     pontem-types-bundle: "npm:1.0.15"
     rxjs: "npm:^7.8.1"
     tslib: "npm:^2.6.2"
-  checksum: 10/9dead65b083b7194c68f2e1fa000a87745e0aa17ab2969735fe288c9da22692265878e45064a3186ffa2b37e7b24a9c37f513ab4af1809e9db65f1c1bb684f25
+  checksum: 10/717034489e4d8a47bd66583baac44fa5589f0a6bbdf5d916bc778801aa2302c59f747420dc51a3cc98ce70b4e2c22371f5cdc2f901ed6c800c11dbc53b5304b4
   languageName: node
   linkType: hard
 
@@ -6146,6 +6146,15 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: 10/a7f4de6e5f57d9fcdea027e22873c633f96a803c96d422db8b99a45c36a9cceb7882d152136bbc31c7158fc1827e37aea5070d369724bb71dd11b5687332bc4d
+  languageName: node
+  linkType: hard
+
+"@types/react-window@npm:^1.8.8":
+  version: 1.8.8
+  resolution: "@types/react-window@npm:1.8.8"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10/79b70b7c33161efb14bf69115792843de8e038594136a8373cfbbcc4066c49fd611dd2d3592a9a81d19d21c075bf14e5e73a64f4d9ad32e45d4d5493f5f53918
   languageName: node
   linkType: hard
 
@@ -19833,7 +19842,7 @@ __metadata:
     "@polkadot/types-support": "npm:^16.4.2"
     "@polkadot/util": "npm:^13.5.3"
     "@polkadot/util-crypto": "npm:^13.5.3"
-    "@polkagate/apps-config": "npm:^0.141.1"
+    "@polkagate/apps-config": "npm:^0.144.6"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^13.0.0"
     "@semantic-release/git": "npm:^10.0.1"
@@ -19847,6 +19856,7 @@ __metadata:
     "@types/node": "npm:^20.10.5"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-spinkit": "npm:^3.0.10"
+    "@types/react-window": "npm:^1.8.8"
     "@vaadin/icons": "npm:^23.2.3"
     babel-plugin-transform-import-meta: "npm:^2.1.1"
     better-react-spinkit: "npm:^2.0.4"

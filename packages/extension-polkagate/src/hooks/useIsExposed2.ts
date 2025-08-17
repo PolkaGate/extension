@@ -20,11 +20,7 @@ export default function useIsExposed2 (genesisHash: string | undefined, stakingI
       return;
     }
 
-    const erasToCheck = (await api.query['fastUnstake']['erasToCheckPerBlock']()).toPrimitive() as number | undefined;
-
-    // console.log('erasToCheck:', erasToCheck);
-
-    if (!erasToCheck || !stakingInfo.stakingConsts || !api || !currentEraIndex) {
+    if (!stakingInfo.stakingConsts || !api || !currentEraIndex) {
       setIsExposed(undefined);
 
       return;
@@ -33,10 +29,21 @@ export default function useIsExposed2 (genesisHash: string | undefined, stakingI
     const isErasStakersPaged = !!api.query['staking']?.['erasStakersPaged'];
     const eraStakes = isErasStakersPaged ? api.query['staking']['erasStakersPaged'] : api.query['staking']['erasStakers'];
     const tasks = Array.from({ length: stakingInfo.stakingConsts.bondingDuration }, (_, index) => eraStakes.entries(currentEraIndex - index));
-    const erasStakers = await Promise.all(tasks);
 
-    // @ts-ignore
-    setIsExposed(!!erasStakers.flat().map((v) => isErasStakersPaged ? v[1].unwrap().others : v[1].others).flat().find(({ who }) => String(who) === stashId));
+    for (const element of tasks) {
+      const result = await element;
+
+      // @ts-ignore
+      const exposed = result.map((v) => isErasStakersPaged ? v[1].unwrap().others : v[1].others).flat().find(({ who }) => String(who) === stashId);
+
+      if (exposed) {
+        setIsExposed(true);
+
+        return;
+      }
+    }
+
+    setIsExposed(false);
   }, [api, chain, currentEraIndex, stakingInfo.stakingConsts]);
 
   useEffect(() => {

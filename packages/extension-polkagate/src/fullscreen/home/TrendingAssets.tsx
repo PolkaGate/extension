@@ -100,7 +100,7 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }
           iconSize={12}
           showHours={false}
           showPercentage
-          style={{ marginLeft: '5px', padding: '0px 2px' }}
+          style={{ marginLeft: '5px', minWidth: '57px', padding: '0px 2px' }}
           textVariant='B-4'
         />
       </Stack>
@@ -153,7 +153,7 @@ function TrendingAssets (): React.ReactElement {
           <Move direction='right' max={MAX_ASSETS_TO_MOVE} setMove={setMove} />
         </Stack>
       </Stack>
-      <Stack alignItems='center' direction='row' ref={refContainer} sx={{ overflowX: 'scroll', width: '100%' }}>
+      <Stack alignItems='center' direction='row' ref={refContainer} sx={{ overflowX: 'auto', width: '100%' }}>
         <motion.div
           animate={{ x: offsetX }}
           style={{ display: 'flex' }}

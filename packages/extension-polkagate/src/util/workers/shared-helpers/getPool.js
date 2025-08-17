@@ -37,30 +37,40 @@ import { closeWebsockets, fastestEndpoint, getChainEndpointsFromGenesisHash } fr
  *
  * @param {string} genesisHash - The Polkadot API instance
  * @param {string} stakerAddress - The address of the staker of the pool
+ * @param {number | undefined} id - The specific pool id
  * @param {MessagePort} port
  */
-export async function getPool (genesisHash, stakerAddress, port) {
+export async function getPool (genesisHash, stakerAddress, id, port) {
   const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
   const { api, connections } = await fastestEndpoint(endpoints);
   const chainName = getChainName(genesisHash);
 
   console.log(`getPool is called for ${stakerAddress} on chain ${chainName}`);
+  id && console.log('getPool is called to fetch the pool with poolId:', id);
 
   const token = api.registry.chainTokens[0];
   const decimal = api.registry.chainDecimals[0];
-  const members = await api.query['nominationPools']['poolMembers'](stakerAddress);
 
-  const member = members.isEmpty ? undefined : /** @type {PoolMember | null} */ (members.toPrimitive());
+  let poolId = id ?? 0;
+  /** @type {PoolMember | null | undefined} */
+  let member;
 
-  if (!member) {
-    console.log(`can not find member for ${stakerAddress}`);
+  if (poolId === 0) {
+    const members = await api.query['nominationPools']['poolMembers'](stakerAddress);
 
-    port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(null) }));
+    member = members.isEmpty ? undefined : /** @type {PoolMember | null} */ (members.toPrimitive());
 
-    return;
+    if (!member) {
+      console.log(`can not find member for ${stakerAddress}`);
+
+      port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(null) }));
+
+      return;
+    }
+
+    poolId = member.poolId;
   }
 
-  const poolId = member.poolId;
   const accounts = getPoolAccounts(api, poolId);
 
   if (!accounts) {

@@ -14,7 +14,9 @@ import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo from '../util/getLogo';
 import GlowCheck from './GlowCheck';
 
-const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
+const DropContentContainer = styled(Grid, {
+  shouldForwardProp: (prop) => prop !== 'preferredWidth'
+})(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
   background: '#05091C',
   border: '4px solid',
   borderColor: '#1B133C',
@@ -32,7 +34,7 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
   width: preferredWidth ? `${preferredWidth}px` : 'fit-content'
 }));
 
-const ContentDisplayContainer = styled(Grid)(({ isSelectedItem, style }: { isSelectedItem: boolean, style: React.CSSProperties }) => ({
+const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })(({ isSelectedItem, style }: { isSelectedItem: boolean, style: React.CSSProperties }) => ({
   '&:hover': { background: '#6743944D' },
   alignItems: 'center',
   background: isSelectedItem ? '#6743944D' : 'transparent',

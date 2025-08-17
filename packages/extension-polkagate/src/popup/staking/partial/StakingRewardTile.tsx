@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Box, Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Award, Chart21, Graph, MedalStar, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Thunder } from '../../../assets/gif';
-import { FormatBalance2, FormatPrice } from '../../../components';
+import { FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
 import { useChainInfo, usePrices, useStakingRewards3, useTokenPrice2, useTranslation } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { Background } from '../../../style';
@@ -86,7 +86,7 @@ const PoolClaimReward = ({ decimal, disabled, onClaimReward, reward, rewardInCur
         onClick={onClaimReward}
         startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
         style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
-        text={t('Claim rewards')}
+        text={t('Claim Rewards')}
       />
     </Container>
   );
@@ -139,6 +139,24 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
 
   const height = type === 'pool' ? '170px' : '140px';
 
+  const { totalRewardCurrency, totalRewardFiat } = useMemo(() => {
+    if (!totalClaimedRewardInCurrency || !totalClaimedReward) {
+      return { totalRewardCurrency: undefined, totalRewardFiat: undefined };
+    }
+
+    if (type === 'solo') {
+      return {
+        totalRewardCurrency: rewardInCurrency,
+        totalRewardFiat: reward
+      };
+    }
+
+    return {
+      totalRewardCurrency: totalClaimedRewardInCurrency,
+      totalRewardFiat: totalClaimedReward
+    };
+  }, [reward, rewardInCurrency, totalClaimedReward, totalClaimedRewardInCurrency, type]);
+
   return (
     <Stack direction='column' sx={{ borderRadius: '14px', height, overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
@@ -152,15 +170,14 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
               {t('Earned')}
             </Typography>
           </Container>
-          <Grid container item>
-            {totalClaimedRewardInCurrency === undefined
+          <Grid alignItems='center' container item justifyContent='start' sx={{ height: '40px' }}>
+            {totalRewardCurrency === undefined
               ? (
-                <Skeleton
-                  animation='wave'
-                  height='30px'
-                  sx={{ borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', mt: '5px', transform: 'none', width: '100%' }}
-                  variant='text'
-                />)
+                <Stack direction='column' sx={{ width: '100%' }}>
+                  <MySkeleton style={{ marginTop: '5px', maxWidth: '245px', width: '100%' }} />
+                  <MySkeleton style={{ marginTop: '5px', maxWidth: '145px', width: '40%' }} />
+                </Stack>
+              )
               : (
                 <FormatPrice
                   commify
@@ -170,21 +187,17 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                   fontSize='40px'
                   fontWeight={400}
                   height={40}
-                  num={totalClaimedRewardInCurrency}
+                  num={totalRewardCurrency}
                   width='fit-content'
                   withSmallDecimal
                 />)
             }
           </Grid>
-          <Grid alignItems='center' container item justifyContent='flex-start' sx={{ m: '-3px 0 6px' }}>
-            {totalClaimedReward === undefined
+          <Grid alignItems='center' container item justifyContent='flex-start' sx={{ height: '20px', m: '-3px 0 6px' }}>
+            {totalRewardFiat === undefined
               ? (
-                <Skeleton
-                  animation='wave'
-                  height='16px'
-                  sx={{ borderRadius: '10px', fontWeight: 'bold', m: '6px 0 1px', maxWidth: '75px', transform: 'none', width: '100%' }}
-                  variant='text'
-                />)
+                <MySkeleton style={{ maxWidth: '75px', width: '100%' }} />
+              )
               : (
                 <FormatBalance2
                   decimalPoint={4}
@@ -197,7 +210,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                     width: 'max-content'
                   }}
                   tokens={[token ?? '']}
-                  value={totalClaimedReward}
+                  value={totalRewardFiat}
                 />)}
           </Grid>
         </Stack>
@@ -238,6 +251,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
+  // Pool total earned rewards
   const { totalClaimedReward } = useStakingRewards3(address, genesisHash, type);
 
   const rewardInCurrency = useMemo(() => {
@@ -248,6 +262,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
     return calcPrice(tokenPrice.price, reward, decimal);
   }, [decimal, tokenPrice, pricesInCurrency, reward]);
 
+  // Pool total earned rewards
   const totalClaimedRewardInCurrency = useMemo(() => {
     if (!totalClaimedReward || !pricesInCurrency || !tokenPrice || !decimal) {
       return undefined;
@@ -264,38 +279,38 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
         Icon={Award}
         buttonsArray={[
           {
-            Icon: Timer,
-            onClick: onClaimReward,
-            text: t('Pending Rewards')
-          },
-          {
             Icon: Graph,
             onClick: onRewardChart,
             text: t('Chart')
+          },
+          {
+            Icon: Timer,
+            onClick: onClaimReward,
+            text: t('Pending Rewards')
           }
         ]}
         cryptoAmount={reward}
         decimal={decimal ?? 0}
         fiatAmount={0}
         layoutDirection='row'
-        title={t('Rewards paid')}
+        title={t('Rewards Earned')}
         token={token ?? ''}
       />
     );
-  } else {
-    return (
-      <FlatRewardTile
-        decimal={decimal}
-        disabled={isDisabled}
-        onClaimReward={onClaimReward}
-        onRewardChart={onRewardChart}
-        reward={reward}
-        rewardInCurrency={rewardInCurrency}
-        token={token}
-        totalClaimedReward={totalClaimedReward}
-        totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
-        type={type}
-      />
-    );
   }
+
+  return (
+    <FlatRewardTile
+      decimal={decimal}
+      disabled={isDisabled}
+      onClaimReward={onClaimReward}
+      onRewardChart={onRewardChart}
+      reward={reward}
+      rewardInCurrency={rewardInCurrency}
+      token={token}
+      totalClaimedReward={totalClaimedReward}
+      totalClaimedRewardInCurrency={totalClaimedRewardInCurrency}
+      type={type}
+    />
+  );
 }

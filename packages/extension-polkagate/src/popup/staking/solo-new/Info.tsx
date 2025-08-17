@@ -13,7 +13,7 @@ import { isBn } from '@polkadot/util';
 
 import { info } from '../../../assets/gif';
 import { BackWithLabel, Motion, ShowValue } from '../../../components';
-import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, useSoloStakingInfo, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { amountToHuman } from '../../../util/utils';
 import StakingMenu from '../partial/StakingMenu';
@@ -43,9 +43,8 @@ export default function Info (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
-  const { genesisHash } = useParams<{ genesisHash: string }>();
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const stakingStats = useMemo(() => ([
@@ -62,7 +61,7 @@ export default function Info (): React.ReactElement {
   return (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

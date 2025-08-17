@@ -11,7 +11,7 @@ import { AccountContext } from '@polkadot/extension-polkagate/src/components/con
 import { subscribeAccounts } from '@polkadot/extension-polkagate/src/messaging';
 import { getStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 function initAccountContext (accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
@@ -36,13 +36,13 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   useEffect(() => {
     const fetchLoginInfo = async () => {
       chrome.storage.onChanged.addListener(function (changes, areaName) {
-        if (areaName === 'local' && NAMES_IN_STORAGE.LOGIN_IFO in changes) {
-          const newValue = changes[NAMES_IN_STORAGE.LOGIN_IFO].newValue as LoginInfo;
+        if (areaName === 'local' && STORAGE_KEY.LOGIN_IFO in changes) {
+          const newValue = changes[STORAGE_KEY.LOGIN_IFO].newValue as LoginInfo;
 
           setLoginInfo(newValue);
         }
       });
-      const info = await getStorage(NAMES_IN_STORAGE.LOGIN_IFO) as LoginInfo;
+      const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
 
       setLoginInfo(info);
     };
@@ -61,7 +61,7 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
       setAccountCtx(initAccountContext([]));
       const addresses = accounts?.map((account) => account.address);
 
-      updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { addressesToForget: addresses }).catch(console.error);
+      updateStorage(STORAGE_KEY.LOGIN_IFO, { addressesToForget: addresses }).catch(console.error);
     }
   }, [accounts, loginInfo]);
 

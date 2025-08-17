@@ -37,13 +37,16 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
   const genesisHash = chain?.genesisHash;
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
-  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>();
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
+  const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
   const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
-  const confirmDisabled = useMemo(() => !proxyItems || proxyItems.length === 0 || proxyItems.every(({ status }) => status === 'current'), [proxyItems]);
+  const confirmDisabled = useMemo(() =>
+    !proxyItems || proxyItems.length === 0 || proxyItems.every(({ status }) => status === 'current')
+  ,
+  [proxyItems]);
 
   const newDepositValue = useMemo(() => {
     if (!proxyItems || proxyItems.length === 0 || confirmDisabled) {
@@ -53,11 +56,11 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     const toAdds = proxyItems.filter(({ status }) => status === 'new').length;
     const olds = proxyItems.filter(({ status }) => status === 'current').length;
 
-    if (olds > 0) {
+    if (olds) {
       return proxyDepositFactor.muln(olds + toAdds).add(proxyDepositBase);
     }
 
-    if (toAdds > 0) {
+    if (toAdds) {
       return proxyDepositFactor.muln(toAdds).add(proxyDepositBase);
     }
 
@@ -80,11 +83,11 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     return newDepositValue.sub(depositedValue);
   }, [depositedValue, newDepositValue]);
 
-  const removeProxy = api?.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
-  const addProxy = api?.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
-  const batchAll = api?.tx['utility']['batchAll'];
-
   const call = useMemo(() => {
+    const removeProxy = api?.tx['proxy']['removeProxy']; /** (delegate, proxyType, delay) **/
+    const addProxy = api?.tx['proxy']['addProxy']; /** (delegate, proxyType, delay) **/
+    const batchAll = api?.tx['utility']['batchAll'];
+
     if (!removeProxy || !addProxy || !batchAll) {
       return undefined;
     }
@@ -94,7 +97,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     proxyItems?.forEach(({ proxy, status }) => {
       const { delay, delegate, proxyType } = proxy;
 
-      // TODO: we will add one proxy but delete in batch
+      // NOTE: we add one proxy but delete in batch
 
       status === 'remove' && temp.push(removeProxy(delegate, proxyType, delay));
       status === 'new' && temp.push(addProxy(delegate, proxyType, delay));
@@ -103,22 +106,14 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     return temp.length > 1
       ? batchAll(temp)
       : temp[0];
-  }, [addProxy, batchAll, proxyItems, removeProxy]);
+  }, [api?.tx, proxyItems]);
 
   const fee = useEstimatedFee2(genesisHash, address, call);
 
-  const backToManage = useCallback(() => {
-    setStep(STEPS.MANAGE);
-  }, [setStep]);
-
   const handleClose = useCallback(() => {
-    if (step === STEPS.CONFIRMATION) {
-      setRefresh(true);
-      setStep(STEPS.CHECK);
-    } else {
-      backToManage();
-    }
-  }, [backToManage, setRefresh, setStep, step]);
+    setRefresh(true);
+    setStep(STEPS.INIT);
+  }, [setRefresh, setStep]);
 
   const transactionDetail = useMemo(() => {
     if (!proxyItems?.length) {
@@ -154,7 +149,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
         description: t('Prox{{iesOrY}} removed', { replace: { iesOrY: removingProxy.length > 1 ? 'ies' : 'y' } }),
         extra:
         {
-          removed: t('{{count}} prox{{iesOrY}}', { replace: { count: removingProxy.length, iesOrY: removingProxy.length > 1 ? 'ies' : 'y' } }),
+          removed: t('{{count}} prox{{iesOrY}}', { replace: { count: removingProxy.length, iesOrY: removingProxy.length > 1 ? 'ies' : 'y' } })
         },
         fee,
         proxyItems,
@@ -196,7 +191,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       }
       noDivider
       onClose={handleClose}
-      open={step !== STEPS.CHECK}
+      open={true}
       style={{ backgroundColor: '#1B133C', minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${540 + extraHeight}px`, padding: '20px 15px 10px' }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
@@ -214,6 +209,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
             depositToPay={depositToPay}
             fee={fee}
             genesisHash={chain?.genesisHash}
+            onClose={handleClose}
             proxyItems={proxyItems}
             selectedProxy={selectedProxy}
             setSelectedProxy={setSelectedProxy}

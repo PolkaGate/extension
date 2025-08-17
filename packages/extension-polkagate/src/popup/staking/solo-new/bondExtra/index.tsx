@@ -3,17 +3,14 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { BN } from '@polkadot/util';
-import type { Content } from '../../../../partials/Review';
-
 import { Grid, Stack } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useBondExtraSolo, useChainInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { amountToMachine } from '../../../../util/utils';
+import { PROXY_TYPE } from '../../../../util/constants';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -26,75 +23,33 @@ export default function BondExtra (): React.ReactElement {
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
 
-  const bondExtra = api?.tx['staking']['bondExtra'];
+  const { availableBalanceToStake,
+    bondExtraValue,
+    errorMessage,
+    estimatedFee,
+    onInputChange,
+    onMaxValue,
+    setBondExtraValue,
+    transactionInformation,
+    tx } = useBondExtraSolo(selectedAccount?.address, genesisHash);
 
-  const [bondExtraValue, setBondExtraValue] = useState<BN | null | undefined>();
   const [review, setReview] = useState<boolean>(false);
 
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, bondExtra, [bondExtraValue]);
-
-  const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
-  const errorMessage = useMemo(() => {
-    if (!bondExtraValue || bondExtraValue.isZero() || !stakingInfo.availableBalanceToStake || !api) {
-      return undefined;
-    }
-
-    if (stakingInfo.availableBalanceToStake.isZero()) {
-      return t('Not enough amount to stake more.');
-    }
-
-    if (bondExtraValue.gt(stakingInfo.availableBalanceToStake)) {
-      return t('It is more than the available balance to stake.');
-    }
-
-    return undefined;
-  }, [api, bondExtraValue, stakingInfo.availableBalanceToStake, t]);
-  const transactionInformation: Content[] = useMemo(() => {
-    return [{
-      content: bondExtraValue,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    },
-    {
-      content: staked && bondExtraValue ? (staked as unknown as BN).add(bondExtraValue) : undefined,
-      title: t('Total Stake After'),
-      withLogo: true
-    }];
-  }, [bondExtraValue, estimatedFee2, staked, t]);
-  const tx = useMemo(() => bondExtra?.(bondExtraValue), [bondExtra, bondExtraValue]);
-
-  const onInputChange = useCallback((value: string | null | undefined) => {
-    const valueAsBN = value ? amountToMachine(value, decimal) : null;
-
-    setBondExtraValue(valueAsBN);
-  }, [decimal]);
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
-  const onMaxValue = useMemo(() => {
-    if (!stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts?.existentialDeposit) {
-      return '0';
-    }
-
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
-  }, [stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => {
     setReview(false);
     setBondExtraValue(undefined);
-  }, []);
+  }, [setBondExtraValue]);
 
   const transactionFlow = useTransactionFlow({
     address: selectedAccount?.address,
     backPathTitle: t('Stake more'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.STAKING,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
@@ -103,7 +58,7 @@ export default function BondExtra (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}
@@ -113,7 +68,7 @@ export default function BondExtra (): React.ReactElement {
         />
         <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', mx: '15px' }}>
           <TokenStakeStatus
-            amount={stakingInfo.availableBalanceToStake}
+            amount={availableBalanceToStake}
             decimal={decimal}
             genesisHash={genesisHash}
             style={{ mt: '8px' }}
@@ -135,7 +90,7 @@ export default function BondExtra (): React.ReactElement {
           />
           <FeeValue
             decimal={decimal}
-            feeValue={estimatedFee2}
+            feeValue={estimatedFee}
             token={token}
           />
           <StakingActionButton

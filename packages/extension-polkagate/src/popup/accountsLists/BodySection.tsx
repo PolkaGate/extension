@@ -109,7 +109,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
               <>
                 {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
                   return (
-                    <>
+                    <React.Fragment key={profileIndex}>
                       {accounts.map((account, accIndex) => {
                         const isFirstProfile = profileIndex === 0;
                         const isFirstAccount = accIndex === 0;
@@ -146,7 +146,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
                           </React.Fragment>
                         );
                       })}
-                    </>
+                    </React.Fragment>
                   );
                 })}
               </>

@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
-import { ASSETS_NAME_IN_STORAGE, ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
 
 import { ChainLogo, Motion, MySwitch, SearchField } from '../../components';
@@ -134,17 +134,17 @@ function NetworkSettings (): React.ReactElement {
   }, [allChains]);
 
   const updateSavedAssetsInStorage = useCallback(() => {
-    getStorage(ASSETS_NAME_IN_STORAGE, true).then((info) => {
-      const assets = info as SavedAssets;
+    getStorage(STORAGE_KEY.ASSETS, true).then((info) => {
+      const assets = info as SavedAssets | undefined;
 
-      assets && Object.keys(assets.balances).forEach((addresses) => {
+      assets?.balances && Object.keys(assets.balances).forEach((addresses) => {
         Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
           if (!selectedChains.has(genesisHash)) {
             assets.balances[addresses][genesisHash] && delete assets.balances[addresses][genesisHash];
           }
         });
       });
-      setStorage(ASSETS_NAME_IN_STORAGE, assets, true).catch(console.error);
+      setStorage(STORAGE_KEY.ASSETS, assets, true).catch(console.error);
     }).catch(console.error);
   }, [selectedChains]);
 
@@ -209,7 +209,7 @@ function NetworkSettings (): React.ReactElement {
 
   return (
     <Motion variant='slide'>
-      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', maxHeight: 'calc(100vh - 195px)', minHeight: '600px', m: '5px', overflow: 'scroll', p: '0 0 30px 20px', width: 'fill-available' }}>
+      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', maxHeight: 'calc(100vh - 195px)', minHeight: '600px', m: '5px', overflow: 'auto', p: '0 0 30px 20px', width: 'fill-available' }}>
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ my: '5px' }} width='95.5%'>
           <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
             {t('Networks to view assets')}
@@ -217,6 +217,7 @@ function NetworkSettings (): React.ReactElement {
           <AddButton />
         </Stack>
         <SearchField
+          focused
           onInputChange={onSearch}
           placeholder='🔍 Search networks'
           placeholderStyle={{ textAlign: 'left' }}

@@ -1,19 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PoolInfo } from '../../../../util/types';
-
 import { Grid } from '@mui/material';
-import React, { useCallback, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { type BN, BN_ZERO } from '@polkadot/util';
-
 import { Motion } from '../../../../components';
-import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePools2, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useJoinPool, usePools2, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
+import { PROXY_TYPE } from '../../../../util/constants';
 import JoinPoolBackButton from '../../partial/JoinPoolBackButton';
-import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../../partial/PoolFilter';
 import ChoosePool from './ChoosePool';
 import JoinPoolInput from './JoinPoolInput';
 
@@ -30,62 +26,27 @@ export default function JoinPool () {
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const navigate = useNavigate();
-  const { api } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
   const pools = usePools2(genesisHash);
 
-  const join = api?.tx['nominationPools']['join']; // (amount, poolId)
+  const { availableBalanceToStake,
+    bondAmount,
+    dispatchFilter,
+    errorMessage,
+    estimatedFee,
+    filter,
+    onInputChange,
+    onMaxValue,
+    onMinValue,
+    onSearch,
+    searchedQuery,
+    selectedPool,
+    setBondAmount,
+    setSelectedPool,
+    transactionInformation,
+    tx } = useJoinPool(selectedAccount?.address, genesisHash);
 
-  const [searchedQuery, setSearchedQuery] = useState<string>('');
-  const [filter, dispatchFilter] = useReducer(poolFilterReducer, INITIAL_POOL_FILTER_STATE);
   const [step, setStep] = useState(POOL_STEPS.CHOOSE_POOL);
-  const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>(undefined);
-  const [bondAmount, setBondAmount] = useState<BN | undefined>(undefined);
 
-  const tx = useMemo(() => {
-    if (!join || !bondAmount || !selectedPool) {
-      return undefined;
-    }
-
-    return join(bondAmount, selectedPool.poolId);
-  }, [bondAmount, join, selectedPool]);
-
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? join?.(bondAmount, selectedPool?.poolId ?? 0));
-
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: bondAmount,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    }];
-  }, [bondAmount, estimatedFee2, t]);
-
-  const errorMessage = useMemo(() => {
-    if (!bondAmount || !stakingInfo.availableBalanceToStake) {
-      return undefined;
-    }
-
-    if (stakingInfo.availableBalanceToStake.isZero()) {
-      return t('Not enough amount to stake more.');
-    }
-
-    if (bondAmount.gt(stakingInfo.availableBalanceToStake ?? BN_ZERO)) {
-      return t('It is more than the available balance to stake.');
-    }
-
-    if (bondAmount.lt(stakingInfo.poolStakingConsts?.minJoinBond ?? BN_ZERO)) {
-      return t('It is less than the minimum amount to join a pool.');
-    }
-
-    return undefined;
-  }, [bondAmount, stakingInfo.availableBalanceToStake, stakingInfo.poolStakingConsts?.minJoinBond, t]);
-
-  const onSearch = useCallback((query: string) => setSearchedQuery(query), []);
   const onNext = useCallback(() => setStep(step + 1), [step]);
   const onBack = useCallback(() => {
     if (step > POOL_STEPS.CHOOSE_POOL) {
@@ -94,7 +55,7 @@ export default function JoinPool () {
     } else {
       navigate('/pool/' + genesisHash + '/stake') as void;
     }
-  }, [genesisHash, navigate, step]);
+  }, [genesisHash, navigate, setBondAmount, step]);
 
   const transactionFlow = useTransactionFlow({
     address: selectedAccount?.address,
@@ -102,6 +63,7 @@ export default function JoinPool () {
     closeReview: onBack,
     genesisHash: genesisHash ?? '',
     pool: selectedPool,
+    proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     review: step === POOL_STEPS.REVIEW,
     stepCounter: { currentStep: 3, totalSteps: 3 },
     transactionInformation,
@@ -123,28 +85,29 @@ export default function JoinPool () {
           style={{ mb: '15px' }}
         />
         {step === POOL_STEPS.CHOOSE_POOL &&
-            <ChoosePool
-              filter={filter}
-              onNext={onNext}
-              pools={pools}
-              searchedQuery={searchedQuery}
-              selectedPool={selectedPool}
-              setSelectedPool={setSelectedPool}
-            />
+          <ChoosePool
+            filter={filter}
+            onNext={onNext}
+            pools={pools}
+            searchedQuery={searchedQuery}
+            selectedPool={selectedPool}
+            setSelectedPool={setSelectedPool}
+          />
         }
         {step === POOL_STEPS.CONFIG &&
-            <JoinPoolInput
-              bondAmount={bondAmount}
-              errorMessage={errorMessage}
-              estimatedFee2={estimatedFee2}
-              formatted={formatted}
-              genesisHash={genesisHash}
-              onBack={onBack}
-              onNext={onNext}
-              selectedPool={selectedPool}
-              setBondAmount={setBondAmount}
-              stakingInfo={stakingInfo}
-            />
+          <JoinPoolInput
+            availableBalanceToStake={availableBalanceToStake}
+            bondAmount={bondAmount}
+            errorMessage={errorMessage}
+            estimatedFee={estimatedFee}
+            genesisHash={genesisHash}
+            onBack={onBack}
+            onInputChange={onInputChange}
+            onMaxValue={onMaxValue}
+            onMinValue={onMinValue}
+            onNext={onNext}
+            selectedPool={selectedPool}
+          />
         }
       </Motion>
     </Grid>

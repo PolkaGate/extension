@@ -7,7 +7,7 @@ import React, { useCallback, useContext } from 'react';
 
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import CreationButton from '@polkadot/extension-polkagate/src/fullscreen/haveWallet/CreationButton';
-import { NAMES_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import { Lock } from '../../assets/gif';
@@ -43,7 +43,7 @@ export function ResetContent (): React.ReactElement {
         src={Lock as string}
         sx={{ height: isExtension ? '55px' : '65px', mt: isExtension ? '-3px' : '20px', width: isExtension ? '55px' : '65px' }}
       />
-      <Typography sx={{ m: isExtension ? '10px 0' : '40px 0 15px', width: '100%' }} textAlign='center' textTransform='uppercase' variant={ isExtension ? 'H-2' : 'H-1'}>
+      <Typography sx={{ m: isExtension ? '10px 0' : '40px 0 15px', width: '100%' }} textAlign='center' textTransform='uppercase' variant={isExtension ? 'H-2' : 'H-1'}>
         {t('Reset Wallet')}
       </Typography>
       <Typography sx={{ color: 'text.secondary', px: '15px', width: '100%' }} textAlign='center' variant='B-4'>
@@ -79,21 +79,21 @@ export function ResetContent (): React.ReactElement {
               Icon={DocumentText}
               label={t('Restore from JSON File')}
               labelPartInColor={t('Restore from JSON File')}
-              style ={{ width: '180px' }}
+              style={{ width: '180px' }}
               url='/account/restore-json'
             />
             <CreationButton
               Icon={Check}
               label={t('Import from Recovery Phrase')}
               labelPartInColor={t('Import from Recovery Phrase')}
-              style ={{ width: '180px' }}
+              style={{ width: '180px' }}
               url='/account/import-seed'
             />
           </Stack>
           <ActionButton
             contentPlacement='center'
             onClick={onClick}
-            text= {t('Back')}
+            text={t('Back')}
             variant='contained'
           />
         </Stack>
@@ -110,7 +110,7 @@ function Reset (): React.ReactElement {
   const onAction = useContext(ActionContext);
 
   const back = useCallback((): void => {
-    updateStorage(NAMES_IN_STORAGE.LOGIN_IFO, { status: LOGIN_STATUS.SET })
+    updateStorage(STORAGE_KEY.LOGIN_IFO, { status: LOGIN_STATUS.SET })
       .finally(() => {
         setExtensionLock(true);
         onAction('/');

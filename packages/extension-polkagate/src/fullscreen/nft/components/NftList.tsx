@@ -53,7 +53,7 @@ function NftList ({ nfts }: ItemsListProps): React.ReactElement {
 
   return (
     <Stack direction='column' sx={{ width: '952px' }}>
-      <Grid container item justifyContent='start' sx={{ gap: '8px', height: '492px', mt: '30px', overflowY: 'scroll' }}>
+      <Grid container item justifyContent='start' sx={{ gap: '8px', height: '492px', mt: '30px', overflowY: 'auto' }}>
         {(!nfts || nfts.length === 0) &&
           <Grid alignItems='center' container item justifyContent='center'>
             {nfts === undefined

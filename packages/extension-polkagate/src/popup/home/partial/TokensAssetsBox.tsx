@@ -11,6 +11,7 @@ import { CloseCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
@@ -124,19 +125,14 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
-  const formatCamelCaseText = useCallback((input: string) => {
-    return input
-      .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space before uppercase letters
-      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
-  }, []);
 
   const logoInfo = getLogo2(tokenDetail.genesisHash, tokenDetail.token);
   const balancePrice = calcPrice(priceOf(tokenDetail.priceId), tokenDetail.totalBalance, tokenDetail.decimal);
 
   const onTokenClick = useCallback(() => {
     isExtension
-    ? navigate(`token/${tokenDetail.genesisHash}/${tokenDetail.assetId}`)
-    : account?.address && navigate(`/accountfs/${account.address}/${tokenDetail.genesisHash}/${tokenDetail.assetId}`);
+      ? navigate(`token/${tokenDetail.genesisHash}/${tokenDetail.assetId}`) as void
+      : account?.address && navigate(`/accountfs/${account.address}/${tokenDetail.genesisHash}/${tokenDetail.assetId}`) as void;
   }, [isExtension, navigate, tokenDetail.genesisHash, tokenDetail.assetId, account?.address]);
 
   return (
@@ -150,7 +146,7 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
             {tokenDetail.token}
           </Typography>
           <Typography color='text.secondary' variant='S-2'>
-            {formatCamelCaseText(tokenDetail.chainName)}
+            {toTitleCase(tokenDetail.chainName)}
           </Typography>
         </Grid>
       </Grid>
@@ -220,13 +216,13 @@ function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
               const showDivider = tokenDetail.assets.length !== index + 1;
 
               return (
-                <>
+                <React.Fragment key={`${index}_fragment`}>
                   <TokensItems
                     key={index}
                     tokenDetail={token}
                   />
                   {showDivider && <Divider sx={{ bgcolor: dividerColor, height: '1px', width: '100%' }} />}
-                </>
+                </React.Fragment>
               );
             })}
           </Grid>

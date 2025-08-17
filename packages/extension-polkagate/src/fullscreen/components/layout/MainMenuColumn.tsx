@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home, MedalStar, Setting } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
 import React, { useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useManifest, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useManifest, useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
 import GovernanceModal from '../GovernanceModal';
 import Language from './Language';
@@ -39,6 +39,8 @@ function MainMenuColumn (): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
 
+  const { maxPosition, maxPositionType } = useStakingPositions(selectedAccount?.address, true);
+
   const [openModal, setOpen] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   return (
@@ -58,7 +60,7 @@ function MainMenuColumn (): React.ReactElement {
       <Shining />
       <LogoWithText style={{ marginBottom: '20px', zIndex: 10 }} />
       <MenuButton
-        Icon={Home}
+        Icon={Home3}
         path='/'
         text={t('Home')}
       />
@@ -74,10 +76,11 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
+        path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${selectedAccount?.address}/${maxPosition?.genesisHash ?? selectedGenesisHash}`}
         text={t('Staking')}
       />
       <MenuButton
-        Icon={MedalStar}
+        Icon={Record}
         onClick={() => setOpen(ExtensionPopups.GOVERNANCE)}
         text={t('Governance')}
       />

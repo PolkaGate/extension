@@ -44,7 +44,7 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
   }, [decimalPart]);
 
   return (
-    <GlowBox style={{ m: 0, width: '100%' }}>
+    <GlowBox isBlueish style={{ m: 0, width: '100%' }}>
       <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
         <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
           {transactionDetail.success
@@ -104,7 +104,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
           const color = isBlock ? 'text.primary' : 'text.highlight';
 
           return (
-            <>
+            <React.Fragment key={index}>
               <Container disableGutters key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography color='text.highlight' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(title)}
@@ -134,7 +134,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
                 </Typography>
               </Container>
               {withDivider && <GradientDivider style={{ my: '5px' }} />}
-            </>
+            </React.Fragment>
           );
         })}
       </Stack>
@@ -163,14 +163,19 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
       };
     }
 
-    const stakingPath = pathname.startsWith('/pool/') ? 'pool' : 'solo';
-    const redirectPath = `/${stakingPath}/${genesisHash}`;
+    let stakingPath = pathname.startsWith('/pool/') ? 'pool' : 'solo';
+    let redirectPath = `/${stakingPath}/${genesisHash}`;
+
+    if (pathname.includes('easyStake') && transactionDetail.extra?.['easyStakingType']) {
+      stakingPath = transactionDetail.extra['easyStakingType'];
+      redirectPath = `/${stakingPath}/${genesisHash}`;
+    }
 
     return {
       redirectPath,
       redirectToSamePath: pathname === redirectPath
     };
-  }, [pathname, genesisHash]);
+  }, [genesisHash, pathname, transactionDetail.extra]);
 
   const goToHistory = useCallback(() => {
     updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
@@ -179,9 +184,10 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
   }, [address, genesisHash, navigate]);
 
   const backToStakingHome = useCallback(() =>
-    close && redirectToSamePath ? close() : navigate(redirectPath, { replace: true })
-  ,
-  [close, navigate, redirectPath, redirectToSamePath]);
+    close && redirectToSamePath
+      ? close()
+      : navigate(redirectPath, { replace: true }) as void
+  , [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
     const url = `https://${chainName}.subscan.io/account/${address}`;

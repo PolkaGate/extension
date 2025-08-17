@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Grid } from '@mui/material';
 import { keyframes } from '@mui/system';
 import React, { useEffect, useState } from 'react';
@@ -29,7 +28,7 @@ const carouselItems = [
   Item1
 ];
 
-function Carousel() {
+function Carousel () {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleIndicatorClick = (index: number) => () => {

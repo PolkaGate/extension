@@ -210,6 +210,7 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' sx={{ width: '100%' }}>
       <MyTextField
+        inputValue={priceId}
         onEnterPress={onCheckPriceIdClick}
         onTextChange={onPriceIdChange}
         placeholder={chainName}
@@ -407,6 +408,7 @@ function AddNewNetwork ({ open, setOpen }: Props): React.ReactElement {
               errorMessage={isError ? t('Invalid endpoint format.') : chainAlreadyExist ? t('This network is already available — no need to add it again.') : ''}
               focused
               iconSize={18}
+              inputValue={endpoint}
               onEnterPress={onCheck}
               onTextChange={onEndpointChange}
               placeholder={'wss://'}

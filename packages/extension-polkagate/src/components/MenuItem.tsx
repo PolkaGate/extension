@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { type MouseEventHandler } from 'react';

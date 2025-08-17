@@ -6,13 +6,13 @@ import type { BN } from '@polkadot/util';
 import type { BalancesInfo, FetchedBalance } from '../../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
-import { Coin, Lock1, Trade, UserOctagon } from 'iconsax-react';
+import { Coin, Lock1, People, Trade, UserOctagon } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ReservedLockedPopup from '@polkadot/extension-polkagate/src/popup/tokens/partial/ReservedLockedPopup';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style/index';
-import { BN_ZERO, noop } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useTranslation } from '../../../hooks';
 import { getValue } from '../../../popup/account/util';
@@ -211,6 +211,10 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
+  const onStaking = useCallback((type: string) => () => {
+    navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;
+  }, [address, genesisHash, navigate]);
+
   const stakings = useMemo(() => {
     if (!token) {
       return undefined;
@@ -270,13 +274,13 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             {
               stakings?.hasPoolStake &&
               <TokenDetailBox
-                Icon={UserOctagon}
+                Icon={People}
                 amount={stakings.maybePoolStake}
                 background='#05091C'
                 decimal={token?.decimal}
                 iconSize='20'
-                iconVariant='Bold'
-                onClick={noop} // TODO @Amir
+                iconVariant='Bulk'
+                onClick={onStaking('pool')}
                 priceId={token?.priceId}
                 title={t('Pool Staked')}
                 token={token?.token}
@@ -291,7 +295,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
                 decimal={token?.decimal}
                 iconSize='20'
                 iconVariant='Bold'
-                onClick={noop} // TODO @Amir
+                onClick={onStaking('solo')}
                 priceId={token?.priceId}
                 title={t('Solo Staked')}
                 token={token?.token}

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Avatar, Grid, Link, Stack, Typography } from '@mui/material';
-import { MedalStar } from 'iconsax-react';
+import { Record } from 'iconsax-react';
 import React, { memo, useCallback } from 'react';
 
 import { GradientButton } from '@polkadot/extension-polkagate/src/components';
@@ -76,8 +76,9 @@ function GovernanceModal ({ chainName, open, setOpen }: Props): React.ReactEleme
       onClose={onClose}
       open={open}
       popupProps={{
-        TitleIcon: MedalStar,
+        TitleIcon: Record,
         iconSize: 24,
+        iconVariant: 'Bulk',
         pt: 185
       }}
       title={t('Explore Governance')}

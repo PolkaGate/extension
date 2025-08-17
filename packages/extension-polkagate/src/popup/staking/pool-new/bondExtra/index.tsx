@@ -4,15 +4,13 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import { Grid, Stack } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
-
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useBondExtraPool, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
-import { amountToMachine } from '../../../../util/utils';
+import { PROXY_TYPE } from '../../../../util/constants';
 import FeeValue from '../../partial/FeeValue';
 import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
@@ -27,82 +25,23 @@ export default function BondExtra (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
 
-  const bondExtra = api?.tx['nominationPools']['bondExtra'];
-
-  const [bondAmount, setBondAmount] = useState<BN | null | undefined>();
   const [review, setReview] = useState<boolean>(false);
 
-  const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : new BN(stakingInfo.pool?.member?.points ?? 0), [stakingInfo.pool]);
-  // const poolState = useMemo(() => String(stakingInfo.pool?.bondedPool?.state), [stakingInfo.pool?.bondedPool?.state]);
-
-  const tx = useMemo(() => {
-    if (!formatted || !bondExtra || !bondAmount) {
-      return undefined;
-    }
-
-    return bondExtra({ FreeBalance: bondAmount });
-  }, [bondAmount, bondExtra, formatted]);
-
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? bondExtra?.({ FreeBalance: bondAmount ?? BN_ONE }));
-
-  const transactionInformation = useMemo(() => {
-    return [{
-      content: bondAmount,
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee2,
-      title: t('Fee')
-    },
-    {
-      content: bondAmount && staked ? (staked as unknown as BN).add(bondAmount) : undefined,
-      title: t('Total stake after'),
-      withLogo: true
-    }];
-  }, [bondAmount, estimatedFee2, staked, t]);
-
-  const errorMessage = useMemo(() => {
-    if (!bondAmount || !stakingInfo.availableBalanceToStake || !staked) {
-      return undefined;
-    }
-
-    if (staked.isZero()) {
-      return t('The account is fully unstaked, so can\'t stake until you withdraw entire unstaked/redeemable amount.');
-    }
-
-    if (stakingInfo.availableBalanceToStake.isZero()) {
-      return t('Not enough amount to stake more.');
-    }
-
-    if (bondAmount.gt(stakingInfo.availableBalanceToStake ?? BN_ZERO)) {
-      return t('It is more than the available balance to stake.');
-    }
-
-    return undefined;
-  }, [bondAmount, staked, stakingInfo.availableBalanceToStake, t]);
-
-  const onMaxValue = useMemo(() => {
-    if (!stakingInfo.pool || !formatted || !stakingInfo.availableBalanceToStake || !stakingInfo.stakingConsts || !staked || staked.isZero()) {
-      return '0';
-    }
-
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
-  }, [formatted, staked, stakingInfo.availableBalanceToStake, stakingInfo.pool, stakingInfo.stakingConsts]);
-
-  const onInputChange = useCallback((value: string | null | undefined) => {
-    const valueAsBN = value ? amountToMachine(value, decimal) : null;
-
-    setBondAmount(valueAsBN);
-  }, [decimal]);
+  const { bondAmount,
+    errorMessage,
+    estimatedFee,
+    onInputChange,
+    onMaxValue,
+    setBondAmount,
+    transactionInformation,
+    tx } = useBondExtraPool(selectedAccount?.address, genesisHash);
 
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => {
     setReview(false);
     setBondAmount(undefined);
-  }, []);
+  }, [setBondAmount]);
   const onBack = useCallback(() => navigate('/pool/' + genesisHash) as void, [genesisHash, navigate]);
 
   const transactionFlow = useTransactionFlow({
@@ -110,6 +49,7 @@ export default function BondExtra (): React.ReactElement {
     backPathTitle: t('Stake more'),
     closeReview,
     genesisHash: genesisHash ?? '',
+    proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     review,
     stepCounter: { currentStep: 2, totalSteps: 2 },
     transactionInformation,
@@ -151,7 +91,7 @@ export default function BondExtra (): React.ReactElement {
             />
             <FeeValue
               decimal={decimal}
-              feeValue={estimatedFee2}
+              feeValue={estimatedFee}
               token={token}
             />
             <StakingActionButton

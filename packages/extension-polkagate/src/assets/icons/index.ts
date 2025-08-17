@@ -25,6 +25,7 @@ export { default as ms } from './ms.svg';
 export { default as msGreen } from './msGreen.svg';
 export { default as msWarning } from './msWarning.svg';
 export { default as notSupported } from './notSupported.svg';
+export { default as noValidator } from './noValidator.svg';
 export { default as pastCrowdloanBlack } from './pastCrowdloanBlack.svg';
 export { default as pastCrowdloanRed } from './pastCrowdloanRed.svg';
 export { default as pastCrowdloanWhite } from './pastCrowdloanWhite.svg';

@@ -1,22 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Grid, Skeleton, Stack } from '@mui/material';
+import { Avatar, Grid, Stack } from '@mui/material';
 import React, { } from 'react';
 
 import { logoWhiteTransparent } from '@polkadot/extension-polkagate/src/assets/logos/index';
+import { MySkeleton } from '@polkadot/extension-polkagate/src/components';
 import { useIsDark } from '@polkadot/extension-polkagate/src/hooks/index';
 
 interface Props {
   length?: number;
-}
-
-function MySkeleton ({ bgcolor, height = 12, style = {}, width }: { bgcolor: string, height?: number, style?: React.CSSProperties, width: number }): React.ReactElement {
-  return (<Skeleton
-    animation='wave'
-    height={height}
-    sx={{ bgcolor, borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: `${width}px`, ...style }}
-  />);
 }
 
 export default function LoadingProxies ({ length = 2 }: Props): React.ReactElement {
@@ -25,10 +18,10 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
   return (
     <>
       {
-        Array.from({ length }).map((index) => (
+        Array.from({ length }).map((_, index) => (
           <Grid
             alignItems='center'
-            columnGap='15px' container item key={index as number} sx={{
+            columnGap='15px' container item key={index} sx={{
               background: '#05091C',
               bgcolor: '#05091C',
               borderRadius: '14px',
@@ -43,7 +36,7 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
             <MySkeleton
               bgcolor={isDark ? '#946CC840' : '#99A1C440'}
               height ={18}
-              style={{ borderRadius: '6px', position: 'absolute', top: '8px', right: '8px' }}
+              style={{ borderRadius: '6px', position: 'absolute', right: '8px', top: '8px' }}
               width={18}
             />
             <Avatar

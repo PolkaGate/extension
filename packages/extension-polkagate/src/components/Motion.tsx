@@ -6,34 +6,34 @@ import type { MotionStyle } from 'framer-motion';
 import { motion } from 'framer-motion';
 import * as React from 'react';
 
-interface Props {
-  style?: MotionStyle;
-  children: React.ReactNode;
-  variant?: 'fade' | 'slide' | 'zoom' | 'flip';
-}
-
 const variants = {
   fade: {
     animate: { opacity: 1, transition: { duration: 0.3 } },
     exit: { opacity: 0, transition: { duration: 0.2 } },
     initial: { opacity: 0 }
   },
+  flip: {
+    animate: { opacity: 1, rotateY: 0, transition: { duration: 0.5 } },
+    exit: { opacity: 0, rotateY: -90, transition: { duration: 0.5 } },
+    initial: { opacity: 0, rotateY: 90 }
+  },
   slide: {
-    animate: { x: 0, opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
-    exit: { x: '-100%', opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } },
-    initial: { x: '10%', opacity: 0 }
+    animate: { opacity: 1, transition: { duration: 0.3, ease: 'easeOut' }, x: 0 },
+    exit: { opacity: 0, transition: { duration: 0.3, ease: 'easeIn' }, x: '-100%' },
+    initial: { opacity: 0, x: '10%' }
   },
   zoom: {
     animate: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
     exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2 } },
     initial: { opacity: 0, scale: 0.9 }
-  },
-  flip: {
-    animate: { rotateY: 0, opacity: 1, transition: { duration: 0.5 } },
-    exit: { rotateY: -90, opacity: 0, transition: { duration: 0.5 } },
-    initial: { rotateY: 90, opacity: 0 }
   }
 };
+
+interface Props {
+  style?: MotionStyle;
+  children: React.ReactNode;
+  variant?: keyof typeof variants;
+}
 
 export default function Motion ({ children, style, variant = 'fade' }: Props) {
   return (

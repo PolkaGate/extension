@@ -92,9 +92,16 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
             <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '24px', width: '24px' }}>
               <HistoryIcon action={action} />
             </Grid>
-            <Typography color='text.primary' sx={{ ml: '5px', textTransform: 'capitalize' }} variant='B-2'>
-              {historyItem.subAction}
-            </Typography>
+            <ScrollingTextBox
+              text={historyItem.subAction ?? ''}
+              textStyle={{
+                color: 'text.primary',
+                ml: '5px',
+                textTransform: 'capitalize',
+                ...theme.typography['B-2']
+              }}
+              width={parseInt(COLUMN_WIDTH.ACTION) - 24}
+            />
           </Stack>
           <Grid alignItems='center' columnGap='4px' container item width={COLUMN_WIDTH.SUB_ACTION}>
             {isTransfer

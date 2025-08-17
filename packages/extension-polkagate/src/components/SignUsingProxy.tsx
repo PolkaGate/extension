@@ -12,11 +12,10 @@ import { noop } from '@polkadot/util';
 import { useIsBlueish, useTranslation } from '../hooks';
 import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
-import Progress from '../popup/staking/partial/Progress';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util/utils';
-import { AccountContext, FadeOnScroll, GradientButton, Identity2 } from '.';
+import { AccountContext, FadeOnScroll, GradientButton, Identity2, Progress } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const { t } = useTranslation();
@@ -26,7 +25,7 @@ const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   return (
     <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: isBlueish ? '#809ACB26' : '#BFA1FF26', borderRadius: '10px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px 7px', width: 'fit-content' }}>
       <Trash color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
-      <Typography color={ isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-2'>
+      <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-2'>
         {t('Reset')}
       </Typography>
     </Container>
@@ -38,9 +37,10 @@ interface ProxiesItemProps {
   selectedProxyItem: Proxy | undefined;
   onSelect: (stringifyProxy: string) => void;
   genesisHash: string | null | undefined;
+  proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: ProxiesItemProps) => {
+const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedProxyItem }: ProxiesItemProps) => {
   const { accounts } = useContext(AccountContext);
   const isBlueish = useIsBlueish();
 
@@ -49,12 +49,14 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, selectedProxyItem }: Proxie
       return false;
     }
 
+    const typeMatch = proxyTypeFilter ? proxyTypeFilter.some((type) => type.toLowerCase() === proxy.proxy.proxyType.toLowerCase()) : true;
+
     const found = accounts.find((account) => account.address === getSubstrateAddress(proxy.proxy.delegate));
 
     const condition = Boolean(!found || found.isHardware || found.isQR || found.isExternal);
 
-    return !condition;
-  }, [accounts, proxy]);
+    return !condition && typeMatch;
+  }, [accounts, proxy, proxyTypeFilter]);
 
   const isChecked = useMemo(() => {
     if (!selectedProxyItem) {
@@ -132,12 +134,10 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
   const [proxyItem, setProxyItem] = useState<Proxy | undefined>(selectedProxy);
 
   const proxyItems = useMemo(() => {
-    return (proxies ?? [])
-      .map((p: Proxy) => ({ proxy: p, status: 'current' }))
-      .filter(({ proxy }) => proxyTypeFilter ? proxyTypeFilter.includes(proxy.proxyType) : true) as ProxyItem[];
-  }, [proxies, proxyTypeFilter]);
+    return (proxies ?? []).map((p: Proxy) => ({ proxy: p, status: 'current' })) as ProxyItem[];
+  }, [proxies]);
 
-  const noProxyAvailable = useMemo(() => proxies && proxyItems.length === 0, [proxies, proxyItems.length]);
+  const noProxyAvailable = useMemo(() => proxies && proxies.length === 0, [proxies]);
   const loadingProxy = useMemo(() => proxies === undefined, [proxies]);
 
   const handleSelectedProxy = useCallback((stringifyProxy: string) => {
@@ -186,14 +186,15 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
           {proxyItems.map((item, index) => (
             <ProxiesItem
               genesisHash={genesisHash}
-              key={index}
+              key={`${index} ${item.proxy.delegate}`}
               onSelect={handleSelectedProxy}
               proxy={item}
+              proxyTypeFilter={proxyTypeFilter}
               selectedProxyItem={proxyItem}
             />
           ))}
         </Stack>
-        <FadeOnScroll containerRef={refContainer} height='70px' ratio={0.2} style={{ bottom: '58px' }} />
+        <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.05} style={{ bottom: '58px' }} />
         {noProxyAvailable &&
           <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center', mt: '90px' }}>
             <Warning2 color='#FF4FB9' size='22' style={{ height: 'fit-content' }} variant='Bold' />
@@ -202,27 +203,32 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
             </Typography>
           </Container>}
         {proxies === undefined &&
-          <Progress text={t('Loading proxy accounts')} />
+          <Progress
+            style={{ marginTop: '90px' }}
+            title={t('Loading proxy accounts')}
+          />
         }
         {isBlueish
-          ? <StakingActionButton
-            disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
-            onClick={onApply}
-            style={{ bottom: '15px', left: 0, padding: '0 15px', position: 'absolute', right: 0, width: '100%' }}
-            text={t('Apply')}
-          />
-          : <GradientButton
-            contentPlacement='center'
-            disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
-            onClick={onApply}
-            style={{
-              bottom: '0',
-              height: '44px',
-              position: 'absolute',
-              width: '100%'
-            }}
-            text={t('Apply')}
-          />
+          ? (
+            <StakingActionButton
+              disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
+              onClick={onApply}
+              style={{ bottom: '15px', left: 0, padding: '0 15px', position: 'absolute', right: 0, width: '100%' }}
+              text={t('Apply')}
+            />)
+          : (
+            <GradientButton
+              contentPlacement='center'
+              disabled={noProxyAvailable || loadingProxy || proxyItem === selectedProxy}
+              onClick={onApply}
+              style={{
+                bottom: '0',
+                height: '44px',
+                position: 'absolute',
+                width: '100%'
+              }}
+              text={t('Apply')}
+            />)
         }
       </Stack>
     </SharePopup>

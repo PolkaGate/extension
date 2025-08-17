@@ -11,10 +11,10 @@ import { getStorage } from '@polkadot/extension-polkagate/src/util';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
-import { ExtensionPopups, NAMES_IN_STORAGE } from '../../../util/constants';
+import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 import SetPassword from './SetPassword';
 
-export default function Password (): React.ReactElement {
+export default function Password(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
 
@@ -22,7 +22,7 @@ export default function Password (): React.ReactElement {
   const [lastEditDate, setLastEdit] = useState<string>();
 
   useEffect(() => {
-    getStorage(NAMES_IN_STORAGE.LOGIN_IFO).then((info) => {
+    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => {
       const timestamp = (info as unknown as LoginInfo | undefined)?.lastEdit;
 
       if (timestamp) {

@@ -7,10 +7,11 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
+import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
 import { useBalances2, useChainInfo, useCurrentEraIndex2, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
@@ -113,7 +114,7 @@ function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStaking
           : undefined,
         unlocking: info.stakingAccount.unlocking
           ? Object.entries(info.stakingAccount.unlocking).reduce((acc, [k, v]) => {
-          // @ts-ignore
+            // @ts-ignore
             acc[k] = {
               ...v,
               remainingEras: isHexToBn(v.remainingEras as unknown as string),
@@ -181,22 +182,32 @@ const DEFAULT_VALUE = {
  * @returns Consolidated staking information including available balance, rewards, and more
  */
 export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
-  const { api, chainName } = useChainInfo(genesisHash);
-  const balances = useBalances2(address, genesisHash, refresh, setRefresh);
+  const { api, chainName, token } = useChainInfo(genesisHash);
+  const balances = useBalances2(address, genesisHash);
   const currentEra = useCurrentEraIndex2(genesisHash);
+  const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
+  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
+  const rewards = useStakingRewards2(chainName, stakingAccount); // total reward
+  const stakingConsts = useStakingConsts2(genesisHash);
 
-  const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo>();
+  const [soloStakingInfoLoaded, setSoloStakingInfoLoaded] = useState<SoloStakingInfo | undefined>(undefined);
+  const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo | undefined>(undefined);
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
 
   // Tracks when we need to save to storage
   const needsStorageUpdate = useRef(false);
   // Tracks when it is done with fetching solo staking information
   const fetchingFlag = useRef(true);
+  // Tracks when it is done with fetching rewards
+  const rewardsFetchingFlag = useRef(true);
 
-  const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
-  const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-  const rewards = useStakingRewards2(chainName, stakingAccount); // total reward
-  const stakingConsts = useStakingConsts2(genesisHash);
+  useEffect(() => {
+    if (refresh) {
+      fetchingFlag.current = true;
+      setSoloStakingInfo(undefined);
+      setSessionInfo(undefined);
+    }
+  }, [refresh]);
 
   // Fetch session and unstaking information
   const fetchSessionInfo = useCallback(async () => {
@@ -204,34 +215,53 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
 
     setSessionInfo(info);
     needsStorageUpdate.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, stakingAccount, refresh]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [api?.genesisHash, stakingAccount, refresh]);
 
   useEffect(() => {
-    if (fetchingFlag.current) {
+    if (fetchingFlag.current && !sessionInfo) {
       fetchSessionInfo().catch(console.error);
     }
-  }, [fetchSessionInfo]);
+  }, [fetchSessionInfo, sessionInfo]);
 
   const availableBalanceToStake = getAvailableToStake(balances, stakingAccount, sessionInfo?.unlockingAmount);
 
   // Separate effect for updating the state
   useEffect(() => {
-    if (fetchingFlag.current && currentEra !== undefined && availableBalanceToStake && stakingAccount !== undefined && rewardDestinationAddress && genesisHash && address) {
-      const info = {
-        availableBalanceToStake,
-        rewardDestinationAddress,
-        rewards,
-        sessionInfo,
-        stakingAccount,
-        stakingConsts
-      };
+    if (fetchingFlag.current === false || currentEra === undefined || !availableBalanceToStake || !stakingAccount || !sessionInfo || !rewardDestinationAddress || !genesisHash || !address || refresh) {
+      return;
+    }
 
-      setSoloStakingInfo(info);
+    const info = {
+      availableBalanceToStake,
+      rewardDestinationAddress,
+      rewards,
+      sessionInfo,
+      stakingAccount,
+      stakingConsts
+    };
+
+    const nonUndefinedInfo = Object.fromEntries(
+      Object.entries(info).filter(([_, v]) => v !== undefined)
+    );
+
+    setSoloStakingInfo((pre) => ({ ...pre, ...nonUndefinedInfo }) as SoloStakingInfo);
+  }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
+
+  useEffect(() => {
+    if (rewards && soloStakingInfo && rewardsFetchingFlag.current) {
+      rewardsFetchingFlag.current = false;
+      setSoloStakingInfo((pre) => ({ ...pre, rewards }) as SoloStakingInfo);
+    }
+  }, [rewards, soloStakingInfo]);
+
+  // Update rewards separately as they might come later
+  useEffect(() => {
+    if (soloStakingInfo && fetchingFlag.current) {
       fetchingFlag.current = false;
       needsStorageUpdate.current = true;
     }
-  }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts]);
+  }, [soloStakingInfo]);
 
   useEffect(() => {
     // Only save to storage when specifically needed
@@ -243,9 +273,8 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
 
       const key = genesisHash + 'SoloStakingInfo' + address;
 
-      chrome.storage.local.set({ [key]: JSON.stringify(toSave) })
+      setStorage(key, toSave, true)
         .then(() => {
-          console.log('saved to storage');
           needsStorageUpdate.current = false;
         })
         .catch(console.error);
@@ -257,19 +286,35 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     if (!soloStakingInfo && genesisHash && address && currentEra !== undefined) {
       const key = genesisHash + 'SoloStakingInfo' + address;
 
-      chrome.storage.local.get(key, (result) => {
-        const raw = result?.[key] as string | undefined;
-        const parsed = raw ? JSON.parse(raw) as unknown as SavedSoloStakingInfo : null;
+      getStorage(key, true).then((parsed) => {
+        const parsedInfo = parsed as SavedSoloStakingInfo;
 
-        if (parsed && parsed.currentEra === currentEra) {
-          const revived = reviveSoloStakingInfoBNs(parsed);
+        if (parsedInfo?.currentEra === currentEra) {
+          const revived = reviveSoloStakingInfoBNs(parsedInfo);
 
-          setSoloStakingInfo(revived);
+          setSoloStakingInfoLoaded(revived);
           needsStorageUpdate.current = false;
         }
-      });
+      }).catch(console.error);
     }
   }, [address, currentEra, genesisHash, soloStakingInfo]);
 
-  return soloStakingInfo ?? DEFAULT_VALUE;
+  // Refresh staking-related state when the chain changes,
+  // which also changes the token value.
+  useEffect(() => {
+    if (!soloStakingInfo && !soloStakingInfoLoaded) {
+      return;
+    }
+
+    if (token?.toLowerCase() !== (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token.toLowerCase()) {
+      console.log('reset on change');
+      fetchingFlag.current = true;
+      setSoloStakingInfoLoaded(undefined);
+      setSoloStakingInfo(undefined);
+      setSessionInfo(undefined);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [soloStakingInfo?.stakingConsts?.token, soloStakingInfoLoaded?.stakingConsts?.token, token]);
+
+  return useMemo(() => soloStakingInfo || soloStakingInfoLoaded || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoLoaded]);
 }

@@ -11,9 +11,7 @@ import { TRANSACTION_FLOW_STEPS } from '@polkadot/extension-polkagate/src/util/c
 export const STEPS = {
   ...TRANSACTION_FLOW_STEPS,
   ADD_PROXY: 'add_proxy',
-  CHECK: 'check',
-  MANAGE: 'manage',
-  // PROXY: 100,
+  INIT: 'init',
   SIGN_QR: 'sign_QR',
   UNSUPPORTED: 'unsupported'
 };

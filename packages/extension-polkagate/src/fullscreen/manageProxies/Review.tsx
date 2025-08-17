@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -16,7 +16,6 @@ import { CanPayErrorAlert, ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } fro
 import { useCanPayFeeAndDeposit, useChainInfo, useFormatted3, useTranslation } from '../../hooks';
 import { FLOATING_POINT_DIGIT, PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
-import { STEPS } from './consts';
 import { type ProxyFlowStep } from './types';
 
 interface Props {
@@ -32,6 +31,7 @@ interface Props {
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   showProxySelection: boolean;
+  onClose: () => void
 }
 
 function DisplayValue (
@@ -63,18 +63,17 @@ function DisplayValue (
   );
 }
 
-function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
+function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
   const formatted = useFormatted3(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const { action, changingItems, reviewText } = useMemo(() => {
+  const { changingItems, reviewText } = useMemo(() => {
     const newProxies = proxyItems?.filter(({ status }) => status === 'new');
 
     if (newProxies?.length) {
       return {
-        action: 'isAdding',
         changingItems: newProxies,
         reviewText: t('You are adding {{count}} prox{{iesOrY}}', { replace: { count: newProxies.length, iesOrY: newProxies.length > 1 ? 'ies' : 'y' } }) as unknown as string
       };
@@ -84,7 +83,6 @@ function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, se
 
     if (removingProxies?.length) {
       return {
-        action: 'isDeleting',
         changingItems: removingProxies,
         reviewText: t('Are you sure you want to remove {{count}} prox{{iesOrY}}?', { replace: { count: removingProxies.length, iesOrY: removingProxies.length > 1 ? 'ies' : 'y' } }) as unknown as string
       };
@@ -97,12 +95,6 @@ function Review ({ address, call, depositToPay, fee, genesisHash, proxyItems, se
   }, [proxyItems, t]);
 
   const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, fee, depositToPay);
-
-  const onClose = useCallback(() => {
-    action === 'isAdding'
-      ? setStep(STEPS.ADD_PROXY)
-      : setStep(STEPS.MANAGE);
-  }, [action, setStep]);
 
   return (
     <Grid container item>

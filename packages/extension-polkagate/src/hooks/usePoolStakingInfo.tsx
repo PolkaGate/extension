@@ -99,7 +99,7 @@ export interface PoolStakingInfo {
 export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash, refresh, setRefresh);
-  const pool = usePool2(address, genesisHash);
+  const pool = usePool2(address, genesisHash, undefined, refresh, setRefresh);
   const poolStakingConsts = usePoolConst(genesisHash);
   const stakingConsts = useStakingConsts2(genesisHash);
 
@@ -114,15 +114,10 @@ export default function usePoolStakingInfo (address: string | undefined, genesis
     const info = await getUnstakingAmount(api, pool);
 
     setSessionInfo(info);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, pool, refresh]);
+  }, [api, pool]);
 
   // Update session info whenever dependencies change
   useEffect(() => {
-    // if (pool === undefined) {
-    //   return;
-    // }
-
     fetchSessionInfo().catch(console.error);
   }, [fetchSessionInfo, pool]);
 

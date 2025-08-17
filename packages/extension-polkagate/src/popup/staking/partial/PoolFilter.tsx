@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Box, Container, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Flash, People } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 
@@ -11,10 +11,10 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { VerifiedTag } from '../../../assets/icons/index';
 import { DecisionButtons, ExtensionPopup, GradientDivider } from '../../../components';
+import MySwitch from '../../../components/MySwitch';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePoolConst, useTranslation } from '../../../hooks';
 import { amountToHuman, amountToMachine } from '../../../util/utils';
-import MySwitch from '../../../components/MySwitch';
 import CheckBox from '../components/CheckBox';
 import Search from '../components/Search';
 import SortBy from './SortBy';
@@ -31,7 +31,7 @@ export enum SORTED_BY {
 }
 
 export interface PoolFilterState {
-  sortBy: SORTED_BY;
+  sortBy: string;
   isVerified: boolean;
   commissionThreshold: number | undefined;
   stakedThreshold: BN;
@@ -133,7 +133,7 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
   const { decimal, token } = useChainInfo(genesisHash, true);
   const poolStakingConsts = usePoolConst(genesisHash);
 
-  const [sortConfig, setSortConfig] = React.useState<SORTED_BY>(SORTED_BY.INDEX);
+  const [sortConfig, setSortConfig] = React.useState<string>(SORTED_BY.INDEX);
   const [justVerifiedStash, setJustVerifiedStash] = React.useState<boolean>(false);
   const [commissionSetting, setCommissionSetting] = React.useState<Setting>(init);
   const [stakedSetting, setStakedSetting] = React.useState<Setting>(init);
@@ -204,6 +204,7 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
         <SortBy
           setSortBy={setSortConfig}
           sortBy={sortConfig}
+          sortOptions={Object.values(SORTED_BY)}
         />
         <GradientDivider style={{ my: '14px' }} />
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '8px', justifyContent: 'space-between', m: 0, width: '96%' }}>
@@ -250,17 +251,19 @@ export default function PoolFilter ({ dispatchFilter, filter, genesisHash, openM
         />
         <GradientDivider style={{ my: '14px' }} />
       </Stack>
-      <DecisionButtons
-        direction='vertical'
-        onPrimaryClick={onApply}
-        onSecondaryClick={onReset}
-        primaryBtnText={t('Apply')}
-        secondaryBtnText={t('Reset all')}
-        style={{
-          height: '106px',
-          width: '100%'
-        }}
-      />
+      <Grid container item sx={{ mt: '60px' }}>
+        <DecisionButtons
+          direction='vertical'
+          onPrimaryClick={onApply}
+          onSecondaryClick={onReset}
+          primaryBtnText={t('Apply')}
+          secondaryBtnText={t('Reset all')}
+          style={{
+            height: '44px',
+            width: '100%'
+          }}
+        />
+      </Grid>
     </ExtensionPopup>
   );
 }

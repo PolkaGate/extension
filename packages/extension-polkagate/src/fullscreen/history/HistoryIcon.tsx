@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ArrowCircleDown2, ArrowCircleRight2, ArrowSwapHorizontal, Data, Dislike, Like1, LikeDislike, MedalStar, Money, Polkadot, Sagittarius, ShoppingBag, Strongbox, Strongbox2 } from 'iconsax-react';
+import { ArrowCircleDown2, ArrowCircleRight2, ArrowSwapHorizontal, Data, Dislike, Like1, LikeDislike, Money, Polkadot, Record, Sagittarius, ShoppingBag, Strongbox, Strongbox2 } from 'iconsax-react';
 import React, { memo } from 'react';
 
 import { type ActionType } from '../../util';
@@ -20,7 +20,7 @@ const HistoryIcon = ({ action }: Props) => {
     aye: <Like1 color='#82FFA5' size='15' variant='Bold' />,
     balances: <ArrowSwapHorizontal color='#AA83DC' size='20' />,
     delegate: <Sagittarius color='#AA83DC' size='20' variant='Bulk' />,
-    governance: <MedalStar color='#AA83DC' size='16' />,
+    governance: <Record color='#AA83DC' size='16' variant='Bulk' />,
     nay: <Dislike color='#FF165C' size='15' variant='Bold' />,
     'pool staking': <Strongbox2 color='#AA83DC' size='20' />,
     proxy: <Data color='#AA83DC' size='14' />,
