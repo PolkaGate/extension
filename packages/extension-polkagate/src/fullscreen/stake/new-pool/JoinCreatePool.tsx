@@ -13,6 +13,7 @@ import { DraggableModal } from '../../components/DraggableModal';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 
 interface Props {
+  address: string | undefined;
   genesisHash: string | undefined;
   onClose: PopupCloser;
   popupOpener: PopupOpener;
@@ -23,7 +24,7 @@ enum stakingOptions {
   CREATE
 }
 
-export default function JoinCreatePool ({ genesisHash, onClose, popupOpener }: Props) {
+export default function JoinCreatePool ({ address, genesisHash, onClose, popupOpener }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -36,12 +37,12 @@ export default function JoinCreatePool ({ genesisHash, onClose, popupOpener }: P
 
   const onStake = useCallback(() => {
     if (selectedOption === stakingOptions.JOIN) {
-      navigate('/fullscreen-stake/pool/join-pool/' + genesisHash) as void;
+      navigate('/fullscreen-stake/pool/join-pool/' + address + '/' + genesisHash) as void;
       onClose();
     } else if (selectedOption === stakingOptions.CREATE) {
       popupOpener(StakingPopUps.CREATE_POOL)();
     }
-  }, [genesisHash, navigate, onClose, popupOpener, selectedOption]);
+  }, [address, genesisHash, navigate, onClose, popupOpener, selectedOption]);
 
   return (
     <DraggableModal

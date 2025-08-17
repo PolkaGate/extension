@@ -142,22 +142,22 @@ export const STAKING_ROUTES: RouteConfig[] = [
   // FULL SCREEN STAKING ROUTES
   {
     Component: SoloFS,
-    path: '/fullscreen-stake/solo/:genesisHash',
+    path: '/fullscreen-stake/solo/:address/:genesisHash',
     trigger: 'solo-staking-fullscreen'
   },
   {
     Component: ManageValidators,
-    path: '/fullscreen-stake/solo/manage-validator/:genesisHash',
+    path: '/fullscreen-stake/solo/manage-validator/:address/:genesisHash',
     trigger: 'solo-staking-manage-validator-fullscreen'
   },
   {
     Component: PoolFS,
-    path: '/fullscreen-stake/pool/:genesisHash',
+    path: '/fullscreen-stake/pool/:address/:genesisHash',
     trigger: 'pool-staking-fullscreen'
   },
   {
     Component: JoinPoolFS,
-    path: '/fullscreen-stake/pool/join-pool/:genesisHash',
+    path: '/fullscreen-stake/pool/join-pool/:address/:genesisHash',
     trigger: 'join-pool-staking-fullscreen'
   },
   {

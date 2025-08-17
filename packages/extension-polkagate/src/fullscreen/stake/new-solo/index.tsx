@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 
 import { type BN, BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSelectedAccount, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
@@ -22,14 +22,13 @@ export default function SoloFullScreen (): React.ReactElement {
 
   useRouteRefresh(() => setRefresh(true));
 
-  const { genesisHash } = useParams<{ genesisHash: string }>();
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
   const { token } = useChainInfo(genesisHash, true);
-  const selectedAccount = useSelectedAccount();
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
+  const stakingInfo = useSoloStakingInfo(address, genesisHash, refresh, setRefresh);
+  const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
-  const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, 'solo', true);
+  const rewardInfo = useStakingRewards3(address, genesisHash, 'solo', true);
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
@@ -97,7 +96,7 @@ export default function SoloFullScreen (): React.ReactElement {
         </Stack>
       </HomeLayout>
       <PopUpHandler
-        address={selectedAccount?.address}
+        address={address}
         genesisHash={genesisHash}
         popupCloser={popupCloser}
         popupOpener={popupOpener}

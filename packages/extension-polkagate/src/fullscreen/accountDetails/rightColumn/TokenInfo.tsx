@@ -212,8 +212,8 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   }, []);
 
   const onStaking = useCallback((type: string) => () => {
-    navigate(`/fullscreen-stake/${type}/${genesisHash}`) as void;
-  }, [genesisHash, navigate]);
+    navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;
+  }, [address, genesisHash, navigate]);
 
   const stakings = useMemo(() => {
     if (!token) {

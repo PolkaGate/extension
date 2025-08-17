@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import { EmptyWarning } from '../../../../assets/icons/index';
 import { FadeOnScroll, Motion, NeonButton, Progress } from '../../../../components';
-import { useBackground, useSelectedAccount, useSoloStakingInfo, useTranslation, useValidatorsInformation } from '../../../../hooks';
+import { useBackground, useSoloStakingInfo, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import NominationsBackButton from '../../partial/NominationsBackButton';
 import NominatorsTable from '../../partial/NominatorsTable';
@@ -52,13 +52,12 @@ export default function NominationsSetting (): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
-  const selectedAccount = useSelectedAccount();
-  const { genesisHash } = useParams<{ genesisHash: string }>();
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
   const refContainer = useRef(null);
 
   const [refresh, setRefresh] = useState<boolean>(false);
 
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
+  const stakingInfo = useSoloStakingInfo(address, genesisHash, refresh, setRefresh);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
   const nominatedValidatorsIds = useMemo(() =>

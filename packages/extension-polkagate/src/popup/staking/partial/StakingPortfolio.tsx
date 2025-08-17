@@ -137,7 +137,7 @@ export default function StakingPortfolio ({ buttons = [], disabled, genesisHash,
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice2(genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
-
+  
   const textColor = useMemo(() => isFullScreen ? '#AA83DC' : theme.palette.text.highlight, [isFullScreen, theme.palette.text.highlight]);
 
   const stakedInCurrency = useMemo(() => {

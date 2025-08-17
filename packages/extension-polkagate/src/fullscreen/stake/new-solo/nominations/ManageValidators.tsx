@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router';
 import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
-import { useSelectedAccount, useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorSuggestion2 } from '../../../../hooks';
+import { useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorSuggestion2 } from '../../../../hooks';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
 import FooterControls from '../../partials/FooterControls';
@@ -24,9 +24,8 @@ import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 function ManageValidators () {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { genesisHash } = useParams<{ genesisHash: string }>();
-  const selectedAccount = useSelectedAccount();
-  const stakingInfo = useSoloStakingInfo(selectedAccount?.address, genesisHash);
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { nominatedValidatorsIds, nominatedValidatorsInformation, validatorsInfo, validatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
 
   const selectedBestValidators = useValidatorSuggestion2(validatorsInfo, genesisHash);
@@ -125,7 +124,7 @@ function ManageValidators () {
     setNewSelectedValidators([]);
     setSystemSuggestion(false);
   }, []);
-  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/solo/' + genesisHash) as void, [genesisHash, navigate]);
+  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/solo/' + address + '/' + genesisHash) as void, [genesisHash, navigate, address]);
   const toggleReview = useCallback(() => setGoReview((isOnReview) => !isOnReview), []);
 
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
@@ -215,7 +214,7 @@ function ManageValidators () {
       </HomeLayout>
       {review &&
         <ReviewPopup
-          address={selectedAccount?.address}
+          address={address}
           genesisHash={genesisHash}
           newSelectedValidators={newSelectedValidators}
           onClose={toggleReview}

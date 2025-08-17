@@ -39,7 +39,7 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
 
   const changePath = useCallback(async () => {
     if (location.pathname.includes('/fullscreen-stake/')) {
-      adjustStakingPath();
+      adjustStakingPath().catch(console.error);
 
       return;
     }
@@ -64,7 +64,7 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
     const newPath = pathParts.join('/');
 
     return await navigate(newPath);
-  }, [location.pathname, genesisHash, address, navigate]);
+  }, [location.pathname, genesisHash, address, navigate, adjustStakingPath]);
 
   const handleExit = useCallback(() => {
     if (!address) {
