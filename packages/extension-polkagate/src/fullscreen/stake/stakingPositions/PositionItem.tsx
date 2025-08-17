@@ -39,7 +39,7 @@ export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
 
 const ArrowButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '8px', cursor: 'pointer', height: '36px', justifyContent: 'center', width: '36px' }}>
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '8px', cursor: 'pointer', height: '36px', justifyContent: 'center', width: '36px' }}>
       <ArrowRight2 color='#AA83DC' size='16' variant='Bold' />
     </Grid>
   );
@@ -108,7 +108,7 @@ function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token
   }, [genesisHash, navigate, selectedAccount?.address, type]);
 
   return (
-    <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#6743944D' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+    <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
       <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
       <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
