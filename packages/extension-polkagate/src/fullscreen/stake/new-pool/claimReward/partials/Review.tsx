@@ -31,6 +31,7 @@ export const RewardHeaderAmount = ({ amount, genesisHash, style, token }: Reward
         amount={amount}
         differentValueColor={isExtension ? theme.palette.text.highlight : '#AA83DC'}
         genesisHash={genesisHash}
+        isExtension ={isExtension}
         token={token}
       />
     </Stack>
