@@ -7,9 +7,9 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function useIsHovered<T extends HTMLElement = HTMLDivElement> (): {
   isHovered: boolean;
-  ref: React.RefObject<T>;
+  ref: React.RefObject<T | null>;
 } {
-  const ref = useRef<T>(null);
+  const ref = useRef<T | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/logo/534b.PNG" data-canonical-src="https://raw.githubusercontent.com/Nick-1979/PolkadotJsPlusPictures/main/polkagate/logo/534b.PNG" width="100" height="100" />
 
-# PolkaGate
+# PolkaGate Extension
 ![license](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&style=flat-square)
 ![](https://img.shields.io/github/issues-raw/PolkaGate/polkagate-extension)
 [![ci](https://github.com/PolkaGate/polkagate-extension/actions/workflows/ci-workflow.yml/badge.svg?event=push)](https://github.com/PolkaGate/polkagate-extension/actions/workflows/ci-workflow.yml)

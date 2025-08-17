@@ -24,8 +24,8 @@ const DROP_INTERVAL = 50;
 function LogoDropAnimation ({ ground = 200, style }: Props) {
   const [drops, setDrops] = useState<Drop[]>([]);
 
-  const requestRef = useRef<number>();
-  const previousTimeRef = useRef<number>();
+  const requestRef = useRef<number>(0);
+  const previousTimeRef = useRef<number>(0);
   const lastDropTimeRef = useRef<number>(0);
 
   // Memoized drop cleanup function

@@ -163,7 +163,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const isExtension = useIsExtensionPopup();
 
   const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);

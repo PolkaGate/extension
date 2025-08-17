@@ -66,7 +66,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[]
 }
 
 interface DropContentProps {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   contentDropWidth?: number | undefined;
   open: boolean;
   options: string[];

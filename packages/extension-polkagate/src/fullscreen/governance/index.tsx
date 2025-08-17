@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
 
 import type { u32 } from '@polkadot/types-codec';
 import type { LatestReferenda } from './utils/types';

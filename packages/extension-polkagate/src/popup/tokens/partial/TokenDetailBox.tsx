@@ -5,11 +5,11 @@ import type { BN } from '@polkadot/util';
 
 import { Grid, styled, Typography } from '@mui/material';
 import { type Icon, InfoCircle } from 'iconsax-react';
-import React, { memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { Tooltip } from '../../../components';
+import { MyTooltip } from '../../../components';
 import { usePrices } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import { ColumnAmounts } from './ColumnAmounts';
@@ -50,7 +50,6 @@ const TokenDetailBoxContainer = styled(Grid, {
 
 function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize = '21', iconVariant, onClick, priceId, title, token }: TokenDetailBoxProp) {
   const pricesInCurrency = usePrices();
-  const toolTipRef = useRef(null);
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
   const totalBalance = useMemo(() => calcPrice(priceOf(priceId ?? '0'), amount ?? BN_ZERO, decimal ?? 0), [amount, decimal, priceId, priceOf]);
@@ -65,7 +64,14 @@ function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, desc
             <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} sx={{ textWrap: 'nowrap' }} variant='B-1'>
               {title}
             </Typography>
-            {description && <InfoCircle color={clickable ? '#AA83DC' : DISABLED_COLOR} ref={toolTipRef} size='19' variant='Bold' />}
+            {description &&
+              <MyTooltip
+                content={description}
+                notShow={!!description}
+              >
+                <InfoCircle color={clickable ? '#AA83DC' : DISABLED_COLOR} size='19' variant='Bold' />
+              </MyTooltip>
+            }
           </Grid>
         </Grid>
         <ColumnAmounts
@@ -76,12 +82,6 @@ function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, desc
           token={token ?? ''}
         />
       </TokenDetailBoxContainer>
-      <Tooltip
-        content={description}
-        placement='top'
-        positionAdjustment={{ top: -10 }}
-        targetRef={description ? toolTipRef : null}
-      />
     </>
   );
 }

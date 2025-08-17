@@ -118,6 +118,7 @@ export default function Solo (): React.ReactElement {
             onRestake={onRestake}
             onWithdraw={onWithdraw}
             redeemable={redeemable}
+            rewardDestinationAddress={stakingInfo.rewardDestinationAddress}
             rewards={rewards}
             toBeReleased={toBeReleased}
             type='solo'

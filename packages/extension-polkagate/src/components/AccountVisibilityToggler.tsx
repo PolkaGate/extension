@@ -18,7 +18,7 @@ function AccountVisibilityToggler ({ size = '24', style = {} }: Props): React.Re
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const hovered = useIsHovered(ref);
 
   const toggleVisibility = useCallback((): void => {

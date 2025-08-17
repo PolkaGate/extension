@@ -1,5 +1,27 @@
 # Change Log
 
+# [1.0.0](https://github.com/polkagate/extension/compare/v0.36.4...v1.0.0) (2025-08-17)
+
+
+* feat!: apply new design with huge performance improvements ([b2e775e](https://github.com/polkagate/extension/commit/b2e775eb5945afdf5b5499fce8d6ea12a474316c))
+
+
+### Features
+
+* apply new design  ([#1783](https://github.com/polkagate/extension/issues/1783)) ([e6304c3](https://github.com/polkagate/extension/commit/e6304c3e28ae38db1f544e643b4a9920b92677b0)), closes [#1690](https://github.com/polkagate/extension/issues/1690) [#1691](https://github.com/polkagate/extension/issues/1691)
+
+
+### BREAKING CHANGES
+
+* the old design is no longer supported, users need to migrate to the new one
+
+## [0.36.4](https://github.com/polkagate/extension/compare/v0.36.3...v0.36.4) (2025-06-04)
+
+
+### Bug Fixes
+
+* fix ledger signing issue due to new weird on-chain metadata version ([#1754](https://github.com/polkagate/extension/issues/1754)) ([86abbc2](https://github.com/polkagate/extension/commit/86abbc26618fa50732aa51b5f3e83918671267f5)), closes [#1753](https://github.com/polkagate/extension/issues/1753)
+
 ## [0.36.3](https://github.com/polkagate/extension/compare/v0.36.2...v0.36.3) (2025-04-08)
 
 

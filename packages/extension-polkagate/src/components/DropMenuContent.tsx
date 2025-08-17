@@ -28,7 +28,7 @@ const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth:
 
 interface Props {
   contentDropWidth?: number | undefined;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   options: Options[];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

@@ -27,7 +27,7 @@ interface Props {
 
 function Currency ({ borderColor, color, dialogLeft = 260, fontSize = '22px', height, minWidth }: Props): React.ReactElement {
   const theme = useTheme();
-  const ref = useRef<DOMRect>();
+  const ref = useRef<DOMRect | null>(null);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [currencyToShow, setCurrencyToShow] = useState<CurrencyItemType | undefined>();

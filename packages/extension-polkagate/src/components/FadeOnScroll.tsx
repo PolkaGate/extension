@@ -11,7 +11,7 @@ interface FaderProps {
   style?: React.CSSProperties;
 }
 interface Props extends FaderProps {
-  containerRef: React.RefObject<HTMLElement> | null;
+  containerRef: React.RefObject<HTMLElement | null> | null;
   showAnyway?: boolean;
 }
 

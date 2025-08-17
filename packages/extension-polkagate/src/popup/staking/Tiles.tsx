@@ -21,6 +21,7 @@ interface Props {
   address: string | undefined;
   asset: FetchedBalance | undefined;
   genesisHash: string | undefined;
+  rewardDestinationAddress: string | undefined;
   redeemable: Balance | BN | undefined;
   unlockingAmount: BN | undefined;
   rewards: BN | undefined;
@@ -32,7 +33,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestake, onWithdraw, redeemable, rewards, toBeReleased, type, unlockingAmount }: Props) {
+function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestake, onWithdraw, redeemable, rewardDestinationAddress, rewards, toBeReleased, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
@@ -51,7 +52,7 @@ function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestak
       {flatTileReward
         ? (
           <StakingRewardTile
-            address={address}
+            address={rewardDestinationAddress}
             genesisHash={genesisHash}
             isDisabled={!rewards || rewards.isZero()}
             layoutDirection={layoutDirection}
