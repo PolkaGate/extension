@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.1](https://github.com/polkagate/extension/compare/v1.0.0...v1.0.1) (2025-08-18)
+
+
+### Bug Fixes
+
+* set missing prop ([149092a](https://github.com/polkagate/extension/commit/149092ad4b21bfd6cd39b55f965571b29f4f516e))
+
 # [1.0.0](https://github.com/polkagate/extension/compare/v0.36.4...v1.0.0) (2025-08-17)
 
 
