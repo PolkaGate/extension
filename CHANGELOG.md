@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.2](https://github.com/polkagate/extension/compare/v1.0.1...v1.0.2) (2025-08-18)
+
+
+### Bug Fixes
+
+* fix rewards inconsistency in solo ([#1784](https://github.com/polkagate/extension/issues/1784)) ([b4eacc2](https://github.com/polkagate/extension/commit/b4eacc21d8e7d98e653d19fd12f7fad079ccadcc))
+
 ## [1.0.1](https://github.com/polkagate/extension/compare/v1.0.0...v1.0.1) (2025-08-18)
 
 
