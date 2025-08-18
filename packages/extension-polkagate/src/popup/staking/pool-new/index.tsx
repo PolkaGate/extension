@@ -145,7 +145,6 @@ export default function Pool (): React.ReactElement {
             onExpand={onExpand}
             onWithdraw={onWithdraw}
             redeemable={redeemable}
-            rewardDestinationAddress={selectedAccount?.address}
             rewards={myClaimable}
             toBeReleased={toBeReleased}
             type='pool'
