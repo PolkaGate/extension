@@ -97,7 +97,7 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
               charsCount={14}
               name={account?.name}
               showAddress
-              style={{ borderRadius: '14px', mt: '5px' }}
+              style={{ borderRadius: '14px', filter: showSnackbar ? 'blur(5px)' : 'none', mt: '5px' }}
             />
           }
           {account && account.isExternal
@@ -115,7 +115,7 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
                 hasError={isPasswordWrong}
                 onEnterPress={onRemove}
                 onPassChange={onPassChange}
-                style={{ marginTop: '45px' }}
+                style={{ filter: showSnackbar ? 'blur(5px)' : 'none', marginTop: '45px' }}
                 title={t('Your Password')}
               />)
           }
