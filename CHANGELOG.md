@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.3](https://github.com/polkagate/extension/compare/v1.0.2...v1.0.3) (2025-08-18)
+
+
+### Bug Fixes
+
+* correct old style selected account setting ([bb0566d](https://github.com/polkagate/extension/commit/bb0566def9923b775042ecc713849864358e762d))
+
 ## [1.0.2](https://github.com/polkagate/extension/compare/v1.0.1...v1.0.2) (2025-08-18)
 
 
