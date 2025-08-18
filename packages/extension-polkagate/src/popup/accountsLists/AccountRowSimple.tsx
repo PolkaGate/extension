@@ -32,7 +32,7 @@ const OFFSET = 30;
 
 function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected, showDrag }: Props): React.ReactElement {
   const navigate = useNavigate();
-
+  const { address, genesisHash, name } = account;
   const [appliedAddress, setAppliedAddress] = useState<string>();
 
   useUpdateSelectedAccount(appliedAddress, false, () => navigate('/') as void);
@@ -44,14 +44,12 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
       return;
     }
 
-    const address = account?.address;
-
     if (!address) {
       return;
     }
 
     setAppliedAddress(address);
-  }, [account?.address, isInSettingMode]);
+  }, [address, isInSettingMode]);
 
   return (
     <motion.div
@@ -71,12 +69,12 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
               <DragIndicator sx={{ color: '#674394', fontSize: '19px' }} />
             }
             <PolkaGateIdenticon
-              address={account.address}
+              address={address}
               size={identiconSize}
             />
             <Identity2
-              address={account?.address}
-              genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
+              address={address}
+              genesisHash={genesisHash ?? POLKADOT_GENESIS}
               nameStyle={{ width: `${MAX_ACCOUNT_NAME_WIDTH - OFFSET}px` }}
               noIdenticon
               style={{ color: (isInSettingMode || isSelected) ? '#EAEBF1' : '#BEAAD8', variant: isInSettingMode ? 'B-4' : 'B-2' }}
@@ -84,9 +82,9 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
           </Stack>
           {!isInSettingMode &&
             <AccountDropDown
-              address={account?.address}
+              address={address}
               iconSize='24px'
-              name={account?.name}
+              name={name}
             />
           }
         </Stack>
