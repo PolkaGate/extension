@@ -90,7 +90,6 @@ export { default as useIsValidator } from './useIsValidator';
 export { useLedger } from './useLedger';
 export { default as useLockedInReferenda } from './useLockedInReferenda';
 export { default as useLockedInReferenda2 } from './useLockedInReferenda2';
-export { default as useLostAccountInformation } from './useLostAccountInformation';
 export { default as useManifest } from './useManifest';
 export { useMapEntries } from './useMapEntries';
 export { default as useMerkleScience } from './useMerkleScience';

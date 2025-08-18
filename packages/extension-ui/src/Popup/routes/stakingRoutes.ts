@@ -3,7 +3,6 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
-import Stake from '@polkadot/extension-polkagate/src/fullscreen/stake';
 import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool';
 import JoinPoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool/joinPool';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo';
@@ -18,9 +17,6 @@ import PoolInfo from '@polkadot/extension-polkagate/src/popup/staking/pool-new/I
 import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool-new/joinPool';
 import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/stake';
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/unstake';
-import StakingReward from '@polkadot/extension-polkagate/src/popup/staking/Reward';
-import SoloPayout from '@polkadot/extension-polkagate/src/popup/staking/solo/rewards/PendingRewards';
-import TuneUp from '@polkadot/extension-polkagate/src/popup/staking/solo/tuneUp';
 import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
 import BondExtra from '@polkadot/extension-polkagate/src/popup/staking/solo-new/bondExtra';
 import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/fast-unstake/FastUnstake';
@@ -46,11 +42,6 @@ export const STAKING_ROUTES: RouteConfig[] = [
     Component: EasyStake,
     path: '/easyStake/:genesisHash',
     trigger: 'easy-stake'
-  },
-  {
-    Component: StakingReward,
-    path: '/stakingReward/:address/:genesisHash/:type',
-    trigger: 'staking-reward'
   },
   // POOL STAKING ROUTE
   {
@@ -105,11 +96,6 @@ export const STAKING_ROUTES: RouteConfig[] = [
     trigger: 'solo-nominations'
   },
   {
-    Component: SoloPayout,
-    path: '/solo/payout/:address',
-    trigger: 'solo-payout'
-  },
-  {
     Component: SoloRestake,
     path: '/solo/:genesisHash/restake',
     trigger: 'solo-restake'
@@ -159,15 +145,5 @@ export const STAKING_ROUTES: RouteConfig[] = [
     Component: JoinPoolFS,
     path: '/fullscreen-stake/pool/join-pool/:address/:genesisHash',
     trigger: 'join-pool-staking-fullscreen'
-  },
-  {
-    Component: Stake,
-    path: '/stake/:address',
-    trigger: 'stake'
-  },
-  {
-    Component: TuneUp,
-    path: '/tuneup/:address',
-    trigger: 'tuneup'
   }
 ];
