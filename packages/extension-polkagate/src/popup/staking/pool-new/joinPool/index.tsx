@@ -23,7 +23,7 @@ export default function JoinPool () {
   useBackground('staking');
 
   const { t } = useTranslation();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const navigate = useNavigate();
   const pools = usePools2(genesisHash);
@@ -43,7 +43,7 @@ export default function JoinPool () {
     setBondAmount,
     setSelectedPool,
     transactionInformation,
-    tx } = useJoinPool(selectedAccount?.address, genesisHash);
+    tx } = useJoinPool(address, genesisHash);
 
   const [step, setStep] = useState(POOL_STEPS.CHOOSE_POOL);
 
@@ -58,7 +58,7 @@ export default function JoinPool () {
   }, [genesisHash, navigate, setBondAmount, step]);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Joining Pool'),
     closeReview: onBack,
     genesisHash: genesisHash ?? '',
@@ -72,7 +72,7 @@ export default function JoinPool () {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + address + '/' + genesisHash} homeType='default' />
       <Motion style={{ height: 'calc(100% - 50px)' }} variant='slide'>
         <JoinPoolBackButton
           dispatchFilter={dispatchFilter}

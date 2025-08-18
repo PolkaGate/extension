@@ -21,9 +21,9 @@ export default function BondExtra (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
@@ -35,7 +35,7 @@ export default function BondExtra (): React.ReactElement {
     onMaxValue,
     setBondAmount,
     transactionInformation,
-    tx } = useBondExtraPool(selectedAccount?.address, genesisHash);
+    tx } = useBondExtraPool(address, genesisHash);
 
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => {
@@ -45,7 +45,7 @@ export default function BondExtra (): React.ReactElement {
   const onBack = useCallback(() => navigate('/pool/' + genesisHash) as void, [genesisHash, navigate]);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Stake more'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -59,7 +59,7 @@ export default function BondExtra (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + address + '/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

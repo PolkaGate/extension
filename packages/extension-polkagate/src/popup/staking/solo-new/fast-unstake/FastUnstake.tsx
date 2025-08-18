@@ -115,14 +115,14 @@ export default function FastUnstake (): React.ReactElement {
 
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const navigate = useNavigate();
 
   const { checkDone,
     eligibilityCheck,
     isEligible,
     transactionInformation,
-    tx } = useFastUnstaking(selectedAccount?.address, genesisHash);
+    tx } = useFastUnstaking(address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 
@@ -131,7 +131,7 @@ export default function FastUnstake (): React.ReactElement {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Withdraw redeemable'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -144,7 +144,7 @@ export default function FastUnstake (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}

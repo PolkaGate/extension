@@ -178,7 +178,7 @@ export default function Settings (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const isBlueish = useIsBlueish();
 
@@ -193,14 +193,14 @@ export default function Settings (): React.ReactElement {
     setSpecificAccount,
     specificAccount,
     transactionInformation,
-    tx } = useSoloSettings(selectedAccount?.address, genesisHash);
+    tx } = useSoloSettings(address, genesisHash);
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
   const onNext = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Settings'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -214,7 +214,7 @@ export default function Settings (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative', zIndex: 1 }}>
-        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

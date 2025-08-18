@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import { EmptyWarning } from '../../../../assets/icons/index';
 import { FadeOnScroll, Motion, NeonButton, Progress } from '../../../../components';
-import { useBackground, useSoloStakingInfo, useTranslation, useValidatorsInformation } from '../../../../hooks';
+import { useBackground, useSelectedAccount, useSoloStakingInfo, useTranslation, useValidatorsInformation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import NominationsBackButton from '../../partial/NominationsBackButton';
 import NominatorsTable from '../../partial/NominatorsTable';
@@ -52,7 +52,8 @@ export default function NominationsSetting (): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
-  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const address = useSelectedAccount()?.address;
+  const { genesisHash } = useParams<{ genesisHash: string }>();
   const refContainer = useRef(null);
 
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -81,7 +82,7 @@ export default function NominationsSetting (): React.ReactElement {
 
   return (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
         <NominationsBackButton style={{ mt: '8px' }} />
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>

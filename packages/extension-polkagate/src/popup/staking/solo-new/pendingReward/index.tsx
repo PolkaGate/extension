@@ -19,7 +19,7 @@ export default function PendingReward () {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const { adaptiveDecimalPoint,
@@ -30,7 +30,7 @@ export default function PendingReward () {
     selectedToPayout,
     totalSelectedPending,
     transactionInformation,
-    tx } = usePendingRewardsSolo(selectedAccount?.address, genesisHash);
+    tx } = usePendingRewardsSolo(address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 
@@ -39,7 +39,7 @@ export default function PendingReward () {
   const closeReview = useCallback(() => setReview(false), []);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Payout rewards'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -53,7 +53,7 @@ export default function PendingReward () {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

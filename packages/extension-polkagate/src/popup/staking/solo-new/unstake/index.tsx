@@ -21,7 +21,7 @@ export default function Unstake (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
@@ -33,7 +33,7 @@ export default function Unstake (): React.ReactElement {
     staked,
     transactionInformation,
     tx,
-    unstakingValue } = useUnstakingSolo(selectedAccount?.address, genesisHash);
+    unstakingValue } = useUnstakingSolo(address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 
@@ -45,7 +45,7 @@ export default function Unstake (): React.ReactElement {
   }, [setUnstakingValue]);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Unstaking'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -58,7 +58,7 @@ export default function Unstake (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}
