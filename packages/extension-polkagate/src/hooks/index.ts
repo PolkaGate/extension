@@ -138,6 +138,7 @@ export { default as useReferendum } from './useReferendum';
 export { default as useReservedDetails } from './useReservedDetails';
 export { default as useReservedDetails2 } from './useReservedDetails2';
 export { default as useRouteRefresh } from './useRouteRefresh';
+export { default as useScrollbarAutoHide } from './useScrollbarAutoHide';
 export { default as useSelectedAccount } from './useSelectedAccount';
 export { default as useSelectedChains } from './useSelectedChains';
 export { default as useSelectedLanguage } from './useSelectedLanguage';

@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { useBackground } from '../hooks';
+import { useBackground, useScrollbarAutoHide } from '../hooks';
 
 interface Props {
   children: React.ReactNode;
@@ -11,6 +11,8 @@ interface Props {
 
 export default function Main ({ children }: Props): React.ReactElement<Props> {
   const background = useBackground();
+
+  useScrollbarAutoHide();
 
   return (
     <main id='main' style={{ height: '100%', width: '100%' }}>
