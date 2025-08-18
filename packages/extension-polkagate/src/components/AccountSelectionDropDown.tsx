@@ -4,26 +4,21 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { useSelectedAccount } from '../hooks';
-import { updateMeta } from '../messaging';
+import { setStorage } from '../util';
+import { STORAGE_KEY } from '../util/constants';
 import { AccountContext, DropSelect } from '.';
 
 interface Props {
   style?: React.CSSProperties;
 }
 
-function AccountDropDown ({ style }: Props) {
+function AccountSelectionDropDown ({ style }: Props) {
   const selectedAccount = useSelectedAccount();
   const { accounts } = useContext(AccountContext);
 
   const onClick = useCallback((address: string | number) => {
-    const accountToUnselect = accounts.find(({ address: accountAddress, selected }) => selected && address !== accountAddress);
-
-    Promise.all([
-      updateMeta(String(address), JSON.stringify({ selected: true })),
-      ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
-    ])
-      .catch(console.error);
-  }, [accounts]);
+    setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address).catch(console.error);
+  }, []);
 
   const options = useMemo(() => {
     return accounts.map(({ address, name }) => {
@@ -52,4 +47,4 @@ function AccountDropDown ({ style }: Props) {
   );
 }
 
-export default AccountDropDown;
+export default AccountSelectionDropDown;

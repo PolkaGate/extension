@@ -84,9 +84,9 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
     const keywordLower = searchKeyword.toLowerCase();
 
     return Object.entries(categorizedAccounts).reduce((acc, [label, accounts]) => {
-      const filteredAccounts = accounts.filter((account) =>
-        account.name?.toLowerCase().includes(keywordLower) ||
-        account.address.toLowerCase().includes(keywordLower)
+      const filteredAccounts = accounts.filter((a) =>
+        a.name?.toLowerCase().includes(keywordLower) ||
+        a.address.toLowerCase().includes(keywordLower)
       );
 
       if (filteredAccounts.length > 0) {

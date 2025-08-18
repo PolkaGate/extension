@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as GradientDivider } from '../style/GradientDivider';
-export { default as AccountSelectionDropDown } from './AccountDropDown';
+export { default as AccountSelectionDropDown } from './AccountSelectionDropDown';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';

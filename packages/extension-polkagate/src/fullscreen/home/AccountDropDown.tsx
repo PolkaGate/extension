@@ -46,13 +46,13 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
       // },
       {
         Icon: Data,
-        text: t('Manage proxies'),
+        text: t('Manage Proxies'),
         value: `/proxyManagement/${address}/${genesisHash}`
       }
     ];
   }, [address, genesisHash, t]);
 
-  const extraFullscreenOptions = useMemo(() => {
+  const fullscreenExtraOptions = useMemo(() => {
     return [
       {
         isLine: true
@@ -83,7 +83,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
     ];
   }, [t]);
 
-  const extraExtensionOptions = useMemo(() => {
+  const extensionExtraOptions = useMemo(() => {
     return [
       {
         isLine: true
@@ -91,7 +91,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
       {
         Icon: Setting4,
         pathname: '/accounts',
-        text: t('Account settings'),
+        text: t('Account Settings'),
         value: `/settings-account/${address}`
       }
     ];
@@ -100,9 +100,9 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
   const _options = useMemo(() => {
     return [
       ...baseOption,
-      ...(isExtension ? extraExtensionOptions : extraFullscreenOptions)
+      ...(isExtension ? extensionExtraOptions : fullscreenExtraOptions)
     ];
-  }, [baseOption, extraExtensionOptions, extraFullscreenOptions, isExtension]);
+  }, [baseOption, extensionExtraOptions, fullscreenExtraOptions, isExtension]);
 
   const toggleOpen = useCallback(() => !disabled && setOpenDropDown((isOpen) => !isOpen), [disabled]);
   const handleClickAway = useCallback(() => setOpenDropDown(false), []);
