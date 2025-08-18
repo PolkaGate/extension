@@ -6,23 +6,22 @@ import { Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecur
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import { updateMeta, windowOpen } from '@polkadot/extension-polkagate/src/messaging';
+import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { noop } from '@polkadot/util';
 
-import { AccountContext, ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
+import { ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { UserDashboardHeader, WebsitesAccess } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
-import { ExtensionPopups } from '../../../util/constants';
+import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 
 function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
   const location = useLocation();
-  const { accounts } = useContext(AccountContext);
   const { address } = useParams<{ address: string }>();
-
   const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   useEffect(() => {
@@ -30,14 +29,8 @@ function AccountSettings (): React.ReactElement {
       return;
     }
 
-    const accountToUnselect = accounts.find(({ address: addr, selected }) => selected && address !== addr);
-
-    Promise.all([
-      updateMeta(address, JSON.stringify({ selected: true })),
-      ...(accountToUnselect ? [updateMeta(accountToUnselect.address, JSON.stringify({ selected: false }))] : [])
-    ])
-      .catch(console.error);
-  }, [accounts, address]);
+    setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address).catch(console.error);
+  }, [address]);
 
   const onAction = useContext(ActionContext);
 
@@ -48,7 +41,7 @@ function AccountSettings (): React.ReactElement {
   const onDapps = useCallback(() => setPopup(ExtensionPopups.DAPPS), []);
   const onForget = useCallback(() => setPopup(ExtensionPopups.REMOVE), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
-  const onImport = useCallback(() => windowOpen('/account/have-wallet'), []);
+  const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
