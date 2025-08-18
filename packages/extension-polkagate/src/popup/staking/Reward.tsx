@@ -92,22 +92,24 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           {t('Reward source')}
         </Typography>
         {reward.poolId
-          ? <Typography color={theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-5' width='fit-content'>
-            {t('Pool #{{poolId}}', { poolId: reward.poolId })}
-          </Typography>
-          : <Identity2
-            address={reward.address}
-            addressStyle={{ color: 'text.highlight' }}
-            genesisHash={genesisHash ?? ''}
-            identiconSize={24}
-            style={{
-              addressVariant: 'B-4',
-              color: theme.palette.text.primary,
-              variant: 'B-1',
-              width: '200px'
-            }}
-            withShortAddress
-            />
+          ? (
+            <Typography color={theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-5' width='fit-content'>
+              {t('Pool #{{poolId}}', { poolId: reward.poolId })}
+            </Typography>)
+          : (
+            <Identity2
+              address={reward.address}
+              addressStyle={{ color: 'text.highlight' }}
+              genesisHash={genesisHash ?? ''}
+              identiconSize={24}
+              style={{
+                addressVariant: 'B-4',
+                color: theme.palette.text.primary,
+                variant: 'B-1',
+                width: '200px'
+              }}
+              withShortAddress
+            />)
         }
       </Container>
     </Collapse>
