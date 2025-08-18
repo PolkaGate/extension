@@ -15,7 +15,7 @@ import { noop } from '@polkadot/util';
 import { AssetLogo } from '../../../components';
 import { useAccountAssets, useChainInfo, useIsHovered, useTranslation } from '../../../hooks';
 
-const DropContentContainer = styled(Grid)(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
+const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
   background: '#05091C',
   border: '4px solid',
   borderColor: '#1B133C',
