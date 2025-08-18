@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router';
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, usePrices, useTranslation } from '../../hooks';
-import { amountToHuman } from '../../util/utils';
+import { calcPrice } from '../../hooks/useYouHave';
 import StakingInfoTile from './partial/StakingInfoTile';
 import StakingRewardTile from './partial/StakingRewardTile';
 
@@ -93,7 +93,7 @@ function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestak
           }]}
           cryptoAmount={redeemable}
           decimal={decimal ?? 0}
-          fiatAmount={redeemable && decimal ? (Number(amountToHuman(redeemable, decimal)) * tokenPrice) : 0}
+          fiatAmount={redeemable && decimal ? calcPrice(tokenPrice, redeemable, decimal) : 0}
           layoutDirection={layoutDirection}
           title={t('Redeemable')}
           token={token ?? ''}
@@ -110,7 +110,7 @@ function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestak
             : undefined)}
           cryptoAmount={unlockingAmount}
           decimal={decimal ?? 0}
-          fiatAmount={unlockingAmount && decimal ? (Number(amountToHuman(unlockingAmount, decimal)) * tokenPrice) : 0}
+          fiatAmount={unlockingAmount && decimal ? calcPrice(tokenPrice, unlockingAmount, decimal) : 0}
           layoutDirection={layoutDirection}
           onExpand={toBeReleased?.length ? onExpand : undefined}
           title={t('Unstaking')}
