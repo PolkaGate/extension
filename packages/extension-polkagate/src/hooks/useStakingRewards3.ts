@@ -376,10 +376,6 @@ export default function useStakingRewards3 (address: string | undefined, genesis
     return `${firstMonth} ${firstDay} - ${lastMonth} ${lastDay}`;
   }, [dataToShow, weeksRewards, pageIndex]);
 
-  console.log('dataToShow:', dataToShow?.[pageIndex]);
-  console.log('weeksRewards:', weeksRewards);
-  console.log('descSortedRewards:', descSortedRewards);
-
   /**
    * Memoized chart configuration with interactive features
    * Handles hover effects, styling, and responsive behavior
