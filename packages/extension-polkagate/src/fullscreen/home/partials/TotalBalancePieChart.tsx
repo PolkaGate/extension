@@ -12,13 +12,15 @@ import { stars6Black, stars6White } from '../../../assets/icons';
 import { AccountsAssetsContext, AssetLogo } from '../../../components';
 import FormatPrice from '../../../components/FormatPrice';
 import { useCurrency, useIsHideNumbers, usePrices, useTranslation, useYouHave } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
-import { isPriceOutdated } from '../../../popup/home/YouHave';
+import { calcPrice, type YouHaveType } from '../../../hooks/useYouHave';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
-import { DEFAULT_COLOR, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
+import { DEFAULT_COLOR, PRICE_VALIDITY_PERIOD, TEST_NETS, TOKENS_WITH_BLACK_LOGO } from '../../../util/constants';
 import getLogo2 from '../../../util/getLogo2';
 import { countDecimalPlaces, formatDecimal } from '../../../util/utils';
 import Chart from './Chart';
+
+export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
+  youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
 
 interface Props {
   setGroupedAssets: React.Dispatch<React.SetStateAction<AssetsWithUiAndPrice[] | undefined>>

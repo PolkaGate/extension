@@ -3,26 +3,26 @@
 
 // @ts-nocheck
 
+import type { ApiPromise } from '@polkadot/api';
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Data } from '@polkadot/types';
 import type { PalletIdentityLegacyIdentityInfo, PalletIdentityRegistration } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { ApiPromise } from '@polkadot/api';
-import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import type { AccountsStore } from '@polkadot/extension-base/stores';
+import { AccountsStore } from '@polkadot/extension-base/stores';
 import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 import keyring from '@polkadot/ui-keyring';
-import { BN, BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
+import { BN_ZERO, hexToString, isHex, u8aToString } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { Progress, Warning } from '../../components';
 import { useApiWithChain2, useFormatted, useFullscreen, usePeopleChain, useTranslation } from '../../hooks';
 import { FULLSCREEN_WIDTH } from '../../util/constants';
 import FullScreenHeader from '../governance/FullScreenHeader';
-import Bread from '../partials/Bread';
 import PreviewIdentity from './Preview';
 import RequestJudgement from './RequestJudgement';
 import Review from './Review';
@@ -367,7 +367,6 @@ export default function ManageIdentity(): React.ReactElement {
     <Grid bgcolor='backgroundFL.primary' container item justifyContent='center'>
       <FullScreenHeader page='manageIdentity' />
       <Grid container item justifyContent='flex-start' sx={{ bgcolor: 'backgroundFL.secondary', display: 'block', height: 'calc(100vh - 70px)', maxWidth: FULLSCREEN_WIDTH, overflow: 'scroll', px: '3%' }}>
-        <Bread />
         {step === STEPS.CHECK_SCREEN &&
           <Progress
             gridSize={200}
