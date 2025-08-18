@@ -11,8 +11,8 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { info } from '../../assets/gif';
-import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../../components';
-import { useAccount, useTranslation } from '../../hooks';
+import { Address2, DecisionButtons, GlowCheckbox, PasswordInput } from '../../components';
+import { useAccount, useAlerts, useTranslation } from '../../hooks';
 import { SharePopup } from '../../partials';
 
 interface Props {
@@ -26,11 +26,12 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
   const account = useAccount(address);
   const navigate = useNavigate();
 
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
   const [password, setPassword] = useState<string>();
   const [isPasswordWrong, setPasswordError] = useState<boolean>();
   const [isBusy, setIsBusy] = useState<boolean>();
+
+  const { notify } = useAlerts();
 
   const toggleAcknowledge = useCallback((state: boolean) => {
     setAcknowledge(state);
@@ -38,12 +39,12 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
 
   const handleClose = useCallback(() => {
     if (window.location.href.includes('accountfs')) { // removing an account from its home
-      navigate('/');
+      navigate('/') as void;
     }
 
-    setShowSnackbar(false);
+    notify(t('Account removed successfully.'), 'info');
     setPopup(undefined);
-  }, [navigate, setPopup]);
+  }, [navigate, notify, setPopup, t]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -67,7 +68,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
         .then(() => {
           setIsBusy(false);
 
-          setShowSnackbar(true);
+          handleClose();
         })
         .catch((error: Error) => {
           setIsBusy(false);
@@ -78,7 +79,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [account, acknowledged, password]);
+  }, [account, acknowledged, handleClose, password]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
@@ -139,11 +140,6 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
           onSecondaryClick={handleClose}
           primaryBtnText={t('Remove account')}
           secondaryBtnText={t('Back')}
-        />
-        <MySnackbar
-          onClose={handleClose}
-          open={showSnackbar}
-          text={t('Account successfully removed!')}
         />
       </Grid>
     </SharePopup>
