@@ -11,7 +11,6 @@ import ImportRawSeed from '@polkadot/extension-polkagate/src/popup/import/import
 import ImportSeed from '@polkadot/extension-polkagate/src/popup/import/importSeedFullScreen';
 import RestoreJson from '@polkadot/extension-polkagate/src/popup/import/restoreJSONFullScreen';
 import CreateAccount from '@polkadot/extension-polkagate/src/popup/newAccount/createAccountFullScreen';
-import Receive from '@polkadot/extension-polkagate/src/popup/receive';
 
 export const ACCOUNT_ROUTES: RouteConfig[] = [
   {
@@ -53,10 +52,5 @@ export const ACCOUNT_ROUTES: RouteConfig[] = [
     Component: Export,
     path: '/export/:address',
     trigger: 'export-address'
-  },
-  {
-    Component: Receive,
-    path: '/receive',
-    trigger: 'receive'
   }
 ];
