@@ -2,12 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as GradientDivider } from '../style/GradientDivider';
-export { default as AccountSelectionDropDown } from './AccountSelectionDropDown';
 export { default as AccountHolder } from './AccountHolder';
 export { default as AccountHolderWithProxy } from './AccountHolderWithProxy';
 export { default as AccountInputWithIdentity } from './AccountInputWithIdentity';
-export { default as AccountNamePasswordCreation } from './AccountNamePasswordCreation';
-export { default as AccountsTable } from './AccountsTable';
+export { default as AccountSelectionDropDown } from './AccountSelectionDropDown';
 export { default as AccountVisibilityToggler } from './AccountVisibilityToggler';
 export { default as AccountWithProxyInConfirmation } from './AccountWithProxyInConfirmation';
 export { default as ActionButton } from './ActionButton';
@@ -16,7 +14,6 @@ export { default as ActionText } from './ActionText';
 export { default as Address } from './Address';
 export { default as Address2 } from './Address2';
 export { default as AddressInput } from './AddressInput';
-export { default as Affirm } from './Affirm';
 export { default as Amount } from './Amount';
 export { default as AmountFee } from './AmountFee';
 export { default as AmountWithOptions } from './AmountWithOptions';
@@ -140,7 +137,6 @@ export { default as Tooltip } from './Tooltip';
 export { default as TwoButtons } from './TwoButtons';
 export { default as TwoToneText } from './TwoToneText';
 export { default as VaadinIcon } from './VaadinIcon';
-export { default as ValidatedInput } from './ValidatedInput';
 export { default as VariantButton } from './VariantButton';
 export { default as Waiting } from './Waiting';
 export { default as Warning } from './Warning';

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ExpandedRewards } from '../../solo/pending';
+import type { ExpandedRewards } from '../../type';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
