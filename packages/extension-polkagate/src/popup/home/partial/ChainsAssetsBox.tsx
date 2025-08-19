@@ -15,7 +15,8 @@ import { AssetLogo, ChainLogo, FormatPrice } from '../../../components';
 import { useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
-import { TokenBalanceDisplay, TokenPriceInfo } from './TokensAssetsBox';
+import { TokenBalanceDisplay } from './TokenBalanceDisplay';
+import { TokenPriceInfo } from './TokenPriceInfo';
 
 type Assets = Record<string, FetchedBalance[]> | null | undefined;
 interface AssetDetailType {

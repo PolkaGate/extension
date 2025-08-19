@@ -15,7 +15,7 @@ import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { TEST_NETS } from '../../util/constants';
 import { amountToHuman } from '../../util/utils';
-import { TokenBalanceDisplay } from '../home/partial/TokensAssetsBox';
+import { TokenBalanceDisplay } from '../home/partial/TokenBalanceDisplay';
 
 export const TestnetBadge = ({ style }: { style?: SxProps<Theme>; }) => {
   const { t } = useTranslation();

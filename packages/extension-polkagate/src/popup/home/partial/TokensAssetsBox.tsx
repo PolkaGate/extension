@@ -15,11 +15,13 @@ import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, FormatBalance2, FormatPrice } from '../../../components';
-import { useIsDark, useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
+import { AssetLogo } from '../../../components';
+import { useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
-import DailyChange from './DailyChange';
+import { Drawer } from './Drawer';
+import { TokenPriceInfo } from './TokenPriceInfo';
+import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 
 type Assets = Record<string, FetchedBalance[]> | null | undefined;
 interface AssetDetailType {
@@ -32,88 +34,8 @@ interface AssetDetailType {
   priceId: string | undefined;
   decimal: number | undefined;
 }
+
 type Summary = AssetDetailType[] | null | undefined;
-
-export const Drawer = ({ length }: { length: number }) => {
-  const theme = useTheme();
-  const colorD1 = theme.palette.mode === 'dark' ? '#24234DCC' : '#CFD5F0';
-  const colorD2 = theme.palette.mode === 'dark' ? '#26255773' : '#DFE4FA';
-
-  return (
-    <Container disableGutters sx={{ display: 'flex', height: length === 0 ? 0 : length > 1 ? '18px' : '9px', justifyContent: 'center', overflow: 'hidden', position: 'relative', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '100%' }}>
-      <div style={{ background: colorD1, borderRadius: '14px', height: length ? '50px' : 0, position: 'absolute', top: '-41px', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '90%', zIndex: 1 }} />
-      <div style={{ background: colorD2, borderRadius: '14px', bottom: 0, height: length > 1 ? '50px' : 0, position: 'absolute', transition: 'all 250ms ease-out', transitionDelay: length ? '250ms' : 'unset', width: '80%' }} />
-    </Container>
-  );
-};
-
-export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
-  const pricesInCurrency = usePrices();
-  const isDark = useIsDark();
-
-  return (
-    <Grid container direction='column' item sx={{ width: 'fit-content' }}>
-      <Typography color='text.primary' textAlign='left' variant='B-2'>
-        {token}
-      </Typography>
-      <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
-        <FormatPrice
-          commify
-          fontFamily='Inter'
-          fontSize='12px'
-          fontWeight={500}
-          ignoreHide
-          num={pricesInCurrency?.prices[priceId ?? '']?.value ?? 0}
-          skeletonHeight={14}
-          textColor={isDark ? '#AA83DC' : '#8299BD'}
-          width='fit-content'
-        />
-        {priceId && pricesInCurrency?.prices[priceId]?.change &&
-          <DailyChange
-            change={pricesInCurrency.prices[priceId].change}
-            iconSize={12}
-            showHours={false}
-            showPercentage
-            textVariant='B-4'
-          />
-        }
-      </Grid>
-    </Grid>
-  );
-}
-
-export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
-  const theme = useTheme();
-  const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
-  const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';
-
-  return (
-    <Grid alignItems='flex-end' container direction='column' item sx={{ '> div.balance': { color: priceColor, ...theme.typography['S-2'] }, rowGap: '6px', width: 'fit-content' }}>
-      <FormatPrice
-        commify
-        decimalColor={theme.palette.text.secondary}
-        fontFamily='Inter'
-        fontSize='14px'
-        fontWeight={600}
-        num={totalBalancePrice}
-        skeletonHeight={14}
-        width='fit-content'
-      />
-      <FormatBalance2
-        decimalPoint={2}
-        decimals={[decimal]}
-        style={{
-          color: balanceColor,
-          fontSize: '12px',
-          fontWeight: 500,
-          lineHeight: '10px'
-        }}
-        tokens={[token]}
-        value={totalBalanceBN}
-      />
-    </Grid>
-  );
-}
 
 function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const theme = useTheme();
