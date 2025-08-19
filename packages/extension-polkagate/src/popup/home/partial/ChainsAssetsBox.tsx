@@ -29,7 +29,7 @@ interface AssetDetailType {
 }
 type Summary = AssetDetailType[] | null | undefined;
 
-function ChainHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
+function ChainHeader({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   const theme = useTheme();
 
   return (
@@ -56,7 +56,7 @@ function ChainHeader ({ assetsDetail }: { assetsDetail: AssetDetailType }) {
   );
 }
 
-function AssetsDetail ({ asset }: { asset: FetchedBalance }) {
+function AssetsDetail({ asset }: { asset: FetchedBalance }) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
@@ -102,7 +102,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
@@ -117,13 +117,13 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
         return null;
       }
 
-      // filter non selected chains
-      const filteredUnselected = accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
+      // filter non selected chains && non zero chains
+      const filtered = accountAssets.filter(
+        ({ genesisHash, totalBalance }) =>
+          selectedChains.includes(genesisHash) && !totalBalance.isZero()
+      );
 
-      // filter non zero chains
-      const filteredNonZero = filteredUnselected.filter(({ totalBalance }) => !totalBalance.isZero());
-
-      return filteredNonZero.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
+      return filtered.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
         const { genesisHash } = balance;
 
         // Initialize the array for the genesisHash if it doesn't exist

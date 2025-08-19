@@ -12,8 +12,8 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
-import { selectableNetworks } from '@polkadot/networks';
 import { BN_ZERO } from '@polkadot/util';
+import allChains from '../../../util/chains';
 
 import { AssetLogo } from '../../../components';
 import { useIsExtensionPopup, usePrices, useSelectedAccount } from '../../../hooks';
@@ -37,7 +37,7 @@ interface AssetDetailType {
 
 type Summary = AssetDetailType[] | null | undefined;
 
-function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
+function TokensItems({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   const theme = useTheme();
   const account = useSelectedAccount();
   const isExtension = useIsExtensionPopup();
@@ -82,7 +82,7 @@ function TokensItems ({ tokenDetail }: { tokenDetail: FetchedBalance }) {
   );
 }
 
-function TokenBox ({ tokenDetail }: { tokenDetail: AssetDetailType }) {
+function TokenBox({ tokenDetail }: { tokenDetail: AssetDetailType }) {
   const theme = useTheme();
 
   const isDark = theme.palette.mode === 'dark';
@@ -160,7 +160,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const tokens: Assets = useMemo(() => {
@@ -173,13 +173,13 @@ function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
         return null;
       }
 
-      // filter non selected chains
-      const filteredUnselected = accountAssets.filter(({ genesisHash }) => selectedChains.includes(genesisHash));
+      // filter non selected chains && non zero chains
+      const filtered = accountAssets.filter(
+        ({ genesisHash, totalBalance }) =>
+          selectedChains.includes(genesisHash) && !totalBalance.isZero()
+      );
 
-      // filter non zero chains
-      const filteredNonZero = filteredUnselected.filter(({ totalBalance }) => !totalBalance.isZero());
-
-      return filteredNonZero.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
+      return filtered.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
         const { token } = balance;
 
         // Initialize the array for the token if it doesn't exist
@@ -208,12 +208,8 @@ function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
         totalBalancePrice: sum.totalBalancePrice + calcPrice(priceOf(asset.priceId), asset.totalBalance, asset.decimal)
       }), { totalBalanceBN: BN_ZERO, totalBalancePrice: 0 });
 
-      const network = selectableNetworks.find(({ displayName, symbols }) => {
-        const isExcluded = /Asset Hub|People/.test(displayName);
-        const matchesToken = symbols[0]?.toLowerCase() === token.toLowerCase();
+      const network = assets.find(({ token: tokenNetwork }) => tokenNetwork.toLowerCase() === token.toLowerCase());
 
-        return !isExcluded && matchesToken;
-      });
       const priceId = assets[0].priceId;
 
       const sortedAssets = assets.slice().sort((a, b) => {
@@ -224,20 +220,23 @@ function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
       });
 
       let genesisHash: string | undefined;
-      let logoInfo: LogoInfo | undefined;
       let decimal: number | undefined;
 
       if (network) {
-        genesisHash = network?.genesisHash[0].toString();
-        logoInfo = getLogo2(network?.genesisHash.toString(), token);
-        decimal = network?.decimals[0];
-      } else {
-        const network = assets.find(({ token: tokenNetwork }) => tokenNetwork.toLowerCase() === token.toLowerCase());
-
         genesisHash = network?.genesisHash.toString();
-        logoInfo = getLogo2(genesisHash, token);
         decimal = network?.decimal;
+      } else {
+        const network = allChains.find(({ name, tokenSymbol }) => {
+          const isExcluded = /Asset Hub|People/.test(name);
+          const matchesToken = tokenSymbol.toLowerCase() === token.toLowerCase();
+
+          return !isExcluded && matchesToken;
+        });
+        genesisHash = network?.genesisHash;
+        decimal = network?.tokenDecimal;
       }
+
+      const logoInfo = getLogo2(genesisHash, token);
 
       return {
         assets: sortedAssets,
