@@ -64,36 +64,78 @@ function View ({ children }: Props): React.ReactElement<Props> {
 const BodyTheme = createGlobalStyle<{ theme: Theme }>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
-    position: relative; /* Add position relative to body */
+    position: relative;
   }
-  
+
   div#root{
     background-color: ${(props) => props.theme.palette.background.default};
   }
-  
+
+  /* Hide all scrollbars completely - no space consumption */
   * {
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: ${(props) => props.theme.palette.label.primary} transparent;
+    /* Firefox - completely hide scrollbars */
+    scrollbar-width: none;
+    -ms-overflow-style: none; /* IE and Edge */
     
+    /* Webkit - completely hide scrollbars */
     &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-      position: absolute; /* Add absolute positioning to scrollbar */
-      right: 0;
-      top: 0;
+      display: none;
+      width: 0 !important;
+      height: 0 !important;
+      background: transparent;
     }
     
     &::-webkit-scrollbar-thumb {
-      background-color: ${(props) => props.theme.palette.label.primary};
-      border-radius: 4px;
-      position: absolute; /* Add absolute positioning to scrollbar thumb */
+      display: none;
     }
     
     &::-webkit-scrollbar-track {
-      background: transparent;
-      position: absolute; /* Add absolute positioning to scrollbar track */
-      right: 0;
+      display: none;
     }
+  }
+
+  /* Custom overlay scrollbar that appears only when needed */
+  .scrollbar-overlay {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 8px;
+      height: 100%;
+      background: ${(props) => props.theme.palette.label.primary};
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+      transform: translateY(0%);
+    }
+    
+    &.scrolling::after,
+    &:hover::after {
+      opacity: 0.6;
+    }
+  }
+
+  /* Alternative: Use margin compensation technique */
+  .no-scrollbar-space {
+    /* Make container wider to hide scrollbar outside viewport */
+    padding-right: 17px; /* Standard scrollbar width on Windows */
+    margin-right: -17px;
+    
+    /* For horizontal scrollbars */
+    &.horizontal {
+      padding-bottom: 17px;
+      margin-bottom: -17px;
+    }
+  }
+
+  /* Auto-hide scrollbars script injection */
+  @keyframes fadeOut {
+    to { opacity: 0; }
   }
 `;
 
