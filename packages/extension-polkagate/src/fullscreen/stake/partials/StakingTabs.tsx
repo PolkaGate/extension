@@ -82,7 +82,7 @@ function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelec
         Icon: Wallet,
         isSelected: tab === STAKING_TABS.STAKING_POSITIONS,
         onClick: tabSetter(STAKING_TABS.STAKING_POSITIONS),
-        title: t('Your staking positions')
+        title: t('Earning Positions')
       },
       {
         Icon: MagicStar,
@@ -97,7 +97,7 @@ function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelec
         Icon: Discover,
         isSelected: tab === STAKING_TABS.VALIDATORS,
         onClick: tabSetter(STAKING_TABS.VALIDATORS),
-        title: t('Validators')
+        title: t('Nominations')
       });
     }
 

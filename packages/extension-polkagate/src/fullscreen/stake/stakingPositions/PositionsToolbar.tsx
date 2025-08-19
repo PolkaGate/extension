@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
+import type { ForwardedRef } from 'react';
 import type { AdvancedDropdownOption } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
@@ -20,22 +21,42 @@ interface TabItemProps {
   selector: () => void;
 }
 
-const TabItem = ({ count, isSelected, selector, text }: TabItemProps) => {
-  const theme = useTheme();
+const TabItem = React.forwardRef<HTMLDivElement, TabItemProps>(
+  ({ count, isSelected, selector, text }, ref: ForwardedRef<HTMLDivElement>) => {
+    const theme = useTheme();
 
-  const color = useMemo(() => isSelected ? theme.palette.text.primary : '#AA83DC', [isSelected, theme.palette.text.primary]);
+    const color = useMemo(() => isSelected ? theme.palette.text.primary : '#AA83DC', [isSelected, theme.palette.text.primary]);
 
-  return (
-    <Grid container item onClick={selector} sx={{ alignItems: 'center', cursor: 'pointer', gap: '6px', height: '36px', justifyContent: 'center', width: '105px', zIndex: 1 }}>
-      <Typography color={color} variant='B-6'>
-        {text}
-      </Typography>
-      <Typography color='text.primary' sx={{ bgcolor: isSelected ? '#EAEBF1' : '#FFFFFF26', borderRadius: '1024px', color: isSelected ? '#05091C' : '#AA83DC', minHeight: '18px', minWidth: '18px' }} variant='B-1'>
-        {count}
-      </Typography>
-    </Grid>
-  );
-};
+    return (
+      <Grid
+        container
+        item
+        onClick={selector}
+        ref={ref}
+        sx={{
+          alignItems: 'center',
+          cursor: 'pointer',
+          gap: '6px',
+          height: '36px',
+          justifyContent: 'center',
+          minWidth: '105px',
+          px: '7px',
+          width: 'fit-content',
+          zIndex: 1
+        }}
+      >
+        <Typography color={color} variant='B-6'>
+          {text}
+        </Typography>
+        <Typography color='text.primary' sx={{ bgcolor: isSelected ? '#EAEBF1' : '#FFFFFF26', borderRadius: '1024px', color: isSelected ? '#05091C' : '#AA83DC', minHeight: '18px', minWidth: '18px' }} variant='B-1'>
+          {count}
+        </Typography>
+      </Grid>
+    );
+  }
+);
+
+TabItem.displayName = 'TabItem';
 
 interface PositionsEarningsProps {
   setter: (selectedTab: POSITION_TABS) => () => void;
@@ -46,24 +67,63 @@ interface PositionsEarningsProps {
 
 const PositionsEarnings = ({ earningsCount, positionsCount, selectedTab, setter }: PositionsEarningsProps) => {
   const { t } = useTranslation();
+  const positionsRef = React.useRef<HTMLDivElement>(null);
+  const exploreRef = React.useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = React.useState<{ left: number; width: number }>({ left: 4, width: 105 });
 
   const isSelected = useCallback((tabName: POSITION_TABS) => tabName === selectedTab, [selectedTab]);
+
+  useEffect(() => {
+    // Find the selected tab's DOM node and update the indicator's position and width
+    let ref: React.RefObject<HTMLDivElement | null>;
+
+    if (selectedTab === POSITION_TABS.POSITIONS) {
+      ref = positionsRef;
+    } else {
+      ref = exploreRef;
+    }
+
+    const positionsRect = positionsRef.current?.parentElement?.getBoundingClientRect();
+    const tabRect = ref.current?.getBoundingClientRect();
+
+    if (tabRect && positionsRect) {
+      setIndicatorStyle({
+        left: tabRect.left - positionsRect.left,
+        width: tabRect.width
+      });
+    }
+  }, [selectedTab, positionsCount, earningsCount, t]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '12px', display: 'flex', flexDirection: 'row', gap: '4px', height: '44px', m: 0, p: '4px', position: 'relative', width: 'fit-content' }}>
       <TabItem
         count={positionsCount ?? 0}
         isSelected={isSelected(POSITION_TABS.POSITIONS)}
+        ref={positionsRef}
         selector={setter(POSITION_TABS.POSITIONS)}
-        text={t('Positions')}
+        text={t('My Positions')}
       />
       <TabItem
         count={earningsCount ?? 0}
         isSelected={isSelected(POSITION_TABS.EXPLORE)}
+        ref={exploreRef}
         selector={setter(POSITION_TABS.EXPLORE)}
         text={t('Explore')}
       />
-      <Grid sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '10px', height: '36px', left: '4px', position: 'absolute', top: '4px', transform: isSelected(POSITION_TABS.EXPLORE) ? 'translateX(109px)' : 'none', transition: 'all ease-in-out 150ms', width: '105px' }} />
+      <Grid
+        sx={{
+          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          borderRadius: '10px',
+          height: '36px',
+          left: `${indicatorStyle.left}px`,
+          pointerEvents: 'none',
+          position: 'absolute',
+          top: '4px',
+          transition: 'all ease-in-out 150ms',
+          width: `${indicatorStyle.width}px`,
+          zIndex: 0
+        }}
+      />
     </Container>
   );
 };

@@ -155,7 +155,7 @@ function ManageValidators () {
         <Stack direction='column' sx={{ alignItems: 'flex-start', px: '18px', width: '100%' }}>
           <Stack direction='column' sx={{ alignItems: 'flex-start', columnGap: '12px', pb: '26px', width: '100%' }}>
             <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase' }} variant='H-2'>
-              {t('Manage Validators')}
+              {t('Edit Nominations')}
             </Typography>
             <Typography color='text.secondary' variant='B-4'>
               {t('Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.')}

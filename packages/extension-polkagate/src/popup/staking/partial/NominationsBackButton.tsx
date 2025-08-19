@@ -56,7 +56,7 @@ export default function NominationsBackButton ({ style }: Props) {
       <Container disableGutters onClick={onBack} ref={containerRef} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px', ml: 0, width: 'max-content' }}>
         <ArrowCircleLeft color='#809ACB' size='24' variant={hovered ? 'Bold' : 'Bulk'} />
         <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
-          {t('Validators')}
+          {t('Nominations')}
         </Typography>
       </Container>
       <SettingButton

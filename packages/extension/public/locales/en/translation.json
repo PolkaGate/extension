@@ -1790,5 +1790,12 @@
   "Explore, collect, and enjoy all your NFT details": "",
   "Rewards Earned": "",
   "Reward source": "",
-  "Pool #{{poolId}}": ""
+  "Pool #{{poolId}}": "",
+  "Account removed successfully.": "",
+  "Edit Nominations": "",
+  "Manage Nominations": "",
+  "Earning Positions": "",
+  "Nominations": "",
+  "My Positions": "",
+  "Loading the nominations' list": ""
 }

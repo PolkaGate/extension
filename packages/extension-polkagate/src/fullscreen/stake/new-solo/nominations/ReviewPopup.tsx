@@ -60,7 +60,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
       onClose={onClose}
       proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
-      title={t('Manage Validators')}
+      title={t('Manage Nominations')}
       transaction={tx}
       transactionInformation={transactionInformation}
     />

@@ -85,9 +85,9 @@ const PAGES_CONFIG = {
   ] as MenuItemConfig[],
   solo: [
     { icon: UserOctagon, tooltip: 'Staking Home', url: '/solo/genesisHash' },
-    { icon: Discover, tooltip: 'Validators Settings', url: '/solo/genesisHash/nominations' },
+    { icon: Discover, tooltip: 'Nominations', url: '/solo/genesisHash/nominations' },
     { icon: AddSquare, tooltip: 'Stake More', url: '/solo/genesisHash/bondExtra' },
-    { icon: Setting2, tooltip: 'Staking Settings', url: '/solo/genesisHash/settings' },
+    { icon: Setting2, tooltip: 'Reward Settings', url: '/solo/genesisHash/settings' },
     { icon: Book, tooltip: 'Info', url: '/solo/genesisHash/info' }
   ] as MenuItemConfig[]
 };

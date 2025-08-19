@@ -83,7 +83,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
             onClick={openValidatorManagement}
             startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
             style={{ height: '44px', padding: 0, width: '180px' }}
-            text={t('Manage Validators')}
+            text={t('Edit Nominations')}
           />
         </TableToolbar>
         <Stack direction='column' ref={refContainer} sx={{ maxHeight: 'calc(100vh - 531px)', minHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative', width: '100%' }}>

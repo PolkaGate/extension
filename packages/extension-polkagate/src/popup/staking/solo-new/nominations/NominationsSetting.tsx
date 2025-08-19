@@ -88,7 +88,8 @@ export default function NominationsSetting (): React.ReactElement {
           {isLoading &&
             <Progress
               style={{ marginTop: '90px' }}
-              title={t("Loading the validators' list")}
+              title={t('Loading nominations')}
+              withEllipsis
             />
           }
           {isLoaded &&
