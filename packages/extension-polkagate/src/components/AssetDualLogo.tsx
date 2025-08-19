@@ -14,7 +14,7 @@ interface Props {
   baseLogoSize?: string;
   baseLogoPosition?: string;
   logoRoundness?: string;
-  style: React.CSSProperties | undefined;
+  style?: React.CSSProperties | undefined;
   token?: string | undefined;
 }
 
