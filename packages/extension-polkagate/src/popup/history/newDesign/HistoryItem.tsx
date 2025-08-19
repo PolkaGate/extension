@@ -4,10 +4,10 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, ArrowSwapHorizontal, CloseCircle, Data, Dislike, Like1, LikeDislike, Money, Polkadot, Record, Sagittarius, ShoppingBag, Strongbox, Strongbox2, TickCircle } from 'iconsax-react';
+import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
-import { type ActionType, historyIconBgColor, isReward, resolveActionType } from '@polkadot/extension-polkagate/src/util/index';
+import { historyIconBgColor, isReward, resolveActionType } from '@polkadot/extension-polkagate/src/util/index';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
@@ -16,36 +16,13 @@ import { calcPrice } from '../../../hooks/useYouHave';
 import GradientDivider from '../../../style/GradientDivider';
 import { amountToMachine } from '../../../util/utils';
 import HistoryDetail from './HistoryDetail';
+import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
 
 interface HistoryItemProps {
   historyDate: string;
   historyItems: TransactionDetail[];
   short: boolean;
 }
-
-const HistoryIcon = ({ action }: { action: string }) => {
-  const normalizedAction = action.toLowerCase() as ActionType;
-
-  const DEFAULT_ICON = <Polkadot color='#AA83DC' size='26' />;
-
-  const actionIcons: Record<ActionType, React.JSX.Element> = {
-    abstain: <LikeDislike color='#AA83DC' size='26' variant='Bold' />,
-    aye: <Like1 color='#82FFA5' size='22' variant='Bold' />,
-    balances: <ArrowSwapHorizontal color='#AA83DC' size='26' />,
-    delegate: <Sagittarius color='#AA83DC' size='26' variant='Bulk' />,
-    governance: <Record color='#AA83DC' size='22' variant='Bulk'/>,
-    nay: <Dislike color='#FF165C' size='22' variant='Bold' />,
-    'pool staking': <Strongbox2 color='#AA83DC' size='26' />,
-    proxy: <Data color='#AA83DC' size='20' />,
-    receive: <ArrowCircleDown2 color='#82FFA5' size='22' variant='Linear' />,
-    reward: <Money color='#82FFA5' size='22' />,
-    send: <ArrowCircleRight2 color='#AA83DC' size='22' />,
-    'solo staking': <Strongbox color='#AA83DC' size='26' />,
-    utility: <ShoppingBag color='#AA83DC' size='22' />
-  };
-
-  return actionIcons[normalizedAction] || DEFAULT_ICON;
-};
 
 const TimeOfTheDay = ({ date }: { date: number }) => {
   const formatTimestamp = useCallback((timestamp: number) => {
@@ -186,7 +163,7 @@ function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
             <React.Fragment key={index}>
               <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={openDetail(historyItem)} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
                 <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
-                  <HistoryIcon action={action} />
+                  <HistoryIcon action={action} isFullscreen={false} />
                 </Grid>
                 <Grid container item justifyContent='space-between' xs>
                   <ActionSubAction
