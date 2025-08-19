@@ -46,11 +46,11 @@ export default function Pool (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
+  const accountAssets = useAccountAssets(address);
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [restakeReward, setRestakeReward] = useState<boolean>(false);
@@ -58,11 +58,11 @@ export default function Pool (): React.ReactElement {
 
   const { redeemable,
     transactionInformation: withdrawTransactionInformation,
-    tx: withdrawTx } = useWithdrawPool(selectedAccount?.address, genesisHash);
+    tx: withdrawTx } = useWithdrawPool(address, genesisHash);
 
   const { myClaimable,
     transactionInformation: rewardTransactionInformation,
-    tx: rewardTx } = useClaimRewardPool(selectedAccount?.address, genesisHash, restakeReward);
+    tx: rewardTx } = useClaimRewardPool(address, genesisHash, restakeReward);
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
@@ -101,7 +101,7 @@ export default function Pool (): React.ReactElement {
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
     extraDetailConfirmationPage: { amount: review === Review.Reward ? myClaimable?.toString() : undefined },
@@ -119,7 +119,7 @@ export default function Pool (): React.ReactElement {
   return transactionFlow || (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + genesisHash} homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + address + '/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             content={<Back />}
@@ -138,7 +138,7 @@ export default function Pool (): React.ReactElement {
             type='pool'
           />
           <Tiles
-            address={selectedAccount?.address}
+            address={address}
             asset={asset}
             genesisHash={genesisHash}
             onClaimReward={onClaimReward}

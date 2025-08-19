@@ -10,7 +10,7 @@ import { type BN } from '@polkadot/util';
 
 import { CreatePoolIcon, JoinPoolIcon } from '../../../../assets/icons';
 import { BackWithLabel, FormatBalance2, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useIsExtensionPopup, useIsHovered, usePoolConst, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useIsExtensionPopup, useIsHovered, usePoolConst, useSelectedAccount, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 
 const OptionBox = styled(Box, {
@@ -98,7 +98,8 @@ export default function Stake () {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { genesisHash } = useParams<{ genesisHash: string }>();
+  const address = useSelectedAccount()?.address;
+  const { genesisHash } = useParams<{ genesisHash: string; }>();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const poolStakingConsts = usePoolConst(genesisHash);
 
@@ -109,7 +110,7 @@ export default function Stake () {
   return (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + address + '/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

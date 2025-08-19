@@ -21,7 +21,7 @@ export default function BondExtra (): React.ReactElement {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
@@ -33,7 +33,7 @@ export default function BondExtra (): React.ReactElement {
     onMaxValue,
     setBondExtraValue,
     transactionInformation,
-    tx } = useBondExtraSolo(selectedAccount?.address, genesisHash);
+    tx } = useBondExtraSolo(address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 
@@ -45,7 +45,7 @@ export default function BondExtra (): React.ReactElement {
   }, [setBondExtraValue]);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Stake more'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -58,7 +58,7 @@ export default function BondExtra (): React.ReactElement {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + genesisHash} homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}

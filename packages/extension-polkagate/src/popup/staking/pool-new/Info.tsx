@@ -44,9 +44,9 @@ export default function Info (): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const getValue = useCallback((value: number | undefined) => {
@@ -73,7 +73,7 @@ export default function Info (): React.ReactElement {
   return (
     <>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
-        <UserDashboardHeader homeType='default' />
+        <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + address + '/' + genesisHash} homeType='default' />
         <Motion variant='slide'>
           <BackWithLabel
             onClick={onBack}

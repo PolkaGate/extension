@@ -45,11 +45,11 @@ export default function CreatePool () {
   useBackground('staking');
 
   const { t } = useTranslation();
-  const selectedAccount = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const navigate = useNavigate();
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+  const formatted = useFormatted3(address, genesisHash);
 
   const { bondAmount,
     errorMessage,
@@ -65,7 +65,7 @@ export default function CreatePool () {
     setBondAmount,
     setRoles,
     transactionInformation,
-    tx } = useCreatePool(selectedAccount?.address, genesisHash);
+    tx } = useCreatePool(address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 
@@ -77,7 +77,7 @@ export default function CreatePool () {
   }, [setBondAmount]);
 
   const transactionFlow = useTransactionFlow({
-    address: selectedAccount?.address,
+    address,
     backPathTitle: t('Creating Pool'),
     closeReview,
     genesisHash: genesisHash ?? '',
@@ -91,7 +91,7 @@ export default function CreatePool () {
 
   return transactionFlow || (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL={'/fullscreen-stake/pool/' + address + '/' + genesisHash} homeType='default' />
       <Motion style={{ height: 'calc(100% - 55px)' }} variant='slide'>
         <BackWithLabel
           onClick={onBack}
@@ -123,7 +123,7 @@ export default function CreatePool () {
             titleInColor={` (${token?.toUpperCase() ?? '--'})`}
           />
           <UpdateRoles
-            address={formatted ?? selectedAccount?.address ?? ''}
+            address={formatted ?? address ?? ''}
             roles={roles}
             setRoles={setRoles}
           />
