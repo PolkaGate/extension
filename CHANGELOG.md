@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.1.0](https://github.com/polkagate/extension/compare/v1.0.3...v1.1.0) (2025-08-19)
+
+
+### Features
+
+* add fullscreen URL in staking popup pages ([#1785](https://github.com/polkagate/extension/issues/1785)) ([c68f4da](https://github.com/polkagate/extension/commit/c68f4da1ae82d99a9508fc990be98c11722f020d))
+
 ## [1.0.3](https://github.com/polkagate/extension/compare/v1.0.2...v1.0.3) (2025-08-18)
 
 
