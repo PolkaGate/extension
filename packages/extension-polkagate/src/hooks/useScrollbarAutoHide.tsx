@@ -1,8 +1,6 @@
 // Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import { useEffect, useMemo } from 'react';
 
 export default function useScrollbarAutoHide () {
@@ -21,56 +19,68 @@ export default function useScrollbarAutoHide () {
     style.textContent = `
       .osb-track {
         position: fixed;
-        top: 0;
-        right: 0;
-        width: ${opts.width}px;
         background: ${opts.bgColor};
         border-radius: 6px;
         opacity: 0;
         transition: opacity .2s ease;
         z-index: 2147483646; /* on top, but below browser UI */
-        pointer-events: auto;
+        pointer-events: none;
       }
-      .osb-track:hover { background: ${opts.bgColor}; }
       .osb-thumb {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 100%;
-        min-height: ${opts.minThumb}px;
         border-radius: 6px;
         background: ${opts.thumbColor};
         cursor: default;
         transition: background-color .2s;
+        pointer-events: none;
+      }
+      .osb-thumb.vertical {
+        top: 0;
+        right: 0;
+        width: 100%;
+        min-height: ${opts.minThumb}px;
         will-change: transform, height;
       }
-      .osb-thumb:active { cursor: default; }
+      .osb-thumb.horizontal {
+        left: 0;
+        bottom: 0;
+        height: 100%;
+        min-width: ${opts.minThumb}px;
+        will-change: transform, width;
+      }
+      .osb-track.vertical {
+        top: 0;
+        right: 0;
+        width: ${opts.width}px;
+      }
+      .osb-track.horizontal {
+        left: 0;
+        bottom: 0;
+        height: ${opts.width}px;
+      }
     `;
     document.head.appendChild(style);
 
     interface Data {
-      track: HTMLDivElement;
-      thumb: HTMLDivElement;
+      vTrack: HTMLDivElement;
+      vThumb: HTMLDivElement;
+      hTrack: HTMLDivElement;
+      hThumb: HTMLDivElement;
       ro: ResizeObserver;
       hideTimer?: ReturnType<typeof setTimeout>;
     }
 
-    const map = new WeakMap<HTMLElement, Data>();
+    const map = new Map<HTMLElement, Data>();
     const raf = (cb: FrameRequestCallback) => requestAnimationFrame(cb);
 
     const isScrollable = (el: HTMLElement) => {
-      const SCROLL_OPTIONS = ['auto', 'scroll', 'overlay'];
       const cs = getComputedStyle(el);
-      const overflowY = cs.overflowY;
-      const overflowX = cs.overflowX;
-      const overflowOK = SCROLL_OPTIONS.includes(overflowY) || SCROLL_OPTIONS.includes(overflowX);
+      const SCROLL_OPTIONS = ['auto', 'scroll', 'overlay'];
 
-      if (!overflowOK) {
-        return false;
-      }
+      const overflowY = SCROLL_OPTIONS.includes(cs.overflowY) && el.scrollHeight > el.clientHeight + 1;
+      const overflowX = SCROLL_OPTIONS.includes(cs.overflowX) && el.scrollWidth > el.clientWidth + 1;
 
-      // allow a tiny epsilon for subpixel rounding
-      return el.scrollHeight - el.clientHeight > 1;
+      return { x: overflowX, y: overflowY };
     };
 
     const updateFor = (el: HTMLElement) => {
@@ -81,38 +91,43 @@ export default function useScrollbarAutoHide () {
       }
 
       const rect = el.getBoundingClientRect();
-      const rtl = getComputedStyle(el).direction === 'rtl';
+      const { x, y } = isScrollable(el);
 
-      d.track.style.height = `${rect.height}px`;
-      d.track.style.top = `${rect.top}px`;
+      // --- Vertical scrollbar ---
+      if (y) {
+        d.vTrack.style.display = 'block';
+        d.vTrack.style.height = `${rect.height}px`;
+        d.vTrack.style.top = `${rect.top}px`;
+        d.vTrack.style.right = `${window.innerWidth - rect.right}px`;
 
-      if (rtl) {
-        d.track.style.left = `${rect.left}px`;
-        d.track.style.right = '';
+        const trackH = d.vTrack.offsetHeight;
+        const thumbH = Math.max(opts.minThumb, (el.clientHeight / el.scrollHeight) * trackH);
+        const maxTop = trackH - thumbH;
+        const ratio = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight);
+
+        d.vThumb.style.height = `${thumbH}px`;
+        d.vThumb.style.transform = `translateY(${ratio * maxTop}px)`;
       } else {
-        d.track.style.right = `${window.innerWidth - rect.right}px`;
-        d.track.style.left = '';
+        d.vTrack.style.display = 'none';
       }
 
-      const canScroll = isScrollable(el);
+      // --- Horizontal scrollbar ---
+      if (x) {
+        d.hTrack.style.display = 'block';
+        d.hTrack.style.width = `${rect.width}px`;
+        d.hTrack.style.left = `${rect.left}px`;
+        d.hTrack.style.bottom = `${window.innerHeight - rect.bottom}px`;
 
-      d.track.style.display = canScroll ? 'block' : 'none';
+        const trackW = d.hTrack.offsetWidth;
+        const thumbW = Math.max(opts.minThumb, (el.clientWidth / el.scrollWidth) * trackW);
+        const maxLeft = trackW - thumbW;
+        const ratio = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth);
 
-      if (!canScroll) {
-        return;
+        d.hThumb.style.width = `${thumbW}px`;
+        d.hThumb.style.transform = `translateX(${ratio * maxLeft}px)`;
+      } else {
+        d.hTrack.style.display = 'none';
       }
-
-      const trackH = d.track.offsetHeight;
-      const thumbH = Math.max(
-        opts.minThumb,
-        (el.clientHeight / el.scrollHeight) * trackH
-      );
-      const maxTop = trackH - thumbH;
-      const ratio =
-        el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight);
-
-      d.thumb.style.height = `${thumbH}px`;
-      d.thumb.style.transform = `translateY(${ratio * maxTop}px)`;
     };
 
     const ensure = (el: HTMLElement): Data => {
@@ -122,25 +137,36 @@ export default function useScrollbarAutoHide () {
         return existing;
       }
 
-      const track = document.createElement('div');
+      const vTrack = document.createElement('div');
 
-      track.className = 'osb-track'.trim();
+      vTrack.className = 'osb-track vertical';
+      const vThumb = document.createElement('div');
 
-      const thumb = document.createElement('div');
+      vThumb.className = 'osb-thumb vertical';
+      vTrack.appendChild(vThumb);
 
-      thumb.className = 'osb-thumb';
-      track.appendChild(thumb);
-      document.body.appendChild(track);
+      const hTrack = document.createElement('div');
+
+      hTrack.className = 'osb-track horizontal';
+      const hThumb = document.createElement('div');
+
+      hThumb.className = 'osb-thumb horizontal';
+      hTrack.appendChild(hThumb);
+
+      document.body.appendChild(vTrack);
+      document.body.appendChild(hTrack);
 
       const showThenAutoHide = (_el: HTMLElement, d: Data) => {
-        d.track.style.opacity = '1';
+        d.vTrack.style.opacity = '1';
+        d.hTrack.style.opacity = '1';
 
         if (d.hideTimer) {
           clearTimeout(d.hideTimer);
         }
 
         d.hideTimer = setTimeout(() => {
-          d.track.style.opacity = '0';
+          d.vTrack.style.opacity = '0';
+          d.hTrack.style.opacity = '0';
         }, opts.autoHideAfter);
       };
 
@@ -161,7 +187,7 @@ export default function useScrollbarAutoHide () {
 
       el.addEventListener('scroll', onScroll, { passive: true });
 
-      const data: Data = { ro, thumb, track };
+      const data: Data = { hThumb, hTrack, ro, vThumb, vTrack };
 
       map.set(el, data);
 
@@ -207,14 +233,16 @@ export default function useScrollbarAutoHide () {
       document.removeEventListener('pointerenter', onPointerEnter, true);
       window.removeEventListener('scroll', onGlobalLayoutChange, true);
       window.removeEventListener('resize', onGlobalLayoutChange);
-      map.forEach((d) => {
+      map.forEach((d, el) => {
         d.ro.disconnect();
 
         if (d.hideTimer) {
           clearTimeout(d.hideTimer);
         }
 
-        d.track.remove();
+        d.vTrack.remove();
+        d.hTrack.remove();
+        map.delete(el);
       });
       map.clear();
     };
