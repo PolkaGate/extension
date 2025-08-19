@@ -393,10 +393,10 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
       case 'bond_extra':
       {
         const bondAmount =
-        (params?.[0]?.value as BondExtraRewards)?.Rewards ||
-        (params?.[0]?.value as BondExtraFreeBalance)?.FreeBalance ||
-        (params?.[0]?.value as string | undefined) ||
-        '0';
+            (params?.[0]?.value as BondExtraRewards)?.Rewards ||
+            (params?.[0]?.value as BondExtraFreeBalance)?.FreeBalance ||
+            (params?.[0]?.value as string | undefined) ||
+            '0';
 
         const amount = isNaN(Number(bondAmount)) ? '0' : bondAmount;
 
@@ -405,7 +405,9 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
 
       case 'nominate':
       {
-        const nominators = (params?.[0].value as AccountId[] ?? []).map(({ Id }) => encodeAddress(hexToU8a(Id), prefix)); // FixMe: @amir for pools value is PoolId
+        const nominatorsRaw = params?.[0]?.value;
+        const nominatorsArr = Array.isArray(nominatorsRaw) ? nominatorsRaw : [];
+        const nominators = nominatorsArr.map(({ Id }) => encodeAddress(hexToU8a(Id), prefix));
 
         return { nominators };
       }
@@ -441,7 +443,6 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
     }
   } catch (error) {
     console.error(error);
-    console.error('txDetail', txDetail);
 
     return {};
   }

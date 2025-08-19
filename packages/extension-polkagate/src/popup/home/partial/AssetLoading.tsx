@@ -8,7 +8,7 @@ import { MySkeleton } from '@polkadot/extension-polkagate/src/components';
 
 import { logoWhiteTransparent } from '../../../assets/logos';
 import { useIsDark } from '../../../hooks/index';
-import { Drawer } from './Drawer';
+import Drawer from './Drawer';
 
 function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   const isDark = useIsDark();

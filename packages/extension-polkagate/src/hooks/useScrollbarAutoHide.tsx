@@ -73,7 +73,11 @@ export default function useScrollbarAutoHide () {
     const map = new Map<HTMLElement, Data>();
     const raf = (cb: FrameRequestCallback) => requestAnimationFrame(cb);
 
-    const isScrollable = (el: HTMLElement) => {
+    const isScrollable = (el: HTMLElement | null) => {
+      if (!el || !(el instanceof Element)) {
+        return { x: false, y: false };
+      }
+
       const cs = getComputedStyle(el);
       const SCROLL_OPTIONS = ['auto', 'scroll', 'overlay'];
 
@@ -202,9 +206,13 @@ export default function useScrollbarAutoHide () {
 
     // Activate when pointer enters scrollable elements
     const onPointerEnter = (e: Event) => {
-      const el = e.target as HTMLElement | null;
+      const el = e.target;
 
-      if (!el || !isScrollable(el)) {
+      if (!(el instanceof Element)) {
+        return;
+      }
+
+      if (!isScrollable(el as HTMLElement)) {
         return;
       }
 
@@ -213,8 +221,8 @@ export default function useScrollbarAutoHide () {
         /auto|scroll/.test(cs.overflowY) || el.scrollHeight > el.clientHeight;
 
       if (maybeScrollable) {
-        ensure(el);
-        raf(() => updateFor(el));
+        ensure(el as HTMLElement);
+        raf(() => updateFor(el as HTMLElement));
       }
     };
 
