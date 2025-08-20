@@ -22,7 +22,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const pricesInCurrency = usePrices();
   const formatted = useFormatted3(address, genesisHash);
   const reservedReason = useReservedDetails2(formatted, genesisHash);
-  const { api } = useChainInfo(genesisHash);
+  const { api, chainName } = useChainInfo(genesisHash);
   const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(address, genesisHash, undefined); // TODO: timeToUnlock!
 
   const [state, dispatch] = useReducer(lockedReservedReducer, {
@@ -51,12 +51,12 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   }, [delegatedBalance, reservedReason, totalLocked]);
 
   const lockedTooltip = useMemo(() => {
-    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(genesisHash ?? '') || !api) {
+    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(chainName ?? '') || !api) {
       return undefined;
     }
 
     return (t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } }));
-  }, [api, genesisHash, t, unlockableAmount]);
+  }, [api, chainName, t, unlockableAmount]);
 
   const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
 
