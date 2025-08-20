@@ -36,7 +36,7 @@ function WelcomeHeader (): React.ReactElement {
     inset: 0,
     position: 'absolute',
     transition: 'all 250ms ease-out'
-  } as SxProps<Theme>), []);
+  } as SxProps<Theme>), [hovered]);
 
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);

@@ -8,6 +8,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import ExportAllAccounts from '../fullscreen/home/ExportAllAccounts';
 import { useTranslation } from '../hooks';
 import DropMenuContent from './DropMenuContent';
+import { useExtensionPopups } from '../util/handleExtensionPopup';
+import { ExtensionPopups } from '../util/constants';
 
 const DropSelectContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'focused'
@@ -28,16 +30,10 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-enum HOME_POPUP {
-  DERIVE,
-  EXPORT
-}
-
 function HomeAccountDropDown ({ style }: Props) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [popup, setPopup] = useState<HOME_POPUP>();
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const _options = useMemo(() => {
     const OPTIONS = [
@@ -64,7 +60,7 @@ function HomeAccountDropDown ({ style }: Props) {
       {
         Icon: ExportCurve,
         text: t('Export All Accounts'),
-        value: () => setPopup(HOME_POPUP.EXPORT)
+        value: extensionPopupOpener(ExtensionPopups.EXPORT)
       }
     ];
 
@@ -90,10 +86,9 @@ function HomeAccountDropDown ({ style }: Props) {
         options={_options}
         setOpen={setOpen}
       />
-      {popup === HOME_POPUP.EXPORT &&
+      {extensionPopup === ExtensionPopups.EXPORT &&
         <ExportAllAccounts
-          open={popup !== undefined}
-          setPopup={setPopup}
+          onClose={extensionPopupCloser}
         />
       }
     </>
