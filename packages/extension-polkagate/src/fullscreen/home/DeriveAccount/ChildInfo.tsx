@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -9,7 +10,6 @@ import { User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { deriveAccount } from '@polkadot/extension-polkagate/src/messaging';
-import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, Identity2, MatchPasswordField, MySnackbar, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -29,11 +29,11 @@ interface Props {
   parentAddress?: string;
   parentPassword: string | undefined;
   setMaybeChidAccount: React.Dispatch<React.SetStateAction<PathState | undefined>>;
-  setPopup: React.Dispatch<ExtensionPopups>;
+  onClose: ExtensionPopupCloser;
   setStep: React.Dispatch<React.SetStateAction<DERIVATION_STEPS>>;
 }
 
-function ChildInfo ({ genesisHash, maybeChidAccount, parentAddress, parentPassword, setMaybeChidAccount, setPopup, setStep }: Props): React.ReactElement {
+function ChildInfo ({ genesisHash, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const parentGenesis = (genesisHash ?? POLKADOT_GENESIS) as HexString;
@@ -78,8 +78,8 @@ function ChildInfo ({ genesisHash, maybeChidAccount, parentAddress, parentPasswo
 
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
-    setPopup(ExtensionPopups.NONE);
-  }, [setPopup]);
+    onClose();
+  }, [onClose]);
 
   return (
     <Grid container item justifyContent='center' sx={{ position: 'relative', px: '5px', zIndex: 1 }}>

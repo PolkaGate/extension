@@ -4,7 +4,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
-import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useAccount, useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -12,13 +11,19 @@ import ChildInfo from './ChildInfo';
 import ParentInfo from './ParentInfo';
 import StepsRow from './StepsRow';
 import { DERIVATION_STEPS, type PathState } from './types';
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
-  open: ExtensionPopups | undefined;
+  closePopup: ExtensionPopupCloser;
 }
 
-function DeriveAccount({ open, setPopup }: Props): React.ReactElement {
+/**
+ * DeriveAccount component provides a modal interface for deriving a new child account from a parent account.
+ * Handles step navigation between parent and child account derivation.
+ *
+ * Only has been used in full-screen mode!
+ */
+function DeriveAccount({ closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const selectedGenesis = useAccountSelectedChain(selectedAccount?.address);
@@ -38,15 +43,15 @@ function DeriveAccount({ open, setPopup }: Props): React.ReactElement {
     if (step === DERIVATION_STEPS.CHILD) {
       setStep(DERIVATION_STEPS.PARENT);
     } else {
-      setPopup(ExtensionPopups.NONE);
+      closePopup();
     }
-  }, [setPopup, step]);
+  }, [closePopup, step]);
 
   return (
     <DraggableModal
       noDivider
       onClose={onClose}
-      open={open !== undefined}
+      open
       showBackIconAsClose={step === DERIVATION_STEPS.CHILD}
       style={{ minHeight: '200px' }}
       title={t('Derive Account')}
@@ -72,8 +77,8 @@ function DeriveAccount({ open, setPopup }: Props): React.ReactElement {
             maybeChidAccount={maybeChidAccount}
             parentAddress={parentAccount?.address}
             parentPassword={parentPassword}
+            onClose={closePopup}
             setMaybeChidAccount={setMaybeChidAccount}
-            setPopup={setPopup}
             setStep={setStep}
           />
         }

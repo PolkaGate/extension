@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import ActionRow from '@polkadot/extension-polkagate/src/popup/settings/partials/ActionRow';
@@ -16,11 +16,22 @@ import AccountSettings from './AccountSettings';
 import ExtensionSettings from './ExtensionSettings';
 import NetworkSettings from './NetworkSettings';
 
-export default function Settings (): React.ReactElement {
+function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
   const { genesisHash } = useParams<{ address: string, genesisHash: string }>();
+
+  const content = useMemo(() => {
+    const routeComponents: Record<string, React.ReactNode> = {
+      '/settingsfs/': <ExtensionSettings />,
+      '/settingsfs/about': <About />,
+      '/settingsfs/account': <AccountSettings />,
+      '/settingsfs/network': <NetworkSettings />
+    };
+
+    return routeComponents[pathname] ?? null;
+  }, [pathname]);
 
   return (
     <HomeLayout
@@ -36,24 +47,11 @@ export default function Settings (): React.ReactElement {
       <TopMenus />
       <VelvetBox style={{ margin: '5px 20px 0 0', padding: 0 }}>
         <Grid container item>
-          {
-            pathname === '/settingsfs/' &&
-            <ExtensionSettings />
-          }
-          {
-            pathname === '/settingsfs/account' &&
-            <AccountSettings />
-          }
-          {
-            pathname === '/settingsfs/network' &&
-            <NetworkSettings />
-          }
-          {
-            pathname === '/settingsfs/about' &&
-            <About />
-          }
+          {content}
         </Grid>
       </VelvetBox>
     </HomeLayout>
   );
 }
+
+export default memo(Settings);

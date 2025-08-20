@@ -18,6 +18,7 @@ import { windowOpen } from '../messaging';
 import Receive from '../popup/receive/Receive';
 import { GradientDivider } from '../style';
 import { ExtensionPopups } from '../util/constants';
+import { useExtensionPopups } from '../util/handleExtensionPopup';
 
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
@@ -97,9 +98,10 @@ function HomeMenu (): React.ReactElement {
   const { assetId } = useParams<{ assetId: string }>();
   const { pathname, state } = useLocation() as { pathname: string; state: { previousUrl: string } };
   const navigate = useNavigate();
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+
   const [leftPosition, setLeftPosition] = useState<number | null>(null);
   const [currentMenu, setCurrentMenu] = useState<string>();
-  const [openModal, setOpen] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const page = useMemo(() => {
     if (!pathname || pathname === '/') {
@@ -127,16 +129,16 @@ function HomeMenu (): React.ReactElement {
       case 'send':
         return (account && windowOpen(`/send/${account.address}/${lastSelectedAccountGenesisHash}/${assetId ?? 0}`))as unknown as void;
       case 'receive':
-        return setOpen(ExtensionPopups.RECEIVE);
+        return extensionPopupOpener(ExtensionPopups.RECEIVE)();
       case 'governance':
-        return setOpen(ExtensionPopups.GOVERNANCE);
+        return extensionPopupOpener(ExtensionPopups.GOVERNANCE)();
       default:
         navigate(`/${input}`, { state: { previousUrl: page } }) as void;
     }
   }, [account, assetId, lastSelectedAccountGenesisHash, navigate, page]);
 
   const selectionLineStyle = useMemo(() => ({
-    background: 'linear-gradient(263.83deg, rgba(255, 79, 185, 0) 9.75%, #FF4FB9 52.71%, rgba(255, 79, 185, 0) 95.13%)',
+    background: 'linear-gradient(263.83deg, transparent 9.75%, #FF4FB9 52.71%, transparent 95.13%)',
     border: 'none',
     height: '2px',
     position: 'relative',
@@ -161,16 +163,13 @@ function HomeMenu (): React.ReactElement {
         </Grid>
       </Container>
       <Receive
-        openPopup={openModal === ExtensionPopups.RECEIVE}
-        setOpenPopup={setOpen}
+        openPopup={extensionPopup === ExtensionPopups.RECEIVE}
+        setOpenPopup={extensionPopupCloser}
       />
-      {
-        openModal === ExtensionPopups.GOVERNANCE &&
+      {extensionPopup === ExtensionPopups.GOVERNANCE &&
         <GovernanceModal
-          open={openModal === ExtensionPopups.GOVERNANCE}
-          setOpen={setOpen}
-        />
-      }
+          setOpen={extensionPopupCloser}
+        />}
     </>
   );
 }

@@ -5,7 +5,7 @@ import type { LoginInfo } from '@polkadot/extension-polkagate/src/popup/password
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Key } from 'iconsax-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
 
@@ -13,12 +13,13 @@ import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 import SetPassword from './SetPassword';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 export default function Password(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
-  const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const [lastEditDate, setLastEdit] = useState<string>();
 
   useEffect(() => {
@@ -37,10 +38,6 @@ export default function Password(): React.ReactElement {
     }).catch(console.error);
   }, []);
 
-  const onClick = useCallback(() => {
-    setShowPopUp(ExtensionPopups.PASSWORD);
-  }, []);
-
   return (
     <>
       <Stack direction='column'>
@@ -49,7 +46,9 @@ export default function Password(): React.ReactElement {
         </Typography>
         <Stack
           columnGap='10px'
-          direction='row' onClick={onClick} sx={{
+          direction='row'
+          onClick={extensionPopupOpener(ExtensionPopups.PASSWORD)}
+          sx={{
             ':hover': { background: '#2D1E4A' },
             alignItems: 'center',
             bgcolor: '#1B133CB2',
@@ -80,12 +79,10 @@ export default function Password(): React.ReactElement {
           <ArrowDown2 color={isDark ? '#AA83DC' : '#745D8B'} size='16px' style={{ marginTop: '5px', transform: 'rotate(270deg)' }} variant='Bold' />
         </Stack>
       </Stack>
-      {
-        showPopUp === ExtensionPopups.PASSWORD &&
-        <SetPassword
-          openMenu={showPopUp === ExtensionPopups.PASSWORD}
-          setPopup={setShowPopUp}
-        />}
+      <SetPassword
+        openMenu={extensionPopup === ExtensionPopups.PASSWORD}
+        onClose={extensionPopupCloser}
+      />
     </>
   );
 }

@@ -9,7 +9,6 @@ import { QRCodeCanvas } from 'qrcode.react';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
-import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, NeonButton, SearchField } from '../../components';
@@ -18,6 +17,7 @@ import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util/utils';
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
@@ -214,16 +214,21 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
 
 interface Props {
   openPopup: boolean;
-  setOpenPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  setOpenPopup: ExtensionPopupCloser;
 }
 
+/**
+ * Popup component for receiving assets. Allows users to select a network and displays a QR code for the selected account address.
+ *
+ * Only has been used in extension mode!
+ */
 export default function Receive ({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
 
   const handleClose = useCallback(() => {
-    setOpenPopup(ExtensionPopups.NONE);
+    setOpenPopup();
     setSelectedChain(undefined);
   }, [setOpenPopup]);
 

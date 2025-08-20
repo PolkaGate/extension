@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/types';
+import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { Key, Link2, Profile, Trash } from 'iconsax-react';
@@ -11,11 +12,10 @@ import { emptyList } from '../assets/icons/index';
 import { ActionButton, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
-import { ExtensionPopups } from '../util/constants';
 import { EditDappAccess, SharePopup } from '.';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  onClose: ExtensionPopupCloser;
   open: boolean;
 }
 
@@ -178,7 +178,13 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
   );
 }
 
-function WebsitesAccess ({ open, setPopup }: Props): React.ReactElement {
+/**
+ * Component for managing and displaying the list of websites (dApps) that have access to the user's accounts.
+ * Allows searching, editing, and removing website access permissions.
+ *
+ * Has been used in both full-screen & extension mode!
+ */
+function WebsitesAccess ({ open, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
@@ -210,9 +216,9 @@ function WebsitesAccess ({ open, setPopup }: Props): React.ReactElement {
     setAccessToEdit(undefined);
 
     if (isExtension || !accessToEdit) {
-      setPopup(ExtensionPopups.NONE);
+      onClose();
     }
-  }, [accessToEdit, isExtension, setPopup]);
+  }, [accessToEdit, isExtension, onClose]);
 
   return (
     <SharePopup

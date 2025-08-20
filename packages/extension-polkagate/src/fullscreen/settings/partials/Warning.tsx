@@ -1,25 +1,24 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
+
 import { Stack, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { DecisionButtons } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { ExtensionPopups } from '../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  onClose: ExtensionPopupCloser;
   open: boolean;
   onConfirm: () => void
 }
 
-function Warning ({ onConfirm, open, setPopup }: Props): React.ReactElement {
+function Warning ({ onClose, onConfirm, open }: Props): React.ReactElement {
   const { t } = useTranslation();
-
-  const onClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
     <DraggableModal
@@ -30,7 +29,7 @@ function Warning ({ onConfirm, open, setPopup }: Props): React.ReactElement {
       style={{ minHeight: '200px' }}
       title={t('Warning')}
     >
-      <Stack direction='column' sx={{ alignItems: 'center', position: 'relative', py: '5px', px: '15px', zIndex: 1 }}>
+      <Stack direction='column' sx={{ alignItems: 'center', position: 'relative', px: '15px', py: '5px', zIndex: 1 }}>
         <Warning2 color='#FFCE4F' size='80' style={{ margin: '15px 0' }} variant='Bold' />
         <Typography color='#BEAAD8' sx={{ width: '72%' }} variant='B-4'>
           {t('Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.')}
