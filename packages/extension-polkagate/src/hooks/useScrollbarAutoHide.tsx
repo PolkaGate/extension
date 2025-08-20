@@ -212,7 +212,9 @@ export default function useScrollbarAutoHide () {
         return;
       }
 
-      if (!isScrollable(el as HTMLElement)) {
+      const { x, y } = isScrollable(el as HTMLElement);
+
+      if (!x && !y) {
         return;
       }
 
