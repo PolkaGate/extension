@@ -1,21 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
+
 import { Avatar, Grid, Link, Stack, Typography } from '@mui/material';
 import { Record } from 'iconsax-react';
 import React, { memo, useCallback } from 'react';
 
 import { GradientButton } from '@polkadot/extension-polkagate/src/components';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
-import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { useTranslation } from '../../hooks';
 
 interface Props {
   chainName?: string;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  setOpen: ExtensionPopupCloser;
 }
 
 type GovernanceDapp = keyof typeof POWERED_BY;
@@ -59,11 +59,11 @@ function Item ({ chainName, name }: ItemProps): React.ReactElement {
   );
 }
 
-function GovernanceModal ({ chainName, open, setOpen }: Props): React.ReactElement {
+function GovernanceModal ({ chainName, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {
-    setOpen(ExtensionPopups.NONE);
+    setOpen();
   }, [setOpen]);
 
   return (
@@ -74,7 +74,7 @@ function GovernanceModal ({ chainName, open, setOpen }: Props): React.ReactEleme
       }}
       modalStyle={{ minHeight: '200px' }}
       onClose={onClose}
-      open={open}
+      open
       popupProps={{
         TitleIcon: Record,
         iconSize: 24,

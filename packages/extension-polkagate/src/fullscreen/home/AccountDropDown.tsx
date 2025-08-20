@@ -15,6 +15,7 @@ import Receive from '../accountDetails/rightColumn/Receive';
 import ExportAccount from '../settings/partials/ExportAccount';
 import RemoveAccount from './RemoveAccount';
 import RenameAccount from './RenameAccount';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 interface Props {
   address: string | undefined;
@@ -29,10 +30,10 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const genesisHash = useAccountSelectedChain(address);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const [hovered, setHovered] = useState<boolean>(false);
   const [open, setOpenDropDown] = useState<boolean>(false);
-  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onMouseEnter = useCallback(() => setHovered(true), []);
   const onMouseLeave = useCallback(() => setHovered(false), []);
@@ -60,12 +61,12 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
       {
         Icon: ArrowCircleDown2,
         text: t('Receive'),
-        value: () => setPopup(ExtensionPopups.RECEIVE)
+        value: extensionPopupOpener(ExtensionPopups.RECEIVE)
       },
       {
         Icon: Edit,
         text: t('Rename'),
-        value: () => setPopup(ExtensionPopups.RENAME)
+        value: extensionPopupOpener(ExtensionPopups.RENAME)
       },
       {
         isLine: true
@@ -73,12 +74,12 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
       {
         Icon: DocumentDownload,
         text: t('Export account'),
-        value: () => setPopup(ExtensionPopups.EXPORT)
+        value: extensionPopupOpener(ExtensionPopups.EXPORT)
       },
       {
         Icon: LogoutCurve,
         text: t('Remove account'),
-        value: () => setPopup(ExtensionPopups.REMOVE)
+        value: extensionPopupOpener(ExtensionPopups.REMOVE)
       }
     ];
   }, [t]);
@@ -127,39 +128,27 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
         options={_options}
         setOpen={setOpenDropDown}
       />
-      {
-        popup === ExtensionPopups.RENAME &&
+      {extensionPopup === ExtensionPopups.RENAME &&
         <RenameAccount
           address={address}
-          open={popup}
-          setPopup={setPopup}
-        />
-      }
-      {
-        popup === ExtensionPopups.REMOVE &&
+          onClose={extensionPopupCloser}
+        />}
+      {extensionPopup === ExtensionPopups.REMOVE &&
         <RemoveAccount
           address={address}
-          open={popup}
-          setPopup={setPopup}
-        />
-      }
-      {
-        popup === ExtensionPopups.EXPORT &&
+          onClose={extensionPopupCloser}
+        />}
+      {extensionPopup === ExtensionPopups.EXPORT &&
         <ExportAccount
           address={address}
           name={name}
-          open={popup}
-          setPopup={setPopup}
-        />
-      }
-      {
-        popup === ExtensionPopups.RECEIVE &&
+          onClose={extensionPopupCloser}
+        />}
+      {extensionPopup === ExtensionPopups.RECEIVE &&
         <Receive
           address={address}
-          open={!!popup}
-          setOpen={setPopup}
-        />
-      }
+          closePopup={extensionPopupCloser}
+        />}
     </>
   );
 }

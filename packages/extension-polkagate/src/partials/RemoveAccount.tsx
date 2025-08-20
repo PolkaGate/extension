@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
+
 import { Container, Stack } from '@mui/material';
 import { LogoutCurve } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -11,15 +13,19 @@ import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } fr
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { forgetAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
-import { ExtensionPopups } from '../util/constants';
 import { SharePopup } from '.';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  onClose: ExtensionPopupCloser;
   open: boolean;
 }
 
-function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
+/**
+ * RemoveAccount provides UI to remove an account, handling both external and internal accounts with confirmation and feedback.
+ *
+ * Has been used in both full-screen & extension mode!
+*/
+function RemoveAccount ({ onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -38,8 +44,8 @@ function RemoveAccount ({ open, setPopup }: Props): React.ReactElement {
     setAcknowledge(false);
     setPassword(undefined);
     setPasswordError(false);
-    setPopup(ExtensionPopups.NONE);
-  }, [setPopup]);
+    onClose();
+  }, [onClose]);
 
   const onRemove = useCallback(() => {
     try {

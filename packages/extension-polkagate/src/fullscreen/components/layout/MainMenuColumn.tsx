@@ -3,11 +3,12 @@
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
-import React, { useState } from 'react';
+import React from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useManifest, useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
@@ -38,10 +39,9 @@ function MainMenuColumn (): React.ReactElement {
   const version = useManifest()?.version;
   const selectedAccount = useSelectedAccount();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const { maxPosition, maxPositionType } = useStakingPositions(selectedAccount?.address, true);
-
-  const [openModal, setOpen] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   return (
     <Grid
@@ -71,7 +71,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={ArrowCircleDown2}
-        onClick={() => setOpen(ExtensionPopups.RECEIVE)}
+        onClick={extensionPopupOpener(ExtensionPopups.RECEIVE)}
         text={t('Receive')}
       />
       <MenuButton
@@ -81,7 +81,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={Record}
-        onClick={() => setOpen(ExtensionPopups.GOVERNANCE)}
+        onClick={extensionPopupOpener(ExtensionPopups.GOVERNANCE)}
         text={t('Governance')}
       />
       <MenuButton
@@ -107,19 +107,15 @@ function MainMenuColumn (): React.ReactElement {
         <Language />
         <Socials buttonSize={24} columnGap='4px' iconSize={13.5} style={{ flexWrap: 'nowrap', width: 'fit-content' }} />
       </Stack>
-      {
-        openModal === ExtensionPopups.RECEIVE &&
+      {extensionPopup === ExtensionPopups.RECEIVE &&
         <ReceiveGeneral
-          setOpen={setOpen}
-        />
-      }
-      {
-        openModal === ExtensionPopups.GOVERNANCE &&
+          closePopup={extensionPopupCloser}
+          openPopup={extensionPopupOpener}
+        />}
+      {extensionPopup === ExtensionPopups.GOVERNANCE &&
         <GovernanceModal
-          open={ openModal === ExtensionPopups.GOVERNANCE}
-          setOpen={setOpen}
-        />
-      }
+          setOpen={extensionPopupCloser}
+        />}
     </Grid>
   );
 }

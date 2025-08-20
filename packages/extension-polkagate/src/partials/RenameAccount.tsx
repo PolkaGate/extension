@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
+
 import { Grid, Typography } from '@mui/material';
 import { Edit2, User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -8,10 +10,9 @@ import React, { useCallback, useState } from 'react';
 import { Address2, DecisionButtons, ExtensionPopup, MySnackbar, MyTextField } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
 import { editAccount } from '../messaging';
-import { ExtensionPopups } from '../util/constants';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  onClose: ExtensionPopupCloser;
   open: boolean;
 }
 
@@ -20,11 +21,13 @@ interface Props {
  * for their account and applies the change on confirmation.
  *
  * @param {boolean} open - Whether the popup is open or not.
- * @param {React.Dispatch<React.SetStateAction<ExtensionPopups>>} setPopup - A function to set the state of the popup (close it or open other popups).
+ * @param {React.Dispatch<React.SetStateAction<ExtensionPopups>>} onClose - A function to set the state of the popup (close it or open other popups).
  *
  * @returns {React.ReactElement} The rendered RenameAccount component.
+ *
+ * Only has been used in extension mode!
  */
-function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
+function RenameAccount ({ onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -34,9 +37,11 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
   const handleClose = useCallback(() => {
     setShowSnackbar(false);
     setNewName(undefined); // to reset on re open
-    setPopup(ExtensionPopups.NONE);
-  }, [setPopup]);
+    onClose();
+  }, [onClose]);
+
   const onNameChange = useCallback((text?: string) => setNewName(text), [setNewName]);
+
   const onRename = useCallback(() => {
     newName && account?.address &&
       editAccount(account.address, newName).then(() => {
@@ -54,12 +59,11 @@ function RenameAccount ({ open, setPopup }: Props): React.ReactElement {
       title={t('Rename Account')}
       withoutTopBorder
     >
-      <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1, px: '5px' }}>
+      <Grid container item justifyContent='center' sx={{ position: 'relative', px: '5px', zIndex: 1 }}>
         <Typography color='#BEAAD8' variant='B-4'>
           {t('Choose a new name for your account')}
         </Typography>
-        {
-          account &&
+        {account &&
           <Address2
             address={account?.address}
             name={account?.name}
