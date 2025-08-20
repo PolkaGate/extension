@@ -1,68 +1,22 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-import type { BN } from '@polkadot/util';
-import type { BalancesInfo, FetchedBalance } from '../../../util/types';
+import type { FetchedBalance } from '../../../util/types';
 
 import { Grid, Stack, Typography } from '@mui/material';
 import { Coin, Lock1, People, Trade, UserOctagon } from 'iconsax-react';
-import React, { memo, useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ReservedLockedPopup from '@polkadot/extension-polkagate/src/popup/tokens/partial/ReservedLockedPopup';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style/index';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useTranslation } from '../../../hooks';
-import { getValue } from '../../../popup/account/util';
+import { useTranslation } from '../../../hooks';
 import TokenDetailBox from '../../../popup/tokens/partial/TokenDetailBox';
-import { GOVERNANCE_CHAINS, MIGRATED_NOMINATION_POOLS_CHAINS, NATIVE_TOKEN_ASSET_ID } from '../../../util/constants';
-
-export type Type = 'locked' | 'reserved';
-
-interface LockedReservedState {
-  type: Type | undefined;
-  data: {
-    items: Record<string, BN | undefined>;
-    titleIcon: Icon;
-  } | undefined;
-}
-
-type Action =
-  | { type: 'OPEN_MENU'; payload: { menuType: Type; items: Record<string, BN | undefined>; titleIcon: Icon } }
-  | { type: 'CLOSE_MENU' }
-  | { type: 'UPDATE_ITEMS'; payload: Record<string, BN | undefined> };
-
-const lockedReservedReducer = (state: LockedReservedState, action: Action): LockedReservedState => {
-  switch (action.type) {
-    case 'OPEN_MENU':
-      return {
-        data: {
-          items: action.payload.items,
-          titleIcon: action.payload.titleIcon
-        },
-        type: action.payload.menuType
-      };
-    case 'CLOSE_MENU':
-      return {
-        data: undefined,
-        type: undefined
-      };
-    case 'UPDATE_ITEMS':
-      return state.data
-        ? {
-          ...state,
-          data: {
-            ...state.data,
-            items: action.payload
-          }
-        }
-        : state;
-    default:
-      return state;
-  }
-};
+import { useTokenInfoDetails } from '@polkadot/extension-polkagate/src/popup/tokens/useTokenInfoDetails';
+ 
+ 
 
 interface Props {
   address: string | undefined;
@@ -70,146 +24,22 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement {
+function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted3(address, genesisHash);
-  const reservedReason = useReservedDetails2(formatted, genesisHash);
-  const pricesInCurrency = usePrices();
   const navigate = useNavigate();
-  const { api } = useChainInfo(genesisHash);
-  const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(address, genesisHash, undefined); // TODO: timeToUnlock!
 
-  const [lockedReservedState, dispatch] = useReducer(lockedReservedReducer, {
-    data: undefined,
-    type: undefined
-  });
+    const {
+      closeMenu,
+      displayPopup,
+      hasAmount,
+      lockedBalance,
+      lockedTooltip,
+      onTransferable,
+      reservedBalance,
+      state,
+      tokenPrice,
+      transferable } = useTokenInfoDetails(address, genesisHash, token);
 
-  const transferable = useMemo(() => getValue('transferable', token as unknown as BalancesInfo), [token]);
-  const lockedBalance = useMemo(() => getValue('locked balance', token as unknown as BalancesInfo), [token]);
-  const reservedBalance = useMemo(() => getValue('reserved', token as unknown as BalancesInfo)?.add(token?.poolReward ?? BN_ZERO), [token]);
-
-  const isMigrationEnabled = useMemo(() => MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash ?? ''), [genesisHash]);
-
-  const { lockedReasonLoading, reservedReasonLoading } = useMemo(() => {
-    const reasons = Object.values(reservedReason);
-    const reservedReasonLoading = reasons.length === 0 || reasons.some((reason) => reason === undefined);
-
-    const lockedReasonLoading = delegatedBalance === undefined || totalLocked === undefined;
-
-    return {
-      lockedReasonLoading,
-      reservedReasonLoading
-    };
-  }, [delegatedBalance, reservedReason, totalLocked]);
-
-  const lockedTooltip = useMemo(() => {
-    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(genesisHash ?? '') || !api) {
-      return undefined;
-    }
-
-    return (t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } }));
-  }, [api, genesisHash, t, unlockableAmount]);
-
-  const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
-  const onTransferable = useCallback(() => navigate(`/send/${address}/${genesisHash}/${token?.assetId ?? NATIVE_TOKEN_ASSET_ID}`), [address, genesisHash, navigate, token?.assetId]);
-
-  const displayPopup = useCallback((type: Type) => () => {
-    const items: Record<string, BN | undefined> = {};
-
-    const addStakingItems = (shouldAdd: boolean) => {
-      if (!shouldAdd) {
-        return;
-      }
-
-      if (token?.soloTotal && hasAmount(token?.soloTotal)) {
-        items['Solo Staking'] = token.soloTotal;
-      }
-
-      if (token?.pooledBalance && hasAmount(token?.pooledBalance)) {
-        items['Pool Staking'] = token.pooledBalance.add(token.poolReward ?? BN_ZERO);
-      }
-    };
-
-    if (type === 'locked') {
-      addStakingItems(!isMigrationEnabled);
-
-      if (hasAmount(unlockableAmount) && !items['Governance']) {
-        items['Governance'] = unlockableAmount;
-      }
-    } else {
-      if (reservedReason) {
-        Object.entries(reservedReason)
-          .forEach(([reason, amount]) => {
-            if (amount && hasAmount(amount)) {
-              items[reason] = amount;
-            }
-          });
-      }
-
-      addStakingItems(!!isMigrationEnabled);
-    }
-
-    dispatch({
-      payload: {
-        items,
-        menuType: type,
-        titleIcon: type === 'locked' ? Lock1 : Coin
-      },
-      type: 'OPEN_MENU'
-    });
-  }, [hasAmount, isMigrationEnabled, reservedReason, token?.poolReward, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
-
-  useEffect(() => {
-    if (lockedReservedState.data === undefined || lockedReservedState.type === undefined) {
-      return;
-    }
-
-    const items: Record<string, BN | undefined> = lockedReservedState.data.items;
-
-    if (lockedReservedState.type === 'reserved') {
-      Object.entries(reservedReason).forEach(([reason, amount]) => {
-        if (amount && !amount.isZero() && !items[reason]) {
-          items[reason] = amount;
-        }
-      });
-
-      if (reservedReasonLoading) {
-        items['loading'] = undefined;
-      } else {
-        delete items['loading'];
-      }
-    }
-
-    if (lockedReservedState.type === 'locked') {
-      if (delegatedBalance && !delegatedBalance.isZero() && !items['delegate']) {
-        items['delegate'] = delegatedBalance;
-      }
-
-      const hasVote = delegatedBalance && totalLocked && !totalLocked.isZero() && totalLocked.sub(delegatedBalance).gt(BN_ZERO) && !items['vote'];
-
-      if (hasVote) {
-        items['vote'] = totalLocked.sub(delegatedBalance);
-      }
-
-      if (lockedReasonLoading) {
-        items['loading'] = undefined;
-      } else if (!lockedReasonLoading) {
-        delete items['loading'];
-      }
-    }
-
-    dispatch({
-      payload: items,
-      type: 'UPDATE_ITEMS'
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [delegatedBalance, lockedReasonLoading, JSON.stringify(lockedReservedState.data?.items), lockedReservedState.type, reservedReason, reservedReasonLoading, totalLocked]);
-
-  const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
-
-  const closeMenu = useCallback(() => {
-    dispatch({ type: 'CLOSE_MENU' });
-  }, []);
 
   const onStaking = useCallback((type: string) => () => {
     navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;
@@ -228,6 +58,9 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
     };
   }, [token]);
 
+  const BOX_BG = '#05091C';
+  const ICON_SIZE = '20';
+
   return (
     <>
       <Grid container item sx={{ display: 'flex', gap: '4px', mb: '10px', p: '15px', pb: '10px' }}>
@@ -239,9 +72,9 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             <TokenDetailBox
               Icon={Trade}
               amount={transferable}
-              background='#05091C'
+              background={BOX_BG}
               decimal={token?.decimal}
-              iconSize='20'
+              iconSize={ICON_SIZE}
               // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onClick={onTransferable}
               priceId={token?.priceId}
@@ -251,10 +84,10 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             <TokenDetailBox
               Icon={Lock1}
               amount={lockedBalance}
-              background='#05091C'
+              background={BOX_BG}
               decimal={token?.decimal}
               description={lockedTooltip}
-              iconSize='20'
+              iconSize={ICON_SIZE}
               onClick={hasAmount(lockedBalance) ? displayPopup('locked') : undefined}
               priceId={token?.priceId}
               title={t('Locked')}
@@ -263,9 +96,9 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
             <TokenDetailBox
               Icon={Coin}
               amount={reservedBalance}
-              background='#05091C'
+              background={BOX_BG}
               decimal={token?.decimal}
-              iconSize='20'
+              iconSize={ICON_SIZE}
               onClick={hasAmount(reservedBalance) ? displayPopup('reserved') : undefined}
               priceId={token?.priceId}
               title={t('Reserved')}
@@ -276,9 +109,9 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
               <TokenDetailBox
                 Icon={People}
                 amount={stakings.maybePoolStake}
-                background='#05091C'
+                background={BOX_BG}
                 decimal={token?.decimal}
-                iconSize='20'
+                iconSize={ICON_SIZE}
                 iconVariant='Bulk'
                 onClick={onStaking('pool')}
                 priceId={token?.priceId}
@@ -291,9 +124,9 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
               <TokenDetailBox
                 Icon={UserOctagon}
                 amount={stakings.maybeSoloStake}
-                background='#05091C'
+                background={BOX_BG}
                 decimal={token?.decimal}
-                iconSize='20'
+                iconSize={ICON_SIZE}
                 iconVariant='Bold'
                 onClick={onStaking('solo')}
                 priceId={token?.priceId}
@@ -305,13 +138,13 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
         </VelvetBox>
       </Grid>
       <ReservedLockedPopup
-        TitleIcon={lockedReservedState.data?.titleIcon}
+        TitleIcon={state.data?.titleIcon}
         decimal={token?.decimal}
         handleClose={closeMenu}
-        items={lockedReservedState.data?.items ?? {}}
-        openMenu={!!lockedReservedState.type}
+        items={state.data?.items ?? {}}
+        openMenu={!!state.type}
         price={tokenPrice}
-        title={lockedReservedState.type ?? ''}
+        title={state.type ?? ''}
         token={token?.token}
       />
     </>

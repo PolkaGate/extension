@@ -3,17 +3,17 @@
 
 // @ts-nocheck
 
-import type { Option } from '@polkadot/types';
+import type { Option, Vec } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { AccountId, AccountId32 } from '@polkadot/types/interfaces/runtime';
+import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletProxyProxyDefinition, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { MIGRATED_NOMINATION_POOLS_CHAINS, PROXY_CHAINS } from '../util/constants';
+import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useAccountAssets, useInfo } from '.';
 
@@ -59,7 +59,7 @@ export default function useReservedDetails (address: string | undefined): Reserv
         const basicDeposit = api.consts['identity']['basicDeposit'] as unknown as BN;
         // const subAccountDeposit = api.consts['identity']['subAccountDeposit'] as unknown as BN;
 
-        const subs = await api.query['identity']['subsOf'](formatted);
+        const subs = (await api.query['identity']['subsOf'](formatted)) as unknown as [BN, Vec<AccountId32>];
 
         const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
 
@@ -74,8 +74,8 @@ export default function useReservedDetails (address: string | undefined): Reserv
 
       /** fetch proxy  */
       if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
-        api.query['proxy']['proxies'](formatted).then((p) => {
-          const maybeDeposit = p?.[1] as BN;
+        api.query['proxy']['proxies'](formatted).then((value) => {
+          const [_proxyDefs, maybeDeposit] = value as unknown as [Vec<PalletProxyProxyDefinition>, BN];
 
           if (!maybeDeposit?.isZero()) {
             setReserved((prev) => {
@@ -282,14 +282,12 @@ export default function useReservedDetails (address: string | undefined): Reserv
       }
 
       /** handle pooleBalance as reserved  */
-      if (maybePooledBalance && MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash)) {
-        if (!maybePooledBalance.isZero()) {
-          setReserved((prev) => {
-            prev.pooledBalance = toBalance(maybePooledBalance);
+      if (maybePooledBalance && !maybePooledBalance.isZero()) {
+        setReserved((prev) => {
+          prev.pooledBalance = toBalance(maybePooledBalance);
 
-            return prev;
-          });
-        }
+          return prev;
+        });
       }
     } catch (e) {
       console.error('Fatal error while fetching reserved details:', e);
