@@ -6,7 +6,7 @@ import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import type { Forcing } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
-import type { ExpandedRewards } from '../fullscreen/stake/solo/pending';
+import type { ExpandedRewards } from '../fullscreen/stake/type';
 import type { Content } from '../partials/Review';
 import type { MyPoolInfo, PoolInfo, RewardDestinationType } from '../util/types';
 
@@ -47,7 +47,7 @@ export const useUnstakingPool = (
   const isPoolOwner = useMemo(() =>
     String(formatted) === String(stakingInfo.pool?.bondedPool?.roles?.root) ||
     String(formatted) === String(stakingInfo.pool?.bondedPool?.roles?.depositor)
-  , [formatted, stakingInfo.pool?.bondedPool?.roles?.depositor, stakingInfo.pool?.bondedPool?.roles?.root]);
+    , [formatted, stakingInfo.pool?.bondedPool?.roles?.depositor, stakingInfo.pool?.bondedPool?.roles?.root]);
   const poolState = useMemo(() => String(stakingInfo.pool?.bondedPool?.state), [stakingInfo.pool?.bondedPool?.state]);
   const poolMemberCounter = useMemo(() => Number(stakingInfo.pool?.bondedPool?.memberCounter), [stakingInfo.pool?.bondedPool?.memberCounter]);
 
@@ -506,7 +506,7 @@ export const useWithdrawSolo = (
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+    , [accountAssets, genesisHash]);
   const transferable = useMemo(() => getValue('transferable', asset), [asset]);
   const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
 
@@ -660,7 +660,7 @@ export const useFastUnstaking = (
     (fastUnstakeDeposit && estimatedFee && transferable)
       ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_ZERO)
       : undefined
-  , [fastUnstakeDeposit, estimatedFee, transferable]);
+    , [fastUnstakeDeposit, estimatedFee, transferable]);
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const redeemable = stakingInfo.stakingAccount?.redeemable;
@@ -668,7 +668,7 @@ export const useFastUnstaking = (
   const hasUnlockingAndRedeemable = useMemo(() => redeemable !== undefined && stakingInfo.stakingAccount
     ? !!(!redeemable.isZero() || stakingInfo.stakingAccount.unlocking?.length)
     : undefined
-  , [redeemable, stakingInfo.stakingAccount]);
+    , [redeemable, stakingInfo.stakingAccount]);
 
   const isEligible = useMemo(() => isExposed !== undefined && hasUnlockingAndRedeemable !== undefined && hasEnoughDeposit !== undefined
     ? !isExposed && !hasUnlockingAndRedeemable && hasEnoughDeposit
@@ -1503,18 +1503,18 @@ export const usePendingRewardsSolo = (
     }
 
     const EndEraInBlock =
-        (forcing.isForceAlways
-          ? progress.sessionLength
-          : progress.eraLength
-        ).mul(
-          historyDepth
-            .sub(progress.activeEra)
-            .addn(era)
-            .add(BN_ONE)
-        ).sub(
-          forcing.isForceAlways
-            ? progress.sessionProgress
-            : progress.eraProgress);
+      (forcing.isForceAlways
+        ? progress.sessionLength
+        : progress.eraLength
+      ).mul(
+        historyDepth
+          .sub(progress.activeEra)
+          .addn(era)
+          .add(BN_ONE)
+      ).sub(
+        forcing.isForceAlways
+          ? progress.sessionProgress
+          : progress.eraProgress);
 
     return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, undefined, true) : undefined;
   }, [currentBlock, forcing, historyDepth, progress]);

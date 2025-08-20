@@ -11,8 +11,6 @@ export { default as FullscreenModeButton } from './FullscreenModeButton';
 export { default as HeaderBrand } from './HeaderBrand';
 export { default as HomeMenu } from './HomeMenu';
 export { default as LogoDropAnimation } from './LogoDropAnimation';
-export { default as Name } from './Name';
-export { default as Passwords } from './Passwords';
 export { default as RemoteNodeSelectorWithSignals } from './RemoteNodeSelectorWithSignals';
 export { default as SharePopup } from './SharePopup';
 export { default as SubTitle } from './SubTitle';

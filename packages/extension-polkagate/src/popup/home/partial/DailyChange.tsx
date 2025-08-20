@@ -5,12 +5,12 @@ import { Container, type SxProps, type Theme, Typography, useTheme } from '@mui/
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { PORTFOLIO_CHANGE_DECIMAL } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/TotalBalancePieChart';
-
 import { FormatPrice, MySkeleton } from '../../../components';
 import { useIsDark, useIsHideNumbers, usePortfolio } from '../../../hooks';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util/utils';
+
+const PORTFOLIO_CHANGE_DECIMAL = 2;
 
 interface DailyChangeProps {
   change?: number | null;

@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/type';
+
 import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
 import { timeDiffSummary } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/timeDiffSummary';
-import { type BN } from '@polkadot/util';
 
 import { AssetLogo, FadeOnScroll, FormatBalance2, GradientDivider, Identity2 } from '../../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
@@ -50,12 +51,6 @@ export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
   );
 };
 
-type ExpandedRewards = [
-  eraIndex: string,
-  validator: string,
-  page: number,
-  value: BN
-]
 interface RewardsTableProp {
   adaptiveDecimalPoint: number | undefined;
   expandedRewards: ExpandedRewards[] | undefined;

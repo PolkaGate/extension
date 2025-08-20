@@ -42,9 +42,8 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       navigate('/') as void;
     }
 
-    notify(t('Account removed successfully.'), 'info');
     setPopup(undefined);
-  }, [navigate, notify, setPopup, t]);
+  }, [navigate, setPopup]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -67,6 +66,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       forgetAccount(account.address)
         .then(() => {
           setIsBusy(false);
+          notify(t('Account removed successfully.'), 'info');
 
           handleClose();
         })
@@ -79,7 +79,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [account, acknowledged, handleClose, password]);
+  }, [account, acknowledged, handleClose, notify, password, t]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);

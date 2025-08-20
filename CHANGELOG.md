@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.1](https://github.com/polkagate/extension/compare/v1.1.0...v1.1.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* correct account remove notify ([0253b8a](https://github.com/polkagate/extension/commit/0253b8a3f794e94b164b36ed80cda519ba2134b5))
+
 # [1.1.0](https://github.com/polkagate/extension/compare/v1.0.3...v1.1.0) (2025-08-19)
 
 
