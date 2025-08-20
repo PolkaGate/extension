@@ -185,6 +185,7 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
     <SharePopup
       modalProps={{
         noDivider: true,
+        showBackIconAsClose: true,
         style: { minHeight: 'fit-content', padding: '20px', zIndex: 1 }
       }}
       modalStyle={{ minHeight: '200px' }}
