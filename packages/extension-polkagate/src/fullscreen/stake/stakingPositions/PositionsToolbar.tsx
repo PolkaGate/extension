@@ -58,14 +58,14 @@ const TabItem = React.forwardRef<HTMLDivElement, TabItemProps>(
 
 TabItem.displayName = 'TabItem';
 
-interface PositionsEarningsProps {
+interface PositionsExploreProps {
   setter: (selectedTab: POSITION_TABS) => () => void;
   selectedTab: POSITION_TABS;
   positionsCount: number | undefined;
   earningsCount: number | undefined;
 }
 
-const PositionsEarnings = ({ earningsCount, positionsCount, selectedTab, setter }: PositionsEarningsProps) => {
+const PositionsExplore = ({ earningsCount, positionsCount, selectedTab, setter }: PositionsExploreProps) => {
   const { t } = useTranslation();
   const positionsRef = React.useRef<HTMLDivElement>(null);
   const exploreRef = React.useRef<HTMLDivElement>(null);
@@ -157,7 +157,12 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '40px', p: '14px', width: '100%' }}>
-      <PositionsEarnings earningsCount={earningsCount} positionsCount={positionsCount} selectedTab={state.tab} setter={setter} />
+      <PositionsExplore
+        earningsCount={earningsCount}
+        positionsCount={positionsCount}
+        selectedTab={state.tab}
+        setter={setter}
+      />
       {state.tab === POSITION_TABS.POSITIONS && (
         <DropSelect
           displayContentType='iconOption'
@@ -189,13 +194,15 @@ function PositionsToolbar ({ dispatch, earningsCount, positionsCount, state }: P
           width: state.tab === POSITION_TABS.POSITIONS ? '195px' : '300px'
         }}
       />
-      <MySwitch
-        checked={state.isTestnet}
-        columnGap='6px'
-        label= {t('Test Networks')}
-        labelStyle={{ color: 'text.secondary', variant: 'B-4' }}
-        onChange={toggleTestnets}
-      />
+      {isTestnetEnabled &&
+        <MySwitch
+          checked={state.isTestnet}
+          columnGap='6px'
+          label={t('Test Networks')}
+          labelStyle={{ color: 'text.secondary', variant: 'B-4' }}
+          onChange={toggleTestnets}
+        />
+      }
     </Container>
   );
 }
