@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance } from '../../hooks/useAssetsBalances';
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, Trade } from 'iconsax-react';

@@ -3,8 +3,8 @@
 
 import type React from 'react';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api-base/types';
-import type { FetchedBalance } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Prices } from '../../../util/types';
 
 import { Badge, Collapse, Container, Divider, Grid, Typography, useTheme, type Theme } from '@mui/material';

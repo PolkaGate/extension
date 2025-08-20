@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance } from '@polkadot/extension-polkagate/hooks/useAssetsBalances';
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
