@@ -19,10 +19,6 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
   const { maxPosition, maxPositionType } = useStakingPositions(address, isStakingPath);
 
   const updatePathWithNewAddress = useCallback((newAddress: string) => {
-    // if (location.pathname.includes('/fullscreen-stake/')) {
-    //   return;
-    // }
-
     const pathParts = location.pathname.split('/');
 
     const maybeAddressIndex = pathParts.findIndex((p) => isValidAddress(p)); // since we put address before genesis in the paths

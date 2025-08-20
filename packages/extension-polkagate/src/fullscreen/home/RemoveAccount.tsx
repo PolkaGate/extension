@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
+
 import { Box, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,11 +19,16 @@ import { SharePopup } from '../../partials';
 
 interface Props {
   address: string | undefined;
-  setPopup: React.Dispatch<React.SetStateAction<any | undefined>>;
-  open: any | undefined;
+  onClose: ExtensionPopupCloser;
 }
 
-function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement {
+/**
+ * Component for removing an account from the extension.
+ * Handles both external and internal accounts with confirmation and password input.
+ *
+ * Only has been used in full-screen mode!
+ */
+function RemoveAccount ({ address, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useAccount(address);
   const navigate = useNavigate();
@@ -42,8 +49,8 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       navigate('/') as void;
     }
 
-    setPopup(undefined);
-  }, [navigate, setPopup]);
+    onClose();
+  }, [navigate, onClose]);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -91,7 +98,7 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
       modalProps={{ dividerStyle: { margin: '5px 0 0' }, showBackIconAsClose: true }}
       modalStyle={{ minHeight: '200px' }}
       onClose={handleClose}
-      open={open !== undefined}
+      open
       popupProps={{ pt: account?.isExternal ? 95 : 50 }}
       title={t('Confirmation of action')}
     >
@@ -115,21 +122,23 @@ function RemoveAccount ({ address, open, setPopup }: Props): React.ReactElement 
           />
         }
         {account && account.isExternal
-          ? <GlowCheckbox
-            changeState={toggleAcknowledge}
-            checked={acknowledged}
-            disabled={isBusy}
-            label={t('I want to remove this account')}
-            style={{ justifyContent: 'center', my: '35px' }}
-          />
-          : <PasswordInput
-            focused
-            hasError={isPasswordWrong}
-            onEnterPress={onRemove}
-            onPassChange={onPassChange}
-            style={{ marginBottom: '25px', marginTop: '35px' }}
-            title={t('Password for {{accountName}}', { replace: { accountName: account?.name } })}
-          />
+          ? (
+            <GlowCheckbox
+              changeState={toggleAcknowledge}
+              checked={acknowledged}
+              disabled={isBusy}
+              label={t('I want to remove this account')}
+              style={{ justifyContent: 'center', my: '35px' }}
+            />)
+          : (
+            <PasswordInput
+              focused
+              hasError={isPasswordWrong}
+              onEnterPress={onRemove}
+              onPassChange={onPassChange}
+              style={{ marginBottom: '25px', marginTop: '35px' }}
+              title={t('Password for {{accountName}}', { replace: { accountName: account?.name } })}
+            />)
         }
         <DecisionButtons
           cancelButton

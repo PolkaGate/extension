@@ -1,23 +1,24 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
+
 import SquareIcon from '@mui/icons-material/Square';
 import { Box, Grid, Link, Typography, useTheme } from '@mui/material';
 import { ShieldTick } from 'iconsax-react';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Translation } from 'react-i18next';
 
-import { ExtensionPopup, GradientButton } from '../components';
-import { DraggableModal } from '../fullscreen/components/DraggableModal';
-import { useIsExtensionPopup, useTranslation } from '../hooks';
-import { ExtensionPopups } from '../util/constants';
+import { GradientButton } from '../components';
+import { useTranslation } from '../hooks';
+import { SharePopup } from '.';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  onClose: ExtensionPopupCloser;
   openMenu: boolean;
 }
 
-function Content({ handleClose }: { handleClose: () => void }): React.ReactElement {
+function Content ({ handleClose }: { handleClose: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -84,37 +85,20 @@ function Content({ handleClose }: { handleClose: () => void }): React.ReactEleme
   );
 }
 
-function PrivacyPolicy ({ openMenu, setPopup }: Props): React.ReactElement {
+function PrivacyPolicy ({ onClose, openMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const isExtension = useIsExtensionPopup();
-
-  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
-    <>  {
-      isExtension
-        ? <ExtensionPopup
-          TitleIcon={ShieldTick}
-          handleClose={handleClose}
-          openMenu={openMenu}
-          title={t('Privacy and security')}
-        >
-          <Content
-            handleClose={handleClose}
-          />
-        </ExtensionPopup>
-        : <DraggableModal
-          onClose={handleClose}
-          open={openMenu}
-          style={{ minHeight: '400px', padding: '20px' }}
-          title={t('Privacy and security')}
-        >
-          <Content
-            handleClose={handleClose}
-          />
-        </DraggableModal>
-    }
-    </>
+    <SharePopup
+      onClose={onClose}
+      open={openMenu}
+      popupProps={{ TitleIcon: ShieldTick }}
+      title={t('Privacy and security')}
+    >
+      <Content
+        handleClose={onClose}
+      />
+    </SharePopup>
   );
 }
 

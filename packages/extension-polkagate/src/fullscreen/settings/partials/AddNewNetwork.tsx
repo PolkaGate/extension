@@ -19,12 +19,11 @@ import { metadataFromApi } from '@polkadot/extension-polkagate/src/util/workers/
 
 import { useCurrency, useTranslation } from '../../../hooks';
 import allChains from '../../../util/chains';
-import { ExtensionPopups } from '../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 interface Props {
-  setOpen: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
-  open: boolean;
+  closePopup: ExtensionPopupCloser;
 }
 
 function getRandomColor () {
@@ -242,7 +241,7 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
   );
 }
 
-function AddNewNetwork ({ open, setOpen }: Props): React.ReactElement {
+function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();
@@ -377,15 +376,15 @@ function AddNewNetwork ({ open, setOpen }: Props): React.ReactElement {
     }
 
     reset();
-    setOpen(ExtensionPopups.NONE);
-  }, [reset, setOpen, showSnackbar]);
+    closePopup();
+  }, [reset, closePopup, showSnackbar]);
 
   const onHow = useCallback(() => setShowHow(!showHow), [showHow]);
 
   return (
     <DraggableModal
       onClose={onClose}
-      open={open}
+      open
       showBackIconAsClose
       style={{ minHeight: '400px', padding: '20px' }}
       title={t('Add New Network')}

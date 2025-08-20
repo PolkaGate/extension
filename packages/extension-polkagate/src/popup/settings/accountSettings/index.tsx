@@ -3,11 +3,12 @@
 
 import { Container, Stack, Typography } from '@mui/material';
 import { Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { noop } from '@polkadot/util';
 
 import { ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
@@ -18,11 +19,13 @@ import RemoveAccount from '../../../partials/RemoveAccount';
 import RenameAccount from '../../../partials/RenameAccount';
 import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 
+type State = { pathname: string } | undefined;
+
 function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
   const location = useLocation();
   const { address } = useParams<{ address: string }>();
-  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   useEffect(() => {
     if (!address) {
@@ -34,12 +37,9 @@ function AccountSettings (): React.ReactElement {
 
   const onAction = useContext(ActionContext);
 
-  const isComingFromAccountsList = location.state?.pathname === '/accounts';
-  const onBack = useCallback(() => onAction(isComingFromAccountsList ? location.state.pathname as string : '/settings'), [isComingFromAccountsList, location, onAction]);
+  const isComingFromAccountsList = (location.state as State)?.pathname === '/accounts';
+  const onBack = useCallback(() => onAction(isComingFromAccountsList ? (location.state as State)?.pathname : '/settings'), [isComingFromAccountsList, location, onAction]);
 
-  const onRename = useCallback(() => setPopup(ExtensionPopups.RENAME), []);
-  const onDapps = useCallback(() => setPopup(ExtensionPopups.DAPPS), []);
-  const onForget = useCallback(() => setPopup(ExtensionPopups.REMOVE), []);
   const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
 
@@ -69,7 +69,7 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={onRename}
+          onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
           style={{
             alignItems: 'center',
             height: '64px',
@@ -108,7 +108,7 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={onDapps}
+          onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
           style={{
             alignItems: 'center',
             height: '64px',
@@ -116,7 +116,7 @@ function AccountSettings (): React.ReactElement {
           }}
           title={t('Websites Access')}
         />
-        <Stack alignItems='center' columnGap='5px' direction='row' onClick={onForget} sx={{ cursor: 'pointer', mt: '25px' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ cursor: 'pointer', mt: '25px' }}>
           <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
           <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
             {t('Remove account')}
@@ -125,16 +125,16 @@ function AccountSettings (): React.ReactElement {
       </Motion>
       <HomeMenu />
       <RenameAccount
-        open={popup === ExtensionPopups.RENAME}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        open={extensionPopup === ExtensionPopups.RENAME}
       />
       <RemoveAccount
-        open={popup === ExtensionPopups.REMOVE}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        open={extensionPopup === ExtensionPopups.REMOVE}
       />
       <WebsitesAccess
-        open={popup === ExtensionPopups.DAPPS}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        open={extensionPopup === ExtensionPopups.DAPPS}
       />
     </Container>
   );

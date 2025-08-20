@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser, ExtensionPopupOpener } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
+
 import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
@@ -10,23 +12,23 @@ import Receive from '../../accountDetails/rightColumn/Receive';
 import AccountListModal from '../AccountListModal';
 
 interface Props {
-  setOpen: React.Dispatch<React.SetStateAction<ExtensionPopups>>
+  closePopup: ExtensionPopupCloser;
+  openPopup: ExtensionPopupOpener;
 }
 
-function ReceiveGeneral ({ setOpen }: Props): React.ReactElement {
+function ReceiveGeneral ({ closePopup, openPopup }: Props): React.ReactElement {
   const [address, setAddress] = useState<string | null | undefined>();
-  const [openReceive, setOpenReceive] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
   const onClose = useCallback(() => {
-    setOpen(ExtensionPopups.NONE);
+    closePopup();
     setAddress(undefined);
-  }, [setOpen]);
+  }, [closePopup]);
 
   const onApply = useCallback(() => {
     setTimeout(() => {
-      setOpenReceive(ExtensionPopups.RECEIVE);
+      openPopup(ExtensionPopups.RECEIVE)();
     }, 50);
-  }, []);
+  }, [openPopup]);
 
   return (
     <Grid alignContent='start' container item sx={{ height: '760px', position: 'relative', width: '196px' }}>
@@ -40,9 +42,8 @@ function ReceiveGeneral ({ setOpen }: Props): React.ReactElement {
       {address &&
         <Receive
           address={address}
+          closePopup={closePopup}
           onClose={onClose}
-          open={openReceive === ExtensionPopups.RECEIVE}
-          setOpen={setOpenReceive}
         />
       }
     </Grid>

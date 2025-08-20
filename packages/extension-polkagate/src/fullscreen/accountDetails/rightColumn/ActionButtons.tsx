@@ -5,7 +5,7 @@ import type { Icon } from 'iconsax-react';
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Record, Triangle } from 'iconsax-react';
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
@@ -14,6 +14,7 @@ import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/ex
 import { useChainInfo, useStakingPositions, useTranslation } from '../../../hooks';
 import GovernanceModal from '../../components/GovernanceModal';
 import Receive from './Receive';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -51,11 +52,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash);
   const { maxPosition, maxPositionType } = useStakingPositions(address, true);
-
-  const [openModal, setOpen] = useState(ExtensionPopups.NONE);
-
-  const onReceiveClick = useCallback(() => setOpen(ExtensionPopups.RECEIVE), []);
-  const onGovernanceClick = useCallback(() => setOpen(ExtensionPopups.GOVERNANCE), []);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   return (
     <>
@@ -69,13 +66,13 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           <ActionBox
             Icon={ArrowCircleDown2}
             label={t('Receive')}
-            onClick={onReceiveClick}
+            onClick={extensionPopupOpener(ExtensionPopups.RECEIVE)}
           />
           {GOVERNANCE_CHAINS.includes(chainName?.toLocaleLowerCase() ?? '') &&
             <ActionBox
               Icon={Record}
               label={t('Governance')}
-              onClick={onGovernanceClick}
+              onClick={extensionPopupOpener(ExtensionPopups.GOVERNANCE)}
             />}
           {STAKING_CHAINS.includes(genesisHash ?? '') &&
             <ActionBox
@@ -90,22 +87,16 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
           />
         </Stack>
       </VelvetBox>
-      {
-        openModal === ExtensionPopups.RECEIVE &&
+      {extensionPopup === ExtensionPopups.RECEIVE &&
         <Receive
           address={address}
-          open={openModal === ExtensionPopups.RECEIVE}
-          setOpen={setOpen}
-        />
-      }
-      {
-        openModal === ExtensionPopups.GOVERNANCE &&
+          closePopup={extensionPopupCloser}
+        />}
+      {extensionPopup === ExtensionPopups.GOVERNANCE &&
         <GovernanceModal
           chainName={chainName}
-          open={openModal === ExtensionPopups.GOVERNANCE}
-          setOpen={setOpen}
-        />
-      }
+          setOpen={extensionPopupCloser}
+        />}
     </>
   );
 }

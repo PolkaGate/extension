@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { MySwitch } from '@polkadot/extension-polkagate/src/components/index';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { ExtensionPopups, STORAGE_KEY, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useTranslation } from '../../../components/translate';
 import useIsTestnetEnabled from '../../../hooks/useIsTestnetEnabled';
@@ -20,17 +21,16 @@ export default function EnableTestNet (): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const isTestnetEnabled = useIsTestnetEnabled();
   const isExtension = useIsExtensionPopup();
-
-  const [testnetWarning, setShowTestnetWarning] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const onEnableTestNetClick = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     checked
-      ? setShowTestnetWarning(ExtensionPopups.WARNING)
+      ? extensionPopupOpener(ExtensionPopups.WARNING)()
       : setStorage(STORAGE_KEY.TEST_NET_ENABLED, false).catch(console.error);
-  }, []);
+  }, [extensionPopupOpener]);
 
   const onEnableTestDone = useCallback(() => {
-    setShowTestnetWarning(ExtensionPopups.NONE);
+    extensionPopupCloser();
 
     setStorage(STORAGE_KEY.TEST_NET_ENABLED, true).catch(console.error);
     accounts?.forEach(({ address, genesisHash }) => {
@@ -39,7 +39,7 @@ export default function EnableTestNet (): React.ReactElement {
         tieAccount(address, null).catch(console.error);
       }
     });
-  }, [accounts]);
+  }, [accounts, extensionPopupCloser]);
 
   return (
     <Stack direction='column'>
@@ -59,9 +59,9 @@ export default function EnableTestNet (): React.ReactElement {
         onChange={onEnableTestNetClick}
       />
       <Warning
+        onClose={extensionPopupCloser}
         onConfirm={onEnableTestDone}
-        open={testnetWarning === ExtensionPopups.WARNING}
-        setPopup={setShowTestnetWarning}
+        open={extensionPopup === ExtensionPopups.WARNING}
       />
     </Stack>
   );

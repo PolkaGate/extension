@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
+
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import saveAs from 'file-saver';
 import React, { useCallback, useContext, useState } from 'react';
@@ -13,11 +15,16 @@ import { useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<any | undefined>>;
-  open: any | undefined;
+  onClose: ExtensionPopupCloser;
 }
 
-function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
+/**
+ * Modal component to export all accounts as an encrypted JSON file.
+ * Prompts for a password, then saves the file and shows a notification.
+ *
+ * Only has been used in full-screen mode!
+ */
+function ExportAllAccounts ({ onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
@@ -26,7 +33,6 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
-  const onClose = useCallback(() => setPopup(undefined), [setPopup]);
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
     onClose();
@@ -59,7 +65,7 @@ function ExportAllAccounts ({ open, setPopup }: Props): React.ReactElement {
     <DraggableModal
       dividerStyle={{ margin: '5px 0 0' }}
       onClose={onClose}
-      open={open !== undefined}
+      open
       showBackIconAsClose
       style={{ minHeight: '200px' }}
       title={t('Export all Accounts')}

@@ -8,18 +8,17 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
-import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 interface Props {
   address: string | undefined;
-  open: boolean;
   onClose?: () => void;
-  setOpen: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  closePopup: ExtensionPopupCloser;
 }
 
 interface AddressComponentProp {
@@ -123,7 +122,7 @@ function AddressComponent ({ address, chainDisplayName, onCopy }: AddressCompone
   );
 }
 
-function Receive ({ address, onClose, open, setOpen }: Props): React.ReactElement {
+function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -155,25 +154,25 @@ function Receive ({ address, onClose, open, setOpen }: Props): React.ReactElemen
     if (selectedChain) {
       setSelectedChain(undefined);
     } else {
-      setOpen(ExtensionPopups.NONE);
+      closePopup();
     }
-  }, [onClose, selectedChain, setOpen]);
+  }, [onClose, selectedChain, closePopup]);
 
   const onDone = useCallback(() => {
     onClose && onClose();
     setSelectedChain(undefined);
-    setOpen(ExtensionPopups.NONE);
-  }, [onClose, setOpen]);
+    closePopup();
+  }, [onClose, closePopup]);
 
   return (
     <DraggableModal
       onClose={_onClose}
-      open={open}
+      open
       showBackIconAsClose
       style={{ minHeight: '400px', padding: '20px' }}
       title={selectedChain ? t('Receive funds') : t('Select network')}
     >
-      <Grow in={open}>
+      <Grow in>
         <Grid container>
           {!selectedChain
             ? <SelectChain setSelectedChain={setSelectedChain} />
