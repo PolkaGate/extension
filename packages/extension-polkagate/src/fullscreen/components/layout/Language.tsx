@@ -13,13 +13,14 @@ import { SettingsContext } from '../../../components/contexts';
 import useIsDark from '../../../hooks/useIsDark';
 import SelectLanguage from '../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../util/constants';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 export default function Language (): React.ReactElement {
   const settings = useContext(SettingsContext);
   const isDark = useIsDark();
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const [language, setLanguage] = useState('');
-  const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const [hovered, setHovered] = useState(false);
 
   const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
@@ -40,16 +41,16 @@ export default function Language (): React.ReactElement {
     });
   }, [settings]);
 
-  const onClick = useCallback(() => {
-    setShowPopUp(ExtensionPopups.LANGUAGE);
-  }, []);
-
   return (
     <>
       <Stack
         columnGap='10px'
         direction='row'
-        justifyContent='space-between' onClick={onClick} onMouseEnter={toggleHover} onMouseLeave={toggleHover} sx={{ alignItems: 'center', bgcolor: hovered ? '#2D1E4A' : 'transparent', border: '1px solid #1B133C', borderRadius: '12px', cursor: 'pointer', height: '36px', width: '100%', px: '10px' }}
+        justifyContent='space-between'
+        onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
+        onMouseEnter={toggleHover}
+        onMouseLeave={toggleHover}
+        sx={{ alignItems: 'center', bgcolor: hovered ? '#2D1E4A' : 'transparent', border: '1px solid #1B133C', borderRadius: '12px', cursor: 'pointer', height: '36px', width: '100%', px: '10px' }}
       >
         <Stack alignItems='center' columnGap='8px' direction='row' sx={{ alignItems: 'center' }}>
           <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='14' variant='Bulk' />
@@ -60,8 +61,8 @@ export default function Language (): React.ReactElement {
         <ChevronRight sx={{ color: '#AA83DC', fontSize: '20px' }} />
       </Stack>
       <SelectLanguage
-        openMenu={showPopUp === ExtensionPopups.LANGUAGE}
-        setPopup={setShowPopUp}
+        onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.LANGUAGE}
       />
     </>
   );

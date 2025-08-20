@@ -3,7 +3,7 @@
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { logoTransparent } from '../assets/logos';
 import CustomTooltip from '../components/Tooltip';
@@ -11,16 +11,17 @@ import { useSelectedLanguage, useTranslation } from '../hooks';
 import { EXTENSION_NAME, ExtensionPopups } from '../util/constants';
 import PrivacyPolicy from './PrivacyPolicy';
 import SelectLanguage from './SelectLanguage';
+import { useExtensionPopups } from '../util/handleExtensionPopup';
 
 function WelcomeHeader (): React.ReactElement {
   const { t } = useTranslation();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
   const languageTicker = useSelectedLanguage();
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
-  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const [hovered, setHovered] = useState<ExtensionPopups>(ExtensionPopups.NONE);
 
-  const shieldHoveredStyle = {
+  const shieldHoveredStyle = useMemo(() => ({
     '&::after': {
       background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
       borderRadius: '10px',
@@ -35,11 +36,7 @@ function WelcomeHeader (): React.ReactElement {
     inset: 0,
     position: 'absolute',
     transition: 'all 250ms ease-out'
-  } as SxProps<Theme>;
-
-  const openPopup = useCallback((popup: ExtensionPopups) => () => {
-    setPopup(popup);
-  }, [setPopup]);
+  } as SxProps<Theme>), []);
 
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);
@@ -51,7 +48,7 @@ function WelcomeHeader (): React.ReactElement {
         <Grid
           container
           item
-          onClick={openPopup(ExtensionPopups.PRIVACY)}
+          onClick={extensionPopupOpener(ExtensionPopups.PRIVACY)}
           onMouseEnter={onHoveredPopup(ExtensionPopups.PRIVACY)}
           onMouseLeave={onHoveredPopup()}
           ref={privacyPolicyRef}
@@ -78,7 +75,7 @@ function WelcomeHeader (): React.ReactElement {
         <Grid
           container
           item
-          onClick={openPopup(ExtensionPopups.LANGUAGE)}
+          onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
           onMouseEnter={onHoveredPopup(ExtensionPopups.LANGUAGE)}
           onMouseLeave={onHoveredPopup()}
           sx={{ alignItems: 'center', bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
@@ -94,12 +91,12 @@ function WelcomeHeader (): React.ReactElement {
         </Grid>
       </Container>
       <SelectLanguage
-        openMenu={popup === ExtensionPopups.LANGUAGE}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.LANGUAGE}
       />
       <PrivacyPolicy
-        openMenu={popup === ExtensionPopups.PRIVACY}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.PRIVACY}
       />
       <CustomTooltip
         content={t('Privacy & Security')}

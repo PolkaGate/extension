@@ -18,6 +18,7 @@ import { useGenesisHashOptions, useTranslation } from '../../hooks';
 import { getStorage, setStorage } from '../../util';
 import AddNewNetwork from './partials/AddNewNetwork';
 import Endpoints from './partials/Endpoints';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 interface ItemProps {
   isLast: boolean;
@@ -69,25 +70,21 @@ function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Ite
 
 function AddButton (): React.ReactElement {
   const { t } = useTranslation();
-  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
-
-  const onClick = useCallback(() => setPopup(ExtensionPopups.NEW_NETWORK), []);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   return (
     <>
       <VelvetBox style={{ minWidth: '165px', width: 'fit-content' }}>
-        <Stack direction='row' onClick={onClick} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
+        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
           <Add color='#FF4FB9' size='24' variant='Linear' />
           <Typography color='text.primary' sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
             {t('Add New Network')}
           </Typography>
         </Stack>
       </VelvetBox>
-      {
-        popup === ExtensionPopups.NEW_NETWORK &&
+      {extensionPopup === ExtensionPopups.NEW_NETWORK &&
         <AddNewNetwork
-          open={popup === ExtensionPopups.NEW_NETWORK}
-          setOpen={setPopup}
+          closePopup={extensionPopupCloser}
         />
       }
     </>

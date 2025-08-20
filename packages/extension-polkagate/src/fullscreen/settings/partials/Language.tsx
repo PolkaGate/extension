@@ -3,7 +3,7 @@
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import useSelectedLanguage from '@polkadot/extension-polkagate/src/hooks/useSelectedLanguage';
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
@@ -12,23 +12,19 @@ import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import SelectLanguage from '../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../util/constants';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 export default function Language (): React.ReactElement {
   const { t } = useTranslation();
   const languageTicker = useSelectedLanguage();
   const isDark = useIsDark();
-
-  const [showPopUp, setShowPopUp] = useState<ExtensionPopups>(ExtensionPopups.NONE);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const language = useMemo(() => {
     const options = getLanguageOptions();
 
     return options.find(({ value }) => value === languageTicker)?.text || options[0].text;
   }, [languageTicker]);
-
-  const onClick = useCallback(() => {
-    setShowPopUp(ExtensionPopups.LANGUAGE);
-  }, []);
 
   return (
     <>
@@ -38,7 +34,9 @@ export default function Language (): React.ReactElement {
         </Typography>
         <Stack
           columnGap='10px'
-          direction='row' onClick={onClick} sx={{
+          direction='row'
+          onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
+          sx={{
             ':hover': { background: '#2D1E4A' },
             alignItems: 'center',
             bgcolor: '#1B133CB2',
@@ -61,13 +59,10 @@ export default function Language (): React.ReactElement {
           </Stack>
         </Stack>
       </Stack>
-      {
-        showPopUp === ExtensionPopups.LANGUAGE &&
-        <SelectLanguage
-          openMenu={showPopUp === ExtensionPopups.LANGUAGE}
-          setPopup={setShowPopUp}
-        />
-      }
+      <SelectLanguage
+        onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.LANGUAGE}
+      />
     </>
   );
 }

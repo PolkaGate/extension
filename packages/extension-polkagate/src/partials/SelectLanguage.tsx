@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
+
 import CheckIcon from '@mui/icons-material/Check';
 import { Box, Fade, Grid, styled, Typography } from '@mui/material';
 import * as flags from 'country-flag-icons/string/3x2';
@@ -12,12 +14,11 @@ import uiSetting from '@polkadot/ui-settings';
 import { GradientButton } from '../components';
 import { useSelectedLanguage, useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
-import { ExtensionPopups } from '../util/constants';
 import { getLanguageOptions, type LanguageOptions } from '../util/getLanguageOptions';
 import { SharePopup } from '.';
 
 interface Props {
-  setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>;
+  onClose: ExtensionPopupCloser;
   openMenu: boolean;
 }
 
@@ -82,7 +83,7 @@ const LanguageSelect = React.memo(
     );
   });
 
-function Content ({ setPopup }: { setPopup: React.Dispatch<React.SetStateAction<ExtensionPopups>>; }): React.ReactElement {
+function Content ({ onClose }: { onClose: ExtensionPopupCloser }): React.ReactElement {
   const { t } = useTranslation();
   const languageTicker = useSelectedLanguage();
 
@@ -91,12 +92,11 @@ function Content ({ setPopup }: { setPopup: React.Dispatch<React.SetStateAction<
   const options = useMemo(() => getLanguageOptions(), []);
 
   const handleLanguageSelect = useCallback((lang: string) => () => setSelectedLanguage(lang), []);
-  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   const applyLanguageChange = useCallback(() => {
     maybeSelectedLanguage && uiSetting.set({ i18nLang: maybeSelectedLanguage });
-    handleClose();
-  }, [maybeSelectedLanguage, handleClose]);
+    onClose();
+  }, [maybeSelectedLanguage, onClose]);
 
   return (
     <Grid container item justifyContent='center' sx={{ position: 'relative', py: '5px', zIndex: 1 }}>
@@ -120,16 +120,14 @@ function Content ({ setPopup }: { setPopup: React.Dispatch<React.SetStateAction<
   );
 }
 
-function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
+function SelectLanguage ({ onClose, openMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
-
-  const handleClose = useCallback(() => setPopup(ExtensionPopups.NONE), [setPopup]);
 
   return (
     <SharePopup
       modalProps={{ showBackIconAsClose: true }}
       modalStyle={{ minHeight: '400px', padding: '20px' }}
-      onClose={handleClose}
+      onClose={onClose}
       open={openMenu}
       popupProps={{
         TitleIcon: Translate
@@ -137,7 +135,7 @@ function SelectLanguage ({ openMenu, setPopup }: Props): React.ReactElement {
       title={ t('Select your language')}
     >
       <Content
-        setPopup={setPopup}
+        onClose={onClose}
       />
     </SharePopup>
   );

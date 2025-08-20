@@ -3,7 +3,9 @@
 
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import CustomTooltip from '../../components/Tooltip';
 import { useSelectedLanguage, useTranslation } from '../../hooks';
@@ -14,12 +16,12 @@ import { ExtensionPopups } from '../../util/constants';
 function TopRightIcons (): React.ReactElement {
   const { t } = useTranslation();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
-  const [popup, setPopup] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const [hovered, setHovered] = useState<ExtensionPopups>(ExtensionPopups.NONE);
   const languageTicker = useSelectedLanguage();
 
-  const shieldHoveredStyle = {
+  const shieldHoveredStyle = useMemo(() => ({
     '&::after': {
       background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
       borderRadius: '10px',
@@ -34,11 +36,7 @@ function TopRightIcons (): React.ReactElement {
     inset: 0,
     position: 'absolute',
     transition: 'all 250ms ease-out'
-  } as SxProps<Theme>;
-
-  const openPopup = useCallback((popup: ExtensionPopups) => () => {
-    setPopup(popup);
-  }, [setPopup]);
+  } as SxProps<Theme>), [hovered]);
 
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);
@@ -50,7 +48,7 @@ function TopRightIcons (): React.ReactElement {
         <Grid
           container
           item
-          onClick={openPopup(ExtensionPopups.LANGUAGE)}
+          onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
           onMouseEnter={onHoveredPopup(ExtensionPopups.LANGUAGE)}
           onMouseLeave={onHoveredPopup()}
           sx={{ alignItems: 'center', bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
@@ -67,7 +65,7 @@ function TopRightIcons (): React.ReactElement {
         <Grid
           container
           item
-          onClick={openPopup(ExtensionPopups.PRIVACY)}
+          onClick={extensionPopupOpener(ExtensionPopups.PRIVACY)}
           onMouseEnter={onHoveredPopup(ExtensionPopups.PRIVACY)}
           onMouseLeave={onHoveredPopup()}
           ref={privacyPolicyRef}
@@ -83,12 +81,12 @@ function TopRightIcons (): React.ReactElement {
         </Grid>
       </Container>
       <SelectLanguage
-        openMenu={popup === ExtensionPopups.LANGUAGE}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.LANGUAGE}
       />
       <PrivacyPolicy
-        openMenu={popup === ExtensionPopups.PRIVACY}
-        setPopup={setPopup}
+        onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.PRIVACY}
       />
       <CustomTooltip
         content={t('Privacy & Security')}

@@ -20,11 +20,6 @@ interface Props {
  * A component for renaming an account. It allows the user to input a new name
  * for their account and applies the change on confirmation.
  *
- * @param {boolean} open - Whether the popup is open or not.
- * @param {React.Dispatch<React.SetStateAction<ExtensionPopups>>} onClose - A function to set the state of the popup (close it or open other popups).
- *
- * @returns {React.ReactElement} The rendered RenameAccount component.
- *
  * Only has been used in extension mode!
  */
 function RenameAccount ({ onClose, open }: Props): React.ReactElement {
