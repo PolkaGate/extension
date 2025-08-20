@@ -4,6 +4,9 @@
 import { Avatar, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
+import { useIsDark } from '../hooks';
+import { TOKENS_WITH_BLACK_LOGO } from '../util/constants';
+
 interface Props {
   asset: string;
   baseLogo: string;
@@ -11,17 +14,24 @@ interface Props {
   baseLogoSize?: string;
   baseLogoPosition?: string;
   logoRoundness?: string;
-  style: React.CSSProperties | undefined
+  style?: React.CSSProperties | undefined;
+  token?: string | undefined;
 }
 
-export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {} }: Props): React.ReactElement {
+export default function AssetDualLogo({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {}, token }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = useIsDark();
+  const filter = isDark
+    ? TOKENS_WITH_BLACK_LOGO.includes(token ?? '')
+      ? 'invert(1)'
+      : ''
+    : '';
 
   return (
     <Grid container sx={{ position: 'relative', width: 'fit-content', ...style }}>
       <Avatar
         src={asset}
-        sx={{ borderRadius: logoRoundness, height: assetSize, width: assetSize }}
+        sx={{ borderRadius: logoRoundness, filter, height: assetSize, width: assetSize }}
         variant='square'
       />
       <Avatar

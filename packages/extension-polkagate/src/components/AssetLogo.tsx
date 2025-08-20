@@ -38,7 +38,7 @@ function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash,
           baseLogoSize={baseTokenSize}
           logoRoundness={logoRoundness}
           style={style}
-
+          token={token}
         />
         : <ChainLogo
           chainName={_chainName}

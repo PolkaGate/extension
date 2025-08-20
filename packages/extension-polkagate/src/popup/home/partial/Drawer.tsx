@@ -4,7 +4,7 @@
 import { Container, useTheme } from '@mui/material';
 import React from 'react';
 
-export const Drawer = ({ length }: { length: number }) => {
+const Drawer = ({ length }: { length: number }) => {
   const theme = useTheme();
   const colorD1 = theme.palette.mode === 'dark' ? '#24234DCC' : '#CFD5F0';
   const colorD2 = theme.palette.mode === 'dark' ? '#26255773' : '#DFE4FA';
@@ -16,3 +16,5 @@ export const Drawer = ({ length }: { length: number }) => {
     </Container>
   );
 };
+
+export default React.memo(Drawer);
