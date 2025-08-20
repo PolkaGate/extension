@@ -23,22 +23,14 @@ function Settings (): React.ReactElement {
   const { genesisHash } = useParams<{ address: string, genesisHash: string }>();
 
   const content = useMemo(() => {
-    switch (pathname) {
-      case '/settingsfs/':
-        return <ExtensionSettings />;
+    const routeComponents: Record<string, React.ReactNode> = {
+      '/settingsfs/': <ExtensionSettings />,
+      '/settingsfs/about': <About />,
+      '/settingsfs/account': <AccountSettings />,
+      '/settingsfs/network': <NetworkSettings />
+    };
 
-      case '/settingsfs/account':
-        return <AccountSettings />;
-
-      case '/settingsfs/network':
-        return <NetworkSettings />;
-
-      case '/settingsfs/about':
-        return <About />;
-
-      default:
-        return null;
-    }
+    return routeComponents[pathname] ?? null;
   }, [pathname]);
 
   return (
