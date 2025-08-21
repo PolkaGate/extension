@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.2](https://github.com/polkagate/extension/compare/v1.1.1...v1.1.2) (2025-08-21)
+
+
+### Bug Fixes
+
+* re-add staking reward route ([37709bd](https://github.com/polkagate/extension/commit/37709bde8cdad2ad3d1fdab0d745e60db5a68dba))
+
 ## [1.1.1](https://github.com/polkagate/extension/compare/v1.1.0...v1.1.1) (2025-08-19)
 
 
