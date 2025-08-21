@@ -24,7 +24,6 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const reservedReason = useReservedDetails2(formatted, genesisHash);
   const { api, chainName } = useChainInfo(genesisHash);
   const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(address, genesisHash, undefined); // TODO: timeToUnlock!
-
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
     type: undefined
@@ -127,7 +126,12 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
         newItems['delegate'] = delegatedBalance;
       }
 
-      const hasVote = delegatedBalance && totalLocked && !totalLocked.isZero() && totalLocked.sub(delegatedBalance).gt(BN_ZERO) && !newItems['vote'];
+      const hasVote =
+        delegatedBalance &&
+        totalLocked &&
+        !totalLocked.isZero() &&
+        totalLocked.sub(delegatedBalance).gt(BN_ZERO) &&
+        !newItems['vote'];
 
       if (hasVote) {
         newItems['vote'] = totalLocked.sub(delegatedBalance);
@@ -140,13 +144,33 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
       }
     }
 
+    // shallow equality to prevent infinite UPDATE loop
+    const same =
+      Object.keys(newItems).length === Object.keys(state.data.items).length &&
+      Object.entries(newItems).every(([k, v]) => {
+        const prev = state.data?.items?.[k];
+
+        if (v === prev) {
+          return true;
+        }
+
+        if (!v || !prev) {
+          return v === prev;
+        }
+
+        return typeof v.eq === 'function' ? v.eq(prev) : v === prev;
+      });
+
+    if (same) {
+      return;
+    }
+
     dispatch({
       payload: newItems,
       type: 'UPDATE_ITEMS'
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delegatedBalance, lockedReasonLoading, state.data?.items, state.type, reservedReason, reservedReasonLoading, totalLocked]);
-
   useEffect(() => {
     address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
   }, [address, genesisHash]);
