@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
 import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
@@ -34,6 +34,41 @@ interface EndpointRowProps {
   value: string;
   delay: number | null | undefined;
   onChangeEndpoint: (event: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+interface State {
+  mayBeEnabled: boolean;
+  maybeNewEndpoint?: string;
+  endpointsDelay?: EndpointsDelay;
+}
+
+type Action =
+  | { type: 'SET_ENABLED'; }
+  | { type: 'SET_ENDPOINT'; payload: string | undefined }
+  | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
+  | { type: 'UPDATE_DELAY'; payload: { endpoint: string; delay: number } }
+  | { type: 'RESET' };
+
+function reducer (state: State, action: Action): State {
+  switch (action.type) {
+    case 'SET_ENABLED':
+      return { ...state, mayBeEnabled: !state.mayBeEnabled };
+    case 'SET_ENDPOINT':
+      return { ...state, maybeNewEndpoint: action.payload };
+    case 'SET_ENDPOINTS_DELAY':
+      return { ...state, endpointsDelay: action.payload };
+    case 'UPDATE_DELAY':
+      return {
+        ...state,
+        endpointsDelay: state.endpointsDelay?.map((e) =>
+          e.value === action.payload.endpoint ? { ...e, delay: action.payload.delay } : e
+        )
+      };
+    case 'RESET':
+      return { endpointsDelay: undefined, mayBeEnabled: false, maybeNewEndpoint: undefined };
+    default:
+      return state;
+  }
 }
 
 function EndpointRow ({ checked, delay, isFirst, isLast, name, onChangeEndpoint, value }: EndpointRowProps): React.ReactElement {
@@ -75,18 +110,22 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
   const { endpoint } = useEndpoint2(genesisHash);
   const endpointOptions = useEndpoints(genesisHash);
 
-  const [mayBeEnabled, setMayBeEnable] = useState<boolean>(isEnabled);
-  const [maybeNewEndpoint, setMaybeNewEndpoint] = useState<string | undefined>();
-  const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
+  const [state, dispatch] = useReducer(reducer, {
+    endpointsDelay: undefined,
+    mayBeEnabled: isEnabled,
+    maybeNewEndpoint: undefined
+  });
+
+  const { endpointsDelay, mayBeEnabled, maybeNewEndpoint } = state;
 
   const isAutoMode = maybeNewEndpoint === AUTO_MODE.value;
 
   const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    setMaybeNewEndpoint((prev) => prev === AUTO_MODE.value && event.target.value === AUTO_MODE.value ? undefined : event.target.value);
+    dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
   }, []);
 
-  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
-    setMayBeEnable(checked);
+  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
+    dispatch({ type: 'SET_ENABLED' });
   }, []);
 
   const onApply = useCallback((): void => {
@@ -106,17 +145,23 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
     onClose();
   }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain]);
 
-  const endpoints = useMemo(() => {
+  const mappedEndpoints = useMemo(() => {
     if (!endpointOptions.length) {
-      return;
+      return [];
     }
 
-    const mappedEndpoints = endpointOptions.map(({ text, value }) => ({ delay: null, name: text.replace(/^via\s/, ''), value })) as EndpointsDelay;
-
-    setEndpointsDelay(mappedEndpoints);
-
-    return mappedEndpoints;
+    return endpointOptions.map(({ text, value }) => ({
+      delay: null,
+      name: text.replace(/^via\s/, ''),
+      value
+    })) as EndpointsDelay;
   }, [endpointOptions]);
+
+  useEffect(() => {
+    if (mappedEndpoints.length) {
+      dispatch({ payload: mappedEndpoints, type: 'SET_ENDPOINTS_DELAY' });
+    }
+  }, [mappedEndpoints]);
 
   const calculateAndSetDelay = useCallback((endpoint: string) => {
     endpoint && CalculateNodeDelay(endpoint)
@@ -126,15 +171,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
         }
 
         isFetching.current[endpoint] = false;
-        setEndpointsDelay((prevEndpoints) => {
-          return prevEndpoints?.map((e) => {
-            if (e.value === response.endpoint) {
-              return { ...e, delay: response.delay };
-            }
-
-            return e;
-          });
-        });
+        dispatch({ payload: { delay: response.delay, endpoint: response.endpoint }, type: 'UPDATE_DELAY' });
 
         response.api?.disconnect().catch(console.error); // if we don't need it to be used in the extension we can disconnect it in the function instead
       })
@@ -142,21 +179,20 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
   }, []);
 
   useEffect(() => {
-    endpoint && setMaybeNewEndpoint(endpoint);
-  }, [endpoint]);
+    endpoint && !maybeNewEndpoint && dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
+  }, [endpoint, maybeNewEndpoint]);
 
   useEffect(() => {
-    endpoints?.forEach(({ value }) => {
+    mappedEndpoints?.forEach(({ value }) => {
       if (value && value !== AUTO_MODE.value && !isFetching.current?.[value]) {
         isFetching.current[value] = true;
         calculateAndSetDelay(value);
       }
     });
-  }, [calculateAndSetDelay, endpoint, endpoints]);
+  }, [calculateAndSetDelay, endpoint, mappedEndpoints]);
 
   const _onClose = useCallback(() => {
-    setMaybeNewEndpoint(undefined);
-    setEndpointsDelay(undefined);
+    dispatch({ type: 'RESET' });
     isFetching.current = {};
     onClose();
   }, [onClose]);
@@ -209,7 +245,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
                 key={index}
                 name={name}
                 onChangeEndpoint={onChangeEndpoint}
-                value ={value}
+                value={value}
               />
             ))}
           </Grid>
