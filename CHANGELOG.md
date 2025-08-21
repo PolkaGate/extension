@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.6](https://github.com/polkagate/extension/compare/v1.1.5...v1.1.6) (2025-08-21)
+
+
+### Bug Fixes
+
+* update account page in full screen when switching selected account in extension ([48dabd3](https://github.com/polkagate/extension/commit/48dabd3783c20ad1083a8d6d7774c04330f4c125))
+
 ## [1.1.5](https://github.com/polkagate/extension/compare/v1.1.4...v1.1.5) (2025-08-21)
 
 
