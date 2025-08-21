@@ -9,7 +9,7 @@ import { createAssets } from '@polkagate/apps-config/assets';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { toCamelCase } from '../fullscreen/governance/utils/util';
+import { toCamelCase } from '../util';
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';

@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
-import type { Vote } from '../fullscreen/governance/post/myVote/util';
+import type { Vote } from '../fullscreen/governance/util';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getAddressVote } from '../fullscreen/governance/post/myVote/util';
+import { getAddressVote } from '../fullscreen/governance/util';
 import { useInfo } from '.';
 
 export default function useMyVote(

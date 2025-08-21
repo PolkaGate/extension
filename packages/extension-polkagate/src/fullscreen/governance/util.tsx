@@ -7,9 +7,9 @@ import type { ApiPromise } from '@polkadot/api';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import type { Track } from '../../utils/types';
+import type { Track } from './types';
 
-import { toCamelCase } from '../../utils/util';
+import { toCamelCase } from '@polkadot/extension-polkagate/src/util';
 
 export const CONVICTION = {
   Locked1x: 1,
@@ -158,3 +158,29 @@ export async function getAllVotes(address: string, api: ApiPromise, tracks: Trac
 
   return castedRefIndexes.flat();
 }
+
+export const getVoteType = (vote: Vote | null | undefined) => {
+  if (vote) {
+    if (vote?.standard?.vote) {
+      return isAye(vote.standard.vote) ? 'Aye' : 'Nay';
+    }
+
+    if (vote?.splitAbstain?.abstain) {
+      return 'Abstain';
+    }
+
+    if (vote?.delegating?.balance) {
+      if (vote?.delegating?.aye) {
+        return 'Aye';
+      }
+
+      if (vote?.delegating?.nay) {
+        return 'Nay';
+      }
+
+      return vote?.delegating?.voted ? 'Abstain' : undefined;
+    }
+  }
+
+  return undefined;
+};

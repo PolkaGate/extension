@@ -3,7 +3,7 @@
 
 import type { TransactionDetail } from './types';
 
-import { isAye } from '../fullscreen/governance/post/myVote/util';
+import { isAye } from '../fullscreen/governance/util';
 
 export const ACTION_TYPES = ['send', 'receive', 'solo staking', 'pool staking', 'reward', 'aye', 'nay', 'abstain', 'delegate', 'utility', 'balances', 'governance', 'proxy'] as const;
 
@@ -29,7 +29,7 @@ export const getVoteType = (voteType: number | null | undefined) => {
   return undefined;
 };
 
-export function resolveActionType (historyItem: TransactionDetail): string {
+export function resolveActionType(historyItem: TransactionDetail): string {
   let action: string =
     isReward(historyItem)
       ? 'reward'

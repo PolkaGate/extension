@@ -271,3 +271,11 @@ export interface DelegationInfo {
   delegatee: AccountId;
   conviction: number;
 }
+
+export interface Lock {
+  classId: BN;
+  endBlock: BN;
+  locked: string;
+  refId: BN | 'N/A';
+  total: BN;
+}

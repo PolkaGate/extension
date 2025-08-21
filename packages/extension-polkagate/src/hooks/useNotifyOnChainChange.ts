@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import { toTitleCase } from '../fullscreen/governance/utils/util';
+import { toTitleCase } from '../util';
 import { useAlerts, useInfo, useTranslation } from '.';
 
 /**

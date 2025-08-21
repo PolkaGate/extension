@@ -3,9 +3,9 @@
 
 import type { DropdownOption } from './types';
 
-import { toCamelCase } from '../fullscreen/governance/utils/util';
 import allChains from './chains';
 import { sanitizeChainName } from './utils';
+import { toCamelCase } from '.';
 
 /**
  * @description get a chain name by its genesisHash

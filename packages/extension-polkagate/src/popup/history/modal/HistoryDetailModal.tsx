@@ -8,7 +8,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { AccountContext, PButton } from '../../../components';
-import { getVoteType } from '../../../fullscreen/governance/utils/util';
+import { getVoteType } from '../../../fullscreen/governance/util';
 import { useTranslation } from '../../../hooks';
 import { accountName, amountToMachine, toShortAddress, upperCaseFirstChar } from '../../../util/utils';
 import Explorer from '../Explorer';
