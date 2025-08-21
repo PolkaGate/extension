@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.5](https://github.com/polkagate/extension/compare/v1.1.4...v1.1.5) (2025-08-21)
+
+
+### Bug Fixes
+
+* scrollbar only appears when scrolling ([#1795](https://github.com/polkagate/extension/issues/1795)) ([04520a7](https://github.com/polkagate/extension/commit/04520a7432e463a91779b48448fdd45c4a17ee55))
+
 ## [1.1.4](https://github.com/polkagate/extension/compare/v1.1.3...v1.1.4) (2025-08-21)
 
 
