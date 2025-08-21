@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.4](https://github.com/polkagate/extension/compare/v1.1.3...v1.1.4) (2025-08-21)
+
+
+### Bug Fixes
+
+* show fee logo as native token logo ([3a25a2b](https://github.com/polkagate/extension/commit/3a25a2b800c30eb381e7dc9199be48696b72c7da))
+
 ## [1.1.3](https://github.com/polkagate/extension/compare/v1.1.2...v1.1.3) (2025-08-21)
 
 
