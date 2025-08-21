@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.3](https://github.com/polkagate/extension/compare/v1.1.2...v1.1.3) (2025-08-21)
+
+
+### Bug Fixes
+
+* correct asset hub links in subscan urls ([f817bc9](https://github.com/polkagate/extension/commit/f817bc946102552bcd3261cbff461f6e03c07234))
+
 ## [1.1.2](https://github.com/polkagate/extension/compare/v1.1.1...v1.1.2) (2025-08-21)
 
 
