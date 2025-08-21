@@ -144,6 +144,7 @@ export default function useScrollbarAutoHide () {
       const vTrack = document.createElement('div');
 
       vTrack.className = 'osb-track vertical';
+
       const vThumb = document.createElement('div');
 
       vThumb.className = 'osb-thumb vertical';
@@ -152,6 +153,7 @@ export default function useScrollbarAutoHide () {
       const hTrack = document.createElement('div');
 
       hTrack.className = 'osb-track horizontal';
+
       const hThumb = document.createElement('div');
 
       hThumb.className = 'osb-thumb horizontal';
@@ -160,7 +162,7 @@ export default function useScrollbarAutoHide () {
       document.body.appendChild(vTrack);
       document.body.appendChild(hTrack);
 
-      const showThenAutoHide = (_el: HTMLElement, d: Data) => {
+      const showThenAutoHide = (d: Data) => {
         d.vTrack.style.opacity = '1';
         d.hTrack.style.opacity = '1';
 
@@ -185,7 +187,7 @@ export default function useScrollbarAutoHide () {
           return;
         }
 
-        showThenAutoHide(el, d);
+        showThenAutoHide(d);
         raf(() => updateFor(el));
       };
 
@@ -195,54 +197,30 @@ export default function useScrollbarAutoHide () {
 
       map.set(el, data);
 
-      // initial paint
-      raf(() => {
-        updateFor(el);
-        showThenAutoHide(el, data);
-      });
-
       return data;
     };
 
-    // Activate when pointer enters scrollable elements
-    const onPointerEnter = (e: Event) => {
-      const el = e.target;
+    // Instead of pointerenter, just listen globally for scrollable elements
+    const onScrollCapture = (e: Event) => {
+      const el = e.target as HTMLElement;
 
-      if (!(el instanceof Element)) {
+      if (!el || !(el instanceof HTMLElement)) {
         return;
       }
 
-      const { x, y } = isScrollable(el as HTMLElement);
+      const { x, y } = isScrollable(el);
 
-      if (!x && !y) {
-        return;
-      }
-
-      const cs = getComputedStyle(el);
-      const maybeScrollable =
-        /auto|scroll/.test(cs.overflowY) || el.scrollHeight > el.clientHeight;
-
-      if (maybeScrollable) {
-        ensure(el as HTMLElement);
-        raf(() => updateFor(el as HTMLElement));
+      if (x || y) {
+        ensure(el);
       }
     };
 
-    // Keep tracks aligned on window changes
-    const onGlobalLayoutChange = () => {
-      map.forEach((_, el) => raf(() => updateFor(el)));
-    };
-
-    document.addEventListener('pointerenter', onPointerEnter, true);
-    window.addEventListener('scroll', onGlobalLayoutChange, true);
-    window.addEventListener('resize', onGlobalLayoutChange);
+    document.addEventListener('scroll', onScrollCapture, true);
 
     // Cleanup
     return () => {
       document.head.removeChild(style);
-      document.removeEventListener('pointerenter', onPointerEnter, true);
-      window.removeEventListener('scroll', onGlobalLayoutChange, true);
-      window.removeEventListener('resize', onGlobalLayoutChange);
+      window.removeEventListener('scroll', onScrollCapture, true);
       map.forEach((d, el) => {
         d.ro.disconnect();
 
