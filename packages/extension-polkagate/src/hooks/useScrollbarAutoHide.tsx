@@ -220,9 +220,7 @@ export default function useScrollbarAutoHide () {
     // Cleanup
     return () => {
       document.head.removeChild(style);
-      document.removeEventListener('onScroll', onPointerEnter, true);
-      window.removeEventListener('scroll', onGlobalLayoutChange, true);
-      window.removeEventListener('resize', onGlobalLayoutChange);
+      window.removeEventListener('scroll', onScrollCapture, true);
       map.forEach((d, el) => {
         d.ro.disconnect();
 
