@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
+// @ts-ignore
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import type { Track, Vote } from './types';
 
@@ -105,7 +106,7 @@ export async function getAddressVote (address: string, api: ApiPromise, referend
   return null;
 }
 
-export async function getAllVotes(address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
+export async function getAllVotes (address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
   const queries = tracks.map((t) => api.query['convictionVoting']['votingFor'](address, t[0]));
   const voting = await Promise.all(queries);
   const castedRefIndexes = voting?.map((v) => {
