@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/Currency';
+import type { CurrencyItemType } from '@polkadot/extension-polkagate/fullscreen/home/partials/type';
 
 import React, { useEffect, useState } from 'react';
 

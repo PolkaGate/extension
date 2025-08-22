@@ -5,7 +5,6 @@ import type { RouteConfig } from './RouteDefinitions';
 
 import AccountFS from '@polkadot/extension-polkagate/src/fullscreen/accountDetails';
 import HaveWallet from '@polkadot/extension-polkagate/src/fullscreen/haveWallet';
-import Export from '@polkadot/extension-polkagate/src/popup/export/Export';
 import ImportLedger from '@polkadot/extension-polkagate/src/popup/import/importLedger';
 import ImportRawSeed from '@polkadot/extension-polkagate/src/popup/import/importRawSeedFullScreen';
 import ImportSeed from '@polkadot/extension-polkagate/src/popup/import/importSeedFullScreen';
@@ -47,10 +46,5 @@ export const ACCOUNT_ROUTES: RouteConfig[] = [
     Component: AccountFS,
     path: '/accountfs/:address/:genesisHash/:paramAssetId',
     trigger: 'account'
-  },
-  {
-    Component: Export,
-    path: '/export/:address',
-    trigger: 'export-address'
   }
 ];

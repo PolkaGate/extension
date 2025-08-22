@@ -20,8 +20,8 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { LatestReferenda } from '../fullscreen/governance/utils/types';
-import type { CurrencyItemType } from '../fullscreen/home/partials/Currency';
+import type { LatestReferenda } from '../fullscreen/governance/types';
+import type { CurrencyItemType } from '../fullscreen/home/partials/type';
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
 
 import { type SxProps, type Theme } from '@mui/material';

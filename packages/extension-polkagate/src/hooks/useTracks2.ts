@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Track } from '../fullscreen/governance/utils/types';
+import type { Track } from '../fullscreen/governance/types';
 
 import { useMemo } from 'react';
 

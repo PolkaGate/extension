@@ -7,9 +7,9 @@ import type { Chain } from '../../../extension-chains/src/types';
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { toCamelCase } from '../fullscreen/governance/utils/util';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
+import { toCamelCase } from '.';
 
 const endpoints = createWsEndpoints();
 
