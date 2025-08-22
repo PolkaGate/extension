@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.7](https://github.com/polkagate/extension/compare/v1.1.6...v1.1.7) (2025-08-22)
+
+
+### Bug Fixes
+
+* show explore when account has no assets ([#1793](https://github.com/polkagate/extension/issues/1793)) ([f6dd9ee](https://github.com/polkagate/extension/commit/f6dd9ee2587922534709e867c25f43d051702f91))
+
 ## [1.1.6](https://github.com/polkagate/extension/compare/v1.1.5...v1.1.6) (2025-08-21)
 
 
