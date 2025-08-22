@@ -190,7 +190,12 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
   , [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
-    const url = `https://${chainName}.subscan.io/account/${address}`;
+    const lcChainName = chainName?.toLowerCase();
+    const _chainName = lcChainName?.includes('assethub')
+      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
+      : chainName;
+
+    const url = `https://${_chainName}.subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);

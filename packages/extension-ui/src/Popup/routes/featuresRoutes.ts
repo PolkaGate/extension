@@ -3,10 +3,7 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
-import Governance from '@polkadot/extension-polkagate/src/fullscreen/governance';
-import ReferendumPost from '@polkadot/extension-polkagate/src/fullscreen/governance/post';
 import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
-import ManageIdentity from '@polkadot/extension-polkagate/src/fullscreen/manageIdentity';
 import ManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
@@ -21,16 +18,6 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     trigger: 'proxy-management'
   },
   {
-    Component: ReferendumPost,
-    path: '/governance/:address/:topMenu/:postId',
-    trigger: 'governance'
-  },
-  {
-    Component: Governance,
-    path: '/governance/:address/:topMenu',
-    trigger: 'governance'
-  },
-  {
     Component: History,
     path: '/history',
     trigger: 'history'
@@ -39,11 +26,6 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: HistoryFs,
     path: '/historyfs',
     trigger: 'history-fullscreen'
-  },
-  {
-    Component: ManageIdentity,
-    path: '/manageIdentity/:address',
-    trigger: 'manage-identity'
   },
   {
     Component: NFTAlbum,

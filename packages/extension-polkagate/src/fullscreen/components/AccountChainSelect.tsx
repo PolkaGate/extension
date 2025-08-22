@@ -9,7 +9,7 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 import { useParams } from 'react-router';
 
-import { useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
 import { AccountContext, ChainLogo, ScrollingTextBox } from '../../components';
@@ -107,6 +107,9 @@ function AccountSelect ({ noSelection = false, onClick }: { noSelection: boolean
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
   const selectedAccount = useSelectedAccount();
+  const { address } = useParams<{ address: string; genesisHash: string }>();
+
+  useUpdateSelectedAccount(selectedAccount?.address, address != selectedAccount?.address);
 
   return (
     <Grid container direction='row' item onClick={onClick(MODAL_TO_OPEN.ACCOUNTS)}

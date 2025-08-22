@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { toCamelCase } from '../fullscreen/governance/utils/util';
+import { toCamelCase } from '../util';
 import { ASSET_HUBS } from '../util/constants';
 import { useInfo } from '.';
 

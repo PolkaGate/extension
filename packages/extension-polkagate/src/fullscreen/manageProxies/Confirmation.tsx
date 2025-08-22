@@ -275,13 +275,18 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
   const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
-    const url = `https://${chainName}.subscan.io/account/${address}`;
+    const lcChainName = chainName?.toLowerCase();
+    const _chainName = lcChainName?.includes('assethub')
+      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
+      : chainName;
+
+    const url = `https://${_chainName}.subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);
 
   return (
-    <Stack direction='column' sx={{ gap: '8px', zIndex: 1 }}>
+    <Stack alignItems='center' direction='column' sx={{ gap: '8px', zIndex: 1 }}>
       {
         goToHistory &&
         <NeonButton
@@ -307,27 +312,25 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
           variant='text'
         />
       }
-      <>
-        {isBlueish
-          ? <StakingActionButton
-            onClick={goToExplorer}
-            startIcon={<SubScanIcon />}
-            text={t('View on Explorer')}
-          />
-          : <GradientButton
-            onClick={goToExplorer}
-            startIconNode={
-              <Avatar
-                src={getLogo('subscan')}
-                sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
-                variant='square'
-              />
-            }
-            style={{ bottom: '17px', position: 'absolute', width: '384px', zIndex: 1 }}
-            text={t('View on Explorer')}
-          />
-        }
-      </>
+      {isBlueish
+        ? <StakingActionButton
+          onClick={goToExplorer}
+          startIcon={<SubScanIcon />}
+          text={t('View on Explorer')}
+        />
+        : <GradientButton
+          onClick={goToExplorer}
+          startIconNode={
+            <Avatar
+              src={getLogo('subscan')}
+              sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
+              variant='square'
+            />
+          }
+          style={{ bottom: '17px', position: 'absolute', width: '384px', zIndex: 1 }}
+          text={t('View on Explorer')}
+        />
+      }
     </Stack>
   );
 }

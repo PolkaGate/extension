@@ -8,14 +8,14 @@ import type { Option, u32 } from '@polkadot/types';
 // @ts-ignore
 import type { PalletConvictionVotingVoteAccountVote, PalletConvictionVotingVoteCasting, PalletConvictionVotingVoteVoting, PalletReferendaReferendumInfoConvictionVotingTally } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types-codec/types';
-import type { BN } from '@polkadot/util';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { CONVICTIONS } from '../fullscreen/governance/utils/consts';
 import { useChainInfo, useCurrentBlockNumber2, useFormatted3 } from '.';
+
+export const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);
 
 export interface Lock {
   classId: BN;

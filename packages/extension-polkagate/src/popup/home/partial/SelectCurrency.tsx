@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { CurrencyItemType } from '../../../fullscreen/home/partials/Currency';
+import type { CurrencyItemType } from '../../../fullscreen/home/partials/type';
 
 import { Box, Grid, styled, Typography } from '@mui/material';
 import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/assets';
@@ -125,7 +125,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
   );
 };
 
-const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -184,7 +184,7 @@ const CurrencyOptions = memo(function LanguageOptions ({ handleCurrencySelect, s
   );
 });
 
-function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
+function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 
@@ -230,7 +230,7 @@ function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateA
   );
 }
 
-function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);

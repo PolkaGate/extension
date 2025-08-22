@@ -1,5 +1,40 @@
 # Change Log
 
+## [1.1.6](https://github.com/polkagate/extension/compare/v1.1.5...v1.1.6) (2025-08-21)
+
+
+### Bug Fixes
+
+* update account page in full screen when switching selected account in extension ([48dabd3](https://github.com/polkagate/extension/commit/48dabd3783c20ad1083a8d6d7774c04330f4c125))
+
+## [1.1.5](https://github.com/polkagate/extension/compare/v1.1.4...v1.1.5) (2025-08-21)
+
+
+### Bug Fixes
+
+* scrollbar only appears when scrolling ([#1795](https://github.com/polkagate/extension/issues/1795)) ([04520a7](https://github.com/polkagate/extension/commit/04520a7432e463a91779b48448fdd45c4a17ee55))
+
+## [1.1.4](https://github.com/polkagate/extension/compare/v1.1.3...v1.1.4) (2025-08-21)
+
+
+### Bug Fixes
+
+* show fee logo as native token logo ([3a25a2b](https://github.com/polkagate/extension/commit/3a25a2b800c30eb381e7dc9199be48696b72c7da))
+
+## [1.1.3](https://github.com/polkagate/extension/compare/v1.1.2...v1.1.3) (2025-08-21)
+
+
+### Bug Fixes
+
+* correct asset hub links in subscan urls ([f817bc9](https://github.com/polkagate/extension/commit/f817bc946102552bcd3261cbff461f6e03c07234))
+
+## [1.1.2](https://github.com/polkagate/extension/compare/v1.1.1...v1.1.2) (2025-08-21)
+
+
+### Bug Fixes
+
+* re-add staking reward route ([37709bd](https://github.com/polkagate/extension/commit/37709bde8cdad2ad3d1fdab0d745e60db5a68dba))
+
 ## [1.1.1](https://github.com/polkagate/extension/compare/v1.1.0...v1.1.1) (2025-08-19)
 
 

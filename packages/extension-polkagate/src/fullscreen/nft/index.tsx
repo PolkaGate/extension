@@ -10,17 +10,29 @@ import { useParams } from 'react-router';
 
 import NftManager from '../../class/nftManager';
 import { useApiWithChain2, useTranslation } from '../../hooks';
-import { getAssetHubByChainName } from '../../hooks/useReferendum';
 import HomeLayout from '../components/layout';
 import Filters from './components/Filters';
 import NftList from './components/NftList';
 import { SUPPORTED_NFT_CHAINS } from './utils/constants';
 import { fetchItemMetadata } from './utils/util';
+import { STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 enum STEPS {
   CHECK_SCREEN,
   INDEX
 }
+
+const getAssetHubByChainName = (chainName?: string) => {
+  if (chainName?.toLowerCase()?.includes('polkadot')) {
+    return { genesisHash: STATEMINT_GENESIS_HASH, name: 'Polkadot Asset Hub' };
+  }
+
+  if (chainName?.toLowerCase()?.includes('kusama')) {
+    return { genesisHash: STATEMINE_GENESIS_HASH, name: 'Kusama Asset Hub' };
+  }
+
+  return undefined;
+};
 
 function NFT (): React.ReactElement {
   const { t } = useTranslation();

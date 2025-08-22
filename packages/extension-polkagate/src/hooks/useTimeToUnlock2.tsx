@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Lock } from '@polkadot/extension-polkagate/fullscreen/governance/types';
 //@ts-ignore
 import type { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
@@ -10,7 +11,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import blockToDate from '../popup/crowdloans/partials/blockToDate';
-import { type Lock } from './useAccountLocks';
 import { useChainInfo, useCurrentBlockNumber2, useFormatted3, useTranslation } from '.';
 
 export default function useTimeToUnlock (address: string | undefined, genesisHash: string | null | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {

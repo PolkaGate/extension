@@ -27,13 +27,14 @@ export default function Step4Summary ({ inputs }: Props): React.ReactElement {
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
-  const { chainName } = useChainInfo(genesisHash);
+  const { chainName, token: sourceChainNativeToken } = useChainInfo(genesisHash);
 
   const assetToTransfer = useMemo(() =>
     accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId),
   [accountAssets, assetId, genesisHash]);
 
   const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
+  const feeLogoInfo = useMemo(() => getLogo2(genesisHash, sourceChainNativeToken), [genesisHash, sourceChainNativeToken]);
 
   return (
     <Motion variant='fade'>
@@ -86,7 +87,7 @@ export default function Step4Summary ({ inputs }: Props): React.ReactElement {
                 genesisHash={genesisHash}
               />
             </Typography>
-            <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+            <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
           </Stack>
         </Stack>
         <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
