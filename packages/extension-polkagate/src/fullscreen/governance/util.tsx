@@ -1,13 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { ApiPromise } from '@polkadot/api';
-import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
-import type { Track } from './types';
+import type { Track, Vote } from './types';
 
 import { toCamelCase } from '@polkadot/extension-polkagate/src/util';
 
@@ -36,42 +32,12 @@ interface Votes {
   prior?: [number, number];
 }
 
-export interface Vote {
-  standard?: {
-    vote: string;
-    balance: number;
-  };
-  delegations?: {
-    votes: BN;
-    capital: BN;
-  };
-  splitAbstain?: {
-    abstain: number;
-    aye: number;
-    nay: number;
-  };
-  delegating?: {
-    balance: BN;
-    aye?: boolean;
-    nay?: boolean;
-    abstain?: BN;
-    conviction: number;
-    target?: AccountId32;
-    voted?: boolean;
-    delegations: {
-      votes: BN;
-      capital: BN;
-    };
-    prior: unknown;
-  }
-}
-
 interface Voting {
   casting: Votes;
   delegating: unknown; // needs to be fixed
 }
 
-export async function getAddressVote(address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
+export async function getAddressVote (address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
   const voting = await api.query['convictionVoting']['votingFor'](address, trackId) as unknown as PalletConvictionVotingVoteVoting;
 
   if (voting.isEmpty) {
@@ -147,14 +113,6 @@ export async function getAllVotes(address: string, api: ApiPromise, tracks: Trac
 
     return jsonV?.casting?.votes?.map((vote) => vote[0]);
   });
-
-  // if (jsonVoting.delegating) {
-  //   // Then, look into the votes of the delegating target address.
-  //   const { target, conviction } = jsonVoting.delegating;
-  //   const proxyVoting = await api.query.convictionVoting.votingFor(target, trackId);
-  //   const jsonProxyVoting = proxyVoting?.toJSON() as Voting;
-  //   const vote = jsonProxyVoting?.casting?.votes?.find(([index]) => index === referendumIndex)?.[1];
-  // }
 
   return castedRefIndexes.flat();
 }
