@@ -37,6 +37,7 @@ interface EndpointRowProps {
 }
 
 interface State {
+  isOnAuto: boolean | undefined;
   mayBeEnabled: boolean;
   maybeNewEndpoint?: string;
   endpointsDelay?: EndpointsDelay;
@@ -44,6 +45,7 @@ interface State {
 
 type Action =
   | { type: 'SET_ENABLED'; }
+  | { type: 'TOGGLE_AUTO'; }
   | { type: 'SET_ENDPOINT'; payload: string | undefined }
   | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
   | { type: 'UPDATE_DELAY'; payload: { endpoint: string; delay: number } }
@@ -53,6 +55,13 @@ function reducer (state: State, action: Action): State {
   switch (action.type) {
     case 'SET_ENABLED':
       return { ...state, mayBeEnabled: !state.mayBeEnabled };
+
+    case 'TOGGLE_AUTO': {
+      const toggle = !state.isOnAuto;
+
+      return { ...state, isOnAuto: toggle, maybeNewEndpoint: toggle ? undefined : state.maybeNewEndpoint };
+    }
+
     case 'SET_ENDPOINT':
       return { ...state, maybeNewEndpoint: action.payload };
     case 'SET_ENDPOINTS_DELAY':
@@ -65,7 +74,7 @@ function reducer (state: State, action: Action): State {
         )
       };
     case 'RESET':
-      return { endpointsDelay: undefined, mayBeEnabled: false, maybeNewEndpoint: undefined };
+      return { endpointsDelay: undefined, isOnAuto: undefined, mayBeEnabled: false, maybeNewEndpoint: undefined };
     default:
       return state;
   }
@@ -112,21 +121,25 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
 
   const [state, dispatch] = useReducer(reducer, {
     endpointsDelay: undefined,
+    isOnAuto: undefined,
     mayBeEnabled: isEnabled,
     maybeNewEndpoint: undefined
   });
 
-  const { endpointsDelay, mayBeEnabled, maybeNewEndpoint } = state;
+  const { endpointsDelay, isOnAuto, mayBeEnabled, maybeNewEndpoint } = state;
 
-  const isAutoMode = maybeNewEndpoint === AUTO_MODE.value;
-
+  // Just to initialize
   useEffect(() => {
-    if (isAuto) {
-      return dispatch({ payload: AUTO_MODE.value, type: 'SET_ENDPOINT' });
+    if (state.maybeNewEndpoint || isOnAuto) {
+      return;
     }
 
-    endpoint && !maybeNewEndpoint && dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
-  }, [endpoint, maybeNewEndpoint, isAuto]);
+    if (isAuto && isOnAuto === undefined) {
+      return dispatch({ type: 'TOGGLE_AUTO' });
+    }
+
+    endpoint && dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
+  }, [endpoint, isAuto, state.maybeNewEndpoint, isOnAuto]);
 
   const mappedEndpoints = useMemo(() => {
     if (!endpointOptions.length) {
@@ -174,6 +187,10 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
     dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
   }, []);
 
+  const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
+    dispatch({ type: 'TOGGLE_AUTO' });
+  }, []);
+
   const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
     dispatch({ type: 'SET_ENABLED' });
   }, []);
@@ -181,19 +198,17 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
   const onApply = useCallback((): void => {
     onEnableChain(genesisHash, mayBeEnabled);
 
-    if (maybeNewEndpoint) {
-      const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
+    const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
 
-      endpointManager.set(genesisHash, {
-        checkForNewOne,
-        endpoint: maybeNewEndpoint,
-        isAuto: maybeNewEndpoint === AUTO_MODE.value,
-        timestamp: Date.now()
-      });
-    }
+    endpointManager.set(genesisHash, {
+      checkForNewOne,
+      endpoint: maybeNewEndpoint,
+      isAuto: isOnAuto,
+      timestamp: Date.now()
+    });
 
     onClose();
-  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain]);
+  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, isOnAuto, onClose, onEnableChain]);
 
   const _onClose = useCallback(() => {
     dispatch({ type: 'RESET' });
@@ -201,12 +216,12 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
     onClose();
   }, [onClose]);
 
-  const isDisabledApply = useMemo(() => {
-    const noEndpointChange = !maybeNewEndpoint || (endpoint === maybeNewEndpoint && !isAutoMode);
+  const isDisabled = useMemo(() => {
+    const noEndpointChange = maybeNewEndpoint === endpoint;
     const noEnableChange = mayBeEnabled === isEnabled;
 
     return noEndpointChange && noEnableChange;
-  }, [endpoint, isAutoMode, isEnabled, mayBeEnabled, maybeNewEndpoint]);
+  }, [endpoint, isEnabled, mayBeEnabled, maybeNewEndpoint]);
 
   const filteredEndpoints = useMemo(() => {
     return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
@@ -233,10 +248,10 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
               value={mayBeEnabled}
             />
             <MySwitch
-              checked={isAutoMode}
+              checked={isOnAuto}
               columnGap='8px'
               label={t('Auto Node Selection')}
-              onChange={onChangeEndpoint}
+              onChange={onToggleAuto}
               style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', margin: '8px 0', padding: '0 15px', width: '100%' }}
               value={AUTO_MODE.value}
             />
@@ -258,7 +273,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={isDisabledApply}
+          disabled={isDisabled}
           onPrimaryClick={onApply}
           onSecondaryClick={_onClose}
           primaryBtnText={t('Apply')}
