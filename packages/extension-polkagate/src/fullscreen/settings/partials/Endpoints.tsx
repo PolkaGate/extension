@@ -107,7 +107,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
 
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
-  const { endpoint } = useEndpoint2(genesisHash);
+  const { endpoint, isAuto } = useEndpoint2(genesisHash);
   const endpointOptions = useEndpoints(genesisHash);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -120,30 +120,13 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
 
   const isAutoMode = maybeNewEndpoint === AUTO_MODE.value;
 
-  const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
-  }, []);
-
-  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
-    dispatch({ type: 'SET_ENABLED' });
-  }, []);
-
-  const onApply = useCallback((): void => {
-    onEnableChain(genesisHash, mayBeEnabled);
-
-    if (maybeNewEndpoint) {
-      const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
-
-      endpointManager.set(genesisHash, {
-        checkForNewOne,
-        endpoint: maybeNewEndpoint,
-        isAuto: maybeNewEndpoint === AUTO_MODE.value,
-        timestamp: Date.now()
-      });
+  useEffect(() => {
+    if (isAuto) {
+      return dispatch({ payload: AUTO_MODE.value, type: 'SET_ENDPOINT' });
     }
 
-    onClose();
-  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain]);
+    endpoint && !maybeNewEndpoint && dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
+  }, [endpoint, maybeNewEndpoint, isAuto]);
 
   const mappedEndpoints = useMemo(() => {
     if (!endpointOptions.length) {
@@ -179,10 +162,6 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
   }, []);
 
   useEffect(() => {
-    endpoint && !maybeNewEndpoint && dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
-  }, [endpoint, maybeNewEndpoint]);
-
-  useEffect(() => {
     mappedEndpoints?.forEach(({ value }) => {
       if (value && value !== AUTO_MODE.value && !isFetching.current?.[value]) {
         isFetching.current[value] = true;
@@ -190,6 +169,31 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
       }
     });
   }, [calculateAndSetDelay, endpoint, mappedEndpoints]);
+
+  const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
+    dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
+  }, []);
+
+  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
+    dispatch({ type: 'SET_ENABLED' });
+  }, []);
+
+  const onApply = useCallback((): void => {
+    onEnableChain(genesisHash, mayBeEnabled);
+
+    if (maybeNewEndpoint) {
+      const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
+
+      endpointManager.set(genesisHash, {
+        checkForNewOne,
+        endpoint: maybeNewEndpoint,
+        isAuto: maybeNewEndpoint === AUTO_MODE.value,
+        timestamp: Date.now()
+      });
+    }
+
+    onClose();
+  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain]);
 
   const _onClose = useCallback(() => {
     dispatch({ type: 'RESET' });
