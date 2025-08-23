@@ -10,7 +10,7 @@ import { useLocation, useParams } from 'react-router';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FadeOnScroll, Motion } from '../../../components';
-import { useAccountAssets, usePrices, useSelectedAccount } from '../../../hooks';
+import { useAccountAssets, useIsTestnetEnabled, usePrices, useSelectedAccount } from '../../../hooks';
 import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS, TEST_NETS } from '../../../util/constants';
 import { fetchStaking } from '../../../util/fetchStaking';
 import getChain from '../../../util/getChain';
@@ -105,6 +105,8 @@ interface Props {
 function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   const selectedAccount = useSelectedAccount();
   const containerRef = useRef(null);
+  const isTestnetEnabled = useIsTestnetEnabled();
+  
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const { pathname } = useLocation();
   const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
@@ -130,7 +132,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
 
   const positions = useMemo(() =>
     accountAssets?.filter(({ pooledBalance, soloTotal }) => (soloTotal && !soloTotal.isZero()) || (pooledBalance && !pooledBalance.isZero()))
-  , [accountAssets]);
+    , [accountAssets]);
 
   const positionItems = useMemo(() => {
     if (state.tab !== POSITION_TABS.POSITIONS) {
@@ -155,7 +157,8 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   }, [positions, state.searchQuery, state.tab]);
 
   const earning = useMemo(() => {
-    return STAKING_CHAINS.map((genesisHash) => {
+    const _stakingChains = isTestnetEnabled ? STAKING_CHAINS : STAKING_CHAINS.filter((genesisHash) => !TEST_NETS.includes(genesisHash)) ;
+    return _stakingChains.map((genesisHash) => {
       const chain = getChain(genesisHash);
 
       if (!chain) {
@@ -177,7 +180,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
         chainName: sanitizeChainName(chain?.name || '') ?? 'Unknown'
       } as unknown as PositionInfo;
     }).filter((item) => !!item);
-  }, [accountAssets]);
+  }, [accountAssets, isTestnetEnabled]);
 
   const earningItems = useMemo(() => {
     return state.searchQuery
@@ -186,19 +189,24 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   }, [earning, state.searchQuery]);
 
   useEffect(() => {
-    if (!positions) {
+    if (!positions && accountAssets === undefined) {
       return;
     }
 
-    (positions?.length === 0)
+    (!positions ||positions?.length === 0)
       ? dispatch({ payload: POSITION_TABS.EXPLORE, type: 'SET_TAB' })
       : dispatch({ payload: POSITION_TABS.POSITIONS, type: 'SET_TAB' });
-  }, [positions]);
+  }, [positions, accountAssets]);
 
   return (
     <Motion>
       <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-        <PositionsToolbar dispatch={dispatch} earningsCount={earning?.length} positionsCount={positions?.length} state={state} />
+        <PositionsToolbar
+          dispatch={dispatch}
+          earningsCount={earning?.length}
+          positionsCount={positions?.length}
+          state={state}
+        />
         <Stack direction='column' ref={containerRef} sx={{ gap: '4px', maxHeight: 'calc(100vh - 530px)', minHeight: '288px', overflow: 'auto', width: '100%' }}>
           {state.tab === POSITION_TABS.POSITIONS
             ? (

@@ -3,8 +3,8 @@
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { Grid, Grow, Skeleton, Typography, useTheme } from '@mui/material';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
@@ -38,36 +38,29 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
 
   const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
-  const [flipCondition, setFlipCondition] = useState(false);
-
-  useEffect(() => {
-    if (!token?.genesisHash) {
-      return;
-    }
-
-    setFlipCondition(true);
-    setTimeout(() => setFlipCondition(false), 500);
-  }, [token?.genesisHash]);
-
   return (
     <GlowBox style={{ height: '187px', justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
-      <Grid
-        container item
-        sx={{
-          backdropFilter: 'blur(4px)',
-          border: '8px solid',
-          borderColor: '#00000033',
-          borderRadius: '999px',
-          height: 'fit-content',
-          ml: '-10px',
-          mt: '15px',
-          transform: flipCondition ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 1s',
-          width: 'fit-content'
-        }}
+      <Grow
+        in={!!token}
+        key={token?.genesisHash ?? token?.token}
+        style={{ transformOrigin: 'center center' }} timeout={1000}
       >
-        <AssetLogo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
-      </Grid>
+        <Grid
+          container item
+          sx={{
+            backdropFilter: 'blur(4px)',
+            border: '8px solid',
+            borderColor: '#00000033',
+            borderRadius: '999px',
+            height: 'fit-content',
+            ml: '-10px',
+            mt: '15px',
+            width: 'fit-content'
+          }}
+        >
+          <AssetLogo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
+        </Grid>
+      </Grow>
       <Explorer
         address={address}
       />

@@ -17,6 +17,7 @@ import PoolInfo from '@polkadot/extension-polkagate/src/popup/staking/pool-new/I
 import JoinPool from '@polkadot/extension-polkagate/src/popup/staking/pool-new/joinPool';
 import PoolStake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/stake';
 import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool-new/unstake';
+import StakingReward from '@polkadot/extension-polkagate/src/popup/staking/Reward';
 import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
 import BondExtra from '@polkadot/extension-polkagate/src/popup/staking/solo-new/bondExtra';
 import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/fast-unstake/FastUnstake';
@@ -80,6 +81,11 @@ export const STAKING_ROUTES: RouteConfig[] = [
     trigger: 'pool-staking-info'
   },
   // SOLO STAKING ROUTE
+  {
+    Component: StakingReward,
+    path: '/stakingReward/:address/:genesisHash/:type',
+    trigger: 'staking-reward'
+  },
   {
     Component: PendingReward,
     path: '/solo/:genesisHash/pendingReward',

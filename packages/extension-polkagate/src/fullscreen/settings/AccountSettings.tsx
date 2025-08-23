@@ -97,7 +97,7 @@ function AccountSettings (): React.ReactElement {
   return (
     <Motion variant='slide'>
       <VelvetBox>
-        <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: 'calc(100vh - 277px)', minHeight: '600px', pl: '20px', position: 'relative', width: '100%' }}>
+        <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: 'calc(100vh - 305px)', minHeight: '600px', pl: '20px', position: 'relative', width: '100%' }}>
           <Typography color='text.primary' fontSize='22px' mt='30px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
             {t('Actions')}
           </Typography>

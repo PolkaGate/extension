@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import type { AccountId, AccountId32 } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
 import type { PalletReferendaTrackInfo } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
@@ -270,4 +270,42 @@ export interface DelegationInfo {
   delegatedBalance: BN;
   delegatee: AccountId;
   conviction: number;
+}
+
+export interface Lock {
+  classId: BN;
+  endBlock: BN;
+  locked: string;
+  refId: BN | 'N/A';
+  total: BN;
+}
+
+export interface Vote {
+  standard?: {
+    vote: string;
+    balance: number;
+  };
+  delegations?: {
+    votes: BN;
+    capital: BN;
+  };
+  splitAbstain?: {
+    abstain: number;
+    aye: number;
+    nay: number;
+  };
+  delegating?: {
+    balance: BN;
+    aye?: boolean;
+    nay?: boolean;
+    abstain?: BN;
+    conviction: number;
+    target?: AccountId32;
+    voted?: boolean;
+    delegations: {
+      votes: BN;
+      capital: BN;
+    };
+    prior: unknown;
+  }
 }

@@ -36,7 +36,7 @@ function RightColumn (): React.ReactElement {
   }, [address, genesisHash]);
 
   return (
-    <Motion style={{ display: 'block', height: '100%', overflow: 'hidden', position: 'relative', width: ' 523px' }} variant='flip'>
+    <Motion style={{ display: 'block', height: '100%', overflow: 'hidden', position: 'relative', width: ' 523px' }} variant='fade'>
       <TokenSummary
         address={address}
         token={token}

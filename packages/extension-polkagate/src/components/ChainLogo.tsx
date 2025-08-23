@@ -10,12 +10,12 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
-import { convertToCamelCase } from '../fullscreen/governance/utils/util';
 import { useIsDark } from '../hooks';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
+import { convertToCamelCase } from '../util';
 
 interface Props {
   chainName?: string;
