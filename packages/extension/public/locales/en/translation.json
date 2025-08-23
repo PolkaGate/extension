@@ -530,13 +530,7 @@
   "Restake": "",
   "Available to Stake": "",
   "Received Rewards": "",
-  "and start earning rewards actively within {{eraLength}}": "",
-  "No rewards will be earned during that period": "",
-  "Rewards require manual claiming if you have staked in pools": "",
   "Start staking": "",
-  "Earn up to": "",
-  "on your": "",
-  "tokens per year": "",
   "Your Staking Positions": "",
   "Explore staking options": "",
   "No reason found!": "",
@@ -813,5 +807,11 @@
   "🔍 Search accounts": "",
   "🔍 Search networks": "",
   "🔍 Search Token": "",
-  "Ignore": ""
+  "Ignore": "",
+  "Stake anytime with as little as {{min}} and start earning rewards actively within {{eraLength}}": "",
+  "Unstake anytime, and redeem your funds after {{duration}} days. No rewards will be earned during that period": "",
+  "after {{unbonding}} days.": "",
+  "Rewards accumulate every {{duration}} hours. Rewards require manual claiming if you have staked in pools.": "",
+  "{{duration}} hours": "",
+  "🔍 Search": ""
 }
