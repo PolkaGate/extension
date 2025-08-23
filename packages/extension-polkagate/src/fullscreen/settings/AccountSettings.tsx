@@ -122,11 +122,12 @@ function AccountSettings (): React.ReactElement {
               label={t('Manage Website Access')}
               onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
             />
-            <ActionBox
-              Icon={Broom}
-              label={t('Derive from Account')}
-              onClick={extensionPopupOpener(ExtensionPopups.DERIVE)}
-            />
+            {!selectedAccount?.isExternal &&
+              <ActionBox
+                Icon={Broom}
+                label={t('Derive from Account')}
+                onClick={extensionPopupOpener(ExtensionPopups.DERIVE)}
+              />}
           </VelvetBox>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ bottom: '20px', cursor: 'pointer', position: 'absolute' }}>
             <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />

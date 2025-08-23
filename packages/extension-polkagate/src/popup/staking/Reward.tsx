@@ -88,7 +88,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
         <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
-        <Typography color='text.highlight' variant='B-1' width='fit-content'>
+        <Typography color='text.highlight' variant='B-1' width='fit-content' textAlign='left'>
           {t('Reward source')}
         </Typography>
         {reward.poolId

@@ -27,7 +27,7 @@ export default function BondExtra ({ address, genesisHash, onClose }: Props) {
   return (
     <StakeUnstake
       address={address}
-      amountLabel={t('Available to stake')}
+      amountLabel={t('Available to Stake')}
       balance={availableBalanceToStake}
       errorMessage={errorMessage}
       estimatedFee={estimatedFee}

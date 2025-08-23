@@ -4,7 +4,7 @@
 import { Grid } from '@mui/material';
 import React, { memo, useCallback, useState } from 'react';
 
-import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 import { Motion, SearchField } from '../../components';
 import { UserDashboardHeader } from '../../partials';
@@ -16,6 +16,7 @@ import { PROFILE_MODE } from './type';
 
 export function AccountsListManagement ({ defaultMode = PROFILE_MODE.NONE, onDone }: { defaultMode?: PROFILE_MODE, onDone?: () => void }): React.ReactElement {
   const isExtension = useIsExtensionPopup();
+  const { t } = useTranslation();
 
   const [searchKeyword, setSearchKeyword] = useState<string>();
   const [mode, setMode] = useState<PROFILE_MODE>(defaultMode);
@@ -40,7 +41,7 @@ export function AccountsListManagement ({ defaultMode = PROFILE_MODE.NONE, onDon
           isExtension &&
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search accounts'
+            placeholder={t('🔍 Search accounts')}
             style={{ marginTop: '10px' }}
           />
         }

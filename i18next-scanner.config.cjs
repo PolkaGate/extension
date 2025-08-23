@@ -43,6 +43,7 @@ module.exports = {
     keySeparator: false, // key separator
     lngs: ['en'],
     nsSeparator: false, // namespace separator
+    removeUnusedKeys: true,
     resource: {
       jsonIndent: 2,
       lineEnding: '\n',

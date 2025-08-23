@@ -84,7 +84,7 @@ export default function ValidatorsTabBody({ stakingInfo }: Props): React.ReactEl
           <GradientButton
             onClick={openValidatorManagement}
             startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
-            style={{ height: '44px', padding: 0, width: '180px' }}
+            style={{ height: '44px', padding: '0 10px', minWidth: '160px', width:'fit-content' }}
             text={t('Edit Nominations')}
           />
         </TableToolbar>

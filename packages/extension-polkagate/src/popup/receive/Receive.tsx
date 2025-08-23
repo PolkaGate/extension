@@ -122,7 +122,7 @@ function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
         <SearchField
           focused
           onInputChange={onSearch}
-          placeholder='🔍 Search networks'
+          placeholder={t('🔍 Search networks')}
         />
       </Grid>
       <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>

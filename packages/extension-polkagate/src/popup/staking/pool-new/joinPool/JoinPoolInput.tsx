@@ -43,7 +43,7 @@ export default function JoinPoolInput ({ availableBalanceToStake, bondAmount, er
         decimal={decimal}
         genesisHash={genesisHash}
         style={{ mt: '8px' }}
-        text={t('Available to stake')}
+        text={t('Available to Stake')}
         token={token}
       />
       <SelectedPool
