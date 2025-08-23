@@ -87,7 +87,7 @@ const SpecificAccountOption = ({ ED, disabled, genesisHash, isBlueish, onNext, s
         setSpecificAccount={setSpecificAccount}
         specificAccount={specificAccount}
       />
-      <Container disableGutters sx={{ columnGap: '8px', display: 'flex' }}>
+      <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex' }}>
         <Warning2 color={isBlueish ? '#596AFF' : '#FF4FB9' } size='35' style={{ height: 'fit-content', marginTop: '4px' }} variant='Bold' />
         <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {t('The balance for the recipient must be at least {{ED}} {{token}} in order to keep the amount', { replace: { ED: ED ? amountToHuman(ED, decimal) : '--', token } })}
