@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import '@vaadin/icons';
-
 import type { AlertType } from '../util/types';
 
 import { Alert as MuiAlert, Box, Slide, Typography } from '@mui/material';

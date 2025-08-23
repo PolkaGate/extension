@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import '@vaadin/icons';
-
 import { Grid } from '@mui/material';
 import React from 'react';
 

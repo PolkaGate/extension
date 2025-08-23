@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const config = require('@polkadot/dev/config/jest.cjs');
-// config.transformIgnorePatterns= ["/!node_modules\@mangata-finance"]
-config.transformIgnorePatterns = ["/!node_modules\@vaadin"]
 
 module.exports = {
   // transformIgnorePatterns: ['/!node_modules'],

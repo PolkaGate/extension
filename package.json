@@ -75,7 +75,6 @@
     "@sentry/react": "^9.40.0",
     "@sentry/webpack-plugin": "^4.0.0",
     "@substrate/connect": "^0.7.32",
-    "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",
     "better-react-spinkit": "^2.0.4",
     "chance": "^1.1.11",
