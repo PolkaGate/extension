@@ -80,7 +80,7 @@ function ValidatorItem ({ genesisHash, isSelected, onDetailClick, onSelect, sele
           StartIcon={PercentageSquare}
           style={{ gap: '2px', maxWidth: '120px', width: 'fit-content' }}
           text={String(commission) + '%'}
-          title={t('Commission')}
+          title={t('Comm.')}
         />
         {/* @ts-ignore */}
         <InfoWithIcons StartIcon={Profile2User} style={{ gap: '2px', maxWidth: '115px', width: 'fit-content' }} text={validatorInfo.exposureMeta?.nominatorCount ?? 0} title={t('Nominators')} />

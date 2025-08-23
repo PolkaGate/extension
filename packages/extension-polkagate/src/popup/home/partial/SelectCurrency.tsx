@@ -238,6 +238,7 @@ function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
   return (
     <SharePopup
       onClose={handleClose}
+      modalProps={{ showBackIconAsClose: true }}
       open={openMenu}
       popupProps={{
         TitleIcon: Hashtag,

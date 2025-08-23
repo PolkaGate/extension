@@ -114,7 +114,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           <InfoWithIcons
             text={`${myShare}%`}
             title={t('My Share')}
-            width='120px'
+            width='110px'
           />
         }
         <InfoWithIcons
@@ -123,13 +123,13 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           decimal={decimal}
           title={t('Staked')}
           token={token}
-          width='160px'
+          width='180px'
         />
         <InfoWithIcons
           StartIcon={PercentageSquare}
           text={isNaN(commission) ? '---' : String(commission) + '%'}
           title={t('Comm.')}
-          width='130px'
+          width='120px'
         />
         <InfoWithIcons
           StartIcon={Profile2User}

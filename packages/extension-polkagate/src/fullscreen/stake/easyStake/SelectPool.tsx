@@ -85,7 +85,7 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
         {incrementalPools !== undefined &&
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search'
+            placeholder={t('🔍 Search')}
             style={{
               height: '44px',
               margin: '17px 0 18px',

@@ -86,7 +86,7 @@ function GlowCheckbox({ changeState, checked = false, disabled, iconStyle = {}, 
       disableGutters
       onClick={onClick}
       ref={containerRef}
-      sx={{ columnGap: '10px', cursor: disabled ? 'default' : 'pointer', display: 'flex', ...style }}
+      sx={{ alignItems: 'center', columnGap: '10px', cursor: disabled ? 'default' : 'pointer', display: 'flex', ...style }}
     >
       <Grid sx={{ ...CheckboxEffect }}>
         <svg
@@ -102,7 +102,7 @@ function GlowCheckbox({ changeState, checked = false, disabled, iconStyle = {}, 
         </svg>
       </Grid>
       {label &&
-        <span style={{ ...LabelFontStyle, ...labelStyle, userSelect: 'none' }}>
+        <span style={{ ...LabelFontStyle, ...labelStyle, textAlign: 'left', userSelect: 'none' }}>
           <TwoToneText
             text={label}
             textPartInColor={labelPartInColor}

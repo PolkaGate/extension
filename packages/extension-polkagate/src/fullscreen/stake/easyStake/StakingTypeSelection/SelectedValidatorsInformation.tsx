@@ -33,7 +33,7 @@ export const SelectedValidatorsInformation = ({ isExtension, isRecommended, onCl
                 {`${validators.length} ` + t('Validators')}
               </Typography>
               {isRecommended &&
-                <Typography color='#82FFA5' variant='B-5'>
+                <Typography color='#82FFA5' textAlign='left' variant='B-5'>
                   {t('Recommended')}
                 </Typography>}
             </Stack>

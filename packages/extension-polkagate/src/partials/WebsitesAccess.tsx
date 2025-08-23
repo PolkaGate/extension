@@ -96,7 +96,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
       </Typography>
       <SearchField
         onInputChange={onSearch}
-        placeholder='🔍 Search'
+        placeholder={t('🔍 Search')}
         placeholderStyle={{ textAlign: isExtension ? 'center' : 'left' }}
         style={{ margin: isExtension ? '17px 0 0' : '20px 25px 15px', padding: '0 10px' }}
       />

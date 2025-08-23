@@ -5,6 +5,8 @@ import { Container, type SxProps, type Theme } from '@mui/material';
 import { Firstline } from 'iconsax-react';
 import React, { memo } from 'react';
 
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+
 import { SearchField } from '../../../components';
 import SortBy from '../../../popup/staking/partial/SortBy';
 
@@ -18,12 +20,14 @@ interface TableToolbarProps {
 }
 
 function TableToolbar ({ children, onSearch, setSortBy, sortBy, sortByObject, style }: TableToolbarProps) {
+  const { t } = useTranslation();
+
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px', ...style }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '18px', m: 0, width: 'fit-content' }}>
         <SearchField
           onInputChange={onSearch}
-          placeholder='🔍 Search'
+          placeholder={t('🔍 Search')}
           style={{
             height: '44px',
             minWidth: '380px',
