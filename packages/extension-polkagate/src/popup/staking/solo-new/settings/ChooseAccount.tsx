@@ -8,23 +8,23 @@ import React, { Fragment, useCallback, useContext, useState } from 'react';
 import { noop } from '@polkadot/util';
 
 import { AccountContext, GradientDivider, Identity2, VariantButton } from '../../../../components';
-import { useChainInfo, useIsBlueish, useTranslation } from '../../../../hooks';
+import { useChainInfo, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
 import { getFormattedAddress } from '../../../../util/utils';
 import PRadio from '../../components/Radio';
 
 interface ChooseAccountMenuProps {
-  openMenu: boolean;
-  handleClose: () => void;
   genesisHash: string | undefined;
+  handleClose: () => void;
+  isBlueish: boolean | undefined
+  openMenu: boolean;
   setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
   specificAccount: string | undefined;
 }
 
-const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAccount, specificAccount }: ChooseAccountMenuProps) => {
+const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, setSpecificAccount, specificAccount }: ChooseAccountMenuProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isBlueish = useIsBlueish();
   const { accounts } = useContext(AccountContext);
   const { chain } = useChainInfo(genesisHash, true);
 
@@ -35,6 +35,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
   return (
     <SharePopup
       onClose={handleClose}
+      modalProps={{ maxHeight: 564 }}
       open={openMenu}
       popupProps={{
         TitleIcon: UserOctagon,
@@ -47,7 +48,7 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
       title={t('Accounts')}
     >
       <Stack direction='column' sx={{ height: '460px', position: 'relative', rowGap: '24px', width: '100%' }}>
-        <Typography color='text.highlight' letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
           {t('My Accounts')}
         </Typography>
         <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflowY: 'auto', rowGap: '12px' }}>
@@ -60,11 +61,11 @@ const ChooseAccountMenu = ({ genesisHash, handleClose, openMenu, setSpecificAcco
                 <Container disableGutters key={address} onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
-                    addressStyle={{ color: '#809ACB' }}
+                    addressStyle={{ color: isBlueish ? '#809ACB': 'primary.main'}}
                     genesisHash={genesisHash ?? ''}
                     identiconSize={24}
                     style={{
-                      color: checked ? '#3988FF' : 'text.primary',
+                      color: checked ? isBlueish ? '#3988FF':'warning.main' : 'text.primary',
                       'div div#socials': {
                         mt: 0
                       },
@@ -123,7 +124,8 @@ export default function ChooseAccount ({ genesisHash, isBlueish, setSpecificAcco
         />
         <ArrowCircleDown color={ isBlueish ? theme.palette.text.highlight : theme.palette.primary.main } onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
       </Container>
-      <ChooseAccountMenu
+      <AccountListToChoose
+        isBlueish={isBlueish}
         genesisHash={genesisHash}
         handleClose={handleToggleMenu}
         openMenu={openMenu}
