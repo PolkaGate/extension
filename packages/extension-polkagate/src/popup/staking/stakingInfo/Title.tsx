@@ -7,26 +7,23 @@ import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { ChainLogo } from '../../../components/index';
-import { useTranslation } from '../../../hooks';
 
 interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
 function Title ({ selectedPosition }: Props): React.ReactElement {
-  const { t } = useTranslation();
-
   return (
     <div style={{ zIndex: 1 }}>
       <Stack direction='row'>
         <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-          {t('Earn up to')}
+          {'Earn up to'}
         </Typography>
         <Typography color='#82FFA5' sx={{ px: '2px' }} textTransform='uppercase' variant='H-3'>
           {`${selectedPosition?.rate || 0}%`}
         </Typography>
         <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-          {t('on your')}
+          {'on your'}
         </Typography>
       </Stack>
       <Stack alignItems='center' direction='row' sx={{ mt: '-10px' }}>
@@ -37,7 +34,7 @@ function Title ({ selectedPosition }: Props): React.ReactElement {
           <ChainLogo genesisHash={selectedPosition?.genesisHash} size={24} />
         </span>
         <Typography color='text.primary' sx={{ ml: '2px' }} textTransform='uppercase' variant='H-3'>
-          {t('tokens per year')}
+          {'tokens per year'}
         </Typography>
       </Stack>
     </div>

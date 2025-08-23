@@ -26,24 +26,14 @@ export default function ContactUs ({ style = {} }: Props): React.ReactElement {
         fontSize={!isExtension ? '22px' : undefined}
         mb='8px'
         mt='10px'
-        sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }}
+        sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', whiteSpace: 'nowrap' }}
         variant='H-4'
       >
         {t('Contact us')}
       </Typography>
-      <Grid
-        alignItems= 'center'
-        columnGap='5px'
-        container
-        justifyContent='flex-start'
-        pt='7px'
-      >
+      <Grid alignItems= 'center' columnGap='5px' container justifyContent='flex-start' pt='7px' sx={{ flexWrap: 'nowrap' }}>
         <AtSignIcon color={color} width='14px' />
-        <Typography
-          color={color}
-          sx={{ textAlign: 'left' }}
-          variant='B-1'
-        >
+        <Typography color={color} sx={{ textAlign: 'left' }} variant='B-1'>
           {SUPPORT_EMAIL}
         </Typography>
       </Grid>

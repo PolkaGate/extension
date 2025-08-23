@@ -56,6 +56,8 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
   const handleClose = useCallback(() => onClose ? onClose() : setSelectedPosition(undefined), [onClose, setSelectedPosition]);
   const goStaking = useCallback(() => onNext ? onNext() : navigate('/easyStake/' + selectedPosition?.genesisHash) as void, [navigate, onNext, selectedPosition?.genesisHash]);
 
+  const min = `${amountToHuman(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond, _decimal)} ${selectedPosition?.tokenSymbol}`;
+
   return (
     <SharePopup
       modalProps={{ noDivider: true, showBackIconAsClose: true }}
@@ -104,21 +106,18 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
           {(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond) &&
             <InfoRow
               Icon={WalletMoney}
-              text1={'Stake anytime with as little as '}
-              text2={`${amountToHuman(poolConsts?.minJoinBond || stakingConsts?.minNominatorBond, _decimal)} ${selectedPosition?.tokenSymbol}`}
-              text3={t('and start earning rewards actively within {{eraLength}}', { replace: { eraLength } })}
+              text={t('Stake anytime with as little as {{min}} and start earning rewards actively within {{eraLength}}', { replace: { eraLength, min } })}
+              textPartInColor={min}
             />}
           <InfoRow
             Icon={Clock}
-            text1={'Unstake anytime, and redeem your funds '}
-            text2={`after ${stakingConsts?.unbondingDuration} days.`}
-            text3={t('No rewards will be earned during that period')}
+            text={t('Unstake anytime, and redeem your funds after {{duration}} days. No rewards will be earned during that period', { replace: { duration: stakingConsts?.unbondingDuration } })}
+            textPartInColor={t('after {{unbonding}} days.', { replace: { unbonding: stakingConsts?.unbondingDuration } })}
           />
           <InfoRow
             Icon={Medal}
-            text1={'Rewards accumulate every'}
-            text2={` ${stakingConsts?.eraDuration} hours.`}
-            text3={t('Rewards require manual claiming if you have staked in pools')}
+            text={t('Rewards accumulate every {{duration}} hours. Rewards require manual claiming if you have staked in pools.', { replace: { duration: stakingConsts?.eraDuration } })}
+            textPartInColor={t('{{duration}} hours', { replace: { duration: stakingConsts?.eraDuration } })}
           />
         </Stack>
         <GradientButton

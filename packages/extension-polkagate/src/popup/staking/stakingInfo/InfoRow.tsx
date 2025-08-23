@@ -6,16 +6,16 @@ import type { Icon } from 'iconsax-react';
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
+import { TwoToneText } from '@polkadot/extension-polkagate/src/components';
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 
 interface Props {
   Icon: Icon;
-  text1: string;
-  text2: string;
-  text3: string;
+  text: string;
+  textPartInColor: string;
 }
 
-function InfoRow ({ Icon, text1, text2, text3 }: Props): React.ReactElement {
+function InfoRow ({ Icon, text, textPartInColor }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const variant = isExtension ? 'B-3' : 'B-2';
 
@@ -41,13 +41,12 @@ function InfoRow ({ Icon, text1, text2, text3 }: Props): React.ReactElement {
       </Stack>
       <Stack sx={{ flexFlow: 'wrap' }} width='290px'>
         <Typography color='#BEAAD8' textAlign='left' variant={variant}>
-          {text1}
-          <Typography color='#AA83DC' variant={variant}>
-            {text2}
-          </Typography>
-          {' '}{text3}
+          <TwoToneText
+            color='#AA83DC'
+            text={text}
+            textPartInColor={textPartInColor}
+          />
         </Typography>
-
       </Stack>
     </Stack>
   );

@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import { SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import { selectableNetworks } from '@polkadot/networks';
 
-import { usePrices } from '../../../hooks';
+import { usePrices, useTranslation } from '../../../hooks';
 import NftFilter from './NftFilter';
 
 const initialFilterState: FilterState = {
@@ -44,7 +44,7 @@ const sortReducer = (state: SortState, action: SortAction): SortState => {
 
 function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const prices = usePrices();
-
+  const { t } = useTranslation();
   const [filters, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const [searchedTxt, setSearchTxt] = useState<string | undefined>();
   const [sort, dispatchSort] = useReducer(sortReducer, initialSortState);
@@ -125,7 +125,7 @@ function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactEle
     <Stack alignItems='center' columnGap='15px' direction= 'row' justifyContent='space-between' sx={{ mt: '20px' }}>
       <SearchField
         onInputChange={onSearch}
-        placeholder='🔍 Search'
+        placeholder={t('🔍 Search')}
         placeholderStyle={{ textAlign: 'left' }}
         style={{ minWidth: '380px', width: '40%' }}
       />

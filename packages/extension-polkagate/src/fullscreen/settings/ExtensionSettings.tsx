@@ -9,11 +9,11 @@ import { VelvetBox } from '../../style';
 import AccountIcon from './partials/AccountIcon';
 import Appearance from './partials/Appearance';
 import AutoLockTimer from './partials/AutoLockTimer';
+import DappRequests from './partials/DappRequests';
 import DiagnosticsReports from './partials/DiagnosticsReports';
 import EnableCamera from './partials/EnableCamera';
 import EnableTestNet from './partials/EnableTestNet';
 import Language from './partials/Language';
-import Notification from './partials/Notification';
 import Password from './partials/Password';
 
 function ExtensionSettings (): React.ReactElement {
@@ -32,7 +32,7 @@ function ExtensionSettings (): React.ReactElement {
           </Stack>
           <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
             <AccountIcon />
-            <Notification />
+            <DappRequests />
             <Appearance />
             <AutoLockTimer />
           </Stack>
