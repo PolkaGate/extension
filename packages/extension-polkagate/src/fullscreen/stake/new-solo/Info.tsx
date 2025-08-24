@@ -34,8 +34,7 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
 
   return (
     <DraggableModal
-      maxHeight={475}
-      minHeight={450}
+      minHeight='auto'
       onClose={onClose}
       open
       showBackIconAsClose

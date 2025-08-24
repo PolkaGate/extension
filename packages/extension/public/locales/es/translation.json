@@ -569,7 +569,7 @@
   "No proxy available": "No hay proxy disponible",
   "Export all Accounts": "Exportar todas las cuentas",
   "Object info": "Objeto",
-  "Show:": "Mostrar:",
+  "Show": "Mostrar",
   "Any status": "Cualquier estado",
   "block": "bloque",
   "hash": "hash",
@@ -820,5 +820,8 @@
   "after {{unbonding}} days.": "después de {{unbonding}} días",
   "Rewards accumulate every {{duration}} hours. Rewards require manual claiming if you have staked in pools.": "Las recompensas se acumulan cada {{duration}} horas. Requieren reclamo manual si has hecho staking en pools",
   "{{duration}} hours": "{{duration}} horas",
-   "🔍 Search": "🔍 Buscar"
+  "🔍 Search": "🔍 Buscar",
+  "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} de {{totalItems}} elementos",
+  "Privacy Policy": "Política de privacidad",
+  "User Agreement": "Acuerdo de usuario"
 }

@@ -18,7 +18,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function PendingRewards ({ address, genesisHash, onClose }: Props) {
+export default function PendingRewards({ address, genesisHash, onClose }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useChainInfo(genesisHash);
@@ -72,6 +72,7 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
           </Container>
           <TableHeader
             checked={!!expandedRewards?.length && selectedToPayout?.length === expandedRewards?.length}
+            disabled={!expandedRewards?.length}
             onSelectAll={onSelectAll}
           />
           <RewardsTable
