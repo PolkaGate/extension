@@ -73,7 +73,7 @@ export default function BondExtra (): React.ReactElement {
               decimal={decimal}
               genesisHash={genesisHash}
               style={{ mt: '8px' }}
-              text={t('Available to stake')}
+              text={t('Available to Stake')}
               token={token}
             />
             <StakeAmountInput

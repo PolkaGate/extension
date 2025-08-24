@@ -17,15 +17,17 @@ import { FadeOnScroll, GradientButton, Motion } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { NoValidatorBox } from '../../../components';
 import TableToolbar from '../../partials/TableToolbar';
-import { LabelBar, Line, Validators } from './partials';
+import { Validators } from './partials/Validators';
 import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem } from './ValidatorItem';
+import { LabelBar } from './partials/LabelBar';
+import Line from './partials/Line';
 
 interface Props {
   stakingInfo: SoloStakingInfo | undefined;
 }
 
-export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactElement {
+export default function ValidatorsTabBody({ stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
@@ -82,7 +84,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
           <GradientButton
             onClick={openValidatorManagement}
             startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
-            style={{ height: '44px', padding: 0, width: '180px' }}
+            style={{ height: '44px', padding: '0 10px', minWidth: '160px', width:'fit-content' }}
             text={t('Edit Nominations')}
           />
         </TableToolbar>
@@ -98,16 +100,16 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
                 setCollapse={setElectedCollapse}
               />
               <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={electedCollapse} style={{ minHeight: 'auto' }} sx={{ width: 'fit-content' }}>
-                <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', width: '100%' }}>
+                <Stack direction='column' sx={{ position: 'relative', gap: '2px', height: 'fit-content', width: '100%' }}>
                   <Line
-                    height={47 * (elected.length + active.length)}
+                    height={46 * (elected.length + active.length)}
                   />
                   <Validators
                     address={stakingInfo?.stakingAccount?.accountId?.toString()}
                     bgcolor='#2D1E4A'
                     genesisHash={genesisHash}
                     isActive={true}
-                    validators={active}
+                    validators={active} // to show possible active validators
                     withCurve
                   />
                   <Validators
@@ -125,14 +127,21 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
                 count={nonElected?.length}
                 isCollapsed={notElectedCollapse}
                 label={t('Not Elected')}
+                description={t('Waiting')}
                 setCollapse={setNotElectedCollapse}
               />
               <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto', width: 'fit-content' }}>
-                <Validators
-                  bgcolor='transparent'
-                  genesisHash={genesisHash}
-                  validators={nonElected}
-                />
+                <Stack direction='column' sx={{ position: 'relative', gap: '2px', height: 'fit-content', width: '100%' }}>
+                  <Line
+                    height={44 * nonElected.length}
+                  />
+                  <Validators
+                    bgcolor='transparent'
+                    genesisHash={genesisHash}
+                    validators={nonElected}
+                    withCurve
+                  />
+                </Stack>
               </Collapse>
             </>
           }

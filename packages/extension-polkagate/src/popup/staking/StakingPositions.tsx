@@ -166,7 +166,7 @@ export default function StakingPositions (): React.ReactElement {
         <Motion variant='slide'>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search Token'
+            placeholder={t('🔍 Search Token')}
             style={{ padding: '4%' }}
           />
           <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'auto', width: '92%' }}>

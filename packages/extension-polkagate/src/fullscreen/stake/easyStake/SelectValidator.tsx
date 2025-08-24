@@ -154,7 +154,7 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
         <>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search'
+            placeholder={t('🔍 Search')}
             style={{
               height: '44px',
               margin: '17px 0 18px',

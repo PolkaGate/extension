@@ -96,7 +96,7 @@ export default function EarningOptions (): React.ReactElement {
         <Motion variant='slide'>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search Token'
+            placeholder={t('🔍 Search Token')}
             style={{ padding: '4%' }}
           />
           <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>

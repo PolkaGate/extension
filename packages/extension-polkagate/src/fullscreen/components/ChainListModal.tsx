@@ -112,7 +112,7 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
         <SearchField
           focused
           onInputChange={onSearch}
-          placeholder='🔍 Search networks'
+          placeholder={t('🔍 Search networks')}
         />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>

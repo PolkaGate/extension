@@ -125,7 +125,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '215px', overflowY: 'auto', p: '8px 12px', width: '100%' }}>
+          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '240px', overflowY: 'auto', p: '8px 12px', width: '100%' }}>
             {accountsToShow.map(({ address, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 
@@ -161,7 +161,7 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
         onPrimaryClick={handleButtons(requestId ? 'approve' : 'update')}
         onSecondaryClick={handleButtons(requestId ? 'ignore' : 'disconnect')}
         primaryBtnText={t('Apply')}
-        secondaryBtnText={t(requestId ? 'Ignore' : 'Disconnect all')}
+        secondaryBtnText={requestId ? t('Ignore') : t('Disconnect all')}
       />
     </Grid>
   );

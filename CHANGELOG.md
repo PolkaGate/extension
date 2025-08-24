@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.8](https://github.com/polkagate/extension/compare/v1.1.7...v1.1.8) (2025-08-23)
+
+
+### Bug Fixes
+
+* correct translation related issues ([a9d9693](https://github.com/polkagate/extension/commit/a9d96939209d811a3c6a6fee8e68f866271a75b9))
+
 ## [1.1.7](https://github.com/polkagate/extension/compare/v1.1.6...v1.1.7) (2025-08-22)
 
 

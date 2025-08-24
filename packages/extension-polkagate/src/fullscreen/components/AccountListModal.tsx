@@ -100,7 +100,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
       <Container disableGutters sx={{ display: 'block', height: '505px', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
         <SearchField
           onInputChange={onSearch}
-          placeholder='🔍 Search accounts'
+          placeholder={t('🔍 Search accounts')}
         />
         <ProfileTabsFS initialAccountList={initialAccountList} width='99%' />
         <VelvetBox style={{ margin: '5px 0 15px' }}>

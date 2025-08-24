@@ -200,7 +200,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
         </Grid>
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', m: '6px', p: '8px 12px', position: 'relative', width: 'calc(100% - 12px)' }}>
-        <Typography color='#AA83DC' variant='B-1' width='fit-content'>
+        <Typography color='#AA83DC' variant='B-1' width='fit-content' textAlign='left'>
           {t('Reward source')}
         </Typography>
         {reward.poolId

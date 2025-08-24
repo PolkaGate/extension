@@ -23,7 +23,7 @@ interface Props {
 
 interface AddressComponentProp {
   address: string | undefined;
-  chainDisplayName: string | undefined;
+  chainName: string | undefined;
   onCopy: () => void;
 }
 
@@ -44,6 +44,7 @@ interface SelectChainProp {
 }
 
 function SelectChain ({ setSelectedChain }: SelectChainProp) {
+  const {t} = useTranslation();
   const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
     const hasRelay = (str: string) => str.toLowerCase().includes('relay');
 
@@ -75,7 +76,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
         <SearchField
           focused
           onInputChange={onSearch}
-          placeholder='🔍 Search networks'
+          placeholder={t('🔍 Search networks')}
         />
       </Grid>
       <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
@@ -104,8 +105,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
   );
 }
 
-function AddressComponent ({ address, chainDisplayName, onCopy }: AddressComponentProp) {
-  const chainName = useMemo(() => sanitizeChainName(chainDisplayName)?.toLowerCase(), [chainDisplayName]);
+function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
@@ -128,6 +128,8 @@ function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
+
+  const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.name)?.toLowerCase() : '', [selectedChain]);
 
   const formattedAddress = useMemo(() => {
     if (!selectedChain) {
@@ -197,11 +199,11 @@ function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
                   />
                 </Grid>
                 <Typography sx={{ display: 'flex', my: '10px', width: '100%' }} variant='B-1'>
-                  {t('Your {{chainName}} Address', { replace: { chainName: selectedChain?.name } })}
+                  {t('Your {{chainName}} Address', { replace: { chainName} })}
                 </Typography>
                 <AddressComponent
                   address={formattedAddress ?? address}
-                  chainDisplayName={selectedChain?.name}
+                  chainName={chainName}
                   onCopy={onCopy}
                 />
                 <DecisionButtons
@@ -217,7 +219,7 @@ function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
               <MySnackbar
                 onClose={handleSnackbarClose}
                 open={showSnackbar}
-                text={t('{{chainName}} address copied!', { replace: { chainName: selectedChain?.name } })}
+                text={t('{{chainName}} address copied!', { replace: { chainName } })}
               />
             </>
           }

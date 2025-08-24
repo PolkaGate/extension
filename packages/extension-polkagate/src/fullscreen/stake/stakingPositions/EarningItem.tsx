@@ -59,9 +59,9 @@ const Staked = ({ balance, decimal, token }: StakedProps) => {
 
 const YieldBadge = ({ rate }: { rate: number | undefined }) => {
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', whiteSpace: 'nowrap', width: 'fit-content' }}>
       <PercentageCircle color='#82FFA5' size='16' variant='Bold' />
-      <Grid container item sx={{ fontSize: '14px', fontWeight: 600, gap: '3px', width: 'fit-content' }}>
+      <Grid container item sx={{ flexWrap: 'nowrap', fontSize: '14px', fontWeight: 600, gap: '3px', width: 'fit-content' }}>
         <span style={{ color: '#82FFA5' }}>up</span>
         <span style={{ color: '#82FFA580' }}>to</span>
         <span style={{ color: '#82FFA5' }}>{rate}%</span>
@@ -75,7 +75,7 @@ const StakeButton = ({ onClick }: { onClick: () => void }) => {
   const { t } = useTranslation();
 
   return (
-    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '11px', cursor: 'pointer', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '11px', cursor: 'pointer', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
       <Trade color='#AA83DC' size='18' variant='Bulk' />
       <Typography color='primary.main' variant='B-4'>
         {t('Stake')}

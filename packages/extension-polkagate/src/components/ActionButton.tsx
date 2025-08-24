@@ -67,7 +67,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', ...ButtonFontStyle }}>
+      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', whiteSpace: 'nowrap', ...ButtonFontStyle }}>
         {text}
       </span>;
     } else {

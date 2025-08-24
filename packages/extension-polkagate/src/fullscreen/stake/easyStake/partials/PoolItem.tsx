@@ -96,7 +96,7 @@ function PoolItem ({ genesisHash, onDetailClick, poolInfo, selectable, selected,
           StartIcon={PercentageSquare}
           style={{ gap: '2px', maxWidth: '120px', width: 'fit-content' }}
           text={String(commission) + '%'}
-          title={t('Commission')}
+          title={t('Comm.')}
         />
         <InfoWithIcons
           StartIcon={Profile2User}

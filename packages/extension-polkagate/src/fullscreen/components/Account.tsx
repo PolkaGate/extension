@@ -15,7 +15,7 @@ import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { type BN,BN_ZERO } from '@polkadot/util';
+import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, FormatPrice, Identity2, MySkeleton } from '../../components';
 import { useAccountAssets, useCurrency, usePrices } from '../../hooks';

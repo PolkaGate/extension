@@ -234,7 +234,7 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
               width = {13}
             />}
           style={{ width: '345px' }}
-          text={t('View On Explorer')}
+          text={t('View on Explorer')}
         />
       </Stack>
     </Stack>

@@ -66,7 +66,7 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
                 width: '64px'
               }}
             />
-            <Typography color='#AA83DC' textAlign='justify' variant='B-4'>
+            <Typography color='#AA83DC' textAlign='left' variant='B-4'>
               {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
             </Typography>
           </Container>
