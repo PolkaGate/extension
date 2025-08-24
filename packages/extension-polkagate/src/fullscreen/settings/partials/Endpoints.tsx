@@ -63,9 +63,11 @@ function reducer (state: State, action: Action): State {
     }
 
     case 'SET_ENDPOINT':
-      return { ...state, maybeNewEndpoint: action.payload };
+      return { ...state, isOnAuto: false, maybeNewEndpoint: action.payload };
+
     case 'SET_ENDPOINTS_DELAY':
       return { ...state, endpointsDelay: action.payload };
+
     case 'UPDATE_DELAY':
       return {
         ...state,
@@ -73,8 +75,10 @@ function reducer (state: State, action: Action): State {
           e.value === action.payload.endpoint ? { ...e, delay: action.payload.delay } : e
         )
       };
+
     case 'RESET':
       return { endpointsDelay: undefined, isOnAuto: undefined, mayBeEnabled: false, maybeNewEndpoint: undefined };
+
     default:
       return state;
   }
@@ -202,7 +206,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
 
     endpointManager.set(genesisHash, {
       checkForNewOne,
-      endpoint: maybeNewEndpoint,
+      endpoint: maybeNewEndpoint || AUTO_MODE.value,
       isAuto: isOnAuto,
       timestamp: Date.now()
     });
@@ -217,11 +221,18 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
   }, [onClose]);
 
   const isDisabled = useMemo(() => {
-    const noEndpointChange = maybeNewEndpoint === endpoint;
+    const noEndpointChange = isOnAuto
+      ? maybeNewEndpoint === undefined
+      : maybeNewEndpoint === endpoint;
     const noEnableChange = mayBeEnabled === isEnabled;
+    const noAutoChange = (isOnAuto ?? isAuto) === isAuto;
 
-    return noEndpointChange && noEnableChange;
-  }, [endpoint, isEnabled, mayBeEnabled, maybeNewEndpoint]);
+    if (!maybeNewEndpoint && isOnAuto === false) {
+      return true;
+    }
+
+    return noEndpointChange && noEnableChange && noAutoChange;
+  }, [endpoint, isEnabled, isOnAuto, isAuto, mayBeEnabled, maybeNewEndpoint]);
 
   const filteredEndpoints = useMemo(() => {
     return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
