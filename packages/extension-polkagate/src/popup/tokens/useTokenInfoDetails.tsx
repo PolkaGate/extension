@@ -8,7 +8,7 @@ import { Coin, Lock1 } from 'iconsax-react';
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, bnMax } from '@polkadot/util';
 
 import { useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
@@ -76,11 +76,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
       }
     };
 
-    if (type === 'locked') {
-      if (hasAmount(unlockableAmount) && !items['Governance']) {
-        items['Governance'] = unlockableAmount;
-      }
-    } else {
+    if (type === 'reserved') {
       Object.entries(reservedReason ?? {}).forEach(([reason, amount]) => {
         if (amount && hasAmount(amount)) {
           items[reason] = amount;
@@ -98,7 +94,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
       },
       type: 'OPEN_MENU'
     });
-  }, [hasAmount, reservedReason, token?.poolReward, token?.pooledBalance, token?.soloTotal, unlockableAmount]);
+  }, [hasAmount, reservedReason, token?.poolReward, token?.pooledBalance, token?.soloTotal]);
 
   useEffect(() => {
     if (state.data === undefined || state.type === undefined) {
@@ -122,19 +118,10 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     }
 
     if (state.type === 'locked') {
-      if (delegatedBalance && !delegatedBalance.isZero() && !newItems['delegate']) {
-        newItems['delegate'] = delegatedBalance;
-      }
+      const lockedInGovernance = bnMax(delegatedBalance ?? BN_ZERO, totalLocked ?? BN_ZERO);
 
-      const hasVote =
-        delegatedBalance &&
-        totalLocked &&
-        !totalLocked.isZero() &&
-        totalLocked.sub(delegatedBalance).gt(BN_ZERO) &&
-        !newItems['vote'];
-
-      if (hasVote) {
-        newItems['vote'] = totalLocked.sub(delegatedBalance);
+      if (lockedInGovernance && !lockedInGovernance.isZero() && hasAmount(lockedInGovernance) && !newItems['Governance']) {
+        newItems['Governance'] = lockedInGovernance;
       }
 
       if (lockedReasonLoading) {
@@ -171,6 +158,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delegatedBalance, lockedReasonLoading, state.data?.items, state.type, reservedReason, reservedReasonLoading, totalLocked]);
+
   useEffect(() => {
     address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
   }, [address, genesisHash]);
