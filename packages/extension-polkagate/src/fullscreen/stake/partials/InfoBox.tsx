@@ -49,7 +49,7 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
           }
         </Typography>
       </Grid>
-      <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+      <Typography color='#AA83DC' textAlign='left' variant='B-4' width='100%'>
         {label}
       </Typography>
     </Box>

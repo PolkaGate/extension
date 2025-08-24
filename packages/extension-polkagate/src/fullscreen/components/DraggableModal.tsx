@@ -13,7 +13,7 @@ export interface DraggableModalProps {
   dividerStyle?: React.CSSProperties;
   draggable?: boolean;
   maxHeight?: number;
-  minHeight?: number;
+  minHeight?: number | string;
   noDivider?: boolean;
   open: boolean;
   onClose: () => void
@@ -82,7 +82,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
       : 'default',
     left: modalPosition.x,
     maxHeight: `${maxHeight}px`,
-    minHeight: `${minHeight}px`,
+    minHeight: typeof minHeight === 'number' ? `${minHeight}px` : minHeight,
     padding: '20px 0 20px',
     position: 'absolute',
     top: modalPosition.y,
