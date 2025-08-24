@@ -3,17 +3,17 @@
 
 // @ts-nocheck
 
-import type { Option } from '@polkadot/types';
+import type { Option, Vec } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
+import type { AccountId, AccountId32 } from '@polkadot/types/interfaces/runtime';
+import type { PalletMultisigMultisig, PalletPreimageRequestStatus, PalletProxyProxyDefinition, PalletRecoveryRecoveryConfig, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaReferendumStatusRankedCollectiveTally, PalletSocietyBid, PalletSocietyCandidacy } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { MIGRATED_NOMINATION_POOLS_CHAINS, PROXY_CHAINS } from '../util/constants';
+import { PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import { useAccountAssets, useInfo } from '.';
 
@@ -59,30 +59,28 @@ export default function useReservedDetails (address: string | undefined): Reserv
         const basicDeposit = api.consts['identity']['basicDeposit'] as unknown as BN;
         // const subAccountDeposit = api.consts['identity']['subAccountDeposit'] as unknown as BN;
 
-        const subs = await api.query['identity']['subsOf'](formatted);
+        const subs = (await api.query['identity']['subsOf'](formatted)) as unknown as [BN, Vec<AccountId32>];
 
         const subAccountsDeposit = (subs ? subs[0] : BN_ZERO) as unknown as BN;
 
         const sum = (basicDeposit.add(subAccountsDeposit)) as unknown as BN;
 
-        !id.isEmpty && setReserved((prev) => {
-          prev.identity = toBalance(sum);
-
-          return prev;
-        });
+        !id.isEmpty && setReserved((prev) => ({
+          ...prev,
+          identity: toBalance(sum)
+        }));
       }).catch(console.error);
 
       /** fetch proxy  */
       if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
-        api.query['proxy']['proxies'](formatted).then((p) => {
-          const maybeDeposit = p?.[1] as BN;
+        api.query['proxy']['proxies'](formatted).then((value) => {
+          const [_proxyDefs, maybeDeposit] = value as unknown as [Vec<PalletProxyProxyDefinition>, BN];
 
           if (!maybeDeposit?.isZero()) {
-            setReserved((prev) => {
-              prev.proxy = toBalance(maybeDeposit);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              proxy: toBalance(maybeDeposit)
+            }));
           }
         }).catch(console.error);
       }
@@ -91,11 +89,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
       api.query?.['recovery']?.['recoverable'](formatted).then((r) => {
         const recoveryInfo = r.isSome ? r.unwrap() as unknown as PalletRecoveryRecoveryConfig : null;
 
-        recoveryInfo?.deposit && setReserved((prev) => {
-          prev.recovery = toBalance((recoveryInfo.deposit as unknown as BN).add(activeLost?.deposit as unknown as BN || BN_ZERO));
-
-          return prev;
-        });
+        recoveryInfo?.deposit && setReserved((prev) => ({
+          ...prev,
+          recovery: toBalance((recoveryInfo.deposit as unknown as BN).add(activeLost?.deposit as unknown as BN || BN_ZERO))
+        }));
       }).catch(console.error);
 
       /** Fetch referenda  */
@@ -134,11 +131,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
           });
 
           if (!referendaDepositSum.isZero()) {
-            setReserved((prev) => {
-              prev.referenda = toBalance(referendaDepositSum);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              referenda: toBalance(referendaDepositSum)
+            }));
           }
         }).catch(console.error);
       }
@@ -159,11 +155,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
           });
 
           if (!sum.isZero()) {
-            setReserved((prev) => {
-              prev.bounty = toBalance(sum);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              bounty: toBalance(sum)
+            }));
           }
         }).catch(console.error);
       }
@@ -184,11 +179,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
           });
 
           if (!sum.isZero()) {
-            setReserved((prev) => {
-              prev.index = toBalance(sum);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              index: toBalance(sum)
+            }));
           }
         }).catch(console.error);
       }
@@ -209,11 +203,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
           });
 
           if (!sum.isZero()) {
-            setReserved((prev) => {
-              prev.multisig = toBalance(sum);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              multisig: toBalance(sum)
+            }));
           }
         }).catch(console.error);
       }
@@ -240,11 +233,10 @@ export default function useReservedDetails (address: string | undefined): Reserv
           });
 
           if (!sum.isZero()) {
-            setReserved((prev) => {
-              prev.preimage = toBalance(sum);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              preimage: toBalance(sum)
+            }));
           }
         }).catch(console.error);
       }
@@ -272,24 +264,20 @@ export default function useReservedDetails (address: string | undefined): Reserv
           }
 
           if (!sum.isZero()) {
-            setReserved((prev) => {
-              prev.society = toBalance(sum);
-
-              return prev;
-            });
+            setReserved((prev) => ({
+              ...prev,
+              society: toBalance(sum)
+            }));
           }
         }).catch(console.error);
       }
 
       /** handle pooleBalance as reserved  */
-      if (maybePooledBalance && MIGRATED_NOMINATION_POOLS_CHAINS.includes(genesisHash)) {
-        if (!maybePooledBalance.isZero()) {
-          setReserved((prev) => {
-            prev.pooledBalance = toBalance(maybePooledBalance);
-
-            return prev;
-          });
-        }
+      if (maybePooledBalance && !maybePooledBalance.isZero()) {
+        setReserved((prev) => ({
+          ...prev,
+          pooledBalance: toBalance(maybePooledBalance)
+        }));
       }
     } catch (e) {
       console.error('Fatal error while fetching reserved details:', e);

@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { FetchedBalance } from '../../hooks/useAssetsBalances';
 import type { DateAmount } from '../../hooks/useSoloStakingInfo';
 
 import { Container } from '@mui/material';
