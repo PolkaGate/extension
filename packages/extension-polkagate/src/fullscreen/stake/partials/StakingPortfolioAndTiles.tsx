@@ -51,6 +51,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
               text: t('Claim Now')
             }]
             : [{
+
               Icon: Timer,
               onClick: popupOpener(StakingPopUps.PENDING_REWARDS),
               text: t('Pending Rewards')
@@ -109,7 +110,11 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
         cryptoAmount={availableBalanceToStake}
         decimal={decimal ?? 0}
         fiatAmount={availableBalanceToStake && decimal ? calcPrice(tokenPrice, availableBalanceToStake, decimal) : 0}
-        icon={ isPoolStaking ? <Ice size='18' style={{ justifyContent: 'center' }} /> : <SnowFlake size='18' />}
+        icon={
+          isPoolStaking
+            ? <Ice size='18' style={{ justifyContent: 'center' }} />
+            : <SnowFlake color={availableBalanceToStake?.isZero() ? '#674394' : undefined} size='18' />
+        }
         isFullScreen
         layoutDirection='row'
         style={{ minWidth: '180px', width: 'min-content' }}
