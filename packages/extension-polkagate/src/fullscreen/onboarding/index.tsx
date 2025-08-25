@@ -61,7 +61,7 @@ function Onboarding (): React.ReactElement {
             src={handWave as string}
             sx={{ height: '48px', width: '48px' }}
           />
-          <Typography textAlign='left' textTransform='uppercase' variant='H-1' width='100%'>
+          <Typography sx={{ whiteSpace: 'nowrap' }} textAlign='left' textTransform='uppercase' variant='H-1' width='100%'>
             {t('Welcome')}<span style={{ color: '#BEAAD8' }}>!</span>
           </Typography>
         </Stack>

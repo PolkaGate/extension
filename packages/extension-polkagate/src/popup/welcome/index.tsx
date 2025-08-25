@@ -46,7 +46,7 @@ function Welcome (): React.ReactElement {
               src={handWave as string}
               sx={{ height: '48px', width: '48px' }}
             />
-            <Typography pb='3px' textTransform='uppercase' variant='H-2' width='100%'>
+            <Typography pb='3px' textTransform='uppercase' variant='H-2' width='100%' sx={{ whiteSpace: 'nowrap'}}>
               {t('Welcome')}!
             </Typography>
             <Typography color={theme.palette.text.secondary} pb='16px' variant='B-1'>
