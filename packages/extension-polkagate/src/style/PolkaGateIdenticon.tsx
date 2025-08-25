@@ -29,20 +29,22 @@ function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style =
   const _theme = (iconTheme ?? accountIconTheme) as IconTheme | undefined;
 
   return (
-    <span style={{ ...style }}>
+    <span style={{ height: `${size}px`, width: `${size}px`, ...style }}>
       {!_theme || _theme === 'polkasoul'
-        ? <PolkaSoul
-          address={address ?? ''}
-          size={size}
-        />
-        : <Icon
-          className='icon'
-          onCopy={onCopy}
-          prefix={prefix}
-          size={size}
-          theme={_theme}
-          value={address}
-        />
+        ? (
+          <PolkaSoul
+            address={address ?? ''}
+            size={size}
+          />)
+        : (
+          <Icon
+            className='icon'
+            onCopy={onCopy}
+            prefix={prefix}
+            size={size}
+            theme={_theme}
+            value={address}
+          />)
       }
     </span>
   );

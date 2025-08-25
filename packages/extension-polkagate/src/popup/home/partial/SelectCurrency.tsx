@@ -8,7 +8,7 @@ import { assetsBtcSVG, assetsEthSVG } from '@polkagate/apps-config/ui/logos/asse
 import { chainsPolkadotCircleSVG } from '@polkagate/apps-config/ui/logos/chains';
 import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
@@ -100,7 +100,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
     <>
       <CategoryHeader type={type} />
       {currencyList.map((currency, index) => (
-        <>
+        <Fragment key={index}>
           <ListItem className={selectedCurrency === currency ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)}>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
               <Box
@@ -119,7 +119,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
           {(!noLastDivider || index !== currencyList.length - 1) &&
             <GradientDivider style={{ my: '3px' }} />
           }
-        </>
+        </Fragment>
       ))}
     </>
   );
