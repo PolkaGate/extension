@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.11](https://github.com/polkagate/extension/compare/v1.1.10...v1.1.11) (2025-08-25)
+
+
+### Bug Fixes
+
+* resolve auto endpoint issue in full-screen ([#1796](https://github.com/polkagate/extension/issues/1796)) ([9dd9cc6](https://github.com/polkagate/extension/commit/9dd9cc645c6d01fd78abc2226cf0a5135ac604ae))
+
 ## [1.1.10](https://github.com/polkagate/extension/compare/v1.1.9...v1.1.10) (2025-08-25)
 
 
