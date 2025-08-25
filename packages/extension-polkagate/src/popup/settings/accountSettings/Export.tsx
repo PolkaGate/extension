@@ -29,7 +29,7 @@ import HomeMenu from '../../../partials/HomeMenu';
  * - Supports exporting either a single account or all accounts.
  * - Uses a snackbar to show export completion.
  */
-export function ExportAccountsBody ({ address, name, onBack }: { address: string | undefined, name: string | undefined, onBack?: () => void }): React.ReactElement {
+export function ExportAccountsBody ({ address, isExternal, name, onBack }: { address: string | undefined, isExternal: boolean | undefined, name: string | undefined, onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const isExtension = useIsExtensionPopup();
@@ -37,11 +37,11 @@ export function ExportAccountsBody ({ address, name, onBack }: { address: string
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [password, setPassword] = useState<string>();
   const [incorrectPassword, setPasswordIncorrect] = useState<boolean>();
-  const [isExportAll, setExportAll] = useState<boolean>();
+  const [isExportAll, setExportAll] = useState<boolean>(!!isExternal);
 
   const onExportAll = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    setExportAll(checked);
-  }, []);
+   !isExternal && setExportAll(checked);
+  }, [isExternal]);
 
   const onCurrentPasswordChange = useCallback((pass: string | null): void => {
     setPasswordIncorrect(false);
@@ -75,7 +75,7 @@ export function ExportAccountsBody ({ address, name, onBack }: { address: string
 
   const content = (
     <>
-      <Stack columnGap='15px' direction='column' sx={{ p: isExtension ? '15px' : 0, pt: 0 }}>
+      <Stack columnGap='15px' direction='column' sx={{ p: isExtension ? '15px' : 0, position:'relative', pt: 0, zIndex: 1 }}>
         <Box component='img' src={user as string} sx={{ alignSelf: 'center', width: '76px' }} />
         <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px' }} textAlign='start' variant='B-4'>
           {t('Your account(s) will be encrypted with your password and saved as a JSON file in your browser’s downloads. You can later import them into the extension using the same password.')}
@@ -86,7 +86,7 @@ export function ExportAccountsBody ({ address, name, onBack }: { address: string
               {t('Export All Accounts')}
             </Typography>
             <MySwitch
-              checked={Boolean(isExportAll)}
+              checked={isExternal ? true : isExportAll}
               onChange={onExportAll}
             />
           </Stack>
@@ -167,6 +167,7 @@ function Export (): React.ReactElement {
       />
       <ExportAccountsBody
         address={account?.address}
+        isExternal = {account?.isExternal}
         name={account?.name}
       />
       <HomeMenu />

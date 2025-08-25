@@ -21,11 +21,12 @@ interface Props {
   address: string | undefined;
   disabled?: boolean;
   iconSize?: string;
+  isExternal?: boolean | undefined;
   name: string | undefined;
   style?: SxProps<Theme>;
 }
 
-function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }: Props) {
+function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, name, style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
@@ -71,11 +72,11 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
       {
         isLine: true
       },
-      {
+      ...(isExternal ? [] : [{
         Icon: DocumentDownload,
         text: t('Export account'),
         value: extensionPopupOpener(ExtensionPopups.EXPORT)
-      },
+      }]),
       {
         Icon: LogoutCurve,
         text: t('Remove account'),
@@ -153,4 +154,4 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', name, style }:
   );
 }
 
-export default AccountDropDown;
+export default React.memo(AccountDropDown);

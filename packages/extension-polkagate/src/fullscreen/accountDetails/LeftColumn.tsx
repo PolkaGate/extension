@@ -57,6 +57,7 @@ export default function LeftColumn(): React.ReactElement {
           </Stack>
           <AccountDropDown
             address={account?.address}
+            isExternal={account?.isExternal}
             name={account?.name}
             style={{ borderWidth: '1px' }}
           />

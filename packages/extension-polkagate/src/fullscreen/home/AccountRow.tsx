@@ -65,6 +65,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
       <Stack columnGap='5px' direction='row'>
         <AccountDropDown
           address={account?.address}
+          isExternal={account?.isExternal}
           name={account?.name}
         />
         <GoToAccountButton
