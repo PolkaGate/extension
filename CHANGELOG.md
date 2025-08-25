@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.1.10](https://github.com/polkagate/extension/compare/v1.1.9...v1.1.10) (2025-08-25)
+
+
+### Bug Fixes
+
+* hide export for external account ([518febd](https://github.com/polkagate/extension/commit/518febde3da8e88ae89813ab1eb8ae6b4e70d582))
+* identicon size issue ([#1798](https://github.com/polkagate/extension/issues/1798)) ([7f3a494](https://github.com/polkagate/extension/commit/7f3a4942efbddb64a77bdfb56624babbda2db9bf))
+
 ## [1.1.9](https://github.com/polkagate/extension/compare/v1.1.8...v1.1.9) (2025-08-25)
 
 
