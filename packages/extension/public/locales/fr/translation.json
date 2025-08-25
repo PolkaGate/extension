@@ -823,5 +823,6 @@
   "🔍 Search": "🔍 Rechercher",
   "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} sur {{totalItems}} éléments",
   "Privacy Policy": "Politique de confidentialité",
-  "User Agreement": "Accord utilisateur"
+  "User Agreement": "Accord utilisateur",
+  "DApp Requests": "Requêtes DApp"
 }

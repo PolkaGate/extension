@@ -816,5 +816,6 @@
   "🔍 Search": "🔍 搜索",
   "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} 共 {{totalItems}} 个项目",
   "Privacy Policy": "隐私政策",
-  "User Agreement": "用户协议"
+  "User Agreement": "用户协议",
+  "DApp Requests": "DApp 请求"
 }
