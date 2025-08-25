@@ -6,7 +6,7 @@ import { User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
 import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
@@ -14,7 +14,6 @@ import { setStorage } from '../../../components/Loading';
 import { OnboardTitle } from '../../../fullscreen/components/index';
 import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
 import { useTranslation } from '../../../hooks';
-import { PROFILE_TAGS } from '../../../hooks/useProfileAccounts';
 import { createAccountSuri, createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
 

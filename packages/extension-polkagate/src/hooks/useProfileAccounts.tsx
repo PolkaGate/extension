@@ -5,18 +5,10 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getStorage, watchStorage } from '../components/Loading';
 import { useTranslation } from '.';
-
-export const PROFILE_TAGS = {
-  ALL: 'All',
-  LEDGER: 'Hardware',
-  LOCAL: 'Local',
-  QR_ATTACHED: 'QR-attached',
-  WATCH_ONLY: 'Watch-only'
-};
 
 /**
  * @description returns the list of accounts which has a profile tag, if profile is undefined it returns 'All' accounts

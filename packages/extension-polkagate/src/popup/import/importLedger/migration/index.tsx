@@ -10,14 +10,13 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
-import { DISABLED_NETWORKS, SELECTED_PROFILE_NAME_IN_STORAGE, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { DISABLED_NETWORKS, PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, DropSelect } from '../../../../components';
 import { setStorage } from '../../../../components/Loading';
 import { openOrFocusTab } from '../../../../fullscreen/accountDetails/components/CommonTasks';
 import { OnboardTitle } from '../../../../fullscreen/components/index';
 import { useGenericLedger, useTranslation } from '../../../../hooks';
-import { PROFILE_TAGS } from '../../../../hooks/useProfileAccounts';
 import { createAccountHardware, getMetadata, updateMeta } from '../../../../messaging';
 import ledgerChains from '../../../../util/legerChains';
 import ManualLedgerImport from '../partials/ManualLedgerImport';

@@ -7,11 +7,11 @@ import React, { useCallback, useMemo } from 'react';
 
 import { MyTooltip } from '@polkadot/extension-polkagate/src/components';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import EditProfile from '@polkadot/extension-polkagate/src/popup/accountsLists/EditProfile';
 
 import { useTranslation } from '../../hooks';
 import useProfileInfo from '../home/useProfileInfo';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
   isInSettingMode?: boolean;

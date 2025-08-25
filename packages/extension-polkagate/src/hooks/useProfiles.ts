@@ -5,8 +5,9 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useContext, useMemo } from 'react';
 
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { AccountContext } from '../components';
-import { PROFILE_TAGS } from './useProfileAccounts';
 
 interface Profiles {
   accountProfiles: string[];

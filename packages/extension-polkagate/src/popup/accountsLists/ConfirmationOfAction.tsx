@@ -4,9 +4,9 @@
 import { Box, Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
 import { forgetAccount, updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { info } from '../../assets/gif';
 import { DecisionButtons, TwoToneText } from '../../components';

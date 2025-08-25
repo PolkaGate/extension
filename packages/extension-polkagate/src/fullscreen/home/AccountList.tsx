@@ -12,13 +12,6 @@ import { AccountProfileLabel } from '../components';
 import AccountRow from './AccountRow';
 import ProfileTabsFS from './ProfileTabsFS';
 
-export const DEFAULT_PROFILE_TAGS = {
-  LEDGER: 'Hardware',
-  LOCAL: 'Local',
-  QR_ATTACHED: 'QR-attached',
-  WATCH_ONLY: 'Watch-only'
-};
-
 function AccountList (): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { categorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
