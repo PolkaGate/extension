@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.9](https://github.com/polkagate/extension/compare/v1.1.8...v1.1.9) (2025-08-25)
+
+
+### Bug Fixes
+
+* resolve wrong token show up in asset bars ([559353a](https://github.com/polkagate/extension/commit/559353a4853a8b7f7fae8140648a2b1d1336756a))
+
 ## [1.1.8](https://github.com/polkagate/extension/compare/v1.1.7...v1.1.8) (2025-08-23)
 
 
