@@ -562,7 +562,7 @@
   "No proxy available": "",
   "Export all Accounts": "",
   "Object info": "",
-  "Show:": "",
+  "Show": "",
   "Any status": "",
   "block": "",
   "hash": "",
@@ -813,5 +813,8 @@
   "after {{unbonding}} days.": "",
   "Rewards accumulate every {{duration}} hours. Rewards require manual claiming if you have staked in pools.": "",
   "{{duration}} hours": "",
-  "🔍 Search": ""
+  "🔍 Search": "",
+  "{{start}} - {{end}} of {{totalItems}} items": "",
+  "Privacy Policy": "",
+  "User Agreement": ""
 }

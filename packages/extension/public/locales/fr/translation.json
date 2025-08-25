@@ -569,7 +569,7 @@
   "No proxy available": "Aucun proxy disponible",
   "Export all Accounts": "Exporter tous les comptes",
   "Object info": "Objet",
-  "Show:": "Afficher :",
+  "Show": "Afficher",
   "Any status": "Tout statut",
   "block": "bloc",
   "hash": "Hachage",
@@ -778,8 +778,8 @@
   "Paid automatically": "Payé automatiquement",
   "Loading rewards details": "Chargement des détails des récompenses",
   "The are no validators yet.": "Aucun validateur pour le moment.",
-  "Claim Now": "Réclamer maintenant",
-  "Unclaimed Rewards": "Récompenses non réclamées",
+  "Claim Now": "Réclamer",
+  "Unclaimed Rewards": "Récompenses",
   "Estimated rewards": "Récompenses estimées",
   "year": "an",
   "No nominators": "Aucun nominator",
@@ -820,5 +820,8 @@
   "after {{unbonding}} days.": "après {{unbonding}} jours",
   "Rewards accumulate every {{duration}} hours. Rewards require manual claiming if you have staked in pools.": "Les récompenses s'accumulent toutes les {{duration}} heures. Elles doivent être réclamées manuellement si vous avez fait du staking dans des pools",
   "{{duration}} hours": "{{duration}} heures",
-  "🔍 Search": "🔍 Rechercher"
+  "🔍 Search": "🔍 Rechercher",
+  "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} sur {{totalItems}} éléments",
+  "Privacy Policy": "Politique de confidentialité",
+  "User Agreement": "Accord utilisateur"
 }

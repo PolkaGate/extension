@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance } from '../../../hooks/useAssetsBalances';
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';

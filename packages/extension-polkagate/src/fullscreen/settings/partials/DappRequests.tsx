@@ -15,11 +15,12 @@ import { useTranslation } from '../../../components/translate';
 
 export interface ItemProps{
   Icon: Icon
+  caption: string;
   label: string;
   notification: string | undefined
 }
 
-function Item ({ Icon, label, notification }: ItemProps): React.ReactElement {
+function Item ({ Icon, caption, label, notification }: ItemProps): React.ReactElement {
   const value = label.toLowerCase();
 
   const onClick = useCallback((): void => {
@@ -63,14 +64,14 @@ function Item ({ Icon, label, notification }: ItemProps): React.ReactElement {
       >
         <Icon color={isSelected ? '#DC45A0' : '#AA83DC'} size={18} variant='Bulk' />
         <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-4'>
-          {toTitleCase(label)}
+          {toTitleCase(caption)}
         </Typography>
       </Stack>
     </Stack>
   );
 }
 
-export default function Notification (): React.ReactElement {
+export default function DappRequests (): React.ReactElement {
   const { t } = useTranslation();
 
   const [notification, setNotification] = useState(settings.notification);
@@ -84,22 +85,25 @@ export default function Notification (): React.ReactElement {
   return (
     <Stack direction='column'>
       <Typography color='text.primary' fontSize='22px' m='40px 0 5px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
-        {t('Notification')}
+        {t('DApp Requests')}
       </Typography>
       <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center' }}>
         <Item
           Icon={Code1}
-          label= {t('PopUp')}
+          caption= {t('PopUp')}
+          label= 'PopUp'
           notification={notification}
         />
         <Item
           Icon={SidebarRight}
-          label= {t('Extension')}
+          caption= {t('Extension')}
+          label= 'Extension'
           notification={notification}
         />
         <Item
           Icon={Grid4}
-          label= {t('Window')}
+          caption= {t('Window')}
+          label= 'Window'
           notification={notification}
         />
       </Stack>

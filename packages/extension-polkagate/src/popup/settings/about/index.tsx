@@ -33,7 +33,7 @@ function About (): React.ReactElement {
           <Introduction style={{ border: '4px solid', borderColor: 'border.paper', height: '54px' }} />
           <RateUs />
           <Grid alignItems='flex-start' container item justifyContent='flex-start' pt='5px' pb='15px' sx={{ border: '4px solid', borderColor: 'border.paper', borderRadius: '14px', mt: '5px', bgcolor: 'background.paper', height: '262px', px: '10px' }}>
-            <Socials label={t('STAY TUNED')} short />
+            <Socials label={t('STAY TUNED')} short style={{ alignItems: 'start' }} />
             <Stack columnGap='35px' direction='row' justifyItems='start' my='5px'>
               <Resources />
               <ContactUs />

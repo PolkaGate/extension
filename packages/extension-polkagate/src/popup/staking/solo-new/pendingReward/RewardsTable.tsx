@@ -3,12 +3,12 @@
 
 import type { ExpandedRewards } from '@polkadot/extension-polkagate/src/fullscreen/stake/type';
 
-import { Container, Grid, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
 import { timeDiffSummary } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/timeDiffSummary';
 
-import { AssetLogo, FadeOnScroll, FormatBalance2, GradientDivider, Identity2 } from '../../../../components';
+import { AssetLogo, FadeOnScroll, FormatBalance2, GradientDivider, Identity2, MySkeleton } from '../../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
 import getLogo2 from '../../../../util/getLogo2';
 import CheckBox from '../../components/CheckBox';
@@ -63,10 +63,10 @@ interface RewardsTableProp {
 const StyledSkeleton = () => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', my: '4px' }}>
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '6px', display: 'inline-block', transform: 'none', width: SKELETON_HEIGHT }} />
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '50px', display: 'inline-block', transform: 'none', width: '65px' }} />
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '50px', display: 'inline-block', transform: 'none', width: '170px' }} />
-      <Skeleton animation='wave' height={SKELETON_HEIGHT} sx={{ borderRadius: '50px', display: 'inline-block', transform: 'none', width: '50px' }} />
+      <MySkeleton height={SKELETON_HEIGHT} style={{ borderRadius: '6px', width: SKELETON_HEIGHT }} />
+      <MySkeleton height={SKELETON_HEIGHT} style={{ borderRadius: '50px', width: '65px' }} />
+      <MySkeleton height={SKELETON_HEIGHT} style={{ borderRadius: '50px', width: '170px' }} />
+      <MySkeleton height={SKELETON_HEIGHT} style={{ borderRadius: '50px', width: '50px' }} />
     </Container>
   );
 };
@@ -74,7 +74,7 @@ const StyledSkeleton = () => {
 export const RewardsTable = ({ adaptiveDecimalPoint, eraToDate, expandedRewards, genesisHash, onSelect, selectedToPayout }: RewardsTableProp) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isExtension= useIsExtensionPopup();
+  const isExtension = useIsExtensionPopup();
 
   const containerRef = useRef(null);
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -89,7 +89,7 @@ export const RewardsTable = ({ adaptiveDecimalPoint, eraToDate, expandedRewards,
     <Grid container item sx={{ position: 'relative' }}>
       <Stack direction='column' ref={containerRef} sx={{ gap: '2px', height: TABLE_HEIGHT, maxHeight: TABLE_HEIGHT, overflow: 'hidden', overflowY: 'auto', width: '100%' }}>
         {expandedRewards === undefined &&
-          Array.from({ length: 5 }).map((_, index) => (
+          Array.from({ length: 8 }).map((_, index) => (
             <StyledSkeleton key={index} />
           ))}
         {expandedRewards && expandedRewards.length === 0 &&

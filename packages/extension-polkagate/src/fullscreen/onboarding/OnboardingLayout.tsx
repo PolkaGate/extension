@@ -30,7 +30,7 @@ function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
   const version = useManifest()?.version;
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: showLeftColumn ? '7px' : `calc(${INNER_WIDTH}-50%)px`, width: '50%' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: showLeftColumn ? '30px' : `calc(${INNER_WIDTH}-50%)px`, width: '50%' }}>
       <Socials buttonSize={24} iconSize={13.5} style={{ pr: '50px', width: 'fit-content' }} />
       <Grid columnGap='40px' container item width='fit-content'>
         <NeedHelp />

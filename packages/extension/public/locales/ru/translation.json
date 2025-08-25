@@ -568,7 +568,7 @@
   "No proxy available": "Прокси недоступен",
   "Export all Accounts": "Экспорт всех аккаунтов",
   "Object info": "Объект",
-  "Show:": "Показать:",
+  "Show": "Показать",
   "Any status": "Любой статус",
   "block": "Блок",
   "hash": "Хеш",
@@ -819,5 +819,8 @@
   "after {{unbonding}} days.": "через {{unbonding}} дней",
   "Rewards accumulate every {{duration}} hours. Rewards require manual claiming if you have staked in pools.": "Награды начисляются каждые {{duration}} часов. Если вы ставили в пулах, награды нужно запрашивать вручную",
   "{{duration}} hours": "{{duration}} часов",
-   "🔍 Search": "🔍 Поиск"
+  "🔍 Search": "🔍 Поиск",
+  "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} из {{totalItems}} элементов",
+  "Privacy Policy": "Политика конфиденциальности",
+  "User Agreement": "Соглашение"
 }

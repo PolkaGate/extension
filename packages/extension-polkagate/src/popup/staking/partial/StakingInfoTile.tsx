@@ -286,7 +286,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
             ))}
         </Container>
       }
-      {isDisabled &&
+      {isDisabled && !isFullScreen &&
         <Grid container item sx={{ bgcolor: '#0802144D', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 10 }} />
       }
     </Grid>

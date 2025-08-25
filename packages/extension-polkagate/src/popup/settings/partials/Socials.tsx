@@ -25,29 +25,29 @@ export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18,
   const bgColor = short && !isDark ? '#CCD2EA' : undefined;
 
   return (
-    <Grid container item sx={{ ...style }}>
+    <Grid container direction='column' item sx={{ alignItems:'center', ...style }}>
       {label &&
         <Typography
           color={isExtension ? 'label.secondary' : 'text.primary'}
           fontSize={!isExtension ? '22px' : undefined}
-          mb='8px'
-          mt='10px'
-          sx={{ display: 'block', textAlign: short ? 'left' : 'center' }}
+          my='8px'
+          sx={{ display: 'block' }}
           variant='H-4'
         >
           {label}
         </Typography>
       }
-      <Grid columnGap={columnGap} container item justifyContent={short ? 'flex-start' : 'center'}>
+      <Grid columnGap={columnGap} container item sx={{ flexWrap:'nowrap', width: 'fit-content' }}>
         <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} />
-        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize - 2}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
+        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize - 3}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
         <SocialIcon Icon={<Discord color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://discord.gg/gsUrreJh' size={buttonSize} />
         <SocialIcon Icon={<Github color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://github.com/PolkaGate/' size={buttonSize} />
-        {!short && <>
-          <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='mailto:support@polkagate.xyz' size={buttonSize} />
-          <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://docs.polkagate.xyz/' size={buttonSize} />
-          <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://polkagate.xyz/' size={buttonSize} />
-        </>
+        {!short &&
+          <>
+            <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='mailto:support@polkagate.xyz' size={buttonSize} />
+            <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://docs.polkagate.xyz/' size={buttonSize} />
+            <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://polkagate.xyz/' size={buttonSize} />
+          </>
         }
       </Grid>
     </Grid>

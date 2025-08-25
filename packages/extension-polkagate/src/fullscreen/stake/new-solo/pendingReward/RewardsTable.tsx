@@ -16,10 +16,11 @@ const TABLE_HEIGHT = 260;
 
 interface TableHeaderProp {
   checked: boolean;
+  disabled: boolean;
   onSelectAll: (checked: boolean) => void;
 }
 
-export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
+export const TableHeader = ({ checked, disabled, onSelectAll }: TableHeaderProp) => {
   const { t } = useTranslation();
 
   const handleAllSelect = useCallback(() => onSelectAll(checked), [checked, onSelectAll]);
@@ -30,6 +31,7 @@ export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
         <GlowCheckbox
           changeState={handleAllSelect}
           checked={checked}
+          disabled={disabled}
           iconStyle={{ height: '24px', width: '24px' }}
           style={{ m: 0, width: 'fit-content' }}
         />

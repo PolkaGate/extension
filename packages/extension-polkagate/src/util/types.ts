@@ -948,6 +948,7 @@ export interface FetchedBalance {
   availableBalance: BN,
   balanceDetails?: any,
   chainName: string,
+  currencyId?: any,
   date?: number,
   decimal: number,
   freeBalance?: BN,

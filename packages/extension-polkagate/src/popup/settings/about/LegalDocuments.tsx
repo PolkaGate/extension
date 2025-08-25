@@ -53,11 +53,11 @@ export default function LegalDocuments ({ style = {} }: Props): React.ReactEleme
         justifyContent={'flex-start'}
       >
         <Item
-          label='Privacy Policy'
+          label={t('Privacy Policy')}
           link={PRIVACY_POLICY_LINK}
         />
         <Item
-          label='User Agreement'
+          label={t('User Agreement')}
           link={PRIVACY_POLICY_LINK}
         />
       </Grid>

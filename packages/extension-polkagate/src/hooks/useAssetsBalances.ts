@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
-import type { BN } from '@polkadot/util';
-import type { AlertType, DropdownOption, UserAddedChains } from '../util/types';
+import type { AlertType, DropdownOption, FetchedBalance, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -22,36 +21,6 @@ type Assets = Record<string, FetchedBalance[]>;
 type AssetsBalancesPerChain = Record<string, FetchedBalance[]>;
 export type AssetsBalancesPerAddress = Record<string, AssetsBalancesPerChain>;
 export interface SavedAssets { balances: AssetsBalancesPerAddress, timeStamp: number }
-
-export interface FetchedBalance {
-  ED: BN,
-  assetId: number | string,
-  availableBalance: BN,
-  balanceDetails?: any,
-  chainName: string,
-  currencyId?: any,
-  date?: number,
-  decimal: number,
-  freeBalance?: BN,
-  frozenBalance: BN,
-  frozenFee?: BN,
-  frozenMisc?: BN,
-  genesisHash: string,
-  lockedBalance?: BN,
-  poolName?: string,
-  poolReward?: BN,
-  priceId: string,
-  price?: number,
-  pooledBalance?: BN,
-  reservedBalance?: BN,
-  soloTotal?: BN,
-  totalBalance: BN,
-  token: string,
-  vestingLocked?: BN,
-  vestedClaimable?: BN,
-  vestingTotal?: BN,
-  votingBalance?: BN
-}
 
 export const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, timeStamp: Date.now() };
 

@@ -34,7 +34,7 @@ function PaginationRow ({ itemsPerPage, options, page, setItemsPerPagePage, setP
         <Stack columnGap='5px' direction='row'>
           <Firstline color='#674394' size='18px' variant='Bold' />
           <Typography color='#AA83DC' variant='B-4'>
-            {`${(page - 1) * _itemsPerPage + 1} - ${Math.min(page * _itemsPerPage, totalItems)} of ${totalItems} items`}
+            {t('{{start}} - {{end}} of {{totalItems}} items', { replace: { end: Math.min(page * _itemsPerPage, totalItems), start: (page - 1) * _itemsPerPage + 1, totalItems } })}
           </Typography>
         </Stack>
       }
@@ -49,8 +49,8 @@ function PaginationRow ({ itemsPerPage, options, page, setItemsPerPagePage, setP
       {
         totalItems >= _itemsPerPage &&
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#AA83DC' variant='B-4'>
-            {t('Show:')}
+          <Typography color='#AA83DC' sx={{ whiteSpace: 'nowrap' }} variant='B-4'>
+            {t('Show')}:
           </Typography>
           <DropSelect
             contentDropWidth={50}

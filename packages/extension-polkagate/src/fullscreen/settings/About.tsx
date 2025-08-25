@@ -40,7 +40,7 @@ function About (): React.ReactElement {
           <RateUs style={{ border: 0, columnGap: '20px', width: 'fit-content' }} />
         </Stack>
         <Stack alignItems='start' columnGap='50px' direction='row' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', height: '144px', mt: '4px', p: '20px', width: '100%' }}>
-          <Socials label={t('STAY TUNED')} short style={{ rowGap: '15px', width: '152px' }} />
+          <Socials label={t('STAY TUNED')} short style={{ alignItems: 'start', rowGap: '15px', width: 'fit-content' }} />
           <Resources style={{ rowGap: '15px' }} />
           <ContactUs style={{ rowGap: '15px' }} />
           <LegalDocuments style={{ rowGap: '22px' }} />
