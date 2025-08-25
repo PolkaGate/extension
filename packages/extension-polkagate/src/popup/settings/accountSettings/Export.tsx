@@ -29,7 +29,7 @@ import HomeMenu from '../../../partials/HomeMenu';
  * - Supports exporting either a single account or all accounts.
  * - Uses a snackbar to show export completion.
  */
-export function ExportAccountsBody ({ address, isExternal, name, onBack }: { address: string | undefined, isExternal: boolean | undefined, name: string | undefined, onBack?: () => void }): React.ReactElement {
+export function ExportAccountsBody ({ address, isExternal, name, onBack }: { address: string | undefined, isExternal?: boolean | undefined, name: string | undefined, onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const isExtension = useIsExtensionPopup();
