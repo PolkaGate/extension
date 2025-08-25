@@ -40,7 +40,7 @@ function Welcome (): React.ReactElement {
         <WelcomeHeader />
         <Carousel />
         <GradientBox style={{ m: 'auto', width: '359px' }}>
-          <Grid container item justifyContent='center' sx={{ p: '18px 32px' }}>
+          <Grid container item justifyContent='center' sx={{ p: '13px 32px' }}>
             <Box
               component='img'
               src={handWave as string}

@@ -164,7 +164,8 @@ export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, pr
     <SharePopup
       RightItem={<ResetSelection onReset={onReset} />}
       modalProps={{
-        dividerStyle: { margin: '5px 0 0' }
+        dividerStyle: { margin: '5px 0 5px' },
+        showBackIconAsClose: true
       }}
       modalStyle={{ minHeight: '200px' }}
       onClose={onClosePopup}

@@ -22,7 +22,7 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenSummary({ address, token }: Props): React.ReactElement {
+function TokenSummary ({ address, token }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
 
