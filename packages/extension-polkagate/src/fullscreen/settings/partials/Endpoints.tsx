@@ -2,22 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
-import EndpointManager2 from '../../../class/endpointManager2';
 import MySwitch from '../../../components/MySwitch';
 import Radio from '../../../components/Radio';
-import { useChainInfo, useEndpoint2, useEndpoints, useTranslation } from '../../../hooks';
+import { useChainInfo, useEndpoint2, useTranslation } from '../../../hooks';
 import DotIndicator from '../../../popup/settings/extensionSettings/components/DotIndicator';
-import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
-
-const endpointManager = new EndpointManager2();
-
-type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
+import useEndpointsSetting from './useEndpointsSetting';
 
 interface Props {
   genesisHash: string;
@@ -72,105 +67,37 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
 
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
-  const { endpoint } = useEndpoint2(genesisHash);
-  const endpointOptions = useEndpoints(genesisHash);
+  const { endpoint, isAuto } = useEndpoint2(genesisHash);
 
-  const [mayBeEnabled, setMayBeEnable] = useState<boolean>(isEnabled);
-  const [maybeNewEndpoint, setMaybeNewEndpoint] = useState<string | undefined>();
-  const [endpointsDelay, setEndpointsDelay] = useState<EndpointsDelay>();
+  const { dispatch,
+    filteredEndpoints,
+    isOnAuto,
+    mayBeEnabled,
+    maybeNewEndpoint,
+    onApply,
+    onChangeEndpoint,
+    onEnableNetwork,
+    onToggleAuto } = useEndpointsSetting(genesisHash, isEnabled, onEnableChain, onClose);
 
-  const isAutoMode = maybeNewEndpoint === AUTO_MODE.value;
+  const isDisabled = useMemo(() => {
+    const noEndpointChange = isOnAuto
+      ? maybeNewEndpoint === undefined
+      : maybeNewEndpoint === endpoint;
+    const noEnableChange = mayBeEnabled === isEnabled;
+    const noAutoChange = (isOnAuto ?? isAuto) === isAuto;
 
-  const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    setMaybeNewEndpoint((prev) => prev === AUTO_MODE.value && event.target.value === AUTO_MODE.value ? undefined : event.target.value);
-  }, []);
-
-  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void => {
-    setMayBeEnable(checked);
-  }, []);
-
-  const onApply = useCallback((): void => {
-    onEnableChain(genesisHash, mayBeEnabled);
-
-    if (maybeNewEndpoint) {
-      const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
-
-      endpointManager.set(genesisHash, {
-        checkForNewOne,
-        endpoint: maybeNewEndpoint,
-        isAuto: maybeNewEndpoint === AUTO_MODE.value,
-        timestamp: Date.now()
-      });
+    if (!maybeNewEndpoint && isOnAuto === false) {
+      return true;
     }
 
-    onClose();
-  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain]);
-
-  const endpoints = useMemo(() => {
-    if (!endpointOptions.length) {
-      return;
-    }
-
-    const mappedEndpoints = endpointOptions.map(({ text, value }) => ({ delay: null, name: text.replace(/^via\s/, ''), value })) as EndpointsDelay;
-
-    setEndpointsDelay(mappedEndpoints);
-
-    return mappedEndpoints;
-  }, [endpointOptions]);
-
-  const calculateAndSetDelay = useCallback((endpoint: string) => {
-    endpoint && CalculateNodeDelay(endpoint)
-      .then((response) => {
-        if (!response) {
-          return;
-        }
-
-        isFetching.current[endpoint] = false;
-        setEndpointsDelay((prevEndpoints) => {
-          return prevEndpoints?.map((e) => {
-            if (e.value === response.endpoint) {
-              return { ...e, delay: response.delay };
-            }
-
-            return e;
-          });
-        });
-
-        response.api?.disconnect().catch(console.error); // if we don't need it to be used in the extension we can disconnect it in the function instead
-      })
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    endpoint && setMaybeNewEndpoint(endpoint);
-  }, [endpoint]);
-
-  useEffect(() => {
-    endpoints?.forEach(({ value }) => {
-      if (value && value !== AUTO_MODE.value && !isFetching.current?.[value]) {
-        isFetching.current[value] = true;
-        calculateAndSetDelay(value);
-      }
-    });
-  }, [calculateAndSetDelay, endpoint, endpoints]);
+    return noEndpointChange && noEnableChange && noAutoChange;
+  }, [endpoint, isEnabled, isOnAuto, isAuto, mayBeEnabled, maybeNewEndpoint]);
 
   const _onClose = useCallback(() => {
-    setMaybeNewEndpoint(undefined);
-    setEndpointsDelay(undefined);
+    dispatch({ type: 'RESET' });
     isFetching.current = {};
     onClose();
-  }, [onClose]);
-
-  const isDisabledApply = useMemo(() => {
-    const noEndpointChange = !maybeNewEndpoint || (endpoint === maybeNewEndpoint && !isAutoMode);
-    const noEnableChange = mayBeEnabled === isEnabled;
-
-    return noEndpointChange && noEnableChange;
-  }, [endpoint, isAutoMode, isEnabled, mayBeEnabled, maybeNewEndpoint]);
-
-  const filteredEndpoints = useMemo(() => {
-    return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
-  }, [endpointsDelay]);
+  }, [dispatch, onClose]);
 
   return (
     <DraggableModal
@@ -193,10 +120,10 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
               value={mayBeEnabled}
             />
             <MySwitch
-              checked={isAutoMode}
+              checked={isOnAuto}
               columnGap='8px'
               label={t('Auto Node Selection')}
-              onChange={onChangeEndpoint}
+              onChange={onToggleAuto}
               style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', margin: '8px 0', padding: '0 15px', width: '100%' }}
               value={AUTO_MODE.value}
             />
@@ -209,7 +136,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
                 key={index}
                 name={name}
                 onChangeEndpoint={onChangeEndpoint}
-                value ={value}
+                value={value}
               />
             ))}
           </Grid>
@@ -218,7 +145,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={isDisabledApply}
+          disabled={isDisabled}
           onPrimaryClick={onApply}
           onSecondaryClick={_onClose}
           primaryBtnText={t('Apply')}
