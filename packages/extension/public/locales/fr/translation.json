@@ -824,5 +824,7 @@
   "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} sur {{totalItems}} éléments",
   "Privacy Policy": "Politique de confidentialité",
   "User Agreement": "Accord utilisateur",
-  "DApp Requests": "Requêtes DApp"
+  "DApp Requests": "Requêtes DApp",
+  "Add profile": "Ajouter un profil",
+  "Profile settings": "Paramètres du profil"
 }

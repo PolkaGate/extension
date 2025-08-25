@@ -823,5 +823,7 @@
   "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} из {{totalItems}} элементов",
   "Privacy Policy": "Политика конфиденциальности",
   "User Agreement": "Соглашение",
-  "DApp Requests": "Запросы DApp"
+  "DApp Requests": "Запросы DApp",
+  "Add profile": "Добавить профиль",
+  "Profile settings": "Настройки профиля"
 }

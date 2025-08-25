@@ -823,5 +823,7 @@
   "{{start}} - {{end}} of {{totalItems}} items": "{{start}} - {{end}} / {{totalItems}} आइटम",
   "Privacy Policy": "गोपनीयता नीति",
   "User Agreement": "उपयोगकर्ता समझौता",
-  "DApp Requests": "DApp अनुरोध"
+  "DApp Requests": "DApp अनुरोध",
+  "Add profile": "प्रोफ़ाइल जोड़ें",
+  "Profile settings": "प्रोफ़ाइल सेटिंग्स"
 }

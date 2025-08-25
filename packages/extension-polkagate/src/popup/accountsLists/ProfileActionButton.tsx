@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import { AddCircle, Setting2 } from 'iconsax-react';
 import React, { memo, useCallback } from 'react';
 
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/hooks/useProfileAccounts';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { MyTooltip } from '../../components';
 import { useSelectedProfile, useTranslation } from '../../hooks';
@@ -37,7 +37,7 @@ function ProfileActionButton ({ isExtension, isInSettingMode, setMode }: Props):
   const fsStyle = isExtension ? {} : { position: 'absolute', right: '29px', top: '-42px' };
 
   return (
-    <MyTooltip content={t(isInSettingMode ? 'Add profile' : 'Profile settings')}>
+    <MyTooltip content={isInSettingMode ? t('Add profile') : t('Profile settings')}>
       <Box alignItems='center' justifyContent='center' onClick={onActionClick} sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px', ...fsStyle }}>
         <ActionIcon color={disabledSettings ? '#BFA1FF26' : '#AA83DC'} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
       </Box>
