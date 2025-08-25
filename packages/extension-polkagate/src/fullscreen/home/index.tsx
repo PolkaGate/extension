@@ -10,7 +10,7 @@ import { useAlerts, useTranslation } from '../../hooks';
 import HomeLayout from '../components/layout';
 import AccountList from './AccountList';
 import AccountsAdd from './AccountsAdd';
-import AssetsBars from './AssetsBars';
+import AssetsBars from './assetBars';
 import PortfolioFullScreen from './PortfolioFullScreen';
 import TrendingAssets from './TrendingAssets';
 
