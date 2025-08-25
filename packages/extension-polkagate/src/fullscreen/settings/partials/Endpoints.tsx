@@ -2,22 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
-import EndpointManager2 from '../../../class/endpointManager2';
 import MySwitch from '../../../components/MySwitch';
 import Radio from '../../../components/Radio';
-import { useChainInfo, useEndpoint2, useEndpoints, useTranslation } from '../../../hooks';
+import { useChainInfo, useEndpoint2, useTranslation } from '../../../hooks';
 import DotIndicator from '../../../popup/settings/extensionSettings/components/DotIndicator';
-import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
-
-const endpointManager = new EndpointManager2();
-
-type EndpointsDelay = { name: string, delay: number | null | undefined, value: string }[];
+import useEndpointsSetting from './useEndpointsSetting';
 
 interface Props {
   genesisHash: string;
@@ -34,54 +29,6 @@ interface EndpointRowProps {
   value: string;
   delay: number | null | undefined;
   onChangeEndpoint: (event: React.ChangeEvent<HTMLInputElement>) => void
-}
-
-interface State {
-  isOnAuto: boolean | undefined;
-  mayBeEnabled: boolean;
-  maybeNewEndpoint?: string;
-  endpointsDelay?: EndpointsDelay;
-}
-
-type Action =
-  | { type: 'SET_ENABLED'; }
-  | { type: 'TOGGLE_AUTO'; }
-  | { type: 'SET_ENDPOINT'; payload: string | undefined }
-  | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
-  | { type: 'UPDATE_DELAY'; payload: { endpoint: string; delay: number } }
-  | { type: 'RESET' };
-
-function reducer (state: State, action: Action): State {
-  switch (action.type) {
-    case 'SET_ENABLED':
-      return { ...state, mayBeEnabled: !state.mayBeEnabled };
-
-    case 'TOGGLE_AUTO': {
-      const toggle = !state.isOnAuto;
-
-      return { ...state, isOnAuto: toggle, maybeNewEndpoint: toggle ? undefined : state.maybeNewEndpoint };
-    }
-
-    case 'SET_ENDPOINT':
-      return { ...state, isOnAuto: false, maybeNewEndpoint: action.payload };
-
-    case 'SET_ENDPOINTS_DELAY':
-      return { ...state, endpointsDelay: action.payload };
-
-    case 'UPDATE_DELAY':
-      return {
-        ...state,
-        endpointsDelay: state.endpointsDelay?.map((e) =>
-          e.value === action.payload.endpoint ? { ...e, delay: action.payload.delay } : e
-        )
-      };
-
-    case 'RESET':
-      return { endpointsDelay: undefined, isOnAuto: undefined, mayBeEnabled: false, maybeNewEndpoint: undefined };
-
-    default:
-      return state;
-  }
 }
 
 function EndpointRow ({ checked, delay, isFirst, isLast, name, onChangeEndpoint, value }: EndpointRowProps): React.ReactElement {
@@ -121,104 +68,16 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
   const { endpoint, isAuto } = useEndpoint2(genesisHash);
-  const endpointOptions = useEndpoints(genesisHash);
 
-  const [state, dispatch] = useReducer(reducer, {
-    endpointsDelay: undefined,
-    isOnAuto: undefined,
-    mayBeEnabled: isEnabled,
-    maybeNewEndpoint: undefined
-  });
-
-  const { endpointsDelay, isOnAuto, mayBeEnabled, maybeNewEndpoint } = state;
-
-  // Just to initialize
-  useEffect(() => {
-    if (state.maybeNewEndpoint || isOnAuto) {
-      return;
-    }
-
-    if (isAuto && isOnAuto === undefined) {
-      return dispatch({ type: 'TOGGLE_AUTO' });
-    }
-
-    endpoint && dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
-  }, [endpoint, isAuto, state.maybeNewEndpoint, isOnAuto]);
-
-  const mappedEndpoints = useMemo(() => {
-    if (!endpointOptions.length) {
-      return [];
-    }
-
-    return endpointOptions.map(({ text, value }) => ({
-      delay: null,
-      name: text.replace(/^via\s/, ''),
-      value
-    })) as EndpointsDelay;
-  }, [endpointOptions]);
-
-  useEffect(() => {
-    if (mappedEndpoints.length) {
-      dispatch({ payload: mappedEndpoints, type: 'SET_ENDPOINTS_DELAY' });
-    }
-  }, [mappedEndpoints]);
-
-  const calculateAndSetDelay = useCallback((endpoint: string) => {
-    endpoint && CalculateNodeDelay(endpoint)
-      .then((response) => {
-        if (!response) {
-          return;
-        }
-
-        isFetching.current[endpoint] = false;
-        dispatch({ payload: { delay: response.delay, endpoint: response.endpoint }, type: 'UPDATE_DELAY' });
-
-        response.api?.disconnect().catch(console.error); // if we don't need it to be used in the extension we can disconnect it in the function instead
-      })
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    mappedEndpoints?.forEach(({ value }) => {
-      if (value && value !== AUTO_MODE.value && !isFetching.current?.[value]) {
-        isFetching.current[value] = true;
-        calculateAndSetDelay(value);
-      }
-    });
-  }, [calculateAndSetDelay, endpoint, mappedEndpoints]);
-
-  const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-    dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
-  }, []);
-
-  const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
-    dispatch({ type: 'TOGGLE_AUTO' });
-  }, []);
-
-  const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
-    dispatch({ type: 'SET_ENABLED' });
-  }, []);
-
-  const onApply = useCallback((): void => {
-    onEnableChain(genesisHash, mayBeEnabled);
-
-    const checkForNewOne = maybeNewEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto;
-
-    endpointManager.set(genesisHash, {
-      checkForNewOne,
-      endpoint: maybeNewEndpoint || AUTO_MODE.value,
-      isAuto: isOnAuto,
-      timestamp: Date.now()
-    });
-
-    onClose();
-  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, isOnAuto, onClose, onEnableChain]);
-
-  const _onClose = useCallback(() => {
-    dispatch({ type: 'RESET' });
-    isFetching.current = {};
-    onClose();
-  }, [onClose]);
+  const { dispatch,
+    filteredEndpoints,
+    isOnAuto,
+    mayBeEnabled,
+    maybeNewEndpoint,
+    onApply,
+    onChangeEndpoint,
+    onEnableNetwork,
+    onToggleAuto } = useEndpointsSetting(genesisHash, isEnabled, onEnableChain, onClose);
 
   const isDisabled = useMemo(() => {
     const noEndpointChange = isOnAuto
@@ -234,9 +93,11 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
     return noEndpointChange && noEnableChange && noAutoChange;
   }, [endpoint, isEnabled, isOnAuto, isAuto, mayBeEnabled, maybeNewEndpoint]);
 
-  const filteredEndpoints = useMemo(() => {
-    return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
-  }, [endpointsDelay]);
+  const _onClose = useCallback(() => {
+    dispatch({ type: 'RESET' });
+    isFetching.current = {};
+    onClose();
+  }, [dispatch, onClose]);
 
   return (
     <DraggableModal
