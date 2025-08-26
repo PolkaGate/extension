@@ -16,7 +16,7 @@ import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
 import { toTitleCase, updateStorage } from '../util';
-import { amountToHuman, countDecimalPlaces, toShortAddress } from '../util/utils';
+import { amountToHuman, countDecimalPlaces, getSubscanChainName, toShortAddress } from '../util/utils';
 
 interface SubProps {
   transactionDetail: TransactionDetail;
@@ -190,10 +190,7 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
   , [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
-    const lcChainName = chainName?.toLowerCase();
-    const _chainName = lcChainName?.includes('assethub')
-      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
-      : chainName;
+  const _chainName = getSubscanChainName(chainName);
 
     const url = `https://${_chainName}.subscan.io/account/${address}`;
 

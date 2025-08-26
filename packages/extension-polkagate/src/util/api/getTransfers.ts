@@ -3,6 +3,7 @@
 
 import type { TransferRequest } from '../types';
 
+import { getSubscanChainName } from '../utils';
 import { postReq } from './getTXsHistory';
 
 const nullObject = {
@@ -20,18 +21,10 @@ export async function getTxTransfers (chainName: string, address: string, pageNu
     return (await Promise.resolve(nullObject));
   }
 
-  let network = chainName.toLowerCase();
+  const network = getSubscanChainName(chainName) as unknown as string;
 
   if (network === 'pendulum') {
     return (await Promise.resolve(nullObject));
-  }
-
-  if (network === 'westendassethub') {
-    network = 'westmint';
-  }
-
-  if (network.includes('assethub')) {
-    network = `assethub-${network.replace(/assethub/, '')}`;
   }
 
   const transferRequest = await postReq<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {

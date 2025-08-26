@@ -12,6 +12,8 @@ import request from 'umi-request';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
+import { getSubscanChainName } from '../utils';
+
 // Common types
 interface AccountId {
   Id: string;
@@ -195,7 +197,7 @@ export async function getGovHistory (chainName: string, address: string, pageNum
     return Promise.resolve(nullObject);
   }
 
-  const network = chainName.toLowerCase();
+  const network = getSubscanChainName(chainName) as unknown as string;
 
   const extrinsics = await postReq<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
     address,
