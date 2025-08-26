@@ -12,13 +12,13 @@ import { type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAss
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
 import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { ChainLogo, Motion, MySwitch, SearchField } from '../../components';
 import { useGenesisHashOptions, useTranslation } from '../../hooks';
 import { getStorage, setStorage } from '../../util';
 import AddNewNetwork from './partials/AddNewNetwork';
 import Endpoints from './partials/Endpoints';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 interface ItemProps {
   isLast: boolean;

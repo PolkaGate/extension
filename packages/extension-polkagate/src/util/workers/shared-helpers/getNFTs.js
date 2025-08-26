@@ -244,7 +244,7 @@ export default async function getNftHandler (addresses, port) {
     try {
       const allItems = await getNFTs(addresses);
 
-      console.info('Shared worker, accounts NFTs fetched and send on chain');
+      console.info('Shared worker, accounts NFTs fetched!');
       port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: allItems }));
 
       return;
