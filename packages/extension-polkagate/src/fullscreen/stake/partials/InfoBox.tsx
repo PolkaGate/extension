@@ -39,7 +39,7 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
         }
         {
           logoInfo &&
-          <AssetLogo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} />
+          <AssetLogo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} token={token} />
         }
         {Amount}
         <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
