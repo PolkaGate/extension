@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.2.0](https://github.com/polkagate/extension/compare/v1.1.11...v1.2.0) (2025-08-26)
+
+
+### Features
+
+* add blueish color to welcome ([#1799](https://github.com/polkagate/extension/issues/1799)) ([8bae3b1](https://github.com/polkagate/extension/commit/8bae3b1118782263bb3c5906f4bb0c1d8c5ea8ce))
+
 ## [1.1.11](https://github.com/polkagate/extension/compare/v1.1.10...v1.1.11) (2025-08-25)
 
 
