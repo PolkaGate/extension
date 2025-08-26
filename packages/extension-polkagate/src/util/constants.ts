@@ -321,5 +321,11 @@ export const STORAGE_KEY = {
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled'
+};
 
+// Function names for asset fetching worker calls
+export const FETCHING_ASSETS_FUNCTION_NAMES = {
+  ASSET_HUB: 'getAssetOnAssetHub',
+  MULTI_ASSET: 'getAssetOnMultiAssetChain',
+  RELAY: 'getAssetOnRelayChain'
 };
