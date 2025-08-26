@@ -71,10 +71,10 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
   const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 
   const filter = isDark
-    ? isDarkLogo
-      ? 'invert(0.2) brightness(2)'
-      : TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(_chainName)
-        ? 'invert(1)'
+    ? TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(_chainName)
+      ? 'invert(1)'
+      : isDarkLogo
+        ? 'invert(0.2) brightness(2)'
         : ''
     : '';
 
@@ -141,7 +141,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
                 ...style
               }}
               variant='square'
-            />
+              />
             : <FontAwesomeIcon
               fontSize='15px'
               icon={fas[convertToCamelCase(_logo)]}
@@ -153,7 +153,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
                 width: size,
                 ...style
               }}
-            />
+              />
           }
         </>
         : _chainName
@@ -168,7 +168,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
               ...style
             }}
             variant='square'
-          >
+            >
             {_chainName?.charAt(0)?.toUpperCase() || ''}
           </Avatar>
           : <Box
@@ -182,7 +182,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
               p: '4px',
               width: size
             }}
-          />
+            />
       }
     </>
   );
