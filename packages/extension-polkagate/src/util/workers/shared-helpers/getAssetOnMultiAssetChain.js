@@ -4,6 +4,7 @@
 //@ts-nocheck
 import { getAssetsObject } from '@paraspell/sdk-pjs';
 
+import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { toTitleCase } from '../../string';
 import { getSubstrateAddress } from '../../utils';
 // eslint-disable-next-line import/extensions
@@ -17,14 +18,14 @@ import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, me
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort} port
  */
-export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
+export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
   const { metadata } = metadataFromApi(api);
 
-  console.info('Shared worker, metadata fetched and sent for chain:', chainName);
-  port.postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', metadata }));
+  console.info(chainName, 'metadata : fetched and saved.');
+  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, metadata }));
 
   const results = await toGetNativeToken(addresses, api, chainName);
 
@@ -56,6 +57,7 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
         const maybeAssetId = entry[0].toHuman()[1].replace(/,/g, '');
 
         const assets = assetObj.nativeAssets.concat(assetObj.otherAssets);
+
         maybeAssetInfo = assets.find(({ assetId }) => assetId === maybeAssetId);
 
         if (maybeAssetInfo) {
@@ -92,7 +94,7 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
     }
   });
 
-  console.info('Shared worker, account assets fetched and send on chain:', chainName);
-  port.postMessage(JSON.stringify({ functionName: 'getAssetOnMultiAssetChain', results }));
+  console.info(chainName, ': account assets fetched.');
+  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, results }));
   closeWebsockets(connections);
 }

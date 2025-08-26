@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
+import { FETCHING_ASSETS_FUNCTION_NAMES, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
 import { getPriceIdByChainName } from '../../utils';
 import { balancify, closeWebsockets } from '../utils';
 import { getBalances } from './getBalances.js';
@@ -49,9 +49,9 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
   } catch (error) {
     console.error(`getAssetOnRelayChain: Error fetching balances for ${chainName}:`, error);
   } finally {
-    console.info('Shared worker, account assets fetched and send on chain:', chainName);
+    console.info(chainName, ': account assets fetched.');
     Object.keys(results).length
-      ? port.postMessage(JSON.stringify({ functionName: 'getAssetOnRelayChain', results }))
-      : port.postMessage(JSON.stringify({ functionName: 'getAssetOnRelayChain' }));
+      ? port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, results }))
+      : port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, results: null }));
   }
 }

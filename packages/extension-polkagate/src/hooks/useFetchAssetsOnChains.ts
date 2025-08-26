@@ -6,7 +6,7 @@ import type { DropdownOption, UserAddedChains } from '../util/types';
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useCallback, useMemo } from 'react';
 
-import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH } from '../util/constants';
+import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH } from '../util/constants';
 import getChainName from '../util/getChainName';
 
 interface Params {
@@ -15,13 +15,6 @@ interface Params {
   genesisOptions: DropdownOption[];
   userAddedEndpoints: UserAddedChains;
 }
-
-// Function names for worker calls
-const FUNCTION_NAMES = {
-  ASSET_HUB: 'getAssetOnAssetHub',
-  MULTI_ASSET: 'getAssetOnMultiAssetChain',
-  RELAY: 'getAssetOnRelayChain'
-};
 
 // 0 = request not sent; 1 = request sent to worker successfully
 const FAILED = 0;
@@ -55,7 +48,7 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
       return FAILED;
     }
 
-    return postToWorker(FUNCTION_NAMES.ASSET_HUB, {
+    return postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, {
       addresses: _addresses,
       assetsToBeFetched,
       chainName,
@@ -64,14 +57,14 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
   }, [assetsChains, postToWorker, userAddedEndpoints]);
 
   const fetchAssetOnRelayChain = useCallback((chainName: string, _addresses: string[]) =>
-    postToWorker(FUNCTION_NAMES.RELAY, {
+    postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.RELAY, {
       addresses: _addresses,
       chainName,
       userAddedEndpoints
     }), [postToWorker, userAddedEndpoints]);
 
   const fetchAssetOnMultiAssetChain = useCallback((chainName: string, _addresses: string[]) =>
-    postToWorker(FUNCTION_NAMES.MULTI_ASSET, {
+    postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, {
       addresses: _addresses,
       chainName,
       userAddedEndpoints

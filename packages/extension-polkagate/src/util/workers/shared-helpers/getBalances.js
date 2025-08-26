@@ -3,6 +3,7 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
+import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { fastestEndpoint, getChainEndpoints, metadataFromApi } from '../utils';
 import { getPooledBalance } from './getPooledBalance.js';
 
@@ -21,8 +22,8 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
   if (api.isConnected && api.derive.balances) {
     const { metadata } = metadataFromApi(api);
 
-    console.info('Shared worker, metadata fetched and sent for chain:', chainName);
-    port.postMessage(JSON.stringify({ functionName: 'getAssetOnRelayChain', metadata }));
+    console.info(chainName, 'metadata : fetched and saved.');
+    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, metadata }));
 
     const requests = addresses.map(async (address) => {
       const allBalances = await api.derive.balances.all(address);

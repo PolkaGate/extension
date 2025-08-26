@@ -1,10 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
+//@ts-nocheck
 
 import { createAssets } from '@polkagate/apps-config/assets';
 
+import { FETCHING_ASSETS_FUNCTION_NAMES } from '../constants';
 import { getAssetOnAssetHub } from './shared-helpers/getAssetOnAssetHub.js';
 import { getAssetOnMultiAssetChain } from './shared-helpers/getAssetOnMultiAssetChain.js';
 import { getAssetOnRelayChain } from './shared-helpers/getAssetOnRelayChain.js';
@@ -15,12 +16,12 @@ import getValidatorsInformation from './shared-helpers/getValidatorsInformation.
 const assetsChains = createAssets();
 
 // Handle connections to the shared worker
-onconnect = (event) => {
+onconnect = (/** @type {{ ports: any[]; }} */ event) => {
   const port = event.ports[0]; // Get the MessagePort from the connection
 
   console.info('Shared worker: port connected');
 
-  port.onmessage = (e) => {
+  port.onmessage = (/** @type {{ data: { functionName: any; parameters: any; }; }} */ e) => {
     const { functionName, parameters } = e.data;
 
     const params = Object.values(parameters);
@@ -29,11 +30,12 @@ onconnect = (event) => {
 
     try {
       switch (functionName) {
-        case 'getAssetOnRelayChain':
+        case FETCHING_ASSETS_FUNCTION_NAMES.RELAY: {
           getAssetOnRelayChain(...params, port).catch(console.error);
           break;
+        }
 
-        case 'getAssetOnMultiAssetChain': {
+        case FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET: {
           // eslint-disable-next-line no-case-declarations
           const assetsToBeFetched = assetsChains[parameters.chainName];
 
@@ -48,7 +50,7 @@ onconnect = (event) => {
           break;
         }
 
-        case 'getAssetOnAssetHub': {
+        case FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB: {
           if (!parameters.assetsToBeFetched) {
             console.warn('getAssetOnAssetHub: No assets to be fetched on, but just Native Token');
 

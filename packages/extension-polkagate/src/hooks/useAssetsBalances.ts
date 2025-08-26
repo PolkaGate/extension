@@ -9,7 +9,7 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 import { useLocation } from 'react-router-dom';
 
 import { toCamelCase } from '../util';
-import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
+import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
 import useSavedAssetsCache from './useSavedAssetsCache';
@@ -26,7 +26,7 @@ export const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, 
 
 const assetsChains = createAssets();
 
-const FUNCTIONS = ['getAssetOnRelayChain', 'getAssetOnAssetHub', 'getAssetOnMultiAssetChain'];
+const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
 
 /**
  * @description To fetch accounts assets on different selected chains

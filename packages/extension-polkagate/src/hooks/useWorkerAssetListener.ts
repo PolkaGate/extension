@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { isObject } from '@polkadot/util';
 
 import { updateMetadata } from '../messaging';
+import { FETCHING_ASSETS_FUNCTION_NAMES } from '../util/constants';
 import { isHexToBn } from '../util/utils';
 
 interface WorkerMessage { functionName?: string, metadata?: MetadataDef, results?: Record<string, MessageBody[]> }
@@ -118,7 +119,7 @@ export default function useWorkerAssetListener (
           });
         }
 
-        if (['getAssetOnAssetHub', 'getAssetOnMultiAssetChain'].includes(functionName)) {
+        if ([FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET].includes(functionName)) {
           Object.keys(results).forEach((address) => {
             _assets[address] = results[address].map(
               (message: MessageBody) => {
