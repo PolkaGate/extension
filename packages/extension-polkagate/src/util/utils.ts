@@ -575,9 +575,9 @@ export const decodeMultiLocation = (hexString: HexString) => {
   try {
     decodedMultiLocation = JSON.parse(decodedJsonString);
   } catch (error) {
-    console.error('Error parsing JSON string in decodeMultiLocation:', error);
+    console.error('Error parsing JSON string in decodeMultiLocation, using the asset id as is:', error);
 
-    return null;
+    return hexString;
   }
 
   return decodeHexValues(decodedMultiLocation);

@@ -5,8 +5,8 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { decodeMultiLocation } from '../../utils';
 
-//@ts-ignore
-export async function getAssets(addresses, api, assets, chainName, results) {
+// @ts-ignore
+export async function getAssets (addresses, api, assets, chainName, results) {
   try {
     for (const asset of assets) {
       const isForeignAssets = asset.isForeign;
@@ -16,6 +16,12 @@ export async function getAssets(addresses, api, assets, chainName, results) {
       const maybeTheAssetOfAddresses = addresses.map((address) => api.query[section].account(assetId, address));
       const assetMetaData = api.query[section].metadata(assetId);
       const assetInfo = await api.query[section].asset(assetId);
+
+      if (!assetInfo?.toPrimitive()) {
+        console.log('No asset info found for assetId:', asset.id);
+        continue;
+      }
+
       const ED = assetInfo.toPrimitive().minBalance;
 
       const response = await Promise.all([assetMetaData, ...maybeTheAssetOfAddresses]);
