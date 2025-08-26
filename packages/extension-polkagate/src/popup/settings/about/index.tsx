@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, Stack } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
-import { ActionContext, BackWithLabel, Motion } from '../../../components';
+import { BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -17,13 +18,13 @@ import Resources from './Resources';
 
 function About (): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
 
-  const onBack = useCallback(() => onAction('/settings'), [onAction]);
+  const onBack = useCallback(() => navigate('/settings') as void, [navigate]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL='/settingsfs/about' homeType='default' />
       <Motion variant='slide'>
         <BackWithLabel
           onClick={onBack}
@@ -32,7 +33,7 @@ function About (): React.ReactElement {
         <Grid container item sx={{ px: '10px' }}>
           <Introduction style={{ border: '4px solid', borderColor: 'border.paper', height: '54px' }} />
           <RateUs />
-          <Grid alignItems='flex-start' container item justifyContent='flex-start' pt='5px' pb='15px' sx={{ border: '4px solid', borderColor: 'border.paper', borderRadius: '14px', mt: '5px', bgcolor: 'background.paper', height: '262px', px: '10px' }}>
+          <Grid alignItems='flex-start' container item justifyContent='flex-start' pb='15px' pt='5px' sx={{ bgcolor: 'background.paper', border: '4px solid', borderColor: 'border.paper', borderRadius: '14px', height: '262px', mt: '5px', px: '10px' }}>
             <Socials label={t('STAY TUNED')} short style={{ alignItems: 'start' }} />
             <Stack columnGap='35px' direction='row' justifyItems='start' my='5px'>
               <Resources />

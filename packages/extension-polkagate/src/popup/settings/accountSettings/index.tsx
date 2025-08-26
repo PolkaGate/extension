@@ -45,7 +45,7 @@ function AccountSettings (): React.ReactElement {
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL='/settingsfs/account' homeType='default' />
       <BackWithLabel
         onClick={onBack}
         text={t('Account Settings')}
