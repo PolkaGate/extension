@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.1](https://github.com/polkagate/extension/compare/v1.2.0...v1.2.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* use the same foreign asset id if not multi location ([708db98](https://github.com/polkagate/extension/commit/708db98d724ec52bd85e461cec83b0f35ca8c695))
+
 # [1.2.0](https://github.com/polkagate/extension/compare/v1.1.11...v1.2.0) (2025-08-26)
 
 
