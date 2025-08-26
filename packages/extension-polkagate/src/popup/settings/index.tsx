@@ -27,7 +27,11 @@ function Settings (): React.ReactElement {
   const account = useSelectedAccount();
 
   const onClick = useCallback((input: SETTING_PAGES) => {
-    return () => navigate(`/settings-${input}/${input === SETTING_PAGES.ACCOUNT ? account?.address : ''}`) as void;
+    const path = input === SETTING_PAGES.ACCOUNT
+      ? `/settings-${input}/${account?.address ?? ''}`
+      : `/settings-${input}/`;
+
+    return () => navigate(path) as void;
   }, [account?.address, navigate]);
 
   return (
