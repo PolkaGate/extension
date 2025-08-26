@@ -11,9 +11,9 @@ function PortfolioBar ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Re
     <Stack direction='row' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '14px', height: '36px', ml: '8px' }}>
       <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: '#05091C', borderRadius: '10px', m: '4px', width: '100%' }}>
         <Stack direction='row' sx={{ borderRadius: 12, height: 11, overflow: 'hidden', width: '98%' }}>
-          {assets.map((asset) => (
+          {assets.map((asset, index) => (
             <Box
-              key={asset.priceId}
+              key={`${asset.priceId}_${index}`}
               sx={{
                 bgcolor: asset.ui.color,
                 height: '100%',
