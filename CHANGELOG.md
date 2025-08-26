@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.2](https://github.com/polkagate/extension/compare/v1.2.1...v1.2.2) (2025-08-26)
+
+
+### Bug Fixes
+
+* wrong available balance to stake issue ([#1800](https://github.com/polkagate/extension/issues/1800)) ([d0a5f66](https://github.com/polkagate/extension/commit/d0a5f66ec65cabeea7a4d6c2eabe98311688202c))
+
 ## [1.2.1](https://github.com/polkagate/extension/compare/v1.2.0...v1.2.1) (2025-08-26)
 
 
