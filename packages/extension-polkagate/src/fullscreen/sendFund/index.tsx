@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useTeleport, useTranslation } from '../../hooks';
+import { useFormatted3, useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import HomeLayout from '../components/layout';
 import Confirmation from '../manageProxies/Confirmation';
@@ -32,6 +32,7 @@ export default function SendFund (): React.ReactElement {
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
+  const formatted = useFormatted3(address, genesisHash);
 
   const [inputs, setInputs] = useState<Inputs>();
   const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.SENDER);
@@ -75,7 +76,7 @@ export default function SendFund (): React.ReactElement {
       amount: inputs?.amountAsBN,
       description: t('Amount'),
       extra: {
-        from: address,
+        from: formatted,
         to: inputs?.recipientAddress,
         // eslint-disable-next-line sort-keys
         recipientNetwork: inputs?.recipientChain?.text
@@ -83,7 +84,7 @@ export default function SendFund (): React.ReactElement {
       fee: inputs?.fee,
       ...txInfo
     } as TransactionDetail;
-  }, [address, inputs, t, txInfo]);
+  }, [formatted, inputs?.amountAsBN, inputs?.fee, inputs?.recipientAddress, inputs?.recipientChain?.text, t, txInfo]);
 
   return (
     <HomeLayout
