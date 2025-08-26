@@ -7,6 +7,7 @@ export default [
   ...baseConfig,
   {
     rules: {
+      '@typescript-eslint/indent': 'off',
       'import/extensions': 'off',
       'react/jsx-max-props-per-line': 'off',
     }
