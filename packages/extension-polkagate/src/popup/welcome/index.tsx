@@ -7,11 +7,13 @@ import React, { useCallback, useState } from 'react';
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, Carousel, GradientBox, GradientButton } from '../../components';
-import { useBackground, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { Version, WelcomeHeader } from '../../partials';
 import { GradientDivider } from '../../style';
 import AddAccount from './AddAccount';
+import BlueGradient from '../staking/stakingStyles/BlueGradient';
+import StakingActionButton from '../staking/partial/StakingActionButton';
 
 export enum Popups {
   NONE,
@@ -19,12 +21,13 @@ export enum Popups {
 }
 
 function Welcome (): React.ReactElement {
-  useBackground('drops');
-
   const { t } = useTranslation();
   const theme = useTheme();
 
   const [popup, setPopup] = useState<Popups>(Popups.NONE);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const toggleDisplayElement = useCallback((show: boolean) => ({ opacity: show ? 1 : 0, transition: 'all 600ms ease-out' }), []);
 
   const onCreateAccount = useCallback((): void => {
     windowOpen('/account/create').catch(console.error);
@@ -38,8 +41,10 @@ function Welcome (): React.ReactElement {
     <>
       <Container disableGutters sx={{ position: 'relative' }}>
         <WelcomeHeader />
-        <Carousel />
-        <GradientBox style={{ m: 'auto', width: '359px' }}>
+        <Carousel currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+        <BlueGradient style={toggleDisplayElement(currentIndex >= 2)} />
+        <GradientBox noGradient={currentIndex >= 2} style={{ m: 'auto', width: '359px' }}>
+          <BlueGradient style={{ top: '-100px', ...toggleDisplayElement(currentIndex >= 2) }} />
           <Grid container item justifyContent='center' sx={{ p: '13px 32px' }}>
             <Box
               component='img'
@@ -59,7 +64,25 @@ function Welcome (): React.ReactElement {
               style={{
                 borderRadius: '18px',
                 height: '48px',
-                width: '299px'
+                width: '299px',
+                ...toggleDisplayElement(currentIndex < 2)
+              }}
+              text={t('Create a new account')}
+            />
+            <StakingActionButton
+              onClick={onCreateAccount}
+              startIcon={<AddCircle color={theme.palette.text.primary} size={20} variant='Bulk' />}
+              style={{
+                '& .MuiButton-startIcon': { mr: '12px' },
+                bottom: '86px',
+                borderRadius: '18px',
+                height: '48px',
+                left: '32px',
+                justifyContent: 'flex-start',
+                pl: '28px',
+                position: 'absolute',
+                width: '290px',
+                ...toggleDisplayElement(currentIndex >= 2)
               }}
               text={t('Create a new account')}
             />
