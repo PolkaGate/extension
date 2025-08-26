@@ -73,7 +73,10 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
     } else {
       return (
         <>
-          <span style={{ color: theme.palette.text.secondary, ...ButtonFontStyle }}>{text?.firstPart}</span>&nbsp;<span style={{ color: theme.palette.text.primary, ...ButtonFontStyle }}>
+          <span style={{ color: isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary, ...ButtonFontStyle }}>
+            {text?.firstPart}
+          </span>&nbsp;
+          <span style={{ color: isBlueish ? theme.palette.text.highlight : theme.palette.text.primary, ...ButtonFontStyle }}>
             {text?.secondPart}
           </span>
         </>
@@ -89,6 +92,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       startIcon={StartIcon
         ? (
           <StartIcon
+            color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main }
             size={iconSize}
             variant={
               (iconAlwaysBold ?? hovered)

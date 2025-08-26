@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Box, Container, styled, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
@@ -19,10 +18,11 @@ const ContentWrapper = styled(Box)({
 interface Props {
   children?: React.ReactNode;
   style?: SxProps<Theme>;
+  isBlueish?: boolean;
   noGradient?: boolean;
 }
 
-function GradientBox ({ children, noGradient = false, style }: Props) {
+function GradientBox ({ children, isBlueish, noGradient = false, style }: Props) {
   const isDark = useIsDark();
 
   const ContainerStyle = {
@@ -36,9 +36,17 @@ function GradientBox ({ children, noGradient = false, style }: Props) {
 
   return (
     <Container disableGutters sx={ContainerStyle}>
-      {isDark && <GradientBorder style={{ top: '-2px' }} />}
+      {isDark &&
+        <GradientBorder
+          style={{ top: '-2px' }}
+          type={isBlueish ? 'blueish' : 'pastel'}
+        />
+      }
       <ContentWrapper>
-        {!noGradient && isDark && <RedGradient style={{ top: '-100px' }} />}
+        {
+          !noGradient && isDark &&
+          <RedGradient style={{ top: '-100px' }} />
+        }
         <Box position='relative' zIndex={1}>
           {children}
         </Box>

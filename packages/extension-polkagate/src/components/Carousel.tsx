@@ -8,7 +8,6 @@ import React, { useEffect } from 'react';
 import { welcomeExtension1, welcomeExtension2, welcomeExtension3, welcomeExtension4 } from '../assets/img';
 
 const INTERVAL = 4000;
-const DISPLAYED_ITEM_COLOR = '#AA83DC';
 const UNDISPLAYED_ITEM_COLOR = 'rgba(190, 170, 216, 0.25)';
 
 const fillAnimation = keyframes`
@@ -30,7 +29,9 @@ const carouselItems: string[] = [
 ];
 const WIDE_ITEM_INDEX = 2;
 
-function Indicators ({ currentIndex }: { currentIndex: number }) {
+function Indicators ({ currentIndex, isBlueish }: { currentIndex: number, isBlueish: boolean }) {
+  const DISPLAYED_ITEM_COLOR = isBlueish ? '#3988FF' : '#AA83DC';
+
   return (
     <Box
       sx={{
@@ -50,7 +51,7 @@ function Indicators ({ currentIndex }: { currentIndex: number }) {
         <Box
           key={index}
           sx={{
-            backgroundColor: index >= currentIndex ? UNDISPLAYED_ITEM_COLOR : DISPLAYED_ITEM_COLOR,
+            backgroundColor: UNDISPLAYED_ITEM_COLOR,
             borderRadius: '8px',
             cursor: 'pointer',
             overflow: 'hidden',
@@ -81,13 +82,18 @@ function Indicators ({ currentIndex }: { currentIndex: number }) {
   );
 }
 
-const BlurEffects = () => (
-  <Grid container item justifyContent='center' sx={{ height: '265px', position: 'absolute', top: '0', width: '449px', zIndex: 2 }}>
-    <Box sx={{ bgcolor: '#FF1AB1', borderRadius: '1820px', filter: 'blur(100px)', height: '128px', left: '30%', position: 'absolute', top: '-85px', width: '128px' }} />
-    <Box sx={{ bgcolor: '#5B00B6', borderRadius: '1820px', filter: 'blur(100px)', height: '128px', position: 'absolute', right: '31px', top: '-6px', width: '128px' }} />
-    <Box sx={{ bgcolor: '#5B00B6', borderRadius: '1820px', filter: 'blur(100px)', height: '128px', left: '-31px', position: 'absolute', top: '-6px', width: '128px' }} />
-  </Grid>
-);
+const BlurEffects = ({ isBlueish }: { isBlueish: boolean }) => {
+  const sideColors = isBlueish ? '#0052B6' : '#5B00B6';
+  const topColor = isBlueish ? '#1A29FF' : '#FF1AB1';
+
+  return (
+    <Grid container item justifyContent='center' sx={{ height: '265px', position: 'absolute', top: '0', width: '449px', zIndex: 2 }}>
+      <Box sx={{ bgcolor: topColor, borderRadius: '1820px', filter: 'blur(100px)', height: '128px', left: '30%', position: 'absolute', top: '-85px', width: '128px' }} />
+      <Box sx={{ bgcolor: sideColors, borderRadius: '1820px', filter: 'blur(100px)', height: '128px', position: 'absolute', right: '31px', top: '-6px', width: '128px' }} />
+      <Box sx={{ bgcolor: sideColors, borderRadius: '1820px', filter: 'blur(100px)', height: '128px', left: '-31px', position: 'absolute', top: '-6px', width: '128px' }} />
+    </Grid>
+  );
+};
 
 function Slides ({ currentIndex }: { currentIndex: number }) {
   return (
@@ -124,6 +130,8 @@ interface Props {
 }
 
 function Carousel ({ currentIndex, setCurrentIndex }: Props) {
+  const isBlueish = currentIndex > 1;
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % carouselItems.length);
@@ -134,9 +142,9 @@ function Carousel ({ currentIndex, setCurrentIndex }: Props) {
 
   return (
     <Grid container item sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
-      <Indicators currentIndex={currentIndex} />
+      <Indicators currentIndex={currentIndex} isBlueish={isBlueish} />
       <Slides currentIndex={currentIndex} />
-      <BlurEffects />
+      <BlurEffects isBlueish={isBlueish} />
     </Grid>
   );
 }
