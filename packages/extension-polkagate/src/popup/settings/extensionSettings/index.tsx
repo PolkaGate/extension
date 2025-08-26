@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
-import { useLocation } from 'react-router';
+import React, { useCallback, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
-import { ActionContext, BackWithLabel, Motion } from '../../../components';
+import { BackWithLabel, Motion } from '../../../components';
 import { useIsDark, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -18,14 +18,15 @@ function ExtensionSettings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isDark = useIsDark();
+  const navigate = useNavigate();
 
-  const onAction = useContext(ActionContext);
+  const fullscreenURL = useMemo(() => pathname === '/settings-extension/chains' ? '/settingsfs/network' : '/settingsfs/', [pathname]);
 
-  const onBack = useCallback(() => onAction('/settings'), [onAction]);
+  const onBack = useCallback(() => navigate('/settings') as void, [navigate]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL={fullscreenURL} homeType='default' />
       <BackWithLabel
         onClick={onBack}
         text={t('Extension Settings')}

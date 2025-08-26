@@ -3,9 +3,10 @@
 
 import { Container, Grid } from '@mui/material';
 import { Category, User } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
-import { ActionCard, ActionContext, Motion } from '../../components';
+import { ActionCard, Motion } from '../../components';
 import { useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
@@ -22,16 +23,20 @@ enum SETTING_PAGES {
 function Settings (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const account = useSelectedAccount();
 
   const onClick = useCallback((input: SETTING_PAGES) => {
-    return () => onAction(`/settings-${input}/${input === SETTING_PAGES.ACCOUNT ? account?.address : ''}`);
-  }, [account?.address, onAction]);
+    const path = input === SETTING_PAGES.ACCOUNT
+      ? `/settings-${input}/${account?.address ?? ''}`
+      : `/settings-${input}/`;
+
+    return () => navigate(path) as void;
+  }, [account?.address, navigate]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
-      <UserDashboardHeader homeType='default' />
+      <UserDashboardHeader fullscreenURL='/settingsfs/' homeType='default' />
       <Motion style={{ padding: '0 10px' }} variant='slide'>
         <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#F5F4FF', borderRadius: '14px', mt: '10px', p: '4px', position: 'relative' }}>
           <Introduction />
