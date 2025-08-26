@@ -18,6 +18,7 @@ import { SharePopup } from '.';
 interface Props {
   onClose: ExtensionPopupCloser;
   open: boolean;
+  onRemoved?: () => void;
 }
 
 /**
@@ -25,7 +26,7 @@ interface Props {
  *
  * Has been used in both full-screen & extension mode!
 */
-function RemoveAccount ({ onClose, open }: Props): React.ReactElement {
+function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -46,6 +47,11 @@ function RemoveAccount ({ onClose, open }: Props): React.ReactElement {
     setPasswordError(false);
     onClose();
   }, [onClose]);
+
+  const handleCloseSnackbar = useCallback(() => {
+    handleClose();
+    onRemoved?.();
+  }, [handleClose, onRemoved]);
 
   const onRemove = useCallback(() => {
     try {
@@ -136,7 +142,7 @@ function RemoveAccount ({ onClose, open }: Props): React.ReactElement {
           />
         </Stack>
         <MySnackbar
-          onClose={handleClose}
+          onClose={handleCloseSnackbar}
           open={showSnackbar}
           text={t('Account successfully removed!')}
         />

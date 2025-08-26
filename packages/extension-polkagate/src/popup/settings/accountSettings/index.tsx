@@ -42,9 +42,8 @@ function AccountSettings (): React.ReactElement {
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
   const onCloseRemove = useCallback(() => {
-    extensionPopupCloser();
     navigate('/') as void;
-  }, [extensionPopupCloser, navigate]);
+  }, [navigate]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -132,7 +131,8 @@ function AccountSettings (): React.ReactElement {
         open={extensionPopup === ExtensionPopups.RENAME}
       />
       <RemoveAccount
-        onClose={onCloseRemove}
+        onClose={extensionPopupCloser}
+        onRemoved={onCloseRemove}
         open={extensionPopup === ExtensionPopups.REMOVE}
       />
       <WebsitesAccess
