@@ -11,11 +11,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
+import { convertToCamelCase } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
-import { convertToCamelCase } from '../util';
 
 interface Props {
   chainName?: string;
@@ -71,9 +71,9 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
   const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 
   const filter = isDark
-    ? isDarkLogo && CHAINS_WITH_BLACK_LOGO.includes(_chainName)
+    ? isDarkLogo
       ? 'invert(0.2) brightness(2)'
-      : TOKENS_WITH_BLACK_LOGO.includes(token ?? '')
+      : TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(_chainName)
         ? 'invert(1)'
         : ''
     : '';
