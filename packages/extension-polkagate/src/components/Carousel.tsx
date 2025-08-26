@@ -3,7 +3,7 @@
 
 import { Box, Grid } from '@mui/material';
 import { keyframes } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { welcomeExtension1, welcomeExtension2, welcomeExtension3, welcomeExtension4 } from '../assets/img';
 
@@ -118,16 +118,19 @@ function Slides ({ currentIndex }: { currentIndex: number }) {
   );
 }
 
-function Carousel () {
-  const [currentIndex, setCurrentIndex] = useState(0);
+interface Props {
+  currentIndex: number;
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
+}
 
+function Carousel ({ currentIndex, setCurrentIndex }: Props) {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % carouselItems.length);
     }, INTERVAL);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [setCurrentIndex]);
 
   return (
     <Grid container item sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
