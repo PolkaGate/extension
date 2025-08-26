@@ -3,15 +3,15 @@
 
 import { Container, Stack, Typography } from '@mui/material';
 import { Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { noop } from '@polkadot/util';
 
-import { ActionCard, ActionContext, BackWithLabel, Motion } from '../../../components';
+import { ActionCard, BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { UserDashboardHeader, WebsitesAccess } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -24,6 +24,7 @@ type State = { pathname: string } | undefined;
 function AccountSettings (): React.ReactElement {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const { address } = useParams<{ address: string }>();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -35,13 +36,14 @@ function AccountSettings (): React.ReactElement {
     setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address).catch(console.error);
   }, [address]);
 
-  const onAction = useContext(ActionContext);
-
   const isComingFromAccountsList = (location.state as State)?.pathname === '/accounts';
-  const onBack = useCallback(() => onAction(isComingFromAccountsList ? (location.state as State)?.pathname : '/settings'), [isComingFromAccountsList, location, onAction]);
+  const onBack = useCallback(() => navigate(isComingFromAccountsList ? (location.state as State)?.pathname ?? '' : '/settings') as void, [isComingFromAccountsList, location, navigate]);
 
-  const onExport = useCallback(() => onAction('/settings-account-export'), [onAction]);
+  const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
+  const onCloseRemove = useCallback(() => {
+    navigate('/') as void;
+  }, [navigate]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -130,6 +132,7 @@ function AccountSettings (): React.ReactElement {
       />
       <RemoveAccount
         onClose={extensionPopupCloser}
+        onRemoved={onCloseRemove}
         open={extensionPopup === ExtensionPopups.REMOVE}
       />
       <WebsitesAccess
