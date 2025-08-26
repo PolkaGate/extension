@@ -75,7 +75,7 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
         <RedGradient style={{ right: '-3%', visibility: isExtension ? 'visible' : 'hidden' }} />
         {isExtension &&
           <AvailableBalance
-            availableBalance={selectedPosition?.availableBalance ?? BN_ZERO}
+            availableBalance={selectedPosition?.freeBalance || selectedPosition?.availableBalance || BN_ZERO}
             decimal={_decimal}
             isExtension={true}
             token={selectedPosition?.tokenSymbol ?? ''}

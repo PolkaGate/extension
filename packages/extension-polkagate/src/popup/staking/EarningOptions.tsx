@@ -102,7 +102,7 @@ export default function EarningOptions (): React.ReactElement {
           <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
               {filteredToken?.map((token, index) => {
-                const { availableBalance, chainName, decimal, genesisHash, tokenSymbol } = token;
+                const { availableBalance, chainName, decimal, freeBalance, genesisHash, tokenSymbol } = token;
                 const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
 
                 return (
@@ -134,7 +134,7 @@ export default function EarningOptions (): React.ReactElement {
                             decimals={[decimal]}
                             label={`${t('Available')}:`}
                             tokens={[tokenSymbol]}
-                            value={availableBalance ?? BN_ZERO}
+                            value={freeBalance || availableBalance || BN_ZERO}
                           />
                         </Typography>
                       </Stack>
