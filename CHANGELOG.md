@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.3](https://github.com/polkagate/extension/compare/v1.2.2...v1.2.3) (2025-08-26)
+
+
+### Bug Fixes
+
+* differ between fee and transferred asset ([fdf9f74](https://github.com/polkagate/extension/commit/fdf9f7480aaf9932a6552870dbd1c77d64aaf54c))
+
 ## [1.2.2](https://github.com/polkagate/extension/compare/v1.2.1...v1.2.2) (2025-08-26)
 
 
