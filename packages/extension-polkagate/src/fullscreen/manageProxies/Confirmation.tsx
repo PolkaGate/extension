@@ -16,7 +16,7 @@ import { useChainInfo, useCurrency, useIsBlueish, useTokenPriceBySymbol, useTran
 import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
 import { toTitleCase } from '../../util';
-import { amountToHuman, countDecimalPlaces, isValidAddress, toShortAddress } from '../../util/utils';
+import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress } from '../../util/utils';
 import { DraggableModal } from '../components/DraggableModal';
 
 const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
@@ -131,7 +131,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                   ? <ProxyAccounts
                     accounts={accounts}
                     genesisHash={genesisHash}
-                  />
+                    />
                   : <Identity2
                     address={accounts[0]}
                     addressStyle={{ color: '#AA83DC' }}
@@ -142,14 +142,14 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                     showShortAddress
                     style={{ addressVariant: 'B-1', maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
-                  />
+                    />
               }
             </>
             : <Amount
               amount={amount}
               genesisHash={genesisHash}
               token={token}
-            />
+              />
         }
       </Stack>
     </GlowBox>
@@ -166,7 +166,10 @@ interface DetailProps {
 const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
+
+  const _decimal = transactionDetail?.decimal ?? nativeAssetDecimal;
+  const _token = transactionDetail?.token ?? nativeToken;
 
   const mainEntries = useMemo(() => {
     const baseFields = ['amount', 'deposit', 'fee', 'block', 'txHash'];
@@ -189,12 +192,13 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
     const isHash = key === 'txHash';
     const isBlock = key === 'block';
     const isBalance = ['amount', 'deposit', 'fee'].includes(key);
+    const isFee = ['fee'].includes(key);
     const isAddress = isValidAddress(content as string);
     const isFromAddress = key === 'from' && isAddress;
     const isDate = showDate && key === 'date';
     const color = (isBlock || isDate) ? 'text.primary' : isBlueish ? 'text.highlight' : 'text.secondary';
 
-    return { isHash, isBlock, isBalance, isAddress, isFromAddress, isDate, color };
+    return { color, isAddress, isBalance, isBlock, isDate, isFee, isFromAddress, isHash };
   }, [isBlueish, showDate]);
 
   const entriesToRender = [...extraEntries, ...mainEntries].filter(([_, content]) => content !== null && content !== undefined);
@@ -204,7 +208,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', p: '12px 18px' }}>
         {entriesToRender.map(([key, content], index) => {
           const withDivider = entriesToRender.length > index + 1;
-          const { color, isAddress, isBalance, isBlock, isDate, isFromAddress, isHash } = getContentTypeAndColor(key, content);
+          const { color, isAddress, isBalance, isBlock, isDate, isFee, isFromAddress, isHash } = getContentTypeAndColor(key, content);
 
           return (
             <React.Fragment key={key}>
@@ -232,7 +236,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                         ? (
                           <FormatBalance2
                             decimalPoint={4}
-                            decimals={[decimal ?? 0]}
+                            decimals={[(isFee ? nativeAssetDecimal : _decimal) ?? 0]}
                             style={{
                               color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
                               fontFamily: 'Inter',
@@ -240,11 +244,11 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                               fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[token ?? '']}
+                            tokens={[(isFee ? nativeToken : _token) ?? '']}
                             value={content as string}
                           />)
                         : isDate
-                          ? new Date(content).toLocaleString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
+                          ? new Date(content).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
                           : content
                     }
                   </Typography>
@@ -275,10 +279,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
   const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
-    const lcChainName = chainName?.toLowerCase();
-    const _chainName = lcChainName?.includes('assethub')
-      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
-      : chainName;
+    const _chainName = getSubscanChainName(chainName);
 
     const url = `https://${_chainName}.subscan.io/account/${address}`;
 
@@ -317,7 +318,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
           onClick={goToExplorer}
           startIcon={<SubScanIcon />}
           text={t('View on Explorer')}
-        />
+          />
         : <GradientButton
           onClick={goToExplorer}
           startIconNode={
@@ -329,7 +330,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
           }
           style={{ bottom: '17px', position: 'absolute', width: '384px', zIndex: 1 }}
           text={t('View on Explorer')}
-        />
+          />
       }
     </Stack>
   );
@@ -357,7 +358,10 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
 
   const Content = () => (
     <Stack direction='column' sx={{ gap: '8px', p: '15px 0', zIndex: 1 }}>
-      <Header genesisHash={genesisHash} transactionDetail={transactionDetail} />
+      <Header
+        genesisHash={genesisHash}
+        transactionDetail={transactionDetail}
+      />
       <Detail
         genesisHash={genesisHash}
         isBlueish={isBlueish}
@@ -384,7 +388,7 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
           showBackIconAsClose
           style={{ backgroundColor: '#1B133C', minHeight: '615px', padding: '20px 9px 10px' }}
           title={transactionDetail.success ? t('Completed') : t('Failed')}
-        >
+          >
           <Content />
         </DraggableModal>
         : <Content />

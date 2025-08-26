@@ -761,3 +761,11 @@ export const removeZeroBalanceRecords = (toBeSavedAssets: SavedAssets): SavedAss
 
   return _toBeSavedAssets;
 };
+
+export const getSubscanChainName = (chainName?: string): string | undefined => {
+   const lcChainName = chainName?.toLowerCase();
+
+    return lcChainName?.includes('assethub')
+      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
+      : chainName;
+    };
