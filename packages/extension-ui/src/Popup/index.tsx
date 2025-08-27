@@ -12,47 +12,47 @@ import SelectedProvider from './contexts/SelectedProvider';
 import AppRoutes from './routes/RouteDefinitions';
 import { AccountAssetProvider, AccountIconThemeProvider, AccountProvider, ActionProvider, AlertProvider, ApiProvider, CurrencyProvider, FetchingProvider, GenesisHashOptionsProvider, MediaProvider, ReferendaProvider, RequestsProvider, SettingsProvider, UserAddedChainsProvider, WorkerProvider } from './contexts';
 
-export default function Popup (): React.ReactElement {
+export default function Popup(): React.ReactElement {
   return (
     <AnimatePresence mode='wait'>
       <ExtensionLockProvider>
-        <Loading>
-          <ActionProvider>
-            <SettingsProvider>
-              <AccountIconThemeProvider>
-                <GenesisHashOptionsProvider>
-                  <WorkerProvider>
-                    <AccountProvider>
-                      <ApiProvider>
-                        <AlertProvider>
-                          <FetchingProvider>
-                            <CurrencyProvider>
-                              <PricesProvider>
-                                <ReferendaProvider>
-                                  <RequestsProvider>
-                                    <MediaProvider>
-                                      <UserAddedChainsProvider>
-                                        <SelectedProvider>
-                                          <AccountAssetProvider>
+        <ActionProvider>
+          <SettingsProvider>
+            <AccountIconThemeProvider>
+              <GenesisHashOptionsProvider>
+                <WorkerProvider>
+                  <AccountProvider>
+                    <ApiProvider>
+                      <AlertProvider>
+                        <FetchingProvider>
+                          <CurrencyProvider>
+                            <PricesProvider>
+                              <ReferendaProvider>
+                                <RequestsProvider>
+                                  <MediaProvider>
+                                    <UserAddedChainsProvider>
+                                      <SelectedProvider>
+                                        <AccountAssetProvider>
+                                          <Loading>
                                             <AppRoutes />
-                                          </AccountAssetProvider>
-                                        </SelectedProvider>
-                                      </UserAddedChainsProvider>
-                                    </MediaProvider>
-                                  </RequestsProvider>
-                                </ReferendaProvider>
-                              </PricesProvider>
-                            </CurrencyProvider>
-                          </FetchingProvider>
-                        </AlertProvider>
-                      </ApiProvider>
-                    </AccountProvider>
-                  </WorkerProvider>
-                </GenesisHashOptionsProvider>
-              </AccountIconThemeProvider>
-            </SettingsProvider>
-          </ActionProvider>
-        </Loading>
+                                          </Loading>
+                                        </AccountAssetProvider>
+                                      </SelectedProvider>
+                                    </UserAddedChainsProvider>
+                                  </MediaProvider>
+                                </RequestsProvider>
+                              </ReferendaProvider>
+                            </PricesProvider>
+                          </CurrencyProvider>
+                        </FetchingProvider>
+                      </AlertProvider>
+                    </ApiProvider>
+                  </AccountProvider>
+                </WorkerProvider>
+              </GenesisHashOptionsProvider>
+            </AccountIconThemeProvider>
+          </SettingsProvider>
+        </ActionProvider>
       </ExtensionLockProvider>
     </AnimatePresence>
   );
