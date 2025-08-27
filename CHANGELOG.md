@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.5](https://github.com/polkagate/extension/compare/v1.2.4...v1.2.5) (2025-08-27)
+
+
+### Bug Fixes
+
+* show highest value token logo ([2253cc8](https://github.com/polkagate/extension/commit/2253cc81e2970559e62f2da6939a43c97936125b))
+
 ## [1.2.4](https://github.com/polkagate/extension/compare/v1.2.3...v1.2.4) (2025-08-27)
 
 
