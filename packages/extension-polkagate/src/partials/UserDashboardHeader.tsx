@@ -33,7 +33,7 @@ function UserDashboardHeader ({ fullscreenURL, genesisHash, homeType, noSelectio
           }
         </Grid>
         {
-          !(signerInformation?.selectedProxyAddress && genesisHash) &&
+          !noSelection &&
           <AccountSelection noSelection={noSelection} /> /** Should not display the selected account while the selected proxy account is being shown. */
         }
         {
