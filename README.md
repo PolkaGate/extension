@@ -28,9 +28,9 @@ Currently, the following features are available:
   - Social recovery
   - Account Profiles
 
-![Group 40093](https://github.com/PolkaGate/extension/assets/46442452/35cc6c13-532c-415e-a8e6-5285bc56e204)
+![extension shots](assets/extension.png)
 
-![image](https://github.com/PolkaGate/extension/assets/46442452/8ad947dd-58a4-4ff3-9aa7-8613121b8938)
+![home in fullscreen](assets/home.png)
 
 
 ## Installation 
