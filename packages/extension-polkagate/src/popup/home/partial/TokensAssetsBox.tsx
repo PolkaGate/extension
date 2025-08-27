@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { BN } from '@polkadot/util';
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
+import type { BN } from '@polkadot/util';
 import type { Prices } from '../../../util/types';
 
-import { Badge, Collapse, Container, Divider, Grid, Typography, useTheme, type Theme } from '@mui/material';
+import { Badge, Collapse, Container, Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import { CloseCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
@@ -13,15 +13,15 @@ import { useNavigate } from 'react-router-dom';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
-import allChains from '../../../util/chains';
 
 import { AssetLogo } from '../../../components';
 import { useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import { calcPrice } from '../../../hooks/useYouHave';
+import allChains from '../../../util/chains';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
-import { TokenPriceInfo } from './TokenPriceInfo';
-import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import Drawer from './Drawer';
+import { TokenBalanceDisplay } from './TokenBalanceDisplay';
+import { TokenPriceInfo } from './TokenPriceInfo';
 
 type Assets = Record<string, FetchedBalance[]> | null | undefined;
 interface AssetDetailType {
@@ -37,9 +37,9 @@ interface AssetDetailType {
 
 type Summary = AssetDetailType[] | null | undefined;
 
-function TokensItems({ theme, tokenDetail, onTokenClick }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
+function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
   const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
-  const { decimal, chainName, token, genesisHash, totalBalance, totalPrice } = tokenDetail;
+  const { chainName, decimal, genesisHash, token, totalBalance, totalPrice } = tokenDetail;
   const logoInfo = getLogo2(genesisHash, token);
 
   return (
@@ -66,19 +66,20 @@ function TokensItems({ theme, tokenDetail, onTokenClick }: { onTokenClick: () =>
     </Grid>
   );
 }
+
 const MemoizedTokensItems = memo(TokensItems);
 
-function TokenBox({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
+function TokenBox ({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
-  
+
   const isDark = theme.palette.mode === 'dark';
   const bgColor = isDark ? '#05091C' : '#EDF1FF';
   const badgeBgColor = isDark ? '#05091C' : '#F5F4FF';
   const closeColor = isDark ? '#674394' : '#CCD2EA';
   const dividerColor = isDark ? '#2D1E4A' : '#CCD2EA66';
   const tokenBoxColor = isDark ? '#1B133C' : '#FFFFFF';
-  const { decimal,assetsTotalBalancePrice, assetsTotalBalanceBN,assets, token, genesisHash,logoInfo, priceId } = tokenDetail;
+  const { assets, assetsTotalBalanceBN, assetsTotalBalancePrice, decimal, genesisHash, logoInfo, priceId, token } = tokenDetail;
 
   const [expand, setExpand] = useState<boolean>(false);
 
@@ -91,10 +92,10 @@ function TokenBox({ address, theme, tokenDetail }: { address: string | undefined
   }), [expand]);
 
   const getTokenClickHandler = useCallback((token: FetchedBalance) => () => {
-  isExtension
-    ? navigate(`token/${token.genesisHash}/${token.assetId}`)
-    : address && navigate(`/accountfs/${address}/${token.genesisHash}/${token.assetId}`);
-}, [isExtension, navigate, address]);
+    isExtension
+      ? navigate(`token/${token.genesisHash}/${token.assetId}`) as void
+      : address && navigate(`/accountfs/${address}/${token.genesisHash}/${token.assetId}`) as void;
+  }, [isExtension, navigate, address]);
 
   return (
     <div>
@@ -146,9 +147,9 @@ function TokenBox({ address, theme, tokenDetail }: { address: string | undefined
               return (
                 <React.Fragment key={`${index}_fragment`}>
                   <MemoizedTokensItems
-                    tokenDetail={token}
-                    theme={theme}
                     onTokenClick={getTokenClickHandler(token)}
+                    theme={theme}
+                    tokenDetail={token}
                   />
                   {showDivider &&
                     <Divider sx={{ bgcolor: dividerColor, height: '1px', width: '100%' }} />
@@ -171,7 +172,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
   const address = useSelectedAccount()?.address;
 
@@ -187,8 +188,11 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
 
       return accountAssets.reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
         if (selectedChains.includes(balance.genesisHash) && !balance.totalBalance.isZero()) {
-          (acc[balance.token] ||= []).push(balance);
+          const normalizedToken = balance.token.toUpperCase(); // since there are tokens like USDT and USDt
+
+          (acc[normalizedToken] ||= []).push(balance);
         }
+
         return acc;
       }, {});
     } else {
@@ -198,9 +202,12 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
 
   const priceMap = useMemo(() => {
     const map: Record<string, number> = {};
-    if (!accountAssets) return map;
 
-    accountAssets.forEach(asset => {
+    if (!accountAssets) {
+      return map;
+    }
+
+    accountAssets.forEach((asset) => {
       if (asset.priceId) {
         map[asset.priceId] = pricesInCurrency?.prices?.[asset.priceId]?.value || 0;
       }
@@ -210,33 +217,37 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
   }, [accountAssets, pricesInCurrency?.prices]);
 
   const summary: Summary = useMemo(() => {
-    if (!tokens) return undefined;
+    if (!tokens) {
+      return undefined;
+    }
 
     return Object.entries(tokens).map(([token, assets]) => {
       let totalBalanceBN = BN_ZERO;
       let totalBalancePrice = 0;
 
-      const enriched = assets.map(asset => {
+      const enriched = assets.map((asset) => {
         const totalPrice = calcPrice(priceMap[asset.priceId], asset.totalBalance, asset.decimal);
+
         totalBalanceBN = totalBalanceBN.add(asset.totalBalance);
         totalBalancePrice += totalPrice;
+
         return { ...asset, totalPrice };
       });
 
       const sortedAssets = enriched.slice().sort((a, b) => b.totalPrice - a.totalPrice);
-      const network = enriched.find(a => a.token.toLowerCase() === token.toLowerCase());
-      const priceId = enriched[0].priceId;
+      const baseToken = sortedAssets[0];
 
       let genesisHash: string | undefined;
       let decimal: number | undefined;
 
-      if (network) {
-        genesisHash = network.genesisHash?.toString();
-        decimal = network.decimal;
-      } else {
-        const networkFallback = allChains.find(({ name, tokenSymbol }) => !/Asset Hub|People/.test(name) && tokenSymbol.toLowerCase() === token.toLowerCase());
-        genesisHash = networkFallback?.genesisHash;
-        decimal = networkFallback?.tokenDecimal;
+      if (baseToken) {
+        genesisHash = baseToken.genesisHash.toString();
+        decimal = baseToken.decimal;
+      } else { // @AMIRKHANEF does this fallback really needed?
+        const baseTokenFallback = allChains.find(({ name, tokenSymbol }) => !/Asset Hub|People/.test(name) && tokenSymbol.toLowerCase() === token.toLowerCase());
+
+        genesisHash = baseTokenFallback?.genesisHash;
+        decimal = baseTokenFallback?.tokenDecimal;
       }
 
       const logoInfo = getLogo2(genesisHash, token);
@@ -248,7 +259,7 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
         decimal,
         genesisHash,
         logoInfo,
-        priceId,
+        priceId: baseToken.priceId,
         token
       };
     }).sort((a, b) => b.assetsTotalBalancePrice - a.assetsTotalBalancePrice);
@@ -261,7 +272,8 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
           <MemoizedTokenBox
             address={address}
             theme={theme}
-            tokenDetail={tokenDetail} />
+            tokenDetail={tokenDetail}
+          />
         </motion.div>
       ))}
     </>

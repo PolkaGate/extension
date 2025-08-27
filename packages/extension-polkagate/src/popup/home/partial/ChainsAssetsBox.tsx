@@ -4,7 +4,7 @@
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Prices } from '../../../util/types';
 
-import { Divider, Grid, Typography, useTheme, type Theme } from '@mui/material';
+import { Divider, Grid, type Theme, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,9 +12,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AssetLogo, ChainLogo, FormatPrice } from '../../../components';
 import { useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
+import { type AssetDetailType, buildChainsAssetsSummary } from '../../helpers/buildChainsAssetsSummary';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import { TokenPriceInfo } from './TokenPriceInfo';
-import { buildChainsAssetsSummary, type AssetDetailType } from '../../helpers/buildChainsAssetsSummary';
 
 type Assets = Record<string, FetchedBalance[]> | null | undefined;
 
@@ -28,7 +28,7 @@ interface ChainHeaderProps {
   token: string | undefined;
 }
 
-function ChainHeader({ chainName, chainTotalBalance, genesisHash, theme, token }: ChainHeaderProps) {
+function ChainHeader ({ chainName, chainTotalBalance, genesisHash, theme, token }: ChainHeaderProps) {
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
@@ -62,7 +62,7 @@ interface AssetDetailProps {
   theme: Theme;
 }
 
-function AssetsDetail({ address, asset, theme, isExtension }: AssetDetailProps) {
+function AssetsDetail ({ address, asset, isExtension, theme }: AssetDetailProps) {
   const navigate = useNavigate();
   const params = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
 
@@ -95,6 +95,7 @@ function AssetsDetail({ address, asset, theme, isExtension }: AssetDetailProps) 
     </Grid>
   );
 }
+
 const MemoizedAssetsDetail = memo(AssetsDetail);
 
 const itemVariants = {
@@ -104,7 +105,7 @@ const itemVariants = {
 
 const gridStyle = { display: 'grid', rowGap: '6px', width: 'inherit' };
 
-function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
   const address = useSelectedAccount()?.address;
@@ -124,6 +125,7 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
       )
       .reduce<Record<string, FetchedBalance[]>>((acc, balance) => {
         (acc[balance.genesisHash] ||= []).push(balance);
+
         return acc;
       }, {});
   }, [accountAssets, selectedChains]);
@@ -138,10 +140,10 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
         <motion.div key={genesisHash} variants={itemVariants}>
           <Grid container item sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
             <MemoizedChainHeader
-              theme={theme}
               chainName={chainName}
               chainTotalBalance={chainTotalBalance}
               genesisHash={genesisHash}
+              theme={theme}
               token={token}
             />
             {assets.map((asset, index) => {
@@ -152,8 +154,8 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
                   <MemoizedAssetsDetail
                     address={address}
                     asset={asset}
-                    theme={theme}
                     isExtension={isExtension}
+                    theme={theme}
                   />
                   {
                     showDivider &&
