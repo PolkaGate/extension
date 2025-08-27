@@ -104,7 +104,7 @@ export default function Pool (): React.ReactElement {
     address,
     backPathTitle: review === Review.Reward ? t('Claim rewards') : t('Withdraw redeemable'),
     closeReview,
-    extraDetailConfirmationPage: { amount: review === Review.Reward ? myClaimable?.toString() : undefined },
+    extraDetailConfirmationPage: (review === Review.Reward ? { amount: myClaimable?.toString() } : undefined),
     genesisHash: genesisHash ?? '',
     proxyTypeFilter: PROXY_TYPE.NOMINATION_POOLS,
     restakeReward: review === Review.Reward ? restakeReward : undefined,
