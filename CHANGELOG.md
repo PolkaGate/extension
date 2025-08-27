@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.4](https://github.com/polkagate/extension/compare/v1.2.3...v1.2.4) (2025-08-27)
+
+
+### Bug Fixes
+
+* display formatted address instead of substrate base on Send Fund page ([#1803](https://github.com/polkagate/extension/issues/1803)) ([870aec6](https://github.com/polkagate/extension/commit/870aec66726e71dc9f832df9f6439258d0d2d20d))
+
 ## [1.2.3](https://github.com/polkagate/extension/compare/v1.2.2...v1.2.3) (2025-08-26)
 
 
