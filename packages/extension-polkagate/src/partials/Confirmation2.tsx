@@ -190,9 +190,9 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
   , [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
-  const _chainName = getSubscanChainName(chainName);
+  const network = getSubscanChainName(chainName);
 
-    const url = `https://${_chainName}.subscan.io/account/${address}`;
+    const url = `https://${network}.subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);

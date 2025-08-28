@@ -279,9 +279,9 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
   const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
-    const _chainName = getSubscanChainName(chainName);
+    const network = getSubscanChainName(chainName);
 
-    const url = `https://${_chainName}.subscan.io/account/${address}`;
+    const url = `https://${network}.subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);

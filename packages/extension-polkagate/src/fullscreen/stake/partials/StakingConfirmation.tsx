@@ -14,7 +14,7 @@ import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } f
 import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
-import { amountToHuman, countDecimalPlaces, isValidAddress, toShortAddress } from '../../../util/utils';
+import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress } from '../../../util/utils';
 
 interface AmountProps {
   amount: string | undefined;
@@ -245,7 +245,8 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory }: ButtonsProp
   const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
-    const url = `https://${chainName}.subscan.io/account/${address}`;
+    const network = getSubscanChainName(chainName);
+    const url = `https://${network}.subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);

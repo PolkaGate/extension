@@ -18,7 +18,7 @@ import { BN, hexToBn, isHex } from '@polkadot/util';
 import { Identity, Label, ShowBalance, SlidePopUp } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import getLogo from '../../../util/getLogo';
-import { isHexToBn, sanitizeChainName } from '../../../util/utils';
+import { getSubscanChainName, isHexToBn, sanitizeChainName } from '../../../util/utils';
 
 interface Props {
   api: ApiPromise;
@@ -37,6 +37,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
   const [accountInfo, setAccountInfo] = useState<DeriveAccountInfo | undefined>();
 
   const chainName = sanitizeChainName(chain?.name);
+  const network = getSubscanChainName(chainName);
 
   const _hexToBn = (value: BN) => new BN(isHex(value) ? hexToBn(value) : String(value));
   const sortedNominators = validatorInfo?.exposure?.others?.sort((a, b) => _hexToBn(b.value).sub(_hexToBn(a.value)).isNeg() ? -1 : 1);
@@ -80,7 +81,7 @@ export default function ValidatorInfoPage({ api, chain, isFullscreen, setShowVal
         <Grid item width='15%'>
           <Link
             height='37px'
-            href={`https://${chainName}.subscan.io/account/${validatorInfo?.accountId}`}
+            href={`https://${network}.subscan.io/account/${validatorInfo?.accountId}`}
             m='auto'
             rel='noreferrer'
             target='_blank'
