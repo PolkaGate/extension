@@ -51,6 +51,7 @@ export const PASEO_ASSET_HUB_GENESIS_HASH = '0xd6eec26135305a8ad257a20d003357284
 export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008';
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
 export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
+export const PASEO_PEOPLE_GENESIS_HASH = '0xe6c30d6e148f250b887105237bcaa5cb9f16dd203bf7b5b9d4f1da7387cb86ec';
 
 /** relay chains info */
 export const RELAY_CHAINS_NAMES = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
@@ -79,7 +80,8 @@ export const TEST_NETS = [
   WESTMINT_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   PASEO_GENESIS_HASH,
-  PASEO_ASSET_HUB_GENESIS_HASH
+  PASEO_ASSET_HUB_GENESIS_HASH,
+  PASEO_PEOPLE_GENESIS_HASH
 ];
 
 export const PROXY_CHAINS = [
@@ -126,6 +128,7 @@ export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople',
 export const PEOPLE_CHAINS_GENESIS_HASHES = [
   POLKADOT_PEOPLE_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
+  PASEO_PEOPLE_GENESIS_HASH,
   KUSAMA_PEOPLE_GENESIS_HASH
 ];
 
@@ -320,7 +323,8 @@ export const STORAGE_KEY = {
   MY_POOL: 'MyPool',
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_PROFILE: 'profile',
-  TEST_NET_ENABLED: 'testnet_enabled'
+  TEST_NET_ENABLED: 'testnet_enabled',
+  VALIDATORS_INFO: 'validatorsInfo'
 };
 
 // Function names for asset fetching worker calls
