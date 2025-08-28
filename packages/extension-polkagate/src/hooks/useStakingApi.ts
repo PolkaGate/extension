@@ -515,13 +515,18 @@ export const useWithdrawSolo = (
       return;
     }
 
-    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
-      const spanCount = optSpans.isEmpty
-        ? 0
-        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
+    try {
+      api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
+        const spanCount = optSpans.isEmpty
+          ? 0
+          : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
 
-      setParam(spanCount as unknown as number);
-    }).catch(console.error);
+        setParam(spanCount as unknown as number);
+      }).catch(console.error);
+    } catch (e) {
+      console.log('slashingSpans is not supported', e);
+      setParam(0);
+    }
   }, [api, formatted, param]);
 
   const estimatedFee = useEstimatedFee2(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
