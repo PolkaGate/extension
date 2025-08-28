@@ -192,7 +192,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
             const logoInfo = getLogo2(genesisHash, token);
 
             return (
-              <Box key={`${genesisHash}+${token}`} sx={{ background: '#05091C', border: '2.57px solid #05091C', borderRadius: '50%', mb: '-4px', ml: index === 0 ? 0 : '-7px', position: 'relative', zIndex: index + 1 }}>
+              <Box key={`${genesisHash}+${token}+${index}`} sx={{ background: '#05091C', border: '2.57px solid #05091C', borderRadius: '50%', mb: '-4px', ml: index === 0 ? 0 : '-7px', position: 'relative', zIndex: index + 1 }}>
                 <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
               </Box>
             );

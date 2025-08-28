@@ -83,14 +83,14 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
   const closeDetail = useCallback(() => setOpen(false), []);
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
-  const isNotElected = isActive === undefined && !onSelect;
+  const notElected = isActive === undefined && !onSelect;
 
   return (
     <>
       <Container
         disableGutters
         onClick={onSelect}
-        sx={{ alignItems: 'center', bgcolor: bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C'), borderRadius: '14px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '4px', pl: '10px', ...style }}
+        sx={{ alignItems: 'center', bgcolor: bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C'), borderRadius: '14px', columnGap: '5px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '4px', pl: '10px', ...style }}
       >
         {onSelect &&
           <GlowCheckbox
@@ -106,7 +106,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           </Typography>
         }
         <ValidatorIdentity
-          style={{ m: 0, ml: isNotElected ? '15px' : 0, width: myShare ? '185px' : isNotElected ? '352px' : '305px' }}
+          style={{ m: 0, ml: notElected ? '15px' : 0, width: myShare ? '185px' : notElected ? '352px' : '305px' }}
           validatorInfo={validatorInfo}
         />
         {
@@ -129,7 +129,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           StartIcon={PercentageSquare}
           text={isNaN(commission) ? '---' : String(commission) + '%'}
           title={t('Comm.')}
-          width='120px'
+          width='105px'
         />
         <InfoWithIcons
           StartIcon={Profile2User}
@@ -142,7 +142,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           StartIcon={ChartSquare}
           text={validatorAPY != null ? `${validatorAPY}%` : '---'}
           title={t('APY')}
-          width='105px'
+          width='80px'
         />
         <ValidatorIdSocials
           style={{ width: '125px' }}

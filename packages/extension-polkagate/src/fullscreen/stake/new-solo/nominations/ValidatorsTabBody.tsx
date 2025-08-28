@@ -17,17 +17,17 @@ import { FadeOnScroll, GradientButton, Motion } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
 import { NoValidatorBox } from '../../../components';
 import TableToolbar from '../../partials/TableToolbar';
+import { LabelBar } from './partials/LabelBar';
+import Line from './partials/Line';
 import { Validators } from './partials/Validators';
 import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem } from './ValidatorItem';
-import { LabelBar } from './partials/LabelBar';
-import Line from './partials/Line';
 
 interface Props {
   stakingInfo: SoloStakingInfo | undefined;
 }
 
-export default function ValidatorsTabBody({ stakingInfo }: Props): React.ReactElement {
+export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
@@ -125,13 +125,13 @@ export default function ValidatorsTabBody({ stakingInfo }: Props): React.ReactEl
                 Icon={Timer}
                 color='#8E8E8E'
                 count={nonElected?.length}
+                description={t('Waiting')}
                 isCollapsed={notElectedCollapse}
                 label={t('Not Elected')}
-                description={t('Waiting')}
                 setCollapse={setNotElectedCollapse}
               />
               <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto', width: 'fit-content' }}>
-                <Stack direction='column' sx={{ position: 'relative', gap: '2px', height: 'fit-content', width: '100%' }}>
+                <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', position: 'relative', width: '100%' }}>
                   <Line
                     height={44 * nonElected.length}
                   />

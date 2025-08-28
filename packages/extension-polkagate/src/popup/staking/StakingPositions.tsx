@@ -70,7 +70,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
+function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -176,30 +176,34 @@ export default function StakingPositions (): React.ReactElement {
 
                 return (
                   <Fragment key={`${index}_fragment`}>
-                    {pooledBalance && !pooledBalance?.isZero() &&
+                    {
+                      pooledBalance && !pooledBalance?.isZero() &&
                       <PositionRow
                         balance={pooledBalance}
                         decimal={decimal}
                         genesisHash={genesisHash}
                         isFirst={index === 0}
                         isLast={index === filteredToken.length - 1}
-                        key={index}
+                        key={`${index}_pool`}
                         price={price}
                         token={token}
                         type='pool'
-                      />}
-                    {soloTotal && !soloTotal?.isZero() &&
+                      />
+                    }
+                    {
+                      soloTotal && !soloTotal?.isZero() &&
                       <PositionRow
                         balance={soloTotal}
                         decimal={decimal}
                         genesisHash={genesisHash}
                         isFirst={index === 0}
                         isLast={index === filteredToken.length - 1}
-                        key={index}
+                        key={`${index}_solo`}
                         price={price}
                         token={token}
                         type='solo'
-                      />}
+                      />
+                    }
                   </Fragment>
                 );
               })}

@@ -194,7 +194,7 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
   );
 };
 
-const ValidatorIdentity = memo(function ValidatorIdentity ({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
+const ValidatorIdentityFs = memo(function ValidatorIdentity ({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', maxWidth: '310px', overflow: 'hidden', width: 'fit-content' }}>
       <PolkaGateIdenticon
@@ -233,7 +233,7 @@ export default function ValidatorInformationFS ({ genesisHash, onClose, onSelect
   return (
     <DetailPanel
       LeftItem={
-        <ValidatorIdentity validatorInfo={validator} />
+        <ValidatorIdentityFs validatorInfo={validator} />
       }
       leftColumnContent={
         <LeftColumnContent
