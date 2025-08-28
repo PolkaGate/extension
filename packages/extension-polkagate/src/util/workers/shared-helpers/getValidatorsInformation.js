@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
+//@ts-nocheck
 import { hexToString } from '@polkadot/util';
 
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints, getChainEndpointsFromGenesisHash } from '../utils';
+import getChainName from '../../getChainName';
+import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
 
 const BATCH_SIZE = 50;
 
@@ -15,7 +15,7 @@ const BATCH_SIZE = 50;
  * @param {string} genesisHash - The genesis hash of the chain
  * @returns {string} The name of the chain
 */
-const getChainName = (genesisHash) => {
+const getPeopleChainName = (genesisHash) => {
   if (genesisHash === POLKADOT_GENESIS_HASH) {
     return 'PolkadotPeople';
   } else if (genesisHash === KUSAMA_GENESIS_HASH) {
@@ -60,10 +60,17 @@ const convertId = (id) => ({
  * @param {MessagePort } port
  */
 export default async function getValidatorsInformation (genesisHash, port) {
-  // make connection to the relay chain Polkadot/Kusama/testnets
-  const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
-  const { api, connections } = await fastestEndpoint(endpoints);
   const chainName = getChainName(genesisHash);
+
+  if (!chainName) {
+    console.error('Invalid genesisHash provided:', genesisHash);
+    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: null }));
+
+    return;
+  }
+
+  const endpoints = getChainEndpoints(chainName);
+  const { api, connections } = await fastestEndpoint(endpoints);
 
   console.log('getting validators information on ' + chainName);
 
@@ -81,8 +88,9 @@ export default async function getValidatorsInformation (genesisHash, port) {
 
     // Start connect to the People chain endpoints in order to fetch identities
     console.log('Connecting to People chain endpoints...');
-    const endpoints = getChainEndpoints(chainName);
-    const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(endpoints);
+    const peopleChainName = getPeopleChainName(genesisHash);
+    const peopleEndpoints = getChainEndpoints(peopleChainName);
+    const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(peopleEndpoints);
 
     // Keep elected and waiting validators separate
     const electedValidatorsInfo = electedInfo.info;

@@ -7,6 +7,8 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
+import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
@@ -16,14 +18,16 @@ import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
 import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
-import PopUpHandler from './PopUpHandler';
+import PopUpHandlerPool from './PopUpHandlerPool';
 
 export default function PoolFullScreen (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
 
-  const { genesisHash } = useParams<{ genesisHash: string }>();
+  const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
+  const genesisHash = mapToSystemGenesis(urlGenesisHash);
+
   const { token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
   const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
@@ -34,9 +38,7 @@ export default function PoolFullScreen (): React.ReactElement {
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, urlGenesisHash), [accountAssets, urlGenesisHash]);
 
   const notStaked = useMemo(() => (
     Boolean(accountAssets === null || (accountAssets && asset === undefined)) ||
@@ -96,7 +98,7 @@ export default function PoolFullScreen (): React.ReactElement {
           />
         </Stack>
       </HomeLayout>
-      <PopUpHandler
+      <PopUpHandlerPool
         address={selectedAccount?.address}
         genesisHash={genesisHash}
         poolInfo={stakingInfo.pool}

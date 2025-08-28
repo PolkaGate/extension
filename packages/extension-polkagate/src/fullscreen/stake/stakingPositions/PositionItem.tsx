@@ -21,6 +21,7 @@ interface TokenInfoProps {
 
 export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
   const { chainName, token } = useChainInfo(genesisHash, true);
+  const _chainName = chainName?.replace('AssetHub', '');
 
   return (
     <Grid container item sx={{ alignItems: 'center', flexWrap: 'nowrap', gap: '6px', minWidth: '100px', width: 'fit-content' }}>
@@ -30,7 +31,7 @@ export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
           {token}
         </Typography>
         <Typography color='#AA83DC' variant='B-5'>
-          {chainName}
+          {_chainName}
         </Typography>
       </Grid>
     </Grid>

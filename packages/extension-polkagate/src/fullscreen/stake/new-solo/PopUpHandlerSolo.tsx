@@ -1,39 +1,41 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
-import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
-import type { MyPoolInfo, PositionInfo } from '../../../util/types';
+import type { DateAmount, SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
+import type { PositionInfo } from '../../../util/types';
 
 import React, { useCallback, useMemo } from 'react';
+
+import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 
 import StakingInfo from '../../../popup/staking/stakingInfo';
 import EasyStake from '../easyStake';
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
-import PoolDetail from './joinPool/PoolDetail';
 import BondExtra from './bondExtra';
-import ClaimReward from './claimReward';
-import CreatePool from './createPool';
+import FastUnstake from './fastUnstaking';
 import Info from './Info';
-import JoinCreatePool from './JoinCreatePool';
+import PendingRewards from './pendingReward';
+import Restake from './restake';
+import Settings from './settings';
 import Unstake from './unstake';
 import Withdraw from './withdraw';
 
 interface Props {
   address: string | undefined;
-  genesisHash: string | undefined;
+  urlGenesisHash: string | undefined;
   stakingPopup: StakingPopUps;
-  popupCloser: PopupCloser;
-  stakingInfo: PoolStakingInfo;
-  toBeReleased: DateAmount[] | undefined;
   popupOpener: PopupOpener;
-  poolInfo: MyPoolInfo | null | undefined;
+  popupCloser: PopupCloser;
+  stakingInfo: SoloStakingInfo;
+  toBeReleased: DateAmount[] | undefined;
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandlerSolo ({ address, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash }: Props): React.ReactElement | null {
+  const genesisHash = mapToSystemGenesis(urlGenesisHash);
+
   const handleClose = useCallback(() => {
     popupCloser();
     setSelectedPosition(undefined);
@@ -50,7 +52,8 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
             genesisHash={genesisHash}
             onClose={popupCloser}
             stakingInfo={stakingInfo}
-          />);
+          />
+        );
 
       case StakingPopUps.UNSTAKE:
         return (
@@ -58,16 +61,27 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
-          />);
+          />
+        );
+
+      case StakingPopUps.RESTAKE:
+        return (
+          <Restake
+            address={address}
+            genesisHash={genesisHash}
+            onClose={popupCloser}
+          />
+        );
 
       case StakingPopUps.UNLOCKING:
-
         return (
           <ToBeReleased
             genesisHash={genesisHash}
             onClose={popupCloser}
+            onRestake={popupOpener(StakingPopUps.RESTAKE)}
             toBeReleased={toBeReleased}
-          />);
+          />
+        );
 
       case StakingPopUps.WITHDRAW:
         return (
@@ -75,15 +89,17 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
-          />);
+          />
+        );
 
-      case StakingPopUps.CLAIM_REWARDS:
+      case StakingPopUps.PENDING_REWARDS:
         return (
-          <ClaimReward
+          <PendingRewards
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
-          />);
+          />
+        );
 
       case StakingPopUps.BOND_EXTRA:
         return (
@@ -91,32 +107,26 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
-          />);
+          />
+        );
 
-      case StakingPopUps.JOIN_CREATE_POOL:
+      case StakingPopUps.FAST_UNSTAKE:
         return (
-          <JoinCreatePool
+          <FastUnstake
+            address={address}
+            onClose={popupCloser}
+            urlGenesisHash={urlGenesisHash}
+          />
+        );
+
+      case StakingPopUps.REWARD_DESTINATION_CONFIG:
+        return (
+          <Settings
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}
-            popupOpener={popupOpener}
-          />);
-
-      case StakingPopUps.CREATE_POOL:
-        return (
-          <CreatePool
-            address={address}
-            genesisHash={genesisHash}
-            onClose={popupCloser}
-          />);
-
-      case StakingPopUps.MY_POOL:
-        return (
-          <PoolDetail
-            genesisHash={genesisHash}
-            onClose={popupCloser}
-            poolDetail={poolInfo}
-          />);
+          />
+        );
 
       case StakingPopUps.STAKING_INFO:
         return (
@@ -139,7 +149,7 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
       default:
         return null;
     }
-  }, [address, genesisHash, handleClose, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
+  }, [address, genesisHash, handleClose, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
 }
 
-export default React.memo(PopUpHandler);
+export default React.memo(PopUpHandlerSolo);

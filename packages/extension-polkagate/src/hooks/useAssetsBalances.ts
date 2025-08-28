@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { toCamelCase } from '../util';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
+import { hubToRelayMap, isMigratedRelay } from '../util/workers/utils/adjustGenesis';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
 import useSavedAssetsCache from './useSavedAssetsCache';
 import useSelectedChains from './useSelectedChains';
@@ -89,15 +90,29 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       };
 
       Object.keys(assets).forEach((address) => {
+        const { genesisHash } = assets[address][0];
+
+        if (isMigratedRelay(genesisHash)) {
+          console.log(` ${genesisHash} is migrated`);
+
+          return;
+        }
+
         if (!combinedAsset.balances[address]) {
           combinedAsset.balances[address] = {};
         }
 
-        const { genesisHash } = assets[address][0];
+        const _mappedGenesisHash = hubToRelayMap(genesisHash) as unknown as string;
+
+        if (_mappedGenesisHash !== genesisHash) {
+          assets[address].forEach((asset) => {
+            asset.genesisHash = _mappedGenesisHash;
+          });
+        }
 
         combinedAsset.balances[address] = {
           ...(combinedAsset.balances[address] || {}),
-          [genesisHash]: assets[address]
+          [_mappedGenesisHash]: assets[address]
         };
       });
 

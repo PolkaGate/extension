@@ -19,8 +19,10 @@ import { EasyStakeSide, type SelectedEasyStakingType } from '../fullscreen/stake
 import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
+import { getStakingAsset } from '../popup/staking/utils';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, isHexToBn } from '../util/utils';
+import { mapToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 import { calcPrice } from './useYouHave2';
 import { useAccountAssets, useChainInfo, useCurrentBlockNumber2, useEstimatedFee2, useFormatted3, useIsExposed2, usePendingRewards3, usePool2, usePoolConst, usePoolStakingInfo, useSoloStakingInfo, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '.';
 
@@ -393,13 +395,18 @@ export const useWithdrawPool = (
       return;
     }
 
-    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
-      const spanCount = optSpans.isEmpty
-        ? 0
-        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
+    try {
+      api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
+        const spanCount = optSpans.isEmpty
+          ? 0
+          : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
 
-      setParam([formatted, spanCount]);
-    }).catch(console.error);
+        setParam([formatted, spanCount]);
+      }).catch(console.error);
+    } catch (e) {
+      console.log('slashingSpans is not supported', e);
+      setParam([formatted, 0]);
+    }
   }, [api, formatted, param]);
 
   const tx = useMemo(() => {
@@ -642,9 +649,11 @@ export const useBondExtraSolo = (
 
 export const useFastUnstaking = (
   address: string | undefined,
-  genesisHash: string | undefined
+  urlGenesisHash: string | undefined
 ) => {
   const { t } = useTranslation();
+  const genesisHash = mapToSystemGenesis(urlGenesisHash);
+
   const { api, decimal, token } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
@@ -652,15 +661,16 @@ export const useFastUnstaking = (
   const formatted = useFormatted3(address, genesisHash);
 
   const transferable = useMemo(() => {
-    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
-
+    const asset = getStakingAsset(accountAssets, urlGenesisHash);
+console.log('asset', asset, urlGenesisHash);
     return getValue('transferable', asset);
-  }, [accountAssets, genesisHash]);
+  }, [accountAssets, urlGenesisHash]);
 
   const fastUnstake = api?.tx['fastUnstake']['registerFastUnstake'];
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, fastUnstake?.());
 
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
+
   const hasEnoughDeposit = useMemo(() =>
     (fastUnstakeDeposit && estimatedFee && transferable)
       ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_ZERO)
@@ -1256,11 +1266,13 @@ export const usePoolDetail = (
 
 export const useEasyStake = (
   address: string | undefined,
-  genesisHash: string | undefined
+  _genesisHash: string | undefined
 ) => {
   const MAX_LETTER_THRESHOLD = 35;
 
   const { t } = useTranslation();
+  const genesisHash = mapToSystemGenesis(_genesisHash);
+
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
   const poolStakingConsts = usePoolConst(genesisHash);
@@ -1273,7 +1285,6 @@ export const useEasyStake = (
   const join = api?.tx['nominationPools']['join']; // (amount, poolId)
 
   const polkagatePool = useMemo(() => chainName ? POLKAGATE_POOL_IDS[chainName] : undefined, [chainName]);
-
   const initialPool = usePool2(address, polkagatePool ? genesisHash : undefined, polkagatePool);
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
@@ -1346,13 +1357,8 @@ export const useEasyStake = (
     }];
   }, [address, estimatedFee, selectedStakingType?.pool, selectedStakingType?.type, selectedStakingType?.validators, stakingConsts?.maxNominations, t]);
 
-  const token = useMemo(() => {
-    if (!accountAssets) {
-      return undefined;
-    }
+  const token = useMemo(() => getStakingAsset(accountAssets, _genesisHash), [accountAssets, _genesisHash]);
 
-    return accountAssets.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0') ?? null;
-  }, [accountAssets, genesisHash]);
   const availableBalanceToStake = useMemo(() => token?.freeBalance, [token?.freeBalance]);
 
   const thresholds = useMemo(() => {

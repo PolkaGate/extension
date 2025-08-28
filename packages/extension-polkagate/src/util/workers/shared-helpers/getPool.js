@@ -3,47 +3,34 @@
 
 import { BN, BN_ZERO, bnMax, hexToString } from '@polkadot/util';
 
-import getChainName from '../../getChainName';
 import getPoolAccounts from '../../getPoolAccounts';
-import { closeWebsockets, fastestEndpoint, getChainEndpointsFromGenesisHash } from '../utils';
+import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
 
 /**
+ * Get all information regarding a pool
  * @typedef {Object} RewardIdBalance
  * @property {RewardIdBalanceData} data - The pool reward id balance data
- */
-
-/**
  * @typedef {Object} RewardIdBalanceData
  * @property {number} free - The pool reward id free balance
  * @property {number} frozen - The pool reward id frozen balance
- */
-
-/**
  * @typedef {Object} PoolMember
  * @property {number} poolId - The pool id
  * @property {number} points - The staked amount
- */
-
-/**
  * @typedef {Object} RewardPools
  * @property {number} lastRecordedTotalPayouts - The last recorded total payouts
  * @property {number} totalRewardsClaimed - The total rewards claimed
  * @property {number} totalCommissionPending - The total commission pending
  * @property {number} totalCommissionClaimed - The total commission claimed
- */
-
-/**
- * Get all information regarding a pool
- *
- * @param {string} genesisHash - The Polkadot API instance
  * @param {string} stakerAddress - The address of the staker of the pool
  * @param {number | undefined} id - The specific pool id
  * @param {MessagePort} port
+ * @param {string} chainName
  */
-export async function getPool (genesisHash, stakerAddress, id, port) {
-  const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
+export async function getPool(chainName, stakerAddress, id, port) {
+  // const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
+  const endpoints = getChainEndpoints(chainName);
+
   const { api, connections } = await fastestEndpoint(endpoints);
-  const chainName = getChainName(genesisHash);
 
   console.log(`getPool is called for ${stakerAddress} on chain ${chainName}`);
   id && console.log('getPool is called to fetch the pool with poolId:', id);
@@ -97,7 +84,7 @@ export async function getPool (genesisHash, stakerAddress, id, port) {
   const unwrappedBondedPool = bondedPools.isEmpty ? null : bondedPools.toPrimitive();
 
   const rewardIdFreeBalance = new BN(rewardIdBalancePrimitive?.data.free ?? 0);
-  const poolRewardClaimable = rewardIdBalance ? bnMax(BN_ZERO, rewardIdFreeBalance.sub(/** @type {BN} */ (ED))) : BN_ZERO;
+  const poolRewardClaimable = rewardIdBalance ? bnMax(BN_ZERO, rewardIdFreeBalance.sub(/** @type {BN} */(ED))) : BN_ZERO;
 
   /** @type {{ accountId: string; member: PoolMember; }[]} */
   let poolMembers = [];

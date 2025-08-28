@@ -7,6 +7,8 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
+import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
@@ -15,14 +17,15 @@ import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
 import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
-import PopUpHandler from './PopUpHandler';
+import PopUpHandlerSolo from './PopUpHandlerSolo';
 
 export default function SoloFullScreen (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
 
-  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const { address, genesisHash: urlGenesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const genesisHash = mapToSystemGenesis(urlGenesisHash);
   const { token } = useChainInfo(genesisHash, true);
   const stakingInfo = useSoloStakingInfo(address, genesisHash, refresh, setRefresh);
   const accountAssets = useAccountAssets(address);
@@ -32,13 +35,11 @@ export default function SoloFullScreen (): React.ReactElement {
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, urlGenesisHash), [accountAssets, urlGenesisHash]);
 
   const notStaked = useMemo(() => (
     Boolean(accountAssets === null || (accountAssets && asset === undefined)) ||
-    (asset?.soloTotal && asset.soloTotal.isZero())
+    (asset?.soloTotal?.isZero())
   ), [accountAssets, asset]);
 
   const tokenPrice = useMemo(() => pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0, [asset?.priceId, pricesInCurrency?.prices]);
@@ -95,9 +96,8 @@ export default function SoloFullScreen (): React.ReactElement {
           />
         </Stack>
       </HomeLayout>
-      <PopUpHandler
+      <PopUpHandlerSolo
         address={address}
-        genesisHash={genesisHash}
         popupCloser={popupCloser}
         popupOpener={popupOpener}
         selectedPosition={selectedPosition}
@@ -105,6 +105,7 @@ export default function SoloFullScreen (): React.ReactElement {
         stakingInfo={stakingInfo}
         stakingPopup={stakingPopup}
         toBeReleased={toBeReleased}
+        urlGenesisHash={urlGenesisHash}
       />
     </>
   );

@@ -13,6 +13,7 @@ import LCConnector from '../util/api/lightClient-connect';
 import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
 import { useEndpoint, useEndpoints, useGenesisHash } from '.';
+import { mapToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 
 // Define types for API state and actions
 interface ApiState {
@@ -45,7 +46,8 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 const endpointManager = new EndpointManager();
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
-export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, _genesisHash?: string): ApiPromise | undefined {
+export default function useApi (address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, genesis?: string): ApiPromise | undefined {
+  const _genesisHash = mapToSystemGenesis(genesis || '');
   const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
   const apisContext = useContext(APIContext);
   const chainGenesisHash = useGenesisHash(address, _genesisHash);

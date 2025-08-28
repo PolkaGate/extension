@@ -26,14 +26,14 @@ export default function useStakingConsts2 (genesisHash: string | undefined): Sta
       const at = await api.rpc.chain.getFinalizedHead();
       const apiAt = await api.at(at);
 
-      const maxNominations = apiAt.consts['electionProviderMultiPhase']['minerMaxVotesPerVoter']?.toPrimitive() as number || MAX_NOMINATIONS;
+      const maxNominations = apiAt.consts['electionProviderMultiPhase']?.['minerMaxVotesPerVoter']?.toPrimitive() as number || MAX_NOMINATIONS;
       const maxNominatorRewardedPerValidator = apiAt.consts['staking']['maxExposurePageSize'].toPrimitive() as number;
       const existentialDepositString = apiAt.consts['balances']['existentialDeposit'].toString();
       const existentialDeposit = new BN(existentialDepositString);
       const bondingDuration = apiAt.consts['staking']['bondingDuration'].toPrimitive() as number;
       const sessionsPerEra = apiAt.consts['staking']['sessionsPerEra'].toPrimitive() as number;
-      const epochDuration = apiAt.consts['babe']['epochDuration'].toPrimitive() as number;
-      const expectedBlockTime = api.consts['babe']['expectedBlockTime'].toPrimitive() as number;
+      const epochDuration = apiAt.consts['babe']?.['epochDuration']?.toPrimitive() as number ?? 0;
+      const expectedBlockTime = api.consts['babe']?.['expectedBlockTime']?.toPrimitive() as number ?? 0;
       const epochDurationInHours = epochDuration * expectedBlockTime / 3600000; // 1000 milSec * 60sec * 60min
       const [minNominatorBond, currentEraIndex] = await Promise.all([
         apiAt.query['staking']['minNominatorBond'](),

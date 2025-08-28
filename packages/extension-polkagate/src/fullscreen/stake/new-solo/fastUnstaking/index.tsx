@@ -5,6 +5,8 @@ import { Container, Stack, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+
 import { GradientButton } from '../../../../components';
 import { useFastUnstaking, useTranslation } from '../../../../hooks';
 import { CheckEligibility, EligibilityItem, EligibilityStatus } from '../../../../popup/staking/solo-new/fast-unstake/FastUnstake';
@@ -14,18 +16,19 @@ import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../.
 
 interface Props {
   address: string | undefined;
-  genesisHash: string | undefined;
+  urlGenesisHash: string | undefined;
   onClose: () => void;
 }
 
-export default function FastUnstaking ({ address, genesisHash, onClose }: Props): React.ReactElement {
+export default function FastUnstaking ({ address, onClose, urlGenesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const genesisHash = mapToSystemGenesis(urlGenesisHash);
 
   const { checkDone,
     eligibilityCheck,
     isEligible,
     transactionInformation,
-    tx } = useFastUnstaking(address, genesisHash);
+    tx } = useFastUnstaking(address, urlGenesisHash);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
 

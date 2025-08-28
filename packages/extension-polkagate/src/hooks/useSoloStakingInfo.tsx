@@ -5,14 +5,15 @@ import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
-import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
+import type { AccountStakingInfo, StakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
+import { mapToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 import { useBalances2, useChainInfo, useCurrentEraIndex2, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
 export interface SessionIfo {
@@ -136,34 +137,6 @@ function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStaking
   };
 }
 
-/**
- * Calculates the balance available for staking
- *
- * @param balances - Account balance information
- * @param stakingAccount - User's staking account information
- * @param unlockingAmount - Amount currently in the unlocking process
- * @returns The amount available to stake, or undefined if required data is missing
- */
-const getAvailableToStake = (balances: BalancesInfo | undefined, stakingAccount: AccountStakingInfo | null | undefined, unlockingAmount: BN | undefined) => {
-  if (!balances || !stakingAccount || !unlockingAmount) {
-    return undefined;
-  }
-
-  const staked = stakingAccount?.stakingLedger?.active as unknown as BN;
-  const redeemable = stakingAccount?.redeemable;
-
-  if (!balances?.freeBalance || !staked || !unlockingAmount) {
-    return undefined;
-  }
-
-  const _availableToStake = balances.freeBalance.sub(staked).sub(unlockingAmount).sub(redeemable || BN_ZERO);
-
-  // the reserved balance can be considered here as the amount which can be staked as well in solo,
-  // but since pooled balance are migrating to the reserved balance. and also the pallet has issue to accept reserved,
-  // hence it needs more workaround on it
-  return bnMax(BN_ZERO, _availableToStake);
-};
-
 const DEFAULT_VALUE = {
   availableBalanceToStake: undefined,
   rewardDestinationAddress: undefined,
@@ -181,7 +154,8 @@ const DEFAULT_VALUE = {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
+export default function useSoloStakingInfo (address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
+  const genesisHash = mapToSystemGenesis(_genesisHash);
   const { api, chainName, token } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash);
   const currentEra = useCurrentEraIndex2(genesisHash);
@@ -224,16 +198,15 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [fetchSessionInfo, sessionInfo]);
 
-  const availableBalanceToStake = getAvailableToStake(balances, stakingAccount, sessionInfo?.unlockingAmount);
 
   // Separate effect for updating the state
   useEffect(() => {
-    if (fetchingFlag.current === false || currentEra === undefined || !availableBalanceToStake || !stakingAccount || !sessionInfo || !rewardDestinationAddress || !genesisHash || !address || refresh) {
+    if (fetchingFlag.current === false || currentEra === undefined || !balances || !stakingAccount || !sessionInfo || !rewardDestinationAddress || !genesisHash || !address || refresh) {
       return;
     }
 
     const info = {
-      availableBalanceToStake,
+      availableBalanceToStake: balances.freeBalance,
       rewardDestinationAddress,
       rewards,
       sessionInfo,
@@ -246,7 +219,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     );
 
     setSoloStakingInfo((pre) => ({ ...pre, ...nonUndefinedInfo }) as SoloStakingInfo);
-  }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
+  }, [address, balances, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
 
   useEffect(() => {
     if (rewards && soloStakingInfo && rewardsFetchingFlag.current) {
