@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.6](https://github.com/polkagate/extension/compare/v1.2.5...v1.2.6) (2025-08-28)
+
+
+### Bug Fixes
+
+* resolve hub names cahnge in subscan urls ([bb7c9ff](https://github.com/polkagate/extension/commit/bb7c9ffdbd5fe710c4436bab1a94acdaee95e817))
+
 ## [1.2.5](https://github.com/polkagate/extension/compare/v1.2.4...v1.2.5) (2025-08-27)
 
 
