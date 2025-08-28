@@ -5,10 +5,12 @@ import type { TransferRequest } from '../types';
 
 import request from 'umi-request';
 
-export default function getRewardsSlashes (chainName: string, address: string, filter: 'unclaimed' | 'claimed'): Promise<TransferRequest> {
-  console.log('getting RewardsSlashes from Subscan ...');
+import { getSubscanChainName } from '../utils';
 
-  return postReq(`https://${chainName}.api.subscan.io/api/v2/scan/account/reward_slash`, {
+export default function getRewardsSlashes (chainName: string, address: string, filter: 'unclaimed' | 'claimed'): Promise<TransferRequest> {
+   const network = getSubscanChainName(chainName) as unknown as string;
+
+  return postReq(`https://${network}.api.subscan.io/api/v2/scan/account/reward_slash`, {
     address,
     category: 'Reward',
     claimed_filter: filter,

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
+import { getSubscanChainName } from '../util/utils';
 import { useStakingRewardDestinationAddress } from '.';
 
 export async function getStakingReward (chainName: string, address: AccountId | string | null): Promise<string | null> {
@@ -18,12 +19,12 @@ export async function getStakingReward (chainName: string, address: AccountId | 
     return null;
   }
 
-  console.log(`Getting Staking Total Reward from subscan  on ${chainName} for ${String(address)} ... `);
+   const network = getSubscanChainName(chainName) as unknown as string;
 
   return new Promise((resolve) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + chainName + '.api.subscan.io/api/scan/staking/total_reward', { address })
+      postData('https://' + network + '.api.subscan.io/api/scan/staking/total_reward', { address })
         .then((data: { message: string; data: { sum: string; }; }) => {
           if (data.message === 'Success') {
             const reward = data.data.sum;

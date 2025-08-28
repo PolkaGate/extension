@@ -5,8 +5,12 @@ import type { TransferRequest } from '../types';
 
 import request from 'umi-request';
 
+import { getSubscanChainName } from '../utils';
+
 export function getNominationPoolsClaimedRewards (chainName: string, address: string, pageSize: number): Promise<TransferRequest> {
-  return postReq(`https://${chainName}.api.subscan.io/api/scan/nomination_pool/rewards`, {
+   const network = getSubscanChainName(chainName) as unknown as string;
+
+   return postReq(`https://${network}.api.subscan.io/api/scan/nomination_pool/rewards`, {
     address,
     row: pageSize
   });
