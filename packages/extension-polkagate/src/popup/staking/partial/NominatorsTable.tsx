@@ -27,23 +27,29 @@ export const ValidatorIdentity = memo(function ValidatorIdentity ({ style, valid
   const isBlueish = useIsBlueish();
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
+    <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'start', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...style }}>
       <PolkaGateIdenticon
         address={validatorInfo.accountId.toString()}
         size={24}
       />
-      {!validatorInfo.identity &&
+      {
+        !validatorInfo.identity &&
         <Typography color='text.primary' variant='B-2'>
           {toShortAddress(validatorInfo.accountId)}
-        </Typography>}
-      {validatorInfo.identity &&
-        <Typography color='text.primary' variant='B-2'>
+        </Typography>
+      }
+      {
+        validatorInfo.identity &&
+        <Typography color='text.primary' textAlign='start' variant='B-2'>
           {validatorInfo.identity.displayParent ?? validatorInfo.identity.display}
-        </Typography>}
-      {validatorInfo.identity?.displayParent &&
-        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} variant='B-5'>
+        </Typography>
+      }
+      {
+        validatorInfo.identity?.displayParent &&
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} textAlign='start' variant='B-5'>
           {validatorInfo.identity.display}
-        </Typography>}
+        </Typography>
+      }
     </Container>
   );
 });
