@@ -44,7 +44,7 @@ export default function useValidatorApy(api: ApiPromise | undefined, validatorAd
     const eraDepth = 10 * eraPerDay; // eras to calculate
 
     // Loop over the past eras to calculate rewards for the validator
-    for (let eraIndex = currentEra - eraDepth; eraIndex <= currentEra; eraIndex++) {
+    for (let eraIndex = Math.max(0, currentEra - eraDepth); eraIndex <= currentEra; eraIndex++) {
       let netReward;
       const eraReward = await api.query['staking']['erasValidatorReward'](eraIndex) as Option<u128>;
 
