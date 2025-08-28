@@ -6,6 +6,8 @@ import type { DeriveAccountRegistration, DeriveStakingQuery } from '@polkadot/ap
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { WorkerContext } from '../components';
+import { getStorage, setStorage } from '../util';
+import { STORAGE_KEY } from '../util/constants';
 
 export interface ValidatorInformation extends DeriveStakingQuery {
   identity: DeriveAccountRegistration | null | undefined;
@@ -33,26 +35,26 @@ export default function useValidatorsInformation (genesisHash: string | undefine
   const [savedValidatorsInformation, setSavedValidatorsInformation] = useState<ValidatorsInformation | undefined>(undefined);
 
   const loadFromStorage = useCallback((key: string) => {
-    chrome.storage.local.get('validatorsInfo', (res) => {
-      const last = res?.['validatorsInfo'] as Record<string, string> ?? {};
+    getStorage(STORAGE_KEY.VALIDATORS_INFO).then((res) => {
+      const last = res as Record<string, string> ?? {};
 
       const loaded = last[key] ? JSON.parse(last[key]) as ValidatorsInformation : undefined;
 
       setSavedValidatorsInformation(loaded);
-    });
+    }).catch(console.error);
   }, []);
 
   const saveValidatorsInfoInStorage = useCallback((info: ValidatorsInformation) => {
-    chrome.storage.local.get('validatorsInfo', (res) => {
-      const last = res?.['validatorsInfo'] as Record<string, string> ?? {};
+    getStorage(STORAGE_KEY.VALIDATORS_INFO).then((res) => {
+      const last = res as Record<string, string> ?? {};
       const key = `${info.genesisHash}`;
 
       const infoToSave = JSON.stringify(info);
 
       last[key] = infoToSave;
 
-      chrome.storage.local.set({ validatorsInfo: last }).catch(console.error);
-    });
+      setStorage(STORAGE_KEY.VALIDATORS_INFO, last).catch(console.error);
+    }).catch(console.error);
   }, []);
 
   const fetchValidatorsInformation = useCallback(() => {
