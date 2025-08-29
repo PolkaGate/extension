@@ -5,11 +5,11 @@ import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
-import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
+import type { AccountStakingInfo, StakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
