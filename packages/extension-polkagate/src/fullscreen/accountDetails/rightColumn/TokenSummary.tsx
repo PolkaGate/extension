@@ -83,10 +83,11 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         fontWeight={400}
         num={totalBalancePrice}
         skeletonHeight={30}
+        style= {{ height: '49.5px' }}
         width={totalBalancePrice === undefined ? '100px' : 'fit-content'}
         withSmallDecimal
       />
-      <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '30px', width: 'fit-content' }}>
+      <Grid alignItems='center' container item sx={{ columnGap: '5px', height: '30px', width: 'fit-content' }}>
         <ShowBalance4
           balance={token?.totalBalance}
           balanceProps={{

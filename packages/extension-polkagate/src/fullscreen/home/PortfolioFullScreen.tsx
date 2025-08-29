@@ -23,12 +23,12 @@ function PortfolioFullScreen (): React.ReactElement {
         <Typography color={isDark ? 'text.secondary' : '#291443'} sx={{ userSelect: 'none' }} variant='B-2'>
           {t('Total Portfolio')}
         </Typography>
-        <Grid container item sx={{ height: `${HEIGHT}px`, m: '11px 0 5px' }}>
+        <Grid container item sx={{ height: `${HEIGHT}px`, m: '6px 0 7px' }}>
           {youHave?.portfolio === undefined
-            ? <Stack direction='column' rowGap='8px'>
+            ? (<Stack direction='column' rowGap='8px'>
               <MySkeleton style={{ width: '258px' }} />
               <MySkeleton style={{ width: '155px' }} />
-            </Stack>
+            </Stack>)
             : <FormatPrice
               commify
               decimalColor={theme.palette.text.secondary}
@@ -38,6 +38,7 @@ function PortfolioFullScreen (): React.ReactElement {
               fontWeight={400}
               height={HEIGHT}
               num={youHave.portfolio}
+              onHideShape='shape1'
               width='fit-content'
               withSmallDecimal
             />
