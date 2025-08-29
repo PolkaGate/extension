@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.7](https://github.com/polkagate/extension/compare/v1.2.6...v1.2.7) (2025-08-29)
+
+
+### Bug Fixes
+
+* compare token symbols in the same case ([52e43dd](https://github.com/polkagate/extension/commit/52e43dd36d751b18fe29671e93e177c1698b53c9))
+
 ## [1.2.6](https://github.com/polkagate/extension/compare/v1.2.5...v1.2.6) (2025-08-28)
 
 
