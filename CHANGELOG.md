@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.8](https://github.com/polkagate/extension/compare/v1.2.7...v1.2.8) (2025-08-29)
+
+
+### Bug Fixes
+
+* resolve incorrect comparison of genesis with chain name ([d3c1c38](https://github.com/polkagate/extension/commit/d3c1c38389cdbf4e7b82284a2d27d65cf0bb6754))
+
 ## [1.2.7](https://github.com/polkagate/extension/compare/v1.2.6...v1.2.7) (2025-08-29)
 
 
