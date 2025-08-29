@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-ignore
 import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import type { Forcing } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
