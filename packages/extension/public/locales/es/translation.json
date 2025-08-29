@@ -1,6 +1,5 @@
 {
   "Account": "Cuenta",
-  "Paste the address here": "Pega la dirección aquí",
   "Accounts": "Cuentas",
   "Disconnect all": "Desconectar todo",
   "Connect all": "Conectar todo",
@@ -826,5 +825,9 @@
   "User Agreement": "Acuerdo de usuario",
   "DApp Requests": "Solicitudes DApp",
   "Add profile": "Agregar perfil",
-  "Profile settings": "Configuración del perfil"
+  "Profile settings": "Configuración del perfil",
+  "recovery phrase": "frase de recuperación",
+  "QR-signer": "firmante QR",
+  "raw seed": "semilla en bruto",
+  "from file": "desde archivo"
 }

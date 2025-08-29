@@ -141,7 +141,7 @@ export default function ImportSeed (): React.ReactElement {
       setName(undefined);
       setPassword('');
       setError(undefined);
-      navigate('/account/have-wallet');
+      navigate('/account/have-wallet') as void;
     }
   }, [navigate, step]);
 
@@ -149,7 +149,7 @@ export default function ImportSeed (): React.ReactElement {
     <AdaptiveLayout style={{ maxWidth: '600px' }}>
       <OnboardTitle
         label={t('Import from raw seed')}
-        labelPartInColor='raw seed'
+        labelPartInColor={t('raw seed')}
         onBack={onBack}
       />
       <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px' }}>

@@ -1,6 +1,5 @@
 {
   "Account": "",
-  "Paste the address here": "",
   "Accounts": "",
   "Disconnect all": "",
   "Connect all": "",
@@ -818,5 +817,9 @@
   "User Agreement": "",
   "DApp Requests": "",
   "Add profile": "",
-  "Profile settings": ""
+  "Profile settings": "",
+  "recovery phrase": "",
+  "QR-signer": "",
+  "raw seed": "",
+  "from file": ""
 }
