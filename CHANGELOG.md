@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.3](https://github.com/polkagate/extension/compare/v1.3.2...v1.3.3) (2025-08-30)
+
+
+### Bug Fixes
+
+* resolve my share issue when it is 0 ([a388cd1](https://github.com/polkagate/extension/commit/a388cd182340eb2556d190d8a1226efd5b752b0d))
+
 ## [1.3.2](https://github.com/polkagate/extension/compare/v1.3.1...v1.3.2) (2025-08-30)
 
 
