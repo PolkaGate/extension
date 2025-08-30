@@ -4,6 +4,7 @@
 export const RETRY_DELAY = 1100; // 1.1 second delay
 export const MAX_RETRIES = 7;
 export const BATCH_SIZE = 3;
+const MAX_BACKOFF_MS = 60_000; // 60s cap
 
 /**
  * Sleep function with exponential backoff and jitter, with logging
@@ -21,6 +22,7 @@ export const backoffSleep = (baseDelay: number, attempt: number, factor = 2, jit
     delay *= rand;
   }
 
+  delay = Math.min(delay, MAX_BACKOFF_MS);
   const stack = new Error().stack?.split('\n')[2]?.trim() || 'unknown caller';
 
   console.log(`[backoffSleep] Waiting ${Math.round(delay)}ms (attempt ${attempt}, called from: ${stack})`);
