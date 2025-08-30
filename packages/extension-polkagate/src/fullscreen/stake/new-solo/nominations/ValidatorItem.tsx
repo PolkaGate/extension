@@ -110,7 +110,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           validatorInfo={validatorInfo}
         />
         {
-          myShare &&
+          !!myShare &&
           <InfoWithIcons
             text={`${myShare}%`}
             title={t('My Share')}
