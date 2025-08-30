@@ -763,12 +763,22 @@ export const removeZeroBalanceRecords = (toBeSavedAssets: SavedAssets): SavedAss
 };
 
 export const getSubscanChainName = (chainName?: string): string | undefined => {
-   const lcChainName = chainName?.toLowerCase();
+  if (!chainName) {
+    return;
+  }
 
-    return lcChainName?.includes('assethub')
-      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
-      : chainName;
-    };
+  const lc = chainName.toLowerCase();
+
+  if (lc.includes('assethub')) {
+    return lc.replace(/^(.*)assethub$/, 'assethub-$1');
+  }
+
+  if (lc.includes('people')) {
+    return lc.replace(/^(.*)people$/, 'people-$1');
+  }
+
+  return lc;
+};
 
 export const safeSubtraction = (subtraction: BN, preferredMin = BN_ZERO) => {
   return bnMax(preferredMin, subtraction);
