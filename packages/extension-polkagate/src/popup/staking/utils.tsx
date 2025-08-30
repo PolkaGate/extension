@@ -3,17 +3,18 @@
 
 import type { FetchedBalance, PositionInfo } from '../../util/types';
 
-import { resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis, resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 
 import { STAKING_CHAINS, TEST_NETS } from '../../util/constants';
 import getChain from '../../util/getChain';
 import { sanitizeChainName } from '../../util/utils';
 
 export function getStakingAsset (accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
-    const _assetId = resolveStakingAssetId(genesisHash);
-    const nativeTokenBalance = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === _assetId);
+  const mappedGenesisHash = mapRelayToSystemGenesis(genesisHash);
+  const _assetId = resolveStakingAssetId(mappedGenesisHash);
+  const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === mappedGenesisHash && String(assetId) === _assetId);
 
-    return nativeTokenBalance ?? null;
+  return asset ?? null;
 }
 
 export function getEarningOptions (accountAssets: FetchedBalance[] | null | undefined, isTestnetEnabled: boolean | undefined) {
@@ -26,17 +27,17 @@ export function getEarningOptions (accountAssets: FetchedBalance[] | null | unde
       return undefined;
     }
 
-    const nativeTokenBalance = getStakingAsset(accountAssets, genesisHash);
+    const asset = getStakingAsset(accountAssets, genesisHash);
 
-    if ( // filter staked tokens
-      (nativeTokenBalance?.soloTotal && !nativeTokenBalance.soloTotal.isZero()) ||
-      (nativeTokenBalance?.pooledBalance && !nativeTokenBalance.pooledBalance.isZero())) {
-      return undefined;
+    // filter already staked assets
+    if ((asset?.soloTotal && !asset.soloTotal.isZero()) ||
+      (asset?.pooledBalance && !asset.pooledBalance.isZero())) {
+      return null;
     }
 
     return {
       ...chain,
-      ...nativeTokenBalance,
+      ...asset,
       chainName: sanitizeChainName(chain.name || '') ?? 'Unknown'
     } as unknown as PositionInfo;
   }).filter((item) => !!item);

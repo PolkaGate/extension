@@ -83,7 +83,7 @@ export function resolveStakingAssetId (genesisHash: string | undefined): string 
     return;
   }
 
-  return isMigratedRelay(genesisHash)
+  return isMigratedHub(genesisHash)
     ? `${NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB}`
     : `${NATIVE_TOKEN_ASSET_ID}`;
 }

@@ -388,7 +388,7 @@ export const useWithdrawPool = (
   const [param, setParam] = useState<[string, number] | null | undefined>(null);
 
   const transferable = useMemo(() => {
-    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
+    const asset = getStakingAsset(accountAssets, genesisHash);
 
     return getValue('transferable', asset);
   }, [accountAssets, genesisHash]);
@@ -408,7 +408,7 @@ export const useWithdrawPool = (
         setParam([formatted, spanCount]);
       }).catch(console.error);
     } catch (e) {
-      console.log('slashingSpans is not supported', e);
+      console.log('slashingSpans is deprecated', e);
       setParam([formatted, 0]);
     }
   }, [api, formatted, param]);
@@ -515,9 +515,7 @@ export const useWithdrawSolo = (
 
   const [param, setParam] = useState<number | null | undefined>(null);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-    , [accountAssets, genesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, genesisHash), [accountAssets, genesisHash]);
   const transferable = useMemo(() => getValue('transferable', asset), [asset]);
   const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
 
@@ -535,7 +533,7 @@ export const useWithdrawSolo = (
         setParam(spanCount as unknown as number);
       }).catch(console.error);
     } catch (e) {
-      console.log('slashingSpans is not supported', e);
+      console.log('slashingSpans is deprecated', e);
       setParam(0);
     }
   }, [api, formatted, param]);
@@ -667,10 +665,10 @@ export const useFastUnstaking = (
   const formatted = useFormatted3(address, genesisHash);
 
   const transferable = useMemo(() => {
-    const asset = getStakingAsset(accountAssets, urlGenesisHash);
+    const asset = getStakingAsset(accountAssets, genesisHash);
 
     return getValue('transferable', asset);
-  }, [accountAssets, urlGenesisHash]);
+  }, [accountAssets, genesisHash]);
 
   const fastUnstake = api?.tx['fastUnstake']?.['registerFastUnstake']; // PASEO seems does not support fast unstake
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, fastUnstake?.());

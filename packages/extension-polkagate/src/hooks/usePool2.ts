@@ -25,7 +25,6 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
  const { chainName } = useChainInfo(genesisHash, true);
   const formatted = useFormatted3(address, genesisHash);
   const isFetching = useContext(FetchingContext);
-  console.log('initialPool:::',genesisHash,address,id);
 
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>(undefined);
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>(undefined);

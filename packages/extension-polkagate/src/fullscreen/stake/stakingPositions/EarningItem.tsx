@@ -7,7 +7,7 @@ import { Container, Grid, Skeleton, Typography, useTheme } from '@mui/material';
 import { PercentageCircle, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { type BN } from '@polkadot/util';
+import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { FormatBalance2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -22,7 +22,7 @@ interface StakedProps {
   token: string;
 }
 
-const Staked = ({ balance, decimal, token }: StakedProps) => {
+const Available = ({ balance, decimal, token }: StakedProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -103,7 +103,7 @@ function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
-      <Staked balance={freeBalance || availableBalance} decimal={decimal} token={tokenSymbol} />
+      <Available balance={freeBalance || availableBalance || BN_ZERO} decimal={decimal} token={tokenSymbol} />
       <ChainIdentifier genesisHash={genesisHash} />
       <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
       <YieldBadge rate={rate} />

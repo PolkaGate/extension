@@ -33,7 +33,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandlerSolo({ address, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash }: Props): React.ReactElement | null {
+function PopUpHandlerSolo ({ address, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash }: Props): React.ReactElement | null {
   const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
 
   const handleClose = useCallback(() => {
@@ -149,7 +149,7 @@ function PopUpHandlerSolo({ address, popupCloser, popupOpener, selectedPosition,
       default:
         return null;
     }
-  }, [address, genesisHash, handleClose, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
+  }, [address, genesisHash, handleClose, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash]);
 }
 
 export default React.memo(PopUpHandlerSolo);

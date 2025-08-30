@@ -20,7 +20,7 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerPool from './PopUpHandlerPool';
 
-export default function PoolFullScreen(): React.ReactElement {
+export default function PoolFullScreen (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
@@ -38,7 +38,7 @@ export default function PoolFullScreen(): React.ReactElement {
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
-  const asset = useMemo(() => getStakingAsset(accountAssets, urlGenesisHash), [accountAssets, urlGenesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, genesisHash), [accountAssets, genesisHash]);
 
   const notStaked = useMemo(() => (
     Boolean(accountAssets === null || (accountAssets && asset === undefined)) ||

@@ -199,7 +199,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
   const isExtension = useIsExtensionPopup();
 
   const isRow = useMemo(() => (pool && pool?.bondedPool?.state?.toString() !== 'Creating'), [pool]);
-  const fsStyle = isExtension ? {} : { bgcolor: '#05091C', borderRadius: '14px', gap: '7px', padding: '15px' };
+  const fsStyle = isExtension ? {} : { bgcolor: '#05091C', borderRadius: '14px', gap: '7px', padding: '15px 15px 8px' };
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1 }}>

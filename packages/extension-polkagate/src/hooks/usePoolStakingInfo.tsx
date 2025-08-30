@@ -94,7 +94,7 @@ export interface PoolStakingInfo {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function usePoolStakingInfo(address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
+export default function usePoolStakingInfo (address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
   const genesisHash = mapRelayToSystemGenesis(_genesisHash);
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances2(address, genesisHash, refresh, setRefresh);

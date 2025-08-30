@@ -104,11 +104,11 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
 
         const _mappedGenesisHash = hubToRelayMap(genesisHash) as unknown as string;
 
-        if (_mappedGenesisHash !== genesisHash) {
-          assets[address].forEach((asset) => {
-            asset.genesisHash = _mappedGenesisHash;
-          });
-        }
+        // if (_mappedGenesisHash !== genesisHash) {
+        //   assets[address].forEach((asset) => {
+        //     asset.genesisHash = _mappedGenesisHash;
+        //   });
+        // }
 
         combinedAsset.balances[address] = {
           ...(combinedAsset.balances[address] || {}),

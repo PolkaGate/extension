@@ -20,7 +20,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function FastUnstaking({ address, onClose, urlGenesisHash }: Props): React.ReactElement {
+export default function FastUnstaking ({ address, onClose, urlGenesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
 
