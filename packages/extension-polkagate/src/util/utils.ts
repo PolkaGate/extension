@@ -13,7 +13,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
-import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, bnMax, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
@@ -769,3 +769,7 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
       ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
       : chainName;
     };
+
+export const safeSubtraction = (subtraction: BN, preferredMin = BN_ZERO) => {
+  return bnMax(preferredMin, subtraction);
+};
