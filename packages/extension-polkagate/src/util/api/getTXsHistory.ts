@@ -12,7 +12,9 @@ import request from 'umi-request';
 
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
+
 import { getSubscanChainName } from '../utils';
+import { backoffSleep, BATCH_SIZE, MAX_RETRIES, RETRY_DELAY } from './utils';
 
 // Common types
 interface AccountId {
@@ -147,9 +149,6 @@ interface ParamTypesMapping {
 }
 
 const SUPPORTED_MODULES = ['balances', 'nominationpools', 'utility', 'proxy', 'staking', 'convictionvoting'];
-const RETRY_DELAY = 1100; // 1.1 second delay
-const MAX_RETRIES = 7;
-const BATCH_SIZE = 3;
 const PAGE_SIZE = 60;
 const nullObject = {
   code: 0,
@@ -160,12 +159,6 @@ const nullObject = {
   generated_at: Date.now(),
   message: 'Success'
 } as unknown as ExtrinsicsRequest;
-
-/**
- * Sleep function to create delays between retries
- * @param ms Milliseconds to sleep
- */
-const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Enhanced POST request with retry logic for rate limiting
@@ -187,8 +180,7 @@ export async function postReq<T> (
     return response;
   } catch (error) {
     if (retryCount < MAX_RETRIES) {
-      console.log(`Rate limit hit, retrying in ${RETRY_DELAY}ms... (Attempt ${retryCount + 1}/${MAX_RETRIES})`);
-      await sleep(RETRY_DELAY);
+      await backoffSleep(RETRY_DELAY, retryCount);
 
       return postReq<T>(api, data, option, retryCount + 1);
     }
@@ -214,7 +206,7 @@ async function processBatch<T> (array: T[], batchSize: number, processor: (items
 
     // Add delay between batches if not the last batch
     if (i + batchSize < array.length) {
-      await sleep(RETRY_DELAY);
+      await backoffSleep(RETRY_DELAY, i / batchSize);
     }
   }
 

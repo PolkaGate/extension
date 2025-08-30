@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.3.0](https://github.com/polkagate/extension/compare/v1.2.8...v1.3.0) (2025-08-30)
+
+
+### Features
+
+* add exponential backoff while fetching fails ([#1810](https://github.com/polkagate/extension/issues/1810)) ([651cb14](https://github.com/polkagate/extension/commit/651cb1440bac43435c13900f47fee279a3fe6df8))
+
 ## [1.2.8](https://github.com/polkagate/extension/compare/v1.2.7...v1.2.8) (2025-08-29)
 
 
