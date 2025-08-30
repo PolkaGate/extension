@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.3.1](https://github.com/polkagate/extension/compare/v1.3.0...v1.3.1) (2025-08-30)
+
+
+### Bug Fixes
+
+* resolve available balance ([#1809](https://github.com/polkagate/extension/issues/1809)) ([019e347](https://github.com/polkagate/extension/commit/019e34747ac6f4a7ee5617ab6912cc0b9c8c04c7)), closes [#1811](https://github.com/polkagate/extension/issues/1811)
+* return staking home from nomination fs ([#1812](https://github.com/polkagate/extension/issues/1812)) ([ae28099](https://github.com/polkagate/extension/commit/ae28099d167ad15e46fe4ef0aa97f9e32572f198))
+
 # [1.3.0](https://github.com/polkagate/extension/compare/v1.2.8...v1.3.0) (2025-08-30)
 
 
