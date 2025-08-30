@@ -7,7 +7,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
-import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { ActionButton, BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
@@ -32,7 +32,7 @@ export const CheckEligibility = ({ loading }: { loading: boolean }) => {
     <Stack direction='column' sx={style}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center' }}>
         <SyncLoader color={adjustedColor} loading={loading} size={4} speedMultiplier={0.6} />
-        <Typography color={ adjustedColor } variant='B-2'>
+        <Typography color={adjustedColor} variant='B-2'>
           {t('Checking fast unstake eligibility')}
         </Typography>
       </Grid>
@@ -112,12 +112,12 @@ export const EligibilityStatus = ({ onBack, status }: { status: boolean | undefi
   );
 };
 
-export default function FastUnstake (): React.ReactElement {
+export default function FastUnstake(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
   const { genesisHash: UrlGenesisHash } = useParams<{ genesisHash: string }>();
-  const genesisHash = mapToSystemGenesis(UrlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesis(UrlGenesisHash);
 
   const address = useSelectedAccount()?.address;
   const navigate = useNavigate();

@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import chains from '../util/chains';
 import { sanitizeChainName } from '../util/utils';
 import { useApi2, useMetadata } from '.';
-import { mapToSystemGenesis } from '../util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 
 /**
  * Interface representing the information about a blockchain.
@@ -38,8 +38,8 @@ interface ChainInfo {
  * @param {boolean} noApi - If true, prevents triggering the API connection.
  * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
  */
-export default function useChainInfo (_genesisHash: string | null | undefined, noApi = false): ChainInfo {
-  const genesisHash = mapToSystemGenesis(_genesisHash);
+export default function useChainInfo(_genesisHash: string | null | undefined, noApi = false): ChainInfo {
+  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
   const chain = useMetadata(genesisHash, true);
   const api = useApi2(noApi ? undefined : genesisHash);
 

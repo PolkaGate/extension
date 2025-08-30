@@ -22,7 +22,7 @@ import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/cr
 import { getStakingAsset } from '../popup/staking/utils';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, isHexToBn, safeSubtraction } from '../util/utils';
-import { mapToSystemGenesis } from '../util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 import { calcPrice } from './useYouHave2';
 import { useAccountAssets, useChainInfo, useCurrentBlockNumber2, useEstimatedFee2, useFormatted3, useIsExposed2, usePendingRewards3, usePool2, usePoolConst, usePoolStakingInfo, useSoloStakingInfo, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '.';
 
@@ -658,7 +658,7 @@ export const useFastUnstaking = (
   urlGenesisHash: string | undefined
 ) => {
   const { t } = useTranslation();
-  const genesisHash = mapToSystemGenesis(urlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
 
   const { api, decimal, token } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
@@ -668,11 +668,11 @@ export const useFastUnstaking = (
 
   const transferable = useMemo(() => {
     const asset = getStakingAsset(accountAssets, urlGenesisHash);
-console.log('asset', asset, urlGenesisHash);
+
     return getValue('transferable', asset);
   }, [accountAssets, urlGenesisHash]);
 
-  const fastUnstake = api?.tx['fastUnstake']['registerFastUnstake'];
+  const fastUnstake = api?.tx['fastUnstake']?.['registerFastUnstake']; // PASEO seems does not support fast unstake
   const estimatedFee = useEstimatedFee2(genesisHash, formatted, fastUnstake?.());
 
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
@@ -1283,7 +1283,7 @@ export const useEasyStake = (
   const MAX_LETTER_THRESHOLD = 35;
 
   const { t } = useTranslation();
-  const genesisHash = mapToSystemGenesis(_genesisHash);
+  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
 
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);

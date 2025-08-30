@@ -34,7 +34,7 @@ type RelayToSystemChainsType = Record<string, {
  * @param type - The type of system chain to map to ('hub', 'people', or 'assetHub'). Defaults to 'hub'.
  * @returns The adjusted genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapToSystemGenesis (genesisHash: string | null | undefined, type: SystemChainsName = 'hub'): string | undefined {
+export function mapRelayToSystemGenesis (genesisHash: string | null | undefined, type: SystemChainsName = 'hub'): string | undefined {
   if (!genesisHash) {
     return;
   }

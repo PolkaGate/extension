@@ -8,7 +8,7 @@ import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
-import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
@@ -19,13 +19,13 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerSolo from './PopUpHandlerSolo';
 
-export default function SoloFullScreen (): React.ReactElement {
+export default function SoloFullScreen(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
 
   const { address, genesisHash: urlGenesisHash } = useParams<{ address: string; genesisHash: string }>();
-  const genesisHash = mapToSystemGenesis(urlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
   const { token } = useChainInfo(genesisHash, true);
   const stakingInfo = useSoloStakingInfo(address, genesisHash, refresh, setRefresh);
   const accountAssets = useAccountAssets(address);

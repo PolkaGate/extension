@@ -6,7 +6,7 @@ import type { PositionInfo } from '../../../util/types';
 
 import React, { useCallback, useMemo } from 'react';
 
-import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 
 import StakingInfo from '../../../popup/staking/stakingInfo';
 import EasyStake from '../easyStake';
@@ -33,8 +33,8 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandlerSolo ({ address, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash }: Props): React.ReactElement | null {
-  const genesisHash = mapToSystemGenesis(urlGenesisHash);
+function PopUpHandlerSolo({ address, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash }: Props): React.ReactElement | null {
+  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
 
   const handleClose = useCallback(() => {
     popupCloser();

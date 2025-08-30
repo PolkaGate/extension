@@ -6,7 +6,7 @@ import type { PositionInfo } from '../../../util/types';
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { mapToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 import { BN_ZERO } from '@polkadot/util';
 
 import { DecisionButtons } from '../../../components';
@@ -27,9 +27,9 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
+function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
-  const genesisHash = mapToSystemGenesis(selectedPosition?.genesisHash);
+  const genesisHash = mapRelayToSystemGenesis(selectedPosition?.genesisHash);
   const { token } = useChainInfo(genesisHash);
 
   const { amount,

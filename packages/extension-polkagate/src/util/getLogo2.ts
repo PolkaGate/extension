@@ -8,7 +8,7 @@ import type { Chain } from '../../../extension-chains/src/types';
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { mapToSystemGenesis } from './workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from './workers/utils/adjustGenesis';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
@@ -22,10 +22,10 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+export default function getLogo2(info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
-  const _info = mapToSystemGenesis(info as string);
+  const _info = mapRelayToSystemGenesis(info as string);
 
   if (token) {
     const networkMap = getNetworkMap();
