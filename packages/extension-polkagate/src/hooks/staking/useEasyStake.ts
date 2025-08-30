@@ -152,7 +152,7 @@ const useEasyStake = (
 
   const errorMessage = useMemo(() => {
     if (token === null || availableBalanceToStake?.isZero()) {
-      return t('Not enough amount to stake more.');
+      return t('Not enough amount to stake.');
     }
 
     if (!amountAsBN || !amount) {
