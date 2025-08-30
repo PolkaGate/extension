@@ -7,6 +7,8 @@ import type { FilterOptions, RecordTabStatus, RecordTabStatusGov, TransactionHis
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+
 import { useChainInfo } from '../../hooks';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { getTXsHistory } from '../../util/api/getTXsHistory';
@@ -15,7 +17,8 @@ import { getHistoryFromStorage } from './hookUtils/getHistoryFromStorage';
 import { saveHistoryToStorage } from './hookUtils/saveHistoryToStorage';
 import { extrinsicsReducer, formatString, log, receivedReducer } from './hookUtils/utils';
 
-export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory (address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);
 

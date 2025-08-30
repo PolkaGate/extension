@@ -14,9 +14,9 @@ export const NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB = -1; //  used only for asset hub
 
 export const POLKAGATE_POOL_IDS: Record<string, number> = {
   Kusama: 18,
-  Paseo: 3,
+  PaseoAssetHub: 3,
   Polkadot: 8,
-  Westend: 6
+  WestendAssetHub: 6
 };
 
 // export const EXTENSION_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf2WHD0oVR0NS7tW6C1U025H1XBEZXqwxvFvPhcoFa18eHQiA/viewform';

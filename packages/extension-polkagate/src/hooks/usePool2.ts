@@ -11,7 +11,7 @@ import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { isHexToBn } from '../util/utils';
-import { useFormatted3 } from '.';
+import { useChainInfo, useFormatted3 } from '.';
 
 const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 
@@ -22,22 +22,23 @@ interface WorkerMessage {
 
 export default function usePool2 (address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
-
+ const { chainName } = useChainInfo(genesisHash, true);
   const formatted = useFormatted3(address, genesisHash);
   const isFetching = useContext(FetchingContext);
+  console.log('initialPool:::',genesisHash,address,id);
 
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>(undefined);
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>(undefined);
 
   const fetchPoolInformation = useCallback(() => {
-    if (!worker || !genesisHash || !formatted) {
+    if (!worker || !genesisHash || !formatted || !chainName) {
       return;
     }
 
     // the sort in this object is important because the getPool use the params as they pass
     // eslint-disable-next-line sort-keys
-    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted, id } });
-  }, [formatted, genesisHash, id, worker]);
+    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { chainName, stakerAddress: formatted, id } });
+  }, [chainName, formatted, genesisHash, id, worker]);
 
   useEffect(() => {
     if (!worker || !formatted) {

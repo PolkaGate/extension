@@ -1,12 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
 import type React from 'react';
 import type { Chain } from '../../../extension-chains/src/types';
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
+import { mapRelayToSystemGenesis } from './workers/utils/adjustGenesis';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
@@ -20,13 +22,15 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+export default function getLogo2(info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
+
+  const _info = mapRelayToSystemGenesis(info as string);
 
   if (token) {
     const networkMap = getNetworkMap();
 
-    chainNameFromGenesisHash = networkMap.get(info as string || '');
+    chainNameFromGenesisHash = networkMap.get(_info || '');
 
     if (!chainNameFromGenesisHash) {
       return undefined;
@@ -44,7 +48,7 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
   }
 
   let maybeExternalLogo;
-  const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
+  const iconName = sanitizeChainName(chainNameFromGenesisHash || (_info as Chain)?.name || (_info as string))?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 

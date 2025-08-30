@@ -20,8 +20,8 @@ async function getStakingConsts(endpoint) {
     const existentialDeposit = apiAt.consts.balances.existentialDeposit.toString();
     const bondingDuration = apiAt.consts.staking.bondingDuration.toNumber();
     const sessionsPerEra = apiAt.consts.staking.sessionsPerEra.toNumber();
-    const epochDuration = apiAt.consts.babe.epochDuration.toNumber();
-    const expectedBlockTime = api.consts.babe.expectedBlockTime.toNumber();
+    const epochDuration = apiAt.consts.babe?.epochDuration?.toNumber() ?? 0;
+    const expectedBlockTime = api.consts.babe?.expectedBlockTime?.toNumber() ?? 0;
     const epochDurationInHours = epochDuration * expectedBlockTime / 3600000; // 1000 milSec * 60sec * 60min
     const [minNominatorBond, currentEraIndex] = await Promise.all([
       apiAt.query.staking.minNominatorBond(),
