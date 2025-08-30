@@ -5,8 +5,7 @@ import type { Content } from '@polkadot/extension-polkagate/partials/Review';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 import type { StakingConsts } from '../../../../util/types';
 
-import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useMemo, useState } from 'react';
 
 import { useChainInfo, useEstimatedFee2, useFormatted3, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
@@ -24,7 +23,6 @@ interface Props {
 export default function ReviewPopup ({ address, genesisHash, newSelectedValidators, onClose, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
-  const navigate = useNavigate();
   const formatted = useFormatted3(address, genesisHash);
 
   const nominate = api?.tx['staking']['nominate'];
@@ -53,23 +51,13 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.REVIEW);
 
-  const handleClose = useCallback(() => {
-    if (flowStep === FULLSCREEN_STAKING_TX_FLOW.REVIEW) {
-      onClose();
-
-      return;
-    }
-
-    navigate(-1) as void;
-  }, [flowStep, navigate, onClose]);
-
   return (
     <StakingPopup
       address={address}
       extraDetailConfirmationPage={extraDetailConfirmationPage}
       flowStep={flowStep}
       genesisHash={genesisHash}
-      onClose={handleClose}
+      onClose={onClose}
       proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
       title={t('Manage Nominations')}
