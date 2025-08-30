@@ -4,6 +4,9 @@
 import { Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
 
 import { AssetNull } from '../../../components';
 import { useAccountAssets, useIsExtensionPopup, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
@@ -34,11 +37,39 @@ function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): Reac
   const selectedChains = useSelectedChains();
   const pricesInCurrency = usePrices();
   const isExtension = useIsExtensionPopup();
+  const { address, genesisHash, paramAssetId } = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
+  const navigate = useNavigate();
 
   const [tab, setTab] = useState<TAB>();
 
   const isLoading = accountAssets === undefined;
   const nothingToShow = accountAssets === null;
+
+  useEffect(() => {
+    // Handle navigation logic specific to the fullscreen account view
+    if (!paramAssetId || !accountAssets?.length || !address) {
+      return;
+    }
+
+    const exactMatch = accountAssets.find((a) => a.assetId.toString() === paramAssetId && a.genesisHash === genesisHash);
+
+    if (exactMatch) {
+      return;
+    }
+
+    const sameIdAsset = accountAssets.find((a) => a.assetId.toString() === paramAssetId);
+
+    if (sameIdAsset) {
+      return navigate(`/accountfs/${address}/${sameIdAsset.genesisHash}/${paramAssetId}`) as void;
+    }
+
+    // Fallback: find asset with maximum value
+    const maxValueAsset = accountAssets.reduce((max, a) =>
+      calcPrice(a.price, a.totalBalance, a.decimal) > calcPrice(max.price, max.totalBalance, max.decimal) ? a : max
+      , accountAssets[0]);
+
+    navigate(`/accountfs/${address}/${maxValueAsset.genesisHash}/${maxValueAsset.assetId}`) as void;
+  }, [accountAssets, address, genesisHash, navigate, paramAssetId]);
 
   useEffect(() => {
     tab
