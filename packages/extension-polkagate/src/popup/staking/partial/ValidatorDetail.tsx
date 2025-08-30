@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
+//@ts-nocheck
 
 import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
@@ -16,7 +16,7 @@ import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { isHexToBn, toShortAddress } from '../../../util/utils';
+import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util/utils';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
@@ -88,6 +88,7 @@ interface ValidatorIdentityDetailProps {
 
 const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
+  const network = getSubscanChainName(chainName);
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
@@ -101,7 +102,7 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
         </Grid>
         <Grid container item sx={{ justifyContent: 'flex-end', width: '32%' }}>
           <Link
-            href={`https://${chainName}.subscan.io/account/${validatorDetail.accountId.toString()}`}
+            href={`https://${network}.subscan.io/account/${validatorDetail.accountId.toString()}`}
             rel='noreferrer'
             sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
             target='_blank'

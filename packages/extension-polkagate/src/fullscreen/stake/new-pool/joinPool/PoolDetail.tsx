@@ -17,7 +17,7 @@ import { DetailPanel, GradientButton, GradientDivider } from '../../../../compon
 import SnowFlake from '../../../../components/SVG/SnowFlake';
 import { CollapseSection, PoolMembers, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
-import { toShortAddress } from '../../../../util/utils';
+import { getSubscanChainName, toShortAddress } from '../../../../util/utils';
 
 interface PoolIdentityDetailProps {
   poolDetail: PoolInfo;
@@ -27,6 +27,7 @@ interface PoolIdentityDetailProps {
 
 const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
+  const network = getSubscanChainName(chainName);
 
   const { bgcolor, textColor } = useMemo(() => {
     const status = poolDetail.bondedPool?.state.toString();
@@ -58,7 +59,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
       <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', m: 0, width: 'fit-content' }}>
         <PoolStashIdSocials poolDetail={poolDetail} />
         <Link
-          href={`https://${chainName}.subscan.io/account/${poolDetail.stashIdAccount?.accountId.toString()}`}
+          href={`https://${network}.subscan.io/account/${poolDetail.stashIdAccount?.accountId.toString()}`}
           rel='noreferrer'
           sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
           target='_blank'

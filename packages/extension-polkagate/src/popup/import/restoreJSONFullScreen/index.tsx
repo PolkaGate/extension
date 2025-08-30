@@ -188,7 +188,7 @@ export default function RestoreJson (): React.ReactElement {
     <AdaptiveLayout style={{ maxWidth: '600px' }}>
       <OnboardTitle
         label={t('Restore from file')}
-        labelPartInColor='from file'
+        labelPartInColor={t('from file')}
         url='/account/have-wallet'
       />
       <Stack direction='column' sx={{ position: 'relative', width: '500px' }}>

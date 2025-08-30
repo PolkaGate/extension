@@ -7,6 +7,7 @@ import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
+import { HideNumberShape1, HideNumberShape2 } from '../fullscreen/home/HideNumberShapes';
 import { useCurrency, useIsHideNumbers } from '../hooks';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
 import { amountToHuman, getDecimal } from '../util/utils';
@@ -28,6 +29,7 @@ interface Props {
   lineHeight?: number;
   mt?: string;
   num?: number | string;
+  onHideShape?: 'shape1' | 'shape2';
   price?: number | null,
   sign?: string;
   style?: React.CSSProperties;
@@ -96,7 +98,7 @@ export function formatDecimalWithCommas (_number: number | string, decimalDigit 
   return { decimalPart: fractionalDigits, integerPart: integerDigits };
 }
 
-function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, height, ignoreHide, lineHeight = 1, mt = '0px', num, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, height, ignoreHide, lineHeight = 1, mt = '0px', num, onHideShape, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
@@ -166,17 +168,28 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
   ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
 
   return (
-    <Grid alignItems='center' container item mt={mt} sx={{ height, ...style }} textAlign={textAlign} width ='fit-content'>
+    <Grid alignItems='center' container item mt={mt} sx={{ height, ...style }} textAlign={textAlign} width='fit-content'>
       {isHideNumbers && !ignoreHide
         ? (
-          <Dots
-            color={textColor}
-            decimalColor={decimalColor}
-            preText={mayCurrencySign}
-            preTextFontSize={fontSize}
-            preTextFontWeight={fontWeight}
-            variant={dotStyle}
-          />)
+          <>
+            {
+              onHideShape
+                ? onHideShape === 'shape1'
+                  ? <HideNumberShape1 />
+                  : onHideShape === 'shape2'
+                    ? <HideNumberShape2 style={{ display: 'flex', justifyContent: 'end', width: '100%' }} />
+                    : <></>
+                : <Dots
+                  color={textColor}
+                  decimalColor={decimalColor}
+                  preText={mayCurrencySign}
+                  preTextFontSize={fontSize}
+                  preTextFontWeight={fontWeight}
+                  variant={dotStyle}
+                  />
+            }
+          </>
+        )
         : total !== undefined
           ? <Stack alignItems='baseline' direction='row' width='fit-content'>
             <Typography

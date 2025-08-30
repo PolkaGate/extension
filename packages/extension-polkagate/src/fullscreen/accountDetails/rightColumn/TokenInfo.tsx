@@ -9,14 +9,12 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ReservedLockedPopup from '@polkadot/extension-polkagate/src/popup/tokens/partial/ReservedLockedPopup';
+import { useTokenInfoDetails } from '@polkadot/extension-polkagate/src/popup/tokens/useTokenInfoDetails';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style/index';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../../../hooks';
 import TokenDetailBox from '../../../popup/tokens/partial/TokenDetailBox';
-import { useTokenInfoDetails } from '@polkadot/extension-polkagate/src/popup/tokens/useTokenInfoDetails';
- 
- 
 
 interface Props {
   address: string | undefined;
@@ -39,7 +37,6 @@ function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
       state,
       tokenPrice,
       transferable } = useTokenInfoDetails(address, genesisHash, token);
-
 
   const onStaking = useCallback((type: string) => () => {
     navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;

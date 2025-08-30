@@ -53,7 +53,7 @@ function OnboardTitle ({ label, labelPartInColor, onBack, url }: Props): React.R
           variant='contained'
         />
       }
-      <Typography alignSelf='end' textAlign='left' textTransform='uppercase' variant='H-1' width='100%'>
+      <Typography alignSelf='end' sx={{ flex: 1, minWidth: 0, whiteSpace: 'nowrap' }} textAlign='left' textTransform='uppercase' variant='H-1' width='100%'>
         <TwoToneText
           text={label}
           textPartInColor={labelPartInColor}

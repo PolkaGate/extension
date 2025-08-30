@@ -4,7 +4,7 @@
 import { Container, Tab, Tabs, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { useTranslation } from '../../../hooks';
+import { useChainInfo, useTranslation } from '../../../hooks';
 import { GOVERNANCE_CHAINS, STAKING_CHAINS } from '../../../util/constants';
 
 export enum TAB {
@@ -17,25 +17,26 @@ export enum TAB {
 interface Props {
   setTab: React.Dispatch<React.SetStateAction<TAB>>;
   tab: TAB | undefined;
-  selectedChain: string | number;
+  selectedChain: string;
 }
 
 function HistoryTabs ({ selectedChain, setTab, tab }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const { chainName } = useChainInfo(selectedChain, true);
 
   const unSupportedTabs = useMemo(() => {
     const unsupportedTabs = [];
 
-    if (!GOVERNANCE_CHAINS.includes(selectedChain as string)) {
+    if (!GOVERNANCE_CHAINS.includes(chainName?.toLowerCase() ?? '')) {
       unsupportedTabs.push(TAB.GOVERNANCE);
     }
 
-    if (!STAKING_CHAINS.includes(selectedChain as string)) {
+    if (!STAKING_CHAINS.includes(selectedChain)) {
       unsupportedTabs.push(TAB.STAKING);
     }
 
     return unsupportedTabs;
-  }, [selectedChain]);
+  }, [chainName, selectedChain]);
 
   const isSelected = useCallback((selectedTab: TAB | undefined) => tab === selectedTab, [tab]);
 

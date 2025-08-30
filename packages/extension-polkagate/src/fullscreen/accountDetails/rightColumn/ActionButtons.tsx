@@ -10,11 +10,11 @@ import { useNavigate } from 'react-router-dom';
 
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
 import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useChainInfo, useStakingPositions, useTranslation } from '../../../hooks';
 import GovernanceModal from '../../components/GovernanceModal';
 import Receive from './Receive';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 interface ActionBoxProps {
   Icon: Icon;

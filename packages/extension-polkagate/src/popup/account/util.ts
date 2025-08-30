@@ -47,14 +47,14 @@ export const getValue = (type: string, balances: BalancesInfo | FetchedBalance |
     case ('available'):
     case ('available balance'):
     case ('transferable'):
-      const frozen = toBN(balances?.frozenBalance ?? BN_ZERO);
-      const reserved = toBN(balances?.reservedBalance ?? BN_ZERO);
-      const free = toBN(balances?.freeBalance ?? BN_ZERO);
+      const { freeBalance = BN_ZERO, frozenBalance = BN_ZERO, reservedBalance = BN_ZERO } = balances ?? {};
 
-      const noFrozenReserved = frozen.isZero() && reserved.isZero();
+      const frozen = toBN(frozenBalance);
+      const reserved = toBN(reservedBalance);
+      const free = toBN(freeBalance);
+
       const frozenReserveDiff = frozen.sub(reserved);
-      const maybeED = noFrozenReserved ? BN_ZERO : toBN(balances.ED || BN_ZERO);
-      const untouchable = bnMax(maybeED, frozenReserveDiff);
+      const untouchable = bnMax(BN_ZERO, frozenReserveDiff);
 
       return free.sub(untouchable);
     case ('reserved'):

@@ -1,6 +1,5 @@
 {
   "Account": "账户",
-  "Paste the address here": "在此粘贴地址",
   "Accounts": "账户",
   "Disconnect all": "全部断开",
   "Connect all": "全部连接",
@@ -819,5 +818,9 @@
   "User Agreement": "用户协议",
   "DApp Requests": "DApp 请求",
   "Add profile": "添加个人资料",
-  "Profile settings": "个人资料设置"
+  "Profile settings": "个人资料设置",
+  "recovery phrase": "恢复短语",
+  "QR-signer": "二维码签名器",
+  "raw seed": "原始种子",
+  "from file": "从文件"
 }

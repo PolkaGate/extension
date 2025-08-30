@@ -128,7 +128,7 @@ export default function ImportSeed (): React.ReactElement {
       setName(undefined);
       setPassword('');
       setError(undefined);
-      navigate('/account/have-wallet');
+      navigate('/account/have-wallet') as void;
     }
   }, [navigate, step]);
 
@@ -136,7 +136,7 @@ export default function ImportSeed (): React.ReactElement {
     <AdaptiveLayout style={{ maxWidth: '600px' }}>
       <OnboardTitle
         label={t('Import from recovery phrase')}
-        labelPartInColor='recovery phrase'
+        labelPartInColor={t('recovery phrase')}
         onBack={onBack}
       />
       <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '525px' }}>

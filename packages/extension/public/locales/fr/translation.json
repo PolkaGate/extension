@@ -1,6 +1,5 @@
 {
   "Account": "Compte",
-  "Paste the address here": "Collez l'adresse ici",
   "Accounts": "Comptes",
   "Disconnect all": "Déconnecter tout",
   "Connect all": "Connecter tout",
@@ -103,7 +102,7 @@
   "have a wallet": "avoir un portefeuille",
   "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "Si vous avez déjà un compte, vous pouvez l'importer en utilisant votre méthode préférée. Pour les importations groupées, vous pouvez restaurer plusieurs comptes à partir d'un fichier.",
   "Restore from File": "Restaurer depuis un fichier",
-  "Import from Recovery Phrase": "Importer depuis la phrase de récupération",
+  "Import from Recovery Phrase": "Importer via phrase de récupération",
   "Import from Raw Seed": "Importer depuis la seed brute",
   "Attach QR-Signer": "Attacher un QR-Signer",
   "Attach Ledger Device": "Attacher un dispositif Ledger",
@@ -125,7 +124,7 @@
   "You can later use this JSON file to import your accounts into the extension using the provided password.": "Vous pourrez ensuite utiliser ce fichier JSON pour importer vos comptes dans l'extension en utilisant le mot de passe fourni.",
   "Create a password": "Créer un mot de passe",
   "Export": "Exporter",
-  "Import from recovery phrase": "Importer depuis la phrase de récupération",
+  "Import from recovery phrase": "Importer via phrase de récupération",
   "Import from raw seed": "Importer depuis la seed brute",
   "Attach ledger device": "Attacher le dispositif Ledger",
   "New profile": "Nouveau profil",
@@ -826,5 +825,9 @@
   "User Agreement": "Accord utilisateur",
   "DApp Requests": "Requêtes DApp",
   "Add profile": "Ajouter un profil",
-  "Profile settings": "Paramètres du profil"
+  "Profile settings": "Paramètres du profil",
+  "recovery phrase": "phrase de récupération",
+  "QR-signer": "signataire QR",
+  "raw seed": "graine brute",
+  "from file": "depuis un fichier"
 }

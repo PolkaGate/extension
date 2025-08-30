@@ -13,7 +13,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
-import { BN, BN_TEN, BN_ZERO, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, bnMax, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
@@ -763,9 +763,23 @@ export const removeZeroBalanceRecords = (toBeSavedAssets: SavedAssets): SavedAss
 };
 
 export const getSubscanChainName = (chainName?: string): string | undefined => {
-   const lcChainName = chainName?.toLowerCase();
+  if (!chainName) {
+    return;
+  }
 
-    return lcChainName?.includes('assethub')
-      ? lcChainName?.replace(/(.*)assethub/, 'assethub-$1')
-      : chainName;
-    };
+  const lc = chainName.toLowerCase();
+
+  if (lc.includes('assethub')) {
+    return lc.replace(/^(.*)assethub$/, 'assethub-$1');
+  }
+
+  if (lc.includes('people')) {
+    return lc.replace(/^(.*)people$/, 'people-$1');
+  }
+
+  return lc;
+};
+
+export const safeSubtraction = (subtraction: BN, preferredMin = BN_ZERO) => {
+  return bnMax(preferredMin, subtraction);
+};

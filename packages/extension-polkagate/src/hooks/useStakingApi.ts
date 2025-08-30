@@ -21,7 +21,7 @@ import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/p
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
 import { getStakingAsset } from '../popup/staking/utils';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
-import { amountToHuman, amountToMachine, blockToDate, isHexToBn } from '../util/utils';
+import { amountToHuman, amountToMachine, blockToDate, isHexToBn, safeSubtraction } from '../util/utils';
 import { mapToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 import { calcPrice } from './useYouHave2';
 import { useAccountAssets, useChainInfo, useCurrentBlockNumber2, useEstimatedFee2, useFormatted3, useIsExposed2, usePendingRewards3, usePool2, usePoolConst, usePoolStakingInfo, useSoloStakingInfo, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '.';
@@ -97,7 +97,9 @@ export const useUnstakingPool = (
       title: t('Fee')
     },
     {
-      content: unstakingValue && staked ? (staked as unknown as BN).sub(unstakingValue) : undefined,
+      content: unstakingValue && staked
+        ? safeSubtraction((staked as unknown as BN).sub(unstakingValue))
+        : undefined,
       title: t('Total stake after'),
       withLogo: true
     }];
@@ -127,7 +129,7 @@ export const useUnstakingPool = (
     // - and they want to keep some stake (not full unstake)
     // - and the remaining stake would be less than the minimum required to stay in the pool
     if (!isPoolOwner && !staked.sub(unstakingValue).isZero() && staked.sub(unstakingValue).lt(stakingInfo.poolStakingConsts.minJoinBond)) {
-      const remained = api.createType('Balance', staked.sub(unstakingValue)).toHuman();
+      const remained = api.createType('Balance', safeSubtraction(staked.sub(unstakingValue))).toHuman();
       const min = api.createType('Balance', stakingInfo.poolStakingConsts.minJoinBond).toHuman();
 
       return t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } });
@@ -150,10 +152,10 @@ export const useUnstakingPool = (
     // Case 2: If user is the pool owner, but the pool is still active or there are other members
     // They can only unstake down to the minimum required to keep the pool alive
     if (isPoolOwner && (poolState !== 'Destroying' || poolMemberCounter !== 1)) {
-      const partial = staked.sub(stakingInfo.poolStakingConsts.minCreateBond);
+      const partial = safeSubtraction(staked.sub(stakingInfo.poolStakingConsts.minCreateBond));
 
       // If there's nothing above the minimum, return '0'
-      return partial.lten(0) ? '0' : partial.toString();
+      return partial.toString();
     }
 
     // Case 3: If user is NOT the pool owner, the user is able to unstake the full amount
@@ -237,7 +239,7 @@ export const useUnstakingSolo = (
     }
 
     if (stakingInfo.stakingConsts && !staked.sub(unstakingValue).isZero() && !isStopStaking && staked.sub(unstakingValue).lt(stakingInfo.stakingConsts.minNominatorBond)) {
-      const remained = api.createType('Balance', staked.sub(unstakingValue)).toHuman();
+      const remained = api.createType('Balance', safeSubtraction(staked.sub(unstakingValue))).toHuman();
       const min = api.createType('Balance', stakingInfo.stakingConsts.minNominatorBond).toHuman();
 
       return t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } });
@@ -259,7 +261,9 @@ export const useUnstakingSolo = (
       title: t('Fee')
     },
     {
-      content: unstakingValue && staked ? (staked).sub(unstakingValue) : undefined,
+      content: unstakingValue && staked
+        ? safeSubtraction((staked).sub(unstakingValue))
+        : undefined,
       title: t('Total stake after'),
       withLogo: true
     }];
@@ -631,7 +635,9 @@ export const useBondExtraSolo = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    const maxAmount = safeSubtraction(stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2)));
+
+    return maxAmount.toString();
   }, [stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
 
   return {
@@ -798,7 +804,9 @@ export const useBondExtraPool = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    const maxAmount = safeSubtraction(stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2)));
+
+    return maxAmount.toString();
   }, [formatted, staked, stakingInfo.availableBalanceToStake, stakingInfo.pool, stakingInfo.stakingConsts]);
 
   const onInputChange = useCallback((value: string | null | undefined) => {
@@ -991,7 +999,9 @@ export const useJoinPool = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    const maxAmount = safeSubtraction(stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2)));
+
+    return maxAmount.toString();
   }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
 
   const onMinValue = useMemo(() => {
@@ -1122,7 +1132,9 @@ export const useCreatePool = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    const maxAmount = safeSubtraction(stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2)));
+
+    return maxAmount.toString();
   }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
 
   const onMinValue = useMemo(() => {
@@ -1367,7 +1379,7 @@ export const useEasyStake = (
     }
 
     const ED = stakingConsts.existentialDeposit;
-    let max = availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee);
+    let max = safeSubtraction(availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee));
 
     let min = !selectedStakingType || selectedStakingType.type === 'pool' ? poolStakingConsts.minJoinBond : stakingConsts.minNominatorBond;
 

@@ -62,7 +62,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
     <AdaptiveLayout style= {{ width: '600px' }}>
       <OnboardTitle
         label={t('Add Watch-only account')}
-        labelPartInColor='Watch-only'
+        labelPartInColor={t('Watch-only')}
         url='/account/have-wallet'
       />
       <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px', zIndex: 1 }}>

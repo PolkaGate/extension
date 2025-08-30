@@ -1,6 +1,5 @@
 {
   "Account": "खाता",
-  "Paste the address here": "पता यहाँ चिपकाएँ",
   "Accounts": "खाते",
   "Disconnect all": "सभी को डिस्कनेक्ट करें",
   "Connect all": "सभी को कनेक्ट करें",
@@ -825,5 +824,9 @@
   "User Agreement": "उपयोगकर्ता समझौता",
   "DApp Requests": "DApp अनुरोध",
   "Add profile": "प्रोफ़ाइल जोड़ें",
-  "Profile settings": "प्रोफ़ाइल सेटिंग्स"
+  "Profile settings": "प्रोफ़ाइल सेटिंग्स",
+  "recovery phrase": "रिकवरी वाक्यांश",
+  "QR-signer": "क्यूआर हस्ताक्षरकर्ता",
+  "raw seed": "कच्चा सीड",
+  "from file": "फ़ाइल से"
 }

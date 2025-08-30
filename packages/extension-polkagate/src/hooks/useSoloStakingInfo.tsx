@@ -198,7 +198,6 @@ export default function useSoloStakingInfo (address: string | undefined, _genesi
     }
   }, [fetchSessionInfo, sessionInfo]);
 
-
   // Separate effect for updating the state
   useEffect(() => {
     if (fetchingFlag.current === false || currentEra === undefined || !balances || !stakingAccount || !sessionInfo || !rewardDestinationAddress || !genesisHash || !address || refresh) {

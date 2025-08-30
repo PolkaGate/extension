@@ -84,7 +84,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
     <AdaptiveLayout style={{ width: '600px' }}>
       <OnboardTitle
         label={t('Attach QR-signer')}
-        labelPartInColor='QR-signer'
+        labelPartInColor={t('QR-signer')}
         url='/account/have-wallet'
       />
       <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '500px' }}>
