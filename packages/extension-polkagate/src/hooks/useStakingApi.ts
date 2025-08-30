@@ -13,7 +13,7 @@ import type { MyPoolInfo, PoolInfo, RewardDestinationType } from '../util/types'
 import { People, UserOctagon } from 'iconsax-react';
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
-import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { EasyStakeSide, type SelectedEasyStakingType } from '../fullscreen/stake/util/utils';
 import { getValue } from '../popup/account/util';
