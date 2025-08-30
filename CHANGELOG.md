@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.2](https://github.com/polkagate/extension/compare/v1.3.1...v1.3.2) (2025-08-30)
+
+
+### Bug Fixes
+
+* resolve people issue in subscan urls ([39902e1](https://github.com/polkagate/extension/commit/39902e1f69fc39cfb600a1b0210da72bcdaab7d5))
+
 ## [1.3.1](https://github.com/polkagate/extension/compare/v1.3.0...v1.3.1) (2025-08-30)
 
 
