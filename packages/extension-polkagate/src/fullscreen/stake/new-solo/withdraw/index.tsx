@@ -29,6 +29,7 @@ export default function Withdraw ({ address, genesisHash, onClose }: Props): Rea
       onClose={onClose}
       proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
+      showBack
       title={t('Withdraw redeemable')}
       transaction={tx}
       transactionInformation={transactionInformation}
