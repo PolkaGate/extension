@@ -54,7 +54,6 @@ export { default as GradientBox } from './GradientBox';
 export { default as GradientBox2 } from './GradientBox2';
 export { default as GradientButton } from './GradientButton';
 export { default as GradientSwitch } from './GradientSwitch';
-export { default as Header } from './Header';
 export { default as HomeAccountDropDown } from './HomeAccountDropDown';
 export { default as HomeButton } from './HomeButton';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';
