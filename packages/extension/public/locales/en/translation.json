@@ -47,7 +47,6 @@
   "This is a QR-attached account. To complete this transaction, you need to use your QR-signer.": "",
   "Use QR-Signer": "",
   "Select Proxy": "",
-  "You’ve used an incorrect password. Try again.": "",
   "Account is in Any Chain mode": "",
   "Export account": "",
   "Rename": "",
@@ -821,5 +820,6 @@
   "recovery phrase": "",
   "QR-signer": "",
   "raw seed": "",
-  "from file": ""
+  "from file": "",
+  "Update Metadata": ""
 }
