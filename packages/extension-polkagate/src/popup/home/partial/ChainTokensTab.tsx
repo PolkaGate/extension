@@ -5,7 +5,7 @@ import type { TabProps } from './AssetTabs';
 
 import { UnfoldMore as UnfoldMoreIcon } from '@mui/icons-material';
 import { Container, Typography, useTheme } from '@mui/material';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import CustomCommand from '../../../components/SVG/CustomCommand';
 import { useTranslation } from '../../../hooks';
@@ -14,6 +14,7 @@ import { TAB } from './AssetsBox';
 function ChainTokensTab ({ setTab, tab }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const fadeTimerRef = useRef<number | null>(null);
 
   const [showChains, setShowChains] = useState<boolean | undefined>(undefined);
   const [textOpacity, setTextOpacity] = useState(1); // State to handle text opacity
@@ -33,7 +34,7 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
   }, [isActiveTab, showChains, t, tab]);
 
   const handleToggle = useCallback(() => {
-    if (isActiveTab) {
+    if (isActiveTab && fadeTimerRef.current === null) {
       setTextOpacity(0.1);
 
       const newValue = !showChains;
@@ -41,9 +42,26 @@ function ChainTokensTab ({ setTab, tab }: TabProps) {
       setTab?.(newValue ? TAB.CHAINS : TAB.TOKENS);
       setDisplayedText(newValue ? t('Networks') : t('Tokens'));
       setShowChains(newValue);
-      setTimeout(() => setTextOpacity(1), 50);
+
+      if (fadeTimerRef.current) {
+        window.clearTimeout(fadeTimerRef.current);
+      }
+
+      fadeTimerRef.current = window.setTimeout(() => {
+        setTextOpacity(1);
+        fadeTimerRef.current = null;
+      }, 50);
     }
   }, [isActiveTab, setTab, showChains, t]);
+
+  // Clear the fade timer to prevent setState on unmounted component
+  useEffect(() => {
+    return () => {
+      if (fadeTimerRef.current) {
+        window.clearTimeout(fadeTimerRef.current);
+      }
+    };
+  }, []);
 
   const { color, secondaryColor } = useMemo(() => {
     const nonSelectedSquareColor = theme.palette.mode === 'dark' ? '#67439480' : '#cfd5ec';
