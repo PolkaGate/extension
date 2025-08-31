@@ -65,14 +65,24 @@ function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): Reac
 
     // Fallback: find asset with maximum value
     const prices = pricesInCurrency?.prices;
-    const maxValueAsset = accountAssets.reduce((max, a) => {
-      const aPrice = prices?.[a.priceId]?.value ?? 0;
-      const maxPrice = prices?.[max.priceId]?.value ?? 0;
+    const init = {
+      asset: accountAssets[0],
+      worth: calcPrice(prices?.[accountAssets[0].priceId]?.value ?? 0, accountAssets[0].totalBalance, accountAssets[0].decimal)
+    };
 
-      return calcPrice(aPrice, a.totalBalance, a.decimal) > calcPrice(maxPrice, max.totalBalance, max.decimal) ? a : max;
-    }, accountAssets[0]);
+    const maxValueAsset = accountAssets.reduce((max, asset) => {
+      const price = prices?.[asset.priceId]?.value ?? 0;
+      const worth = calcPrice(price, asset.totalBalance, asset.decimal);
 
-    navigate(`/accountfs/${address}/${maxValueAsset.genesisHash}/${maxValueAsset.assetId}`) as void;
+      return worth > max.worth
+        ? {
+          asset,
+          worth
+        }
+        : max;
+    }, init);
+
+    navigate(`/accountfs/${address}/${maxValueAsset.asset.genesisHash}/${maxValueAsset.asset.assetId}`) as void;
   }, [accountAssets, address, genesisHash, navigate, paramAssetId, pricesInCurrency?.prices]);
 
   useEffect(() => {
