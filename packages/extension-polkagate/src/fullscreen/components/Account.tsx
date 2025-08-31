@@ -70,7 +70,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
     };
   }, [account?.address, nftManager]);
 
-  const totalBalance = useMemo(() => {
+  const valueInCurrency = useMemo(() => {
     if (accountAssets && pricesInCurrencies && currency) {
       const t = accountAssets.reduce((accumulator, { decimal, priceId, totalBalance }) => (accumulator + calcPrice(pricesInCurrencies.prices?.[priceId]?.value, totalBalance, decimal)), 0);
 
@@ -128,8 +128,6 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
 
     const prices = pricesInCurrencies?.prices;
     const assets = accountAssets.filter(({ genesisHash }) => genesisHash === savedSelectedChain);
-
-    account?.address === '5ECro2Szgee3YLDpDQYRAti3zJ6CnxmdvLAgmfDNoeBuaHMc' && console.log('assets:', assets);
 
     if (assets.length) {
       const init = {
@@ -199,9 +197,9 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
           fontFamily='Inter'
           fontSize='16px'
           fontWeight={600}
-          num={totalBalance}
+          num={valueInCurrency}
           style={{ margin: '3px 0 0 20px' }}
-          width={totalBalance ? 'fit-content' : '100px'}
+          width={valueInCurrency ? 'fit-content' : '100px'}
           withSmallDecimal
         />
         {accountAssets === undefined &&
