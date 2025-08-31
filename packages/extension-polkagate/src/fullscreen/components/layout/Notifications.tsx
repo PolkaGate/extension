@@ -3,18 +3,25 @@
 
 import { Box, Grid } from '@mui/material';
 import { Notification } from 'iconsax-react';
-import React, { } from 'react';
+import React, { useCallback } from 'react';
 
-import { noop } from '@polkadot/util';
+import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 function Notifications (): React.ReactElement {
+    const { notify } = useAlerts();
+    const { t } = useTranslation();
+
+    const onClick = useCallback(() => {
+      notify(t('Coming Soon!'), 'info');
+    }, [notify, t]);
+
   return (
     <Grid
       alignItems='center'
       container
       item
       justifyContent='center'
-      onClick={noop}
+      onClick={onClick}
       sx={{
         '&:hover': {
           background: '#674394'
