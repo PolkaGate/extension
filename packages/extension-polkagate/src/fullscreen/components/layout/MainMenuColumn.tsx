@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
-import React from 'react';
+import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Moon, Record, Setting } from 'iconsax-react';
+import React, { useCallback } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-import { useManifest, useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
+import { useAlerts, useManifest, useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
 import GovernanceModal from '../GovernanceModal';
 import Language from './Language';
@@ -30,6 +30,51 @@ function Shining (): React.ReactElement {
         width: '100px'
       }}
       />
+    </Box>
+  );
+}
+
+function ThemeToggle (): React.ReactElement {
+   const { notify } = useAlerts();
+    const { t } = useTranslation();
+
+    const onClick = useCallback(() => {
+      notify(t('Coming Soon!'), 'info');
+    }, [notify, t]);
+
+  return (
+    <Box onClick={onClick} sx={{ alignItems: 'center', borderRadius: '16px', display: 'flex', height: '32px', position: 'relative', width: '48px' }}>
+      <Box sx={{ backdropFilter: 'blur(8px)', bgcolor: '#2D1E4A80', borderRadius: '16px', boxShadow: '0px 0px 24px 8px #4E2B7259 inset', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+      <Box sx={{ height: 28, position: 'relative', width: 28 }}>
+        <Box
+          sx={{
+            background: '#9542FF4D',
+            borderRadius: '50%',
+            height: '100%',
+            left: 0,
+            position: 'absolute',
+            top: 0,
+            width: '100%'
+          }}
+        />
+        <Box
+          sx={{
+            alignItems: 'center',
+            background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+            borderRadius: '50%',
+            display: 'flex',
+            height: 24,
+            justifyContent: 'center',
+            left: '50%',
+            position: 'absolute',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 24
+          }}
+        >
+          <Moon color='#EAEBF1' size='16' variant='Bold' />
+        </Box>
+      </Box>
     </Box>
   );
 }
@@ -58,7 +103,10 @@ function MainMenuColumn (): React.ReactElement {
       }}
     >
       <Shining />
-      <LogoWithText style={{ marginBottom: '20px', zIndex: 10 }} />
+      <Grid alignItems='center' container direction='row' sx={{ columnGap: '12px', marginBottom: '20px' }}>
+        <LogoWithText style={{ zIndex: 10 }} />
+        <ThemeToggle />
+      </Grid>
       <MenuButton
         Icon={Home3}
         path='/'
