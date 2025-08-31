@@ -4,6 +4,9 @@
 import { Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
 
 import { AssetNull } from '../../../components';
 import { useAccountAssets, useIsExtensionPopup, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
@@ -34,11 +37,53 @@ function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): Reac
   const selectedChains = useSelectedChains();
   const pricesInCurrency = usePrices();
   const isExtension = useIsExtensionPopup();
+  const { address, genesisHash, paramAssetId } = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
+  const navigate = useNavigate();
 
   const [tab, setTab] = useState<TAB>();
 
   const isLoading = accountAssets === undefined;
   const nothingToShow = accountAssets === null;
+
+  useEffect(() => {
+    // Handle navigation logic specific to the fullscreen account view
+    if (!paramAssetId || !accountAssets?.length || !address) {
+      return;
+    }
+
+    const exactMatch = accountAssets.find((a) => a.assetId.toString() === paramAssetId && a.genesisHash === genesisHash);
+
+    if (exactMatch) {
+      return;
+    }
+
+    const sameIdAsset = accountAssets.find((a) => a.assetId.toString() === paramAssetId);
+
+    if (sameIdAsset) {
+      return navigate(`/accountfs/${address}/${sameIdAsset.genesisHash}/${paramAssetId}`) as void;
+    }
+
+    // Fallback: find asset with maximum value
+    const prices = pricesInCurrency?.prices;
+    const init = {
+      asset: accountAssets[0],
+      worth: calcPrice(prices?.[accountAssets[0].priceId]?.value ?? 0, accountAssets[0].totalBalance, accountAssets[0].decimal)
+    };
+
+    const maxValueAsset = accountAssets.reduce((max, asset) => {
+      const price = prices?.[asset.priceId]?.value ?? 0;
+      const worth = calcPrice(price, asset.totalBalance, asset.decimal);
+
+      return worth > max.worth
+        ? {
+          asset,
+          worth
+        }
+        : max;
+    }, init);
+
+    navigate(`/accountfs/${address}/${maxValueAsset.asset.genesisHash}/${maxValueAsset.asset.assetId}`) as void;
+  }, [accountAssets, address, genesisHash, navigate, paramAssetId, pricesInCurrency?.prices]);
 
   useEffect(() => {
     tab
