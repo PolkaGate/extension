@@ -119,7 +119,7 @@ const usePendingRewardsSolo = (
     return call(...params);
   }, [batch, payoutStakers, selectedToPayout]);
 
-  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? payoutStakers, tx ? undefined : [address, BN_ZERO]);
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? payoutStakers, tx ? undefined : [address, BN_ZERO]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{

@@ -13,7 +13,7 @@ import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { EasyStakeSide } from '../../fullscreen/stake/util/utils';
 import { POLKAGATE_POOL_IDS } from '../../util/constants';
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, safeSubtraction } from '../../util/utils';
 import useAccountAssets from '../useAccountAssets';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee2 from '../useEstimatedFee2';
@@ -63,7 +63,7 @@ const useEasyStake = (
   }, [initialPool, selectedStakingType, setSelectedStakingType]);
 
   const tx = useMemo(() => {
-    if (!selectedStakingType || !bond || !nominated || !batchAll || !join) {
+    if (!selectedStakingType || !bond || !nominated || !batchAll || !join || !amountAsBN) {
       return undefined;
     }
 
@@ -129,7 +129,7 @@ const useEasyStake = (
     }
 
     const ED = stakingConsts.existentialDeposit;
-    let max = availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee);
+    let max = safeSubtraction(availableBalanceToStake.sub(ED.muln(2)).sub(estimatedFee));
 
     let min = !selectedStakingType || selectedStakingType.type === 'pool' ? poolStakingConsts.minJoinBond : stakingConsts.minNominatorBond;
 

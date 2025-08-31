@@ -783,3 +783,5 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
 export const safeSubtraction = (subtraction: BN, preferredMin = BN_ZERO) => {
   return bnMax(preferredMin, subtraction);
 };
+
+export const calcMaxValue = (minuend: BN, subtrahend: BN) => safeSubtraction(minuend.sub(subtrahend)).toString();

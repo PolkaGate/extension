@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { BN_ZERO } from '@polkadot/util';
 
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../../popup/staking/partial/PoolFilter';
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, calcMaxValue } from '../../util/utils';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee2 from '../useEstimatedFee2';
 import useFormatted3 from '../useFormatted3';
@@ -41,7 +41,7 @@ const useJoinPool = (
     return join(bondAmount, selectedPool.poolId);
   }, [bondAmount, join, selectedPool]);
 
-  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? join?.(bondAmount, selectedPool?.poolId ?? 0));
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? join?.(bondAmount, selectedPool?.poolId ?? 0));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -82,7 +82,7 @@ const useJoinPool = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    return calcMaxValue(stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts.existentialDeposit.muln(2));
   }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
 
   const onMinValue = useMemo(() => {

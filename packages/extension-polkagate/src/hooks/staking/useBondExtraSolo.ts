@@ -7,7 +7,7 @@ import type { Content } from '../../partials/Review';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, calcMaxValue } from '../../util/utils';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee2 from '../useEstimatedFee2';
 import useFormatted3 from '../useFormatted3';
@@ -46,6 +46,7 @@ const useBondExtraSolo = (
 
     return undefined;
   }, [api, bondExtraValue, stakingInfo.availableBalanceToStake, t]);
+
   const transactionInformation: Content[] = useMemo(() => {
     return [{
       content: bondExtraValue,
@@ -64,6 +65,7 @@ const useBondExtraSolo = (
       withLogo: true
     }];
   }, [bondExtraValue, estimatedFee, staked, t]);
+
   const tx = useMemo(() => bondExtra?.(bondExtraValue), [bondExtra, bondExtraValue]);
 
   const onInputChange = useCallback((value: string | null | undefined) => {
@@ -77,7 +79,7 @@ const useBondExtraSolo = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    return calcMaxValue(stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts.existentialDeposit.muln(2));
   }, [stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts?.existentialDeposit]);
 
   return {

@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { BN_FIVE, BN_ZERO } from '@polkadot/util';
 
 import { type RolesState, updateRoleReducer } from '../../popup/staking/pool-new/createPool/UpdateRoles';
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, calcMaxValue } from '../../util/utils';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee2 from '../useEstimatedFee2';
 import useFormatted3 from '../useFormatted3';
@@ -111,7 +111,7 @@ const useCreatePool = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    return calcMaxValue(stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts.existentialDeposit.muln(2));
   }, [formatted, stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts]);
 
   const onMinValue = useMemo(() => {

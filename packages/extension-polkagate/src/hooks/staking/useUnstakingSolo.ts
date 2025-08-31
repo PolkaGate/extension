@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import { BN_ONE } from '@polkadot/util';
 
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, safeSubtraction } from '../../util/utils';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee2 from '../useEstimatedFee2';
 import useFormatted3 from '../useFormatted3';
@@ -73,7 +73,7 @@ const useUnstakingSolo = (
     }
 
     if (stakingInfo.stakingConsts && !staked.sub(unstakingValue).isZero() && !isStopStaking && staked.sub(unstakingValue).lt(stakingInfo.stakingConsts.minNominatorBond)) {
-      const remained = api.createType('Balance', staked.sub(unstakingValue)).toHuman();
+      const remained = api.createType('Balance', safeSubtraction(staked.sub(unstakingValue))).toHuman();
       const min = api.createType('Balance', stakingInfo.stakingConsts.minNominatorBond).toHuman();
 
       return t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } });
@@ -95,7 +95,7 @@ const useUnstakingSolo = (
       title: t('Fee')
     },
     {
-      content: unstakingValue && staked ? (staked).sub(unstakingValue) : undefined,
+      content: unstakingValue && staked ? safeSubtraction((staked).sub(unstakingValue)) : undefined,
       title: t('Total stake after'),
       withLogo: true
     }];

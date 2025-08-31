@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { DATE_OPTIONS } from '../../util/constants';
-import { amountToHuman, amountToMachine } from '../../util/utils';
+import { amountToHuman, amountToMachine, safeSubtraction } from '../../util/utils';
 import { useChainInfo, useEstimatedFee2, useFormatted3, usePoolStakingInfo, useTranslation } from '..';
 
 const useUnstakingPool = (
@@ -82,7 +82,7 @@ const useUnstakingPool = (
       title: t('Fee')
     },
     {
-      content: unstakingValue && staked ? (staked as unknown as BN).sub(unstakingValue) : undefined,
+      content: unstakingValue && staked ? safeSubtraction((staked as unknown as BN).sub(unstakingValue)) : undefined,
       title: t('Total stake after'),
       withLogo: true
     }];
@@ -112,7 +112,7 @@ const useUnstakingPool = (
     // - and they want to keep some stake (not full unstake)
     // - and the remaining stake would be less than the minimum required to stay in the pool
     if (!isPoolOwner && !staked.sub(unstakingValue).isZero() && staked.sub(unstakingValue).lt(stakingInfo.poolStakingConsts.minJoinBond)) {
-      const remained = api.createType('Balance', staked.sub(unstakingValue)).toHuman();
+      const remained = api.createType('Balance', safeSubtraction(staked.sub(unstakingValue))).toHuman();
       const min = api.createType('Balance', stakingInfo.poolStakingConsts.minJoinBond).toHuman();
 
       return t('Remaining stake amount ({{remained}}) should not be less than {{min}}.', { replace: { min, remained } });
@@ -135,10 +135,10 @@ const useUnstakingPool = (
     // Case 2: If user is the pool owner, but the pool is still active or there are other members
     // They can only unstake down to the minimum required to keep the pool alive
     if (isPoolOwner && (poolState !== 'Destroying' || poolMemberCounter !== 1)) {
-      const partial = staked.sub(stakingInfo.poolStakingConsts.minCreateBond);
+      const partial = safeSubtraction(staked.sub(stakingInfo.poolStakingConsts.minCreateBond));
 
       // If there's nothing above the minimum, return '0'
-      return partial.lten(0) ? '0' : partial.toString();
+      return partial.toString();
     }
 
     // Case 3: If user is NOT the pool owner, the user is able to unstake the full amount

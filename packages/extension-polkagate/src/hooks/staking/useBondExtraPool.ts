@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, calcMaxValue } from '../../util/utils';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee2 from '../useEstimatedFee2';
 import useFormatted3 from '../useFormatted3';
@@ -38,7 +38,7 @@ const useBondExtraPool = (
     return bondExtra({ FreeBalance: bondAmount });
   }, [bondAmount, bondExtra, formatted]);
 
-  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? bondExtra?.({ FreeBalance: bondAmount ?? BN_ONE }));
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? bondExtra?.({ FreeBalance: bondAmount ?? BN_ONE }));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -84,7 +84,7 @@ const useBondExtraPool = (
       return '0';
     }
 
-    return (stakingInfo.availableBalanceToStake.sub(stakingInfo.stakingConsts.existentialDeposit.muln(2))).toString(); // TO-DO: check if this is correct
+    return calcMaxValue(stakingInfo.availableBalanceToStake, stakingInfo.stakingConsts.existentialDeposit.muln(2));
   }, [formatted, staked, stakingInfo.availableBalanceToStake, stakingInfo.pool, stakingInfo.stakingConsts]);
 
   const onInputChange = useCallback((value: string | null | undefined) => {
