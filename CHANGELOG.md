@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.4](https://github.com/polkagate/extension/compare/v1.3.3...v1.3.4) (2025-08-31)
+
+
+### Bug Fixes
+
+* select defaultGenesisAndAssetId issue ([#1815](https://github.com/polkagate/extension/issues/1815)) ([f815c25](https://github.com/polkagate/extension/commit/f815c252563c6a69a065419204794a5fac0a79ce))
+
 ## [1.3.3](https://github.com/polkagate/extension/compare/v1.3.2...v1.3.3) (2025-08-30)
 
 
