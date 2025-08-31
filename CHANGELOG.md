@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.5](https://github.com/polkagate/extension/compare/v1.3.4...v1.3.5) (2025-08-31)
+
+
+### Bug Fixes
+
+* resolve stuck at loading asset in account page fullscreen ([#1813](https://github.com/polkagate/extension/issues/1813)) ([1b80b53](https://github.com/polkagate/extension/commit/1b80b536554606039070438b5223e1423f494ec1)), closes [#1814](https://github.com/polkagate/extension/issues/1814)
+
 ## [1.3.4](https://github.com/polkagate/extension/compare/v1.3.3...v1.3.4) (2025-08-31)
 
 
