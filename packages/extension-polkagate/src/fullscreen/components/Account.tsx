@@ -11,14 +11,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
+import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { type BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, FormatPrice, Identity2, MySkeleton } from '../../components';
-import { useAccountAssets, useCurrency, usePrices } from '../../hooks';
+import { useAccountAssets, useAccountSelectedChain, useCurrency, usePrices } from '../../hooks';
 import { setStorage } from '../../util';
 
 interface Props {
@@ -34,6 +34,8 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
   const pricesInCurrencies = usePrices();
   const currency = useCurrency();
   const accountAssets = useAccountAssets(account?.address);
+  const savedSelectedChain = useAccountSelectedChain(account?.address);
+
   const nftManager = useMemo(() => new NftManager(), []);
 
   const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
@@ -68,11 +70,9 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
     };
   }, [account?.address, nftManager]);
 
-  const calculatePrice = useCallback((amount: BN, decimal: number, price: number) => parseFloat(amountToHuman(amount, decimal)) * price, []);
-
   const totalBalance = useMemo(() => {
     if (accountAssets && pricesInCurrencies && currency) {
-      const t = accountAssets.reduce((accumulator, { decimal, priceId, totalBalance }) => (accumulator + calculatePrice(totalBalance, decimal, pricesInCurrencies.prices?.[priceId]?.value ?? 0)), 0);
+      const t = accountAssets.reduce((accumulator, { decimal, priceId, totalBalance }) => (accumulator + calcPrice(pricesInCurrencies.prices?.[priceId]?.value, totalBalance, decimal)), 0);
 
       return t;
     } else if (accountAssets === null) {
@@ -82,7 +82,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
     return undefined;
     /** we need currency as a dependency to update balance by changing currency*/
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountAssets, calculatePrice, currency, pricesInCurrencies]);
+  }, [accountAssets, currency, pricesInCurrencies]);
 
   const assetsToShow = useMemo(() => {
     if (!accountAssets || !pricesInCurrencies) {
@@ -101,8 +101,8 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
         const aTotalBalance = getValue('total', a as unknown as BalancesInfo) ?? BN_ZERO;
         const bTotalBalance = getValue('total', b as unknown as BalancesInfo) ?? BN_ZERO;
 
-        const aPrice = calculatePrice(aTotalBalance, a.decimal, prices?.[a.priceId]?.value ?? 0);
-        const bPrice = calculatePrice(bTotalBalance, b.decimal, prices?.[b.priceId]?.value ?? 0);
+        const aPrice = calcPrice(prices?.[a.priceId]?.value, aTotalBalance, a.decimal);
+        const bPrice = calcPrice(prices?.[b.priceId]?.value, bTotalBalance, b.decimal);
 
         return bPrice - aPrice;
       });
@@ -119,13 +119,41 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
     }
 
     return uniqueAssets;
-  }, [accountAssets, calculatePrice, pricesInCurrencies]);
+  }, [accountAssets, pricesInCurrencies]);
 
   useEffect(() => {
-    if (assetsToShow?.[0]) {
-      setDefaultGenesisAndAssetId?.(`${assetsToShow[0].genesisHash}/${assetsToShow[0].assetId}`);
+    if (!accountAssets?.length) {
+      return;
     }
-  }, [assetsToShow, setDefaultGenesisAndAssetId]);
+
+    const prices = pricesInCurrencies?.prices;
+    const assets = accountAssets.filter(({ genesisHash }) => genesisHash === savedSelectedChain);
+
+    account?.address === '5ECro2Szgee3YLDpDQYRAti3zJ6CnxmdvLAgmfDNoeBuaHMc' && console.log('assets:', assets);
+
+    if (assets.length) {
+      const init = {
+        asset: assets[0],
+        worth: calcPrice(prices?.[assets[0].priceId]?.value ?? 0, assets[0].totalBalance, assets[0].decimal)
+      };
+
+      const maxValueAsset = assets.reduce((max, asset) => {
+        const price = prices?.[asset.priceId]?.value ?? 0;
+        const worth = calcPrice(price, asset.totalBalance, asset.decimal);
+
+        return worth > max.worth
+          ? {
+            asset,
+            worth
+          }
+          : max;
+      }, init);
+
+      return setDefaultGenesisAndAssetId?.(`${maxValueAsset.asset.genesisHash}/${maxValueAsset.asset.assetId}`);
+    }
+
+    setDefaultGenesisAndAssetId?.(`${accountAssets[0].genesisHash}/${accountAssets[0].assetId}`);
+  }, [account?.address, accountAssets, pricesInCurrencies?.prices, savedSelectedChain, setDefaultGenesisAndAssetId]);
 
   const extraTokensCount = useMemo(() => assetsToShow ? assetsToShow.length - 4 : 0, [assetsToShow]);
 
