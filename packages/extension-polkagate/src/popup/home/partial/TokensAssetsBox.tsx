@@ -46,7 +46,16 @@ function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () =
     <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: bgcolor }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <Grid item sx={{ border: '3px solid', borderColor: bgcolor, borderRadius: '8px' }}>
-          <AssetLogo assetSize='26px' baseTokenSize='18px' genesisHash={genesisHash} logo={logoInfo?.logoSquare} logoRoundness='8px' subLogo={logoInfo?.subLogo} subLogoPosition='-3px -8px auto auto' token={token} />
+          <AssetLogo
+            assetSize='26px'
+            baseTokenSize='18px'
+            genesisHash={genesisHash}
+            logo={logoInfo?.logoSquare}
+            logoRoundness='8px'
+            subLogo={logoInfo?.subLogo}
+            subLogoPosition='-3px -8px auto auto'
+            token={token}
+          />
         </Grid>
         <Grid container direction='column' item sx={{ width: 'fit-content' }}>
           <Typography color='text.secondary' sx={{ bgcolor, borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>

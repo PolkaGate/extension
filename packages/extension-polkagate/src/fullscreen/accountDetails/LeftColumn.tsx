@@ -24,9 +24,9 @@ export interface UnlockInformationType {
   unlockableAmount: BN | undefined;
 }
 
-export default function LeftColumn(): React.ReactElement {
+export default function LeftColumn (): React.ReactElement {
   const { t } = useTranslation();
-  const { address } = useParams<{ address: string, paramAssetId?: string }>();
+  const { address } = useParams<{ address: string }>();
   const { accounts } = useContext(AccountContext);
   const account = accounts.find(({ address: accountAddress }) => accountAddress === address);
   const profile = useAccountProfile(account);

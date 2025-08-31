@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export { default as ChainSwitch } from './ChainSwitch';
 export { default as ConnectedDapp } from './ConnectedDapp';
 export { default as EditDappAccess } from './EditDappAccess';
 export { default as FullScreenChainSwitch } from './FullScreenChainSwitch';

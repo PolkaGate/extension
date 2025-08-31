@@ -101,7 +101,7 @@ function History (): React.ReactElement {
       />
       <Motion variant='slide'>
         <HistoryTabs
-          selectedChain={selectedChain}
+          selectedChain={selectedChain as string}
           setTab={setTab}
           tab={tab}
         />

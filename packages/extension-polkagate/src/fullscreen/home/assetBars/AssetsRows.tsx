@@ -72,7 +72,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
           const logoInfo = getLogo2(genesisHash, token);
 
           return (
-            <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', my: '5px', px: '10px' }}>
+            <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', my: '4px', px: '10px' }}>
               <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
                 <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
                 <Typography variant='B-2'>
@@ -95,6 +95,7 @@ function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.Reac
                 fontSize='14px'
                 fontWeight={600}
                 num={totalBalance}
+                onHideShape='shape2'
                 style={{ display: 'flex', justifyContent: 'end', width: `${WIDTHS[4]}%` }}
                 textAlign='right'
               />

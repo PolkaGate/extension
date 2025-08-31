@@ -5,11 +5,11 @@ import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
-import type { AccountStakingInfo, BalancesInfo, StakingConsts } from '../util/types';
+import type { AccountStakingInfo, StakingConsts } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
@@ -136,34 +136,6 @@ function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStaking
   };
 }
 
-/**
- * Calculates the balance available for staking
- *
- * @param balances - Account balance information
- * @param stakingAccount - User's staking account information
- * @param unlockingAmount - Amount currently in the unlocking process
- * @returns The amount available to stake, or undefined if required data is missing
- */
-const getAvailableToStake = (balances: BalancesInfo | undefined, stakingAccount: AccountStakingInfo | null | undefined, unlockingAmount: BN | undefined) => {
-  if (!balances || !stakingAccount || !unlockingAmount) {
-    return undefined;
-  }
-
-  const staked = stakingAccount?.stakingLedger?.active as unknown as BN;
-  const redeemable = stakingAccount?.redeemable;
-
-  if (!balances?.freeBalance || !staked || !unlockingAmount) {
-    return undefined;
-  }
-
-  const _availableToStake = balances.freeBalance.sub(staked).sub(unlockingAmount).sub(redeemable || BN_ZERO);
-
-  // the reserved balance can be considered here as the amount which can be staked as well in solo,
-  // but since pooled balance are migrating to the reserved balance. and also the pallet has issue to accept reserved,
-  // hence it needs more workaround on it
-  return bnMax(BN_ZERO, _availableToStake);
-};
-
 const DEFAULT_VALUE = {
   availableBalanceToStake: undefined,
   rewardDestinationAddress: undefined,
@@ -224,7 +196,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [fetchSessionInfo, sessionInfo]);
 
-  const availableBalanceToStake = getAvailableToStake(balances, stakingAccount, sessionInfo?.unlockingAmount);
+  const availableBalanceToStake = balances?.freeBalance;
 
   // Separate effect for updating the state
   useEffect(() => {

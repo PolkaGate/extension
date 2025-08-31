@@ -1,5 +1,48 @@
 # Change Log
 
+## [1.3.3](https://github.com/polkagate/extension/compare/v1.3.2...v1.3.3) (2025-08-30)
+
+
+### Bug Fixes
+
+* resolve my share issue when it is 0 ([a388cd1](https://github.com/polkagate/extension/commit/a388cd182340eb2556d190d8a1226efd5b752b0d))
+
+## [1.3.2](https://github.com/polkagate/extension/compare/v1.3.1...v1.3.2) (2025-08-30)
+
+
+### Bug Fixes
+
+* resolve people issue in subscan urls ([39902e1](https://github.com/polkagate/extension/commit/39902e1f69fc39cfb600a1b0210da72bcdaab7d5))
+
+## [1.3.1](https://github.com/polkagate/extension/compare/v1.3.0...v1.3.1) (2025-08-30)
+
+
+### Bug Fixes
+
+* resolve available balance ([#1809](https://github.com/polkagate/extension/issues/1809)) ([019e347](https://github.com/polkagate/extension/commit/019e34747ac6f4a7ee5617ab6912cc0b9c8c04c7)), closes [#1811](https://github.com/polkagate/extension/issues/1811)
+* return staking home from nomination fs ([#1812](https://github.com/polkagate/extension/issues/1812)) ([ae28099](https://github.com/polkagate/extension/commit/ae28099d167ad15e46fe4ef0aa97f9e32572f198))
+
+# [1.3.0](https://github.com/polkagate/extension/compare/v1.2.8...v1.3.0) (2025-08-30)
+
+
+### Features
+
+* add exponential backoff while fetching fails ([#1810](https://github.com/polkagate/extension/issues/1810)) ([651cb14](https://github.com/polkagate/extension/commit/651cb1440bac43435c13900f47fee279a3fe6df8))
+
+## [1.2.8](https://github.com/polkagate/extension/compare/v1.2.7...v1.2.8) (2025-08-29)
+
+
+### Bug Fixes
+
+* resolve incorrect comparison of genesis with chain name ([d3c1c38](https://github.com/polkagate/extension/commit/d3c1c38389cdbf4e7b82284a2d27d65cf0bb6754))
+
+## [1.2.7](https://github.com/polkagate/extension/compare/v1.2.6...v1.2.7) (2025-08-29)
+
+
+### Bug Fixes
+
+* compare token symbols in the same case ([52e43dd](https://github.com/polkagate/extension/commit/52e43dd36d751b18fe29671e93e177c1698b53c9))
+
 ## [1.2.6](https://github.com/polkagate/extension/compare/v1.2.5...v1.2.6) (2025-08-28)
 
 
