@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
-import { Book, Book1, Data } from 'iconsax-react';
+import { Book } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
@@ -12,7 +12,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { rejectMetaRequest } from '../../messaging';
 import Request from './Request';
 
-export default function Metadata(): React.ReactElement {
+export default function Metadata (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const requests = useContext(MetadataReqContext);
