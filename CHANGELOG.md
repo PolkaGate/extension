@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.6](https://github.com/polkagate/extension/compare/v1.3.5...v1.3.6) (2025-08-31)
+
+
+### Bug Fixes
+
+* resolve warning issue in extension mode ([2c863d0](https://github.com/polkagate/extension/commit/2c863d04f918471085ebb214f137efa870a6342f))
+
 ## [1.3.5](https://github.com/polkagate/extension/compare/v1.3.4...v1.3.5) (2025-08-31)
 
 
