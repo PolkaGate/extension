@@ -1,5 +1,13 @@
 # Change Log
 
+# [1.4.0](https://github.com/polkagate/extension/compare/v1.3.6...v1.4.0) (2025-08-31)
+
+
+### Features
+
+* add update metadata design ([1df7895](https://github.com/polkagate/extension/commit/1df78958829c5814858700bcf01005a65f133b02))
+* update phishing alert design ([5e19aaa](https://github.com/polkagate/extension/commit/5e19aaa53d072eb267a5d7b94291f553cf85df26))
+
 ## [1.3.6](https://github.com/polkagate/extension/compare/v1.3.5...v1.3.6) (2025-08-31)
 
 
