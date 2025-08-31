@@ -22,6 +22,7 @@ function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
   const { notify } = useAlerts();
   const { t } = useTranslation();
   // const colorMode = useContext(ColorContext);
+
   const onClick = useCallback(() => {
   //  colorMode.toggleColorMode();
     notify(t('Coming Soon!'), 'info');
