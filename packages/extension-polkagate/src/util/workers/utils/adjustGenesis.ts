@@ -48,7 +48,7 @@ export function mapRelayToSystemGenesis (genesisHash: string | null | undefined,
  * @param genesisHash - The original genesis hash of the hub chain.
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function hubToRelayMap (genesisHash: string | undefined): string | undefined {
+export function mapHubToRelay (genesisHash: string | undefined): string | undefined {
   if (!genesisHash) {
     return;
   }

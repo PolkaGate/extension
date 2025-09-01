@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { toCamelCase } from '../util';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
-import { hubToRelayMap, isMigratedRelay } from '../util/workers/utils/adjustGenesis';
+import { mapHubToRelay, isMigratedRelay } from '../util/workers/utils/adjustGenesis';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
 import useSavedAssetsCache from './useSavedAssetsCache';
 import useSelectedChains from './useSelectedChains';
@@ -34,7 +34,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -93,7 +93,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
         const { genesisHash } = assets[address][0];
 
         if (isMigratedRelay(genesisHash)) {
-          console.log(` ${genesisHash} is migrated`);
+          console.debug(` ${genesisHash} is migrated`);
 
           return;
         }
@@ -102,13 +102,13 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
           combinedAsset.balances[address] = {};
         }
 
-        const _mappedGenesisHash = hubToRelayMap(genesisHash) as unknown as string;
+        const _mappedGenesisHash = mapHubToRelay(genesisHash) as unknown as string;
 
-        // if (_mappedGenesisHash !== genesisHash) {
-        //   assets[address].forEach((asset) => {
-        //     asset.genesisHash = _mappedGenesisHash;
-        //   });
-        // }
+        if (_mappedGenesisHash !== genesisHash) {
+          assets[address].forEach((asset) => {
+            asset.chainName = asset.chainName.replace('AssetHub', '');
+          });
+        }
 
         combinedAsset.balances[address] = {
           ...(combinedAsset.balances[address] || {}),

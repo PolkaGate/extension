@@ -30,14 +30,14 @@ export default function usePool2 (address: string | undefined, genesisHash: stri
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>(undefined);
 
   const fetchPoolInformation = useCallback(() => {
-    if (!worker || !genesisHash || !formatted || !chainName) {
+    if (!worker || !formatted || !chainName) {
       return;
     }
 
     // the sort in this object is important because the getPool use the params as they pass
     // eslint-disable-next-line sort-keys
     worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { chainName, stakerAddress: formatted, id } });
-  }, [chainName, formatted, genesisHash, id, worker]);
+  }, [chainName, formatted, id, worker]);
 
   useEffect(() => {
     if (!worker || !formatted) {

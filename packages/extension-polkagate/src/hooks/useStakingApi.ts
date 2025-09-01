@@ -1294,8 +1294,13 @@ export const useEasyStake = (
   const nominated = api?.tx['staking']['nominate'];
   const join = api?.tx['nominationPools']['join']; // (amount, poolId)
 
-  const polkagatePool = useMemo(() => chainName ? POLKAGATE_POOL_IDS[chainName] : undefined, [chainName]);
-  const initialPool = usePool2(address, polkagatePool ? genesisHash : undefined, polkagatePool);
+  const polkagatePoolID = useMemo(() => {
+    const chainUniqueName = chainName?.replaceAll('AssetHub', '');
+
+    return chainUniqueName ? POLKAGATE_POOL_IDS[chainUniqueName] : undefined;
+  }, [chainName]);
+
+  const initialPool = usePool2(address, polkagatePoolID ? genesisHash : undefined, polkagatePoolID);
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [amountAsBN, setAmountAsBN] = useState<BN | undefined>(undefined);

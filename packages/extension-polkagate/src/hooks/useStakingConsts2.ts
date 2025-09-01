@@ -8,9 +8,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { MAX_NOMINATIONS } from '../util/constants';
+import { mapHubToRelay } from '../util/workers/utils/adjustGenesis';
 import { useChainInfo, useCurrentEraIndex2 } from '.';
 
 export default function useStakingConsts2 (genesisHash: string | undefined): StakingConsts | null | undefined {
+  const relayGenesisHash = mapHubToRelay(genesisHash);
+  const { api: relayChainApi } = useChainInfo(relayGenesisHash);
+
   const { api, chainName } = useChainInfo(genesisHash);
   const eraIndex = useCurrentEraIndex2(genesisHash);
 
@@ -19,7 +23,7 @@ export default function useStakingConsts2 (genesisHash: string | undefined): Sta
 
   const getStakingConsts = useCallback(async () => {
     try {
-      if (!api || !chainName) {
+      if (!api || !chainName || !relayChainApi) {
         return;
       }
 
@@ -32,9 +36,16 @@ export default function useStakingConsts2 (genesisHash: string | undefined): Sta
       const existentialDeposit = new BN(existentialDepositString);
       const bondingDuration = apiAt.consts['staking']['bondingDuration'].toPrimitive() as number;
       const sessionsPerEra = apiAt.consts['staking']['sessionsPerEra'].toPrimitive() as number;
-      const epochDuration = apiAt.consts['babe']?.['epochDuration']?.toPrimitive() as number ?? 0;
-      const expectedBlockTime = api.consts['babe']?.['expectedBlockTime']?.toPrimitive() as number ?? 0;
+
+      const atRelay = await relayChainApi.rpc.chain.getFinalizedHead();
+      const apiAtRelay = await relayChainApi.at(atRelay);
+
+      const epochDuration = apiAtRelay.consts['babe']['epochDuration']?.toPrimitive() as number ?? 0;
+      const expectedBlockTime = relayChainApi.consts['babe']['expectedBlockTime']?.toPrimitive() as number ?? 0;
       const epochDurationInHours = epochDuration * expectedBlockTime / 3600000; // 1000 milSec * 60sec * 60min
+
+        console.log('epochDuration expectedBlockTime', epochDuration.toString(), expectedBlockTime.toString());
+
       const [minNominatorBond, currentEraIndex] = await Promise.all([
         apiAt.query['staking']['minNominatorBond'](),
         api.query['staking']['currentEra']()
@@ -62,7 +73,7 @@ export default function useStakingConsts2 (genesisHash: string | undefined): Sta
       console.log('something went wrong while getStakingConsts. err: ', error);
       setNewConsts(null);
     }
-  }, [api, chainName]);
+  }, [api, chainName, relayChainApi]);
 
   useEffect(() => {
     if (!chainName) {
@@ -82,14 +93,14 @@ export default function useStakingConsts2 (genesisHash: string | undefined): Sta
   }, [chainName]);
 
   useEffect(() => {
-    if (!eraIndex || !api || !chainName) {
+    if (!eraIndex || !api || !chainName || !relayChainApi) {
       return;
     }
 
     const isSavedVersionOutOfDate = eraIndex !== savedConsts?.eraIndex;
 
     isSavedVersionOutOfDate && getStakingConsts().catch(console.error);
-  }, [api, chainName, eraIndex, getStakingConsts, savedConsts?.eraIndex]);
+  }, [api, chainName, eraIndex, getStakingConsts, relayChainApi, savedConsts?.eraIndex]);
 
   return newConsts ?? savedConsts ?? undefined;
 }
