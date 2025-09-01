@@ -9,7 +9,6 @@ import { useMemo } from 'react';
 import chains from '../util/chains';
 import { sanitizeChainName } from '../util/utils';
 import { useApi2, useMetadata } from '.';
-import { mapRelayToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 
 /**
  * Interface representing the information about a blockchain.

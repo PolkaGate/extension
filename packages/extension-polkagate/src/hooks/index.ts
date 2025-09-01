@@ -34,7 +34,6 @@ export { default as useBalancesOnAssethub } from './useBalancesOnAssethub';
 export { default as useBalancesOnAssethub2 } from './useBalancesOnAssethub2';
 export { default as useBalancesOnMultiAssetChain } from './useBalancesOnMultiAssetChain';
 export { default as useBalancesOnMultiAssetChain2 } from './useBalancesOnMultiAssetChain2';
-export { default as useBlockInterval } from './useBlockInterval';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
 export { default as useCategorizedAccountsInProfiles } from './useCategorizedAccountsInProfiles';

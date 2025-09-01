@@ -422,7 +422,6 @@
   "decimals": "",
   "symbol": "",
   "upgrade": "",
-  "This approval will add the metadata to your extension instance, allowing future requests to be decoded using this metadata.": "",
   "Approve": "",
   "Copy": "",
   "Download": "",
@@ -821,5 +820,9 @@
   "QR-signer": "",
   "raw seed": "",
   "from file": "",
-  "Update Metadata": ""
+  "Update Metadata": "",
+  "item": "",
+  "value": "",
+  "genesis hash": "",
+  "This approval adds the metadata to your extension so future requests can be decoded with it": ""
 }
