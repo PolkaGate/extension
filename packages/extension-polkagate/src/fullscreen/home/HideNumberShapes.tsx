@@ -5,10 +5,10 @@ import { Box, Grid, Stack } from '@mui/material';
 import React from 'react';
 
 export function HideNumberShape1 (): React.ReactElement {
-  const renderRow = (count: number, offset = 0) => (
-    <Stack direction='row' key={offset} sx={{ ml: offset ? '12px' : 0 }}>
+  const renderRow = (count: number, offset = 0, rowId: number) => (
+    <Stack direction='row' key={`row-${rowId}-${offset}`} sx={{ ml: offset ? '12px' : 0 }}>
       {Array.from({ length: count }).map((_, index) => (
-        <React.Fragment key={index}>
+        <React.Fragment key={`cell-${rowId}-${offset}-${index}`}>
           <Box
             sx={{
               animation: 'fadeIn 0.4s forwards',
@@ -45,19 +45,19 @@ export function HideNumberShape1 (): React.ReactElement {
         `}
       </style>
       <Stack direction='column'>
-        {renderRow(10)}
-        {renderRow(10, 12)}
-        {renderRow(10)}
+        {renderRow(10, 0, 0)}
+        {renderRow(10, 12, 1)}
+        {renderRow(10, 0, 2)}
       </Stack>
     </>
   );
 }
 
 export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }): React.ReactElement {
-  const renderRow = (count: number, offset = 0) => (
+  const renderRow = (count: number, offset = 0, rowId: number) => (
     <Stack
       direction='row'
-      key={offset}
+      key={`row-${rowId}-${offset}`}
       sx={{
         flexShrink: 1,
         minWidth: 0,
@@ -66,7 +66,7 @@ export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }
       }}
     >
       {Array.from({ length: count }).map((_, index) => (
-        <React.Fragment key={index}>
+        <React.Fragment key={`cell-${rowId}-${offset}-${index}`}>
           <Box
             sx={{
               animation: 'fadeInUp 0.4s forwards',
@@ -104,8 +104,8 @@ export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }
           `}
         </style>
         <Stack direction='column' sx={{ flexShrink: 1, minWidth: 0, overflow: 'hidden', width: '67px' }}>
-          {renderRow(3, 12)}
-          {renderRow(3)}
+          {renderRow(3, 12, 0)}
+          {renderRow(3, 0, 1)}
         </Stack>
       </>
     </Grid>
