@@ -3,7 +3,7 @@
 
 import type { Proxy, TransactionDetail, TxInfo } from '@polkadot/extension-polkagate/util/types';
 
-import { Grid, Typography } from '@mui/material';
+import { Fade, Grid, Typography } from '@mui/material';
 import { ArrowLeft } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -61,15 +61,16 @@ export default function SendFund (): React.ReactElement {
 
   const isLoading = useMemo(() =>
     (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee))
-  ,
-  [inputStep, inputs, inputTransaction]);
+    ,
+    [inputStep, inputs, inputTransaction]);
 
   const buttonDisable = useMemo(() =>
+    (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
     (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientChain === undefined)) ||
     isLoading ||
     (inputStep === INPUT_STEPS.SUMMARY && !!inputs?.fee)
-  ,
-  [inputStep, inputs, isLoading]);
+    ,
+    [inputStep, inputs, isLoading]);
 
   const transactionDetail = useMemo(() => {
     return {
@@ -85,7 +86,7 @@ export default function SendFund (): React.ReactElement {
       ...txInfo,
       token: inputs?.token // since an asset may be transferring other than native hence we overwrite native token
     } as TransactionDetail;
-  }, [formatted, inputs?.amountAsBN, inputs?.fee, inputs?.recipientAddress, inputs?.recipientChain?.text, t, txInfo]);
+  }, [formatted, inputs?.amountAsBN, inputs?.fee, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
 
   return (
     <HomeLayout
@@ -159,33 +160,37 @@ export default function SendFund (): React.ReactElement {
             style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
           />)
         : inputTransaction &&
-        <SignArea3
-          address={address}
-          direction='horizontal'
-          genesisHash={genesisHash}
-          ledgerStyle={{ position: 'unset' }}
-          onClose={onBack}
-          proxyTypeFilter={PROXY_TYPE.SEND_FUND}
-          selectedProxy={selectedProxy}
-          setFlowStep={setFlowStep}
-          setSelectedProxy={setSelectedProxy}
-          setShowProxySelection={setShowProxySelection}
-          setTxInfo={setTxInfo}
-          showProxySelection={showProxySelection}
-          signUsingPasswordProps={{
-            decisionButtonProps: {
-              primaryButtonProps: { style: { width: '148%' } },
-              secondaryButtonProps: {
-                StartIcon: ArrowLeft,
-                iconVariant: 'Linear',
-                text: t('Back')
-              }
-            }
-          }}
-          style={{ position: 'unset', width: '73%' }}
-          transaction={inputTransaction}
-          withCancel
-        />
+        <Fade in={true} style={{ width: 'inherit' }} timeout={1000}>
+          <div>
+            <SignArea3
+              address={address}
+              direction='horizontal'
+              genesisHash={genesisHash}
+              ledgerStyle={{ position: 'unset' }}
+              onClose={onBack}
+              proxyTypeFilter={PROXY_TYPE.SEND_FUND}
+              selectedProxy={selectedProxy}
+              setFlowStep={setFlowStep}
+              setSelectedProxy={setSelectedProxy}
+              setShowProxySelection={setShowProxySelection}
+              setTxInfo={setTxInfo}
+              showProxySelection={showProxySelection}
+              signUsingPasswordProps={{
+                decisionButtonProps: {
+                  primaryButtonProps: { style: { width: '148%' } },
+                  secondaryButtonProps: {
+                    StartIcon: ArrowLeft,
+                    iconVariant: 'Linear',
+                    text: t('Back')
+                  }
+                }
+              }}
+              style={{ position: 'unset', width: '73%' }}
+              transaction={inputTransaction}
+              withCancel
+            />
+          </div>
+        </Fade>
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
