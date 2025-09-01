@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Fade, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
@@ -168,72 +168,75 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
   ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
 
   return (
-    <Grid alignItems='center' container item mt={mt} sx={{ height, ...style }} textAlign={textAlign} width='fit-content'>
-      {isHideNumbers && !ignoreHide
-        ? (
-          <>
-            {
-              onHideShape
-                ? onHideShape === 'shape1'
-                  ? <HideNumberShape1 />
-                  : onHideShape === 'shape2'
-                    ? <HideNumberShape2 style={{ display: 'flex', justifyContent: 'end', width: '100%' }} />
-                    : <></>
-                : <Dots
-                  color={textColor}
-                  decimalColor={decimalColor}
-                  preText={mayCurrencySign}
-                  preTextFontSize={fontSize}
-                  preTextFontWeight={fontWeight}
-                  variant={dotStyle}
-                  />
-            }
-          </>
-        )
-        : total !== undefined
-          ? <Stack alignItems='baseline' direction='row' width='fit-content'>
-            <Typography
-              fontFamily={fontFamily}
-              fontSize={fontSize}
-              fontWeight={fontWeight}
-              lineHeight={lineHeight}
-              sx={{ color: textColor }}
-            >
-              {withCountUp
-                ? (
-                  <CountUp
-                    decimals={_decimalPoint}
-                    duration={1}
-                    end={parseFloat(String(total))}
-                    prefix={sign || currency?.sign || ''}
-                  />)
-                : <>
-                  {formattedTotal}
-                </>
+    <Fade in={true} timeout={1000}>
+      <Grid alignItems='center' container item mt={mt} sx={{ height, ...style }} textAlign={textAlign} width='fit-content'>
+        {isHideNumbers && !ignoreHide
+          ? (
+            <>
+              {
+                onHideShape
+                  ? onHideShape === 'shape1'
+                    ? <HideNumberShape1 />
+                    : onHideShape === 'shape2'
+                      ? <HideNumberShape2 style={{ display: 'flex', justifyContent: 'end', width: '100%' }} />
+                      : <></>
+                  : <Dots
+                    color={textColor}
+                    decimalColor={decimalColor}
+                    preText={mayCurrencySign}
+                    preTextFontSize={fontSize}
+                    preTextFontWeight={fontWeight}
+                    variant={dotStyle}
+                    />
               }
-            </Typography>
-            {withSmallDecimal && Number(total) > 0 &&
+            </>
+          )
+          : total !== undefined
+            ? <Stack alignItems='baseline' direction='row' width='fit-content'>
               <Typography
                 fontFamily={fontFamily}
-                fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
+                fontSize={fontSize}
                 fontWeight={fontWeight}
                 lineHeight={lineHeight}
-                sx={{ color: decimalColor || theme.palette.secondary.contrastText }}
+                sx={{ color: textColor }}
               >
-                <DecimalPart
-                  value={total}
-                  withCountUp={withCountUp}
-                />
+                {withCountUp
+                  ? (
+                    <CountUp
+                      decimals={_decimalPoint}
+                      duration={1}
+                      end={parseFloat(String(total))}
+                      prefix={sign || currency?.sign || ''}
+                    />)
+                  : <>
+                    {formattedTotal}
+                  </>
+                }
               </Typography>
-            }
-          </Stack>
-          : (
-            <MySkeleton
-              height={skeletonHeight}
-              style={{ borderRadius: '14px', width }}
-            />)
-      }
-    </Grid>
+              {
+                withSmallDecimal && Number(total) > 0 &&
+                <Typography
+                  fontFamily={fontFamily}
+                  fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}
+                  fontWeight={fontWeight}
+                  lineHeight={lineHeight}
+                  sx={{ color: decimalColor || theme.palette.secondary.contrastText }}
+                >
+                  <DecimalPart
+                    value={total}
+                    withCountUp={withCountUp}
+                  />
+                </Typography>
+              }
+            </Stack>
+            : (
+              <MySkeleton
+                height={skeletonHeight}
+                style={{ borderRadius: '14px', width }}
+              />)
+        }
+      </Grid>
+    </Fade>
   );
 }
 

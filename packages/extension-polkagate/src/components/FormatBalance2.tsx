@@ -7,6 +7,7 @@ import type BN from 'bn.js';
 import type { Compact } from '@polkadot/types';
 import type { INumber } from '@polkadot/types-codec/types';
 
+import { Fade } from '@mui/material';
 import React, { type CSSProperties, useMemo } from 'react';
 
 import { formatBalance, isString } from '@polkadot/util';
@@ -83,35 +84,37 @@ function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimal
 
   const formatInfo = useMemo(() =>
     format || getFormat(decimals, tokens, formatIndex)
-  , [decimals, tokens, format, formatIndex]);
+    , [decimals, tokens, format, formatIndex]);
 
   return (
-    <div style={{ ...style }}>
-      {label
-        ? <>{label}&nbsp;</>
-        : ''
-      }
-      <span>
-        {isHideNumbers
-          ? <Dots
-            color={style?.color}
-            postText={tokens[0]}
-            postTextStyle={style}
-            variant='small'
-          />
-          : valueFormatted
-            ? splitFormat(valueFormatted, decimalPoint, labelPost, isShort)
-            : value
-              ? value === 'all'
-                ? <>{t('everything')}{labelPost || ''}</>
-                : applyFormat(decimalPoint, value, formatInfo, withCurrency, withSi, isShort, labelPost, tokenColor)
-              : isString(labelPost)
-                ? `-${labelPost}`
-                : labelPost
+    <Fade in={true} timeout={1000}>
+      <div style={{ ...style }}>
+        {label
+          ? <>{label}&nbsp;</>
+          : ''
         }
-      </span>
-      {children}
-    </div>
+        <span>
+          {isHideNumbers
+            ? <Dots
+              color={style?.color}
+              postText={tokens[0]}
+              postTextStyle={style}
+              variant='small'
+              />
+            : valueFormatted
+              ? splitFormat(valueFormatted, decimalPoint, labelPost, isShort)
+              : value
+                ? value === 'all'
+                  ? <>{t('everything')}{labelPost || ''}</>
+                  : applyFormat(decimalPoint, value, formatInfo, withCurrency, withSi, isShort, labelPost, tokenColor)
+                : isString(labelPost)
+                  ? `-${labelPost}`
+                  : labelPost
+          }
+        </span>
+        {children}
+      </div>
+    </Fade>
   );
 }
 
