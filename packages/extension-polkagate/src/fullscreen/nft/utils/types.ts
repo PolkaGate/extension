@@ -97,7 +97,6 @@ export interface DetailProp {
 
 export interface ItemsListProps {
   nfts: ItemInformation[] | null | undefined;
-  apis: Record<string, ApiPromise | undefined>;
 }
 
 export interface DataType {

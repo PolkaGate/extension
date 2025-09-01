@@ -9,19 +9,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hexToString } from '@polkadot/util';
 
-import { useApiWithChain2, usePeopleChain } from '.';
+import { useChainInfo, usePeopleChain } from '.';
 
 interface SubIdentity {
   parentAddress: string,
   display: string
 }
 
-export default function useIdentity(genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
+export default function useIdentity (genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
-  const { peopleChain } = usePeopleChain(undefined, genesisHash);
+  const { peopleChain } = usePeopleChain(genesisHash);
 
-  const api = useApiWithChain2(peopleChain);
+  const { api } = useChainInfo(peopleChain?.genesisHash);
 
   const getIdentityOf = useCallback(async (accountId: string) => {
     if (!api?.query?.['identity']?.['identityOf'] || !accountId) {

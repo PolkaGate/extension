@@ -1,20 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '../hooks';
-import { Warning } from '.';
 import { CanPayStatements } from '../hooks/useCanPayFeeAndDeposit';
+import { Warning } from '.';
 
 interface Props {
   canPayStatements: CanPayStatements;
   extraText?: string;
 }
 
-export default function CanPayErrorAlert({ canPayStatements, extraText }: Props): React.ReactElement {
+export default function CanPayErrorAlert ({ canPayStatements, extraText }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 

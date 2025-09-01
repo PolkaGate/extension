@@ -3,11 +3,7 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { useMemo } from 'react';
-
 import { BN, BN_THOUSAND, BN_TWO, bnMin } from '@polkadot/util';
-
-import useApi from './useApi';
 
 export const A_DAY = new BN(24 * 60 * 60 * 1000);
 
@@ -16,7 +12,7 @@ export const A_DAY = new BN(24 * 60 * 60 * 1000);
 const THRESHOLD = BN_THOUSAND.div(BN_TWO);
 const DEFAULT_TIME = new BN(6_000);
 
-export function calcInterval(api: ApiPromise | undefined): BN {
+export function calcInterval (api: ApiPromise | undefined): BN {
   if (!api) {
     return DEFAULT_TIME;
   }
@@ -40,10 +36,4 @@ export function calcInterval(api: ApiPromise | undefined): BN {
           : DEFAULT_TIME
     )
   ));
-}
-
-export default function useBlockInterval(address: string | undefined): BN | undefined {
-  const api = useApi(address);
-
-  return useMemo(() => api && calcInterval(api), [api]);
 }
