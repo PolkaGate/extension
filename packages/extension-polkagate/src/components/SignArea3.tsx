@@ -11,11 +11,12 @@ import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { Data, ScanBarcode, Warning2 } from 'iconsax-react';
+import { Data, Lock, ScanBarcode, Warning2 } from 'iconsax-react';
 import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import keyring from '@polkadot/ui-keyring';
+import { noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useIsBlueish, useIsExtensionPopup, useProxies, useTranslation } from '../hooks';
@@ -31,6 +32,7 @@ import { GradientButton, SignUsingProxy } from '.';
 interface AlertHandler {
   alertText: string;
   buttonText: string;
+  isDisabled?: boolean;
   icon: ReactNode;
   onClick: () => void;
 }
@@ -59,6 +61,7 @@ const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) =
         isBlueish
           ? (
             <StakingActionButton
+              disabled={alertHandler.isDisabled}
               onClick={alertHandler.onClick}
               startIcon={alertHandler.icon}
               style={{ marginTop: '18px' }}
@@ -68,6 +71,7 @@ const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) =
           : (
             <GradientButton
               contentPlacement='center'
+              disabled={alertHandler.isDisabled}
               onClick={alertHandler.onClick}
               style={{
                 height: '44px',
@@ -213,16 +217,26 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, on
     }
 
     if (showUseProxy) {
+      if (proxies?.length) {
+        return {
+          alertText: t('This is a watch-only account. To complete this transaction, you must use a proxy.'),
+          buttonText: t('Use Proxy'),
+          icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
+          onClick: toggleSelectProxy
+        };
+      }
+
       return {
-        alertText: t('This is a watch-only account. To complete this transaction, you must use a proxy.'),
-        buttonText: t('Use Proxy'),
-        icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
-        onClick: toggleSelectProxy
+        alertText: t('This is a watch-only account. No proxies are available in the extension to sign transactions.'),
+        buttonText: t('Cannot sign'),
+        icon: <Lock color={theme.palette.text.highlight} size={18} variant='Bold' />,
+        isDisabled: true,
+        onClick: noop
       };
     }
 
     return undefined;
-  }, [showQrSign, showUseProxy, t, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+  }, [proxies?.length, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
