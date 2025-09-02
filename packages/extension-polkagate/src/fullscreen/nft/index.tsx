@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { ItemInformation } from './utils/types';
 
 import { Stack, Typography } from '@mui/material';
@@ -9,30 +8,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import NftManager from '../../class/nftManager';
-import { useApiWithChain2, useTranslation } from '../../hooks';
+import { useTranslation } from '../../hooks';
 import HomeLayout from '../components/layout';
 import Filters from './components/Filters';
 import NftList from './components/NftList';
-import { SUPPORTED_NFT_CHAINS } from './utils/constants';
 import { fetchItemMetadata } from './utils/util';
-import { STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 enum STEPS {
   CHECK_SCREEN,
   INDEX
 }
-
-const getAssetHubByChainName = (chainName?: string) => {
-  if (chainName?.toLowerCase()?.includes('polkadot')) {
-    return { genesisHash: STATEMINT_GENESIS_HASH, name: 'Polkadot Asset Hub' };
-  }
-
-  if (chainName?.toLowerCase()?.includes('kusama')) {
-    return { genesisHash: STATEMINE_GENESIS_HASH, name: 'Kusama Asset Hub' };
-  }
-
-  return undefined;
-};
 
 function NFT (): React.ReactElement {
   const { t } = useTranslation();
@@ -70,16 +55,6 @@ function NFT (): React.ReactElement {
       nftManager.unsubscribe(handleNftUpdate);
     };
   }, [address, nftManager]);
-
-  const chainNames = Object.keys(SUPPORTED_NFT_CHAINS);
-
-  const apis = Object.fromEntries(
-    chainNames.map((chainName) => [
-      chainName,
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useApiWithChain2(getAssetHubByChainName(chainName) as Chain)
-    ])
-  );
 
   const reset = useCallback(() => {
     setStep(STEPS.CHECK_SCREEN);
@@ -131,7 +106,6 @@ function NFT (): React.ReactElement {
             />
           }
           <NftList
-            apis={apis}
             nfts={itemsToShow}
           />
         </>

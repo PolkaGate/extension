@@ -21,7 +21,7 @@ interface SubIdentity {
 export default function useIdentity2 (genesisHash: string | undefined, formatted: string | undefined | null, accountInfo?: DeriveAccountInfo | null): DeriveAccountInfo | undefined | null {
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
-  const { peopleChain } = usePeopleChain(undefined, genesisHash);
+  const { peopleChain } = usePeopleChain(genesisHash);
   const chainGenesisHash = useMemo(() => peopleChain?.genesisHash || getChainGenesisHash(peopleChain?.name), [peopleChain]);
   const api = useApi2(chainGenesisHash);
 

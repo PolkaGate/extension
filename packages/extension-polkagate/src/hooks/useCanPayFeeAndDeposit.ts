@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
-import { useBalances } from '.';
+import { useBalances2 } from '.';
 
 export enum CanPayStatements {
   CAN_NOT_PAY,
@@ -25,13 +25,14 @@ export enum CanPayStatements {
 
 export default function useCanPayFeeAndDeposit (
   formatted: AccountId | string | undefined,
+  genesisHash: string | undefined,
   proxyAddress: AccountId | string | undefined,
   estimatedFee: Balance | undefined,
   deposit: BN | Balance | undefined,
   balancesFromProps?: BalancesInfo | undefined
 ): CanPayFee {
-  const balancesFromAddress = useBalances(formatted?.toString());
-  const proxyAddressBalances = useBalances(proxyAddress?.toString());
+  const balancesFromAddress = useBalances2(formatted?.toString(), genesisHash);
+  const proxyAddressBalances = useBalances2(proxyAddress?.toString(), genesisHash);
 
   const balances = balancesFromProps || balancesFromAddress;
   const [canPayFeeAndDeposit, setCanPayFeeAndDeposit] = useState<boolean | undefined>();

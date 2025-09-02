@@ -94,7 +94,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
     };
   }, [proxyItems, t]);
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, fee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), genesisHash, selectedProxy?.delegate, fee, depositToPay);
 
   return (
     <Grid container item>
