@@ -91,6 +91,7 @@ export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onS
           address={account.address}
           error={error}
           fee={fee}
+          genesisHash={payload.genesisHash}
           isFirst={isFirst}
           isSignable
           onCancel={onCancel}

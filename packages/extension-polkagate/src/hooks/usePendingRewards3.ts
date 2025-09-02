@@ -3,7 +3,6 @@
 
 import type { StorageKey } from '@polkadot/types';
 import type { AnyTuple, Codec } from '@polkadot/types/types';
-import type { ExposureOverview } from './useValidators';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -11,6 +10,13 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { toBN } from '../util/utils';
 import { useActiveEraIndex, useChainInfo, useFormatted3 } from '.';
+
+interface ExposureOverview {
+  total: BN;
+  own: BN
+  nominatorCount: BN;
+  pageCount: BN;
+}
 
 interface Others {
   who: string;

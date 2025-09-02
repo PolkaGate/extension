@@ -14,20 +14,21 @@ import useTranslation from '../../../hooks/useTranslation';
 import { approveSignPassword, isSignLocked } from '../../../messaging';
 
 interface Props {
+  address: string;
   error: string | null;
+  fee?: Balance;
   isFirst: boolean;
   isSignable: boolean;
+  genesisHash?: string;
   setError: (value: string | null) => void;
   signId: string;
   onCancel: () => void;
-  address: string;
-  fee?: Balance;
 }
 
-export default function SignArea ({ address, error, fee, isFirst, isSignable, onCancel, setError, signId }: Props): JSX.Element {
+export default function SignWithPassword ({ address, error, fee, genesisHash, isFirst, isSignable, onCancel, setError, signId }: Props): JSX.Element {
   const onAction = useContext(ActionContext);
   const { t } = useTranslation();
-  const canPayFee = useCanPayFee(address, fee);
+  const canPayFee = useCanPayFee(address, genesisHash, fee);
 
   const [savePass, setSavePass] = useState(false);
   const [isLocked, setIsLocked] = useState<boolean | null>(null);
@@ -95,24 +96,6 @@ export default function SignArea ({ address, error, fee, isFirst, isSignable, on
               title={t('Your Password')}
             />
           )}
-          {/* <Grid item>
-            <Checkbox
-              checked={savePass}
-              label={isLocked
-                ? t<string>(
-                  'Remember my password for the next {{expiration}} minutes',
-                  { replace: { expiration: PASSWORD_EXPIRY_MIN } }
-                )
-                : t<string>(
-                  'Extend the period without password by {{expiration}} minutes',
-                  { replace: { expiration: PASSWORD_EXPIRY_MIN } }
-                )
-              }
-              labelStyle={{ fontSize: '14px', fontWeight: 400 }}
-              onChange={() => setSavePass(!savePass)}
-              style={{ ml: '10px', mt: '5px' }}
-            />
-          </Grid> */}
           {canPayFee === false &&
             <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
               <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
