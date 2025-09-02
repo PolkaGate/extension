@@ -13,11 +13,11 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { decodeMultiLocation } from '../util/utils';
-import { useChainInfo, useFormatted3 } from '.';
+import { useChainInfo, useFormatted } from '.';
 
-export default function useBalancesOnAssethub2 (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalancesOnAssethub(address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
 
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
 

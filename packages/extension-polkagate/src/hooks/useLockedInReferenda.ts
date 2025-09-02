@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { BN_MAX_INTEGER } from '@polkadot/util';
 
-import { useAccountLocks2, useCurrentBlockNumber2, useHasDelegated2, useTimeToUnlock2 } from '.';
+import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useTimeToUnlock } from '.';
 
 interface Lock {
   classId: BN;
@@ -29,17 +29,17 @@ interface OutputType {
 }
 
 export default function useLockedInReferenda (address: string | undefined, genesisHash: string | null | undefined, refreshNeeded: boolean | undefined): OutputType {
-  const delegatedBalance = useHasDelegated2(address, genesisHash, refreshNeeded);
-  const referendaLocks = useAccountLocks2(address, genesisHash, 'referenda', 'convictionVoting', false, refreshNeeded);
-  const currentBlock = useCurrentBlockNumber2(genesisHash);
-  const { lockedInRef, timeToUnlock, totalLocked, unlockableAmount } = useTimeToUnlock2(address, genesisHash, delegatedBalance, referendaLocks, refreshNeeded);
+  const delegatedBalance = useHasDelegated(address, genesisHash, refreshNeeded);
+  const referendaLocks = useAccountLocks(address, genesisHash, 'referenda', 'convictionVoting', false, refreshNeeded);
+  const currentBlock = useCurrentBlockNumber(genesisHash);
+  const { lockedInRef, timeToUnlock, totalLocked, unlockableAmount } = useTimeToUnlock(address, genesisHash, delegatedBalance, referendaLocks, refreshNeeded);
 
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
   const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
 
   const hasDescription = useMemo(() =>
     Boolean((unlockableAmount && !unlockableAmount.isZero()) || (delegatedBalance && !delegatedBalance.isZero()) || timeToUnlock)
-  , [delegatedBalance, timeToUnlock, unlockableAmount]);
+    , [delegatedBalance, timeToUnlock, unlockableAmount]);
 
   return {
     classToUnlock,

@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
 import { FormatBalance2, GradientButton } from '../../../components';
-import { useIsExtensionPopup, usePoolConst, useStakingConsts2, useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation } from '../../../hooks';
 import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
 import { remainingTime } from '../../../util/time';
@@ -48,7 +48,7 @@ function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const poolConsts = usePoolConst(selectedPosition?.genesisHash);
-  const stakingConsts = useStakingConsts2(selectedPosition?.genesisHash);
+  const stakingConsts = useStakingConsts(selectedPosition?.genesisHash);
 
   const _decimal = selectedPosition?.decimal || stakingConsts?.decimal || 1;
   const eraLength = remainingTime(poolConsts?.eraLength?.toNumber() ?? 0);

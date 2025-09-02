@@ -813,3 +813,15 @@ export function calcInterval (api: ApiPromise | undefined): BN {
     )
   ));
 }
+
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal) || '0') * (assetPrice ?? 0);
+
+export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
+  if (tokenPriceChange === -100) {
+    return 0;
+  }
+
+  const totalChange = (tokenPriceChange * tokenBalance) / 100;
+
+  return totalChange * tokenPrice;
+};

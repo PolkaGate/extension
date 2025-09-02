@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hexToString } from '@polkadot/util';
 
 import getChainGenesisHash from '../util/getChainGenesisHash';
-import { useApi2, usePeopleChain } from '.';
+import { useApi, usePeopleChain } from '.';
 
 interface SubIdentity {
   parentAddress: string,
@@ -23,7 +23,7 @@ export default function useIdentity2 (genesisHash: string | undefined, formatted
 
   const { peopleChain } = usePeopleChain(genesisHash);
   const chainGenesisHash = useMemo(() => peopleChain?.genesisHash || getChainGenesisHash(peopleChain?.name), [peopleChain]);
-  const api = useApi2(chainGenesisHash);
+  const api = useApi(chainGenesisHash);
 
   const getIdentityOf = useCallback(async (accountId: string) => {
     if (!api?.query?.['identity']?.['identityOf'] || !accountId) {

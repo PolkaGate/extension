@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router';
 import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
-import { useSoloStakingInfo, useStakingConsts2, useTranslation, useValidatorSuggestion2 } from '../../../../hooks';
+import { useSoloStakingInfo, useStakingConsts, useTranslation, useValidatorSuggestion } from '../../../../hooks';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
 import FooterControls from '../../partials/FooterControls';
@@ -28,8 +28,8 @@ function ManageValidators () {
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { nominatedValidatorsIds, nominatedValidatorsInformation, validatorsInfo, validatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
 
-  const selectedBestValidators = useValidatorSuggestion2(validatorsInfo, genesisHash);
-  const stakingConsts = useStakingConsts2(genesisHash);
+  const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
+  const stakingConsts = useStakingConsts(genesisHash);
 
   const [review, setGoReview] = useState<boolean>(false);
   const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);

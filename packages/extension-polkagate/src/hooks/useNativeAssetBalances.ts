@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import type { Balance } from '@polkadot/types/interfaces';
-//@ts-ignore
+// @ts-ignore
 import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
 import type { HexString } from '@polkadot/util/types';
 import type { BalancesInfo, SavedBalances } from '../util/types';
@@ -15,13 +15,13 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { FetchingContext } from '../components';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { decodeMultiLocation } from '../util/utils';
-import { useChainInfo, useFormatted3, useSelectedAccount, useStakingAccount2 } from '.';
+import { useChainInfo, useFormatted, useSelectedAccount, useStakingAccount } from '.';
 
-export default function useNativeAssetBalances2 (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
-  const stakingAccount = useStakingAccount2(address, genesisHash, undefined, undefined);
+export default function useNativeAssetBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
+  const stakingAccount = useStakingAccount(address, genesisHash, undefined, undefined);
   const { api, chainName, decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
   const account = useSelectedAccount();
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
   const isFetching = useContext(FetchingContext);
 
   const [balances, setBalances] = useState<BalancesInfo | undefined>();
@@ -40,7 +40,7 @@ export default function useNativeAssetBalances2 (address: string | undefined, ge
     const ED = api.consts['balances'] ? api.consts['balances']['existentialDeposit'] as unknown as BN : BN_ZERO;
 
     api.derive.balances?.all(formatted).then((allBalances) => {
-      //@ts-ignore
+      // @ts-ignore
       api.query['system']['account'](formatted).then(({ data: systemBalance }: FrameSystemAccountInfo) => {
         // some chains such as PARALLEL does not support this call hence BN_ZERO is set for them
         const frozenBalance = systemBalance?.frozen || BN_ZERO;
@@ -66,7 +66,7 @@ export default function useNativeAssetBalances2 (address: string | undefined, ge
         isFetching.set(isFetching.fetching);
       }).catch(console.error);
     }).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, genesisHash, chainName, decimal, stakingAccount, token, isFetchingNativeTokenOfAssetHub, balances, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import type { ValidatorInformation, ValidatorsInformation } from './useValidator
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DEFAULT_FILTERS } from '../util/constants';
-import { useStakingConsts2 } from '.';
+import { useStakingConsts } from '.';
 
 const commissionSort = (a: ValidatorInformation, b: ValidatorInformation) => {
   // Sort by commission (ascending - least first)
@@ -25,15 +25,15 @@ const commissionSort = (a: ValidatorInformation, b: ValidatorInformation) => {
  * This hooks return a list of suggested validators to choose
  */
 
-export default function useValidatorSuggestion2 (allValidatorsInfo: ValidatorsInformation | undefined, genesisHash: string | undefined): ValidatorInformation[] | null | undefined {
-  const stakingConsts = useStakingConsts2(genesisHash);
+export default function useValidatorSuggestion (allValidatorsInfo: ValidatorsInformation | undefined, genesisHash: string | undefined): ValidatorInformation[] | null | undefined {
+  const stakingConsts = useStakingConsts(genesisHash);
   const [selected, setSelected] = useState<ValidatorInformation[] | undefined>();
 
   const allValidators = useMemo(() =>
     allValidatorsInfo?.validatorsInformation.elected
       .concat(allValidatorsInfo?.validatorsInformation.waiting)
       ?.filter((v) => v.validatorPrefs.blocked as unknown as boolean === false || v.validatorPrefs.blocked.isFalse)
-  , [allValidatorsInfo?.validatorsInformation.elected, allValidatorsInfo?.validatorsInformation.waiting]);
+    , [allValidatorsInfo?.validatorsInformation.elected, allValidatorsInfo?.validatorsInformation.waiting]);
 
   const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInformation[] | undefined, limit: number): ValidatorInformation[] => {
     if (!validators?.length) {

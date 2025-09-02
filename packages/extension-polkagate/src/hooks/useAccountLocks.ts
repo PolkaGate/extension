@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { useChainInfo, useCurrentBlockNumber2, useFormatted3 } from '.';
+import { useChainInfo, useCurrentBlockNumber, useFormatted } from '.';
 
 export const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);
 
@@ -106,8 +106,8 @@ interface Info {
 
 export default function useAccountLocks (address: string | undefined, genesisHash: string | null | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
   const { api, chain } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
-  const currentBlock = useCurrentBlockNumber2(genesisHash);
+  const formatted = useFormatted(address, genesisHash);
+  const currentBlock = useCurrentBlockNumber(genesisHash);
 
   const [info, setInfo] = useState<Info | null>();
 
@@ -194,7 +194,7 @@ export default function useAccountLocks (address: string | undefined, genesisHas
       const maybeReferenda = optTallies
         ? optTallies.map((v, index) =>
           v.isSome
-            ? [refIds[index], v.unwrap()] as [BN, PalletReferendaReferendumInfoConvictionVotingTally ]
+            ? [refIds[index], v.unwrap()] as [BN, PalletReferendaReferendumInfoConvictionVotingTally]
             : null
         ).filter((v) => !!v)
         : null;

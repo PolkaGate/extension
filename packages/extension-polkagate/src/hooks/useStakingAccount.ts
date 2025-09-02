@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { isHexToBn } from '../util/utils';
-import { useChainInfo, useStashId2 } from '.';
+import { useChainInfo, useStashId } from '.';
 
 BN.prototype.toJSON = function () {
   return this.toString();
@@ -28,9 +28,9 @@ BN.prototype.toJSON = function () {
  * @param setRefresh
  * @returns account staking Info
  */
-export default function useStakingAccount2 (address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
+export default function useStakingAccount (address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const stashId = useStashId2(address, genesisHash);
+  const stashId = useStashId(address, genesisHash);
 
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null | undefined>(undefined);
 

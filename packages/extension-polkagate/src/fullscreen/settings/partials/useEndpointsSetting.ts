@@ -6,7 +6,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
 import EndpointManager2 from '../../../class/endpointManager2';
-import { useEndpoint2, useEndpoints, useIsExtensionPopup } from '../../../hooks';
+import { useEndpoint, useEndpoints, useIsExtensionPopup } from '../../../hooks';
 import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
 
@@ -64,7 +64,7 @@ const endpointManager = new EndpointManager2();
 
 export default function useEndpointsSetting (genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
   const isExtension = useIsExtensionPopup();
-  const { endpoint, isAuto } = useEndpoint2(genesisHash);
+  const { endpoint, isAuto } = useEndpoint(genesisHash);
   const endpointOptions = useEndpoints(genesisHash);
 
   const isFetching = useRef<Record<string, boolean>>({});

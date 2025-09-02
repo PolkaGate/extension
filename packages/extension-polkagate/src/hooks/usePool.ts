@@ -11,7 +11,7 @@ import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { isHexToBn } from '../util/utils';
-import { useFormatted3 } from '.';
+import { useFormatted } from '.';
 
 const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 
@@ -20,10 +20,10 @@ interface WorkerMessage {
   results?: string;
 }
 
-export default function usePool2 (address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
+export default function usePool (address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
 
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
   const isFetching = useContext(FetchingContext);
 
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>(undefined);

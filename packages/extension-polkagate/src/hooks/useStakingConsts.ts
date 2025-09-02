@@ -8,11 +8,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { MAX_NOMINATIONS } from '../util/constants';
-import { useChainInfo, useCurrentEraIndex2 } from '.';
+import { useChainInfo, useCurrentEraIndex } from '.';
 
-export default function useStakingConsts2 (genesisHash: string | undefined): StakingConsts | null | undefined {
+export default function useStakingConsts (genesisHash: string | undefined): StakingConsts | null | undefined {
   const { api, chainName } = useChainInfo(genesisHash);
-  const eraIndex = useCurrentEraIndex2(genesisHash);
+  const eraIndex = useCurrentEraIndex(genesisHash);
 
   const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
   const [savedConsts, setSavedConsts] = useState<StakingConsts | undefined | null>();

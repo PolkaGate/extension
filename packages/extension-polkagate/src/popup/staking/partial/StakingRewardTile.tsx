@@ -8,12 +8,12 @@ import { Award, Chart21, Graph, MedalStar, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Thunder } from '../../../assets/gif';
 import { FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
-import { useChainInfo, usePrices, useStakingRewards3, useTokenPrice2, useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
+import { useChainInfo, usePrices, useStakingRewards3, useTokenPrice, useTranslation } from '../../../hooks';
 import { Background } from '../../../style';
 import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
 import StakingActionButton from './StakingActionButton';
@@ -250,7 +250,7 @@ export default function StakingRewardTile ({ address, genesisHash, isDisabled, l
   const navigate = useNavigate();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();
-  const tokenPrice = useTokenPrice2(genesisHash);
+  const tokenPrice = useTokenPrice(genesisHash);
   // Pool total earned rewards
   const { totalClaimedReward } = useStakingRewards3(address, genesisHash, type);
 

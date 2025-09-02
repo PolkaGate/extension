@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { toBN } from '../util/utils';
-import { useActiveEraIndex, useChainInfo, useFormatted3 } from '.';
+import { useActiveEraIndex, useChainInfo, useFormatted } from '.';
 
 interface ExposureOverview {
   total: BN;
@@ -83,7 +83,7 @@ export const MAX_SUPPORTED_PAYOUT_ERAS = 7; // TODO: can increase to more if nee
 
 export default function usePendingRewards3 (address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | undefined {
   const { api, chainName } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
   const activeEra = useActiveEraIndex(genesisHash);
 
   const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts>();

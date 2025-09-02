@@ -19,7 +19,7 @@ import { useChainInfo } from '.';
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
 export type Reserved = { [key in Item]?: Balance | null | undefined };
 
-export default function useReservedDetails2 (formatted: string | undefined, genesisHash: string | undefined): Reserved {
+export default function useReservedDetails (formatted: string | undefined, genesisHash: string | undefined): Reserved {
   const { api, decimal } = useChainInfo(genesisHash);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
@@ -30,7 +30,7 @@ export default function useReservedDetails2 (formatted: string | undefined, gene
       : activeRecoveries === null
         ? null
         : undefined
-  , [activeRecoveries, formatted]);
+    , [activeRecoveries, formatted]);
 
   const toBalance = useCallback((value: BN) => {
     if (!api) {

@@ -7,11 +7,12 @@ import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme 
 import { Sticker } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+
 import { AssetLogo, FormatBalance3, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useChainInfo, usePrices, useTokenPrice2, useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave2';
+import { useChainInfo, usePrices, useTokenPrice, useTranslation } from '../../../hooks';
 import { GlowBox } from '../../../style';
 import { GlowBall } from '../../../style/VelvetBox';
 import getLogo2 from '../../../util/getLogo2';
@@ -135,7 +136,7 @@ interface Props {
 export default function StakingPortfolio ({ buttons = [], disabled, genesisHash, isFullScreen = false, onInfo, staked, style, type }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
-  const tokenPrice = useTokenPrice2(genesisHash);
+  const tokenPrice = useTokenPrice(genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const textColor = useMemo(() => isFullScreen ? '#AA83DC' : theme.palette.text.highlight, [isFullScreen, theme.palette.text.highlight]);

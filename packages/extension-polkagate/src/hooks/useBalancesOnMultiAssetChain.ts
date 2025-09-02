@@ -19,7 +19,7 @@ import { useChainInfo } from '.';
 
 const assetsChains = createAssets();
 
-export default function useBalancesOnMultiAssetChain2 (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalancesOnMultiAssetChain (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);
 
   const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];

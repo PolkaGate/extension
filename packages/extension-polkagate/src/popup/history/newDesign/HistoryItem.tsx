@@ -7,16 +7,15 @@ import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
+import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
 import { historyIconBgColor, isReward, resolveActionType } from '@polkadot/extension-polkagate/src/util/index';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
 import GradientDivider from '../../../style/GradientDivider';
-import { amountToMachine } from '../../../util/utils';
+import { amountToMachine, calcPrice } from '../../../util/utils';
 import HistoryDetail from './HistoryDetail';
-import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
 
 interface HistoryItemProps {
   historyDate: string;

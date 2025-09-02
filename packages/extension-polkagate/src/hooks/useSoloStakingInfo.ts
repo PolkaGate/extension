@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
-import { useBalances2, useChainInfo, useCurrentEraIndex2, useStakingAccount2, useStakingConsts2, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
+import { useBalances, useChainInfo, useCurrentEraIndex, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
 
 export interface SessionIfo {
   eraLength: number; // Length of an era in blocks
@@ -155,12 +155,12 @@ const DEFAULT_VALUE = {
  */
 export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
   const { api, chainName, token } = useChainInfo(genesisHash);
-  const balances = useBalances2(address, genesisHash);
-  const currentEra = useCurrentEraIndex2(genesisHash);
-  const stakingAccount = useStakingAccount2(address, genesisHash, refresh, setRefresh);
+  const balances = useBalances(address, genesisHash);
+  const currentEra = useCurrentEraIndex(genesisHash);
+  const stakingAccount = useStakingAccount(address, genesisHash, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
   const rewards = useStakingRewards2(chainName, stakingAccount); // total reward
-  const stakingConsts = useStakingConsts2(genesisHash);
+  const stakingConsts = useStakingConsts(genesisHash);
 
   const [soloStakingInfoLoaded, setSoloStakingInfoLoaded] = useState<SoloStakingInfo | undefined>(undefined);
   const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo | undefined>(undefined);
@@ -285,7 +285,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
       setSoloStakingInfo(undefined);
       setSessionInfo(undefined);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [soloStakingInfo?.stakingConsts?.token, soloStakingInfoLoaded?.stakingConsts?.token, token]);
 
   return useMemo(() => soloStakingInfo || soloStakingInfoLoaded || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoLoaded]);

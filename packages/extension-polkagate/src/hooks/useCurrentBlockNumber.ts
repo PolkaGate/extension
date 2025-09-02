@@ -3,10 +3,10 @@
 
 import { useEffect, useState } from 'react';
 
-import { useApi2 } from '.';
+import { useApi } from '.';
 
-export default function useCurrentBlockNumber (genesisHash: string | null | undefined): number | undefined {
-  const api = useApi2(genesisHash);
+export default function useCurrentBlockNumber(genesisHash: string | null | undefined): number | undefined {
+  const api = useApi(genesisHash);
 
   const [blockNumber, setCurrentBlockNumber] = useState<number | undefined>();
 

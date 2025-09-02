@@ -6,11 +6,11 @@ import type { SoloStakingInfo } from './useSoloStakingInfo';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useChainInfo, useCurrentEraIndex2 } from '.';
+import { useChainInfo, useCurrentEraIndex } from '.';
 
-export default function useIsExposed2 (genesisHash: string | undefined, stakingInfo: SoloStakingInfo): boolean | undefined {
+export default function useIsExposed(genesisHash: string | undefined, stakingInfo: SoloStakingInfo): boolean | undefined {
   const { api, chain } = useChainInfo(genesisHash);
-  const currentEraIndex = useCurrentEraIndex2(genesisHash);
+  const currentEraIndex = useCurrentEraIndex(genesisHash);
   const [exposed, setIsExposed] = useState<boolean>();
 
   const checkIsExposed = useCallback(async (stashId: AccountId | string): Promise<undefined> => {

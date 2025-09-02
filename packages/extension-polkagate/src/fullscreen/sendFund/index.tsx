@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted3, useTeleport, useTranslation } from '../../hooks';
+import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import { toBN } from '../../util/utils';
 import HomeLayout from '../components/layout';
@@ -33,7 +33,7 @@ export default function SendFund (): React.ReactElement {
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
 
   const [inputs, setInputs] = useState<Inputs>();
   const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.SENDER);

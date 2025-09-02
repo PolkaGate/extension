@@ -10,12 +10,12 @@ import { useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { useChainInfo, useFormatted3, useTracks2 } from '.';
+import { useChainInfo, useFormatted, useTracks } from '.';
 
-export default function useHasDelegated (address: string | undefined, genesisHash: string | null | undefined, refresh?: boolean): BN | null | undefined {
+export default function useHasDelegated(address: string | undefined, genesisHash: string | null | undefined, refresh?: boolean): BN | null | undefined {
   const { api, chain } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
-  const { tracks } = useTracks2(genesisHash);
+  const formatted = useFormatted(address, genesisHash);
+  const { tracks } = useTracks(genesisHash);
 
   const [hasDelegated, setHasDelegated] = useState<BN | null>();
   const [fetchedFor, setFetchedFor] = useState<string | undefined>(undefined);

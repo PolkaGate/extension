@@ -7,11 +7,11 @@ import { Grid, styled, Typography } from '@mui/material';
 import { type Icon, InfoCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { MyTooltip } from '../../../components';
 import { usePrices } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
 import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenDetailBoxProp {

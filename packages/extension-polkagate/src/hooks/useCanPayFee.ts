@@ -7,10 +7,10 @@ import type { BN } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
 import { getValue } from '../popup/account/util';
-import { useBalances2 } from '.';
+import { useBalances } from '.';
 
 export default function useCanPayFee (formatted: string | undefined, genesisHash: string | undefined, estimatedFee: Balance | BN | undefined): boolean | undefined {
-  const balances = useBalances2(formatted, genesisHash);
+  const balances = useBalances(formatted, genesisHash);
   const [canPayFee, setCanPayFee] = useState<boolean | undefined>();
 
   useEffect(() =>

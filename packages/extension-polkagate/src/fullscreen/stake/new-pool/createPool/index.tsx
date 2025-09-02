@@ -7,7 +7,7 @@ import { Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { GradientButton } from '../../../../components';
-import { useChainInfo, useCreatePool, useFormatted3, useTranslation } from '../../../../hooks';
+import { useChainInfo, useCreatePool, useFormatted, useTranslation } from '../../../../hooks';
 import FeeValue from '../../../../popup/staking/partial/FeeValue';
 import StakeAmountInput from '../../../../popup/staking/partial/StakeAmountInput';
 import { PoolNameBox } from '../../../../popup/staking/pool-new/createPool';
@@ -25,7 +25,7 @@ interface Props {
 export default function CreatePool ({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
 

@@ -8,7 +8,7 @@ import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-po
 
 import MySwitch from '../../../components/MySwitch';
 import Radio from '../../../components/Radio';
-import { useChainInfo, useEndpoint2, useTranslation } from '../../../hooks';
+import { useChainInfo, useEndpoint, useTranslation } from '../../../hooks';
 import DotIndicator from '../../../popup/settings/extensionSettings/components/DotIndicator';
 import { AUTO_MODE } from '../../../util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -67,7 +67,7 @@ function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pr
 
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
-  const { endpoint, isAuto } = useEndpoint2(genesisHash);
+  const { endpoint, isAuto } = useEndpoint(genesisHash);
 
   const { dispatch,
     filteredEndpoints,

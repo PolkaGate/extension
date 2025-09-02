@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
 import { ms, msGreen, msWarning } from '../assets/icons';
-import { useAccountName, useChainInfo, useFormatted3, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChainInfo, useFormatted, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
 import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
@@ -47,7 +47,7 @@ interface Props {
   withShortAddress?: boolean;
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -56,7 +56,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
   const bgColor = !isDark ? '#CCD2EA' : undefined;
 
   const accountName = useAccountName(address);
-  const _formatted = useFormatted3(address, genesisHash);
+  const _formatted = useFormatted(address, genesisHash);
   const msData = useMerkleScience(_formatted, chain);
 
   const isMSgreen = ['Exchange', 'Donation'].includes(msData?.tag_type_verbose || '');

@@ -6,7 +6,7 @@ import type { PoolInfo, PositionInfo } from '../../../../util/types';
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
-import { useChainInfo, useIsExtensionPopup, usePoolConst, useStakingConsts2, useTranslation } from '../../../../hooks';
+import { useChainInfo, useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation } from '../../../../hooks';
 import { StakingInfoStack } from '../../../../popup/staking/partial/NominatorsTable';
 import { areArraysEqual } from '../../../../util/utils';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../../util/utils';
@@ -26,7 +26,7 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
   const { t } = useTranslation();
   const theme = useTheme();
   const poolStakingConsts = usePoolConst(selectedPosition?.genesisHash);
-  const stakingConsts = useStakingConsts2(selectedPosition?.genesisHash);
+  const stakingConsts = useStakingConsts(selectedPosition?.genesisHash);
   const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
   const isExtension = useIsExtensionPopup();
 
@@ -35,7 +35,7 @@ export default function StakingTypeSelection ({ initialPool, selectedPosition, s
   const isRecommendedValidators = useMemo(() =>
     !selectedStakingType?.validators ||
     (selectedPosition?.suggestedValidators && selectedStakingType?.validators && areArraysEqual([selectedPosition.suggestedValidators, selectedStakingType.validators]))
-  , [selectedPosition?.suggestedValidators, selectedStakingType?.validators]);
+    , [selectedPosition?.suggestedValidators, selectedStakingType?.validators]);
 
   const onOptions = useCallback((type: 'pool' | 'solo') => () => {
     if (!selectedPosition || !initialPool) {

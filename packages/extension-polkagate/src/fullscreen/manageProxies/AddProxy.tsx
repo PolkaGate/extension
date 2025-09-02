@@ -11,7 +11,7 @@ import { Clock, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AddressInput, DecisionButtons, DropSelect, MyTextField } from '../../components';
-import { useAccountDisplay2, useFormatted3, useTranslation } from '../../hooks';
+import { useAccountDisplay, useFormatted, useTranslation } from '../../hooks';
 import { toTitleCase } from '../../util';
 import { CHAIN_PROXY_TYPES } from '../../util/constants';
 import { sanitizeChainName } from '../../util/utils';
@@ -31,8 +31,8 @@ interface Props {
 
 export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted3(proxiedAddress, chain?.genesisHash);
-  const accountDisplayName = useAccountDisplay2(proxiedAddress, chain?.genesisHash);
+  const formatted = useFormatted(proxiedAddress, chain?.genesisHash);
+  const accountDisplayName = useAccountDisplay(proxiedAddress, chain?.genesisHash);
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);

@@ -11,11 +11,11 @@ import { useChainInfo } from '.';
  * This hook queries the blockchain's staking module to fetch the current era index.
  * The era index is returned as a number. If an error occurs during the query, the result will be `undefined`.
  *
- * @function useCurrentEraIndex2
+ * @function useCurrentEraIndex
  * @param {string | undefined} genesisHash - The genesis hash of the blockchain to query for the current era index.
  * @returns {number | undefined} The current era index of the blockchain, or `undefined` if the index cannot be retrieved.
  */
-export default function useCurrentEraIndex2 (genesisHash: string | undefined): number | undefined {
+export default function useCurrentEraIndex(genesisHash: string | undefined): number | undefined {
   const [index, setIndex] = useState<number>();
   const { api } = useChainInfo(genesisHash);
 
