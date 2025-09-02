@@ -144,7 +144,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
             label={t('Deposit')}
             token={token}
           />
-          <Box sx={{ background: ' linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', m: '10px 0 5px', width: '34s' }} />
+          <Box sx={{ background: ' linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', m: '10px 0 5px', width: '100%' }} />
           <DisplayValue
             balance={fee}
             canPayFee={feeAndDeposit}
