@@ -5,15 +5,16 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
-import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { CanPayFee, Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { CanPayErrorAlert, ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useChainInfo, useFormatted3, useTranslation } from '../../hooks';
+import { ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } from '../../components';
+import { useCanPayFeeAndDeposit, useChainInfo, useTranslation } from '../../hooks';
+import { UnableToPayFee } from '../../partials';
 import { FLOATING_POINT_DIGIT, PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
 import { type ProxyFlowStep } from './types';
@@ -34,8 +35,8 @@ interface Props {
   onClose: () => void
 }
 
-function DisplayValue (
-  { balance, decimal, genesisHash, label, token }: {
+function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token }: {
+    canPayFee?: CanPayFee;
     label: string;
     genesisHash: string | undefined;
     balance: BN | undefined;
@@ -48,6 +49,9 @@ function DisplayValue (
         {label}
       </Typography>
       <Stack alignItems='center' columnGap={1} direction='row'>
+        {canPayFee?.isAbleToPay === false && canPayFee?.warning &&
+          <UnableToPayFee warningText={canPayFee.warning} />
+        }
         <ChainLogo genesisHash={genesisHash} size={18} />
         <Typography color='#EAEBF1' variant='B-1'>
           {decimal && token &&
@@ -66,7 +70,6 @@ function DisplayValue (
 function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
-  const formatted = useFormatted3(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const { changingItems, reviewText } = useMemo(() => {
@@ -94,14 +97,11 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
     };
   }, [proxyItems, t]);
 
-  const feeAndDeposit = useCanPayFeeAndDeposit(formatted?.toString(), selectedProxy?.delegate, fee, depositToPay);
+  const feeAndDeposit = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, fee, depositToPay);
 
   return (
     <Grid container item>
       <Grid container direction='column' item justifyContent='start'>
-        {feeAndDeposit.isAbleToPay === false &&
-          <CanPayErrorAlert canPayStatements={feeAndDeposit.statement} />
-        }
         <Typography color='#BEAAD8' my='15px' textAlign='center' variant='B-4'>
           {reviewText}
         </Typography>
@@ -147,6 +147,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
           <Box sx={{ background: ' linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', m: '10px 0 5px', width: '34s' }} />
           <DisplayValue
             balance={fee}
+            canPayFee={feeAndDeposit}
             decimal={decimal}
             genesisHash={genesisHash}
             label={t('Fee')}
@@ -171,7 +172,6 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
           transaction={call}
           withCancel
         />}
-      {/*  disabled={!depositToPay || feeAndDeposit.isAbleToPay !== true || !changingItems || changingItems.length === 0}          */}
     </Grid>
 
   );
