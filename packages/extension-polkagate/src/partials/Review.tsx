@@ -22,6 +22,7 @@ import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
 import { toShortAddress } from '../util/utils';
+import UnableToPayFee from './UnableToPayFee';
 
 interface AccountBoxProps {
   selectedAccount: AccountJson | null | undefined;
@@ -97,6 +98,7 @@ export interface Content {
   content: string | BN | null | undefined;
   Icon?: IconType;
   itemKey?: 'fee' | 'amount';
+  warningText?: string;
 }
 
 interface ContentItemProps extends Content {
@@ -106,7 +108,7 @@ interface ContentItemProps extends Content {
   noDivider?: boolean;
 }
 
-export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, withLogo }: ContentItemProps) {
+export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
@@ -122,6 +124,9 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
           <DescriptionTip description={description} />
         </Stack>
         <Stack direction='row' sx={{ alignItems: 'center', columnGap: '4px' }}>
+          {warningText &&
+            <UnableToPayFee warningText={warningText} />
+          }
           {Icon &&
             <Icon color='#AA83DC' size={18} variant='Bulk' />
           }
@@ -233,7 +238,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
         />
       }
       <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '170px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle }}>
-        {transactionInformation.map(({ content, description, title, withLogo }, index) => (
+        {transactionInformation.map(({ content, description, title, warningText, withLogo }, index) => (
           <ContentItem
             content={content}
             decimal={decimal}
@@ -243,6 +248,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
             noDivider={pool && !isRow}
             title={title}
             token={token}
+            warningText={warningText}
             withLogo={withLogo}
           />
         ))}

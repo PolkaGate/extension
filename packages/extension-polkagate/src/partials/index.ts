@@ -11,6 +11,7 @@ export { default as RemoteNodeSelectorWithSignals } from './RemoteNodeSelectorWi
 export { default as SharePopup } from './SharePopup';
 export { default as SubTitle } from './SubTitle';
 export { default as ThroughProxy } from './ThroughProxy';
+export { default as UnableToPayFee } from './UnableToPayFee';
 export { default as UserDashboardHeader } from './UserDashboardHeader';
 export { default as Version } from './Version';
 export { default as Version2 } from './Version2';
