@@ -10,14 +10,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { calcInterval } from './calcInterval';
+import { calcInterval } from '../util/utils';
 
 interface ValidatorEraInfo {
   netReward: number;
   total: BN;
 }
 
-export default function useValidatorApy(api: ApiPromise | undefined, validatorAddress: string, isElected?: boolean): string | undefined | null {
+export default function useValidatorApy (api: ApiPromise | undefined, validatorAddress: string, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
   const blockInterval = calcInterval(api);
   const blockIntervalInSec = blockInterval.toNumber() / 1000;
@@ -117,7 +117,7 @@ export default function useValidatorApy(api: ApiPromise | undefined, validatorAd
     }
 
     setApy(APY);
-  }, [api]);
+  }, [api, blockIntervalInSec]);
 
   useEffect(() => {
     if (!api || isElected === undefined) {

@@ -3,7 +3,6 @@
 
 import type { StorageKey } from '@polkadot/types';
 import type { AnyTuple, Codec } from '@polkadot/types/types';
-import type { ExposureOverview } from './validatorTypes';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -11,6 +10,13 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { toBN } from '../util/utils';
 import { useActiveEraIndex, useChainInfo, useFormatted3 } from '.';
+
+interface ExposureOverview {
+  total: BN;
+  own: BN
+  nominatorCount: BN;
+  pageCount: BN;
+}
 
 interface Others {
   who: string;
@@ -75,7 +81,7 @@ const isRewardsPaged = (chainName: string | undefined, era: number): boolean => 
 
 export const MAX_SUPPORTED_PAYOUT_ERAS = 7; // TODO: can increase to more if needed after enough tests
 
-export default function usePendingRewards3(address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | undefined {
+export default function usePendingRewards3 (address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | undefined {
   const { api, chainName } = useChainInfo(genesisHash);
   const formatted = useFormatted3(address, genesisHash);
   const activeEra = useActiveEraIndex(genesisHash);
