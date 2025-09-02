@@ -78,9 +78,6 @@ export default function useCanPayFeeAndDeposit (
     const hasDeposit = !!(deposit && !deposit.isZero());
     const wholeAmount = estimatedFee.add(depositAmount);
 
-    console.log('available :::', available?.toString());
-    console.log('estimatedFee :::', estimatedFee?.toString());
-
     return {
       available,
       depositAmount,
