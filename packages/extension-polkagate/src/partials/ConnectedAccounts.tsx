@@ -7,12 +7,13 @@ import { Container, Grid, type SxProps, type Theme,Typography } from '@mui/mater
 import { User } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { noop } from '@polkadot/util';
+
 import { AccountContext, DecisionButtons, GradientDivider, GradientSwitch } from '../components';
 import { sortAccounts } from '../components/sortAccounts';
 import { useTranslation } from '../hooks';
 import { approveAuthRequest, ignoreAuthRequest, updateAuthorization } from '../messaging';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
-import { noop } from '../util/utils';
 
 interface Props {
   closePopup: () => void;
