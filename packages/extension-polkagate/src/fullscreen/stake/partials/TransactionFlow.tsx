@@ -6,9 +6,10 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
 import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes, TxInfo } from '../../../util/types';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useTransactionData } from '../../../hooks';
 import { WaitScreen2 } from '../../../partials';
 import Review, { type Content } from '../../../partials/Review';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../util/constants';
@@ -38,27 +39,7 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
-  const transactionDetail = useMemo(() => {
-    if (!txInfo) {
-      return undefined;
-    }
-
-    const _txInfo = txInfo;
-
-    const txAmount = transactionInformation.find(({ itemKey }) => itemKey === 'amount');
-
-    if (txAmount?.content) {
-      _txInfo.amount = txAmount.content.toString();
-    }
-
-    const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
-
-    if (txFee?.content) {
-      _txInfo.fee = txFee.content.toString();
-    }
-
-    return { ..._txInfo, ...extraDetailConfirmationPage };
-  }, [extraDetailConfirmationPage, transactionInformation, txInfo]);
+  const { transactionDetail, txInformation } = useTransactionData(address, genesisHash, selectedProxy?.delegate, txInfo, transactionInformation, extraDetailConfirmationPage);
 
   const goToHistory = useCallback(() => navigate('/historyfs') as void, [navigate]);
 
@@ -79,7 +60,7 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
           showAccountBox={showAccountBox}
           showProxySelection={showProxySelection}
           transaction={transaction}
-          transactionInformation={transactionInformation}
+          transactionInformation={txInformation}
         />
       }
       {

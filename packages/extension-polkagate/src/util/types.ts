@@ -913,7 +913,7 @@ export interface DropdownOption {
 
 export type TransferType = 'All' | 'Max' | 'Normal';
 
-export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number }
+export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number, warning: string | undefined }
 
 export interface ProxiedAccounts {
   genesisHash: string;

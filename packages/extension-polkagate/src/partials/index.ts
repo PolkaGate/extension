@@ -8,6 +8,7 @@ export { default as HomeMenu } from './HomeMenu';
 export { default as LogoDropAnimation } from './LogoDropAnimation';
 export { default as SharePopup } from './SharePopup';
 export { default as SubTitle } from './SubTitle';
+export { default as UnableToPayFee } from './UnableToPayFee';
 export { default as UserDashboardHeader } from './UserDashboardHeader';
 export { default as Version } from './Version';
 export { default as Version2 } from './Version2';

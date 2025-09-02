@@ -809,5 +809,11 @@
   "item": "",
   "value": "",
   "genesis hash": "",
-  "This approval adds the metadata to your extension so future requests can be decoded with it": ""
+  "This approval adds the metadata to your extension so future requests can be decoded with it": "",
+  "Insufficient balance to cover transaction fee.": "",
+  "Insufficient balance to complete the transaction.": "",
+  "Insufficient balance for transaction deposit.": "",
+  "Selected proxy account lacks funds for the fee.": "",
+  "This is a watch-only account. No proxies are available in the extension to sign transactions.": "",
+  "Cannot sign": ""
 }

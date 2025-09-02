@@ -8,10 +8,10 @@ import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes, TxInfo }
 import type { Content } from './Review';
 
 import { Grid } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { BackWithLabel, Motion } from '../components';
-import { useBackground, useTranslation } from '../hooks';
+import { useBackground, useTransactionData, useTranslation } from '../hooks';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import Confirmation2 from './Confirmation2';
 import Review from './Review';
@@ -45,27 +45,7 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
 
   const onOpenProxySelection = useCallback(() => setShowProxySelection(true), []);
 
-  const transactionDetail = useMemo(() => {
-    if (!txInfo) {
-      return undefined;
-    }
-
-    const _txInfo = txInfo;
-
-    const txAmount = transactionInformation.find(({ itemKey }) => itemKey === 'amount');
-
-    if (txAmount?.content) {
-      _txInfo.amount = txAmount.content.toString();
-    }
-
-    const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
-
-    if (txFee?.content) {
-      _txInfo.fee = txFee.content.toString();
-    }
-
-    return { ..._txInfo, ...extraDetailConfirmationPage };
-  }, [extraDetailConfirmationPage, transactionInformation, txInfo]);
+  const { transactionDetail, txInformation } = useTransactionData(address, genesisHash, selectedProxy?.delegate, txInfo, transactionInformation, extraDetailConfirmationPage);
 
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative', width: '100%' }}>
@@ -103,7 +83,7 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
             showAccountBox={showAccountBox}
             showProxySelection={showProxySelection}
             transaction={transaction}
-            transactionInformation={transactionInformation}
+            transactionInformation={txInformation}
           />}
         {flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
           <WaitScreen2 />

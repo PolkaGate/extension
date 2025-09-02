@@ -5,7 +5,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from '@mui/icons-material';
 import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { type MouseEventHandler } from 'react';
 
-import { noop } from '../util/utils';
+import { noop } from '@polkadot/util';
 
 interface Props {
   disabled?: boolean;

@@ -8,11 +8,10 @@ import { DocumentText, FolderOpen, Import, Refresh2 } from 'iconsax-react';
 import React, { createRef, useCallback, useState } from 'react';
 import Dropzone from 'react-dropzone';
 
-import { hexToU8a, isHex, u8aToString } from '@polkadot/util';
+import { hexToU8a, isHex, noop, u8aToString } from '@polkadot/util';
 
 import { useIsDark } from '../hooks';
 import useTranslation from '../hooks/useTranslation';
-import { noop } from '../util/utils';
 import ActionButton from './ActionButton';
 
 function formatBytes (bytes?: number, decimals = 2): string {

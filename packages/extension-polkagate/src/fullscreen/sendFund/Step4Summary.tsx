@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
+import type { CanPayFee } from '../../util/types';
 import type { Inputs } from './types';
 
 import { Box, Divider, Stack, Typography, useTheme } from '@mui/material';
@@ -14,14 +15,16 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { AssetLogo, Motion, ShowBalance4 } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
+import { UnableToPayFee } from '../../partials';
 import FromToBox from './partials/FromToBox';
 
 interface Props {
+  canPayFee: CanPayFee;
   inputs: Inputs;
   teleportState: Teleport;
 }
 
-export default function Step4Summary ({ inputs }: Props): React.ReactElement {
+export default function Step4Summary ({ canPayFee, inputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -80,6 +83,9 @@ export default function Step4Summary ({ inputs }: Props): React.ReactElement {
             {t('Estimated fee')}
           </Typography>
           <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end'>
+            {canPayFee.isAbleToPay === false && canPayFee.warning &&
+              <UnableToPayFee warningText={canPayFee.warning} />
+            }
             <Typography color='text.primary' sx={{ ml: '5px', textAlign: 'left' }} variant='B-1'>
               <ShowBalance4
                 balance={inputs.paraSpellFee ?? inputs.fee}
