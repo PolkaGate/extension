@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.5.0](https://github.com/polkagate/extension/compare/v1.4.0...v1.5.0) (2025-09-02)
+
+
+### Features
+
+* display can not pay fee warning ([#1819](https://github.com/polkagate/extension/issues/1819)) ([639d48b](https://github.com/polkagate/extension/commit/639d48b1b276e7b65598c8c81778aca55db7e1c6))
+
 # [1.4.0](https://github.com/polkagate/extension/compare/v1.3.6...v1.4.0) (2025-08-31)
 
 
