@@ -14,8 +14,9 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useFormatted3, useTeleport, useTranslation } from '../../hooks';
+import { useCanPayFeeAndDeposit, useFormatted3, useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
+import { toBN } from '../../util/utils';
 import HomeLayout from '../components/layout';
 import Confirmation from '../manageProxies/Confirmation';
 import StepsRow, { INPUT_STEPS } from './partials/StepsRow';
@@ -40,6 +41,8 @@ export default function SendFund (): React.ReactElement {
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
+
+  const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee ? toBN(inputs?.fee) : undefined);
 
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
@@ -128,6 +131,7 @@ export default function SendFund (): React.ReactElement {
         {
           inputStep === INPUT_STEPS.SUMMARY && inputs &&
           <Step4Summary
+            canPayFee={canPayFee}
             inputs={inputs}
             teleportState={teleportState}
           />
