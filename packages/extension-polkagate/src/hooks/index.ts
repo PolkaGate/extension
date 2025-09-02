@@ -156,6 +156,7 @@ export { default as useTokenPrice2 } from './useTokenPrice2';
 export { default as useTokenPriceBySymbol } from './useTokenPriceBySymbol';
 export { default as useTokens } from './useTokens';
 export { default as useTracks2 } from './useTracks2';
+export { default as useTransactionData } from './useTransactionData';
 export { default as useTransactionFlow } from './useTransactionFlow';
 export { default as useTransactionState } from './useTransactionState';
 export { default as useTranslation } from './useTranslation';
