@@ -15,21 +15,18 @@ import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants
 import { decodeMultiLocation } from '../util/utils';
 import { useChainInfo, useFormatted } from '.';
 
-export default function useBalancesOnAssethub(address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalancesOnAssethub (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
-
-  const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
-
-  const isForeignAsset = assetId ? typeof assetId === 'string' && assetId?.startsWith('0x') : undefined;
 
   const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
 
   const fetchAssetOnAssetHub = useCallback(async () => {
-    if (!api || !assetId) {
+    if (!api || !assetId || !formatted) {
       return;
     }
 
+    const isForeignAsset = typeof assetId === 'string' && assetId?.startsWith('0x');
     const section = isForeignAsset ? 'foreignAssets' : 'assets';
     const _assetId = isForeignAsset ? decodeMultiLocation(assetId as HexString) : assetId;
 
@@ -65,15 +62,17 @@ export default function useBalancesOnAssethub(address: string | undefined, genes
     } catch (error) {
       console.error(`Failed to fetch info for assetId ${assetId}:`, error);
     }
-  }, [api, assetId, chainName, formatted, isForeignAsset]);
+  }, [api, assetId, chainName, formatted]);
 
   useEffect(() => {
-    if (assetId === undefined || assetId === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB || !api?.query?.['assets'] || !isAssetHub) {
+    if (assetId === undefined || assetId === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB || !api?.query?.['assets'] || !chain || !formatted) {
       return;
     }
 
-    fetchAssetOnAssetHub().catch(console.error);
-  }, [api, assetId, fetchAssetOnAssetHub, isAssetHub]);
+    const isAssetHub = ASSET_HUBS.includes(chain.genesisHash ?? '');
+
+    isAssetHub && fetchAssetOnAssetHub().catch(console.error);
+  }, [api?.query, assetId, chain, fetchAssetOnAssetHub, formatted]);
 
   return assetBalance;
 }
