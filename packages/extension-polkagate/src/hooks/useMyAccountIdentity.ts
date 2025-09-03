@@ -8,7 +8,7 @@ import type { SavedIdentities } from '../util/types';
 import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
-import { useAccount, useChainInfo, useFormatted, useIdentity2 } from '.';
+import { useAccount, useChainInfo, useFormatted, useIdentity } from '.';
 
 /**
  * @description
@@ -19,7 +19,7 @@ export default function useMyAccountIdentity (address: AccountId | string | unde
   const { chainName } = useChainInfo(genesisHash, true);
   const account = useAccount(address);
   const formatted = useFormatted(address, genesisHash);
-  const info = useIdentity2(genesisHash ?? '', formatted);
+  const info = useIdentity(genesisHash ?? '', formatted);
 
   const [oldIdentity, setOldIdentity] = useState<DeriveAccountRegistration | null | undefined>();
 

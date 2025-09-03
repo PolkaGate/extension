@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 
 import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -47,7 +47,7 @@ interface Props {
   withShortAddress?: boolean;
 }
 
-function Identity2({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const theme = useTheme();
@@ -100,24 +100,27 @@ function Identity2({ accountInfo, address, addressStyle, charsCount = 6, directi
         {!noIdenticon &&
           <Grid alignItems='center' container item m='auto 0' pr='5px' sx={{ ...identiconStyle }} width='fit-content'>
             {isSelected
-              ? <GlowCheck
-                show={true}
-                size={`${identiconSize}px`}
-                timeout={100}
-              />
+              ? (
+                <GlowCheck
+                  show={true}
+                  size={`${identiconSize}px`}
+                  timeout={100}
+                />)
               : identiconType === 'polkagate'
-                ? <PolkaGateIdenticon
-                  address={String(_formatted || address)}
-                  size={identiconSize}
-                />
-                : <Identicon
-                  iconTheme={(chain?.icon ?? 'polkadot') as MyIconTheme}
-                  isSubId={!!_accountInfo?.identity?.displayParent}
-                  judgement={_judgement as RegExpMatchArray}
-                  prefix={chain?.ss58Format ?? 42}
-                  size={identiconSize}
-                  value={_formatted || address}
-                />
+                ? (
+                  <PolkaGateIdenticon
+                    address={String(_formatted || address)}
+                    size={identiconSize}
+                  />)
+                : (
+                  <Identicon
+                    iconTheme={(chain?.icon ?? 'polkadot') as MyIconTheme}
+                    isSubId={!!_accountInfo?.identity?.displayParent}
+                    judgement={_judgement as RegExpMatchArray}
+                    prefix={chain?.ss58Format ?? 42}
+                    size={identiconSize}
+                    value={_formatted || address}
+                  />)
             }
           </Grid>
         }

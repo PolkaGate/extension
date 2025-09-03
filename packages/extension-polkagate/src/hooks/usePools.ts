@@ -40,7 +40,7 @@ export interface UsePools {
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools2 (genesisHash: string | undefined): UsePools {
+export default function usePools (genesisHash: string | undefined): UsePools {
   const { api } = useChainInfo(genesisHash);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();

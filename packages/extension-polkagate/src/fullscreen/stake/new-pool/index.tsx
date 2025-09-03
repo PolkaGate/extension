@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewards3 } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewardsChart } from '../../../hooks';
 import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
@@ -30,7 +30,7 @@ export default function PoolFullScreen (): React.ReactElement {
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
-  const rewardInfo = useStakingRewards3(selectedAccount?.address, genesisHash, 'pool', true);
+  const rewardInfo = useStakingRewardsChart(selectedAccount?.address, genesisHash, 'pool', true);
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 

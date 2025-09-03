@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
-import { useBalances, useChainInfo, useCurrentEraIndex, useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress, useStakingRewards2 } from '.';
+import { useBalances, useChainInfo, useCurrentEraIndex, useSoloStakingTotalReward,useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress } from '.';
 
 export interface SessionIfo {
   eraLength: number; // Length of an era in blocks
@@ -159,7 +159,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   const currentEra = useCurrentEraIndex(genesisHash);
   const stakingAccount = useStakingAccount(address, genesisHash, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
-  const rewards = useStakingRewards2(chainName, stakingAccount); // total reward
+  const rewards = useSoloStakingTotalReward(chainName, stakingAccount); // total reward
   const stakingConsts = useStakingConsts(genesisHash);
 
   const [soloStakingInfoLoaded, setSoloStakingInfoLoaded] = useState<SoloStakingInfo | undefined>(undefined);

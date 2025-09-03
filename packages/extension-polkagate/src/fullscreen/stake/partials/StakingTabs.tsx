@@ -3,7 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
-import type { UseStakingRewards } from '../../../hooks/useStakingRewards3';
+import type { UseStakingRewards } from '../../../hooks/useStakingRewardsChart';
 import type { PositionInfo } from '../../../util/types';
 
 import { Container, Stack, Typography } from '@mui/material';
