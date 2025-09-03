@@ -960,7 +960,7 @@ export const useJoinPool = (
     return join(bondAmount, selectedPool.poolId);
   }, [bondAmount, join, selectedPool]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? join?.(bondAmount, selectedPool?.poolId ?? 0));
+  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? join?.(bondAmount ?? BN_ONE, selectedPool?.poolId ?? 0));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
