@@ -28,7 +28,9 @@ export default function useEstimatedFee (genesisHash: string | undefined, addres
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE)) as unknown as Balance;
+       setEstimatedFee(api?.createType('Balance', BN_ONE) as unknown as Balance);
+
+       return;
     }
 
     (async () => {
