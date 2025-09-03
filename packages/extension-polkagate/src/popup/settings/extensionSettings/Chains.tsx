@@ -183,9 +183,7 @@ export default function Chains (): React.ReactElement {
           marginTop: '5px',
           width: '100%'
         }}
-        text={{
-          firstPart: t('+ Add New Network')
-        }}
+        text={ t('+ Add New Network')}
         variant='contained'
       />
     </Motion>

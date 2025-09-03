@@ -841,5 +841,8 @@
   "Selected proxy account lacks funds for the fee.": "Le compte proxy sélectionné ne dispose pas de fonds pour les frais.",
   "This is a watch-only account. No proxies are available in the extension to sign transactions.": "Ceci est un compte en lecture seule. Aucun proxy n’est disponible dans l’extension pour signer des transactions.",
   "Cannot sign": "Impossible de signer",
-  "Version {{version}}": "Version {{version}}"
+  "Version {{version}}": "Version {{version}}",
+  "Already have an account": "Vous avez déjà un compte",
+  "Demo account import": "Importation de compte démo",
+  "Demo Account Import": "Importation de compte Démo"
 }

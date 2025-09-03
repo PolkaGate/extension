@@ -93,8 +93,8 @@ function Onboarding (): React.ReactElement {
             width: '100%'
           }}
           text={{
-            firstPart: t('Already'),
-            secondPart: t('have an account')
+            text: t('Already have an account'),
+            textPartInColor: t('have an account')
           }}
           variant='contained'
         />
@@ -110,8 +110,8 @@ function Onboarding (): React.ReactElement {
             width: '100%'
           }}
           text={{
-            firstPart: t('Demo'),
-            secondPart: t('account import')
+            text: t('Demo account import'),
+            textPartInColor: t('account import')
           }}
           variant='contained'
         />

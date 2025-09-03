@@ -97,8 +97,8 @@ function Welcome (): React.ReactElement {
                 width: '295px'
               }}
               text={{
-                firstPart: t('Already'),
-                secondPart: t('have an account')
+                text: t('Already have an account'),
+                textPartInColor: t('have an account')
               }}
               variant='contained'
             />

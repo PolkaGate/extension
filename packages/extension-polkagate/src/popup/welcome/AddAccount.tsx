@@ -108,8 +108,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Restore from'),
-                  secondPart: t('File')
+                  text: t('Restore from File'),
+                  textPartInColor: t('File')
                 }}
                 variant='contained'
               />
@@ -122,8 +122,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Import from'),
-                  secondPart: t('Recovery Phrase')
+                  text: t('Import from Recovery Phrase'),
+                  textPartInColor: t('Recovery Phrase')
                 }}
                 variant='contained'
               />
@@ -136,9 +136,9 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Import from'),
-                  secondPart: t('Raw Seed')
-                }}
+                  text: t('Import from Raw Seed'),
+                  textPartInColor: t('Raw Seed')
+                }} 
                 variant='contained'
               />
               <ActionButton
@@ -150,8 +150,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Attach'),
-                  secondPart: t('QR-Signer')
+                  text: t('Attach QR-Signer'),
+                  textPartInColor: t('QR-Signer')
                 }}
                 variant='contained'
               />
@@ -164,8 +164,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Attach'),
-                  secondPart: t('Ledger Device')
+                  text: t('Attach Ledger Device'),
+                  textPartInColor: t('Ledger Device')
                 }}
                 variant='contained'
               />
@@ -179,8 +179,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Add'),
-                  secondPart: t('Watch-only Account')
+                  text: t('Add Watch-only Account'),
+                  textPartInColor: t('Watch-only Account')
                 }}
                 variant='contained'
               />
@@ -193,8 +193,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Demo'),
-                  secondPart: t('Account Import')
+                  text: t('Demo Account Import'),
+                  textPartInColor: t('Account Import')
                 }}
                 variant='contained'
               />
