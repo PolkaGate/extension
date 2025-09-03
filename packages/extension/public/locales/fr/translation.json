@@ -829,5 +829,17 @@
   "recovery phrase": "phrase de récupération",
   "QR-signer": "signataire QR",
   "raw seed": "graine brute",
-  "from file": "depuis un fichier"
+  "from file": "depuis un fichier",
+  "Update Metadata": "Mettre à jour les métadonnées",
+  "item": "élément",
+  "value": "valeur",
+  "genesis hash": "hachage de genèse",
+  "This approval adds the metadata to your extension so future requests can be decoded with it": "Cette approbation ajoute les métadonnées à votre extension afin que les futures requêtes puissent être décodées avec celles-ci",
+  "Insufficient balance to cover transaction fee.": "Solde insuffisant pour couvrir les frais de transaction.",
+  "Insufficient balance to complete the transaction.": "Solde insuffisant pour compléter la transaction.",
+  "Insufficient balance for transaction deposit.": "Solde insuffisant pour le dépôt de transaction.",
+  "Selected proxy account lacks funds for the fee.": "Le compte proxy sélectionné ne dispose pas de fonds pour les frais.",
+  "This is a watch-only account. No proxies are available in the extension to sign transactions.": "Ceci est un compte en lecture seule. Aucun proxy n’est disponible dans l’extension pour signer des transactions.",
+  "Cannot sign": "Impossible de signer",
+  "Version {{version}}": "Version {{version}}"
 }

@@ -828,5 +828,17 @@
   "recovery phrase": "фраза восстановления",
   "QR-signer": "QR-подписант",
   "raw seed": "сырой сид",
-  "from file": "из файла"
+  "from file": "из файла",
+  "Update Metadata": "Обновить метаданные",
+  "item": "элемент",
+  "value": "значение",
+  "genesis hash": "хэш генезиса",
+  "This approval adds the metadata to your extension so future requests can be decoded with it": "Это подтверждение добавляет метаданные в ваше расширение, чтобы будущие запросы могли быть декодированы с их помощью",
+  "Insufficient balance to cover transaction fee.": "Недостаточно средств для оплаты комиссии за транзакцию.",
+  "Insufficient balance to complete the transaction.": "Недостаточно средств для завершения транзакции.",
+  "Insufficient balance for transaction deposit.": "Недостаточно средств для депозита транзакции.",
+  "Selected proxy account lacks funds for the fee.": "На выбранном прокси-аккаунте недостаточно средств для оплаты комиссии.",
+  "This is a watch-only account. No proxies are available in the extension to sign transactions.": "Это аккаунт только для просмотра. В расширении нет доступных прокси для подписания транзакций.",
+  "Cannot sign": "Невозможно подписать",
+  "Version {{version}}": "Версия {{version}}"
 }
