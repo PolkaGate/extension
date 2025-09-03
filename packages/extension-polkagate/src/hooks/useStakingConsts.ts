@@ -8,7 +8,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { MAX_NOMINATIONS } from '../util/constants';
-import { useChainInfo, useCurrentEraIndex } from '.';
+import useChainInfo from './useChainInfo';
+import useCurrentEraIndex from './useCurrentEraIndex';
 
 export default function useStakingConsts (genesisHash: string | undefined): StakingConsts | null | undefined {
   const { api, chainName } = useChainInfo(genesisHash);

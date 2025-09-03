@@ -13,7 +13,13 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
 import { isHexToBn } from '../util/utils';
-import { useBalances, useChainInfo, useCurrentEraIndex, useSoloStakingTotalReward,useStakingAccount, useStakingConsts, useStakingRewardDestinationAddress } from '.';
+import useBalances from './useBalances';
+import useChainInfo from './useChainInfo';
+import useCurrentEraIndex from './useCurrentEraIndex';
+import useSoloStakingTotalReward from './useSoloStakingTotalReward';
+import useStakingAccount from './useStakingAccount';
+import useStakingConsts from './useStakingConsts';
+import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
 export interface SessionIfo {
   eraLength: number; // Length of an era in blocks

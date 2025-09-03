@@ -10,7 +10,8 @@ import { useUserAddedPriceId } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../util';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { getPriceIdByChainName } from '../util/utils';
-import { useChainInfo, usePrices } from '.';
+import useChainInfo from './useChainInfo';
+import usePrices from './usePrices';
 
 const DEFAULT_PRICE = {
   decimal: undefined,

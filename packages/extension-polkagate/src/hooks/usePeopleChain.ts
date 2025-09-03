@@ -8,7 +8,8 @@ import { useMemo } from 'react';
 
 import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import { sanitizeChainName } from '../util/utils';
-import { useChainInfo, useMetadata } from '.';
+import useChainInfo from './useChainInfo';
+import useMetadata from './useMetadata';
 
 interface PeopleChainInfo {
   peopleChain: Chain | null | undefined;
@@ -47,7 +48,7 @@ export default function usePeopleChain (genesisHash?: string): PeopleChainInfo {
   const peopleChain = useMetadata(peopleChainGenesisHash, true);
 
   const maybeEndpoint = useMemo(() => {
-    const peopleChainName = sanitizeChainName(peopleChain?.name as string);
+    const peopleChainName = sanitizeChainName(peopleChain?.name);
 
     if (!peopleChainName) {
       return;

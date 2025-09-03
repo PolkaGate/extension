@@ -11,7 +11,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import blockToDate from '../popup/crowdloans/partials/blockToDate';
-import { useChainInfo, useCurrentBlockNumber, useFormatted, useTranslation } from '.';
+import useChainInfo from './useChainInfo';
+import useCurrentBlockNumber from './useCurrentBlockNumber';
+import useFormatted from './useFormatted';
+import useTranslation from './useTranslation';
 
 export default function useTimeToUnlock (address: string | undefined, genesisHash: string | null | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
   const { t } = useTranslation();

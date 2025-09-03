@@ -10,7 +10,7 @@ import type { ValidatorInformation, ValidatorsInformation } from './useValidator
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DEFAULT_FILTERS } from '../util/constants';
-import { useStakingConsts } from '.';
+import useStakingConsts from './useStakingConsts';
 
 const commissionSort = (a: ValidatorInformation, b: ValidatorInformation) => {
   // Sort by commission (ascending - least first)

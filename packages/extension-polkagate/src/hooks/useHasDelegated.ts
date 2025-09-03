@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-//@ts-ignore
+// @ts-ignore
 import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
@@ -10,9 +10,11 @@ import { useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { useChainInfo, useFormatted, useTracks } from '.';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
+import useTracks from './useTracks';
 
-export default function useHasDelegated(address: string | undefined, genesisHash: string | null | undefined, refresh?: boolean): BN | null | undefined {
+export default function useHasDelegated (address: string | undefined, genesisHash: string | null | undefined, refresh?: boolean): BN | null | undefined {
   const { api, chain } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
   const { tracks } = useTracks(genesisHash);

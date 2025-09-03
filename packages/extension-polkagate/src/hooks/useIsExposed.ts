@@ -6,9 +6,10 @@ import type { SoloStakingInfo } from './useSoloStakingInfo';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useChainInfo, useCurrentEraIndex } from '.';
+import useChainInfo from './useChainInfo';
+import useCurrentEraIndex from './useCurrentEraIndex';
 
-export default function useIsExposed(genesisHash: string | undefined, stakingInfo: SoloStakingInfo): boolean | undefined {
+export default function useIsExposed (genesisHash: string | undefined, stakingInfo: SoloStakingInfo): boolean | undefined {
   const { api, chain } = useChainInfo(genesisHash);
   const currentEraIndex = useCurrentEraIndex(genesisHash);
   const [exposed, setIsExposed] = useState<boolean>();

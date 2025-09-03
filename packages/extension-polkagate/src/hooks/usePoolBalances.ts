@@ -13,7 +13,8 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
 import getPoolAccounts from '../util/getPoolAccounts';
-import { useChainInfo, useFormatted } from '.';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
 
 export default function usePoolBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);

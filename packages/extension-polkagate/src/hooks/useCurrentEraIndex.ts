@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 /**
  * Custom hook to retrieve the current era index for a given blockchain.
@@ -15,7 +15,7 @@ import { useChainInfo } from '.';
  * @param {string | undefined} genesisHash - The genesis hash of the blockchain to query for the current era index.
  * @returns {number | undefined} The current era index of the blockchain, or `undefined` if the index cannot be retrieved.
  */
-export default function useCurrentEraIndex(genesisHash: string | undefined): number | undefined {
+export default function useCurrentEraIndex (genesisHash: string | undefined): number | undefined {
   const [index, setIndex] = useState<number>();
   const { api } = useChainInfo(genesisHash);
 

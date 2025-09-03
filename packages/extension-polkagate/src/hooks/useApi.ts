@@ -10,7 +10,8 @@ import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
 import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
-import { useEndpoint, useEndpoints } from '.';
+import useEndpoint from './useEndpoint';
+import { useEndpoints } from './useEndpoints';
 
 // Define types for API state and actions
 interface ApiState {

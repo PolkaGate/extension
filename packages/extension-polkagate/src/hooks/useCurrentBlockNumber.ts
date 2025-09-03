@@ -3,9 +3,9 @@
 
 import { useEffect, useState } from 'react';
 
-import { useApi } from '.';
+import useApi from './useApi';
 
-export default function useCurrentBlockNumber(genesisHash: string | null | undefined): number | undefined {
+export default function useCurrentBlockNumber (genesisHash: string | null | undefined): number | undefined {
   const api = useApi(genesisHash);
 
   const [blockNumber, setCurrentBlockNumber] = useState<number | undefined>();

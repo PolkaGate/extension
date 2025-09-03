@@ -13,7 +13,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import { useChainInfo, useCurrentBlockNumber, useFormatted } from '.';
+import useChainInfo from './useChainInfo';
+import useCurrentBlockNumber from './useCurrentBlockNumber';
+import useFormatted from './useFormatted';
 
 export const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [index + 1, lock, new BN(lock)]);
 

@@ -10,8 +10,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
+import useBalances from './useBalances';
+import useChainInfo from './useChainInfo';
 import usePool from './usePool';
-import { useBalances, useChainInfo, usePoolConst, useStakingConsts } from '.';
+import usePoolConst from './usePoolConst';
+import useStakingConsts from './useStakingConsts';
 
 /**
  * Calculates unstaking amounts and their respective release dates
@@ -96,7 +99,7 @@ export interface PoolStakingInfo {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function usePoolStakingInfo(address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
+export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash, refresh, setRefresh);
   const pool = usePool(address, genesisHash, undefined, refresh, setRefresh);

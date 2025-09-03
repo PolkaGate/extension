@@ -6,7 +6,7 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { useMemo } from 'react';
 
 import { getSubstrateAddress } from '../util/utils';
-import { useAccount } from '.';
+import useAccount from './useAccount';
 
 export default function useAccountName (address: string | AccountId | undefined): string | undefined {
   const substrateAddress = getSubstrateAddress(address);

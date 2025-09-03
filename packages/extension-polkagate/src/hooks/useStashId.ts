@@ -7,7 +7,8 @@ import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
 
 import { useEffect, useState } from 'react';
 
-import { useChainInfo, useFormatted } from '.';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
 
 export default function useStashId (address: AccountId | string | undefined, genesisHash: string | undefined): AccountId | string | undefined {
   const formatted = useFormatted(address, genesisHash);

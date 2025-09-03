@@ -12,10 +12,11 @@ import { toCamelCase } from '../util';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
+import useIsTestnetEnabled from './useIsTestnetEnabled';
 import useSavedAssetsCache from './useSavedAssetsCache';
 import useSelectedChains from './useSelectedChains';
+import useTranslation from './useTranslation';
 import useWorkerAssetListener from './useWorkerAssetListener';
-import { useIsTestnetEnabled, useTranslation } from '.';
 
 type Assets = Record<string, FetchedBalance[]>;
 type AssetsBalancesPerChain = Record<string, FetchedBalance[]>;

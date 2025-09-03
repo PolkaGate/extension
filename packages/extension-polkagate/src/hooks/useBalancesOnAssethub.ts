@@ -13,7 +13,8 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { decodeMultiLocation } from '../util/utils';
-import { useChainInfo, useFormatted } from '.';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
 
 export default function useBalancesOnAssethub (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);

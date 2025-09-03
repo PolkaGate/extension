@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react';
 
 import { isNumber } from '@polkadot/util';
 
-import { useChainInfo, useEndpoint } from '.';
+import useChainInfo from './useChainInfo';
+import useEndpoint from './useEndpoint';
 
 export interface Teleport {
   allowTeleport: boolean;

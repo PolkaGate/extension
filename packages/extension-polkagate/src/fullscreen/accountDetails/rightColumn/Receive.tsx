@@ -44,7 +44,7 @@ interface SelectChainProp {
 }
 
 function SelectChain ({ setSelectedChain }: SelectChainProp) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
     const hasRelay = (str: string) => str.toLowerCase().includes('relay');
 
@@ -199,7 +199,7 @@ function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
                   />
                 </Grid>
                 <Typography sx={{ display: 'flex', my: '10px', width: '100%' }} variant='B-1'>
-                  {t('Your {{chainName}} Address', { replace: { chainName} })}
+                  {t('Your {{chainName}} Address', { replace: { chainName } })}
                 </Typography>
                 <AddressComponent
                   address={formattedAddress ?? address}

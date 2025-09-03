@@ -15,7 +15,10 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { FetchingContext } from '../components';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { decodeMultiLocation } from '../util/utils';
-import { useChainInfo, useFormatted, useSelectedAccount, useStakingAccount } from '.';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
+import useSelectedAccount from './useSelectedAccount';
+import useStakingAccount from './useStakingAccount';
 
 export default function useNativeAssetBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address, genesisHash, undefined, undefined);

@@ -14,7 +14,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
 export type Reserved = { [key in Item]?: Balance | null | undefined };

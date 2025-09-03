@@ -11,7 +11,7 @@ import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { isHexToBn } from '../util/utils';
-import { useFormatted } from '.';
+import useFormatted from './useFormatted';
 
 const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 

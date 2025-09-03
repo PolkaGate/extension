@@ -5,7 +5,7 @@ import type { Track } from '../fullscreen/governance/types';
 
 import { useMemo } from 'react';
 
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 interface TracksType { fellowshipTracks: Track[] | undefined, tracks: Track[] | undefined }
 
