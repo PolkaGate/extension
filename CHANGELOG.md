@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.5.2](https://github.com/polkagate/extension/compare/v1.5.1...v1.5.2) (2025-09-03)
+
+
+### Bug Fixes
+
+* add estimated fee prop ([#1823](https://github.com/polkagate/extension/issues/1823)) ([9052e83](https://github.com/polkagate/extension/commit/9052e834c7511ddb8ca5283ff8f8aa1c1c716246))
+
 ## [1.5.1](https://github.com/polkagate/extension/compare/v1.5.0...v1.5.1) (2025-09-02)
 
 
