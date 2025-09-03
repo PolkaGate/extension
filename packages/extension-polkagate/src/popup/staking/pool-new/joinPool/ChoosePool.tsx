@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { UsePools } from '../../../../hooks/usePools2';
+import type { UsePools } from '../../../../hooks/usePools';
 import type { PoolInfo } from '../../../../util/types';
 
 import { LinearProgress, Stack, type SxProps, type Theme } from '@mui/material';

@@ -8,7 +8,7 @@ import { People } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { useJoinPool, usePools2, useSelectedAccount, useTranslation } from '../../../../hooks';
+import { useJoinPool, usePools, useSelectedAccount, useTranslation } from '../../../../hooks';
 import { SORTED_BY } from '../../../../popup/staking/partial/PoolFilter';
 import { FetchPoolProgress } from '../../../../popup/staking/pool-new/joinPool/ChoosePool';
 import { VelvetBox } from '../../../../style';
@@ -27,7 +27,7 @@ function JoinPool () {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const pools = usePools2(genesisHash);
+  const pools = usePools(genesisHash);
   const navigate = useNavigate();
 
   const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = pools;

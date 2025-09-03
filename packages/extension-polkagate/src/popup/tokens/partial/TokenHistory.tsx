@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon , IconProps} from 'iconsax-react';
+import type { Icon, IconProps } from 'iconsax-react';
 import type { TransactionDetail } from '../../../util/types';
 
 import { Container, Grid, IconButton, Typography } from '@mui/material';
@@ -14,7 +14,7 @@ import { DecisionButtons, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
 import HistoryBox from '../../history/newDesign/HistoryBox';
-import useTransactionHistory2 from '../../history/useTransactionHistory2';
+import useTransactionHistory from '../../history/useTransactionHistory';
 
 interface FilterState {
   governance: boolean;
@@ -153,7 +153,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [filter, dispatchFilter] = useReducer(filterReducer, INITIAL_STATE);
 
-  const { grouped } = useTransactionHistory2(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
+  const { grouped } = useTransactionHistory(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {

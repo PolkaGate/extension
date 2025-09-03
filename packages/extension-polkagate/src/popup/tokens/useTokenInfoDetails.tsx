@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
-import { useChainInfo, useFormatted3, useLockedInReferenda2, usePrices, useReservedDetails2, useTranslation } from '../../hooks';
+import { useChainInfo, useFormatted, useLockedInReferenda, usePrices, useReservedDetails, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { updateStorage } from '../../util';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
@@ -20,10 +20,10 @@ import { lockedReservedReducer, type Type } from './LockedReserved';
 export function useTokenInfoDetails (address: string | undefined, genesisHash: string | undefined, token: FetchedBalance | undefined) {
   const { t } = useTranslation();
   const pricesInCurrency = usePrices();
-  const formatted = useFormatted3(address, genesisHash);
-  const reservedReason = useReservedDetails2(formatted, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
+  const reservedReason = useReservedDetails(formatted, genesisHash);
   const { api, chainName } = useChainInfo(genesisHash);
-  const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda2(address, genesisHash, undefined); // TODO: timeToUnlock!
+  const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined); // TODO: timeToUnlock!
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
     type: undefined

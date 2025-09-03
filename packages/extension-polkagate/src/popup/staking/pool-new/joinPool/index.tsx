@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { Motion } from '../../../../components';
-import { useBackground, useJoinPool, usePools2, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useJoinPool, usePools, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 import JoinPoolBackButton from '../../partial/JoinPoolBackButton';
@@ -26,7 +26,7 @@ export default function JoinPool () {
   const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const navigate = useNavigate();
-  const pools = usePools2(genesisHash);
+  const pools = usePools(genesisHash);
 
   const { availableBalanceToStake,
     bondAmount,

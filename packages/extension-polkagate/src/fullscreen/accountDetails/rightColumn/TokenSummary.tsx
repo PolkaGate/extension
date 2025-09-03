@@ -7,11 +7,11 @@ import { Grid, Grow, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
+import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, FormatPrice, ShowBalance4 } from '../../../components';
 import { usePrices } from '../../../hooks';
-import { calcChange, calcPrice } from '../../../hooks/useYouHave';
 import DailyChange from '../../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../../style';
 import getLogo2 from '../../../util/getLogo2';

@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { bnToBn } from '@polkadot/util';
 
 import { Address2, ChainLogo, DecisionButtons, FormatBalance2, FormatPrice } from '../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee2, useFavIcon, useMetadata, useTokenPrice2, useTranslation } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
 import { NATIVE_TOKEN_ASSET_ID } from '../../../util/constants';
 import { amountToHuman, getSubstrateAddress } from '../../../util/utils';
 import { getValue } from '../../account/util';
@@ -25,7 +25,7 @@ interface Decoded {
 }
 
 interface Props {
-  payload: ExtrinsicPayload; 
+  payload: ExtrinsicPayload;
   signerPayload: SignerPayloadJSON;
   url: string;
   onCancel: () => void;
@@ -65,12 +65,12 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
 
   const accountAssets = useAccountAssets(substrateAddress);
   const specVersion = useRef(bnToBn(hexSpec)).current;
-  const { price } = useTokenPrice2(genesisHash);
+  const { price } = useTokenPrice(genesisHash);
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
 
   const call = api && decoded?.method ? api.tx[decoded.method.section][decoded.method.method] : undefined;
-  const fee = useEstimatedFee2(genesisHash, substrateAddress, call, decoded.method ? decoded.method.args : []);
+  const fee = useEstimatedFee(genesisHash, substrateAddress, call, decoded.method ? decoded.method.args : []);
   const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === NATIVE_TOKEN_ASSET_ID);
 
   const onNext = useCallback(() => {

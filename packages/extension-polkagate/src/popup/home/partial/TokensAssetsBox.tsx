@@ -12,11 +12,11 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
 import { useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
 import allChains from '../../../util/chains';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import Drawer from './Drawer';

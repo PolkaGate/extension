@@ -11,7 +11,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
-import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts2, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { toTitleCase } from '../../../util';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress } from '../../../util/utils';
@@ -70,7 +70,7 @@ export const Amount = memo(function MemoAmount ({ amount, differentValueColor, g
 
 const ValidatorsConfirm = ({ genesisHash, nominators }: { genesisHash: string | undefined; nominators: string[] }) => {
   const { t } = useTranslation();
-  const stakingConst = useStakingConsts2(genesisHash);
+  const stakingConst = useStakingConsts(genesisHash);
 
   return (
     <Stack alignItems='flex-end' direction='row' pb='30px' pt='12px'>

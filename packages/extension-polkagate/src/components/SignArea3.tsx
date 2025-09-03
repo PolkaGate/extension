@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import { noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useAccount, useAccountDisplay2, useChainInfo, useFormatted3, useIsBlueish, useIsExtensionPopup, useProxies, useTranslation } from '../hooks';
+import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useIsBlueish, useIsExtensionPopup, useProxies, useTranslation } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
@@ -116,19 +116,19 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, on
   const theme = useTheme();
   const account = useAccount(address);
   const { api: apiFromGenesisHash, chain, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
 
   // To handle system chain apis like people chain
   const api = maybeApi || apiFromGenesisHash;
 
-  const senderName = useAccountDisplay2(address, genesisHash);
+  const senderName = useAccountDisplay(address, genesisHash);
   const proxies = useProxies(api, formatted);
 
   const [showQR, setShowQR] = useState<boolean>(false);
   const [lastHeader, setLastHeader] = useState<Header>();
   const [rawNonce, setRawNonce] = useState<number>();
 
-  const selectedProxyName = useAccountDisplay2(getSubstrateAddress(selectedProxy?.delegate), genesisHash);
+  const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate), genesisHash);
   const from = selectedProxy?.delegate ?? formatted ?? address;
 
   const isLedger = useMemo(() => account?.isHardware, [account?.isHardware]);

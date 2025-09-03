@@ -3,48 +3,38 @@
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../components/contexts';
-import { useChain } from './';
+import { useChainInfo } from '.';
 
-export default function useFormatted(address?: AccountId | string, formatted?: AccountId | string): string | undefined {
-  const { accounts } = useContext(AccountContext);
-  const chain = useChain(address);
+export default function useFormatted (address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
+  const { chain } = useChainInfo(genesisHash, true);
 
   const encodedAddress = useMemo(() => {
     if (formatted) {
       return String(formatted);
     }
 
-    if (!chain) {
+    if (!chain || !address) {
       return;
     }
 
     const prefix: number = chain.ss58Format;
 
-    if (address && prefix !== undefined && accounts?.length) {
-      const selectedAddressJson = accounts.find((acc) => acc.address === address);
-
-      if (!selectedAddressJson) {
-        console.log(`${address} not found in accounts!`);
-
-        return undefined;
-      }
-
-      try {
-        const publicKey = decodeAddress(selectedAddressJson.address);
+    try {
+      if (address && prefix !== undefined) {
+        const publicKey = decodeAddress(address);
 
         return encodeAddress(publicKey, prefix);
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error(error);
     }
 
     return undefined;
-  }, [formatted, chain, accounts, address]);
+  }, [formatted, chain, address]);
 
   return encodedAddress;
 }

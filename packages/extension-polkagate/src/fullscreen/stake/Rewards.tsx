@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { UseStakingRewards } from '../../hooks/useStakingRewards3';
+import type { UseStakingRewards } from '../../hooks/useStakingRewardsChart';
 import type { ClaimedRewardInfo } from '../../util/types';
 
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';

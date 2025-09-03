@@ -17,7 +17,7 @@ import { isAddress } from '@polkadot/util-crypto';
 import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
-import { useChainInfo, useFormatted3, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
+import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import getLogo2 from '../util/getLogo2';
@@ -31,7 +31,7 @@ interface AccountBoxProps {
 
 const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const { t } = useTranslation();
-  const formatted = useFormatted3(selectedAccount?.address, genesisHash);
+  const formatted = useFormatted(selectedAccount?.address, genesisHash);
   const isExtension = useIsExtensionPopup();
 
   const color = useMemo(() => isExtension ? 'text.highlight' : '#AA83DC', [isExtension]);

@@ -5,7 +5,7 @@ import { Stack } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
-import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../../../hooks';
+import { useStakingConsts, useTranslation, useValidatorsInformation } from '../../../hooks';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 import ValidatorsTable from './partials/ValidatorsTable';
 
@@ -21,7 +21,7 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
   const { t } = useTranslation();
   const refContainer = useRef(null);
 
-  const stakingConsts = useStakingConsts2(genesisHash);
+  const stakingConsts = useStakingConsts(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
   const [newSelectedValidators, setNewSelectedValidators] = useState<string[] | undefined>(undefined);
@@ -143,31 +143,31 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
 
   return (
     <>
-      <Stack direction='column' ref = {refContainer} sx={{ height: 'fit-content', maxHeight: '620px', minHeight: '620px', mt: '12px', position: 'relative', px: '15px', width: '100%', zIndex: 1 }}>
+      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '620px', minHeight: '620px', mt: '12px', position: 'relative', px: '15px', width: '100%', zIndex: 1 }}>
         {isLoading &&
-        <Progress
-          style={{ marginTop: '90px' }}
-          title={t("Loading the validators' list")}
-        />
+          <Progress
+            style={{ marginTop: '90px' }}
+            title={t("Loading the validators' list")}
+          />
         }
         {isLoaded &&
-        <>
-          <SearchField
-            onInputChange={onSearch}
-            placeholder={t('🔍 Search')}
-            style={{
-              height: '44px',
-              margin: '17px 0 18px',
-              width: '410px'
-            }}
-          />
-          <ValidatorsTable
-            genesisHash={genesisHash ?? ''}
-            onSelect={onSelect}
-            selected={newSelectedValidators}
-            validatorsInformation={filtered ?? []}
-          />
-        </>}
+          <>
+            <SearchField
+              onInputChange={onSearch}
+              placeholder={t('🔍 Search')}
+              style={{
+                height: '44px',
+                margin: '17px 0 18px',
+                width: '410px'
+              }}
+            />
+            <ValidatorsTable
+              genesisHash={genesisHash ?? ''}
+              onSelect={onSelect}
+              selected={newSelectedValidators}
+              validatorsInformation={filtered ?? []}
+            />
+          </>}
         <DecisionButtons
           cancelButton
           direction='horizontal'

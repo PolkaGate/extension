@@ -7,7 +7,7 @@ import { Stack } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
-import { usePools2, useTranslation } from '../../../hooks';
+import { usePools, useTranslation } from '../../../hooks';
 import { FetchPoolProgress } from '../../../popup/staking/pool-new/joinPool/ChoosePool';
 import { PREFERRED_POOL_NAME } from '../../../util/constants';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
@@ -22,7 +22,7 @@ interface Props {
 export default function SelectPool ({ genesisHash, setSelectedStakingType, setSide }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
-  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools2(genesisHash);
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(genesisHash);
 
   const [selectedPool, setSelectedPool] = useState<PoolInfo | undefined>(undefined);
   const [searchedQuery, setSearch] = useState<string>('');

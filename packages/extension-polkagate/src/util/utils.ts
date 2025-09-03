@@ -439,18 +439,18 @@ export function areArraysEqual<T> (arrays: T[][]): boolean {
   const referenceArrayLength = arrays[0].length;
 
   // Check if all inputs are arrays of the same length
-  const allValidArrays = arrays.every((array) => Array.isArray(array) && array.length === referenceArrayLength);
+  const allValidArrays = arrays.every((arr) => Array.isArray(arr) && arr.length === referenceArrayLength);
 
   if (!allValidArrays) {
     return false;
   }
 
   // Create sorted copies of the arrays
-  const sortedArrays = arrays.map((array) => array.sort());
+  const sortedArrays = arrays.map((arr) => arr.sort());
 
   // Compare each sorted array with the first sorted array
-  return sortedArrays.every((sortedArray) =>
-    sortedArray.every((element, index) => element === sortedArrays[0][index])
+  return sortedArrays.every((s) =>
+    s.every((element, index) => element === sortedArrays[0][index])
   );
 }
 
@@ -813,3 +813,15 @@ export function calcInterval (api: ApiPromise | undefined): BN {
     )
   ));
 }
+
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal) || '0') * (assetPrice ?? 0);
+
+export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
+  if (tokenPriceChange === -100) {
+    return 0;
+  }
+
+  const totalChange = (tokenPriceChange * tokenBalance) / 100;
+
+  return totalChange * tokenPrice;
+};

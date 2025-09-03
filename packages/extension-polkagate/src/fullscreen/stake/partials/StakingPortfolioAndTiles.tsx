@@ -10,10 +10,10 @@ import React, { useMemo } from 'react';
 
 import Ice from '@polkadot/extension-polkagate/src/components/SVG/Ice';
 import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
 import StakingInfoTile from '../../../popup/staking/partial/StakingInfoTile';
 import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
 import { GlowBall } from '../../../style/VelvetBox';

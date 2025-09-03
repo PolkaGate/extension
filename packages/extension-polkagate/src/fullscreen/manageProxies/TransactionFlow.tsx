@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { SelectedProxy } from '../../components';
-import { useEstimatedFee2, useTranslation } from '../../hooks';
+import { useEstimatedFee, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import { DraggableModal } from '../components/DraggableModal';
 import Confirmation from './Confirmation';
@@ -45,8 +45,8 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
   const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
   const confirmDisabled = useMemo(() =>
     !proxyItems || proxyItems.length === 0 || proxyItems.every(({ status }) => status === 'current')
-  ,
-  [proxyItems]);
+    ,
+    [proxyItems]);
 
   const newDepositValue = useMemo(() => {
     if (!proxyItems || proxyItems.length === 0 || confirmDisabled) {
@@ -108,7 +108,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       : temp[0];
   }, [api?.tx, proxyItems]);
 
-  const fee = useEstimatedFee2(genesisHash, address, call);
+  const fee = useEstimatedFee(genesisHash, address, call);
 
   const handleClose = useCallback(() => {
     setRefresh(true);
