@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
+//@ts-nocheck
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 
@@ -11,7 +10,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hexToString } from '@polkadot/util';
 
 import getChainGenesisHash from '../util/getChainGenesisHash';
-import { useApi, usePeopleChain } from '.';
+import useApi from './useApi';
+import usePeopleChain from './usePeopleChain';
 
 interface SubIdentity {
   parentAddress: string,
