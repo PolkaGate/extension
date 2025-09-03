@@ -1563,7 +1563,7 @@ export const usePendingRewardsSolo = (
 
   const fakeTx = useMemo(() => payoutStakers?.(address, BN_ZERO, BN_ZERO), [address, payoutStakers]);
 
-  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? fakeTx);
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? fakeTx);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
