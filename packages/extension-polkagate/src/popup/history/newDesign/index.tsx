@@ -14,7 +14,7 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext, Motion } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
-import useTransactionHistory2 from '../useTransactionHistory2';
+import useTransactionHistory from '../useTransactionHistory';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
 
@@ -61,7 +61,7 @@ function History (): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { grouped } = useTransactionHistory2(selectedAccount?.address, selectedChain as string | undefined, historyFilter);
+  const { grouped } = useTransactionHistory(selectedAccount?.address, selectedChain as string | undefined, historyFilter);
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
