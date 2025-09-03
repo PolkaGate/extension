@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 export default function useFormatted (address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
   const { chain } = useChainInfo(genesisHash, true);

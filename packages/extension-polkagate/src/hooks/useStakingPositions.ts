@@ -8,7 +8,8 @@ import { useMemo } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { amountToHuman } from '../util/numberUtils';
-import { useAccountAssets, usePrices } from '.';
+import useAccountAssets from './useAccountAssets';
+import usePrices from './usePrices';
 
 export default function useStakingPositions (address: string | undefined, active?: boolean): { positions: FetchedBalance[] | undefined | null, maxPosition: FetchedBalance | undefined, maxPositionType: 'solo' | 'pool' | undefined } {
   const accountAssets = useAccountAssets(address);

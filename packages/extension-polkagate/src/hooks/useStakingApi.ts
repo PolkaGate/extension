@@ -21,7 +21,20 @@ import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/p
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, calcPrice, isHexToBn, safeSubtraction } from '../util/utils';
-import { useAccountAssets, useChainInfo, useCurrentBlockNumber, useEstimatedFee, useFormatted, useIsExposed, usePendingRewards, usePool, usePoolConst, usePoolStakingInfo, useSoloStakingInfo, useStakingConsts, useTokenPriceBySymbol, useTranslation } from '.';
+import useAccountAssets from './useAccountAssets';
+import useChainInfo from './useChainInfo';
+import useCurrentBlockNumber from './useCurrentBlockNumber';
+import useEstimatedFee from './useEstimatedFee';
+import useFormatted from './useFormatted';
+import useIsExposed from './useIsExposed';
+import usePendingRewards from './usePendingRewards';
+import usePool from './usePool';
+import usePoolConst from './usePoolConst';
+import usePoolStakingInfo from './usePoolStakingInfo';
+import useSoloStakingInfo from './useSoloStakingInfo';
+import useStakingConsts from './useStakingConsts';
+import useTokenPriceBySymbol from './useTokenPriceBySymbol';
+import useTranslation from './useTranslation';
 
 export const useUnstakingPool = (
   address: string | undefined,

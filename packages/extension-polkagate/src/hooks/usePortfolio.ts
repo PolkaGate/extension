@@ -5,7 +5,7 @@ import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
 import { calcChange, calcPrice } from '../util/utils';
-import { usePrices } from '.';
+import usePrices from './usePrices';
 
 export interface PortfolioType {
   available: number;

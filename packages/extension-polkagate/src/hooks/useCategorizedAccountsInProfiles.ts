@@ -7,7 +7,10 @@ import { useEffect, useState } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useAccountsOrder, useProfileAccounts, useProfiles, useSelectedProfile } from '.';
+import useAccountsOrder from './useAccountsOrder';
+import useProfileAccounts from './useProfileAccounts';
+import useProfiles from './useProfiles';
+import useSelectedProfile from './useSelectedProfile';
 
 /**
  * Custom React hook that returns a categorized mapping of accounts based on profile tags.

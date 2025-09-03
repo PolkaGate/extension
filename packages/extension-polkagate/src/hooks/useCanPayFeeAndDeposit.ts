@@ -11,7 +11,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { getValue } from '../popup/account/util';
-import { useBalances, useTranslation } from '.';
+import useBalances from './useBalances';
+import useTranslation from './useTranslation';
 
 /**
  * Enum representing different payment capability states

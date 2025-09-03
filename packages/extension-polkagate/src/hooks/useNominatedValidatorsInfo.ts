@@ -7,7 +7,7 @@ import type { ValidatorInformation, ValidatorsInformation } from './useValidator
 import { useMemo } from 'react';
 
 import { getNominatedValidatorsIds, getNominatedValidatorsInformation } from '../fullscreen/stake/new-solo/nominations/util';
-import { useValidatorsInformation } from '.';
+import useValidatorsInformation from './useValidatorsInformation';
 
 interface Output{
   validatorsInfo: ValidatorsInformation | undefined;

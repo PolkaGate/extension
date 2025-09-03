@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getStorage, watchStorage } from '../components/Loading';
-import { useTranslation } from '.';
+import useTranslation from './useTranslation';
 
 /**
  * @description returns the list of accounts which has a profile tag, if profile is undefined it returns 'All' accounts

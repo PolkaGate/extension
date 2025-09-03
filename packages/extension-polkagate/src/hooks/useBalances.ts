@@ -8,8 +8,13 @@ import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import useBalancesOnAssethub from './useBalancesOnAssethub';
+import useBalancesOnMultiAssetChain from './useBalancesOnMultiAssetChain';
+import useChainInfo from './useChainInfo';
+import useNativeAssetBalances from './useNativeAssetBalances';
+import usePoolBalances from './usePoolBalances';
 import { isUpToDate } from './useSavedAssetsCache';
-import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useChainInfo, useNativeAssetBalances, usePoolBalances, useSelectedAccount } from '.';
+import useSelectedAccount from './useSelectedAccount';
 
 export default function useBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
   const { api, chainName, decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { BN_ONE } from '@polkadot/util';
 
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 export default function useEstimatedFee (genesisHash: string | undefined, address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
   const { api } = useChainInfo(genesisHash);

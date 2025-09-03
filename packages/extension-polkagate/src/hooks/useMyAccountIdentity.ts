@@ -8,7 +8,10 @@ import type { SavedIdentities } from '../util/types';
 import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
-import { useAccount, useChainInfo, useFormatted, useIdentity } from '.';
+import useAccount from './useAccount';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
+import useIdentity from './useIdentity';
 
 /**
  * @description

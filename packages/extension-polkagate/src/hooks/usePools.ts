@@ -11,7 +11,7 @@ import type { PoolInfo } from '../util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import getPoolAccounts from '../util/getPoolAccounts';
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBatchLength: number) =>
   info.map((i, index) => {

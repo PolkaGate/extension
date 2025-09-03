@@ -11,8 +11,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { bnMax } from '@polkadot/util';
 
 import { sanitizeChainName, toBN } from '../util/utils';
+import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
-import { useChainInfo } from '.';
 
 /**
  * Custom hook to fetch and manage pool staking constants from the blockchain.

@@ -15,7 +15,7 @@ import { BN } from '@polkadot/util';
 
 import { toCamelCase } from '../util';
 import { ASSET_HUBS } from '../util/constants';
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 const assetsChains = createAssets();
 

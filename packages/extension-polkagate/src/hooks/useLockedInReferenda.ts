@@ -7,7 +7,10 @@ import { useMemo } from 'react';
 
 import { BN_MAX_INTEGER } from '@polkadot/util';
 
-import { useAccountLocks, useCurrentBlockNumber, useHasDelegated, useTimeToUnlock } from '.';
+import useAccountLocks from './useAccountLocks';
+import useCurrentBlockNumber from './useCurrentBlockNumber';
+import useHasDelegated from './useHasDelegated';
+import useTimeToUnlock from './useTimeToUnlock';
 
 interface Lock {
   classId: BN;

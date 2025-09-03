@@ -13,7 +13,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { isHexToBn } from '../util/utils';
-import { useChainInfo, useStashId } from '.';
+import useChainInfo from './useChainInfo';
+import useStashId from './useStashId';
 
 BN.prototype.toJSON = function () {
   return this.toString();

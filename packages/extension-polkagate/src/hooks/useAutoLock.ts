@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { getStorage } from '../components/Loading';
+import { getStorage } from '../util';
 import { AUTO_LOCK_PERIOD_DEFAULT } from '../util/constants';
 
 export type AutoLockDelayType = 'min' | 'hour' | 'day';

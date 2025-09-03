@@ -9,7 +9,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { toBN } from '../util/utils';
-import { useActiveEraIndex, useChainInfo, useFormatted } from '.';
+import useActiveEraIndex from './useActiveEraIndex';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
 
 interface ExposureOverview {
   total: BN;

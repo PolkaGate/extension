@@ -8,7 +8,8 @@ import { useMemo } from 'react';
 
 import chains from '../util/chains';
 import { sanitizeChainName } from '../util/utils';
-import { useApi, useMetadata } from '.';
+import useApi from './useApi';
+import useMetadata from './useMetadata';
 
 /**
  * Interface representing the information about a blockchain.

@@ -10,7 +10,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { postData } from '../util/api';
 import { getSubscanChainName } from '../util/utils';
-import { useStakingRewardDestinationAddress } from '.';
+import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
 export async function getStakingReward (chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {

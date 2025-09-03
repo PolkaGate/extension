@@ -3,8 +3,8 @@
 
 import { useCallback, useEffect } from 'react';
 
+import useAlerts from './useAlerts';
 import useTranslation from './useTranslation';
-import { useAlerts } from '.';
 
 export default function useTransactionState () {
   const { t } = useTranslation();

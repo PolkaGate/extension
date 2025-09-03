@@ -10,8 +10,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
+import useBalances from './useBalances';
+import useChainInfo from './useChainInfo';
 import usePool from './usePool';
-import { useBalances, useChainInfo, usePoolConst, useStakingConsts } from '.';
+import usePoolConst from './usePoolConst';
+import useStakingConsts from './useStakingConsts';
 
 /**
  * Calculates unstaking amounts and their respective release dates
