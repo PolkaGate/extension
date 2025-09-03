@@ -1543,25 +1543,28 @@ export const usePendingRewardsSolo = (
 
     return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => sum.add((value)[3]), BN_ZERO);
   }, [selectedToPayout]);
+
   const adaptiveDecimalPoint = totalSelectedPending && decimal && (String(totalSelectedPending).length >= decimal - 1 ? 2 : 4);
 
   const tx = useMemo(() => {
-    if (!selectedToPayout || !payoutStakers || !batch) {
+    if (!selectedToPayout.length || !payoutStakers || !batch) {
       return undefined;
     }
 
-    const call = selectedToPayout.length === 1
-      ? payoutStakers
-      : batch;
+    const call = selectedToPayout.length > 1
+      ? batch
+      : payoutStakers;
 
-    const params = selectedToPayout.length === 1
-      ? [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]]
-      : [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))];
+    const params = selectedToPayout.length > 1
+      ? [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))]
+      : [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]];
 
     return call(...params);
   }, [batch, payoutStakers, selectedToPayout]);
 
-  const estimatedFee = useEstimatedFee2(genesisHash ?? '', formatted, tx ?? payoutStakers, tx ? undefined : [address, BN_ZERO]);
+  const fakeTx = useMemo(() => payoutStakers?.(address, BN_ZERO, BN_ZERO), [address, payoutStakers]);
+
+  const estimatedFee = useEstimatedFee2(genesisHash, formatted, tx ?? fakeTx);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
