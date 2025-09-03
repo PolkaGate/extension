@@ -17,11 +17,7 @@ export default function useEstimatedFee (genesisHash: string | undefined, addres
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   useEffect(() => {
-    if (estimatedFee) {
-      return;
-    }
-
-    if (!address || !call) {
+    if (estimatedFee || !address || !call) {
       return;
     }
 
@@ -32,15 +28,19 @@ export default function useEstimatedFee (genesisHash: string | undefined, addres
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
+      return setEstimatedFee(api?.createType('Balance', BN_ONE)) as unknown as Balance;
     }
 
-    const _call = isFunction ? call(...params || []) : call;
+    (async () => {
+      try {
+        const _call = isFunction ? call(...params || []) : call;
+        const i = await _call.paymentInfo(address);
 
-    _call.paymentInfo(address)
-      .then(
-        (i) => setEstimatedFee(i?.partialFee && api.createType('Balance', i.partialFee) as Balance)
-      ).catch(console.error);
+        setEstimatedFee(i?.partialFee && api.createType('Balance', i.partialFee) as unknown as Balance);
+      } catch (e) {
+        console.error('something went wrong while estimating fee:', e);
+      }
+    })().catch(console.error);
   }, [address, api, call, params, estimatedFee]);
 
   return estimatedFee;
