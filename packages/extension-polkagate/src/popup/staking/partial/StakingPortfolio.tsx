@@ -185,6 +185,7 @@ export default function StakingPortfolio ({ buttons = [], disabled, genesisHash,
       <FormatBalance3
         balanceProps={{
           decimal,
+          decimalPoint: 4,
           token,
           value: staked
         }}
