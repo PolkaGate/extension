@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.5.1](https://github.com/polkagate/extension/compare/v1.5.0...v1.5.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* resolve sign area with issue when using ledger ([f014596](https://github.com/polkagate/extension/commit/f0145969aa522152451abe3dea4d6999996cf00e))
+
 # [1.5.0](https://github.com/polkagate/extension/compare/v1.4.0...v1.5.0) (2025-09-02)
 
 

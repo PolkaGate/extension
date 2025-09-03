@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { Variant } from '@mui/material/styles/createTypography';
 
 import { Stack, type SxProps, Typography } from '@mui/material';

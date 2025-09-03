@@ -4,13 +4,13 @@
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
 import type { SignerPayloadRaw } from '@polkadot/types/types';
 
-import { Avatar, Box, Grid, Typography, useTheme } from '@mui/material';
-import { Edit2 } from 'iconsax-react';
+import { Avatar, Box, Grid, Stack, Typography } from '@mui/material';
+import { Edit2, Warning2 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { isAscii, u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 
-import { ActionContext, Address2, Warning } from '../../../components';
+import { ActionContext, Address2 } from '../../../components';
 import { useFavIcon, useTranslation } from '../../../hooks';
 import { cancelSignRequest } from '../../../messaging';
 import { type ModeData, SIGN_POPUP_MODE } from '../types';
@@ -29,7 +29,6 @@ interface Props {
 
 export default function RawData ({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
-  const theme = useTheme();
   const onAction = useContext(ActionContext);
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
@@ -59,7 +58,7 @@ export default function RawData ({ account, error, isFirst, request, setError, s
   const text = useMemo(() => isAscii(data)
     ? u8aToString(u8aUnwrapBytes(data))
     : data
-  , [data]);
+    , [data]);
 
   return (
     <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
@@ -102,13 +101,14 @@ export default function RawData ({ account, error, isFirst, request, setError, s
         </Grid>
       </Box>
       {(isHardware || isExternal) && (
-        <>
-          <Warning theme={theme}>{
-            isHardware
+        <Stack alignItems='center' columnGap='5px' direction='row' sx={{ p: '15px 8px 0px', width: '100%' }}>
+          <Warning2 color='#FFCE4F' size={24} variant='Bold' />
+          <Typography sx={{ color: 'text.secondary', width: '100%' }} variant='B-4'>
+            {isHardware
               ? t('Raw data signing is not supported for hardware wallets.')
-              : t('Raw data signing is not supported for QR wallets.')
-          }</Warning>
-        </>
+              : t('Raw data signing is not supported for QR wallets.')}
+          </Typography>
+        </Stack>
       )}
       <SignWithPassword
         address={account.address}

@@ -160,6 +160,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
         <SignArea3
           address={address}
           genesisHash={genesisHash}
+          ledgerStyle={{ width: '92%' }}
           maybeApi={undefined}
           onClose={onClose}
           proxyTypeFilter={PROXY_TYPE.GENERAL}
