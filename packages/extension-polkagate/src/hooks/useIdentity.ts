@@ -1,7 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
+
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 
@@ -9,7 +10,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hexToString } from '@polkadot/util';
 
-import { useChainInfo, usePeopleChain } from '.';
+import getChainGenesisHash from '../util/getChainGenesisHash';
+import { useApi, usePeopleChain } from '.';
 
 interface SubIdentity {
   parentAddress: string,
@@ -20,8 +22,8 @@ export default function useIdentity (genesisHash: string | undefined, formatted:
   const [info, setInfo] = useState<DeriveAccountInfo | null>();
 
   const { peopleChain } = usePeopleChain(genesisHash);
-
-  const { api } = useChainInfo(peopleChain?.genesisHash);
+  const chainGenesisHash = useMemo(() => peopleChain?.genesisHash || getChainGenesisHash(peopleChain?.name), [peopleChain]);
+  const api = useApi(chainGenesisHash);
 
   const getIdentityOf = useCallback(async (accountId: string) => {
     if (!api?.query?.['identity']?.['identityOf'] || !accountId) {
