@@ -29,11 +29,14 @@ export default function useValidatorSuggestion (allValidatorsInfo: ValidatorsInf
   const stakingConsts = useStakingConsts(genesisHash);
   const [selected, setSelected] = useState<ValidatorInformation[] | undefined>();
 
-  const allValidators = useMemo(() =>
-    allValidatorsInfo?.validatorsInformation.elected
-      .concat(allValidatorsInfo?.validatorsInformation.waiting)
-      ?.filter((v) => v.validatorPrefs.blocked as unknown as boolean === false || v.validatorPrefs.blocked.isFalse)
-    , [allValidatorsInfo?.validatorsInformation.elected, allValidatorsInfo?.validatorsInformation.waiting]);
+  const allValidators = useMemo(() => {
+    const elected = allValidatorsInfo?.validatorsInformation.elected ?? [];
+    const waiting = allValidatorsInfo?.validatorsInformation.waiting ?? [];
+
+    return elected
+      .concat(waiting)
+      .filter((v) => (v.validatorPrefs.blocked as unknown as boolean) === false || v.validatorPrefs.blocked.isFalse);
+  }, [allValidatorsInfo?.validatorsInformation.elected, allValidatorsInfo?.validatorsInformation.waiting]);
 
   const onLimitValidatorsPerOperator = useCallback((validators: ValidatorInformation[] | undefined, limit: number): ValidatorInformation[] => {
     if (!validators?.length) {
