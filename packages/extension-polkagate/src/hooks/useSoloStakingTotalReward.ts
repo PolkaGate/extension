@@ -46,7 +46,7 @@ export async function getStakingReward (chainName: string, address: AccountId | 
   });
 }
 
-export default function useStakingRewards2 (chainName: string | undefined, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
+export default function useSoloStakingTotalReward (chainName: string | undefined, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
   const [rewards, setRewards] = useState<BN>();
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 
