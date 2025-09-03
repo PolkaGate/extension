@@ -5,8 +5,9 @@ import { Box, Grid, Typography } from '@mui/material';
 import React, { type CSSProperties, useCallback, useRef, useState } from 'react';
 
 import Sparkles from '../components/SVG/Sparkles';
-import { useIsDark, useIsExtensionPopup, useIsHovered, useManifest, useTranslation } from '../hooks';
+import { useIsDark, useIsExtensionPopup, useIsHovered, useTranslation } from '../hooks';
 import ChangeLog from '../popup/home/ChangeLog';
+import { Version } from '.';
 
 interface Props {
   showLabel?: boolean;
@@ -28,10 +29,9 @@ function MyDivider (): React.ReactElement {
   );
 }
 
-function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
+function WhatsNew ({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
-  const version = useManifest()?.version;
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
 
@@ -45,14 +45,13 @@ function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom:
   return (
     <>
       <Grid alignItems='center' container item justifyContent='center' sx={{ ...style }}>
-        {showLabel &&
-          <Typography color={textColor} variant='B-1'>
-            {t('Version')}
-          </Typography>
-        }
-        <Typography color={textColor} variant='B-1'>
-          {version}
-        </Typography>
+        <Version
+          shortLabel={false}
+          showLabel={showLabel}
+          style={{ padding: 0, width: 'fit-content' }}
+          textColor={textColor}
+          variant='B-1'
+        />
         <MyDivider />
         <Sparkles color={hovered ? '#AA83DC' : sparklesColor} height={12} width={12} />
         <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onClick={toggleOpenPopup} ref={containerRef} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
@@ -69,4 +68,4 @@ function Version ({ showLabel = true, style = { columnGap: '5px', paddingBottom:
   );
 }
 
-export default React.memo(Version);
+export default React.memo(WhatsNew);

@@ -6,7 +6,7 @@ import React from 'react';
 
 import { logoTransparent, logoWhite } from '../../../assets/logos';
 import useIsDark from '../../../hooks/useIsDark';
-import { Version2 } from '../../../partials';
+import { WhatsNew } from '../../../partials';
 import { EXTENSION_NAME } from '../../../util/constants';
 
 function Introduction ({ style = {} }: { style?: SxProps }): React.ReactElement {
@@ -23,7 +23,7 @@ function Introduction ({ style = {} }: { style?: SxProps }): React.ReactElement 
         <Typography color='text.primary' fontFamily='Eras' fontSize='18px' fontWeight={400}>
           {EXTENSION_NAME}
         </Typography>
-        <Version2
+        <WhatsNew
           showLabel={false}
           style={{
             padding: 0,

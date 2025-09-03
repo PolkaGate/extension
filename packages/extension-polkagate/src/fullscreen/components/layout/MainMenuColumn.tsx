@@ -1,16 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Link, Stack, Typography } from '@mui/material';
+import { Box, Grid, Link, Stack } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
 import React from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-import { useManifest, useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
+import { useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
 import GovernanceModal from '../GovernanceModal';
 import Language from './Language';
@@ -36,7 +37,6 @@ function Shining (): React.ReactElement {
 
 function MainMenuColumn (): React.ReactElement {
   const { t } = useTranslation();
-  const version = useManifest()?.version;
   const selectedAccount = useSelectedAccount();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
@@ -96,9 +96,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <Stack direction='column' rowGap='20px' sx={{ pt: '190px' }}>
         <Grid container item justifyContent='start' width='fit-content'>
-          <Typography color='#674394' sx={{ textAlign: 'left', width: '20%' }} variant='B-5'>
-            {`v.${version}`}
-          </Typography>
+          <Version style={{ padding: 0, textAlign: 'left', width: '20%' }} variant='B-5' />
           <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />
           <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px' }} target='_blank' underline='none' variant='B-5'>
             {t('Privacy & Security')}
