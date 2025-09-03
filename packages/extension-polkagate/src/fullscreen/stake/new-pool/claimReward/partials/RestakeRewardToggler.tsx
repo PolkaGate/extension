@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { MySwitch } from '../../../../../components';
+import { GradientSwitch } from '../../../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../../../hooks';
 
 export interface RestakeRewardTogglerProps {
@@ -36,7 +36,7 @@ export default function RestakeRewardToggler ({ restake, setRestake }: RestakeRe
           {t('Your tokens will return to stake')}
         </Typography>
       </Stack>
-      <MySwitch
+      <GradientSwitch
         checked={restake}
         onChange={noop}
       />
