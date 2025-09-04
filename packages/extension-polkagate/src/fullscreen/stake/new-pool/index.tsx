@@ -11,7 +11,7 @@ import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking
 import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewardsChart } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
 import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
@@ -25,16 +25,14 @@ export default function PoolFullScreen (): React.ReactElement {
 
   useRouteRefresh(() => setRefresh(true));
 
-  const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
+  const { address, genesisHash: urlGenesisHash } = useParams<{ address: string, genesisHash: string }>();
   const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
-
   const { token } = useChainInfo(genesisHash, true);
-  const selectedAccount = useSelectedAccount();
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash, refresh, setRefresh);
+  const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
-  const rewardInfo = useStakingRewardsChart(selectedAccount?.address, genesisHash, 'pool', true);
+  const rewardInfo = useStakingRewardsChart(address, genesisHash, 'pool', true);
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
@@ -99,7 +97,7 @@ export default function PoolFullScreen (): React.ReactElement {
         </Stack>
       </HomeLayout>
       <PopUpHandlerPool
-        address={selectedAccount?.address}
+        address={address}
         genesisHash={genesisHash}
         poolInfo={stakingInfo.pool}
         popupCloser={popupCloser}
