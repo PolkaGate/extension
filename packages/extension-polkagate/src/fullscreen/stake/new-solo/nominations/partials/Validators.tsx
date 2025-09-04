@@ -23,7 +23,7 @@ interface Props {
   withCurve?: boolean
 }
 
-export const Validators = React.memo(function Validators({ address, bgcolor, genesisHash, isActive, validators, withCurve }: Props): React.ReactElement {
+export const Validators = React.memo(function Validators ({ address, bgcolor, genesisHash, isActive, validators, withCurve }: Props): React.ReactElement {
   return (
     <>
       {
@@ -53,7 +53,7 @@ export const Validators = React.memo(function Validators({ address, bgcolor, gen
                 isActive={isActive}
                 key={index}
                 myShare={myShare}
-                style={{ marginLeft: '3%', width: '94%' }}
+                style={{ marginLeft: '2.5%', width: '95.5%' }}
                 validatorInfo={validator}
               />
             </Stack>
