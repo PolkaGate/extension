@@ -84,11 +84,11 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
           <GradientButton
             onClick={openValidatorManagement}
             startIconNode={<Menu color='#EAEBF1' size='18' style={{ marginRight: '6px', zIndex: 10 }} variant='Bulk' />}
-            style={{ height: '44px', padding: '0 10px', minWidth: '160px', width:'fit-content' }}
+            style={{ height: '44px', minWidth: '160px', padding: '0 10px', width: 'fit-content' }}
             text={t('Edit Nominations')}
           />
         </TableToolbar>
-        <Stack direction='column' ref={refContainer} sx={{ maxHeight: 'calc(100vh - 531px)', minHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative', width: '100%' }}>
+        <Stack direction='column' ref={refContainer} sx={{ maxHeight: 'calc(100vh - 531px)', maxWidth: '1050px', minHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative' }}>
           {isNominated && isLoaded &&
             <>
               <LabelBar
@@ -99,8 +99,8 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
                 label={t('Elected')}
                 setCollapse={setElectedCollapse}
               />
-              <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={electedCollapse} style={{ minHeight: 'auto' }} sx={{ width: 'fit-content' }}>
-                <Stack direction='column' sx={{ position: 'relative', gap: '2px', height: 'fit-content', width: '100%' }}>
+              <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={electedCollapse} style={{ minHeight: 'auto' }}>
+                <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', position: 'relative', width: '100%' }}>
                   <Line
                     height={46 * (elected.length + active.length)}
                   />
@@ -130,7 +130,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
                 label={t('Not Elected')}
                 setCollapse={setNotElectedCollapse}
               />
-              <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto', width: 'fit-content' }}>
+              <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto' }}>
                 <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', position: 'relative', width: '100%' }}>
                   <Line
                     height={44 * nonElected.length}
@@ -147,7 +147,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
           }
           {isNominated !== false && isLoading &&
             Array.from({ length: 10 }).map((_, index) => (
-              <UndefinedItem key={index} />
+              <UndefinedItem key={index} mb='2px' />
             ))
           }
           {isNominated === false &&
