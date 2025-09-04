@@ -10,7 +10,6 @@ import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
 import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
-import { mapRelayToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 import useEndpoint from './useEndpoint';
 import { useEndpoints } from './useEndpoints';
 
@@ -45,8 +44,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 const endpointManager = new EndpointManager();
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
-export default function useApi(_genesisHash: string | null | undefined, stateApi?: ApiPromise, _endpoint?: string): ApiPromise | undefined {
-  const genesisHash = mapRelayToSystemGenesis(_genesisHash || '');
+export default function useApi (genesisHash: string | null | undefined, stateApi?: ApiPromise, _endpoint?: string): ApiPromise | undefined {
   const { checkForNewOne, endpoint } = useEndpoint(genesisHash, _endpoint);
   const apisContext = useContext(APIContext);
   const endpoints = useEndpoints(genesisHash);

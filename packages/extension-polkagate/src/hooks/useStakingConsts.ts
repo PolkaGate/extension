@@ -8,10 +8,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { MAX_NOMINATIONS } from '../util/constants';
+import { mapHubToRelay } from '../util/workers/utils/adjustGenesis';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
 
 export default function useStakingConsts (genesisHash: string | undefined): StakingConsts | null | undefined {
+  const relayGenesisHash = mapHubToRelay(genesisHash);
+  const { api: relayChainApi } = useChainInfo(relayGenesisHash);
+
   const { api, chainName } = useChainInfo(genesisHash);
   const eraIndex = useCurrentEraIndex(genesisHash);
 
@@ -20,21 +24,25 @@ export default function useStakingConsts (genesisHash: string | undefined): Stak
 
   const getStakingConsts = useCallback(async () => {
     try {
-      if (!api || !chainName) {
+      if (!api || !chainName || !relayChainApi) {
         return;
       }
 
       const at = await api.rpc.chain.getFinalizedHead();
       const apiAt = await api.at(at);
 
-      const maxNominations = apiAt.consts['electionProviderMultiPhase']['minerMaxVotesPerVoter']?.toPrimitive() as number || MAX_NOMINATIONS;
       const maxNominatorRewardedPerValidator = apiAt.consts['staking']['maxExposurePageSize'].toPrimitive() as number;
       const existentialDepositString = apiAt.consts['balances']['existentialDeposit'].toString();
       const existentialDeposit = new BN(existentialDepositString);
       const bondingDuration = apiAt.consts['staking']['bondingDuration'].toPrimitive() as number;
       const sessionsPerEra = apiAt.consts['staking']['sessionsPerEra'].toPrimitive() as number;
-      const epochDuration = apiAt.consts['babe']['epochDuration'].toPrimitive() as number;
-      const expectedBlockTime = api.consts['babe']['expectedBlockTime'].toPrimitive() as number;
+
+      const atRelay = await relayChainApi.rpc.chain.getFinalizedHead();
+      const apiAtRelay = await relayChainApi.at(atRelay);
+
+      const maxNominations = relayChainApi.consts['electionProviderMultiPhase']?.['minerMaxVotesPerVoter']?.toPrimitive() as number || MAX_NOMINATIONS;
+      const epochDuration = apiAtRelay.consts['babe']['epochDuration'].toPrimitive() as number;
+      const expectedBlockTime = relayChainApi.consts['babe']['expectedBlockTime'].toPrimitive() as number;
       const epochDurationInHours = epochDuration * expectedBlockTime / 3600000; // 1000 milSec * 60sec * 60min
       const [minNominatorBond, currentEraIndex] = await Promise.all([
         apiAt.query['staking']['minNominatorBond'](),
@@ -63,7 +71,7 @@ export default function useStakingConsts (genesisHash: string | undefined): Stak
       console.log('something went wrong while getStakingConsts. err: ', error);
       setNewConsts(null);
     }
-  }, [api, chainName]);
+  }, [api, chainName, relayChainApi]);
 
   useEffect(() => {
     if (!chainName) {
