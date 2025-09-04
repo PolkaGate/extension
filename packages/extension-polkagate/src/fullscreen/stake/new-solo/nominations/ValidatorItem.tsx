@@ -142,7 +142,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           StartIcon={ChartSquare}
           text={validatorAPY != null ? `${validatorAPY}%` : '---'}
           title={t('APY')}
-          width='80px'
+          width='100px'
         />
         <ValidatorIdSocials
           style={{ justifyContent: 'center', width: '125px' }}
@@ -163,8 +163,8 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
   );
 });
 
-const UndefinedItem = ({ noSocials = false }: { noSocials?: boolean }) => (
-  <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '10px' }}>
+const UndefinedItem = ({ mb = '0px', noSocials = false }: { noSocials?: boolean; mb?: string; }) => (
+  <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb, minHeight: '48px', p: '10px' }}>
     <MySkeleton height={20} style={{ borderRadius: '20px', width: '300px' }} />
     <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
     <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />

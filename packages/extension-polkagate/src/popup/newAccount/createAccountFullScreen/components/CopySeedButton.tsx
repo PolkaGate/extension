@@ -80,9 +80,7 @@ function CopySeedButton ({ style, value }: Props): React.ReactElement<Props> {
                 height: '32px',
                 padding: '5px 10px'
               }}
-              text={{
-                firstPart: t('Copy')
-              }}
+              text={t('Copy')}
               variant='contained'
             />
           </CopyToClipboard>

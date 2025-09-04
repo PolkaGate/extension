@@ -834,5 +834,8 @@
   "Selected proxy account lacks funds for the fee.": "所选代理账户没有足够资金支付费用。",
   "This is a watch-only account. No proxies are available in the extension to sign transactions.": "这是一个仅供查看的账户。扩展中没有可用于签署交易的代理。",
   "Cannot sign": "无法签署",
-  "Version {{version}}": "版本 {{version}}"
+  "Version {{version}}": "版本 {{version}}",
+  "Already have an account": "已经有账号？",
+  "Demo account import": "导入演示账户",
+  "Demo Account Import": "导入演示账户"
 }
