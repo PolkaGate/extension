@@ -74,11 +74,11 @@ function Welcome (): React.ReactElement {
               startIcon={<AddCircle color={theme.palette.text.primary} size={20} variant='Bulk' />}
               style={{
                 '& .MuiButton-startIcon': { mr: '12px' },
-                bottom: '86px',
                 borderRadius: '18px',
+                bottom: '86px',
                 height: '48px',
-                left: '32px',
                 justifyContent: 'flex-start',
+                left: '32px',
                 pl: '28px',
                 position: 'absolute',
                 width: '290px',

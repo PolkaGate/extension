@@ -6,11 +6,12 @@ import type { DropdownOption } from '../../../util/types';
 
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { ActionButton, ActionContext, ChainLogo, Motion, SearchField } from '../../../components';
+import { ActionButton, ChainLogo, Motion, SearchField } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import MySwitch from '../../../components/MySwitch';
 import { useTranslation } from '../../../components/translate';
@@ -20,7 +21,7 @@ import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
 
 export default function Chains (): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
 
   const allChains = useGenesisHashOptions(false);
 
@@ -116,8 +117,8 @@ export default function Chains (): React.ReactElement {
   }, [allChains]);
 
   const chainEndpoints = useCallback((genesisHash: string) => {
-    return () => onAction(`/endpoints/${genesisHash}`);
-  }, [onAction]);
+    return () => navigate(`/endpoints/${genesisHash}`) as void;
+  }, [navigate]);
 
   const onAddNewChain = useCallback(() => {
     windowOpen('/settingsfs/network').catch(console.error);

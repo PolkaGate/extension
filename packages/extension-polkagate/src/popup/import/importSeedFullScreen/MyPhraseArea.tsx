@@ -88,7 +88,7 @@ export default function MyPhraseArea ({ isCorrect, label, seed, setSeed }: Props
             height: '32px',
             padding: '5px 10px'
           }}
-          text={ t('Paste')}
+          text={t('Paste')}
           variant='contained'
         />
       </Stack>

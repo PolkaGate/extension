@@ -42,7 +42,7 @@ function DownloadSeedButton ({ iconSize = 18, style = {}, text, value }: Props):
           height: '32px',
           padding: '5px 10px'
         }}
-        text={ text ?? t('Download') }
+        text={text ?? t('Download') }
         variant='contained'
       />
     </Grid>

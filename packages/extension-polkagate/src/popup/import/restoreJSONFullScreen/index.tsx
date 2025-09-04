@@ -218,9 +218,9 @@ export default function RestoreJson (): React.ReactElement {
                   marginBottom: '10px',
                   width: 'fit-content'
                 }}
-                text={ areAllSelected
-                    ? t('Deselect all ({{num}}) accounts', { replace: { num: accountsInfo.length } })
-                    : t('Select all ({{num}}) accounts', { replace: { num: accountsInfo.length } })
+                text={areAllSelected
+                  ? t('Deselect all ({{num}}) accounts', { replace: { num: accountsInfo.length } })
+                  : t('Select all ({{num}}) accounts', { replace: { num: accountsInfo.length } })
                 }
                 variant='contained'
               />
