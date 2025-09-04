@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.5.3](https://github.com/polkagate/extension/compare/v1.5.2...v1.5.3) (2025-09-04)
+
+
+### Bug Fixes
+
+* resolve multipart button text in various languages ([#1827](https://github.com/polkagate/extension/issues/1827)) ([f152f61](https://github.com/polkagate/extension/commit/f152f61ad57ffed91307297ded9f7774fb447765)), closes [#1829](https://github.com/polkagate/extension/issues/1829)
+
 ## [1.5.2](https://github.com/polkagate/extension/compare/v1.5.1...v1.5.2) (2025-09-03)
 
 
