@@ -72,7 +72,7 @@ export async function getPool (genesisHash, stakerAddress, id, port) {
   const [metadata, bondedPools, myClaimable, pendingRewards, rewardIdBalance, stashIdAccount] = await Promise.all([
     api.query['nominationPools']['metadata'](poolId),
     api.query['nominationPools']['bondedPools'](poolId),
-    api.call['nominationPoolsApi']['pendingRewards'](stakerAddress),
+    api.call['nominationPoolsApi']?.['pendingRewards'](stakerAddress), // not available on paseo hub
     api.query['nominationPools']['rewardPools'](poolId),
     api.query['system']['account'](accounts.rewardId),
     api.derive.staking.account(accounts.stashId)

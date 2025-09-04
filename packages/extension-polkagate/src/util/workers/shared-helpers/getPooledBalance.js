@@ -26,7 +26,7 @@ export async function getPooledBalance (api, address) {
     api.query.nominationPools.bondedPools(poolId),
     api.query.nominationPools.metadata(poolId),
     api.derive.staking.account(accounts.stashId),
-    api.call.nominationPoolsApi.pendingRewards(address)
+    api.call.nominationPoolsApi?.pendingRewards(address) // not available on paseo hub
   ]);
 
   const active = member.points.isZero()
