@@ -840,5 +840,8 @@
   "Selected proxy account lacks funds for the fee.": "चयनित प्रॉक्सी खाते में शुल्क के लिए धन नहीं है।",
   "This is a watch-only account. No proxies are available in the extension to sign transactions.": "यह केवल देखने के लिए खाता है। एक्सटेंशन में लेन-देन पर हस्ताक्षर करने के लिए कोई प्रॉक्सी उपलब्ध नहीं है।",
   "Cannot sign": "हस्ताक्षर नहीं कर सकते",
-  "Version {{version}}": "संस्करण {{version}}"
+  "Version {{version}}": "संस्करण {{version}}",
+   "Already have an account": "क्या आपके पास पहले से खाता है?",
+  "Demo account import": "डेमो खाता आयात",
+  "Demo Account Import": "डेमो खाता आयात"
 }

@@ -1,14 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { TransitionProps } from '@mui/material/transitions';
 
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import { Check, ColorSwatch, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
-import { ActionButton, ActionContext } from '../../components';
+import { ActionButton } from '../../components';
 import { CustomCloseSquare } from '../../components/SVG/CustomCloseSquare';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
@@ -27,7 +27,7 @@ const Transition = React.forwardRef(function Transition (props: TransitionProps 
 
 function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
 
   const handleClose = useCallback(() => setPopup(Popups.NONE), [setPopup]);
 
@@ -57,11 +57,11 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
 
   const onExploreDemo = useCallback((): void => {
     createAccountExternal('Demo Account ☔️', DEMO_ACCOUNT, POLKADOT_GENESIS_HASH)
-      .then(() => onAction('/'))
+      .then(() => navigate('/') as void)
       .catch((error: Error) => {
         console.error(error);
       });
-  }, [onAction]);
+  }, [navigate]);
 
   return (
     <Dialog
@@ -108,8 +108,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Restore from'),
-                  secondPart: t('File')
+                  text: t('Restore from File'),
+                  textPartInColor: t('File')
                 }}
                 variant='contained'
               />
@@ -122,8 +122,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Import from'),
-                  secondPart: t('Recovery Phrase')
+                  text: t('Import from Recovery Phrase'),
+                  textPartInColor: t('Recovery Phrase')
                 }}
                 variant='contained'
               />
@@ -136,8 +136,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Import from'),
-                  secondPart: t('Raw Seed')
+                  text: t('Import from Raw Seed'),
+                  textPartInColor: t('Raw Seed')
                 }}
                 variant='contained'
               />
@@ -150,8 +150,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Attach'),
-                  secondPart: t('QR-Signer')
+                  text: t('Attach QR-Signer'),
+                  textPartInColor: t('QR-Signer')
                 }}
                 variant='contained'
               />
@@ -164,8 +164,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Attach'),
-                  secondPart: t('Ledger Device')
+                  text: t('Attach Ledger Device'),
+                  textPartInColor: t('Ledger Device')
                 }}
                 variant='contained'
               />
@@ -179,8 +179,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Add'),
-                  secondPart: t('Watch-only Account')
+                  text: t('Add Watch-only Account'),
+                  textPartInColor: t('Watch-only Account')
                 }}
                 variant='contained'
               />
@@ -193,8 +193,8 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
                   width: '100%'
                 }}
                 text={{
-                  firstPart: t('Demo'),
-                  secondPart: t('Account Import')
+                  text: t('Demo Account Import'),
+                  textPartInColor: t('Account Import')
                 }}
                 variant='contained'
               />

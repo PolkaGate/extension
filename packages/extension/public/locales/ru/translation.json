@@ -840,5 +840,8 @@
   "Selected proxy account lacks funds for the fee.": "На выбранном прокси-аккаунте недостаточно средств для оплаты комиссии.",
   "This is a watch-only account. No proxies are available in the extension to sign transactions.": "Это аккаунт только для просмотра. В расширении нет доступных прокси для подписания транзакций.",
   "Cannot sign": "Невозможно подписать",
-  "Version {{version}}": "Версия {{version}}"
+  "Version {{version}}": "Версия {{version}}",
+  "Already have an account": "Уже есть аккаунт",
+  "Demo account import": "Импорт демо-аккаунта",
+  "Demo Account Import": "Импорт Демо-аккаунта"
 }

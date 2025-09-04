@@ -3,12 +3,13 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Button, type SxProps, type Theme, useTheme } from '@mui/material';
+import { Button, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
 import { useIsDark, useIsExtensionPopup, useIsHovered } from '../hooks';
+import TwoToneText from './TwoToneText';
 
 export interface ActionButtonProps {
   StartIcon?: Icon;
@@ -22,7 +23,7 @@ export interface ActionButtonProps {
   isBusy?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: SxProps<Theme> | undefined;
-  text?: string | { firstPart?: string; secondPart?: string; };
+  text?: string | { text?: string; textPartInColor?: string; };
   variant?: 'text' | 'contained' | 'outlined';
 }
 
@@ -72,14 +73,14 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       </span>;
     } else {
       return (
-        <>
-          <span style={{ color: isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary, ...ButtonFontStyle }}>
-            {text?.firstPart}
-          </span>&nbsp;
-          <span style={{ color: isBlueish ? theme.palette.text.highlight : theme.palette.text.primary, ...ButtonFontStyle }}>
-            {text?.secondPart}
-          </span>
-        </>
+        <Typography sx={{ color: isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary, textAlign: 'left' }}>
+          <TwoToneText
+            color={isBlueish ? theme.palette.text.highlight : theme.palette.text.primary}
+            style={ButtonFontStyle}
+            text={text?.text ?? ''}
+            textPartInColor={text?.textPartInColor ?? ''}
+          />
+        </Typography>
       );
     }
   }, [ButtonFontStyle, disabled, isBlueish, isDark, text, theme]);
@@ -92,7 +93,7 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       startIcon={StartIcon
         ? (
           <StartIcon
-            color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main }
+            color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main}
             size={iconSize}
             variant={
               (iconAlwaysBold ?? hovered)
