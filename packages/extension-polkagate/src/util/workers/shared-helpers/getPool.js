@@ -3,6 +3,7 @@
 
 import { BN, BN_ZERO, bnMax, hexToString } from '@polkadot/util';
 
+import getChainName from '../../getChainName';
 import getPoolAccounts from '../../getPoolAccounts';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
 
@@ -24,11 +25,11 @@ import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
  * @param {string} stakerAddress - The address of the staker of the pool
  * @param {number | undefined} id - The specific pool id
  * @param {MessagePort} port
- * @param {string} chainName
+ * @param {string} genesisHash
  */
-export async function getPool(chainName, stakerAddress, id, port) {
-  // const endpoints = getChainEndpointsFromGenesisHash(genesisHash);
-  const endpoints = getChainEndpoints(chainName);
+export async function getPool (genesisHash, stakerAddress, id, port) {
+  const chainName = getChainName(genesisHash);
+  const endpoints = getChainEndpoints(chainName ?? '');
 
   const { api, connections } = await fastestEndpoint(endpoints);
 
