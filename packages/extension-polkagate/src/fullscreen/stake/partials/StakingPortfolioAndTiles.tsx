@@ -141,7 +141,7 @@ interface Props {
 
 export default function StakingPortfolioAndTiles ({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
-  const {api }= useChainInfo(genesisHash);
+  const { api } = useChainInfo(genesisHash);
 
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
