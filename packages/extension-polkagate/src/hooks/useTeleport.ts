@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react';
 
 import { isNumber } from '@polkadot/util';
 
-import { useChainInfo, useEndpoint2 } from '.';
+import useChainInfo from './useChainInfo';
+import useEndpoint from './useEndpoint';
 
 export interface Teleport {
   allowTeleport: boolean;
@@ -62,7 +63,7 @@ function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOpti
 
 export default function useTeleport (genesisHash: string | undefined): Teleport {
   const { api, chain } = useChainInfo(genesisHash);
-  const { endpoint: endpointUrl } = useEndpoint2(genesisHash);
+  const { endpoint: endpointUrl } = useEndpoint(genesisHash);
   const [state, setState] = useState<Teleport>(() => ({ ...DEFAULT_STATE }));
   const [paraId, setParaId] = useState<ParaId>();
   const [firstEndpoint, setFirstEndpoint] = useState<ExtLinkOption | undefined>(undefined);

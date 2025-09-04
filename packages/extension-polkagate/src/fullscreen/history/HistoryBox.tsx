@@ -40,7 +40,7 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
           {t('Status')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: 'calc(100vh - 360px)', minHeight: '422px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
+      <Container disableGutters id='scrollArea' ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: 'calc(100vh - 360px)', minHeight: '422px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
         {
           !notReady && historyItems?.map((item, index) => (
             <HistoryItem

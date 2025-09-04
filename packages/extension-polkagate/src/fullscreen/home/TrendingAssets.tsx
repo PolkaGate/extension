@@ -153,7 +153,7 @@ function TrendingAssets (): React.ReactElement {
           <Move direction='right' max={MAX_ASSETS_TO_MOVE} setMove={setMove} />
         </Stack>
       </Stack>
-      <Stack alignItems='center' direction='row' ref={refContainer} sx={{ overflowX: 'auto', width: '100%' }}>
+      <Stack alignItems='center' direction='row' ref={refContainer} sx={{ overflowX: 'auto', width: 'auto' }}>
         <motion.div
           animate={{ x: offsetX }}
           style={{ display: 'flex' }}

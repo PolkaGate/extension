@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useReducer, useRef, useState } from 'react
 
 import { DecisionButtons, FadeOnScroll, Motion, Progress } from '../../../components';
 import { EasyStakeSide, type SelectedEasyStakingType, sortingFunctions } from '../../../fullscreen/stake/util/utils';
-import { usePools2, useTranslation } from '../../../hooks';
+import { usePools, useTranslation } from '../../../hooks';
 import { PREFERRED_POOL_NAME } from '../../../util/constants';
 import JoinPoolBackButton from '../partial/JoinPoolBackButton';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer, SORTED_BY } from '../partial/PoolFilter';
@@ -26,7 +26,7 @@ export default function SelectPool ({ genesisHash, selectedStakingType, setSelec
   const { t } = useTranslation();
   const refContainer = useRef(null);
 
-  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools2(genesisHash);
+  const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(genesisHash);
 
   const [filter, dispatchFilter] = useReducer(poolFilterReducer, INITIAL_POOL_FILTER_STATE);
   const [searchedQuery, setSearchedQuery] = useState<string>('');

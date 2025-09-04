@@ -8,7 +8,7 @@ import type { StakingConsts } from '../../../../util/types';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { useChainInfo, useEstimatedFee2, useFormatted3, useTranslation } from '../../../../hooks';
+import { useChainInfo, useEstimatedFee, useFormatted, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
@@ -25,13 +25,13 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
   const navigate = useNavigate();
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
 
   const nominate = api?.tx['staking']['nominate'];
 
   const params = newSelectedValidators.map((v) => v.accountId.toString());
 
-  const estimatedFee2 = useEstimatedFee2(genesisHash ?? '', formatted, nominate, [params]);
+  const estimatedFee2 = useEstimatedFee(genesisHash ?? '', formatted, nominate, [params]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{

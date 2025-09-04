@@ -8,9 +8,10 @@ import type { Proxy, ProxyTypes, TxInfo } from '../../../../../util/types';
 import type { FullScreenTransactionFlow } from '../../../util/utils';
 import type { RestakeRewardTogglerProps } from './RestakeRewardToggler';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useTransactionData } from '../../../../../hooks';
 import { WaitScreen2 } from '../../../../../partials';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../../../util/constants';
 import Confirmation from '../../../partials/StakingConfirmation';
@@ -38,25 +39,7 @@ function ClaimRewardsTransactionFlow ({ address, amount, closeReview, flowStep, 
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
-  const transactionDetail = useMemo(() => {
-    if (!txInfo) {
-      return undefined;
-    }
-
-    const _txInfo = txInfo;
-
-    if (amount) {
-      _txInfo.amount = amount;
-    }
-
-    const txFee = transactionInformation.find(({ itemKey }) => itemKey === 'fee');
-
-    if (txFee?.content) {
-      _txInfo.fee = txFee.content.toString();
-    }
-
-    return _txInfo;
-  }, [amount, transactionInformation, txInfo]);
+  const { transactionDetail, txInformation } = useTransactionData(address, genesisHash, selectedProxy?.delegate, txInfo, transactionInformation, undefined, amount);
 
   const goToHistory = useCallback(() => navigate('/historyfs') as void, [navigate]);
 
@@ -78,7 +61,7 @@ function ClaimRewardsTransactionFlow ({ address, amount, closeReview, flowStep, 
           showAccountBox={showAccountBox}
           showProxySelection={showProxySelection}
           transaction={transaction}
-          transactionInformation={transactionInformation}
+          transactionInformation={txInformation}
         />
       }
       {

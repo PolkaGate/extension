@@ -10,10 +10,10 @@ import { Award, Graph, LockSlash, Moneys, Strongbox2, Timer, Trade } from 'icons
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, usePrices, useTranslation } from '../../hooks';
-import { calcPrice } from '../../hooks/useYouHave';
 import StakingInfoTile from './partial/StakingInfoTile';
 import StakingRewardTile from './partial/StakingRewardTile';
 

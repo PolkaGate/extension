@@ -13,7 +13,7 @@ import type { HexString } from '@polkadot/util/types';
 import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
 
-import { BN, BN_TEN, BN_ZERO, bnMax, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
+import { BN, BN_TEN, BN_THOUSAND, BN_TWO, BN_ZERO, bnMax, bnMin, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { EXTRA_PRICE_IDS } from './api/getPrices';
@@ -381,8 +381,6 @@ export const isWss = (input: string | undefined): boolean => {
 
 export const pgBoxShadow = (theme: Theme): string => theme.palette.mode === 'dark' ? '0px 4px 4px rgba(255, 255, 255, 0.25)' : '2px 3px 4px 0px rgba(0, 0, 0, 0.10)';
 
-export const noop = () => null;
-
 export const truncString32Bytes = (input: string | null | undefined): string | null | undefined => {
   if (!input) {
     return input;
@@ -441,18 +439,18 @@ export function areArraysEqual<T> (arrays: T[][]): boolean {
   const referenceArrayLength = arrays[0].length;
 
   // Check if all inputs are arrays of the same length
-  const allValidArrays = arrays.every((array) => Array.isArray(array) && array.length === referenceArrayLength);
+  const allValidArrays = arrays.every((arr) => Array.isArray(arr) && arr.length === referenceArrayLength);
 
   if (!allValidArrays) {
     return false;
   }
 
   // Create sorted copies of the arrays
-  const sortedArrays = arrays.map((array) => array.sort());
+  const sortedArrays = arrays.map((arr) => arr.sort());
 
   // Compare each sorted array with the first sorted array
-  return sortedArrays.every((sortedArray) =>
-    sortedArray.every((element, index) => element === sortedArrays[0][index])
+  return sortedArrays.every((s) =>
+    s.every((element, index) => element === sortedArrays[0][index])
   );
 }
 
@@ -782,4 +780,48 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
 
 export const safeSubtraction = (subtraction: BN, preferredMin = BN_ZERO) => {
   return bnMax(preferredMin, subtraction);
+};
+
+// Some chains incorrectly use these, i.e. it is set to values such as 0 or even 2
+// Use a low minimum validity threshold to check these against
+const THRESHOLD = BN_THOUSAND.div(BN_TWO);
+const DEFAULT_TIME = new BN(6_000);
+const A_DAY = new BN(24 * 60 * 60 * 1000);
+
+export function calcInterval (api: ApiPromise | undefined): BN {
+  if (!api) {
+    return DEFAULT_TIME;
+  }
+
+  return bnMin(A_DAY, (
+    // Babe, e.g. Relay chains (Substrate defaults)
+    api.consts['babe']?.['expectedBlockTime'] as unknown as BN ||
+    // POW, eg. Kulupu
+    api.consts['difficulty']?.['targetBlockTime'] as unknown as BN ||
+    // Subspace
+    // Subspace
+    api.consts['subspace']?.['expectedBlockTime'] || (
+      // Check against threshold to determine value validity
+      (api.consts['timestamp']?.['minimumPeriod'] as unknown as BN).gte(THRESHOLD)
+        // Default minimum period config
+        ? (api.consts['timestamp']['minimumPeriod'] as unknown as BN).mul(BN_TWO)
+        : api.query['parachainSystem']
+          // default guess for a parachain
+          ? DEFAULT_TIME.mul(BN_TWO)
+          // default guess for others
+          : DEFAULT_TIME
+    )
+  ));
+}
+
+export const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) => parseFloat(amountToHuman(balance, decimal) || '0') * (assetPrice ?? 0);
+
+export const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
+  if (tokenPriceChange === -100) {
+    return 0;
+  }
+
+  const totalChange = (tokenPriceChange * tokenBalance) / 100;
+
+  return totalChange * tokenPrice;
 };

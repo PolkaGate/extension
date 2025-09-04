@@ -11,7 +11,7 @@ import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking
 import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewards3 } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
@@ -31,7 +31,7 @@ export default function SoloFullScreen (): React.ReactElement {
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
-  const rewardInfo = useStakingRewards3(address, genesisHash, 'solo', true);
+  const rewardInfo = useStakingRewardsChart(address, genesisHash, 'solo', true);
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 

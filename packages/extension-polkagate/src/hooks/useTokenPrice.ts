@@ -10,7 +10,8 @@ import { useUserAddedPriceId } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../util';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import { getPriceIdByChainName } from '../util/utils';
-import { useInfo, usePrices } from '.';
+import useChainInfo from './useChainInfo';
+import usePrices from './usePrices';
 
 const DEFAULT_PRICE = {
   decimal: undefined,
@@ -24,13 +25,13 @@ const assetsChains = createAssets();
 
 /**
  *  @description retrieve the price of a token from local storage PRICES
- * @param address : accounts substrate address
+ * @param genesisHash : the chain's genesisHash on which token resides
  * @param assetId : asset id on multi asset chains
  * @param assetChainName : chain name to fetch asset id price from
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (address: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
-  const { chainName: addressChainName, decimal, genesisHash, token } = useInfo(address);
+export default function useTokenPrice (genesisHash: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
+  const { chainName: addressChainName, decimal, token } = useChainInfo(genesisHash, true);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();
   const _chainName = assetChainName || addressChainName;

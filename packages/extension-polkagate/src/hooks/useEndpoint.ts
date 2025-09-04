@@ -1,17 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import type { EndpointType } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import EndpointManager from '../class/endpointManager';
+import EndpointManager2 from '../class/endpointManager2';
 import { AUTO_MODE } from '../util/constants';
-import { useGenesisHash } from '.';
 
 // Create a singleton EndpointManager
-const endpointManager = new EndpointManager();
+const endpointManager = new EndpointManager2();
 
 const DEFAULT_ENDPOINT = {
   checkForNewOne: undefined,
@@ -20,19 +18,18 @@ const DEFAULT_ENDPOINT = {
   timestamp: undefined
 };
 
-export default function useEndpoint(address: AccountId | string | undefined, _endpoint?: string): EndpointType {
-  const genesisHash = useGenesisHash(address);
+export default function useEndpoint(genesisHash: string | null | undefined, _endpoint?: string): EndpointType {
   const [endpoint, setEndpoint] = useState<EndpointType>(DEFAULT_ENDPOINT);
 
   // Function to fetch or update the endpoint
   const fetchEndpoint = useCallback(() => {
-    if (!address || !genesisHash) {
+    if (!genesisHash) {
       return;
     }
 
     // If an endpoint is provided, set it as manual
     if (_endpoint) {
-      endpointManager.set(String(address), genesisHash, {
+      endpointManager.set(genesisHash, {
         checkForNewOne: false,
         endpoint: _endpoint,
         isAuto: false,
@@ -40,11 +37,11 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
       });
     } else {
       // Otherwise, check for a saved endpoint or set to auto mode
-      const savedEndpoint = endpointManager.get(String(address), genesisHash);
+      const savedEndpoint = endpointManager.get(genesisHash);
 
       // If an endpoint already saved or it should be on auto mode, then save the Auto Mode endpoint in the storage
       if (!savedEndpoint || endpointManager.shouldBeOnAutoMode(savedEndpoint)) {
-        endpointManager.set(String(address), genesisHash, {
+        endpointManager.set(genesisHash, {
           checkForNewOne: false,
           endpoint: AUTO_MODE.value,
           isAuto: true,
@@ -54,17 +51,17 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
     }
 
     // Update the local state with the current endpoint
-    const maybeExistingEndpoint = endpointManager.get(String(address), genesisHash);
+    const maybeExistingEndpoint = endpointManager.get(genesisHash);
 
     setEndpoint(maybeExistingEndpoint || DEFAULT_ENDPOINT);
-  }, [address, genesisHash, _endpoint]);
+  }, [genesisHash, _endpoint]);
 
   useEffect(() => {
     fetchEndpoint();
 
     // Handler for endpoint changes
-    const handleEndpointChange = (changedAddress: string, changedGenesisHash: string, newEndpoint: EndpointType) => {
-      if (changedAddress === String(address) && changedGenesisHash === genesisHash) {
+    const handleEndpointChange = (changedGenesisHash: string, newEndpoint: EndpointType) => {
+      if (changedGenesisHash === genesisHash) {
         setEndpoint(newEndpoint);
       }
     };
@@ -74,7 +71,7 @@ export default function useEndpoint(address: AccountId | string | undefined, _en
     return () => {
       endpointManager.unsubscribe(handleEndpointChange);
     };
-  }, [address, genesisHash, fetchEndpoint]);
+  }, [genesisHash, fetchEndpoint]);
 
   return endpoint;
 }

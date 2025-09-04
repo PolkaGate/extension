@@ -8,13 +8,13 @@ import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO, noop } from '@polkadot/util';
 
 import { ToggleDots } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
 import { STAKING_CHAINS } from '../../../util/constants';
 import { ColumnAmounts } from './ColumnAmounts';
 

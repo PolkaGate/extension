@@ -12,7 +12,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { rejectMetaRequest } from '../../messaging';
 import Request from './Request';
 
-export default function Metadata(): React.ReactElement {
+export default function Metadata (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const requests = useContext(MetadataReqContext);

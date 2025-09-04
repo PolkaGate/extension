@@ -15,12 +15,12 @@ import { BN } from '@polkadot/util';
 
 import { toCamelCase } from '../util';
 import { ASSET_HUBS } from '../util/constants';
-import { useInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 const assetsChains = createAssets();
 
-export default function useBalancesOnMultiAssetChain(address: string | undefined, assetId?: string | number): BalancesInfo | undefined {
-  const { api, chain, chainName } = useInfo(address);
+export default function useBalancesOnMultiAssetChain (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+  const { api, chain, chainName } = useChainInfo(genesisHash);
 
   const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
   const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');

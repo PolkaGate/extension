@@ -7,7 +7,7 @@ import { Container, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FadeOnScroll, GradientButton, Progress, SearchField } from '../../components';
-import { useCategorizedAccountsInProfiles, useFormatted3, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
+import { useCategorizedAccountsInProfiles, useFormatted, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { VelvetBox } from '../../style';
 import ProfileTabsFS from '../home/ProfileTabsFS';
 import AccountRowSimple from './AccountRowSimple';
@@ -34,7 +34,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
   const [appliedAddress, setAppliedAddress] = useState<string>();
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
-  const formatted = useFormatted3(maybeSelected, genesisHash);
+  const formatted = useFormatted(maybeSelected, genesisHash);
 
   const _handleClose = useCallback(() => {
     setMayBeSelected(undefined);
@@ -119,11 +119,11 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                           return (
                             <React.Fragment key={account.address}>
                               {isFirstAccount &&
-                              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
-                                <AccountProfileLabel
-                                  label={label}
-                                />
-                              </Stack>
+                                <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
+                                  <AccountProfileLabel
+                                    label={label}
+                                  />
+                                </Stack>
                               }
                               <AccountRowSimple
                                 account={account}

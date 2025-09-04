@@ -9,7 +9,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import HistoryTabs from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryTabs';
-import useTransactionHistory2 from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory2';
+import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
 
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -55,7 +55,7 @@ function HistoryFs (): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { allHistories, grouped } = useTransactionHistory2(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
+  const { allHistories, grouped } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {

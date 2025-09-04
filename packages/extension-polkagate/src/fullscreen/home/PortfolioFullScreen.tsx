@@ -40,6 +40,7 @@ function PortfolioFullScreen (): React.ReactElement {
               num={youHave.portfolio}
               onHideShape='shape1'
               width='fit-content'
+              withCountUp
               withSmallDecimal
             />
           }

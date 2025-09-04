@@ -1,14 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { useEffect, useState } from 'react';
 
-import { useApi } from '.';
+import useApi from './useApi';
 
-export default function useCurrentBlockNumber(address: AccountId | string | undefined): number | undefined {
-  const api = useApi(address);
+export default function useCurrentBlockNumber (genesisHash: string | null | undefined): number | undefined {
+  const api = useApi(genesisHash);
 
   const [blockNumber, setCurrentBlockNumber] = useState<number | undefined>();
 

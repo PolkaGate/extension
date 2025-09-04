@@ -7,7 +7,8 @@ import { useMemo } from 'react';
 import { useUserAddedPriceId } from '../fullscreen/addNewChain/utils';
 import { toCamelCase } from '../util';
 import { getPriceIdByChainName } from '../util/utils';
-import { useChainInfo, usePrices } from '.';
+import useChainInfo from './useChainInfo';
+import usePrices from './usePrices';
 
 const DEFAULT_PRICE = {
   price: undefined,

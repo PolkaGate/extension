@@ -8,19 +8,25 @@ import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import useBalancesOnAssethub from './useBalancesOnAssethub';
+import useBalancesOnMultiAssetChain from './useBalancesOnMultiAssetChain';
+import useChainInfo from './useChainInfo';
+import useNativeAssetBalances from './useNativeAssetBalances';
+import usePoolBalances from './usePoolBalances';
 import { isUpToDate } from './useSavedAssetsCache';
-import { useBalancesOnAssethub, useBalancesOnMultiAssetChain, useInfo, useNativeAssetBalances, usePoolBalances } from '.';
+import useSelectedAccount from './useSelectedAccount';
 
-export default function useBalances (address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
-  const { account, api, chainName, decimal: currentDecimal, genesisHash: chainGenesisHash, token: currentToken } = useInfo(address);
+export default function useBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
+  const { api, chainName, decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
+  const account = useSelectedAccount();
 
   const isNativeAssetId = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB) || assetId === 'undefined';
   const maybeNonNativeAssetId = isNativeAssetId ? undefined : assetId;
 
-  const balances = useNativeAssetBalances(address, refresh, setRefresh, onlyNew);
-  const maybeBalancesOnAssetHub = useBalancesOnAssethub(address, maybeNonNativeAssetId);
-  const maybeBalancesOnMultiChainAssets = useBalancesOnMultiAssetChain(address, maybeNonNativeAssetId);
-  const pooledBalance = usePoolBalances(address, refresh); // can move it inside useNativeAssetBalances hook and then remove overall state var
+  const balances = useNativeAssetBalances(address, genesisHash, refresh, setRefresh, onlyNew);
+  const maybeBalancesOnAssetHub = useBalancesOnAssethub(address, genesisHash, maybeNonNativeAssetId);
+  const maybeBalancesOnMultiChainAssets = useBalancesOnMultiAssetChain(address, genesisHash, maybeNonNativeAssetId);
+  const pooledBalance = usePoolBalances(address, genesisHash, refresh); // can move it inside useNativeAssetBalances hook and then remove overall state var
 
   const [overall, setOverall] = useState<BalancesInfo | undefined>();
 
@@ -30,7 +36,7 @@ export default function useBalances (address: string | undefined, refresh?: bool
   const apiGenesisHash = api?.genesisHash?.toString();
 
   useEffect(() => {
-    if (balances && isUpToDate(balances?.date) && pooledBalance && apiGenesisHash === chainGenesisHash && apiGenesisHash === balances?.genesisHash && apiGenesisHash === pooledBalance.genesisHash) {
+    if (balances && isUpToDate(balances?.date) && pooledBalance && apiGenesisHash === genesisHash && apiGenesisHash === balances?.genesisHash && apiGenesisHash === pooledBalance.genesisHash) {
       setOverall({
         ...balances,
         pooledBalance: pooledBalance.balance
@@ -38,10 +44,11 @@ export default function useBalances (address: string | undefined, refresh?: bool
     } else {
       setOverall(undefined);
     }
-  }, [pooledBalance, balances, apiGenesisHash, chainGenesisHash]);
+  }, [pooledBalance, balances, apiGenesisHash, genesisHash]);
 
+  // TODO - account?.balances won't work!!!!!! because since now accounts are on substrate mode!!! @AMIRKHANEF @Nick-1979
   useEffect(() => {
-    if (!address || !apiGenesisHash || apiGenesisHash !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== chainGenesisHash || account?.genesisHash !== overall.genesisHash) {
+    if (!address || !apiGenesisHash || apiGenesisHash !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== genesisHash || account?.genesisHash !== overall.genesisHash) {
       return;
     }
 
@@ -69,16 +76,16 @@ export default function useBalances (address: string | undefined, refresh?: bool
     const metaData = JSON.stringify({ balances: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, apiGenesisHash, pooledBalance, chainGenesisHash, chainName, decimal, overall, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, apiGenesisHash, pooledBalance, genesisHash, chainName, decimal, overall, token]);
 
   if (maybeNonNativeAssetId) {
     return assetBalance;
   }
 
-  return overall && overall.genesisHash === chainGenesisHash && overall.token === currentToken && overall.decimal === currentDecimal
+  return overall && overall.genesisHash === genesisHash && overall.token === currentToken && overall.decimal === currentDecimal
     ? overall
-    : balances && balances.genesisHash === chainGenesisHash && balances.token === currentToken && balances.decimal === currentDecimal
+    : balances && balances.genesisHash === genesisHash && balances.token === currentToken && balances.decimal === currentDecimal
       ? balances
       : undefined;
 }

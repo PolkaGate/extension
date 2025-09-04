@@ -145,7 +145,7 @@ const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isAct
           width='80px'
         />
         <ValidatorIdSocials
-          style={{ width: '125px' }}
+          style={{ justifyContent: 'center', width: '125px' }}
           validatorDetail={validatorInfo}
         />
         <IconButton onClick={openValidatorDetail} sx={{ bgcolor: bgcolor ? '#1B133C' : '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>

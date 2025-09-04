@@ -6,7 +6,7 @@ import { Container, IconButton, Typography } from '@mui/material';
 import { Data } from 'iconsax-react';
 import React from 'react';
 
-import { useAccountName, useIsBlueish, useMyAccountIdentity2 } from '../hooks';
+import { useAccountName, useIsBlueish, useMyAccountIdentity } from '../hooks';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util/utils';
 
@@ -24,7 +24,7 @@ interface Props {
 
 const SelectedProxy = ({ genesisHash, signerInformation, style = {}, textMaxWidth }: Props) => {
   const signerAddress = getSubstrateAddress(signerInformation.selectedProxyAddress) ?? '';
-  const signerId = useMyAccountIdentity2(signerAddress, genesisHash);
+  const signerId = useMyAccountIdentity(signerAddress, genesisHash);
   const signerName = useAccountName(signerAddress);
   const isBlueish = useIsBlueish();
 
@@ -42,7 +42,7 @@ const SelectedProxy = ({ genesisHash, signerInformation, style = {}, textMaxWidt
       </Container>
       <IconButton
         onClick={signerInformation.onClick}
-        sx={{ bgcolor: isBlueish ?'#809ACB26' : '#4E2B7259', borderRadius: '8px', m: 0, p: '3.5px' }}
+        sx={{ bgcolor: isBlueish ? '#809ACB26' : '#4E2B7259', borderRadius: '8px', m: 0, p: '3.5px' }}
       >
         <CachedIcon sx={{ color: isBlueish ? 'text.highlight' : 'primary.main', fontSize: '18px' }} />
       </IconButton>

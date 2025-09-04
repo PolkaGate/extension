@@ -1,16 +1,23 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { useEffect, useState } from 'react';
 
-import { useApi } from '.';
+import useChainInfo from './useChainInfo';
 
-/** This hook is going to be used for users account existing in the extension */
-export default function useCurrentEraIndex(address: AccountId | string | undefined): number | undefined {
+/**
+ * Custom hook to retrieve the current era index for a given blockchain.
+ *
+ * This hook queries the blockchain's staking module to fetch the current era index.
+ * The era index is returned as a number. If an error occurs during the query, the result will be `undefined`.
+ *
+ * @function useCurrentEraIndex
+ * @param {string | undefined} genesisHash - The genesis hash of the blockchain to query for the current era index.
+ * @returns {number | undefined} The current era index of the blockchain, or `undefined` if the index cannot be retrieved.
+ */
+export default function useCurrentEraIndex (genesisHash: string | undefined): number | undefined {
   const [index, setIndex] = useState<number>();
-  const api = useApi(address);
+  const { api } = useChainInfo(genesisHash);
 
   useEffect(() => {
     api?.query['staking']?.['currentEra']().then((i) => {
@@ -20,8 +27,3 @@ export default function useCurrentEraIndex(address: AccountId | string | undefin
 
   return index;
 }
-
-/**
- * @details
- *  The CurrentEra in Polkadot refers to the latest planned era within the network. It represents the era that is currently being prepared for and is the next era in line to become active. The CurrentEra is used to queue up all the election winners for the next era ahead of time, allowing the system to prepare for the transition of validators and ensure a smooth process for the next era.
- */

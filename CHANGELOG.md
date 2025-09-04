@@ -1,5 +1,34 @@
 # Change Log
 
+## [1.5.2](https://github.com/polkagate/extension/compare/v1.5.1...v1.5.2) (2025-09-03)
+
+
+### Bug Fixes
+
+* add estimated fee prop ([#1823](https://github.com/polkagate/extension/issues/1823)) ([9052e83](https://github.com/polkagate/extension/commit/9052e834c7511ddb8ca5283ff8f8aa1c1c716246))
+
+## [1.5.1](https://github.com/polkagate/extension/compare/v1.5.0...v1.5.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* resolve sign area with issue when using ledger ([f014596](https://github.com/polkagate/extension/commit/f0145969aa522152451abe3dea4d6999996cf00e))
+
+# [1.5.0](https://github.com/polkagate/extension/compare/v1.4.0...v1.5.0) (2025-09-02)
+
+
+### Features
+
+* display can not pay fee warning ([#1819](https://github.com/polkagate/extension/issues/1819)) ([639d48b](https://github.com/polkagate/extension/commit/639d48b1b276e7b65598c8c81778aca55db7e1c6))
+
+# [1.4.0](https://github.com/polkagate/extension/compare/v1.3.6...v1.4.0) (2025-08-31)
+
+
+### Features
+
+* add update metadata design ([1df7895](https://github.com/polkagate/extension/commit/1df78958829c5814858700bcf01005a65f133b02))
+* update phishing alert design ([5e19aaa](https://github.com/polkagate/extension/commit/5e19aaa53d072eb267a5d7b94291f553cf85df26))
+
 ## [1.3.6](https://github.com/polkagate/extension/compare/v1.3.5...v1.3.6) (2025-08-31)
 
 

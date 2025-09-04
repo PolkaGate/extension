@@ -828,5 +828,17 @@
   "recovery phrase": "रिकवरी वाक्यांश",
   "QR-signer": "क्यूआर हस्ताक्षरकर्ता",
   "raw seed": "कच्चा सीड",
-  "from file": "फ़ाइल से"
+  "from file": "फ़ाइल से",
+  "Update Metadata": "मेटाडेटा अपडेट करें",
+  "item": "आइटम",
+  "value": "मान",
+  "genesis hash": "जेनेसिस हैश",
+  "This approval adds the metadata to your extension so future requests can be decoded with it": "यह अनुमोदन आपके एक्सटेंशन में मेटाडेटा जोड़ता है ताकि भविष्य के अनुरोधों को इसके साथ डिकोड किया जा सके",
+  "Insufficient balance to cover transaction fee.": "लेन-देन शुल्क को कवर करने के लिए अपर्याप्त बैलेंस।",
+  "Insufficient balance to complete the transaction.": "लेन-देन पूरा करने के लिए अपर्याप्त बैलेंस।",
+  "Insufficient balance for transaction deposit.": "लेन-देन जमा करने के लिए अपर्याप्त बैलेंस।",
+  "Selected proxy account lacks funds for the fee.": "चयनित प्रॉक्सी खाते में शुल्क के लिए धन नहीं है।",
+  "This is a watch-only account. No proxies are available in the extension to sign transactions.": "यह केवल देखने के लिए खाता है। एक्सटेंशन में लेन-देन पर हस्ताक्षर करने के लिए कोई प्रॉक्सी उपलब्ध नहीं है।",
+  "Cannot sign": "हस्ताक्षर नहीं कर सकते",
+  "Version {{version}}": "संस्करण {{version}}"
 }

@@ -3,11 +3,9 @@
 
 import { useContext, useMemo } from 'react';
 
-import { type BN } from '@polkadot/util';
-
 import { AccountsAssetsContext } from '../components';
-import { amountToHuman } from '../util/utils';
-import { usePrices } from '.';
+import { calcChange, calcPrice } from '../util/utils';
+import usePrices from './usePrices';
 
 export interface PortfolioType {
   available: number;
@@ -15,19 +13,6 @@ export interface PortfolioType {
   date: number;
   portfolio: number;
 }
-
-const calcPrice = (assetPrice: number | undefined, balance: BN, decimal: number) =>
-  parseFloat(amountToHuman(balance, decimal)) * (assetPrice ?? 0);
-
-const calcChange = (tokenPrice: number, tokenBalance: number, tokenPriceChange: number) => {
-  if (tokenPriceChange === -100) {
-    return 0;
-  }
-
-  const totalChange = (tokenPriceChange * tokenBalance) / 100;
-
-  return totalChange * tokenPrice;
-};
 
 /**
  * @description
@@ -78,14 +63,10 @@ export default function usePortfolio (address?: string): PortfolioType | undefin
 
           const { change: tokenPriceChange = 0, value: tokenValue = 0 } = tokenData;
 
-          // const transferable = getValue('transferable', asset) ?? BN_ZERO;
-
           const currentAssetPrice = calcPrice(tokenValue, totalBalance, decimal);
-          // const currentAvailableAssetPrice = calcPrice(tokenValue, transferable, decimal);
           const tokenBalanceNum = Number(totalBalance) / 10 ** decimal;
 
           portfolio += currentAssetPrice;
-          // available += currentAvailableAssetPrice;
           change += calcChange(tokenValue, tokenBalanceNum, tokenPriceChange);
         }
       }

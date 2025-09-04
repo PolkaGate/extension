@@ -11,7 +11,7 @@ import type { PoolInfo } from '../util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import getPoolAccounts from '../util/getPoolAccounts';
-import { useApi } from '.';
+import useChainInfo from './useChainInfo';
 
 const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBatchLength: number) =>
   info.map((i, index) => {
@@ -34,23 +34,33 @@ const handleInfo = (info: [Codec, Codec, Codec, DeriveStakingAccount][], lastBat
     }
   })?.filter((f) => f !== undefined);
 
-interface UsePools {
+export interface UsePools {
   incrementalPools: PoolInfo[] | null | undefined;
   numberOfFetchedPools: number;
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools(address: string | undefined): UsePools {
-  const api = useApi(address);
+export default function usePools (genesisHash: string | undefined): UsePools {
+  const { api } = useChainInfo(genesisHash);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();
   const [numberOfFetchedPools, setNumberOfFetchedPools] = useState<number>(0);
   const [incrementalPools, setIncrementalPools] = useState<PoolInfo[] | null>();
 
   useEffect(() => {
-    window.addEventListener('totalNumberOfPools', (res) => setTotalNumberOfPools(res.detail));
-    window.addEventListener('numberOfFetchedPools', (res) => setNumberOfFetchedPools(res.detail));
-    window.addEventListener('incrementalPools', (res) => setIncrementalPools(res.detail));
+    const handleTotalPools = (res) => setTotalNumberOfPools(res.detail);
+    const handleFetchedPools = (res) => setNumberOfFetchedPools(res.detail);
+    const handleIncrementalPools = (res) => setIncrementalPools(res.detail);
+
+    window.addEventListener('totalNumberOfPools', handleTotalPools);
+    window.addEventListener('numberOfFetchedPools', handleFetchedPools);
+    window.addEventListener('incrementalPools', handleIncrementalPools);
+
+    return () => {
+      window.removeEventListener('totalNumberOfPools', handleTotalPools);
+      window.removeEventListener('numberOfFetchedPools', handleFetchedPools);
+      window.removeEventListener('incrementalPools', handleIncrementalPools);
+    };
   }, []);
 
   const getPools = useCallback(async (api: ApiPromise) => {

@@ -8,7 +8,7 @@ import { Coin, Lock1, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave';
+import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';

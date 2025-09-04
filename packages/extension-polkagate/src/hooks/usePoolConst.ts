@@ -11,8 +11,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { bnMax } from '@polkadot/util';
 
 import { sanitizeChainName, toBN } from '../util/utils';
-import useCurrentEraIndex2 from './useCurrentEraIndex2';
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
+import useCurrentEraIndex from './useCurrentEraIndex';
 
 /**
  * Custom hook to fetch and manage pool staking constants from the blockchain.
@@ -33,7 +33,7 @@ import { useChainInfo } from '.';
  */
 export default function usePoolConst (genesisHash: string | undefined, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const { api, chain, token } = useChainInfo(genesisHash);
-  const eraIndex = useCurrentEraIndex2(genesisHash);
+  const eraIndex = useCurrentEraIndex(genesisHash);
   const chainName = sanitizeChainName(chain?.name);
 
   const [consts, setConsts] = useState<PoolStakingConsts | undefined | null>();

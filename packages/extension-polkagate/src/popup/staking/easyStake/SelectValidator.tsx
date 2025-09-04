@@ -8,13 +8,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DecisionButtons, FadeOnScroll, Motion, Progress } from '../../../components';
 import { EasyStakeSide } from '../../../fullscreen/stake/util/utils';
-import { useStakingConsts2, useTranslation, useValidatorsInformation } from '../../../hooks';
+import { useStakingConsts, useTranslation, useValidatorsInformation } from '../../../hooks';
 import Search from '../components/Search';
 import NominatorsTable from '../partial/NominatorsTable';
 
 export default function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
   const { t } = useTranslation();
-  const stakingConsts = useStakingConsts2(genesisHash);
+  const stakingConsts = useStakingConsts(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
   const [newSelectedValidators, setNewSelectedValidators] = useState<string[] | undefined>(undefined);

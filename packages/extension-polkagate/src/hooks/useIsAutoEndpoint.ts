@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { AUTO_MODE } from '../util/constants';
-import useEndpoint2 from './useEndpoint2';
+import useEndpoint from './useEndpoint';
 
 export default function useIsAutoEndpoint (genesisHash: string | undefined): boolean {
-  const { endpoint } = useEndpoint2(genesisHash);
+  const { endpoint } = useEndpoint(genesisHash);
 
   return endpoint === AUTO_MODE.value;
 }

@@ -1,12 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Link, Typography } from '@mui/material';
+import { Box, Container, Grid, Link } from '@mui/material';
 import React from 'react';
+
+import { Version } from '@polkadot/extension-polkagate/src/partials';
 
 import { onboardingBackground } from '../../assets/img';
 import { CarouselFs } from '../../components';
-import { useFullscreen, useManifest, useTranslation } from '../../hooks';
+import { useFullscreen, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
 import LogoWithText from '../components/layout/LogoWithText';
@@ -27,7 +29,6 @@ const INNER_WIDTH = 1416;
 
 function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const version = useManifest()?.version;
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: showLeftColumn ? '30px' : `calc(${INNER_WIDTH}-50%)px`, width: '50%' }}>
@@ -37,9 +38,7 @@ function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
         <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer' }} target='_blank' underline='none' variant='B-5'>
           {t('Privacy & Security')}
         </Link>
-        <Typography color='#674394' variant='B-5'>
-          {`v.${version}`}
-        </Typography>
+        <Version style={{ padding: 0, width: 'fit-content' }} variant='B-5' />
       </Grid>
     </Grid>
   );

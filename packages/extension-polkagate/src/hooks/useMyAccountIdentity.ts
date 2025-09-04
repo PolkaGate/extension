@@ -8,17 +8,21 @@ import type { SavedIdentities } from '../util/types';
 import { useEffect, useState } from 'react';
 
 import { updateMeta } from '../messaging';
-import { useAccount, useIdentity, useInfo } from '.';
+import useAccount from './useAccount';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
+import useIdentity from './useIdentity';
 
 /**
  * @description
  * This hook is going to be used for users account existing in the extension,
  * it utilizes the saved identities in the local storage if any, while fetching the online identity
  * */
-export default function useMyAccountIdentity(address: AccountId | string | undefined): DeriveAccountRegistration | null | undefined {
-  const { chainName, formatted, genesisHash } = useInfo(address);
+export default function useMyAccountIdentity (address: AccountId | string | undefined, genesisHash: string | null | undefined): DeriveAccountRegistration | null | undefined {
+  const { chainName } = useChainInfo(genesisHash, true);
   const account = useAccount(address);
-  const info = useIdentity(genesisHash, formatted);
+  const formatted = useFormatted(address, genesisHash);
+  const info = useIdentity(genesisHash ?? '', formatted);
 
   const [oldIdentity, setOldIdentity] = useState<DeriveAccountRegistration | null | undefined>();
 

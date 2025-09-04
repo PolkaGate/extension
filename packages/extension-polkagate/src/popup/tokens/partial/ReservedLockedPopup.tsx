@@ -11,12 +11,12 @@ import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, Profil
 import React, { useMemo } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { GradientButton, GradientDivider } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
-import { calcPrice } from '../../../hooks/useYouHave';
 import AssetLoading from '../../home/partial/AssetLoading';
 import { ColumnAmounts } from './ColumnAmounts';
 

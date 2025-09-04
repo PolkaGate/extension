@@ -7,14 +7,13 @@ import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
-import { calcPrice } from '@polkadot/extension-polkagate/src/hooks/useYouHave2';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 import { BN_ZERO } from '@polkadot/util';
 
 import { CryptoFiatBalance, ScrollingTextBox } from '../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { historyIconBgColor, resolveActionType } from '../../util';
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine, calcPrice } from '../../util/utils';
 import { COLUMN_WIDTH } from './consts';
 import HistoryDetail from './HistoryDetail';
 import HistoryIcon from './HistoryIcon';

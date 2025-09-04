@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useChainInfo } from '.';
+import useChainInfo from './useChainInfo';
 
 interface ActiveEraType {
   index: number;

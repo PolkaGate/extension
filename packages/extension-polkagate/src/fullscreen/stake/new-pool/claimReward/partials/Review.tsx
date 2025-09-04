@@ -54,7 +54,7 @@ export default function Review ({ amount, closeReview, genesisHash, proxyTypeFil
         token={token}
       />
       <Grid container item sx={{ bgcolor: '#05091C', borderRadius: '14px', flexDirection: 'column', gap: '7px', maxHeight: '190px', mt: '20px', overflow: 'hidden', overflowY: 'auto', padding: '15px', width: '100%' }}>
-        {transactionInformation.map(({ Icon, content, description, title, withLogo }, index) => (
+        {transactionInformation.map(({ Icon, content, description, title, warningText, withLogo }, index) => (
           <ContentItem
             Icon={Icon}
             content={content}
@@ -64,6 +64,7 @@ export default function Review ({ amount, closeReview, genesisHash, proxyTypeFil
             key={index}
             title={title}
             token={token}
+            warningText={warningText}
             withLogo={withLogo}
           />
         ))}

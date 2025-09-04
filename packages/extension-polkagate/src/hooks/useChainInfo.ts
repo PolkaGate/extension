@@ -8,7 +8,8 @@ import { useMemo } from 'react';
 
 import chains from '../util/chains';
 import { sanitizeChainName } from '../util/utils';
-import { useApi2, useMetadata } from '.';
+import useApi from './useApi';
+import useMetadata from './useMetadata';
 
 /**
  * Interface representing the information about a blockchain.
@@ -40,7 +41,7 @@ interface ChainInfo {
 export default function useChainInfo (genesisHash: string | null | undefined, noApi = false): ChainInfo {
   // const genesisHash = mapRelayToSystemGenesis(_genesisHash);
   const chain = useMetadata(genesisHash, true);
-  const api = useApi2(noApi ? undefined : genesisHash);
+  const api = useApi(noApi ? undefined : genesisHash);
 
   return useMemo(() => {
     const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);

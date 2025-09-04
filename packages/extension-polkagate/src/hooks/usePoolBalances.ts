@@ -4,7 +4,7 @@
 import type React from 'react';
 import type { Option } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
-//@ts-ignore
+// @ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -13,10 +13,12 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
 import getPoolAccounts from '../util/getPoolAccounts';
-import { useInfo } from '.';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
 
-export default function usePoolBalances(address: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
-  const { api, chain, chainName, formatted } = useInfo(address);
+export default function usePoolBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
+  const { api, chain, chainName } = useChainInfo(genesisHash);
+  const formatted = useFormatted(address, genesisHash);
   const isFetching = useContext(FetchingContext);
 
   const [pooledBalance, setPooledBalance] = useState<{ balance: BN, genesisHash: string } | null>();

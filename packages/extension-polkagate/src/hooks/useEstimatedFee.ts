@@ -9,19 +9,15 @@ import { useEffect, useState } from 'react';
 
 import { BN_ONE } from '@polkadot/util';
 
-import { useApi } from '.';
+import useChainInfo from './useChainInfo';
 
-export default function useEstimatedFee (
-  address: string | undefined,
-  call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>,
-  params?: unknown[] | (() => unknown)[]
-): Balance | undefined {
-  const api = useApi(address);
+export default function useEstimatedFee (genesisHash: string | undefined, address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
+  const { api } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
 
   useEffect(() => {
-    if (!address || !call) {
+    if (estimatedFee || !address || !call) {
       return;
     }
 
@@ -32,16 +28,22 @@ export default function useEstimatedFee (
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-      return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
+       setEstimatedFee(api?.createType('Balance', BN_ONE) as unknown as Balance);
+
+       return;
     }
 
-    const _call = isFunction ? call(...params || []) : call;
+    (async () => {
+      try {
+        const _call = isFunction ? call(...params || []) : call;
+        const i = await _call.paymentInfo(address);
 
-    _call.paymentInfo(address)
-      .then(
-        (i) => setEstimatedFee(i?.partialFee && api.createType('Balance', i.partialFee) as Balance)
-      ).catch(console.error);
-  }, [address, api, call, params]);
+        setEstimatedFee(i?.partialFee && api.createType('Balance', i.partialFee) as unknown as Balance);
+      } catch (e) {
+        console.error('something went wrong while estimating fee:', e);
+      }
+    })().catch(console.error);
+  }, [address, api, call, params, estimatedFee]);
 
   return estimatedFee;
 }

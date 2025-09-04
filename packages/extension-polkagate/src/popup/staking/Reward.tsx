@@ -11,7 +11,7 @@ import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion, Progress } from '../../components';
-import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewards3, useTranslation } from '../../hooks';
+import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
 import StakingMenu from './partial/StakingMenu';
@@ -169,7 +169,7 @@ export default function StakingReward () {
   const poolStakingInfo = usePoolStakingInfo(address, type === 'pool' ? genesisHash : undefined);
 
   // Fetch staking rewards based on the type; for pool rewards, we must explicitly pass 'solo' to the hook
-  const rewardInfo = useStakingRewards3(address, genesisHash, type === 'pool' ? 'pool' : 'solo');
+  const rewardInfo = useStakingRewardsChart(address, genesisHash, type === 'pool' ? 'pool' : 'solo');
 
   // Normalize the type for navigation purposes; if the original type is not 'solo' (stash), treat it as 'pool'
   const _type = type === 'solo' ? 'solo' : 'pool';

@@ -6,7 +6,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useChainInfo, useCreatePool, useFormatted3, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, useCreatePool, useFormatted, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 import Search from '../../components/Search';
@@ -38,7 +38,7 @@ export const PoolNameBox = ({ enteredValue, initName, onInputChange }: PoolNameB
         style={{ '> div': { backgroundColor: '#2224424D', border: '1px solid #2E2B52', borderRadius: '12px', height: 'fit-content', p: '6px' }, width: '100%' }}
       />
     </Stack>
-  , [enteredValue, initName, isExtension, onInputChange, t]);
+    , [enteredValue, initName, isExtension, onInputChange, t]);
 };
 
 export default function CreatePool () {
@@ -49,7 +49,7 @@ export default function CreatePool () {
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const navigate = useNavigate();
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const formatted = useFormatted3(address, genesisHash);
+  const formatted = useFormatted(address, genesisHash);
 
   const { bondAmount,
     errorMessage,

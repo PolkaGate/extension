@@ -1,23 +1,33 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
+
+import type { AccountId } from '@polkadot/types/interfaces/runtime';
+// @ts-ignore
+import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
 
 import { useEffect, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import useChainInfo from './useChainInfo';
+import useFormatted from './useFormatted';
 
-import { useApi, useFormatted } from '.';
-
-export default function useStashId(address?: AccountId | string): AccountId | string | undefined {
-  const formatted = useFormatted(address);
-  const api = useApi(address);
+export default function useStashId (address: AccountId | string | undefined, genesisHash: string | undefined): AccountId | string | undefined {
+  const formatted = useFormatted(address, genesisHash);
+  const { api } = useChainInfo(genesisHash);
   const [stashId, setStashId] = useState<AccountId | string>();
 
   useEffect(() => {
     try {
-      api?.query?.staking?.ledger && formatted && api.query.staking.ledger(formatted).then((res) => {
-        setStashId(res?.isSome ? res?.unwrap()?.stash?.toString() : formatted);
-      });
+      if (!api || !api.query?.['staking']?.['ledger'] || !formatted) {
+        return;
+      }
+
+      api.query['staking']['ledger'](formatted)
+        .then((res) => {
+          const response = res.isEmpty ? undefined : res.toPrimitive() as unknown as PalletStakingStakingLedger;
+
+          setStashId(response?.stash?.toString() ?? formatted);
+        })
+        .catch(console.error);
     } catch (e) {
       setStashId(undefined);
       console.error(e);

@@ -8,7 +8,7 @@ import { isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
-import { useStakingPositions } from '.';
+import useStakingPositions from './useStakingPositions';
 
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();

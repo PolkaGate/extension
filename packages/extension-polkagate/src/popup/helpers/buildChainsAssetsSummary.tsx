@@ -5,8 +5,8 @@ import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/type
 import type { Prices } from '../../util/types';
 
 import chains from '@polkadot/extension-polkagate/src/util/chains';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 
-import { calcPrice } from '../../hooks/useYouHave';
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 
 export interface AssetDetailType {

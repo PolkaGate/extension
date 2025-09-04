@@ -1,19 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { useCallback, useContext, useEffect, useReducer } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-import EndpointManager from '../class/endpointManager';
+import EndpointManager from '../class/endpointManager2';
 import { APIContext } from '../components';
 import LCConnector from '../util/api/lightClient-connect';
 import { AUTO_MODE } from '../util/constants';
 import { fastestConnection } from '../util/utils';
-import { useEndpoint, useEndpoints, useGenesisHash } from '.';
 import { mapRelayToSystemGenesis } from '../util/workers/utils/adjustGenesis';
+import useEndpoint from './useEndpoint';
+import { useEndpoints } from './useEndpoints';
 
 // Define types for API state and actions
 interface ApiState {
@@ -46,12 +45,11 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 const endpointManager = new EndpointManager();
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
-export default function useApi(address: AccountId | string | undefined, stateApi?: ApiPromise, _endpoint?: string, genesis?: string): ApiPromise | undefined {
-  const _genesisHash = mapRelayToSystemGenesis(genesis || '');
-  const { checkForNewOne, endpoint } = useEndpoint(address, _endpoint);
+export default function useApi(_genesisHash: string | null | undefined, stateApi?: ApiPromise, _endpoint?: string): ApiPromise | undefined {
+  const genesisHash = mapRelayToSystemGenesis(_genesisHash || '');
+  const { checkForNewOne, endpoint } = useEndpoint(genesisHash, _endpoint);
   const apisContext = useContext(APIContext);
-  const chainGenesisHash = useGenesisHash(address, _genesisHash);
-  const endpoints = useEndpoints(chainGenesisHash);
+  const endpoints = useEndpoints(genesisHash);
 
   const [state, dispatch] = useReducer(apiReducer, {
     api: stateApi,
@@ -61,7 +59,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   // This function is called exclusively in auto mode to update the account's "auto mode" endpoint
   // with the fastest endpoint available.
-  const updateEndpoint = useCallback((addressKey: string | undefined, chainKey: string, selectedEndpoint: string, cbFunction?: () => void) => {
+  const updateEndpoint = useCallback((chainKey: string, selectedEndpoint: string, cbFunction?: () => void) => {
     try {
       const newEndpoint = {
         checkForNewOne: false,
@@ -69,17 +67,8 @@ export default function useApi(address: AccountId | string | undefined, stateApi
         isAuto: true,
         timestamp: Date.now()
       };
-      const savedEndpoints = endpointManager.getEndpoints();
 
-      if (addressKey) {
-        endpointManager.set(addressKey, chainKey, newEndpoint);
-      } else {
-        for (const address in savedEndpoints) {
-          if (savedEndpoints[address]?.[chainKey]) {
-            endpointManager.set(address, chainKey, newEndpoint);
-          }
-        }
-      }
+      endpointManager.set(chainKey, newEndpoint);
 
       cbFunction?.();
     } catch (error) {
@@ -89,7 +78,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
 
   // Checks if there is an available API connection, then will change the address endpoint to the available API's endpoint
   // Returns false if it was not successful to find an available API and true vice versa
-  const connectToExisted = useCallback((address: string, genesisHash: string): boolean => {
+  const connectToExisted = useCallback((genesisHash: string): boolean => {
     const apiList = apisContext.apis[genesisHash];
 
     if (!apiList) {
@@ -103,9 +92,9 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     }
 
     dispatch({ payload: availableApi.api, type: 'SET_API' });
-    updateEndpoint(address, genesisHash, availableApi.endpoint);
+    updateEndpoint(genesisHash, availableApi.endpoint);
 
-    // console.log('Successfully connected to existing API for genesis hash:', genesisHash);
+    console.log('Successfully connected to existing API for genesis hash:', genesisHash);
 
     return true;
   }, [apisContext.apis, updateEndpoint]);
@@ -154,7 +143,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   }, [handleNewApi]);
 
   // Handles auto mode by finding the fastest endpoint and connecting to it
-  const handleAutoMode = useCallback(async (address: string, genesisHash: string, findNewEndpoint: boolean) => {
+  const handleAutoMode = useCallback(async (genesisHash: string, findNewEndpoint: boolean) => {
     const apisForGenesis = apisContext.apis[genesisHash];
 
     const autoModeExists = apisForGenesis?.some(({ endpoint }) => isAutoMode(endpoint));
@@ -163,7 +152,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    const result = !findNewEndpoint && connectToExisted(String(address), genesisHash);
+    const result = !findNewEndpoint && connectToExisted(genesisHash);
 
     if (result) {
       return;
@@ -180,12 +169,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       return;
     }
 
-    const accountAddress =
-      findNewEndpoint
-        ? address
-        : undefined;
-
-    updateEndpoint(accountAddress, genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
+    updateEndpoint(genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
   }, [apisContext.apis, connectToExisted, endpoints, handleNewApi, updateEndpoint]);
 
   const addApiRequest = useCallback((endpointToRequest: string, genesisHash: string) => {
@@ -228,16 +212,16 @@ export default function useApi(address: AccountId | string | undefined, stateApi
   }, [addApiRequest, connectToEndpoint, isInContext]);
 
   useEffect(() => {
-    // if _endpoint & _genesisHash are available means useApiWithChain2 is trying to create a new connection!
-    if (_endpoint && _genesisHash) {
-      handleApiWithChain(_endpoint, _genesisHash);
+    // if _endpoint & genesisHash are available means useApiWithChain2 is trying to create a new connection!
+    if (_endpoint && genesisHash) {
+      handleApiWithChain(_endpoint, genesisHash);
     }
-  }, [_endpoint, _genesisHash, handleApiWithChain]);
+  }, [_endpoint, genesisHash, handleApiWithChain]);
 
-  // Manages the API connection when the address, endpoint, or genesis hash changes
+  // Manages the API connection when the endpoint, or genesis hash changes
   useEffect(() => {
     // @ts-expect-error to bypass access to private prop
-    if (!address || !chainGenesisHash || !endpoint || state.isLoading || state?.api?._options?.provider?.endpoint === endpoint) {
+    if (!genesisHash || !endpoint || state.isLoading || state?.api?._options?.provider?.endpoint === endpoint) {
       return;
     }
 
@@ -253,7 +237,7 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     // and the endpoint stored in `EndpointManager`.
     // If they are not equal, it means the state has not been updated yet,
     // so we log a message and return early to prevent further processing.
-    const endpointFromTheManager = endpointManager.get(String(address), chainGenesisHash)?.endpoint; // Endpoint stored in the manager
+    const endpointFromTheManager = endpointManager.get(genesisHash)?.endpoint; // Endpoint stored in the manager
 
     // Check if the two endpoints are not synchronized
     if (endpoint !== endpointFromTheManager) {
@@ -264,13 +248,13 @@ export default function useApi(address: AccountId | string | undefined, stateApi
     }
 
     // To provide api from context
-    if (isInContext(endpoint, chainGenesisHash)) {
+    if (isInContext(endpoint, genesisHash)) {
       return;
     }
 
     // If in auto mode, check existing connections or find a new one
     if (isAutoMode(endpoint)) {
-      handleAutoMode(String(address), chainGenesisHash, !!checkForNewOne).catch(console.error);
+      handleAutoMode(genesisHash, !!checkForNewOne).catch(console.error);
     }
 
     // Connect to a WebSocket endpoint if provided
@@ -288,9 +272,9 @@ export default function useApi(address: AccountId | string | undefined, stateApi
       });
     }
 
-    addApiRequest(endpoint, chainGenesisHash);
+    addApiRequest(endpoint, genesisHash);
     // @ts-expect-error to bypass access to private prop
-  }, [address, addApiRequest, chainGenesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, isInContext, state?.api?._options?.provider?.endpoint, state.isLoading]);
+  }, [addApiRequest, genesisHash, checkForNewOne, connectToEndpoint, endpoint, handleAutoMode, handleNewApi, isInContext, state?.api?._options?.provider?.endpoint, state.isLoading]);
 
   return state.api;
 }

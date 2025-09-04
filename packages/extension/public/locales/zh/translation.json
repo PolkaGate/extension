@@ -822,5 +822,17 @@
   "recovery phrase": "恢复短语",
   "QR-signer": "二维码签名器",
   "raw seed": "原始种子",
-  "from file": "从文件"
+  "from file": "从文件",
+  "Update Metadata": "更新元数据",
+  "item": "项目",
+  "value": "数值",
+  "genesis hash": "创世哈希",
+  "This approval adds the metadata to your extension so future requests can be decoded with it": "此批准会将元数据添加到您的扩展程序中，以便将来请求可以使用它进行解码",
+  "Insufficient balance to cover transaction fee.": "余额不足，无法支付交易手续费。",
+  "Insufficient balance to complete the transaction.": "余额不足，无法完成交易。",
+  "Insufficient balance for transaction deposit.": "余额不足，无法支付交易押金。",
+  "Selected proxy account lacks funds for the fee.": "所选代理账户没有足够资金支付费用。",
+  "This is a watch-only account. No proxies are available in the extension to sign transactions.": "这是一个仅供查看的账户。扩展中没有可用于签署交易的代理。",
+  "Cannot sign": "无法签署",
+  "Version {{version}}": "版本 {{version}}"
 }
