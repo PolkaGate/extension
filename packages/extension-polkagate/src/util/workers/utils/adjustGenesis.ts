@@ -3,7 +3,7 @@
 
 import { PASEO_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
 
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from '../../constants';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, STAKING_CHAINS, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from '../../constants';
 
 export const relayToSystemChains = {
   [PASEO_GENESIS]: {
@@ -86,4 +86,12 @@ export function resolveStakingAssetId (genesisHash: string | undefined): string 
   return isMigratedHub(genesisHash)
     ? `${NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB}`
     : `${NATIVE_TOKEN_ASSET_ID}`;
+}
+
+export function isStakingChain (genesisHash: string | undefined): boolean | undefined {
+  if (!genesisHash) {
+    return;
+  }
+
+  return STAKING_CHAINS.includes(genesisHash ?? '');
 }
