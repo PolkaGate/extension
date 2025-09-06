@@ -24,6 +24,7 @@ interface Props {
   fontFamily?: string;
   fontSize?: string;
   fontWeight?: number;
+  formattedFrom?: 'k' | 'M' | 'G' | 'T' | 'P' | 'E';
   height?: number;
   ignoreHide?: boolean; // ignore hide numbers
   lineHeight?: number;
@@ -43,22 +44,19 @@ interface Props {
 
 const DECIMAL_POINTS_FOR_CRYPTO_AS_CURRENCY = 4;
 const SMALL_DECIMALS_FONT_SIZE_REDUCTION = 20;
+const LOOKUP = [
+  { symbol: '', value: 1 },
+  { symbol: 'k', value: 1e3 },
+  { symbol: 'M', value: 1e6 },
+  { symbol: 'G', value: 1e9 },
+  { symbol: 'T', value: 1e12 },
+  { symbol: 'P', value: 1e15 },
+  { symbol: 'E', value: 1e18 }
+];
 
 export function nFormatter (num: number, decimalPoint: number) {
-  const lookup = [
-    { symbol: '', value: 1 },
-    { symbol: 'k', value: 1e3 },
-    { symbol: 'M', value: 1e6 },
-    { symbol: 'G', value: 1e9 },
-    { symbol: 'T', value: 1e12 },
-    { symbol: 'P', value: 1e15 },
-    { symbol: 'E', value: 1e18 }
-  ];
-
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  const item = lookup.slice().reverse().find(function (item) {
-    return num >= item.value;
-  });
+  const item = LOOKUP.slice().reverse().find((item) => num >= item.value);
 
   if (!item && num > 0) {
     return num.toFixed(decimalPoint).replace(rx, '$1');
@@ -98,7 +96,7 @@ export function formatDecimalWithCommas (_number: number | string, decimalDigit 
   return { decimalPart: fractionalDigits, integerPart: integerDigits };
 }
 
-function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, height, ignoreHide, lineHeight = 1, mt = '0px', num, onHideShape, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, formattedFrom, height, ignoreHide, lineHeight = 1, mt = '0px', num, onHideShape, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const currency = useCurrency();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
@@ -139,33 +137,68 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
     return `${Math.round(reducedSize)}px`;
   }, []);
 
-  const { decimalPart, integerPart } = formatDecimalWithCommas(total as number, _decimalPoint, commify);
+  // Check if we should use nFormatter based on the formattedFrom prop
+  const shouldUseNFormatter = useMemo(() => {
+    if (!formattedFrom || total === undefined) {
+      return false;
+    }
+
+    const threshold = LOOKUP.slice().reverse().find((item) => formattedFrom === item.symbol);
+
+    return Math.abs(Number(total)) >= (threshold?.value || 0);
+  }, [formattedFrom, total]);
+
+  // Get the formatted value based on whether we should use nFormatter
+  const formattedValue = useMemo(() => {
+    if (total === undefined) {
+      return undefined;
+    }
+
+    if (shouldUseNFormatter) {
+      return nFormatter(Number(total), _decimalPoint);
+    }
+
+    return total;
+  }, [total, shouldUseNFormatter, _decimalPoint]);
+
+  const { decimalPart, integerPart } = shouldUseNFormatter
+    ? { decimalPart: '', integerPart: String(formattedValue) }
+    : formatDecimalWithCommas(total as number, _decimalPoint, commify);
 
   const mayCurrencySign = sign || currency?.sign || '';
   const formattedTotal = useMemo(() => (
     <>
       {mayCurrencySign}
       <span>
-        {integerPart.split(',').map((part, idx, arr) => (
-          <React.Fragment key={idx}>
-            <span key={`number-${idx}`} style={{ color: textColor }}>
-              {part}
-            </span>
-            {idx < arr.length - 1 && (
-              <span key={`comma-${idx}`} style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
-                ,
-              </span>
-            )}
-          </React.Fragment>
-        ))}
-        {decimalPart && (
-          <span style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
-            {'.'}{decimalPart}
-          </span>
-        )}
+        {shouldUseNFormatter
+          ? (
+            <span style={{ color: textColor }}>
+              {String(formattedValue).replace(mayCurrencySign, '')}
+            </span>)
+          : (
+            <>
+              {integerPart.split(',').map((part, idx, arr) => (
+                <React.Fragment key={idx}>
+                  <span key={`number-${idx}`} style={{ color: textColor }}>
+                    {part}
+                  </span>
+                  {idx < arr.length - 1 && (
+                    <span key={`comma-${idx}`} style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
+                      ,
+                    </span>
+                  )}
+                </React.Fragment>
+              ))}
+              {decimalPart && (
+                <span style={{ color: decimalColor || textColor || theme.palette.secondary.contrastText }}>
+                  {'.'}{decimalPart}
+                </span>
+              )}
+            </>
+          )}
       </span>
     </>
-  ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText]);
+  ), [decimalColor, decimalPart, integerPart, mayCurrencySign, textColor, theme.palette.secondary.contrastText, shouldUseNFormatter, formattedValue]);
 
   return (
     <Fade in={true} timeout={1000}>
@@ -180,14 +213,15 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
                     : onHideShape === 'shape2'
                       ? <HideNumberShape2 style={{ display: 'flex', justifyContent: 'end', width: '100%' }} />
                       : <></>
-                  : <Dots
-                    color={textColor}
-                    decimalColor={decimalColor}
-                    preText={mayCurrencySign}
-                    preTextFontSize={fontSize}
-                    preTextFontWeight={fontWeight}
-                    variant={dotStyle}
-                    />
+                  : (
+                    <Dots
+                      color={textColor}
+                      decimalColor={decimalColor}
+                      preText={mayCurrencySign}
+                      preTextFontSize={fontSize}
+                      preTextFontWeight={fontWeight}
+                      variant={dotStyle}
+                    />)
               }
             </>
           )
@@ -200,7 +234,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
                 lineHeight={lineHeight}
                 sx={{ color: textColor }}
               >
-                {withCountUp
+                {withCountUp && !shouldUseNFormatter
                   ? (
                     <CountUp
                       decimals={_decimalPoint}
@@ -214,7 +248,7 @@ function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimal
                 }
               </Typography>
               {
-                withSmallDecimal && Number(total) > 0 &&
+                withSmallDecimal && Number(total) > 0 && !shouldUseNFormatter &&
                 <Typography
                   fontFamily={fontFamily}
                   fontSize={reduceFontSize(fontSize, SMALL_DECIMALS_FONT_SIZE_REDUCTION)}

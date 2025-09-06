@@ -129,6 +129,7 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
             fontFamily='OdibeeSans'
             fontSize={isHideNumbers ? '16px' : '30px'}
             fontWeight={400}
+            formattedFrom='M'
             height={30}
             num={stakedInCurrency}
             textColor={isDisabled ? '#674394' : undefined}
