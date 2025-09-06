@@ -378,7 +378,7 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
         }
       }}
       fullScreen
-      open={Boolean(poolDetail || openMenu)}
+      open={Boolean(openMenu)}
     >
       {!poolDetail &&
         <Progress
@@ -471,7 +471,7 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
                 >
                   <PoolMembers
                     genesisHash={genesisHash}
-                    members={poolDetail.poolMembers ?? []}
+                    members={collapse['Members'] ? poolDetail.poolMembers ?? [] : []}
                     totalStaked={poolDetail.bondedPool?.points.toString() ?? '0'}
                   />
                 </CollapseSection>

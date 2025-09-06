@@ -132,14 +132,14 @@ function StakingMenu ({ genesisHash, pool, type }: Props): React.ReactElement {
     }
 
     if (input === '/pool/detail') {
-      pool && togglePoolDetail();
+      togglePoolDetail();
 
       return;
     }
 
     navigate(input) as void;
     setCurrentMenu(input);
-  }, [currentMenu, navigate, pool, togglePoolDetail]);
+  }, [currentMenu, navigate, togglePoolDetail]);
 
   const selectionLineStyle = useMemo(() => ({
     background: 'linear-gradient(90deg, transparent 9.75%, #596AFF 52.71%, transparent 95.13%)',
@@ -180,7 +180,7 @@ function StakingMenu ({ genesisHash, pool, type }: Props): React.ReactElement {
         genesisHash={genesisHash}
         handleClose={togglePoolDetail}
         openMenu={openPopup}
-        poolDetail={openPopup ? pool ?? undefined : undefined}
+        poolDetail={pool ?? undefined}
       />
     </>
   );

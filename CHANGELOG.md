@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.5.4](https://github.com/polkagate/extension/compare/v1.5.3...v1.5.4) (2025-09-06)
+
+
+### Bug Fixes
+
+* display issue with pool details on staking pages in extension mode ([#1833](https://github.com/polkagate/extension/issues/1833)) ([0861613](https://github.com/polkagate/extension/commit/08616131bcb55c5a452dfedc89a8b52a10bb1732))
+* resolve pool name width issue in easy staking ([#1832](https://github.com/polkagate/extension/issues/1832)) ([7d1f46e](https://github.com/polkagate/extension/commit/7d1f46ebc2369cff1aa585b97bdb0ca9b6a93b93))
+
 ## [1.5.3](https://github.com/polkagate/extension/compare/v1.5.2...v1.5.3) (2025-09-04)
 
 

@@ -3,11 +3,11 @@
 
 import type { PoolInfo } from '../../../../util/types';
 
-import { Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Collapse, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { FormatBalance2 } from '../../../../components';
+import { FormatBalance2, ScrollingTextBox } from '../../../../components';
 import { useChainInfo } from '../../../../hooks';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
 import { isHexToBn } from '../../../../util/utils';
@@ -37,9 +37,14 @@ export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, ope
               size={24}
             />
             <Stack direction='column' sx={{ ml: '10px', mr: 'auto', width: 'fit-content' }}>
-              <Typography color='text.primary' sx={{ maxWidth: '250px', overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
-                {poolDetail.metadata}
-              </Typography>
+              <ScrollingTextBox
+                text={poolDetail.metadata ?? ''}
+                textStyle={{
+                  color: theme.palette.text.primary,
+                  ...theme.typography['B-2']
+                }}
+                width={isExtension ? 230 : 250}
+              />
               <FormatBalance2
                 decimals={[decimal ?? 0]}
                 style={{ ...theme.typography['B-4'], color: textColor, width: 'fit-content' }}
