@@ -76,6 +76,10 @@ export function isMigratedHub (info: string | undefined): boolean {
   ));
 }
 
+export function isMigrated (genesisHash: string): boolean {
+  return isMigratedRelay(genesisHash) || isMigratedHub(genesisHash);
+}
+
 /** Resolves the appropriate staking asset ID based on the provided genesis hash.
  * If the genesis hash corresponds to a migrated relay chain, it returns the asset ID for the
  * native token on AssetHub; otherwise, it returns the standard native token asset ID.
