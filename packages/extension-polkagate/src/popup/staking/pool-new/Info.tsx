@@ -117,6 +117,7 @@ export default function Info (): React.ReactElement {
       </Grid>
       <StakingMenu
         genesisHash={genesisHash ?? ''}
+        pool={stakingInfo.pool}
         type='pool'
       />
     </>
