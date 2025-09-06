@@ -11,6 +11,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 
 import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
 
+import { ScrollingTextBox } from '../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
 import { EXTENSION_NAME } from '../../../util/constants';
@@ -30,6 +31,18 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
   const isExtension = useIsExtensionPopup();
 
   const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const description = useMemo(() => {
+    if (selectedStakingType?.pool) {
+      return selectedStakingType.pool.metadata ?? '';
+    }
+
+    return t('Validators: {{selected}} of {{threshold}}', {
+      replace: {
+        selected: selectedStakingType?.validators?.length ?? 0,
+        threshold: stakingConsts?.maxNominations || 16
+      }
+    });
+  }, [selectedStakingType?.pool, selectedStakingType?.validators?.length, stakingConsts?.maxNominations, t]);
 
   const isRecommended = useMemo(() => selectedStakingType?.type === 'pool' && selectedStakingType.pool?.metadata?.toLowerCase().includes(EXTENSION_NAME.toLowerCase()), [selectedStakingType?.pool?.metadata, selectedStakingType?.type]);
 
@@ -48,15 +61,15 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
                 : t('Solo Staking')}
             </Typography>
             {!isRecommended &&
-              <Typography color={textColor} textAlign='left' variant='B-1'>
-                {selectedStakingType?.pool?.metadata}
-                {selectedStakingType?.validators && t('Validators: {{selected}} of {{threshold}}', {
-                  replace: {
-                    selected: selectedStakingType.validators.length,
-                    threshold: stakingConsts?.maxNominations || 16
-                  }
-                })}
-              </Typography>}
+              <ScrollingTextBox
+                text={description}
+                textStyle={{
+                  color: textColor,
+                  ...theme.typography['B-1']
+                }}
+                width={isExtension ? 230 : 275}
+              />
+            }
           </Stack>
           {isRecommended &&
             <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
