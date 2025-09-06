@@ -259,7 +259,7 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
             startIconNode={
               <Avatar
                 src={getLogo(name)}
-                sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
+                sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
                 variant='square'
               />
             }
