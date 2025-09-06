@@ -8,8 +8,8 @@ import type { Chain } from '../../../extension-chains/src/types';
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { mapRelayToSystemGenesis } from './migrateHubUtils';
 import getNetworkMap from './getNetworkMap';
+import { isMigratedHub, mapRelayToSystemGenesis } from './migrateHubUtils';
 import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
 
@@ -22,7 +22,7 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-export default function getLogo2(info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
   const _info = mapRelayToSystemGenesis(info as string);
@@ -41,9 +41,10 @@ export default function getLogo2(info: string | undefined | null | Chain, token?
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
     const found = chainAssets?.find(({ symbol }) => symbol.toUpperCase() === token.toUpperCase())?.ui;
+    const subLogo = isMigratedHub(_info) ? undefined : (found.subLogo ? getLogo2(chainNameFromGenesisHash)?.logo : undefined);
 
     if (found) {
-      return { ...found, subLogo: found.subLogo ? getLogo2(chainNameFromGenesisHash)?.logo : undefined };
+      return { ...found, subLogo };
     }
   }
 
