@@ -3,7 +3,6 @@
 
 import type React from 'react';
 import type { Option } from '@polkadot/types';
-import type { Balance } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember } from '@polkadot/types/lookup';
 
@@ -16,7 +15,7 @@ import getPoolAccounts from '../util/getPoolAccounts';
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';
 
-export default function usePoolBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
+export default function usePoolBalances(address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): { balance: BN, genesisHash: string } | null | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
   const isFetching = useContext(FetchingContext);
@@ -52,23 +51,20 @@ export default function usePoolBalances (address: string | undefined, genesisHas
         return setPooledBalance({ balance: BN_ZERO, genesisHash });
       }
 
-      const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
+      const [bondedPool, stashIdAccount, myClaimable = BN_ZERO] = await Promise.all([
         api.query['nominationPools']['bondedPools'](poolId) as unknown as Option<PalletNominationPoolsBondedPoolInner>,
         api.derive.staking.account(accounts.stashId),
-        api.call['nominationPoolsApi']?.['pendingRewards'](formatted) // not available on paseo hub
+        api.call['nominationPoolsApi']?.['pendingRewards']?.(formatted) // not available on paseo hub
       ]);
 
       const active = member.points.isZero()
         ? BN_ZERO
         : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
-      const rewards = myClaimable as Balance;
-      let unlockingValue = BN_ZERO;
 
-      member?.unbondingEras?.forEach((value: BN) => {
-        unlockingValue = unlockingValue.add(value);
-      });
+      const unlockingValue = [...member.unbondingEras.values()]
+        .reduce((total: BN, value) => total.add(value), BN_ZERO);
 
-      genesisHash === chain?.genesisHash && setPooledBalance({ balance: active.add(rewards).add(unlockingValue), genesisHash });
+      genesisHash === chain?.genesisHash && setPooledBalance({ balance: active.add(myClaimable as BN).add(unlockingValue), genesisHash });
       setRefresh?.(false);
       isFetching.fetching[String(formatted)]['pooledBalance'] = false;
       isFetching.set(isFetching.fetching);

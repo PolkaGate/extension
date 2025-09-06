@@ -1,11 +1,30 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { PASEO_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
+import { KUSAMA_GENESIS, PASEO_GENESIS, POLKADOT_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
 
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, STAKING_CHAINS, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
+import { KUSAMA_PEOPLE_GENESIS_HASH, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, STAKING_CHAINS, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
 
 export const relayToSystemChains = {
+   [KUSAMA_GENESIS]: {
+    hub: STATEMINE_GENESIS_HASH,
+    people: KUSAMA_PEOPLE_GENESIS_HASH
+  },
+  [PASEO_GENESIS]: {
+    hub: PASEO_ASSET_HUB_GENESIS_HASH,
+    people: PASEO_PEOPLE_GENESIS_HASH
+  },
+  [POLKADOT_GENESIS]: {
+    hub: STATEMINT_GENESIS_HASH,
+    people: POLKADOT_PEOPLE_GENESIS_HASH
+  },
+  [WESTEND_GENESIS]: {
+    hub: WESTMINT_GENESIS_HASH,
+    people: WESTEND_PEOPLE_GENESIS_HASH
+  }
+};
+
+export const migratedRelaysToSystemChains = {
   [PASEO_GENESIS]: {
     hub: PASEO_ASSET_HUB_GENESIS_HASH,
     people: PASEO_PEOPLE_GENESIS_HASH
@@ -40,16 +59,35 @@ export function mapRelayToSystemGenesis (genesisHash: string | null | undefined,
     return;
   }
 
-  const chains = relayToSystemChains as RelayToSystemChainsType;
+  const chains = migratedRelaysToSystemChains as RelayToSystemChainsType;
 
   return chains[genesisHash]?.[type] ?? genesisHash;
+}
+
+/** Maps a system chain genesis hash to its corresponding relay chain genesis hash if applicable.
+ * Supports all system chain types defined in relayToSystemChains for future extensibility.
+ * @param systemGenesisHash - The genesis hash of the system chain (e.g., hub, people, assetHub, etc).
+ * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
+ */
+export function mapSystemToRelay (systemGenesisHash: string | undefined | null): string | undefined | null {
+  if (!systemGenesisHash || !isMigratedHub(systemGenesisHash)) {
+    return systemGenesisHash;
+  }
+
+  for (const [relayGenesis, systemChains] of Object.entries(relayToSystemChains)) {
+    if (Object.values(systemChains).includes(systemGenesisHash)) {
+      return relayGenesis;
+    }
+  }
+
+  return systemGenesisHash;
 }
 
 /** Maps a hub genesis hash to its corresponding relay chain genesis hash if applicable.
  * @param genesisHash - The original genesis hash of the hub chain.
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapHubToRelay (genesisHash: string | undefined): string | undefined {
+export function mapHubToRelay (genesisHash: string | undefined | null): string | undefined {
   if (!genesisHash) {
     return;
   }
@@ -102,4 +140,18 @@ export function isStakingChain (genesisHash: string | undefined): boolean | unde
   }
 
   return STAKING_CHAINS.includes(genesisHash ?? '');
+}
+
+export function isSystemChain (systemChainGenesis: string | undefined, relayGenesis: string | undefined): boolean | undefined {
+  if (!relayGenesis) {
+    return;
+  }
+
+  const systemChains = relayToSystemChains[relayGenesis];
+
+    if (!systemChains) {
+    return;
+  }
+
+  return Object.values(systemChains).includes(systemChainGenesis ?? '');
 }

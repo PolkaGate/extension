@@ -11,7 +11,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { Compact, u128 } from '@polkadot/types-codec';
 import type { HexString } from '@polkadot/util/types';
 import type { SavedAssets } from '../hooks/useAssetsBalances';
-import type { DropdownOption, FastestConnectionType, RecentChainsType, TransactionDetail, UserAddedChains } from './types';
+import type { DropdownOption, FastestConnectionType, TransactionDetail, UserAddedChains } from './types';
 
 import { BN, BN_TEN, BN_THOUSAND, BN_TWO, BN_ZERO, bnMax, bnMin, hexToBn, hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -19,8 +19,8 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { EXTRA_PRICE_IDS } from './api/getPrices';
 import { fastestEndpoint } from './workers/utils';
 import allChains from './chains';
-import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
-import { isMigratedHub } from './migrateHubUtils';
+import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
+import { isMigrated, isMigratedHub } from './migrateHubUtils';
 
 interface Meta {
   docs: Text[];
@@ -363,8 +363,8 @@ export const sanitizeChainName = (chainName: string | undefined, withMigration?:
     .replace(/\s/g, '');
 
   sanitizedChainName = withMigration && isMigratedHub(sanitizedChainName)
-  ? sanitizedChainName.replace('AssetHub', '')
-  : sanitizedChainName;
+    ? sanitizedChainName.replace('AssetHub', '')
+    : sanitizedChainName;
 
   return sanitizedChainName;
 };
@@ -487,39 +487,6 @@ export function extractBaseUrl (url: string | undefined) {
     console.error('Invalid URL:', error);
 
     return null;
-  }
-}
-
-export async function updateRecentChains (addressKey: string, genesisHashKey: string) {
-  try {
-    const result = await new Promise<{ RecentChains?: RecentChainsType }>((resolve) => chrome.storage.local.get('RecentChains', resolve));
-    const accountsAndChains = result.RecentChains ?? {};
-    const myRecentChains = accountsAndChains[addressKey] ?? [];
-
-    if (!myRecentChains.length) {
-      if (INITIAL_RECENT_CHAINS_GENESISHASH.includes(genesisHashKey)) {
-        accountsAndChains[addressKey] = INITIAL_RECENT_CHAINS_GENESISHASH;
-      } else {
-        const initialChains = INITIAL_RECENT_CHAINS_GENESISHASH.slice(0, 3);
-
-        accountsAndChains[addressKey] = [...initialChains, genesisHashKey];
-      }
-
-      await new Promise<void>((resolve) =>
-        chrome.storage.local.set({ RecentChains: accountsAndChains }, resolve)
-      );
-    } else if (!myRecentChains.includes(genesisHashKey)) {
-      myRecentChains.unshift(genesisHashKey);
-      myRecentChains.pop();
-      accountsAndChains[addressKey] = myRecentChains;
-
-      await new Promise<void>((resolve) =>
-        chrome.storage.local.set({ RecentChains: accountsAndChains }, resolve)
-      );
-    }
-  } catch (error) {
-    console.error('Error updating recent chains:', error);
-    throw error;
   }
 }
 
@@ -787,8 +754,14 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
 
   const lc = chainName.toLowerCase();
 
-  if (lc.includes('assethub')) {
-    return lc.replace(/^(.*)assethub$/, 'assethub-$1');
+  if (lc.includes('assethub') || isMigrated(lc)) {
+    // if already has 'assethub' at the end → reorder
+    if (/(.*)assethub$/.test(lc)) {
+      return lc.replace(/^(.*)assethub$/, 'assethub-$1');
+    }
+
+    // if it’s just the relay (westend, polkadot, paseo, etc.)
+    return `assethub-${lc}`;
   }
 
   if (lc.includes('people')) {

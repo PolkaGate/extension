@@ -150,13 +150,6 @@ export const IDENTITY_CHAINS = [
   '0x6d8d9f145c2177fa83512492cdd80a71e29f22473f4a8943a6292149ac319fb9' // SORA
 ];
 
-export const INITIAL_RECENT_CHAINS_GENESISHASH = [
-  POLKADOT_GENESIS_HASH,
-  WESTEND_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  ACALA_GENESIS_HASH // ACALA
-];
-
 // used in history to categorize transactions
 export const STAKING_ACTIONS = ['Solo Staking', 'Pool Staking'];
 // export const STAKING_ACTIONS = ['bond', 'unbond', 'bond_extra', 'nominate', 'redeem', 'stop_nominating', 'chill', 'tuneUp'];

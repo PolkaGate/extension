@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
+//@ts-nocheck
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Box } from '@mui/material';
@@ -14,6 +13,7 @@ import { useIsDark } from '../hooks';
 import { convertToCamelCase } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
+import { mapHubToRelay } from '../util/migrateHubUtils';
 import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
 
@@ -59,19 +59,21 @@ function haveSameWords (str1: string, str2: string): boolean {
 function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {}, token }: Props): React.ReactElement<Props> {
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
+  const _genesisHash = mapHubToRelay(genesisHash);
   const [isDarkLogo, setIsDarkLogo] = useState(false);
 
-  const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
+  const maybeUserAddedChainColor = useUserAddedChainColor(_genesisHash);
   const options = useContext(GenesisHashOptionsContext);
 
-  const foundChainName = options.find(({ text, value }) => value === genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
+  const foundChainName = options.find(({ text, value }) => value === _genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
 
   const _chainName = sanitizeChainName(foundChainName || chainName, true);
+
   const chainLogoInfo = getLogo2(_chainName);
   const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 
   const filter = isDark
-    ? TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(_chainName)
+    ? TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(_chainName ?? '')
       ? 'invert(1)'
       : isDarkLogo
         ? 'invert(0.2) brightness(2)'

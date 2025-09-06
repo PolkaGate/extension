@@ -11,6 +11,7 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { useSelectedAccount } from '../hooks';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../util/constants';
 import { DropSelect, GenesisHashOptionsContext } from '.';
+import { mapSystemToRelay } from '../util/migrateHubUtils';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 
@@ -26,9 +27,18 @@ function ChainDropDown ({ style = {}, withSelectAChainText = true }: Props): Rea
 
   const [selectedChain, setSelectedChain] = useState<number | string>(DEFAULT_SELECTED_OPTION.value);
 
+  /**
+   * Adjusts the selected chain's genesis hash to the relay equivalent and updates state.
+   */
+  const handleSetChain = useCallback((value: string) => {
+    const adjustedGenesis = mapSystemToRelay(value);
+
+    adjustedGenesis && setSelectedChain(adjustedGenesis);
+  }, []);
+
   useEffect(() => {
-    savedSelectedChain && setSelectedChain(savedSelectedChain);
-  }, [savedSelectedChain]);
+    savedSelectedChain && handleSetChain(savedSelectedChain);
+  }, [handleSetChain, savedSelectedChain]);
 
   const chainOptions = useMemo(() => {
     const filteredOptions = options.filter((option) => option.value); // filter out the "Allow on any chain" option
@@ -40,9 +50,9 @@ function ChainDropDown ({ style = {}, withSelectAChainText = true }: Props): Rea
 
   const handleSelectedChain = useCallback((value: number | string) => {
     selectedAccount && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: value }).then(() => {
-      setSelectedChain(value);
+      handleSetChain(String(value));
     }).catch(console.error);
-  }, [selectedAccount]);
+  }, [handleSetChain, selectedAccount]);
 
   return (
     <DropSelect
