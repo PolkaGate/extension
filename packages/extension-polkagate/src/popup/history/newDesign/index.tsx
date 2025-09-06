@@ -1,48 +1,31 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DropdownOption, TransactionDetail } from '../../../util/types';
+import type { TransactionDetail } from '../../../util/types';
 import type { FilterOptions } from '../hookUtils/types';
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
+import ChainDropDown from '@polkadot/extension-polkagate/src/components/ChainDropDown';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
-import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 
-import { ActionContext, BackWithLabel, DropSelect, FadeOnScroll, GenesisHashOptionsContext, Motion } from '../../../components';
+import { ActionContext, BackWithLabel, FadeOnScroll, Motion } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
 import useTransactionHistory from '../useTransactionHistory';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
 
-const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
-
 function History (): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
-  const options = useContext(GenesisHashOptionsContext);
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [tab, setTab] = useState<TAB>(TAB.ALL);
-  const [selectedChain, setSelectedChain] = useState<number | string>(DEFAULT_SELECTED_OPTION.value);
-  const { decimal, token } = useChainInfo(selectedChain as string, true);
-
-  useEffect(() => {
-    savedSelectedChain && setSelectedChain(savedSelectedChain);
-  }, [savedSelectedChain]);
-
-  const chainOptions = useMemo(() => {
-    const filteredOptions = options.filter((option) => option.value); // filter out the "Allow on any chain" option
-
-    filteredOptions.unshift(DEFAULT_SELECTED_OPTION);
-
-    return filteredOptions;
-  }, [options]);
+  const { decimal, token } = useChainInfo(savedSelectedChain as string, true);
 
   const historyFilter: FilterOptions = useMemo(() => {
     const defaultFilters = {
@@ -61,7 +44,7 @@ function History (): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { grouped } = useTransactionHistory(selectedAccount?.address, selectedChain as string | undefined, historyFilter);
+  const { grouped } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
@@ -85,11 +68,6 @@ function History (): React.ReactElement {
     return Object.keys(result).length === 0 ? null : result;
   }, [decimal, grouped, token]);
 
-  const handleSelectedChain = useCallback((value: number | string) => {
-    selectedAccount && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: value }).then(() => {
-      setSelectedChain(value);
-    }).catch(console.error);
-  }, [selectedAccount]);
   const onBack = useCallback(() => onAction('/'), [onAction]);
 
   return (
@@ -101,26 +79,21 @@ function History (): React.ReactElement {
       />
       <Motion variant='slide'>
         <HistoryTabs
-          selectedChain={selectedChain as string}
+          selectedChain={savedSelectedChain as string}
           setTab={setTab}
           tab={tab}
         />
-        {savedSelectedChain !== undefined &&
-        <DropSelect
-          defaultValue={savedSelectedChain ?? DEFAULT_SELECTED_OPTION.value}
-          displayContentType='logo'
-          onChange={handleSelectedChain}
-          options={chainOptions}
-          style={{
-            margin: '12px 15px',
-            width: 'calc(100% - 30px)'
-          }}
-          value={selectedChain}
-        />}
+        {
+          savedSelectedChain !== undefined &&
+          <ChainDropDown
+            style={{ margin: '12px 15px', width: 'calc(100% - 30px)' }}
+            withSelectAChainText={false}
+          />
+        }
         <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '400px', mt: '10px', overflowY: 'auto', pb: '60px' }}>
           <HistoryBox
             historyItems={historyItemsToShow}
-            notReady={!selectedChain}
+            notReady={!savedSelectedChain}
             style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
           />
         </Grid>

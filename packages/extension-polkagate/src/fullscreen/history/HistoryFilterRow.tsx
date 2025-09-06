@@ -29,7 +29,7 @@ function HistoryFilterRow ({ allHistories, extraFilters, setExtraFilters }: Prop
         <Box sx={{ background: 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)', height: '24px', width: '1px' }} />
         <ChainDropDown
           style={{ border: 'none', height: '42px', margin: '0', width: '210px' }}
-          withSelectChainText={false}
+          withSelectAChainText={false}
         />
       </Stack>
       <TransactionTypeDropDown
