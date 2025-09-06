@@ -6,7 +6,7 @@ import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid } from '@mui/material';
 import { Add, Award, Coin, LockSlash, MedalStar, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import Ice from '@polkadot/extension-polkagate/src/components/SVG/Ice';
 import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
@@ -31,7 +31,7 @@ interface TileBoxProps {
   popupOpener: PopupOpener;
 }
 
-const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) => {
+const TileBoxes = memo(function MemoTileBoxes ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -123,7 +123,7 @@ const TileBoxes = ({ availableBalanceToStake, genesisHash, popupOpener, redeemab
       />
     </Grid>
   );
-};
+});
 
 interface Props {
   genesisHash: string | undefined;
