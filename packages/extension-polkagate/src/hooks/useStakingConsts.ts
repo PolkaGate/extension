@@ -7,12 +7,12 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
+import { mapHubToRelay } from '../util/migrateHubUtils';
 import { MAX_NOMINATIONS } from '../util/constants';
-import { mapHubToRelay } from '../util/workers/utils/adjustGenesis';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
 
-export default function useStakingConsts (genesisHash: string | undefined): StakingConsts | null | undefined {
+export default function useStakingConsts(genesisHash: string | undefined): StakingConsts | null | undefined {
   const relayGenesisHash = mapHubToRelay(genesisHash);
   const { api: relayChainApi } = useChainInfo(relayGenesisHash);
 

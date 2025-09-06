@@ -3,13 +3,13 @@
 
 import type { FetchedBalance, PositionInfo } from '../../util/types';
 
-import { mapRelayToSystemGenesis, resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis, resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { STAKING_CHAINS, TEST_NETS } from '../../util/constants';
 import getChain from '../../util/getChain';
 import { sanitizeChainName } from '../../util/utils';
 
-export function getStakingAsset (accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
+export function getStakingAsset(accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
   const mappedGenesisHash = mapRelayToSystemGenesis(genesisHash);
   const _assetId = resolveStakingAssetId(mappedGenesisHash);
   const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === mappedGenesisHash && String(assetId) === _assetId);
@@ -17,7 +17,7 @@ export function getStakingAsset (accountAssets: FetchedBalance[] | null | undefi
   return asset ?? null;
 }
 
-export function getEarningOptions (accountAssets: FetchedBalance[] | null | undefined, isTestnetEnabled: boolean | undefined) {
+export function getEarningOptions(accountAssets: FetchedBalance[] | null | undefined, isTestnetEnabled: boolean | undefined) {
   const _stakingChains = isTestnetEnabled ? STAKING_CHAINS : STAKING_CHAINS.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
 
   return _stakingChains.map((genesisHash) => {

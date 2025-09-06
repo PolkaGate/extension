@@ -8,7 +8,7 @@ import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
@@ -20,7 +20,7 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerPool from './PopUpHandlerPool';
 
-export default function PoolFullScreen (): React.ReactElement {
+export default function PoolFullScreen(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));

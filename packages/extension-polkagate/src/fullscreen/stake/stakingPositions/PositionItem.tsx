@@ -6,7 +6,7 @@ import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, noop } from '@polkadot/util';
 
 import { ChainLogo, CryptoFiatBalance } from '../../../components';

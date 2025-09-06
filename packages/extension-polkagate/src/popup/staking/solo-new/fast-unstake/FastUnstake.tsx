@@ -7,7 +7,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { ActionButton, BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';

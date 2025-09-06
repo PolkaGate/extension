@@ -5,7 +5,7 @@ import { Container, Stack, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { GradientButton } from '../../../../components';
 import { useFastUnstaking, useTranslation } from '../../../../hooks';
@@ -20,7 +20,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function FastUnstaking ({ address, onClose, urlGenesisHash }: Props): React.ReactElement {
+export default function FastUnstaking({ address, onClose, urlGenesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
 

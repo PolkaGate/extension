@@ -8,7 +8,7 @@ import type { Chain } from '../../../extension-chains/src/types';
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { mapRelayToSystemGenesis } from './workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from './migrateHubUtils';
 import getNetworkMap from './getNetworkMap';
 import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';

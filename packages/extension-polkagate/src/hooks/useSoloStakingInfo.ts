@@ -12,8 +12,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
+import { mapRelayToSystemGenesis } from '../util/migrateHubUtils';
 import { isHexToBn } from '../util/utils';
-import { mapRelayToSystemGenesis } from '../util/workers/utils/adjustGenesis';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
@@ -95,7 +95,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
   return { toBeReleased, unlockingAmount };
 };
 
-function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStakingInfo {
+function reviveSoloStakingInfoBNs(info: SavedSoloStakingInfo): SavedSoloStakingInfo {
   return {
     ...info,
     availableBalanceToStake: info.availableBalanceToStake ? isHexToBn(info.availableBalanceToStake as unknown as string) : undefined,
@@ -160,7 +160,7 @@ const DEFAULT_VALUE = {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function useSoloStakingInfo (address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
+export default function useSoloStakingInfo(address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
   const genesisHash = mapRelayToSystemGenesis(_genesisHash);
   const { api, chainName, token } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash);

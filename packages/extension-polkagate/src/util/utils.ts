@@ -20,6 +20,7 @@ import { EXTRA_PRICE_IDS } from './api/getPrices';
 import { fastestEndpoint } from './workers/utils';
 import allChains from './chains';
 import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, INITIAL_RECENT_CHAINS_GENESISHASH, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
+import { isMigratedHub } from './migrateHubUtils';
 
 interface Meta {
   docs: Text[];
@@ -347,7 +348,26 @@ export async function getHistoryFromStorage (formatted: string): Promise<Transac
 export const isHexToBn = (i: string): BN => isHex(i) ? hexToBn(i) : new BN(i);
 export const toBN = (i: unknown): BN => isHexToBn(String(i));
 
-export const sanitizeChainName = (chainName: string | undefined) => (chainName?.replace(' Relay Chain', '')?.replace(' Network', '')?.replace(' chain', '')?.replace(' Chain', '')?.replace(' Finance', '')?.replace(' Testnet', '')?.replace(/\s/g, ''));
+export const sanitizeChainName = (chainName: string | undefined, withMigration?: boolean) => {
+  if (!chainName) {
+    return chainName;
+  }
+
+  let sanitizedChainName = chainName
+    .replace(' Relay Chain', '')
+    .replace(' Network', '')
+    .replace(' chain', '')
+    .replace(' Chain', '')
+    .replace(' Finance', '')
+    .replace(' Testnet', '')
+    .replace(/\s/g, '');
+
+  sanitizedChainName = withMigration && isMigratedHub(sanitizedChainName)
+  ? sanitizedChainName.replace('AssetHub', '')
+  : sanitizedChainName;
+
+  return sanitizedChainName;
+};
 
 export const isEmail = (input: string | undefined) => {
   if (!input) {

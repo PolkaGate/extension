@@ -6,7 +6,7 @@ import type { PositionInfo } from '../../../util/types';
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { DecisionButtons } from '../../../components';

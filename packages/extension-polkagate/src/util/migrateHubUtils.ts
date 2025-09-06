@@ -3,7 +3,7 @@
 
 import { PASEO_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
 
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, STAKING_CHAINS, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from '../../constants';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, STAKING_CHAINS, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
 
 export const relayToSystemChains = {
   [PASEO_GENESIS]: {
@@ -22,6 +22,7 @@ export const hubToRelay = {
 };
 
 export const migratedRelays = [PASEO_GENESIS, WESTEND_GENESIS_HASH];
+export const migratedRelayNames = ['paseo', 'westend'];
 
 type SystemChainsName = 'hub' | 'people' | 'assetHub';
 
@@ -65,11 +66,14 @@ export function isMigratedRelay (genesisHash: string): boolean {
 }
 
 /** Checks if the provided genesis hash corresponds to a migrated hub chain.
- * @param genesisHash - The genesis hash to check.
+ * @param info - The genesis hash or hub chain name to check.
  * @returns True if the genesis hash has a mapping in hubToRelay; otherwise, false.
  */
-export function isMigratedHub (genesisHash: string | undefined): boolean {
-  return !!(genesisHash && (hubToRelay as Record<string, string>)?.[genesisHash]);
+export function isMigratedHub (info: string | undefined): boolean {
+  return !!(info && (
+    (hubToRelay as Record<string, string>)?.[info] ||
+    migratedRelayNames.find((relayName) => info?.toLowerCase()?.includes(relayName))
+  ));
 }
 
 /** Resolves the appropriate staking asset ID based on the provided genesis hash.

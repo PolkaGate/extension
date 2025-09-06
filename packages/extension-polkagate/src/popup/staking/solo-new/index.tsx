@@ -8,7 +8,7 @@ import { Coin, Timer1, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
@@ -35,7 +35,7 @@ const Back = () => {
   );
 };
 
-export default function Solo (): React.ReactElement {
+export default function Solo(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();

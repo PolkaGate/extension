@@ -9,9 +9,9 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 import { useLocation } from 'react-router-dom';
 
 import { toCamelCase } from '../util';
+import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
-import { mapHubToRelay, isMigratedRelay } from '../util/workers/utils/adjustGenesis';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 import useSavedAssetsCache from './useSavedAssetsCache';

@@ -6,7 +6,7 @@ import type { PositionInfo } from '../../../util/types';
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/workers/utils/adjustGenesis';
+import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { ChainLogo } from '../../../components/index';
 
@@ -14,7 +14,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function Title ({ selectedPosition }: Props): React.ReactElement {
+function Title({ selectedPosition }: Props): React.ReactElement {
   const genesisHash = mapHubToRelay(selectedPosition?.genesisHash);
 
   return (
