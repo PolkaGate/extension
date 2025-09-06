@@ -18,7 +18,7 @@ interface Props {
   token?: string | undefined;
 }
 
-export default function AssetDualLogo({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {}, token }: Props): React.ReactElement {
+export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {}, token }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const filter = isDark

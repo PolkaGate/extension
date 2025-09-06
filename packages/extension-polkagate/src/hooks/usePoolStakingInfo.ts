@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
+import { mapRelayToSystemGenesis } from '../util/migrateHubUtils';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
 import usePool from './usePool';
@@ -77,9 +78,6 @@ const getAvailableToStake = (balances: BalancesInfo | undefined) => {
 
   const _availableToStake = balances.freeBalance;
 
-  // the reserved balance can be considered here as the amount which can be staked as well in solo,
-  // but since pooled balance are migrating to the reserved balance. and also the pallet has issue to accept reserved,
-  // hence it needs more workaround on it
   return bnMax(BN_ZERO, _availableToStake);
 };
 
@@ -95,11 +93,12 @@ export interface PoolStakingInfo {
  * Custom hook that provides solo staking information for a given address
  *
  * @param address - The account address to get staking info for
- * @param genesisHash - The chain's genesis hash to identify the network
+ * @param _genesisHash - The chain's genesis hash to identify the network
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function usePoolStakingInfo(address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
+export default function usePoolStakingInfo(address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
+  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash, refresh, setRefresh);
   const pool = usePool(address, genesisHash, undefined, refresh, setRefresh);

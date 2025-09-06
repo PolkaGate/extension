@@ -9,7 +9,8 @@ import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
-import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { isStakingChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { ExtensionPopups, GOVERNANCE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useChainInfo, useStakingPositions, useTranslation } from '../../../hooks';
@@ -23,7 +24,7 @@ interface ActionBoxProps {
   onClick?: () => void;
 }
 
-function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
+function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
 
   const _onClick = useCallback(() => {
@@ -48,7 +49,7 @@ interface Props {
   assetId: string | undefined;
 }
 
-function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
+function ActionButtons({ address, assetId, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash);
   const { maxPosition, maxPositionType } = useStakingPositions(address, true);
@@ -74,7 +75,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
               label={t('Governance')}
               onClick={extensionPopupOpener(ExtensionPopups.GOVERNANCE)}
             />}
-          {STAKING_CHAINS.includes(genesisHash ?? '') &&
+          {isStakingChain(genesisHash) &&
             <ActionBox
               Icon={BuyCrypto}
               label={t('Staking')}

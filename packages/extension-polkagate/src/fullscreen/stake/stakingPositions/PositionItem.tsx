@@ -6,6 +6,7 @@ import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, noop } from '@polkadot/util';
 
 import { ChainLogo, CryptoFiatBalance } from '../../../components';
@@ -21,16 +22,18 @@ interface TokenInfoProps {
 
 export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
   const { chainName, token } = useChainInfo(genesisHash, true);
+  const _chainName = chainName?.replace('AssetHub', '');
+  const _genesisHash = mapHubToRelay(genesisHash);
 
   return (
     <Grid container item sx={{ alignItems: 'center', flexWrap: 'nowrap', gap: '6px', minWidth: '100px', width: 'fit-content' }}>
-      <ChainLogo genesisHash={genesisHash} size={24} />
+      <ChainLogo genesisHash={_genesisHash} size={24} />
       <Grid container item sx={{ alignItems: 'flex-start', display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
         <Typography color='text.primary' textTransform='uppercase' variant='B-2'>
           {token}
         </Typography>
         <Typography color='#AA83DC' variant='B-5'>
-          {chainName}
+          {_chainName}
         </Typography>
       </Grid>
     </Grid>
@@ -91,7 +94,7 @@ interface Props extends TokenInfoProps {
   isSelected?: boolean;
 }
 
-function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
+function PositionItem({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
   const { address } = useParams<{ address: string; genesisHash: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);

@@ -9,6 +9,7 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 import { useLocation } from 'react-router-dom';
 
 import { toCamelCase } from '../util';
+import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
@@ -34,7 +35,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -90,15 +91,29 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
       };
 
       Object.keys(assets).forEach((address) => {
+        const { genesisHash } = assets[address][0];
+
+        if (isMigratedRelay(genesisHash)) {
+          console.debug(` ${genesisHash} is migrated`);
+
+          return;
+        }
+
         if (!combinedAsset.balances[address]) {
           combinedAsset.balances[address] = {};
         }
 
-        const { genesisHash } = assets[address][0];
+        const _mappedGenesisHash = mapHubToRelay(genesisHash) as unknown as string;
+
+        if (_mappedGenesisHash !== genesisHash) {
+          assets[address].forEach((asset) => {
+            asset.chainName = asset.chainName.replace('AssetHub', '');
+          });
+        }
 
         combinedAsset.balances[address] = {
           ...(combinedAsset.balances[address] || {}),
-          [genesisHash]: assets[address]
+          [_mappedGenesisHash]: assets[address]
         };
       });
 

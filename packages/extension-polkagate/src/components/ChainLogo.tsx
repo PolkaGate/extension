@@ -66,7 +66,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
 
   const foundChainName = options.find(({ text, value }) => value === genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
 
-  const _chainName = sanitizeChainName(foundChainName || chainName);
+  const _chainName = sanitizeChainName(foundChainName || chainName, true);
   const chainLogoInfo = getLogo2(_chainName);
   const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 

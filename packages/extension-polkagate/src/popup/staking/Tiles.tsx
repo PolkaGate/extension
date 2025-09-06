@@ -19,7 +19,7 @@ import StakingRewardTile from './partial/StakingRewardTile';
 
 interface Props {
   address: string | undefined;
-  asset: FetchedBalance | undefined;
+  asset: FetchedBalance | undefined | null;
   genesisHash: string | undefined;
   redeemable: Balance | BN | undefined;
   unlockingAmount: BN | undefined;

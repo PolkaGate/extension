@@ -19,6 +19,8 @@ import { EasyStakeSide, type SelectedEasyStakingType } from '../fullscreen/stake
 import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
+import { getStakingAsset } from '../popup/staking/utils';
+import { mapRelayToSystemGenesis } from '../util/migrateHubUtils';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, calcPrice, isHexToBn, safeSubtraction } from '../util/utils';
 import useAccountAssets from './useAccountAssets';
@@ -398,7 +400,7 @@ export const useWithdrawPool = (
   const [param, setParam] = useState<[string, number] | null | undefined>(null);
 
   const transferable = useMemo(() => {
-    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
+    const asset = getStakingAsset(accountAssets, genesisHash);
 
     return getValue('transferable', asset);
   }, [accountAssets, genesisHash]);
@@ -409,13 +411,18 @@ export const useWithdrawPool = (
       return;
     }
 
-    api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
-      const spanCount = optSpans.isEmpty
-        ? 0
-        : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
+    try {
+      api.query['staking']['slashingSpans'](formatted).then((optSpans) => {
+        const spanCount = optSpans.isEmpty
+          ? 0
+          : (optSpans.toPrimitive() as { prior: unknown[] }).prior.length + 1;
 
-      setParam([formatted, spanCount]);
-    }).catch(console.error);
+        setParam([formatted, spanCount]);
+      }).catch(console.error);
+    } catch (e) {
+      console.log('slashingSpans is deprecated', e);
+      setParam([formatted, 0]);
+    }
   }, [api, formatted, param]);
 
   const tx = useMemo(() => {
@@ -520,9 +527,7 @@ export const useWithdrawSolo = (
 
   const [param, setParam] = useState<number | null | undefined>(null);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-    , [accountAssets, genesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, genesisHash), [accountAssets, genesisHash]);
   const transferable = useMemo(() => getValue('transferable', asset), [asset]);
   const redeemable = useMemo(() => stakingInfo.stakingAccount?.redeemable, [stakingInfo.stakingAccount?.redeemable]);
 
@@ -540,7 +545,7 @@ export const useWithdrawSolo = (
         setParam(spanCount as unknown as number);
       }).catch(console.error);
     } catch (e) {
-      console.log('slashingSpans is not supported', e);
+      console.log('slashingSpans is deprecated', e);
       setParam(0);
     }
   }, [api, formatted, param]);
@@ -660,9 +665,11 @@ export const useBondExtraSolo = (
 
 export const useFastUnstaking = (
   address: string | undefined,
-  genesisHash: string | undefined
+  urlGenesisHash: string | undefined
 ) => {
   const { t } = useTranslation();
+  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
+
   const { api, decimal, token } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
@@ -670,7 +677,7 @@ export const useFastUnstaking = (
   const formatted = useFormatted(address, genesisHash);
 
   const transferable = useMemo(() => {
-    const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0');
+    const asset = getStakingAsset(accountAssets, genesisHash);
 
     return getValue('transferable', asset);
   }, [accountAssets, genesisHash]);
@@ -679,6 +686,7 @@ export const useFastUnstaking = (
   const estimatedFee = useEstimatedFee(genesisHash, formatted, fastUnstake?.());
 
   const fastUnstakeDeposit = api ? api.consts['fastUnstake']['deposit'] as unknown as BN : undefined;
+
   const hasEnoughDeposit = useMemo(() =>
     (fastUnstakeDeposit && estimatedFee && transferable)
       ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(transferable || BN_ZERO)
@@ -1280,11 +1288,13 @@ export const usePoolDetail = (
 
 export const useEasyStake = (
   address: string | undefined,
-  genesisHash: string | undefined
+  _genesisHash: string | undefined
 ) => {
   const MAX_LETTER_THRESHOLD = 35;
 
   const { t } = useTranslation();
+  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
+
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
   const poolStakingConsts = usePoolConst(genesisHash);
@@ -1296,9 +1306,13 @@ export const useEasyStake = (
   const nominated = api?.tx['staking']['nominate'];
   const join = api?.tx['nominationPools']['join']; // (amount, poolId)
 
-  const polkagatePool = useMemo(() => chainName ? POLKAGATE_POOL_IDS[chainName] : undefined, [chainName]);
+  const polkagatePoolID = useMemo(() => {
+    const chainUniqueName = chainName?.replaceAll('AssetHub', '');
 
-  const initialPool = usePool(address, polkagatePool ? genesisHash : undefined, polkagatePool);
+    return chainUniqueName ? POLKAGATE_POOL_IDS[chainUniqueName] : undefined;
+  }, [chainName]);
+
+  const initialPool = usePool(address, polkagatePoolID ? genesisHash : undefined, polkagatePoolID);
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [amountAsBN, setAmountAsBN] = useState<BN | undefined>(undefined);
@@ -1370,13 +1384,8 @@ export const useEasyStake = (
     }];
   }, [address, estimatedFee, selectedStakingType?.pool, selectedStakingType?.type, selectedStakingType?.validators, stakingConsts?.maxNominations, t]);
 
-  const token = useMemo(() => {
-    if (!accountAssets) {
-      return undefined;
-    }
+  const token = useMemo(() => getStakingAsset(accountAssets, _genesisHash), [accountAssets, _genesisHash]);
 
-    return accountAssets.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0') ?? null;
-  }, [accountAssets, genesisHash]);
   const availableBalanceToStake = useMemo(() => token?.freeBalance, [token?.freeBalance]);
 
   const thresholds = useMemo(() => {

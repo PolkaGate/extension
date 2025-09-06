@@ -16,10 +16,10 @@ const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value:
 
 interface Props {
   style?: React.CSSProperties;
-  withSelectChainText?: boolean;
+  withSelectAChainText?: boolean;
 }
 
-function ChainDropDown ({ style = {}, withSelectChainText = true }: Props): React.ReactElement {
+function ChainDropDown ({ style = {}, withSelectAChainText = true }: Props): React.ReactElement {
   const options = useContext(GenesisHashOptionsContext);
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
@@ -33,10 +33,10 @@ function ChainDropDown ({ style = {}, withSelectChainText = true }: Props): Reac
   const chainOptions = useMemo(() => {
     const filteredOptions = options.filter((option) => option.value); // filter out the "Allow on any chain" option
 
-    withSelectChainText && filteredOptions.unshift(DEFAULT_SELECTED_OPTION);
+    withSelectAChainText && filteredOptions.unshift(DEFAULT_SELECTED_OPTION);
 
     return filteredOptions;
-  }, [options, withSelectChainText]);
+  }, [options, withSelectAChainText]);
 
   const handleSelectedChain = useCallback((value: number | string) => {
     selectedAccount && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: value }).then(() => {
@@ -46,7 +46,6 @@ function ChainDropDown ({ style = {}, withSelectChainText = true }: Props): Reac
 
   return (
     <DropSelect
-      // defaultValue={savedSelectedChain ?? DEFAULT_SELECTED_OPTION.value}
       displayContentType='logo'
       onChange={handleSelectedChain}
       options={chainOptions}

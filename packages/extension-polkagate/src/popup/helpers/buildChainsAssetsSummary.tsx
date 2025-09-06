@@ -4,8 +4,9 @@
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Prices } from '../../util/types';
 
+import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import chains from '@polkadot/extension-polkagate/src/util/chains';
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice, sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 
@@ -38,7 +39,7 @@ export function buildChainsAssetsSummary (
     const network = chains.find(({ genesisHash: networkGenesisHash, tokenSymbol }) => genesisHash === networkGenesisHash && tokenSymbol);
     const token = network?.tokenSymbol;
     const logoInfo = getLogo2(genesisHash);
-    const chainName = network?.name;
+    const chainName = toTitleCase(sanitizeChainName(network?.name, true));
 
     return {
       assets: sortedAssets,

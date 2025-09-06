@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-nocheck
 import type React from 'react';
 import type { Chain } from '../../../extension-chains/src/types';
 
@@ -8,6 +9,7 @@ import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
 import getNetworkMap from './getNetworkMap';
+import { isMigratedHub, mapRelayToSystemGenesis } from './migrateHubUtils';
 import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
 
@@ -23,10 +25,12 @@ export interface LogoInfo {
 export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 
+  const _info = mapRelayToSystemGenesis(info as string);
+
   if (token) {
     const networkMap = getNetworkMap();
 
-    chainNameFromGenesisHash = networkMap.get(info as string || '');
+    chainNameFromGenesisHash = networkMap.get(_info || '');
 
     if (!chainNameFromGenesisHash) {
       return undefined;
@@ -37,14 +41,17 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
     const found = chainAssets?.find(({ symbol }) => symbol.toUpperCase() === token.toUpperCase())?.ui;
+    const subLogo = found?.subLogo && !isMigratedHub(_info)
+      ? getLogo2(chainNameFromGenesisHash)?.logo
+      : undefined;
 
     if (found) {
-      return { ...found, subLogo: found.subLogo ? getLogo2(chainNameFromGenesisHash)?.logo : undefined };
+      return { ...found, subLogo };
     }
   }
 
   let maybeExternalLogo;
-  const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
+  const iconName = sanitizeChainName(chainNameFromGenesisHash || (_info as Chain)?.name || (_info as string))?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 

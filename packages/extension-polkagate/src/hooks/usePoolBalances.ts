@@ -55,7 +55,7 @@ export default function usePoolBalances (address: string | undefined, genesisHas
       const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
         api.query['nominationPools']['bondedPools'](poolId) as unknown as Option<PalletNominationPoolsBondedPoolInner>,
         api.derive.staking.account(accounts.stashId),
-        api.call['nominationPoolsApi']['pendingRewards'](formatted)
+        api.call['nominationPoolsApi']?.['pendingRewards'](formatted) // not available on paseo hub
       ]);
 
       const active = member.points.isZero()

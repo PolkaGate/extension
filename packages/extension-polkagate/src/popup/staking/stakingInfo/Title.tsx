@@ -6,13 +6,17 @@ import type { PositionInfo } from '../../../util/types';
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
+import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+
 import { ChainLogo } from '../../../components/index';
 
 interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function Title ({ selectedPosition }: Props): React.ReactElement {
+function Title({ selectedPosition }: Props): React.ReactElement {
+  const genesisHash = mapHubToRelay(selectedPosition?.genesisHash);
+
   return (
     <div style={{ zIndex: 1 }}>
       <Stack direction='row'>
@@ -31,7 +35,7 @@ function Title ({ selectedPosition }: Props): React.ReactElement {
           {selectedPosition?.tokenSymbol}
         </Typography>
         <span style={{ marginBottom: '5px' }}>
-          <ChainLogo genesisHash={selectedPosition?.genesisHash} size={24} />
+          <ChainLogo genesisHash={genesisHash} size={24} />
         </span>
         <Typography color='text.primary' sx={{ ml: '2px' }} textTransform='uppercase' variant='H-3'>
           {'tokens per year'}
