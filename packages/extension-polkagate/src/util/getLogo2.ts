@@ -41,7 +41,9 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
     const found = chainAssets?.find(({ symbol }) => symbol.toUpperCase() === token.toUpperCase())?.ui;
-    const subLogo = isMigratedHub(_info) ? undefined : (found.subLogo ? getLogo2(chainNameFromGenesisHash)?.logo : undefined);
+    const subLogo = found?.subLogo && !isMigratedHub(_info)
+      ? getLogo2(chainNameFromGenesisHash)?.logo
+      : undefined;
 
     if (found) {
       return { ...found, subLogo };
