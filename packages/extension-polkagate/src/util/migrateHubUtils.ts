@@ -69,8 +69,8 @@ export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | 
  * @param systemGenesisHash - The genesis hash of the system chain (e.g., hub, people, assetHub, etc).
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapSystemToRelay (systemGenesisHash: string | undefined | null): string | undefined | null {
-  if (!systemGenesisHash || !isMigratedHub(systemGenesisHash)) {
+export function mapSystemToRelay (systemGenesisHash: string | undefined | null, withMigrationCheck = true): string | undefined | null {
+  if (!systemGenesisHash || (withMigrationCheck && !isMigratedHub(systemGenesisHash))) {
     return systemGenesisHash;
   }
 
@@ -154,4 +154,16 @@ export function isSystemChain (systemChainGenesis: string | undefined, relayGene
   }
 
   return Object.values(systemChains).includes(systemChainGenesis ?? '');
+}
+
+export function extractRelayChainName (systemChainName: string | undefined): string | undefined {
+  if (!systemChainName) {
+    return;
+  }
+
+  return systemChainName
+    .toLowerCase()
+    .replace(/\bpeople\b/i, '')
+    .replace(/\bassethub\b/i, '')
+    .trim();
 }
