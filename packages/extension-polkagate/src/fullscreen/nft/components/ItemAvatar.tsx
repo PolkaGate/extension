@@ -16,8 +16,6 @@ const WithLoading = ({ children, loaded }: { loaded: boolean, children: React.Re
   <>
     {!loaded &&
       <Progress
-        gridSize={50}
-        pt={0}
         type='grid'
       />
     }
