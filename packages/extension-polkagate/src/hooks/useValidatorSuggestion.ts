@@ -1,15 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type { StakingConsts } from '../util/types';
 import type { ValidatorInformation, ValidatorsInformation } from './useValidatorsInformation';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DEFAULT_FILTERS } from '../util/constants';
+import { DEFAULT_FILTERS, TEST_NETS } from '../util/constants';
 import useStakingConsts from './useStakingConsts';
 
 const commissionSort = (a: ValidatorInformation, b: ValidatorInformation) => {
@@ -73,9 +70,10 @@ export default function useValidatorSuggestion (allValidatorsInfo: ValidatorsInf
       Number(v.validatorPrefs.commission) !== 0 && // filter 0 commission validators, to exclude new and chilled validators
       (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
       // @ts-ignore
-      (v.exposureMeta?.nominatorCount ?? 0) < stakingConsts?.maxNominatorRewardedPerValidator// filter oversubscribed
+     ((v.exposureMeta?.nominatorCount ?? 0) < stakingConsts?.maxNominatorRewardedPerValidator || TEST_NETS.includes(genesisHash))// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
+
     const filtered2 = onLimitValidatorsPerOperator(filtered1, DEFAULT_FILTERS.limitOfValidatorsPerOperator.value);
 
     // const filtered3 = allValidatorsIdentities?.length
@@ -83,7 +81,7 @@ export default function useValidatorSuggestion (allValidatorsInfo: ValidatorsInf
     //   : filtered2;
 
     return filtered2.sort(commissionSort).slice(0, stakingConsts?.maxNominations);
-  }, [onLimitValidatorsPerOperator]);
+  }, [genesisHash, onLimitValidatorsPerOperator]);
 
   useEffect(() => {
     if (!allValidators || !stakingConsts) {
