@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.5.8](https://github.com/polkagate/extension/compare/v1.5.7...v1.5.8) (2025-09-07)
+
+
+### Bug Fixes
+
+* exclude unreleased changes from changelog ([#1841](https://github.com/polkagate/extension/issues/1841)) ([816a75b](https://github.com/polkagate/extension/commit/816a75b2794e2d89373f2b6d27627736033bc71f))
+
 ## [1.5.7](https://github.com/polkagate/extension/compare/v1.5.6...v1.5.7) (2025-09-07)
 
 
