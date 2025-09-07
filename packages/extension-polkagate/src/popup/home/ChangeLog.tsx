@@ -261,7 +261,7 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
       const v = getVersion(version);
 
       return v
-        ? (!newVersion || semver.gte(v, usingVersion)) && (!extensionCurrentVersion || semver.lte(v, extensionCurrentVersion))
+        ? (!newVersion || semver.gt(v, usingVersion)) && (!extensionCurrentVersion || semver.lte(v, extensionCurrentVersion))
         : false;
     });
 
