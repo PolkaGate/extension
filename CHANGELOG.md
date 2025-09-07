@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.5.6](https://github.com/polkagate/extension/compare/v1.5.5...v1.5.6) (2025-09-07)
+
+
+### Bug Fixes
+
+* handle long pool names in easy staking page ([#1834](https://github.com/polkagate/extension/issues/1834)) ([ddf448e](https://github.com/polkagate/extension/commit/ddf448e9153248605023c54b8ffb980176ec3a66))
+
+## [1.5.5](https://github.com/polkagate/extension/compare/v1.5.4...v1.5.5) (2025-09-06)
+
+
+### Bug Fixes
+
+* incorrect large amount display in staking tiles ([#1831](https://github.com/polkagate/extension/issues/1831)) ([d4ef542](https://github.com/polkagate/extension/commit/d4ef542e56436dfc1ba5f41ba574a32ba379e7f8))
+
 ## [1.5.4](https://github.com/polkagate/extension/compare/v1.5.3...v1.5.4) (2025-09-06)
 
 

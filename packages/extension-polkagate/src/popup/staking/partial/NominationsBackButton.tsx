@@ -4,7 +4,7 @@
 import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, Repeat } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useIsHovered, useTranslation } from '../../../hooks';
 import { windowOpen } from '../../../messaging';
@@ -36,20 +36,21 @@ const SettingButton = ({ Icon, disabled = false, onClick, text }: SettingButtonP
 };
 
 interface Props {
+  address: string | undefined;
+  genesisHash: string | undefined;
   style?: SxProps<Theme>;
 }
 
-export default function NominationsBackButton ({ style }: Props) {
+export default function NominationsBackButton ({ address, genesisHash, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const navigate = useNavigate();
-  const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const onBack = useCallback(() => navigate('/solo/' + genesisHash) as void, [genesisHash, navigate]);
-  const onChange = useCallback(() => windowOpen('/fullscreen-stake/solo/manage-validator/' + genesisHash) as unknown as void, [genesisHash]);
+  const onChange = useCallback(() => windowOpen('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as unknown as void, [address, genesisHash]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '15px', width: '100%', ...style }}>

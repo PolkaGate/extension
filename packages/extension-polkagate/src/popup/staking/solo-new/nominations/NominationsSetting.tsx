@@ -84,7 +84,11 @@ export default function NominationsSetting (): React.ReactElement {
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
       <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
       <Motion variant='slide'>
-        <NominationsBackButton style={{ mt: '8px' }} />
+        <NominationsBackButton
+          address={address}
+          genesisHash={genesisHash}
+          style={{ mt: '8px' }}
+        />
         <Stack direction='row' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
           {isLoading &&
             <Progress
