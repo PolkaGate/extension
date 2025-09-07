@@ -9,13 +9,8 @@ import { useIsBlueish } from '../hooks';
 
 interface Props {
   direction?: 'column' | 'row'
-  fontSize?: number;
-  titlePaddingTop?: number;
-  titlePaddingLeft?: number;
   title?: string;
-  pt?: number | string;
   size?: number;
-  gridSize?: number;
   type?: 'circle' | 'cubes' | 'grid' | 'wordpress' | 'beatLoader';
   withEllipsis?: boolean;
   style?: React.CSSProperties;
