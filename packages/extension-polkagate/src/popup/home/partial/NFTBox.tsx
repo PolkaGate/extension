@@ -7,6 +7,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import { logoBlackBirdTransparent } from '../../../assets/logos';
@@ -90,8 +91,12 @@ function NFTBox () {
   }, [fetchMetadata, itemsToShow]);
 
   const openNft = useCallback(() => {
-    switchToOrOpenTab(`/nft/${account?.address ?? ''}`, true);
-  }, [account?.address]);
+    const path = `/nft/${account?.address ?? ''}`;
+
+    isExtension
+    ? windowOpen(path).catch(console.error)
+    : switchToOrOpenTab(path, true);
+  }, [account?.address, isExtension]);
 
   return (
     <>
