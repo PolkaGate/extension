@@ -250,13 +250,20 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
       return undefined;
     }
 
-    const usingVersion = window.localStorage.getItem('using_version') ?? '';
-    const extensionCurrentVersion = manifest?.version ?? usingVersion;
+    const usingVersionRaw = window.localStorage.getItem('using_version') || '';
+    const usingVersion = semver.valid(usingVersionRaw) || semver.coerce(usingVersionRaw)?.version || '0.0.0';
+    const extensionCurrentVersionRaw = manifest?.version || usingVersionRaw;
+    const extensionCurrentVersion = semver.valid(extensionCurrentVersionRaw) || semver.coerce(extensionCurrentVersionRaw)?.version || null;
 
     const filteredChangelog = newVersion
-      ? changelog.filter(({ version }) => semver.gte(version, usingVersion) && semver.lte(version, extensionCurrentVersion))
-      : [...changelog];
+      ? changelog.filter(({ version }) => {
+          const v = semver.valid(version) || semver.coerce(version)?.version;
 
+          return v
+            ? semver.gte(v, usingVersion) && (!extensionCurrentVersion || semver.lte(v, extensionCurrentVersion))
+            : false;
+        })
+      : [...changelog];
     const mergedChangelog = filteredChangelog.map((entry) => {
       const localEntry = localNews.find((local) => local.version === entry.version);
 
