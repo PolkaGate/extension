@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.5.7](https://github.com/polkagate/extension/compare/v1.5.6...v1.5.7) (2025-09-07)
+
+
+### Bug Fixes
+
+* resolve full-screen URL path in nomination settings ([f87b1c8](https://github.com/polkagate/extension/commit/f87b1c8c403634b402738082dec665fe4537b442))
+* resolve issue with opening all NFTs in extension mode ([#1839](https://github.com/polkagate/extension/issues/1839)) ([a86aade](https://github.com/polkagate/extension/commit/a86aade7e89b86838ac89258813509807d8d9e02)), closes [#1838](https://github.com/polkagate/extension/issues/1838)
+
 ## [1.5.6](https://github.com/polkagate/extension/compare/v1.5.5...v1.5.6) (2025-09-07)
 
 
