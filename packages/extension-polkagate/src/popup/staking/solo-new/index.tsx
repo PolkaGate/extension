@@ -8,7 +8,7 @@ import { Coin, Timer1, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
@@ -42,7 +42,7 @@ export default function Solo(): React.ReactElement {
   const navigate = useNavigate();
   const address = useSelectedAccount()?.address;
   const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
-  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);

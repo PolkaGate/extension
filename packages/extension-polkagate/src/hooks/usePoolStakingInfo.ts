@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-import { mapRelayToSystemGenesis } from '../util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
 import usePool from './usePool';
@@ -98,7 +98,7 @@ export interface PoolStakingInfo {
  * @returns Consolidated staking information including available balance, rewards, and more
  */
 export default function usePoolStakingInfo(address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
-  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash, refresh, setRefresh);
   const pool = usePool(address, genesisHash, undefined, refresh, setRefresh);

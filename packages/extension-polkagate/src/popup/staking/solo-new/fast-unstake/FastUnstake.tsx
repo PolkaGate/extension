@@ -7,7 +7,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { ActionButton, BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
@@ -117,7 +117,7 @@ export default function FastUnstake(): React.ReactElement {
 
   const { t } = useTranslation();
   const { genesisHash: UrlGenesisHash } = useParams<{ genesisHash: string }>();
-  const genesisHash = mapRelayToSystemGenesis(UrlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(UrlGenesisHash);
 
   const address = useSelectedAccount()?.address;
   const navigate = useNavigate();

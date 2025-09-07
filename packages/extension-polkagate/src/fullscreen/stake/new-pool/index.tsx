@@ -8,7 +8,7 @@ import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
@@ -26,7 +26,7 @@ export default function PoolFullScreen(): React.ReactElement {
   useRouteRefresh(() => setRefresh(true));
 
   const { address, genesisHash: urlGenesisHash } = useParams<{ address: string, genesisHash: string }>();
-  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
   const { token } = useChainInfo(genesisHash, true);
   const stakingInfo = usePoolStakingInfo(address, genesisHash, refresh, setRefresh);
   const accountAssets = useAccountAssets(address);

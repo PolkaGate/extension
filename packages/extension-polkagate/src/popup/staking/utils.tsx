@@ -3,14 +3,14 @@
 
 import type { FetchedBalance, PositionInfo } from '../../util/types';
 
-import { mapRelayToSystemGenesis, resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated, resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { STAKING_CHAINS, TEST_NETS } from '../../util/constants';
 import getChain from '../../util/getChain';
 import { sanitizeChainName } from '../../util/utils';
 
 export function getStakingAsset(accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
-  const mappedGenesisHash = mapRelayToSystemGenesis(genesisHash);
+  const mappedGenesisHash = mapRelayToSystemGenesisIfMigrated(genesisHash);
   const _assetId = resolveStakingAssetId(mappedGenesisHash);
   const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === mappedGenesisHash && String(assetId) === _assetId);
 

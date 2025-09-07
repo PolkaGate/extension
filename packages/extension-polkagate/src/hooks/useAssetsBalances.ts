@@ -9,9 +9,9 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 import { useLocation } from 'react-router-dom';
 
 import { toCamelCase } from '../util';
-import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
+import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 import useSavedAssetsCache from './useSavedAssetsCache';
@@ -35,7 +35,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances(accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 

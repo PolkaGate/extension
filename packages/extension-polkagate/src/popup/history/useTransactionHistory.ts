@@ -7,7 +7,7 @@ import type { FilterOptions, RecordTabStatus, RecordTabStatusGov, TransactionHis
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
-import { mapRelayToSystemGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo } from '../../hooks';
 import { getTxTransfers } from '../../util/api/getTransfers';
@@ -17,8 +17,8 @@ import { getHistoryFromStorage } from './hookUtils/getHistoryFromStorage';
 import { saveHistoryToStorage } from './hookUtils/saveHistoryToStorage';
 import { extrinsicsReducer, formatString, log, receivedReducer } from './hookUtils/utils';
 
-export default function useTransactionHistory (address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
-  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
+export default function useTransactionHistory(address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -291,7 +291,7 @@ export default function useTransactionHistory (address: AccountId | string | und
       const historyGenesisToSave = latestTransactions[0].chain?.genesisHash; // @AMIRKHANEF , a guard to do not save history for a wrong chain! TODO: needs an approach to avoid redundant writing
 
       // Save to local storage with chain information
-     historyGenesisToSave && saveHistoryToStorage(String(address), historyGenesisToSave, latestTransactions)
+      historyGenesisToSave && saveHistoryToStorage(String(address), historyGenesisToSave, latestTransactions)
         .then(() => {
           log('Successfully saved latest transactions to local storage');
         })

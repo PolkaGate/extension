@@ -20,7 +20,7 @@ import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
 import { getStakingAsset } from '../popup/staking/utils';
-import { mapRelayToSystemGenesis } from '../util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, calcPrice, isHexToBn, safeSubtraction } from '../util/utils';
 import useAccountAssets from './useAccountAssets';
@@ -668,7 +668,7 @@ export const useFastUnstaking = (
   urlGenesisHash: string | undefined
 ) => {
   const { t } = useTranslation();
-  const genesisHash = mapRelayToSystemGenesis(urlGenesisHash);
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
 
   const { api, decimal, token } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
@@ -1293,7 +1293,7 @@ export const useEasyStake = (
   const MAX_LETTER_THRESHOLD = 35;
 
   const { t } = useTranslation();
-  const genesisHash = mapRelayToSystemGenesis(_genesisHash);
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
 
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);

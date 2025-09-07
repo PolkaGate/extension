@@ -6,7 +6,7 @@ import { KUSAMA_GENESIS, PASEO_GENESIS, POLKADOT_GENESIS, WESTEND_GENESIS } from
 import { KUSAMA_PEOPLE_GENESIS_HASH, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, STAKING_CHAINS, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
 
 export const relayToSystemChains = {
-   [KUSAMA_GENESIS]: {
+  [KUSAMA_GENESIS]: {
     hub: STATEMINE_GENESIS_HASH,
     people: KUSAMA_PEOPLE_GENESIS_HASH
   },
@@ -54,7 +54,7 @@ type RelayToSystemChainsType = Record<string, {
  * @param type - The type of system chain to map to ('hub', 'people', or 'assetHub'). Defaults to 'hub'.
  * @returns The adjusted genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapRelayToSystemGenesis (genesisHash: string | null | undefined, type: SystemChainsName = 'hub'): string | undefined {
+export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | undefined, type: SystemChainsName = 'hub'): string | undefined {
   if (!genesisHash) {
     return;
   }
@@ -149,7 +149,7 @@ export function isSystemChain (systemChainGenesis: string | undefined, relayGene
 
   const systemChains = relayToSystemChains[relayGenesis];
 
-    if (!systemChains) {
+  if (!systemChains) {
     return;
   }
 
