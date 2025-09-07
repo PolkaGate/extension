@@ -251,9 +251,10 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
     }
 
     const usingVersion = window.localStorage.getItem('using_version') ?? '';
+    const extensionCurrentVersion = manifest?.version ?? usingVersion;
 
     const filteredChangelog = newVersion
-      ? changelog.filter(({ version }) => semver.gte(version, usingVersion))
+      ? changelog.filter(({ version }) => semver.gte(version, usingVersion) && semver.lte(version, extensionCurrentVersion))
       : [...changelog];
 
     const mergedChangelog = filteredChangelog.map((entry) => {
@@ -293,7 +294,7 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
     });
 
     return mergedChangelog;
-  }, [changelog, localNews, newVersion]);
+  }, [changelog, localNews, manifest?.version, newVersion]);
 
   useEffect(() => {
     const fetchChangelog = async () => {
