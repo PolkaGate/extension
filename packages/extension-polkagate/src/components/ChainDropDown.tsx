@@ -11,7 +11,6 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 import { useSelectedAccount } from '../hooks';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../util/constants';
 import { DropSelect, GenesisHashOptionsContext } from '.';
-import { mapSystemToRelay } from '../util/migrateHubUtils';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
 
@@ -27,13 +26,8 @@ function ChainDropDown ({ style = {}, withSelectAChainText = true }: Props): Rea
 
   const [selectedChain, setSelectedChain] = useState<number | string>(DEFAULT_SELECTED_OPTION.value);
 
-  /**
-   * Adjusts the selected chain's genesis hash to the relay equivalent and updates state.
-   */
   const handleSetChain = useCallback((value: string) => {
-    const adjustedGenesis = mapSystemToRelay(value);
-
-    adjustedGenesis && setSelectedChain(adjustedGenesis);
+    setSelectedChain(value);
   }, []);
 
   useEffect(() => {
