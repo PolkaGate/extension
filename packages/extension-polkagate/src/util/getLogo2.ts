@@ -20,6 +20,7 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
+// info can be a chain, chain name, genesis hash or even an external dapp or web site name, but if info is a genesishash we must have the token as well
 export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
   let chainNameFromGenesisHash;
 

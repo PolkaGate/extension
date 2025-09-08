@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransitionProps } from '@mui/material/transitions';
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 import { Container, Dialog, Grid, Slide, styled, Typography } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
-import { QRCodeCanvas } from 'qrcode.react';
 import React, { useCallback, useMemo, useState } from 'react';
+import { QRCode } from 'react-qrcode-logo';
 
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
+import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, NeonButton, SearchField } from '../../components';
@@ -17,7 +19,6 @@ import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util/utils';
-import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
@@ -42,7 +43,7 @@ interface AddressComponentProp {
   chain: NetworkInfo;
 }
 
-function AddressComponent({ address, chain }: AddressComponentProp) {
+function AddressComponent ({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -169,6 +170,12 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
     return formatted;
   }, [address, selectedChain.ss58Format]);
 
+  const chainLogo = useMemo(() => {
+    const chainName = sanitizeChainName(selectedChain?.name)?.toLowerCase();
+
+    return getLogo2(chainName);
+  }, [selectedChain?.name]);
+
   const onBack = useCallback(() => setSelectedChain(undefined), [setSelectedChain]);
 
   return (
@@ -187,12 +194,17 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
         <AddressComponent address={formattedAddress ?? address} chain={selectedChain} />
       </Grid>
       <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
-        <QRCodeCanvas
+        <QRCode
           bgColor='#fff'
+          ecLevel='H'
+          eyeColor={chainLogo?.color}
           fgColor='#000'
-          includeMargin
-          level='H'
-          size={280}
+          logoImage={chainLogo?.logo}
+          logoPadding={1}
+          logoPaddingStyle='circle'
+          qrStyle='dots'
+          removeQrCodeBehindLogo={true}
+          size={270}
           style={{
             borderRadius: '13px'
           }}

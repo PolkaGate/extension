@@ -1,19 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
+
 import { Grid, Grow, Stack, styled, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
-import { QRCodeCanvas } from 'qrcode.react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
+import { QRCode } from 'react-qrcode-logo';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
+import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
-import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 interface Props {
   address: string | undefined;
@@ -106,7 +108,6 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
 }
 
 function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
-
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
       <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
@@ -122,7 +123,7 @@ function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp)
   );
 }
 
-function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
+function Receive ({ address, closePopup, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -130,6 +131,7 @@ function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
 
   const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.name)?.toLowerCase() : '', [selectedChain]);
+  const chainLogo = useMemo(() => getLogo2(chainName), [chainName]);
 
   const formattedAddress = useMemo(() => {
     if (!selectedChain) {
@@ -186,11 +188,16 @@ function Receive ({ address, onClose, closePopup }: Props): React.ReactElement {
                   style={{ marginTop: '10px' }}
                 />
                 <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
-                  <QRCodeCanvas
+                  <QRCode
                     bgColor='#fff'
+                    ecLevel='H'
+                    eyeColor={chainLogo?.color}
                     fgColor='#000'
-                    includeMargin
-                    level='H'
+                    logoImage={chainLogo?.logo}
+                    logoPadding={5}
+                    logoPaddingStyle='circle'
+                    qrStyle='dots'
+                    removeQrCodeBehindLogo={true}
                     size={200}
                     style={{
                       borderRadius: '13px'
