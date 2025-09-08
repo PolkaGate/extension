@@ -845,5 +845,6 @@
   "Already have an account": "¿Ya tienes una cuenta?",
   "Demo account import": "Importar cuenta de demostración",
   "Demo Account Import": "Importar Cuenta de Demostración",
-  "Loading pool members": "Cargando miembros del pool"
+  "Loading pool members": "Cargando miembros del pool",
+  "Loading": "Cargando" 
 }
