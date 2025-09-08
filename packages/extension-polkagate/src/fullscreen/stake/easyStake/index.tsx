@@ -27,7 +27,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
+function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
   const genesisHash = mapRelayToSystemGenesisIfMigrated(selectedPosition?.genesisHash);
   const { token } = useChainInfo(genesisHash);

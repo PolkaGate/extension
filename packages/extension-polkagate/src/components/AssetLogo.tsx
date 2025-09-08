@@ -30,25 +30,27 @@ function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash,
   return (
     <>
       {subLogo && logo
-        ? <AssetDualLogo
-          asset={logo}
-          assetSize={assetSize}
-          baseLogo={subLogo}
-          baseLogoPosition={subLogoPosition}
-          baseLogoSize={baseTokenSize}
-          logoRoundness={logoRoundness}
-          style={style}
-          token={token}
-        />
-        : <ChainLogo
-          chainName={_chainName}
-          genesisHash={genesisHash}
-          logo={logo || subLogo}
-          logoRoundness={logoRoundness}
-          size={Number(assetSize.replace('px', ''))}
-          style={style}
-          token={token}
-        />
+        ? (
+          <AssetDualLogo
+            asset={logo}
+            assetSize={assetSize}
+            baseLogo={subLogo}
+            baseLogoPosition={subLogoPosition}
+            baseLogoSize={baseTokenSize}
+            logoRoundness={logoRoundness}
+            style={style}
+            token={token}
+          />)
+        : (
+          <ChainLogo
+            chainName={_chainName}
+            genesisHash={genesisHash}
+            logo={logo || subLogo}
+            logoRoundness={logoRoundness}
+            size={Number(assetSize.replace('px', ''))}
+            style={style}
+            token={token}
+          />)
       }
     </>
   );

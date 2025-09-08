@@ -35,7 +35,7 @@ const Back = () => {
   );
 };
 
-export default function Solo(): React.ReactElement {
+export default function Solo (): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();

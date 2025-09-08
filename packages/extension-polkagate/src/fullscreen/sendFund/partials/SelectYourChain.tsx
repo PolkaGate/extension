@@ -51,7 +51,7 @@ export default function SelectYourChain ({ chainName, destinationOptions, setSel
             </Typography>
           </Stack>
         </Stack>
-        <Box sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', transition: 'all 250ms ease-out', display: 'flex', height: '40px', justifyContent: 'center', width: '40px' }}>
+        <Box sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', display: 'flex', height: '40px', justifyContent: 'center', transition: 'all 250ms ease-out', width: '40px' }}>
           <ExpandMore sx={{ color: '#AA83DC', fontSize: '20px' }} />
         </Box>
       </Stack>

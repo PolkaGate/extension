@@ -160,7 +160,7 @@ const DEFAULT_VALUE = {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function useSoloStakingInfo(address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
+export default function useSoloStakingInfo (address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { api, chainName, token } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash);
