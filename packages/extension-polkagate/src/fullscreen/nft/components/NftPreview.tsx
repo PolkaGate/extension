@@ -8,12 +8,16 @@ import type { ItemInformation } from '../utils/types';
 import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+
 import { Progress } from '../../../components';
 import { PREVIEW_SIZE } from '../utils/constants';
 import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 
-function NftPreview ({ gifSource, info }: { gifSource: string | null | undefined; info: ItemInformation}) {
+function NftPreview ({ gifSource, info }: { gifSource: string | null | undefined; info: ItemInformation }) {
+    const { t } = useTranslation();
+
   const [loaded, setLoaded] = useState<boolean>(false);
 
   const { animation_url, animationContentType, image, imageContentType } = info;
@@ -30,9 +34,12 @@ function NftPreview ({ gifSource, info }: { gifSource: string | null | undefined
     return (
       <>
         {!loaded &&
-            <Grid container item sx={{ left: '15%', position: 'absolute', top: '25%', width: 'fit-content', zIndex: 100 }}>
-              <Progress type='grid' />
-            </Grid>
+          <Grid container item sx={{ left: '15%', position: 'absolute', top: '25%', width: 'fit-content', zIndex: 100 }}>
+            <Progress
+              title={t('Loading')}
+              withEllipsis
+            />
+          </Grid>
         }
         <iframe
           onLoad={onLoaded}

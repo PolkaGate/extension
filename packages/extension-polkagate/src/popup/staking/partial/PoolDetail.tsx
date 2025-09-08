@@ -46,7 +46,7 @@ export const StakingInfoStackWithIcon = ({ Icon, amount, decimal, text, title, t
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: isExtension ? '6px' : '24px', m: 0, width: 'fit-content' }}>
       {Icon}
-      <StakingInfoStack adjustedColorForTitle = {titleColor} amount={amount} decimal={decimal} text={text} title={title} token={token} />
+      <StakingInfoStack adjustedColorForTitle={titleColor} amount={amount} decimal={decimal} text={text} title={title} token={token} />
     </Container>
   );
 };
@@ -172,18 +172,26 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
   return (
     <>
       <Stack direction='column' ref={containerRef} sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
-        <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Stack direction='row' sx={{ justifyContent: 'space-between', width: '100%' }}>
           <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
             {t('Identity')}
           </Typography>
-          <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
+          <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='fit-content'>
             {t('Staked')}
           </Typography>
-          <Typography color={color} letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='25%'>
+          <Typography color={color} letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='fit-content'>
             {t('Percent')}
           </Typography>
-        </Container>
+        </Stack>
         <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
+          {members.length === 0 &&
+            <Progress
+              size={10}
+              style={{ gap: '20px', marginTop: '10px' }}
+              title={t('Loading pool members')}
+              variant='B-2'
+            />
+          }
           {members.map((member, index) => {
             const percentage = (Number(member.member.points.toString()) / Number(totalStaked)) * 100;
             // const percentage = ((isHexToBn(member.member.points.toString()).div(isHexToBn(totalStaked.toString()))).muln(100)).toString();
@@ -196,7 +204,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
                     genesisHash={genesisHash ?? ''}
                     identiconSize={18}
                     showShortAddress
-                    style={{ variant: 'B-4', width: '40%' }}
+                    style={{ variant: 'B-4', width: '43%' }}
                   />
                   <FormatBalance2
                     decimals={[decimal ?? 0]}
@@ -205,7 +213,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
                     tokens={[token ?? '']}
                     value={isHexToBn(member.member.points.toString())}
                   />
-                  <Typography color='text.primary' textAlign='right' variant='B-4' width='25%'>
+                  <Typography color='text.primary' textAlign='right' variant='B-4' width='22%'>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
                   </Typography>
                 </Container>
@@ -350,6 +358,8 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const membersRef = useRef<{ accountId: string; member: { points: number; poolId: number } }[]>([]);
+
   const { collapse,
     commission,
     handleCollapses,
@@ -357,6 +367,16 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
     poolStatus,
     roles,
     totalPoolRewardAsFiat } = usePoolDetail(poolDetail, genesisHash);
+
+  const members = useMemo(() => {
+    if (!collapse['Members'] || !poolDetail) {
+      return membersRef.current;
+    }
+
+    membersRef.current = poolDetail.poolMembers ?? [];
+
+    return poolDetail.poolMembers ?? [];
+  }, [collapse, poolDetail]);
 
   return (
     <Dialog
@@ -471,7 +491,7 @@ export default function PoolDetail ({ comprehensive, genesisHash, handleClose, o
                 >
                   <PoolMembers
                     genesisHash={genesisHash}
-                    members={collapse['Members'] ? poolDetail.poolMembers ?? [] : []}
+                    members={members}
                     totalStaked={poolDetail.bondedPool?.points.toString() ?? '0'}
                   />
                 </CollapseSection>

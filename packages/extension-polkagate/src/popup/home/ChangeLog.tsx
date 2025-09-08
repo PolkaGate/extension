@@ -241,20 +241,29 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
 
   const [localNews, setLocalNews] = useState<News[]>([]);
   const [changelog, setChangelog] = useState<ChangeLogEntry[] | null | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const openPopup = useMemo(() => newVersion ? Boolean(openMenu && changelog) : openMenu, [changelog, newVersion, openMenu]);
+
+  const getVersion = useCallback((version: string | undefined) => semver.valid(version) || semver.coerce(version)?.version, []);
 
   const newVersionsToShow: ChangeLogEntry[] | undefined = useMemo(() => {
     if (!changelog || !localNews) {
       return undefined;
     }
 
-    const usingVersion = window.localStorage.getItem('using_version') ?? '';
+    const usingVersionRaw = window.localStorage.getItem('using_version') || '';
+    const usingVersion = getVersion(usingVersionRaw) || '0.0.0';
+    const extensionCurrentVersionRaw = manifest?.version || usingVersionRaw;
+    const extensionCurrentVersion = getVersion(extensionCurrentVersionRaw) || null;
 
-    const filteredChangelog = newVersion
-      ? changelog.filter(({ version }) => semver.gte(version, usingVersion))
-      : [...changelog];
+    const filteredChangelog = changelog.filter(({ version }) => {
+      const v = getVersion(version);
+
+      return v
+        ? (!newVersion || semver.gt(v, usingVersion)) && (!extensionCurrentVersion || semver.lte(v, extensionCurrentVersion))
+        : false;
+    });
 
     const mergedChangelog = filteredChangelog.map((entry) => {
       const localEntry = localNews.find((local) => local.version === entry.version);
@@ -293,7 +302,7 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
     });
 
     return mergedChangelog;
-  }, [changelog, localNews, newVersion]);
+  }, [changelog, getVersion, localNews, manifest?.version, newVersion]);
 
   useEffect(() => {
     const fetchChangelog = async () => {
@@ -335,9 +344,9 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
   }, [setShowAlert]);
 
   const onClose = useCallback(() => {
-    newVersion && window.localStorage.setItem('using_version', manifest?.version || '0.1.0');
+    newVersion && window.localStorage.setItem('using_version', getVersion(manifest?.version) || '0.1.0');
     setShowAlert(false);
-  }, [setShowAlert, manifest?.version, newVersion]);
+  }, [getVersion, setShowAlert, manifest?.version, newVersion]);
 
   return (
     <SharePopup
@@ -353,14 +362,13 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
         withoutTopBorder: true
       }}
     >
-
       <Stack direction='column' sx={{ p: '10px 10px 0', position: 'relative', width: '100%', zIndex: 1 }}>
         {!isLoading && newVersion &&
-            <Box
-              component='img'
-              src={celebration as string}
-              sx={{ height: '235px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%' }}
-            />
+          <Box
+            component='img'
+            src={celebration as string}
+            sx={{ height: '235px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%' }}
+          />
         }
         <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
           <Box
@@ -376,35 +384,35 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
         <GradientDivider />
         <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
           {!isLoading &&
-              <>
-                <Grid container item sx={{ pb: '5px', position: 'relative', zIndex: 1 }}>
-                  <Stack sx={{ height: '380px', overflowY: 'auto', pt: '20px', rowGap: '20px', width: '100%' }}>
-                    {newVersionsToShow?.map((change, index) => (
-                      <NewVersionItem
-                        item={change}
-                        key={index}
-                      />
-                    ))}
-                  </Stack>
-                  <GradientButton
-                    contentPlacement='center'
-                    onClick={onClose}
-                    style={{
-                      height: '44px',
-                      marginTop: '10px',
-                      width: '345px'
-                    }}
-                    text={t('Wow, it’s great!')}
-                  />
-                </Grid>
-              </>
+            <>
+              <Grid container item sx={{ pb: '5px', position: 'relative', zIndex: 1 }}>
+                <Stack sx={{ height: '380px', overflow: 'hidden', overflowY: 'auto', pt: '20px', rowGap: '20px', width: '100%' }}>
+                  {newVersionsToShow?.map((change, index) => (
+                    <NewVersionItem
+                      item={change}
+                      key={index}
+                    />
+                  ))}
+                </Stack>
+                <GradientButton
+                  contentPlacement='center'
+                  onClick={onClose}
+                  style={{
+                    height: '44px',
+                    marginTop: '10px',
+                    width: '345px'
+                  }}
+                  text={t('Wow, it’s great!')}
+                />
+              </Grid>
+            </>
           }
         </Box>
         {isLoading &&
-            <Progress
-              title={t('Loading, please wait')}
-              withEllipsis
-            />
+          <Progress
+            title={t('Loading, please wait')}
+            withEllipsis
+          />
         }
       </Stack>
     </SharePopup>
