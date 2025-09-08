@@ -306,14 +306,13 @@ export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
 export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
 export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
 export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
-export const ASSETS_NAME_IN_STORAGE = 'assets';
 
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
-  ASSETS: 'assets',
+  ASSETS: 'migrated-assets',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',

@@ -9,7 +9,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionButton, ChainLogo, Motion, SearchField } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
@@ -59,7 +59,7 @@ export default function Chains (): React.ReactElement {
   }, [allChains]);
 
   const updateSavedAssetsInStorage = useCallback(() => {
-    getStorage(ASSETS_NAME_IN_STORAGE, true).then((info) => {
+    getStorage(STORAGE_KEY.ASSETS, true).then((info) => {
       const assets = info as SavedAssets;
 
       assets && Object.keys(assets.balances).forEach((addresses) => {
@@ -69,7 +69,7 @@ export default function Chains (): React.ReactElement {
           }
         });
       });
-      setStorage(ASSETS_NAME_IN_STORAGE, assets, true).catch(console.error);
+      setStorage(STORAGE_KEY.ASSETS, assets, true).catch(console.error);
     }).catch(console.error);
   }, [selectedChains]);
 

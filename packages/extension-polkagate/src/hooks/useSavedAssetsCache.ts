@@ -7,7 +7,7 @@ import type { AlertType } from '../util/types';
 import { Chance } from 'chance';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo } from 'react';
 
-import { ASSETS_NAME_IN_STORAGE, TIME_TO_REMOVE_ALERT } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY, TIME_TO_REMOVE_ALERT } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getStorage, setStorage } from '../components/Loading';
 import { removeZeroBalanceRecords } from '../util/utils';
@@ -69,13 +69,13 @@ export default function useSavedAssetsCache ({ addresses,
     // console.log('roundDone : setFetchedAssets in handleAccountsSaving:', updatedAssetsToBeSaved);
 
     setFetchedAssets(updatedAssetsToBeSaved);
-    setStorage(ASSETS_NAME_IN_STORAGE, updatedAssetsToBeSaved, true).catch(console.error);
+    setStorage(STORAGE_KEY.ASSETS, updatedAssetsToBeSaved, true).catch(console.error);
     setIsUpdate(true);
   }, [addresses, fetchedAssets, setFetchedAssets, setIsUpdate]);
 
   // Check if cache is up to date on mount
   useEffect(() => {
-    getStorage(ASSETS_NAME_IN_STORAGE, true).then((savedAssets) => {
+    getStorage(STORAGE_KEY.ASSETS, true).then((savedAssets) => {
       const _timeStamp = (savedAssets as SavedAssets)?.timeStamp;
 
       setIsUpdate(Boolean(isUpToDate(_timeStamp)));
@@ -119,7 +119,7 @@ export default function useSavedAssetsCache ({ addresses,
       return;
     }
 
-    getStorage(ASSETS_NAME_IN_STORAGE, true)
+    getStorage(STORAGE_KEY.ASSETS, true)
       .then((savedAssets: unknown) => {
         if (typeof savedAssets === 'object' && savedAssets && 'balances' in savedAssets) {
           const _savedAssets = savedAssets as SavedAssets;
