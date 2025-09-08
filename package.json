@@ -89,6 +89,7 @@
     "react-countup": "^6.5.3",
     "react-json-to-table": "^0.1.7",
     "react-markdown": "^8.0.7",
+    "react-qrcode-logo": "^4.0.0",
     "react-spinners": "^0.17.0",
     "react-tooltip": "^4.2.21",
     "react-window": "^1.8.10",
