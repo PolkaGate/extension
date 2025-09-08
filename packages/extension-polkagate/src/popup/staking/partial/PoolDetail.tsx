@@ -172,23 +172,24 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
   return (
     <>
       <Stack direction='column' ref={containerRef} sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
-        <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Stack direction='row' sx={{ justifyContent: 'space-between', width: '100%' }}>
           <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
             {t('Identity')}
           </Typography>
-          <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
+          <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='fit-content'>
             {t('Staked')}
           </Typography>
-          <Typography color={color} letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='25%'>
+          <Typography color={color} letterSpacing='1px' textAlign='right' textTransform='uppercase' variant='S-1' width='fit-content'>
             {t('Percent')}
           </Typography>
-        </Container>
+        </Stack>
         <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
           {members.length === 0 &&
             <Progress
               size={10}
               style={{ gap: '20px', marginTop: '10px' }}
               title={t('Loading pool members')}
+              variant='B-2'
             />
           }
           {members.map((member, index) => {
