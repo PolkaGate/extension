@@ -182,10 +182,10 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
     <Grid container item justifyContent='center'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '8px 6px' }}>
         <ArrowCircleLeft color='#FF4FB9' onClick={onBack} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
-        <Grid alignItems='center' columnGap='10px' container item width='fit-content'>
+        <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
           <ChainLogo chainName={selectedChain.name} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
-            {chainNameSanitizer(selectedChain.name)}
+            {t('Your Address')}
           </Typography>
         </Grid>
         <ArrowCircleLeft color='#FF4FB9' size='24' style={{ visibility: 'hidden' }} variant={'Bulk'} />
