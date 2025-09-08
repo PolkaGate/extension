@@ -837,5 +837,6 @@
   "Version {{version}}": "版本 {{version}}",
   "Already have an account": "已经有账号？",
   "Demo account import": "导入演示账户",
-  "Demo Account Import": "导入演示账户"
+  "Demo Account Import": "导入演示账户",
+  "Loading pool members": "正在加载池成员"
 }

@@ -843,5 +843,6 @@
   "Version {{version}}": "संस्करण {{version}}",
    "Already have an account": "क्या आपके पास पहले से खाता है?",
   "Demo account import": "डेमो खाता आयात",
-  "Demo Account Import": "डेमो खाता आयात"
+  "Demo Account Import": "डेमो खाता आयात",
+  "Loading pool members":"पूल सदस्यों को लोड किया जा रहा है"
 }

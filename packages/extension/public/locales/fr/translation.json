@@ -844,5 +844,6 @@
   "Version {{version}}": "Version {{version}}",
   "Already have an account": "Vous avez déjà un compte",
   "Demo account import": "Importation de compte démo",
-  "Demo Account Import": "Importation de compte Démo"
+  "Demo Account Import": "Importation de compte Démo",
+  "Loading pool members": "Chargement des membres du pool"
 }
