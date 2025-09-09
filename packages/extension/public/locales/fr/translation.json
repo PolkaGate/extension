@@ -846,5 +846,9 @@
   "Demo account import": "Importation de compte démo",
   "Demo Account Import": "Importation de compte Démo",
   "Loading pool members": "Chargement des membres du pool",
-  "Loading": "Chargement" 
+  "Loading": "Chargement",
+  "Your Address": "Votre adresse",
+  "keep me signed in for 15 minutes": "Rester connecté pendant 15 minutes",
+  "15 minutes": "15 minutes",
+  "No-password session active — {{remainingTimeInMinute}} left.": "Session sans mot de passe active — il reste {{remainingTimeInMinute}} minutes."
 }

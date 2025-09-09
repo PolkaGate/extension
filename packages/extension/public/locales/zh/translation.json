@@ -839,5 +839,9 @@
   "Demo account import": "导入演示账户",
   "Demo Account Import": "导入演示账户",
   "Loading pool members": "正在加载池成员",
-  "Loading": "加载中"
+  "Loading": "加载中",
+  "Your Address": "您的地址",
+  "keep me signed in for 15 minutes": "保持登录状态15分钟",
+  "15 minutes": "15分钟",
+  "No-password session active — {{remainingTimeInMinute}} left.": "无密码会话已激活 — 还剩 {{remainingTimeInMinute}} 分钟。"
 }

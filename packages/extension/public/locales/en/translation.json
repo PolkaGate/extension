@@ -810,5 +810,9 @@
   "Demo account import": "",
   "Demo Account Import": "",
   "Loading pool members": "",
-  "Loading": ""
+  "Loading": "",
+  "Your Address": "",
+  "keep me signed in for 15 minutes": "",
+  "15 minutes": "",
+  "No-password session active — {{remainingTimeInMinute}} left.": ""
 }
