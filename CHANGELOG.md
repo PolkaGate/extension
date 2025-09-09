@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.6.0](https://github.com/polkagate/extension/compare/v1.5.8...v1.6.0) (2025-09-09)
+
+
+### Features
+
+* introduce 15-minute no-password session ([#1846](https://github.com/polkagate/extension/issues/1846)) ([d3c5392](https://github.com/polkagate/extension/commit/d3c53925b71f9f5134a32d3aadcc93f64ea770ec))
+
 ## [1.5.8](https://github.com/polkagate/extension/compare/v1.5.7...v1.5.8) (2025-09-07)
 
 
