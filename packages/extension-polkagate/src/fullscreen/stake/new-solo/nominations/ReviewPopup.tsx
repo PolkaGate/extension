@@ -31,7 +31,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   const params = newSelectedValidators.map((v) => v.accountId.toString());
 
-  const estimatedFee2 = useEstimatedFee(genesisHash, formatted, nominate, [params]);
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, nominate, [params]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -39,11 +39,11 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
       title: t('Validators')
     },
     {
-      content: estimatedFee2,
+      content: estimatedFee,
       itemKey: 'fee',
       title: t('Fee')
     }];
-  }, [estimatedFee2, newSelectedValidators.length, stakingConsts?.maxNominations, t]);
+  }, [estimatedFee, newSelectedValidators.length, stakingConsts?.maxNominations, t]);
   const tx = useMemo(() => nominate?.(params), [params, nominate]);
   const extraDetailConfirmationPage = useMemo(() => {
     const nominators = newSelectedValidators.map(({ accountId }) => accountId.toString());

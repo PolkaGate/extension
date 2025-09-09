@@ -26,9 +26,10 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
+function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
-  const { token } = useChainInfo(selectedPosition?.genesisHash);
+  const genesisHash = selectedPosition?.genesisHash;
+  const { token } = useChainInfo(genesisHash);
 
   const { amount,
     amountAsBN,
@@ -45,7 +46,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
     side,
     stakingConsts,
     transactionInformation,
-    tx } = useEasyStake(address, selectedPosition?.genesisHash);
+    tx } = useEasyStake(address, genesisHash);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
   const [BNamount, setBNamount] = useState<BN | null | undefined>(BN_ZERO);
@@ -118,7 +119,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
       address={address}
       extraDetailConfirmationPage={{ amount: amountAsBN?.toString() }}
       flowStep={flowStep}
-      genesisHash={selectedPosition?.genesisHash}
+      genesisHash={genesisHash}
       maxHeight={700}
       minHeight={270}
       noDivider={side === EasyStakeSide.INPUT && flowStep === FULLSCREEN_STAKING_TX_FLOW.NONE}
@@ -131,7 +132,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
       reviewHeader={
         <EasyStakeReviewHeader
           amount={amountAsBN?.toString()}
-          genesisHash={selectedPosition?.genesisHash}
+          genesisHash={genesisHash}
           token={token}
         />
       }
@@ -151,7 +152,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
             amount={amount}
             availableBalanceToStake={availableBalanceToStake}
             errorMessage={errorMessage}
-            genesisHash={selectedPosition?.genesisHash}
+            genesisHash={genesisHash}
             loading={!initialPool}
             onChangeAmount={onChangeAmount}
             onMaxMinAmount={onMaxMinAmount}
@@ -172,14 +173,14 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
         }
         {side === EasyStakeSide.SELECT_POOL &&
           <SelectPool
-            genesisHash={selectedPosition?.genesisHash}
+            genesisHash={genesisHash}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
           />
         }
         {side === EasyStakeSide.SELECT_VALIDATORS &&
           <SelectValidator
-            genesisHash={selectedPosition?.genesisHash}
+            genesisHash={genesisHash}
             selectedStakingType={selectedStakingType}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
