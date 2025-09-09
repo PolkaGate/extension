@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 import { hexToString } from '@polkadot/util';
 
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
@@ -70,11 +70,12 @@ export default async function getValidatorsInformation (genesisHash, port) {
   }
 
   const endpoints = getChainEndpoints(chainName);
-  const { api, connections } = await fastestEndpoint(endpoints);
-
-  console.log('getting validators information on ' + chainName);
 
   try {
+    const { api, connections } = await fastestEndpoint(endpoints);
+
+    console.log('getting validators information on ' + chainName);
+
     const [electedInfo, waitingInfo, currentEra] = await Promise.all([
       api.derive.staking.electedInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
       api.derive.staking.waitingInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
