@@ -62,7 +62,7 @@ export default function usePoolBalances(address: string | undefined, genesisHash
         : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
 
       const unlockingValue = [...member.unbondingEras.values()]
-        .reduce((total: BN, value) => total.add(value), BN_ZERO);
+        .reduce((total: BN, value) => total.add(value.toBn()), BN_ZERO);
 
       genesisHash === chain?.genesisHash && setPooledBalance({ balance: active.add(myClaimable as BN).add(unlockingValue), genesisHash });
       setRefresh?.(false);
