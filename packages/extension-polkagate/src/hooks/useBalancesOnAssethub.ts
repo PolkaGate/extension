@@ -11,8 +11,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
-import { decodeMultiLocation } from '../util/utils';
+import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
+import { decodeMultiLocation, isOnAssetHub } from '../util/utils';
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';
 
@@ -70,7 +70,7 @@ export default function useBalancesOnAssethub (address: string | undefined, gene
       return;
     }
 
-    const isAssetHub = ASSET_HUBS.includes(chain.genesisHash ?? '');
+    const isAssetHub = isOnAssetHub(chain.genesisHash ?? '');
 
     isAssetHub && fetchAssetOnAssetHub().catch(console.error);
   }, [api?.query, assetId, chain, fetchAssetOnAssetHub, formatted]);

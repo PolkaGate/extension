@@ -1,29 +1,35 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
-import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
-import { getPriceIdByChainName } from '../../utils';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
+import { getPriceIdByChainName, isOnAssetHub } from '../../utils';
 // eslint-disable-next-line import/extensions
 import { balancify } from '.';
 
+/**
+ * @param {any[]} addresses
+ * @param {import("@polkadot/api").ApiPromise} api
+ * @param {string | undefined} chainName
+ */
 export async function toGetNativeToken (addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
 
-  const systemBalance = await Promise.all(addresses.map((address) => api.query.system.account(address)));
-  const existentialDeposit = api.consts.balances.existentialDeposit;
+  const systemBalance = await Promise.all(addresses.map((address) => api.query['system']['account'](address)));
+  const existentialDeposit = api.consts['balances']['existentialDeposit'];
 
   addresses.forEach((address, index) => {
+    // @ts-ignore
     balances[index].ED = existentialDeposit;
+    // @ts-ignore
     balances[index].frozenBalance = systemBalance[index].data.frozen;
 
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
 
-    const isAssetHub = ASSET_HUBS.includes(api.genesisHash.toString());
+    const isAssetHub = isOnAssetHub(api.genesisHash.toString());
 
+    // @ts-ignore
     _result[address] = [{
       assetId: isAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
       balanceDetails: balancify(balances[index]),
