@@ -21,9 +21,11 @@ import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
  * @param {boolean} changeUrl - Whether to change the URL after updating the selected chain.
  * @param {() => void} [onClose] - Optional callback to execute after updating and changing the URL.
  */
-export default function useUpdateAccountSelectedChain (address: string | undefined, genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
+export default function useUpdateAccountSelectedChain (address: string | undefined, _genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
 
   const adjustStakingPath = useCallback(async () => {
     const pathParts = location.pathname.split('/');
