@@ -70,9 +70,9 @@ export default function useBalancesOnAssethub (address: string | undefined, gene
       return;
     }
 
-    const _isAssetHub = isOnAssetHub(chain.genesisHash ?? '');
+    const isAssetHub = isOnAssetHub(chain.genesisHash ?? '');
 
-    _isAssetHub && fetchAssetOnAssetHub().catch(console.error);
+    isAssetHub && fetchAssetOnAssetHub().catch(console.error);
   }, [api?.query, assetId, chain, fetchAssetOnAssetHub, formatted]);
 
   return assetBalance;

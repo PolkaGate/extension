@@ -5,8 +5,6 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 
 import { getParaId, getRelayChainSymbol, hasSupportForAsset, NODES_WITH_RELAY_CHAINS_DOT_KSM, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 
-import { ASSET_HUBS } from '@polkadot/extension-polkagate/src/util/constants';
-
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
