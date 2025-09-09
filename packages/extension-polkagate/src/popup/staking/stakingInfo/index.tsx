@@ -7,7 +7,7 @@ import type { PositionInfo } from '../../../util/types';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { Clock, Medal, WalletMoney } from 'iconsax-react';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { BN_ZERO } from '@polkadot/util';
 

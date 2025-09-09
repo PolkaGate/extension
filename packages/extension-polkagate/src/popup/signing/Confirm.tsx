@@ -8,10 +8,10 @@ import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { Box, Grid } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { cubes } from '../../assets/icons';
-import { ActionContext } from '../../components';
 import { approveSignSignature } from '../../messaging';
 import LedgerSign from './ledger/LedgerSign';
 import LedgerSignGeneric from './ledger/LedgerSignGeneric';
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onSignature, request }: Props): React.ReactElement {
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const { isExternal, isHardware } = request.account;
 
   const [error, setError] = useState<string | null>(null);
@@ -52,12 +52,12 @@ export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onS
     extrinsic.addSignature(address, signature, _raw.toHex());
 
     approveSignSignature(signId, signature, extrinsic.toHex())
-      .then(() => onAction('/'))
+      .then(() => navigate('/'))
       .catch((error: Error): void => {
         setError(error.message);
         console.error(error);
       });
-  }, [payload?.address, signId, onAction]);
+  }, [payload?.address, signId, navigate]);
 
   return (
     <Grid container display='block' height='440px' item zIndex={1}>
@@ -68,23 +68,25 @@ export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onS
       />
       {isHardware && account && (
         account?.isGeneric || account?.isMigration
-          ? <LedgerSignGeneric
-            account={request.account}
-            error={error}
-            onCancel={onCancel}
-            onSignature={onLedgerGenericSignature}
-            payload={payload}
-            setError={setError}
-          />
-          : <LedgerSign
-            account={request.account}
-            error={error}
-            genesisHash={payload.genesisHash}
-            onCancel={onCancel}
-            onSignature={onSignature}
-            payload={extrinsicPayload}
-            setError={setError}
-          />
+          ? (
+            <LedgerSignGeneric
+              account={request.account}
+              error={error}
+              onCancel={onCancel}
+              onSignature={onLedgerGenericSignature}
+              payload={payload}
+              setError={setError}
+            />)
+          : (
+            <LedgerSign
+              account={request.account}
+              error={error}
+              genesisHash={payload.genesisHash}
+              onCancel={onCancel}
+              onSignature={onSignature}
+              payload={extrinsicPayload}
+              setError={setError}
+            />)
       )}
       {account && !isExternal &&
         <SignWithPassword
@@ -97,6 +99,7 @@ export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onS
           onCancel={onCancel}
           setError={setError}
           signId={signId}
+          withSavePassword
         />
       }
     </Grid>

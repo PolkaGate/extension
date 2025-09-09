@@ -7,9 +7,9 @@ import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
 import { ScanBarcode } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { ActionContext } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { cancelSignRequest } from '../../../messaging';
 import { CMD_MORTAL, type ModeData, SIGN_POPUP_MODE } from '../types';
@@ -31,9 +31,9 @@ interface Props {
   url: string;
 }
 
-export default function Request ({ account, error, hexBytes, isFirst, onSignature, payload, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+function Request ({ account, error, hexBytes, isFirst, onSignature, payload, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
 
   const { isExternal, isHardware, isQR } = account;
   const signerPayload = request.payload as SignerPayloadJSON;
@@ -44,9 +44,9 @@ export default function Request ({ account, error, hexBytes, isFirst, onSignatur
     }
 
     cancelSignRequest(signId)
-      .then(() => onAction('/'))
+      .then(() => navigate('/'))
       .catch((error: Error) => console.error(error));
-  }, [onAction, signId]);
+  }, [navigate, signId]);
 
   useEffect(() => {
     isQR && setMode({
@@ -60,20 +60,22 @@ export default function Request ({ account, error, hexBytes, isFirst, onSignatur
     return (
       <>
         {isExternal && !isHardware
-          ? <Qr
-            address={signerPayload.address}
-            cmd={CMD_MORTAL}
-            genesisHash={signerPayload.genesisHash}
-            onSignature={onSignature}
-            payload={payload}
-          />
-          : <Extrinsic
-            onCancel={onCancel}
-            payload={payload}
-            setMode={setMode}
-            signerPayload={signerPayload}
-            url={url}
-          />
+          ? (
+            <Qr
+              address={signerPayload.address}
+              cmd={CMD_MORTAL}
+              genesisHash={signerPayload.genesisHash}
+              onSignature={onSignature}
+              payload={payload}
+            />)
+          : (
+            <Extrinsic
+              onCancel={onCancel}
+              payload={payload}
+              setMode={setMode}
+              signerPayload={signerPayload}
+              url={url}
+            />)
         }
       </>
     );
@@ -96,3 +98,5 @@ export default function Request ({ account, error, hexBytes, isFirst, onSignatur
 
   return null;
 }
+
+export default memo(Request);

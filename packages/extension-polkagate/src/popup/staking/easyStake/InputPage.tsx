@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
 import InputPageFS, { type InputPageProp } from '../../../fullscreen/stake/easyStake/InputPage';

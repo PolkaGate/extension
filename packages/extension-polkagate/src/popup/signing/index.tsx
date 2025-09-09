@@ -5,10 +5,11 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { HexString } from '@polkadot/util/types';
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { TypeRegistry } from '@polkadot/types';
 
-import { ActionContext, ExtensionPopup, Loading, SigningReqContext } from '../../components';
+import { ExtensionPopup, Loading, SigningReqContext } from '../../components';
 import useTranslation from '../../hooks/useTranslation';
 import { approveSignSignature, cancelSignRequest } from '../../messaging';
 import Confirm from './Confirm';
@@ -23,10 +24,10 @@ function isRawPayload (payload: SignerPayloadJSON | SignerPayloadRaw): payload i
   return !!(payload as SignerPayloadRaw).data;
 }
 
-export default function Signing(): React.ReactElement {
+export default function Signing (): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(SigningReqContext);
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
 
   const DEFAULT_MODE_DATA: ModeData = useMemo(() => ({
     data: null,
@@ -36,13 +37,11 @@ export default function Signing(): React.ReactElement {
 
   const [requestIndex, setRequestIndex] = useState(0);
   const [mode, setMode] = useState<ModeData>(DEFAULT_MODE_DATA);
-
   const [error, setError] = useState<string | null>(null);
   const [{ hexBytes, payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
 
-  const _onNextClick = useCallback(() => setRequestIndex((requestIndex) => requestIndex + 1), []);
-
-  const _onPreviousClick = useCallback(() => setRequestIndex((requestIndex) => requestIndex - 1), []);
+  const onNextClick = useCallback(() => setRequestIndex((requestIndex) => requestIndex + 1), []);
+  const onPreviousClick = useCallback(() => setRequestIndex((requestIndex) => requestIndex - 1), []);
 
   useEffect(() => {
     setRequestIndex(
@@ -82,15 +81,15 @@ export default function Signing(): React.ReactElement {
     }
   }, [request]);
 
-  const _onCancel = useCallback((): void => {
+  const onCancel = useCallback((): void => {
     if (!request?.id) {
       return;
     }
 
     cancelSignRequest(request.id)
-      .then(() => onAction('/'))
+      .then(() => navigate('/'))
       .catch(console.error);
-  }, [onAction, request?.id]);
+  }, [navigate, request?.id]);
 
   const onBack = useCallback((): void => {
     setMode(DEFAULT_MODE_DATA);
@@ -98,25 +97,26 @@ export default function Signing(): React.ReactElement {
 
   const onSignature = useCallback(({ signature }: { signature: HexString }): void => {
     request?.id && approveSignSignature(request.id, signature)
-      .then(() => onAction('/'))
+      .then(() => navigate('/'))
       .catch((e: Error): void => {
         setError(e.message);
         console.error(e);
       });
-  }, [onAction, setError, request?.id]);
+  }, [navigate, setError, request?.id]);
 
   return request
     ? <ExtensionPopup
       TitleIcon={mode.Icon}
-      handleClose={_onCancel}
+      handleClose={onCancel}
       iconSize={24}
-      maxHeight='450px'
+      maxHeight='calc(100% - 75px)'
       onBack={[SIGN_POPUP_MODE.DETAIL, SIGN_POPUP_MODE.SIGN].includes(mode.type) ? onBack : undefined}
       openMenu={true}
       pt={10}
+      style={{ '> div#container div#boxContainer': { height: 'calc(100% - 75px)' } }}
       title={mode.title}
       withoutTopBorder
-    >
+      >
       {mode.type === SIGN_POPUP_MODE.DETAIL &&
         <ExtrinsicDetail
           account={request.account}
@@ -129,8 +129,8 @@ export default function Signing(): React.ReactElement {
           {requests.length > 1 && (
             <TransactionIndex
               index={requestIndex}
-              onNextClick={_onNextClick}
-              onPreviousClick={_onPreviousClick}
+              onNextClick={onNextClick}
+              onPreviousClick={onPreviousClick}
               totalItems={requests.length}
             />
           )}
@@ -156,7 +156,7 @@ export default function Signing(): React.ReactElement {
           extrinsicPayload={payload}
           fee={mode.fee}
           isFirst={requestIndex === 0}
-          onCancel={_onCancel}
+          onCancel={onCancel}
           onSignature={onSignature}
           request={request}
         />
