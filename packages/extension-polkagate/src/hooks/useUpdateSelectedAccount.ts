@@ -37,7 +37,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
         pathParts[maybeGenesisIndex] = maxPosition?.genesisHash;
       } else if (savedSelectedChain) {
         // Since it still can be a staking path, we need to adjust the savedSelectedChain
-        const genesisHash = mapRelayToSystemGenesisIfMigrated(savedSelectedChain) ?? '';
+        const genesisHash = mapRelayToSystemGenesisIfMigrated(savedSelectedChain) ?? savedSelectedChain;
 
         pathParts[maybeGenesisIndex] = genesisHash;
       }
