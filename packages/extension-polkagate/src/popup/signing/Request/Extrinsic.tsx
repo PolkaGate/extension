@@ -69,7 +69,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
 
-  const call = api && decoded?.method ? api.tx[decoded.method.section][decoded.method.method] : undefined;
+  const call = useMemo(() => api && decoded?.method ? api.tx[decoded.method.section][decoded.method.method] : undefined, [api, decoded.method]);
   const fee = useEstimatedFee(genesisHash, substrateAddress, call, decoded.method ? decoded.method.args : []);
   const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === NATIVE_TOKEN_ASSET_ID);
 
@@ -82,7 +82,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   }, [fee, setMode, t]);
 
   return (
-    <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
+    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center'>
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
         <Avatar
           src={faviconUrl ?? undefined}
@@ -142,7 +142,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         genesisHash={genesisHash}
         setMode={setMode}
       />
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, bottom: '-33px', position: 'relative', p: '10px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, bottom: '-33px', p: '10px', position: 'relative' }}>
         <Typography color='#AA83DC' variant='B-1'>
           {t('Estimated Fee')}
         </Typography>
