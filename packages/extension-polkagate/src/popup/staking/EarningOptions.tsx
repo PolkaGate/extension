@@ -9,6 +9,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { BackWithLabel, ChainLogo, FadeOnScroll, FormatBalance2, Motion, SearchField } from '../../components';
@@ -82,7 +83,8 @@ export default function EarningOptions (): React.ReactElement {
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
               {earningItems?.map((token, index) => {
                 const { availableBalance, chainName, decimal, freeBalance, genesisHash, tokenSymbol } = token;
-                const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
+                const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
+                const info = { ...token, rate: rates?.[relayChainName] || 0 } as PositionInfo;
 
                 return (
                   <Grid alignItems='center' container item justifyContent='space-between' key={index}
@@ -124,7 +126,7 @@ export default function EarningOptions (): React.ReactElement {
                           {t('up to')}
                         </Typography>
                         <Typography color='#82FFA5' sx={{ lineHeight: '17px' }} variant='B-2'>
-                          {rates?.[chainName.toLowerCase()] || 0}%
+                          {info.rate }%
                         </Typography>
                         <Typography color='#EAEBF1' fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
                           {t('per year')}

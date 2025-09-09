@@ -163,7 +163,7 @@ export function extractRelayChainName (systemChainName: string | undefined): str
 
   return systemChainName
     .toLowerCase()
-    .replace(/\bpeople\b/i, '')
-    .replace(/\bassethub\b/i, '')
+    .replace(/people/i, '')
+    .replace(/assethub/i, '')
     .trim();
 }

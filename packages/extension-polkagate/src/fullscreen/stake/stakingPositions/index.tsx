@@ -8,6 +8,7 @@ import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, use
 import { useLocation, useParams } from 'react-router';
 
 import { getEarningOptions } from '@polkadot/extension-polkagate/src/popup/staking/utils';
+import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { FadeOnScroll, Motion } from '../../../components';
 import { useAccountAssets, useIsTestnetEnabled, usePrices, useSelectedAccount } from '../../../hooks';
@@ -77,7 +78,8 @@ const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rat
   <>
     {earningItems?.map((token) => {
       const { chainName, genesisHash, tokenSymbol } = token;
-      const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0, suggestedValidators: allSuggestedValidators?.[chainName.toLowerCase()] || [] } as PositionInfo;
+      const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
+      const info = { ...token, rate: rates?.[relayChainName] || 0, suggestedValidators: allSuggestedValidators?.[relayChainName] || [] } as PositionInfo;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
         return <Fragment key={`${genesisHash}_${tokenSymbol}_fragment`} />;
