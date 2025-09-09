@@ -6,7 +6,6 @@ import type { PositionInfo } from '../../../util/types';
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { DecisionButtons } from '../../../components';
@@ -27,9 +26,9 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
+function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(selectedPosition?.genesisHash);
+  const genesisHash = selectedPosition?.genesisHash;
   const { token } = useChainInfo(genesisHash);
 
   const { amount,
@@ -47,7 +46,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
     side,
     stakingConsts,
     transactionInformation,
-    tx } = useEasyStake(address, selectedPosition?.genesisHash);
+    tx } = useEasyStake(address, genesisHash);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
   const [BNamount, setBNamount] = useState<BN | null | undefined>(BN_ZERO);

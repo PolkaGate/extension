@@ -8,7 +8,6 @@ import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
@@ -19,13 +18,12 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerSolo from './PopUpHandlerSolo';
 
-export default function SoloFullScreen(): React.ReactElement {
+export default function SoloFullScreen (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
 
-  const { address, genesisHash: urlGenesisHash } = useParams<{ address: string; genesisHash: string }>();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
   const { token } = useChainInfo(genesisHash, true);
   const stakingInfo = useSoloStakingInfo(address, genesisHash, refresh, setRefresh);
   const accountAssets = useAccountAssets(address);
@@ -98,6 +96,7 @@ export default function SoloFullScreen(): React.ReactElement {
       </HomeLayout>
       <PopUpHandlerSolo
         address={address}
+        genesisHash={genesisHash}
         popupCloser={popupCloser}
         popupOpener={popupOpener}
         selectedPosition={selectedPosition}
@@ -105,7 +104,6 @@ export default function SoloFullScreen(): React.ReactElement {
         stakingInfo={stakingInfo}
         stakingPopup={stakingPopup}
         toBeReleased={toBeReleased}
-        urlGenesisHash={urlGenesisHash}
       />
     </>
   );

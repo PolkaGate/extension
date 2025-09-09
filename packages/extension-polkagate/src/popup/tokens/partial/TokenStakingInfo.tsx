@@ -8,6 +8,7 @@ import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { isStakingChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO, noop } from '@polkadot/util';
 
@@ -15,7 +16,6 @@ import { ToggleDots } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { usePrices, useTranslation } from '../../../hooks';
-import { STAKING_CHAINS } from '../../../util/constants';
 import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenStakingInfoProp {
@@ -28,7 +28,7 @@ enum STAKING_TYPE {
   POOL
 }
 
-function TokenStakingInfo({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
+function TokenStakingInfo ({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ function TokenStakingInfo({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
   const [state, setState] = useState<STAKING_TYPE>();
 
   const stakings = useMemo(() => {
-    if (!tokenDetail) {
+    if (!tokenDetail || !isStakingChain(genesisHash)) {
       return undefined;
     }
 
@@ -48,7 +48,7 @@ function TokenStakingInfo({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
       hasPoolStake,
       hasSoloStake
     };
-  }, [tokenDetail]);
+  }, [genesisHash, tokenDetail]);
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
@@ -87,7 +87,7 @@ function TokenStakingInfo({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
     navigate(path) as void;
   }, [genesisHash, navigate, notStaked, state]);
 
-  if (!STAKING_CHAINS.includes(tokenDetail?.genesisHash ?? '')) {
+  if (!isStakingChain(tokenDetail?.genesisHash ?? genesisHash)) {
     return null;
   }
 

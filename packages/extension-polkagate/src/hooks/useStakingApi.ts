@@ -20,7 +20,6 @@ import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
 import { getStakingAsset } from '../popup/staking/utils';
-import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import { amountToHuman, amountToMachine, blockToDate, calcPrice, isHexToBn, safeSubtraction } from '../util/utils';
 import useAccountAssets from './useAccountAssets';
@@ -93,7 +92,7 @@ export const useUnstakingPool = (
     return txs.length > 1 ? batchAll(txs) : txs[0];
   }, [batchAll, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen, unstakingValue]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? unbonded?.(formatted ?? address ?? '', unstakingValue ?? BN_ONE));
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? unbonded?.(formatted ?? address ?? '', unstakingValue ?? BN_ONE));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -239,7 +238,7 @@ export const useUnstakingSolo = (
     return txs.length > 1 ? batchAll(txs) : txs[0];
   }, [batchAll, chill, isStopStaking, maxUnlockingChunks, redeem, unbonded, unlockingLen, unstakingValue]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? unbonded?.(unstakingValue ?? BN_ONE));
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? unbonded?.(unstakingValue ?? BN_ONE));
 
   const errorMessage = useMemo(() => {
     if (!unstakingValue || unstakingValue.isZero() || !staked || !api) {
@@ -321,7 +320,7 @@ export const useRestakeSolo = (
 
   const [rebondValue, setRebondValue] = useState<BN | null | undefined>();
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, rebond, [rebondValue]);
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, rebond, [rebondValue]);
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);
@@ -433,7 +432,7 @@ export const useWithdrawPool = (
     return undefined;
   }, [redeem, param]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx);
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -550,7 +549,7 @@ export const useWithdrawSolo = (
     }
   }, [api, formatted, param]);
 
-  const estimatedFee = useEstimatedFee(review ? genesisHash ?? '' : undefined, formatted, redeem, [param ?? 0]);
+  const estimatedFee = useEstimatedFee(review ? genesisHash : undefined, formatted, redeem, [param ?? 0]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -665,10 +664,9 @@ export const useBondExtraSolo = (
 
 export const useFastUnstaking = (
   address: string | undefined,
-  urlGenesisHash: string | undefined
+  genesisHash: string | undefined
 ) => {
   const { t } = useTranslation();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
 
   const { api, decimal, token } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
@@ -768,7 +766,7 @@ export const useBondExtraPool = (
     return bondExtra({ FreeBalance: bondAmount });
   }, [bondAmount, bondExtra, formatted]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? bondExtra?.({ FreeBalance: bondAmount ?? BN_ONE }));
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? bondExtra?.({ FreeBalance: bondAmount ?? BN_ONE }));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -909,7 +907,7 @@ export const useSoloSettings = (
 
   const rewardDestination = useMemo(() => makePayee(rewardDestinationType, specificAccount ?? rewardDestinationAddress ?? stashId), [makePayee, rewardDestinationAddress, rewardDestinationType, specificAccount, stashId]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, setPayee, [rewardDestination ?? 'Staked']);
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, setPayee, [rewardDestination ?? 'Staked']);
   const changeToStake = useMemo(() => rewardType === 'Others' && rewardDestinationType === 'Staked', [rewardDestinationType, rewardType]);
   const nextDisabled = useMemo(() => rewardDestinationType === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount), [rewardDestinationAddress, rewardDestinationType, specificAccount]);
 
@@ -968,7 +966,7 @@ export const useJoinPool = (
     return join(bondAmount, selectedPool.poolId);
   }, [bondAmount, join, selectedPool]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? join?.(bondAmount ?? BN_ONE, selectedPool?.poolId ?? 0));
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? join?.(bondAmount ?? BN_ONE, selectedPool?.poolId ?? 0));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -1127,7 +1125,7 @@ export const useCreatePool = (
     ]);
   }, [batch, bondAmount, create, initName, poolId, poolMetadata, roles.bouncer, roles.nominator, roles.root, setMetadata]);
 
-  const estimatedFee = useEstimatedFee(genesisHash ?? '', formatted, tx ?? setMetadata?.(BN_FIVE, initName));
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? setMetadata?.(BN_FIVE, initName));
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -1288,12 +1286,11 @@ export const usePoolDetail = (
 
 export const useEasyStake = (
   address: string | undefined,
-  _genesisHash: string | undefined
+  genesisHash: string | undefined
 ) => {
   const MAX_LETTER_THRESHOLD = 35;
 
   const { t } = useTranslation();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
 
   const { api, chainName, decimal } = useChainInfo(genesisHash);
   const accountAssets = useAccountAssets(address);
@@ -1384,7 +1381,7 @@ export const useEasyStake = (
     }];
   }, [address, estimatedFee, selectedStakingType?.pool, selectedStakingType?.type, selectedStakingType?.validators, stakingConsts?.maxNominations, t]);
 
-  const token = useMemo(() => getStakingAsset(accountAssets, _genesisHash), [accountAssets, _genesisHash]);
+  const token = useMemo(() => getStakingAsset(accountAssets, genesisHash), [accountAssets, genesisHash]);
 
   const availableBalanceToStake = useMemo(() => token?.freeBalance, [token?.freeBalance]);
 

@@ -20,7 +20,7 @@ interface Props {
 
 export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeReleased }: Props) {
   const { t } = useTranslation();
-  const { decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
 
   return (
     <DraggableModal

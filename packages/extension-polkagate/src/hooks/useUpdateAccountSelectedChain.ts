@@ -32,7 +32,9 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
     const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
 
     if (maybeGenesisIndex !== -1 && genesisHash) {
-      pathParts[maybeGenesisIndex] = genesisHash;
+      const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(genesisHash) ?? '';
+
+      pathParts[maybeGenesisIndex] = stakingGenesisHash;
     }
 
     const newPath = pathParts.join('/');
