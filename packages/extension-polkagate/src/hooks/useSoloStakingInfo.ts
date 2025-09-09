@@ -282,7 +282,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
       return;
     }
 
-    const infoToken = (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token.toLowerCase();
+    const infoToken = (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token?.toLowerCase();
 
     if (infoToken && token.toLowerCase() !== infoToken) {
       console.log('reset on change');

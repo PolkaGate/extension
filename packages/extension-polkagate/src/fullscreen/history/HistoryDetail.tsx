@@ -243,7 +243,7 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
 
   const { link, name } = useMemo(() => getLink(chainName ?? '', 'extrinsic', historyItem?.txHash ?? ''), [chainName, historyItem?.txHash]);
 
-  const openExplorer = useCallback(() => window.open(link, '_blank'), [link]);
+  const openExplorer = useCallback(() => link && window.open(link, '_blank'), [link]);
 
   return (
     <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
@@ -255,6 +255,7 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
             <FadeOnScroll containerRef={containerRef} />
           </Grid>
           <GradientButton
+            disabled={!link}
             onClick={openExplorer}
             startIconNode={
               <Avatar
