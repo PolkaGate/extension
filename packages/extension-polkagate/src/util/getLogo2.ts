@@ -63,7 +63,7 @@ export default function getLogo2 (info: string | undefined | null, token?: strin
   }
 
   let maybeExternalLogo;
-  const chainName = chainNameFromGenesisHash || (_info as unknown as Chain)?.name || (_info);
+  const chainName = chainNameFromGenesisHash || _info;
   const iconName = sanitizeChainName(chainName)?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
