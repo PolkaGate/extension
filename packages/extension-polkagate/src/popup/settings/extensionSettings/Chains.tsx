@@ -7,7 +7,7 @@ import type { DropdownOption } from '../../../util/types';
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -153,7 +153,7 @@ export default function Chains (): React.ReactElement {
             >
               <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value as string)} sx={{ cursor: 'pointer' }}>
                 <ChainLogo genesisHash={value as string} size={24} />
-                <Typography color={ isSelected ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
+                <Typography color={isSelected ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
                   {text}
                 </Typography>
                 <ChevronRight sx={{
@@ -184,7 +184,7 @@ export default function Chains (): React.ReactElement {
           marginTop: '5px',
           width: '100%'
         }}
-        text={ t('+ Add New Network')}
+        text={t('+ Add New Network')}
         variant='contained'
       />
     </Motion>

@@ -3,7 +3,7 @@
 
 import { Container, Stack, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { CreatePoolIcon, JoinPoolIcon } from '../../../assets/icons';
 import { DecisionButtons } from '../../../components';

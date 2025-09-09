@@ -8,7 +8,7 @@ import type { DateAmount } from '../../hooks/useSoloStakingInfo';
 import { Container } from '@mui/material';
 import { Award, Graph, LockSlash, Moneys, Strongbox2, Timer, Trade } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { type BN } from '@polkadot/util';

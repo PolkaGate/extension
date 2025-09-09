@@ -845,5 +845,9 @@
   "Demo account import": "डेमो खाता आयात",
   "Demo Account Import": "डेमो खाता आयात",
   "Loading pool members":"पूल सदस्यों को लोड किया जा रहा है",
-  "Loading": "लोड हो रहा है"
+  "Loading": "लोड हो रहा है",
+  "Your Address": "आपका पता",
+  "keep me signed in for 15 minutes": "मुझे 15 मिनट के लिए साइन इन रखें",
+  "15 minutes": "15 मिनट",
+  "No-password session active — {{remainingTimeInMinute}} left.": "नो-पासवर्ड सत्र सक्रिय — {{remainingTimeInMinute}} बचे हैं।"
 }

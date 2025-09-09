@@ -6,11 +6,12 @@ import type { SignerPayloadRaw } from '@polkadot/types/types';
 
 import { Avatar, Box, Grid, Stack, Typography } from '@mui/material';
 import { Edit2, Warning2 } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { isAscii, u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 
-import { ActionContext, Address2 } from '../../../components';
+import { Address2 } from '../../../components';
 import { useFavIcon, useTranslation } from '../../../hooks';
 import { cancelSignRequest } from '../../../messaging';
 import { type ModeData, SIGN_POPUP_MODE } from '../types';
@@ -29,7 +30,7 @@ interface Props {
 
 export default function RawData ({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
 
@@ -41,9 +42,9 @@ export default function RawData ({ account, error, isFirst, request, setError, s
     }
 
     cancelSignRequest(signId)
-      .then(() => onAction('/'))
+      .then(() => navigate('/'))
       .catch((error: Error) => console.error(error));
-  }, [onAction, signId]);
+  }, [navigate, signId]);
 
   useEffect(() => {
     setMode({

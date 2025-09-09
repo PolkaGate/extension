@@ -845,5 +845,9 @@
   "Demo account import": "Импорт демо-аккаунта",
   "Demo Account Import": "Импорт Демо-аккаунта",
   "Loading pool members": "Загрузка участников пула",
-  "Loading": "Загрузка"
+  "Loading": "Загрузка",
+  "Your Address": "Ваш адрес",
+  "keep me signed in for 15 minutes": "Оставаться в системе 15 минут",
+  "15 minutes": "15 минут",
+  "No-password session active — {{remainingTimeInMinute}} left.": "Сессия без пароля активна — осталось {{remainingTimeInMinute}} минут."
 }

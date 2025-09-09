@@ -5,7 +5,7 @@ import type { Icon } from 'iconsax-react';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export interface Options {
   Icon?: Icon;

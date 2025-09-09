@@ -6,7 +6,7 @@ import type { ValidatorInformation } from '../../../../hooks/useValidatorsInform
 import type { StakingConsts } from '../../../../util/types';
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { useChainInfo, useEstimatedFee, useFormatted, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';

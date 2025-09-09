@@ -19,19 +19,13 @@ export default function TransactionIndex ({ index, onNextClick, onPreviousClick,
   const previousClickActive = index !== 0;
   const nextClickActive = index < totalItems - 1;
 
-  const prevClick = useCallback(
-    (): void => {
-      previousClickActive && onPreviousClick();
-    },
-    [onPreviousClick, previousClickActive]
-  );
+  const prevClick = useCallback((): void => {
+    previousClickActive && onPreviousClick();
+  }, [onPreviousClick, previousClickActive]);
 
-  const nextClick = useCallback(
-    (): void => {
-      nextClickActive && onNextClick();
-    },
-    [nextClickActive, onNextClick]
-  );
+  const nextClick = useCallback((): void => {
+    nextClickActive && onNextClick();
+  }, [nextClickActive, onNextClick]);
 
   return (
     <Grid alignItems='center' container justifyContent='space-between' m='0'>
