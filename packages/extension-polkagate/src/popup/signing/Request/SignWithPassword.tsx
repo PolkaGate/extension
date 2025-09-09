@@ -114,25 +114,30 @@ export default function SignWithPassword ({ address, error, fee, genesisHash, is
               </Typography>
             </Grid>
           }
-          {withSavePassword && isLocked &&
-            <GlowCheckbox
-              changeState={toggleSavePass}
-              checked={savePass}
-              label={!isLocked ? t('Extend session for 15 more minutes') : t('keep me signed in for 15min')}
-              labelPartInColor={t('15min')}
-              labelStyle={{ ...theme.typography['B-1'] }}
-              style={{ ml: '6px', mt: !isLocked ? '25px' : '12px' }}
-            />}
-          {withSavePassword && !isLocked &&
-            <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
-              <InfoCircle color='#3988FF' size='22' variant='Bold' />
-              <Typography color='#EAEBF1' variant='B-4'>
-                <TwoToneText
-                  text={t('No-password session active — {{remainingTimeInMinute}} left.', { replace: { remainingTimeInMinute } })}
-                  textPartInColor={remainingTimeInMinute}
-                />
-              </Typography>
-            </Grid>
+          {withSavePassword &&
+            <>
+              {isLocked
+                ? (
+                  <GlowCheckbox
+                    changeState={toggleSavePass}
+                    checked={savePass}
+                    label={t('keep me signed in for 15 minutes')}
+                    labelPartInColor={t('15 minutes')}
+                    labelStyle={{ ...theme.typography['B-1'] }}
+                    style={{ ml: '6px', mt: !isLocked ? '25px' : '12px' }}
+                  />)
+                : (
+                  <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
+                    <InfoCircle color='#3988FF' size='22' variant='Bold' />
+                    <Typography color='#EAEBF1' variant='B-4'>
+                      <TwoToneText
+                        text={t('No-password session active — {{remainingTimeInMinute}} left.', { replace: { remainingTimeInMinute } })}
+                        textPartInColor={remainingTimeInMinute}
+                      />
+                    </Typography>
+                  </Grid>)
+              }
+            </>
           }
           <DecisionButtons
             direction='vertical'
