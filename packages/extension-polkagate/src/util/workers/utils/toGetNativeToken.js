@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import { BN_ZERO } from '@polkadot/util';
 
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
@@ -21,11 +19,13 @@ export async function toGetNativeToken (addresses, api, chainName) {
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
 
-  const systemBalance = await Promise.all(addresses.map((address) => api.query.system.account(address)));
-  const existentialDeposit = api.consts.balances.existentialDeposit;
+  const systemBalance = await Promise.all(addresses.map((address) => api.query['system']['account'](address)));
+  const existentialDeposit = api.consts['balances']['existentialDeposit'];
 
   await Promise.all(addresses.map(async (address, index) => {
+    // @ts-ignore
     balances[index].ED = existentialDeposit;
+    // @ts-ignore
     balances[index].frozenBalance = systemBalance[index].data.frozen;
 
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
@@ -39,6 +39,7 @@ export async function toGetNativeToken (addresses, api, chainName) {
       maybeStakingTotals = await getStakingBalances(address, api);
     }
 
+    // @ts-ignore
     _result[address] = [{
       assetId: isAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
       balanceDetails: balancify(balances[index]),
