@@ -5,13 +5,18 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
 import { isMigratedHub } from '../../migrateHubUtils';
-import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
-import { getPriceIdByChainName } from '../../utils';
+import { getPriceIdByChainName, isOnAssetHub } from '../../utils';
 import { getStakingBalances } from '../shared-helpers/getStakingBalances';
 import { balancify } from '.';
 
-export async function toGetNativeToken(addresses, api, chainName) {
+/**
+ * @param {any[]} addresses
+ * @param {import("@polkadot/api").ApiPromise} api
+ * @param {string | undefined} chainName
+ */
+export async function toGetNativeToken (addresses, api, chainName) {
   const _result = {};
 
   const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
@@ -26,7 +31,7 @@ export async function toGetNativeToken(addresses, api, chainName) {
     const totalBalance = balances[index].freeBalance.add(balances[index].reservedBalance);
 
     const genesisHash = api.genesisHash.toString();
-    const isAssetHub = ASSET_HUBS.includes(genesisHash);
+    const isAssetHub = isOnAssetHub(genesisHash);
 
     let maybeStakingTotals;
 

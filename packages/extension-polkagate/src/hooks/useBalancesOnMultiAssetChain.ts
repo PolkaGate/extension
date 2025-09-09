@@ -14,7 +14,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN } from '@polkadot/util';
 
 import { toCamelCase } from '../util';
-import { ASSET_HUBS } from '../util/constants';
+import { isOnAssetHub } from '../util/utils';
 import useChainInfo from './useChainInfo';
 
 const assetsChains = createAssets();
@@ -23,7 +23,7 @@ export default function useBalancesOnMultiAssetChain (address: string | undefine
   const { api, chain, chainName } = useChainInfo(genesisHash);
 
   const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
-  const isAssetHub = ASSET_HUBS.includes(chain?.genesisHash || '');
+  const isAssetHub = isOnAssetHub(chain?.genesisHash || '');
 
   const [assetBalance, setAssetBalance] = useState<BalancesInfo | undefined>();
 

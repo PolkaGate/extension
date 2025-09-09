@@ -13,8 +13,8 @@ import { bnToBn } from '@polkadot/util';
 
 import { Address2, ChainLogo, DecisionButtons, FormatBalance2, FormatPrice } from '../../../components';
 import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
-import { NATIVE_TOKEN_ASSET_ID } from '../../../util/constants';
-import { amountToHuman, getSubstrateAddress } from '../../../util/utils';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
+import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import { type ModeData, SIGN_POPUP_MODE } from '../types';
 import RequestContent from './requestContent';
@@ -82,7 +82,9 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
     call,
     decoded.method ? decoded.method.args : []
   );
-  const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === NATIVE_TOKEN_ASSET_ID);
+
+  const nativeAssetId = isOnAssetHub(genesisHash) ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID;
+  const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === nativeAssetId);
 
   const onNext = useCallback(() => {
     setMode({

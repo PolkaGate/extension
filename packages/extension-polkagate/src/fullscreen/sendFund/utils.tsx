@@ -9,7 +9,6 @@ import { ASSET_HUBS } from '@polkadot/extension-polkagate/src/util/constants';
 
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
-export const isAssethub = (genesisHash?: string) => ASSET_HUBS.includes(genesisHash || '');
 
 export function reorderAssetHubLabel (label: string): string {
   if (label.endsWith('AssetHub')) {
