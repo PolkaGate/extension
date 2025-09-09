@@ -31,7 +31,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   const params = newSelectedValidators.map((v) => v.accountId.toString());
 
-  const estimatedFee2 = useEstimatedFee(genesisHash ?? '', formatted, nominate, [params]);
+  const estimatedFee2 = useEstimatedFee(genesisHash, formatted, nominate, [params]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{

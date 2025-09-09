@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { isValidGenesis, updateStorage } from '../util';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 
 /**
  * Updates the selected chain for a given account address in storage and optionally changes the URL.
@@ -29,7 +30,9 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
     const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
 
     if (maybeGenesisIndex !== -1 && genesisHash) {
-      pathParts[maybeGenesisIndex] = genesisHash;
+      const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(genesisHash) ?? '';
+
+      pathParts[maybeGenesisIndex] = stakingGenesisHash;
     }
 
     const newPath = pathParts.join('/');

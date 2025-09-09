@@ -3,13 +3,14 @@
 
 import { Box, Grid, Link, Stack } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
+import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
@@ -42,6 +43,16 @@ function MainMenuColumn (): React.ReactElement {
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const { maxPosition, maxPositionType } = useStakingPositions(selectedAccount?.address, true);
+
+  const stakingPath = useMemo(() => {
+    if (maxPosition && maxPositionType) {
+      return `/fullscreen-stake/${maxPositionType}/${selectedAccount?.address}/${maxPosition.genesisHash}`;
+    }
+
+    const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash);
+
+    return `/fullscreen-stake/solo/${selectedAccount?.address}/${stakingGenesisHash}`;
+  }, [maxPosition, maxPositionType, selectedAccount?.address, selectedGenesisHash]);
 
   return (
     <Grid
@@ -76,7 +87,7 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
-        path={`/fullscreen-stake/${maxPositionType ?? 'solo'}/${selectedAccount?.address}/${maxPosition?.genesisHash ?? selectedGenesisHash}`}
+        path={stakingPath}
         text={t('Staking')}
       />
       <MenuButton

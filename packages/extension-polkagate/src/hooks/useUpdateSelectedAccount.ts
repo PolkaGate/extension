@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
 import useStakingPositions from './useStakingPositions';
@@ -35,7 +36,10 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       if (isStakingPath && maxPosition) {
         pathParts[maybeGenesisIndex] = maxPosition?.genesisHash;
       } else if (savedSelectedChain) {
-        pathParts[maybeGenesisIndex] = savedSelectedChain;
+        // Since it still can be a staking path, we need to adjust the savedSelectedChain
+        const genesisHash = mapRelayToSystemGenesisIfMigrated(savedSelectedChain) ?? '';
+
+        pathParts[maybeGenesisIndex] = genesisHash;
       }
     }
 

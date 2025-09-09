@@ -39,8 +39,7 @@ interface ChainInfo {
  * @param {boolean} noApi - If true, prevents triggering the API connection.
  * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
  */
-export default function useChainInfo(genesisHash: string | null | undefined, noApi = false): ChainInfo {
-  // const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
+export default function useChainInfo (genesisHash: string | null | undefined, noApi = false): ChainInfo {
   const chain = useMetadata(genesisHash, true);
   const api = useApi(noApi ? undefined : genesisHash);
 

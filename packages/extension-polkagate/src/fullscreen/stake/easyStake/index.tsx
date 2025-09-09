@@ -6,7 +6,6 @@ import type { PositionInfo } from '../../../util/types';
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { DecisionButtons } from '../../../components';
@@ -29,8 +28,7 @@ interface Props {
 
 function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(selectedPosition?.genesisHash);
-  const { token } = useChainInfo(genesisHash);
+  const { token } = useChainInfo(selectedPosition?.genesisHash);
 
   const { amount,
     amountAsBN,
@@ -120,7 +118,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
       address={address}
       extraDetailConfirmationPage={{ amount: amountAsBN?.toString() }}
       flowStep={flowStep}
-      genesisHash={genesisHash}
+      genesisHash={selectedPosition?.genesisHash}
       maxHeight={700}
       minHeight={270}
       noDivider={side === EasyStakeSide.INPUT && flowStep === FULLSCREEN_STAKING_TX_FLOW.NONE}
@@ -133,7 +131,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
       reviewHeader={
         <EasyStakeReviewHeader
           amount={amountAsBN?.toString()}
-          genesisHash={genesisHash}
+          genesisHash={selectedPosition?.genesisHash}
           token={token}
         />
       }
@@ -153,7 +151,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
             amount={amount}
             availableBalanceToStake={availableBalanceToStake}
             errorMessage={errorMessage}
-            genesisHash={genesisHash}
+            genesisHash={selectedPosition?.genesisHash}
             loading={!initialPool}
             onChangeAmount={onChangeAmount}
             onMaxMinAmount={onMaxMinAmount}
@@ -174,14 +172,14 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
         }
         {side === EasyStakeSide.SELECT_POOL &&
           <SelectPool
-            genesisHash={genesisHash}
+            genesisHash={selectedPosition?.genesisHash}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
           />
         }
         {side === EasyStakeSide.SELECT_VALIDATORS &&
           <SelectValidator
-            genesisHash={genesisHash}
+            genesisHash={selectedPosition?.genesisHash}
             selectedStakingType={selectedStakingType}
             setSelectedStakingType={setSelectedStakingType}
             setSide={setSide}
