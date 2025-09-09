@@ -22,12 +22,11 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
+function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-    const {
-      closeMenu,
+    const { closeMenu,
       displayPopup,
       hasAmount,
       lockedBalance,
