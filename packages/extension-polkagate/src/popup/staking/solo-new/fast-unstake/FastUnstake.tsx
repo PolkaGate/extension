@@ -7,8 +7,6 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
-
 import { HourGlass, WarningGif } from '../../../../assets/gif';
 import { ActionButton, BackWithLabel, GradientDivider, Motion, NeonButton } from '../../../../components';
 import { useBackground, useFastUnstaking, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
@@ -116,8 +114,7 @@ export default function FastUnstake (): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
-  const { genesisHash: UrlGenesisHash } = useParams<{ genesisHash: string }>();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(UrlGenesisHash);
+  const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const address = useSelectedAccount()?.address;
   const navigate = useNavigate();
@@ -126,7 +123,7 @@ export default function FastUnstake (): React.ReactElement {
     eligibilityCheck,
     isEligible,
     transactionInformation,
-    tx } = useFastUnstaking(address, UrlGenesisHash);
+    tx } = useFastUnstaking(address, genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 

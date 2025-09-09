@@ -6,8 +6,6 @@ import type { PositionInfo } from '../../../util/types';
 
 import React, { useCallback, useMemo } from 'react';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
-
 import StakingInfo from '../../../popup/staking/stakingInfo';
 import EasyStake from '../easyStake';
 import ToBeReleased from '../ToBeReleased';
@@ -23,7 +21,7 @@ import Withdraw from './withdraw';
 
 interface Props {
   address: string | undefined;
-  urlGenesisHash: string | undefined;
+  genesisHash: string | undefined;
   stakingPopup: StakingPopUps;
   popupOpener: PopupOpener;
   popupCloser: PopupCloser;
@@ -33,9 +31,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandlerSolo({ address, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash }: Props): React.ReactElement | null {
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
-
+function PopUpHandlerSolo ({ address, genesisHash, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   const handleClose = useCallback(() => {
     popupCloser();
     setSelectedPosition(undefined);
@@ -114,8 +110,8 @@ function PopUpHandlerSolo({ address, popupCloser, popupOpener, selectedPosition,
         return (
           <FastUnstake
             address={address}
+            genesisHash={genesisHash}
             onClose={popupCloser}
-            urlGenesisHash={urlGenesisHash}
           />
         );
 
@@ -149,7 +145,7 @@ function PopUpHandlerSolo({ address, popupCloser, popupOpener, selectedPosition,
       default:
         return null;
     }
-  }, [address, genesisHash, handleClose, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased, urlGenesisHash]);
+  }, [address, genesisHash, handleClose, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
 }
 
 export default React.memo(PopUpHandlerSolo);

@@ -81,6 +81,7 @@ export { default as useSoloStakingInfo } from './useSoloStakingInfo';
 export { default as useSoloStakingTotalReward } from './useSoloStakingTotalReward';
 export { default as useStakingAccount } from './useStakingAccount';
 export * from './useStakingApi';
+export { default as useStakingConstRelay } from './useStakingConstRelay';
 export { default as useStakingConsts } from './useStakingConsts';
 export { default as useStakingPositions } from './useStakingPositions';
 export { default as useStakingRewardDestinationAddress } from './useStakingRewardDestinationAddress';

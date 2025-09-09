@@ -94,8 +94,8 @@ interface Props extends TokenInfoProps {
   isSelected?: boolean;
 }
 
-function PositionItem({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
-  const { address } = useParams<{ address: string; genesisHash: string }>();
+function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
+  const { address } = useParams<{ address: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);

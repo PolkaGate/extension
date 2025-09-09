@@ -12,7 +12,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BN_ZERO } from '@polkadot/util';
 
 import { getStorage, setStorage } from '../util';
-import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import { isHexToBn } from '../util/utils';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
@@ -160,8 +159,7 @@ const DEFAULT_VALUE = {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function useSoloStakingInfo (address: string | undefined, _genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
+export default function useSoloStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): SoloStakingInfo {
   const { api, chainName, token } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash);
   const currentEra = useCurrentEraIndex(genesisHash);

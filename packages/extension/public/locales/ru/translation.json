@@ -844,5 +844,6 @@
   "Already have an account": "Уже есть аккаунт",
   "Demo account import": "Импорт демо-аккаунта",
   "Demo Account Import": "Импорт Демо-аккаунта",
-  "Loading pool members": "Загрузка участников пула"
+  "Loading pool members": "Загрузка участников пула",
+  "Loading": "Загрузка"
 }

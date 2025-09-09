@@ -23,7 +23,7 @@ interface SelectedPoolInformationProps {
 
 export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, open, poolDetail }: SelectedPoolInformationProps) => {
   const theme = useTheme();
-  const { decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash, true);
 
   const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 

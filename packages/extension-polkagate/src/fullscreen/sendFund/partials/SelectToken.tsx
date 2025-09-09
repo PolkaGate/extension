@@ -13,7 +13,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { noop } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
-import { useAccountAssets, useChainInfo, useIsHovered, useTranslation } from '../../../hooks';
+import { useAccountAssets, useIsHovered, useTranslation } from '../../../hooks';
 
 const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
   background: '#05091C',
@@ -33,7 +33,7 @@ const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !=
   width: `${preferredWidth}px`
 }));
 
-function Row ({ assetId, genesisHash, setSelectedAsset, token }: { assetId: string, token: string, genesisHash: string, setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>> }): React.ReactElement {
+function AssetRow ({ assetId, genesisHash, setSelectedAsset, token }: { assetId: string, token: string, genesisHash: string, setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>> }): React.ReactElement {
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
@@ -93,7 +93,7 @@ function CustomizedDropDown ({ assets, containerRef, contentDropWidth, open, set
       <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
         {assets.map(({ assetId, genesisHash, token }, index) => {
           return (
-            <Row
+            <AssetRow
               assetId={String(assetId)}
               genesisHash={genesisHash}
               key={index}
@@ -119,32 +119,30 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const accountAssets = useAccountAssets(address);
-  const { chainName } = useChainInfo(genesisHash, true);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
-  const [selectedAsset, setSelectedAsset] = useState<string>();
-
-  useUpdateAccountSelectedAsset(address, genesisHash, selectedAsset, true);
+  const [selectedAssetId, setSelectedAsset] = useState<string>();
 
   const accountAssetsOnCurrentChain = useMemo(() => accountAssets?.filter((asset) => asset.genesisHash === genesisHash), [accountAssets, genesisHash]);
+  const asset = useMemo(() =>
+    accountAssetsOnCurrentChain?.find((a) => String(a.assetId) === String(assetId)) || accountAssetsOnCurrentChain?.[0]
+    , [accountAssetsOnCurrentChain, assetId]);
+
+  const _urlAssetId = useMemo(() => selectedAssetId ?? asset?.assetId, [asset?.assetId, selectedAssetId]);
+
+  useUpdateAccountSelectedAsset(address, genesisHash, _urlAssetId, true);
 
   useEffect(() => {
-    if (!chainName) {
+    if (!asset?.token) {
       return;
     }
 
-    const asset = accountAssetsOnCurrentChain?.find((asset) => String(asset.assetId) === String(assetId));
-
-    if (asset) {
-      const { decimal, token } = asset;
-
-      token && setInputs((prev) => ({
-        ...(prev || {}),
-        decimal,
-        token
-      }));
-    }
-  }, [accountAssetsOnCurrentChain, assetId, chainName, setInputs]);
+    setInputs((prev) => ({
+      ...(prev || {}),
+      decimal: asset.decimal,
+      token: asset.token
+    }));
+  }, [asset, setInputs]);
 
   const logoInfo = useMemo(() => inputs?.token && getLogo2(genesisHash, inputs.token), [genesisHash, inputs?.token]);
 

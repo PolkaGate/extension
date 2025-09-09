@@ -34,8 +34,8 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
 
   return (
     <SharePopup
-      onClose={handleClose}
       modalProps={{ maxHeight: 564 }}
+      onClose={handleClose}
       open={openMenu}
       popupProps={{
         TitleIcon: UserOctagon,
@@ -61,11 +61,11 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
                 <Container disableGutters key={address} onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
-                    addressStyle={{ color: isBlueish ? '#809ACB': 'primary.main'}}
+                    addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main' }}
                     genesisHash={genesisHash ?? ''}
                     identiconSize={24}
                     style={{
-                      color: checked ? isBlueish ? '#3988FF':'warning.main' : 'text.primary',
+                      color: checked ? isBlueish ? '#3988FF' : 'warning.main' : 'text.primary',
                       'div div#socials': {
                         mt: 0
                       },
@@ -125,9 +125,9 @@ export default function ChooseAccount ({ genesisHash, isBlueish, setSpecificAcco
         <ArrowCircleDown color={ isBlueish ? theme.palette.text.highlight : theme.palette.primary.main } onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
       </Container>
       <AccountListToChoose
-        isBlueish={isBlueish}
         genesisHash={genesisHash}
         handleClose={handleToggleMenu}
+        isBlueish={isBlueish}
         openMenu={openMenu}
         setSpecificAccount={setSpecificAccount}
         specificAccount={specificAccount}

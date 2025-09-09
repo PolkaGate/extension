@@ -8,8 +8,6 @@ import { Coin, Timer1, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
-
 import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
@@ -41,8 +39,7 @@ export default function Solo (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const address = useSelectedAccount()?.address;
-  const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
-  const genesisHash = mapRelayToSystemGenesisIfMigrated(urlGenesisHash);
+  const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -66,11 +63,11 @@ export default function Solo (): React.ReactElement {
 
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
-  const onRestake = useCallback(() => navigate('/solo/' + urlGenesisHash + '/restake') as void, [urlGenesisHash, navigate]);
-  const onFastUnstake = useCallback(() => navigate('/solo/' + urlGenesisHash + '/fastUnstake') as void, [urlGenesisHash, navigate]);
-  const onUnstake = useCallback(() => navigate('/solo/' + urlGenesisHash + '/unstake') as void, [urlGenesisHash, navigate]);
+  const onRestake = useCallback(() => navigate('/solo/' + genesisHash + '/restake') as void, [genesisHash, navigate]);
+  const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
+  const onUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
-  const onClaimReward = useCallback(() => navigate('/solo/' + urlGenesisHash + '/pendingReward') as void, [navigate, urlGenesisHash]);
+  const onClaimReward = useCallback(() => navigate('/solo/' + genesisHash + '/pendingReward') as void, [navigate, genesisHash]);
   const onWithdraw = useCallback(() => setReview(true), []);
   const closeReview = useCallback(() => setReview(false), []);
 

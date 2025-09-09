@@ -3,12 +3,12 @@
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
-import React, { Fragment, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
-import { ActionButton, ActionContext, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
+import { ActionButton, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
 import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
@@ -70,14 +70,14 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
+function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
   const isTestNet = TEST_NETS.includes(genesisHash);
   const value = amountToHuman(balance.muln(price), decimal);
 
-  const openStaking = useCallback(() => navigate(type === 'solo' ? `/solo/${genesisHash}` : `/pool/${genesisHash}`) as void, [genesisHash, navigate, type]);
+  const openStaking = useCallback(() => navigate(`/${type}/` + genesisHash) as void, [genesisHash, navigate, type]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
@@ -110,7 +110,7 @@ export default function StakingPositions (): React.ReactElement {
   const account = useSelectedAccount();
   const pricesInCurrency = usePrices();
   const accountAssets = useAccountAssets(account?.address);
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
 
   const [searchKeyWord, setSearchKeyWord] = useState<string>();
@@ -142,13 +142,8 @@ export default function StakingPositions (): React.ReactElement {
     setSearchKeyWord(keyword);
   }, []);
 
-  const backHome = useCallback(() => {
-    onAction('/');
-  }, [onAction]);
-
-  const onEarningOptions = useCallback(() => {
-    onAction('/stakingIndex-options');
-  }, [onAction]);
+  const backHome = useCallback(() => navigate('/') as void, [navigate]);
+  const onEarningOptions = useCallback(() => navigate('/stakingIndex-options') as void, [navigate]);
 
   return (
     <>
