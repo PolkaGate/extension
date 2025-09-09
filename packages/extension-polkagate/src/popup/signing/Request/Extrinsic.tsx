@@ -69,8 +69,19 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
 
-  const call = useMemo(() => api && decoded?.method ? api.tx[decoded.method.section][decoded.method.method] : undefined, [api, decoded.method]);
-  const fee = useEstimatedFee(genesisHash, substrateAddress, call, decoded.method ? decoded.method.args : []);
+  const call = useMemo(
+    () => (api && decoded?.method)
+      ? api.tx?.[decoded.method.section as keyof typeof api.tx]
+               ?.[decoded.method.method]
+      : undefined,
+    [api, decoded?.method]
+  );
+  const fee = useEstimatedFee(
+    genesisHash,
+    substrateAddress,
+    call,
+    decoded.method ? decoded.method.args : []
+  );
   const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === NATIVE_TOKEN_ASSET_ID);
 
   const onNext = useCallback(() => {
