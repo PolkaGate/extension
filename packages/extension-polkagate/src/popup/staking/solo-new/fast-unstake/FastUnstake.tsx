@@ -110,7 +110,7 @@ export const EligibilityStatus = ({ onBack, status }: { status: boolean | undefi
   );
 };
 
-export default function FastUnstake(): React.ReactElement {
+export default function FastUnstake (): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
