@@ -22,11 +22,15 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-// info can be a chain, chain name, genesis hash or even an external dapp or web site name, but if info is a genesishash we must have the token as well
-export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+// info can be a chain name, genesishash or even an external dapp or web site name, but if info is a genesishash we must have the token as well
+export default function getLogo2 (info: string | undefined | null, token?: string): LogoInfo | undefined {
+  if (!info) {
+    return;
+  }
+
   let chainNameFromGenesisHash;
 
-  const _info = mapRelayToSystemGenesisIfMigrated(info as string);
+  const _info = mapRelayToSystemGenesisIfMigrated(info);
 
   if (token) {
     const networkMap = getNetworkMap();
@@ -51,7 +55,7 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
     }
 
     // if it is not an asset on multi asset chain but a token on a system chain like people chain
-    const relayGenesis = mapSystemToRelay(info as string, false);
+    const relayGenesis = mapSystemToRelay(info, false);
 
     if (relayGenesis && relayGenesis !== info) {
       chainNameFromGenesisHash = getChainName(relayGenesis);
@@ -59,7 +63,8 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
   }
 
   let maybeExternalLogo;
-  const iconName = sanitizeChainName(chainNameFromGenesisHash || (_info as unknown as Chain)?.name || (_info))?.toLowerCase();
+  const chainName = chainNameFromGenesisHash || (_info as unknown as Chain)?.name || (_info);
+  const iconName = sanitizeChainName(chainName)?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 
