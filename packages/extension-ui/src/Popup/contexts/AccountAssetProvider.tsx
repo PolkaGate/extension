@@ -32,14 +32,18 @@ export default function AccountAssetProvider ({ children }: { children: React.Re
   useEffect(() => {
     /** remove forgotten accounts from assets if any */
     if (accounts && assetsOnChains?.balances) {
-      Object.keys(assetsOnChains.balances).forEach((_address) => {
-        const found = accounts.find(({ address }) => address === _address);
+      const updatedBalances = { ...assetsOnChains.balances };
 
-        if (!found) {
-          delete assetsOnChains.balances[_address];
-          setStorage(STORAGE_KEY.ASSETS, assetsOnChains, true).catch(console.error);
+      Object.keys(updatedBalances).forEach((_address) => {
+        const exists = accounts.some(({ address }) => address === _address);
+
+        if (!exists) {
+          delete updatedBalances[_address];
         }
       });
+      const updated = { ...assetsOnChains, balances: updatedBalances };
+
+      setStorage(STORAGE_KEY.ASSETS, updated, true).catch(console.error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, assetsOnChains?.timeStamp]);
