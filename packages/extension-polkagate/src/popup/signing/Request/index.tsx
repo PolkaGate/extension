@@ -8,7 +8,7 @@ import type { HexString } from '@polkadot/util/types';
 
 import { ScanBarcode } from 'iconsax-react';
 import React, { memo, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '../../../hooks';
 import { cancelSignRequest } from '../../../messaging';

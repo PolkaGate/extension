@@ -6,7 +6,7 @@ import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/type
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO, noop } from '@polkadot/util';

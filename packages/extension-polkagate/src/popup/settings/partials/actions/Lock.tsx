@@ -4,7 +4,7 @@
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Unlock } from 'iconsax-react';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';

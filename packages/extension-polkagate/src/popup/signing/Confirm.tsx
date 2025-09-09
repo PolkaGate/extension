@@ -9,7 +9,7 @@ import type { HexString } from '@polkadot/util/types';
 
 import { Box, Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { cubes } from '../../assets/icons';
 import { approveSignSignature } from '../../messaging';

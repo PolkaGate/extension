@@ -4,7 +4,7 @@
 import { Container, Grid } from '@mui/material';
 import { Category, User } from 'iconsax-react';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionCard, Motion } from '../../components';
 import { useIsDark, useSelectedAccount, useTranslation } from '../../hooks';

@@ -3,7 +3,7 @@
 
 import { Container, Grid, Stack } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';

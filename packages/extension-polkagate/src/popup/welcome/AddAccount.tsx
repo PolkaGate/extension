@@ -6,7 +6,7 @@ import type { TransitionProps } from '@mui/material/transitions';
 import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
 import { Check, ColorSwatch, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components';
 import { CustomCloseSquare } from '../../components/SVG/CustomCloseSquare';

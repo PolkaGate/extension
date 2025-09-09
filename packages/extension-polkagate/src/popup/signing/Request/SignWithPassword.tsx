@@ -7,7 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { Grid, Typography, useTheme } from '@mui/material';
 import { InfoCircle, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { DecisionButtons, GlowCheckbox, PasswordInput, TwoToneText } from '../../../components';
 import { useCanPayFee } from '../../../hooks/index';

@@ -7,7 +7,7 @@ import type { SignerPayloadRaw } from '@polkadot/types/types';
 import { Avatar, Box, Grid, Stack, Typography } from '@mui/material';
 import { Edit2, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import { isAscii, u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 
@@ -59,7 +59,7 @@ export default function RawData ({ account, error, isFirst, request, setError, s
   const text = useMemo(() => isAscii(data)
     ? u8aToString(u8aUnwrapBytes(data))
     : data
-  , [data]);
+    , [data]);
 
   return (
     <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
