@@ -52,10 +52,10 @@ export default function usePoolBalances (address: string | undefined, genesisHas
         return setPooledBalance({ balance: BN_ZERO, genesisHash });
       }
 
-      const [bondedPool, stashIdAccount, myClaimable] = await Promise.all([
+      const [bondedPool, stashIdAccount, myClaimable = BN_ZERO] = await Promise.all([
         api.query['nominationPools']['bondedPools'](poolId) as unknown as Option<PalletNominationPoolsBondedPoolInner>,
         api.derive.staking.account(accounts.stashId),
-        api.call['nominationPoolsApi']['pendingRewards'](formatted)
+        api.call['nominationPoolsApi']?.['pendingRewards'](formatted)
       ]);
 
       const active = member.points.isZero()
