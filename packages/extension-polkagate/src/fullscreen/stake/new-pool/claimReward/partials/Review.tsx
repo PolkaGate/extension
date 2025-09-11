@@ -77,7 +77,6 @@ export default function Review ({ amount, closeReview, genesisHash, proxyTypeFil
         address={selectedAccount?.address}
         genesisHash={genesisHash}
         ledgerStyle={{ position: 'unset' }}
-        maybeApi={undefined}
         onClose={closeReview}
         proxyTypeFilter={proxyTypeFilter}
         selectedProxy={selectedProxy}
