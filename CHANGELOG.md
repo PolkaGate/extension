@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.6.1](https://github.com/polkagate/extension/compare/v1.6.0...v1.6.1) (2025-09-11)
+
+
+### Bug Fixes
+
+* correct non-native balance decimals and token display in fullscreen token page ([b2e1a56](https://github.com/polkagate/extension/commit/b2e1a563c804fdb43f968fd818ec9fc6f236c1d8))
+
 # [1.6.0](https://github.com/polkagate/extension/compare/v1.5.8...v1.6.0) (2025-09-09)
 
 
