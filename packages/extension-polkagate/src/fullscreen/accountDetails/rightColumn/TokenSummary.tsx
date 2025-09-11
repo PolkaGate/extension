@@ -99,9 +99,11 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
               width: 'max-content'
             }
           }}
+          decimal={token?.decimal}
           decimalPoint={FLOATING_POINT_DIGIT}
           genesisHash={token?.genesisHash}
           skeletonStyle={{ width: '130px' }}
+          token={token?.token}
         />
         {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
           <DailyChange
