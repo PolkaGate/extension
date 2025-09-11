@@ -118,7 +118,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, na
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           ref={containerRef}
-          sx={{ background: hovered || open ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '3px solid #1B133C', borderRadius: '10px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px', ...style }}
+          sx={{ background: hovered || open ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '2px solid #1B133C', borderRadius: '12px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px', ...style }}
         >
           <MoreVert sx={{ color: hovered || open ? '#EAEBF1' : '#AA83DC', fontSize: iconSize }} />
         </Grid>

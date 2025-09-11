@@ -3,35 +3,18 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { ChevronRight } from '@mui/icons-material';
-import { Grid, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { useIsHovered } from '../../hooks';
 import { setStorage } from '../../util';
 import { Account } from '../components';
+import OpenerButton from '../sendFund/partials/OpenerButton';
 import AccountDropDown from './AccountDropDown';
-
-function GoToAccountButton ({ onClick }: { onClick: () => void }): React.ReactElement {
-  const containerRef = useRef(null);
-  const isHovered = useIsHovered(containerRef);
-
-  return (
-    <Grid
-      alignItems='center' container item justifyContent='center'
-      onClick={onClick}
-      ref={containerRef}
-      sx={{ background: isHovered ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '3px solid #1B133C', borderRadius: '10px', cursor: 'pointer', height: '36px', transition: 'all 0.2s ease-in-out', width: '36px' }}
-    >
-      <ChevronRight sx={{ color: isHovered ? '#EAEBF1' : '#AA83DC', fontSize: '28px' }} />
-    </Grid>
-  );
-}
 
 function AccountRow ({ account }: { account: AccountWithChildren }): React.ReactElement {
   const navigate = useNavigate();
@@ -68,8 +51,8 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
           isExternal={account?.isExternal}
           name={account?.name}
         />
-        <GoToAccountButton
-          onClick={goToAccountPage}
+        <OpenerButton
+        onClick={goToAccountPage}
         />
       </Stack>
     </Stack>
