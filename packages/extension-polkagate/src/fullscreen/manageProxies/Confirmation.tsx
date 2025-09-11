@@ -30,18 +30,19 @@ const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
 interface AmountProps {
   amount: string | undefined;
   genesisHash: string | undefined;
-  assetDecimal: number | undefined
+  assetDecimal: number | undefined;
   token: string | undefined;
 }
 
 const Amount = ({ amount, assetDecimal, genesisHash, token }: AmountProps) => {
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const price = useTokenPriceBySymbol(token, genesisHash);
   const currency = useCurrency();
 
   const _decimal = assetDecimal ?? nativeAssetDecimal;
   const _token = token ?? nativeToken;
+  const price = useTokenPriceBySymbol(_token, genesisHash);
+
   const amountInHuman = amountToHuman((amount ?? '0'), _decimal);
 
   const value = ((price.price ?? 0) * parseFloat(amountInHuman)).toFixed(2);

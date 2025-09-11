@@ -3,8 +3,6 @@
 
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
-//@ts-ignore
-import type { PalletAssetsAssetDetails, PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
 import type { AnyNumber, ISubmittableResult } from '@polkadot/types/types';
 import type { Bytes } from '@polkadot/types-codec';
 import type { BN } from '@polkadot/util';
