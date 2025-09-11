@@ -93,7 +93,13 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       startIcon={StartIcon
         ? (
           <StartIcon
-            color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main}
+            color={
+              disabled
+                ? '#BEAAD84D'
+                : isBlueish
+                  ? theme.palette.text.highlight
+                  : theme.palette.primary.main
+            }
             size={iconSize}
             variant={
               (iconAlwaysBold ?? hovered)
