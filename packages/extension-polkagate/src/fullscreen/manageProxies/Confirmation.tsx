@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { BN } from '@polkadot/util';
 import type { TransactionDetail } from '../../util/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -29,16 +30,19 @@ const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
 interface AmountProps {
   amount: string | undefined;
   genesisHash: string | undefined;
+  assetDecimal: number | undefined
   token: string | undefined;
 }
 
-const Amount = ({ amount, genesisHash, token }: AmountProps) => {
-  const { decimal, token: nativeToken } = useChainInfo(genesisHash, true);
-  const _token = token ?? nativeToken;
+const Amount = ({ amount, assetDecimal, genesisHash, token }: AmountProps) => {
+  const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
+
   const price = useTokenPriceBySymbol(token, genesisHash);
   const currency = useCurrency();
 
-  const amountInHuman = amountToHuman((amount ?? '0'), decimal);
+  const _decimal = assetDecimal ?? nativeAssetDecimal;
+  const _token = token ?? nativeToken;
+  const amountInHuman = amountToHuman((amount ?? '0'), _decimal);
 
   const value = ((price.price ?? 0) * parseFloat(amountInHuman)).toFixed(2);
   const [integerPart, decimalPart] = amountInHuman.split('.');
@@ -105,7 +109,7 @@ interface HeaderProps {
 const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
   const { t } = useTranslation();
 
-  const { accounts, amount, description, success, token } = transactionDetail;
+  const { accounts, amount, assetDecimal, description, success, token } = transactionDetail;
 
   return (
     <GlowBox style={{ m: 0, width: '100%' }}>
@@ -147,6 +151,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
             </>
             : <Amount
               amount={amount}
+              assetDecimal={assetDecimal}
               genesisHash={genesisHash}
               token={token}
               />
@@ -168,7 +173,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
   const theme = useTheme();
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const _decimal = transactionDetail?.decimal ?? nativeAssetDecimal;
+  const _decimal = transactionDetail?.assetDecimal ?? transactionDetail?.decimal ?? nativeAssetDecimal;
   const _token = transactionDetail?.token ?? nativeToken;
 
   const mainEntries = useMemo(() => {
@@ -191,8 +196,8 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
   const getContentTypeAndColor = useCallback((key: string, content: any) => {
     const isHash = key === 'txHash';
     const isBlock = key === 'block';
-    const isBalance = ['amount', 'deposit', 'fee'].includes(key);
     const isFee = ['fee'].includes(key);
+    const isBalance = isFee || ['amount', 'deposit'].includes(key);
     const isAddress = isValidAddress(content as string);
     const isFromAddress = key === 'from' && isAddress;
     const isDate = showDate && key === 'date';
@@ -236,7 +241,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                         ? (
                           <FormatBalance2
                             decimalPoint={4}
-                            decimals={[(isFee ? nativeAssetDecimal : _decimal) ?? 0]}
+                            decimals={[(isFee ? (content?.decimal ?? nativeAssetDecimal) : _decimal) ?? 0]}
                             style={{
                               color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
                               fontFamily: 'Inter',
@@ -244,8 +249,8 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                               fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[(isFee ? nativeToken : _token) ?? '']}
-                            value={content as string}
+                            tokens={[(isFee ? (content?.token ?? nativeToken) : _token) ?? '']}
+                            value={content?.fee as BN ?? content as string}
                           />)
                         : isDate
                           ? new Date(content).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
