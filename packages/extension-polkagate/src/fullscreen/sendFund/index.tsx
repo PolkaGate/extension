@@ -28,8 +28,8 @@ import { type Inputs } from './types';
 
 export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
-
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
+
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
@@ -62,10 +62,7 @@ export default function SendFund (): React.ReactElement {
 
   const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
 
-  const isLoading = useMemo(() =>
-    (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee))
-    ,
-    [inputStep, inputs, inputTransaction]);
+  const isLoading = useMemo(() => (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee)), [inputStep, inputs, inputTransaction]);
 
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
@@ -78,6 +75,7 @@ export default function SendFund (): React.ReactElement {
   const transactionDetail = useMemo(() => {
     return {
       amount: inputs?.amountAsBN,
+      assetDecimal: inputs?.decimal,
       description: t('Amount'),
       extra: {
         from: formatted,
@@ -85,11 +83,11 @@ export default function SendFund (): React.ReactElement {
         // eslint-disable-next-line sort-keys
         recipientNetwork: inputs?.recipientChain?.text
       },
-      fee: inputs?.fee,
       ...txInfo,
-      token: inputs?.token // since an asset may be transferring other than native hence we overwrite native token
+      fee: inputs?.feeInfo,
+      token: inputs?.token // since a token other than native token might be transferred, hence we overwrite native token
     } as TransactionDetail;
-  }, [formatted, inputs?.amountAsBN, inputs?.fee, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
+  }, [formatted, inputs?.amountAsBN, inputs?.decimal, inputs?.feeInfo, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
 
   return (
     <HomeLayout
@@ -133,6 +131,7 @@ export default function SendFund (): React.ReactElement {
           <Step4Summary
             canPayFee={canPayFee}
             inputs={inputs}
+            setInputs={setInputs}
             teleportState={teleportState}
           />
         }
@@ -189,6 +188,7 @@ export default function SendFund (): React.ReactElement {
                   }
                 }
               }}
+              signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
               transaction={inputTransaction}
               withCancel

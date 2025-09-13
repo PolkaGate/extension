@@ -23,6 +23,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/types';
 import type { CurrencyItemType } from '../fullscreen/home/partials/type';
 import type { ItemInformation } from '../fullscreen/nft/utils/types';
+import type { FeeInfo } from '../fullscreen/sendFund/types';
 
 import { type SxProps, type Theme } from '@mui/material';
 
@@ -148,7 +149,7 @@ interface stashAccountDisplay {
 export interface TxResult {
   block?: number;
   txHash?: string;
-  fee?: string;
+  fee?: string | FeeInfo;
   success: boolean;
   failureText?: string;
 }
@@ -157,24 +158,25 @@ export interface TransactionDetail extends TxResult {
   action: string; // send, solo staking, pool staking, convictionvoting, ...
   amount?: string;
   chain?: Chain | null;
-  description?: string; // a short description which can be replace with 'Completed' text on success
   calls?: string[];
   class?: number;
   conviction?: string;
   date: number;
+  description?: string; // a short description which can be replace with 'Completed' text on success
   decimal?: number;
   delegatee?: string;
   deposit?: string;
+  extra?: Record<string, string>;
   from: NameAddress;
   nominators?: string[];
   poolId?: string;
   refId?: number;
+  assetDecimal?: number;
   subAction?: string; // bond_extra, unbound, nominate, vote, unvote, unlock, ...
   to?: NameAddress;
   token?: string;
   throughProxy?: NameAddress; // not available in subscan (can be removed)
   voteType?: number;
-  extra?: Record<string, string>
 }
 
 export type ExtraDetailConfirmationPage = Partial<TransactionDetail>;
