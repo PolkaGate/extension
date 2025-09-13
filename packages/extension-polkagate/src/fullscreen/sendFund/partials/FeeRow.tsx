@@ -54,7 +54,9 @@ export default function FeeRow({ address, canPayFee, genesisHash, inputs, setInp
       return nonNativeAssets as unknown as Partial<FetchedBalance>[];
     }
 
-    const filteredNonNativeAssets = nonNativeAssets?.filter(({ assetId }) => !assetId.eq(maybeSelectedNonNativeFeeAsset.id)) as unknown as Partial<FetchedBalance>[];
+    const filteredNonNativeAssets = nonNativeAssets?.filter(({ assetId }) => {
+      return assetId?.toString() !== maybeSelectedNonNativeFeeAsset.id.toString();
+    }) as unknown as Partial<FetchedBalance>[];
 
     return [...filteredNonNativeAssets, nativeAsset] as Partial<FetchedBalance>[];
   }, [feeAssets, genesisHash, maybeSelectedNonNativeFeeAsset, token]);
