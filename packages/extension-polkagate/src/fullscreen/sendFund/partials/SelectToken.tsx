@@ -1,11 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Inputs } from '../types';
 
-import { ExpandMore } from '@mui/icons-material';
-import { Box, ClickAwayListener, Grid, Popover, Stack, styled, Typography } from '@mui/material';
+import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import useUpdateAccountSelectedAsset from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedAsset';
@@ -13,99 +11,9 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { noop } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
-import { useAccountAssets, useIsHovered, useTranslation } from '../../../hooks';
-
-const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
-  background: '#05091C',
-  border: '4px solid',
-  borderColor: '#1B133C',
-  borderRadius: '12px',
-  columnGap: '5px',
-  flexWrap: 'nowrap',
-  margin: 'auto',
-  marginTop: '4px',
-  maxHeight: '400px',
-  minWidth: '197px',
-  overflow: 'hidden',
-  padding: '6px',
-  rowGap: '4px',
-  transition: 'all 250ms ease-out',
-  width: `${preferredWidth}px`
-}));
-
-function AssetRow ({ assetId, genesisHash, setSelectedAsset, token }: { assetId: string, token: string, genesisHash: string, setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>> }): React.ReactElement {
-  const refContainer = useRef(null);
-  const hovered = useIsHovered(refContainer);
-
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
-
-  const onClick = useCallback(() => {
-    setSelectedAsset(assetId);
-  }, [assetId, setSelectedAsset]);
-
-  return (
-    <Stack
-      alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
-      sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
-    >
-      <AssetLogo assetSize='28px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-      <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
-        {token}
-      </Typography>
-    </Stack>
-  );
-}
-
-interface DropContentProps {
-  assets: FetchedBalance[]
-  containerRef: React.RefObject<HTMLDivElement | null>;
-  contentDropWidth?: number | undefined;
-  open: boolean;
-  setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>>
-}
-
-function CustomizedDropDown ({ assets, containerRef, contentDropWidth, open, setSelectedAsset }: DropContentProps) {
-  const id = open ? 'dropContent-popover' : undefined;
-  const anchorEl = open ? containerRef.current : null;
-
-  return (
-    <Popover
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        horizontal: 'right',
-        vertical: 'top'
-      }}
-      id={id}
-      open={open}
-      slotProps={{
-        paper: {
-          sx: {
-            background: 'none',
-            backgroundImage: 'none'
-          }
-        }
-      }}
-      transformOrigin={{
-        horizontal: 'left',
-        vertical: 'top'
-      }}
-    >
-      <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
-        {assets.map(({ assetId, genesisHash, token }, index) => {
-          return (
-            <AssetRow
-              assetId={String(assetId)}
-              genesisHash={genesisHash}
-              key={index}
-              setSelectedAsset={setSelectedAsset}
-              token={token}
-            />
-          );
-        })}
-      </DropContentContainer>
-    </Popover>
-  );
-}
+import { useAccountAssets, useTranslation } from '../../../hooks';
+import CustomizedDropDown from './CustomizedDropDown';
+import OpenerButton from './OpenerButton';
 
 interface Props {
   address: string | undefined;
@@ -172,9 +80,8 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
             </Stack>
           </Stack>
           {!!accountAssetsOnCurrentChain?.length &&
-            <Box sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', transition: 'all 250ms ease-out', display: 'flex', height: '40px', justifyContent: 'center', width: '40px' }}>
-              <ExpandMore sx={{ color: '#AA83DC', fontSize: '20px' }} />
-            </Box>}
+            <OpenerButton flip />
+          }
         </Stack>
       </ClickAwayListener>
       {!!accountAssetsOnCurrentChain?.length && openTokenList &&

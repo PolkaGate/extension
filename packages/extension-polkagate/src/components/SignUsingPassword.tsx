@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
+import type { SignerOptions, SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { Proxy, TxResult } from '../util/types';
 import type { DecisionButtonProps } from './DecisionButtons';
@@ -62,6 +62,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 export interface SignUsingPasswordProps {
   api: ApiPromise | undefined;
   direction?: 'horizontal' | 'vertical';
+  decisionButtonProps?: Partial<DecisionButtonProps>
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void;
   onCancel: () => void;
@@ -69,12 +70,12 @@ export interface SignUsingPasswordProps {
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   proxies: Proxy[] | undefined;
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
-  decisionButtonProps?: Partial<DecisionButtonProps>
+  signerOption: Partial<SignerOptions> | undefined;
   style?: React.CSSProperties;
   withCancel: boolean | undefined
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, signerOption, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -101,7 +102,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
 
       setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-      const txResult = await signAndSend(api, preparedTransaction, signer, from);
+      const txResult = await signAndSend(api, preparedTransaction, signer, from, signerOption);
 
       setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
       setBusy(false);
@@ -111,7 +112,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
       setHasError(true);
       setBusy(false);
     }
-  }, [api, from, handleTxResult, password, preparedTransaction, setFlowStep]);
+  }, [api, from, handleTxResult, password, preparedTransaction, setFlowStep, signerOption]);
 
   const confirmText = !api ? t('Loading ...') : t('Confirm');
 

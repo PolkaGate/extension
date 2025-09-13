@@ -99,6 +99,36 @@ export function formatDecimal (_number: number | string, decimalDigit = FLOATING
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
 
+/**
+ * Converts scientific notation to decimal string
+ * @param {string|number} value - e.g., "1e-7" or 2.5e-8
+ * @returns {string} decimal representation
+ */
+export function sciToDecimal (value: string | number) {
+  const str = value.toString();
+
+  // Check if it’s scientific notation
+  if (!/e/i.test(str)) {
+    return str;
+  }
+
+  const [base, exp] = str.toLowerCase().split('e');
+  let [intPart, fracPart = ''] = base.split('.');
+  const exponent = parseInt(exp, 10);
+
+  if (exponent > 0) {
+    // Shift decimal to the right
+    const shift = exponent - fracPart.length;
+
+    fracPart = fracPart + '0'.repeat(Math.max(shift, 0));
+
+    return intPart + fracPart;
+  } else {
+    // Shift decimal to the left
+    return '0.' + '0'.repeat(Math.abs(exponent) - 1) + intPart + fracPart;
+  }
+}
+
 export function amountToHuman (_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
   if (!_amount || !_decimals) {
     return '';
@@ -116,22 +146,29 @@ export function amountToMachine (amount: string | undefined, decimal: number | u
     return BN_ZERO;
   }
 
-  const dotIndex = amount.indexOf('.');
-  let newAmount = amount;
+  try {
+    const _amount = sciToDecimal(amount);
+    const dotIndex = _amount.indexOf('.');
+    let newAmount = _amount;
 
-  if (dotIndex >= 0) {
-    const wholePart = amount.slice(0, dotIndex);
-    const fractionalPart = amount.slice(dotIndex + 1);
+    if (dotIndex >= 0) {
+      const wholePart = _amount.slice(0, dotIndex);
+      const fractionalPart = _amount.slice(dotIndex + 1);
 
-    newAmount = wholePart + fractionalPart;
-    decimal -= fractionalPart.length;
+      newAmount = wholePart + fractionalPart;
+      decimal -= fractionalPart.length;
 
-    if (decimal < 0) {
-      throw new Error("decimal should be more than amount's decimals digits");
+      if (decimal < 0) {
+        throw new Error("decimal should be more than amount's decimals digits");
+      }
     }
-  }
 
-  return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
+    return new BN(newAmount).mul(BN_TEN.pow(new BN(decimal)));
+  } catch (e) {
+    console.error('Something went wrong when converting amount to machine:', e);
+
+    return BN_ZERO;
+  }
 }
 
 export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {

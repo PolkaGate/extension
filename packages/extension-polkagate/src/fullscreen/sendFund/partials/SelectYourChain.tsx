@@ -3,8 +3,7 @@
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
-import { ExpandMore } from '@mui/icons-material';
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
@@ -12,6 +11,7 @@ import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 import { ChainLogo } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ChainListModal from '../../components/ChainListModal';
+import OpenerButton from './OpenerButton';
 
 interface Props {
   destinationOptions?: DropdownOption[];
@@ -51,9 +51,7 @@ export default function SelectYourChain ({ chainName, destinationOptions, setSel
             </Typography>
           </Stack>
         </Stack>
-        <Box sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', display: 'flex', height: '40px', justifyContent: 'center', transition: 'all 250ms ease-out', width: '40px' }}>
-          <ExpandMore sx={{ color: '#AA83DC', fontSize: '20px' }} />
-        </Box>
+        <OpenerButton flip />
       </Stack>
       {openChainList &&
         <ChainListModal

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ApiPromise } from '@polkadot/api';
+import type { SignerOptions } from '@polkadot/api/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { Header } from '@polkadot/types/interfaces';
 // @ts-ignore
@@ -89,7 +89,6 @@ interface Props {
   direction?: 'horizontal' | 'vertical';
   genesisHash: string | null | undefined;
   ledgerStyle?: React.CSSProperties;
-  maybeApi?: ApiPromise;
   onClose: () => void
   proxyTypeFilter: ProxyTypes[] | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
@@ -98,6 +97,7 @@ interface Props {
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   showProxySelection: boolean;
+  signerOption?: Partial<SignerOptions>;
   signUsingPasswordProps?: Partial<SignUsingPasswordProps>;
   signUsingQRProps?: Partial<SignUsingQRProps>;
   style?: React.CSSProperties;
@@ -111,15 +111,12 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
-  const { api: apiFromGenesisHash, chain, token } = useChainInfo(genesisHash);
+  const { api, chain, token } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
-
-  // To handle system chain apis like people chain
-  const api = maybeApi || apiFromGenesisHash;
 
   const senderName = useAccountDisplay(address, genesisHash);
   const proxies = useProxies(api, formatted);
@@ -251,7 +248,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, on
         block: txResult?.block || 0,
         chain,
         date: Date.now(),
-        decimal,
+        decimal, // in cross chain transfer this will be the sending chain decimal
         failureText: txResult?.failureText,
         from: { address: String(formatted), name: senderName },
         success: txResult?.success,
@@ -314,6 +311,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, maybeApi, on
             preparedTransaction={preparedTransaction}
             proxies={proxies}
             setFlowStep={setFlowStep}
+            signerOption={signerOption}
             withCancel={withCancel}
             {...signUsingPasswordProps}
           />

@@ -6,7 +6,7 @@ import type { TransactionDetail } from '../../util/types';
 
 import { Avatar, Collapse, Container, Dialog, Grid, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
-import React, { Fragment, memo, useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
@@ -193,8 +193,8 @@ function DetailCard ({ historyItem }: Props) {
           const color = isAddress || isHash ? 'text.secondary' : isDate ? 'text.primary' : '#AA83DC';
 
           return (
-            <Fragment key={key}>
-              <Container disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <React.Fragment key={index}>
+              <Container disableGutters key={key} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography color='text.secondary' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(key)}
                 </Typography>
@@ -227,7 +227,7 @@ function DetailCard ({ historyItem }: Props) {
                 </Typography>
               </Container>
               {withDivider && <GradientDivider style={{ my: '7px' }} />}
-            </Fragment>
+            </React.Fragment>
           );
         })}
       </Container>

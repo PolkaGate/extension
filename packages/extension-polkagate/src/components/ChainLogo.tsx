@@ -88,6 +88,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
     }
 
     const handleLoad = () => {
+       setIsDarkLogo(false);
       const canvas = document.createElement('canvas');
 
       canvas.width = img.naturalWidth;

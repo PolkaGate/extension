@@ -16,7 +16,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function RecipientAddress({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function RecipientAddress ({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
 

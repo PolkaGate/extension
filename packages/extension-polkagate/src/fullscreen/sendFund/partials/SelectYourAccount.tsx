@@ -1,21 +1,21 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ExpandMore } from '@mui/icons-material';
-import { Box, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Identity2 } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import AccountListModal from '../../components/AccountListModal';
 import NumberedTitle from './NumberedTitle';
+import OpenerButton from './OpenerButton';
 
 interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
 }
 
-export default function SelectYourAccount({ address, genesisHash }: Props): React.ReactElement {
+export default function SelectYourAccount ({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [openAccountList, setOpenAccountList] = useState<boolean>(false);
@@ -44,9 +44,7 @@ export default function SelectYourAccount({ address, genesisHash }: Props): Reac
             style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-4' }}
             withShortAddress
           />
-          <Box sx={{ '&:hover': { background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', cursor: 'pointer' }, alignItems: 'center', border: '2px solid #1B133C', borderRadius: '10px', display: 'flex', height: '40px', justifyContent: 'center', transition: 'all 250ms ease-out', width: '40px' }}>
-            <ExpandMore sx={{ color: '#AA83DC', fontSize: '20px' }} />
-          </Box>
+          <OpenerButton flip />
         </Stack>
       </Stack>
       {openAccountList &&
