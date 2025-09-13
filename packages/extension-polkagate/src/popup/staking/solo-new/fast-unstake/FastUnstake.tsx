@@ -30,7 +30,7 @@ export const CheckEligibility = ({ loading }: { loading: boolean }) => {
     <Stack direction='column' sx={style}>
       <Grid container item sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center' }}>
         <SyncLoader color={adjustedColor} loading={loading} size={4} speedMultiplier={0.6} />
-        <Typography color={ adjustedColor } variant='B-2'>
+        <Typography color={adjustedColor} variant='B-2'>
           {t('Checking fast unstake eligibility')}
         </Typography>
       </Grid>
@@ -115,6 +115,7 @@ export default function FastUnstake (): React.ReactElement {
 
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
+
   const address = useSelectedAccount()?.address;
   const navigate = useNavigate();
 

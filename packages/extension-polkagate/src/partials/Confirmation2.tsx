@@ -16,6 +16,7 @@ import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
 import { toTitleCase, updateStorage } from '../util';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, toShortAddress } from '../util/utils';
 
 interface SubProps {
@@ -163,12 +164,14 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
       };
     }
 
+    const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(genesisHash);
+
     let stakingPath = pathname.startsWith('/pool/') ? 'pool' : 'solo';
-    let redirectPath = `/${stakingPath}/${genesisHash}`;
+    let redirectPath = `/${stakingPath}/${stakingGenesisHash}`;
 
     if (pathname.includes('easyStake') && transactionDetail.extra?.['easyStakingType']) {
       stakingPath = transactionDetail.extra['easyStakingType'];
-      redirectPath = `/${stakingPath}/${genesisHash}`;
+      redirectPath = `/${stakingPath}/${stakingGenesisHash}`;
     }
 
     return {

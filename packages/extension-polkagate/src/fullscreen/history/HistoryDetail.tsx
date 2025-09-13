@@ -9,15 +9,15 @@ import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
-import { getLink } from '@polkadot/extension-polkagate/src/popup/history/Explorer';
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { BN_ZERO } from '@polkadot/util';
 
 import { FadeOnScroll, FormatBalance2, FormatPrice, GradientButton } from '../../components';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
-import { useChainInfo, useIsExtensionPopup, useSelectedAccount, useTokenPriceBySymbol, useTranslation } from '../../hooks';
+import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
 import { getVoteType, isReward, toTitleCase } from '../../util';
-import { CHAINS_ON_POLKAHOLIC, CHAINS_WITH_BLACK_LOGO } from '../../util/constants';
+import { CHAINS_WITH_BLACK_LOGO } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../util/utils';
 
@@ -42,7 +42,7 @@ const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), []);
+  const toggleCollapse = useCallback(() => calls.length > 1 && setOpen((isOpen) => !isOpen), [calls.length]);
 
   return (
     <>
@@ -221,7 +221,7 @@ function DetailCard ({ historyItem }: Props) {
                               }}
                               tokens={[historyItem?.token ?? '']}
                               value={value as string}
-                            />
+                              />
                             : value
                   }
                 </Typography>
@@ -235,56 +235,44 @@ function DetailCard ({ historyItem }: Props) {
   );
 }
 
-function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties}): React.ReactElement {
+function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
-  const selectedAccount = useSelectedAccount();
   const { chainName } = useChainInfo(historyItem?.chain?.genesisHash, true);
 
-  const isWestmint = chainName?.replace(/\s/g, '') === 'WestendAssetHub';
+  const { link, name } = useMemo(() => getLink(chainName ?? '', 'extrinsic', historyItem?.txHash ?? ''), [chainName, historyItem?.txHash]);
 
-  const { link, name } = useMemo(() => {
-    if (CHAINS_ON_POLKAHOLIC.includes(chainName ?? '')) {
-      return { link: getLink(chainName ?? '', 'polkaholic', 'extrinsic', historyItem?.txHash ?? ''), name: 'polkaholic' };
-    }
-
-    if (isWestmint) {
-      return { link: getLink(chainName ?? '', 'statscan', 'extrinsic', String(selectedAccount?.address ?? '')), name: 'statescan' };
-    }
-
-    return { link: getLink(chainName ?? '', 'subscan', 'extrinsic', historyItem?.txHash ?? ''), name: 'subscan' };
-  }, [chainName, historyItem?.txHash, isWestmint, selectedAccount?.address]);
-
-  const openExplorer = useCallback(() => window.open(link, '_blank'), [link]);
+  const openExplorer = useCallback(() => link && window.open(link, '_blank'), [link]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 , ...style }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
       {historyItem &&
-          <>
-            <DetailHeader historyItem={historyItem} />
-            <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'auto', pb: '65px' }}>
-              <DetailCard historyItem={historyItem} />
-              <FadeOnScroll containerRef={containerRef} />
-            </Grid>
-            <GradientButton
-              onClick={openExplorer}
-              startIconNode={
-                <Avatar
-                  src={getLogo(name)}
-                  sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name) && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
-                  variant='square'
-                />
-              }
-              style={{
-                bottom: '15px',
-                position: 'absolute',
-                width: '96%',
-                zIndex: 1
-              }}
-              text={t('View on Explorer')}
-            />
-          </>
+        <>
+          <DetailHeader historyItem={historyItem} />
+          <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'auto', pb: '65px' }}>
+            <DetailCard historyItem={historyItem} />
+            <FadeOnScroll containerRef={containerRef} />
+          </Grid>
+          <GradientButton
+            disabled={!link}
+            onClick={openExplorer}
+            startIconNode={
+              <Avatar
+                src={getLogo(name)}
+                sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
+                variant='square'
+              />
+            }
+            style={{
+              bottom: '15px',
+              position: 'absolute',
+              width: '96%',
+              zIndex: 1
+            }}
+            text={t('View on Explorer')}
+          />
+        </>
       }
     </Grid>
   );
@@ -318,7 +306,7 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             }}
             fullScreen
             open={!!historyItem}
-          >
+            >
             <Container disableGutters sx={{ height: '100%', width: '100%' }}>
               <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
                 <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
@@ -334,7 +322,7 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             open={!!historyItem}
             style={{ backgroundColor: '#1B133C', minHeight: '400px', padding: ' 20px 10px 10px' }}
             title={historyItem?.subAction ?? historyItem?.action}
-          >
+            >
             <Content
               historyItem={historyItem}
               style={{ background: 'transparent', border: 0 }}

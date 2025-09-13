@@ -7,6 +7,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { useMemo } from 'react';
 
 import chains from '../util/chains';
+import { isMigrated } from '../util/migrateHubUtils';
 import { sanitizeChainName } from '../util/utils';
 import useApi from './useApi';
 import useMetadata from './useMetadata';
@@ -44,9 +45,10 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
 
   return useMemo(() => {
     const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
-    const chainName = sanitizeChainName(chainInfo?.chain);
+    const chainName = sanitizeChainName(chainInfo?.chain ?? chain?.name, true);
     const decimal = chainInfo?.tokenDecimal;
     const token = chainInfo?.tokenSymbol;
+    const displayName = isMigrated(genesisHash ?? '') ? chainName : chainInfo?.name ?? chainName;
 
     if (!genesisHash) {
       return {
@@ -62,9 +64,9 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
     return {
       api,
       chain,
-      chainName: chainName ?? chain?.name,
+      chainName,
       decimal: decimal ?? chain?.tokenDecimals,
-      displayName: chainInfo?.name ?? chain?.name ?? chainName,
+      displayName,
       token: token ?? chain?.tokenSymbol
     };
   }, [api, chain, genesisHash]);

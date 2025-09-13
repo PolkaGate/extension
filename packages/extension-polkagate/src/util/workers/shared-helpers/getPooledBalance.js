@@ -7,7 +7,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../getPoolAccounts';
 
-export async function getPooledBalance(api, address) {
+export async function getPooledBalance (api, address) {
   const response = await api.query.nominationPools.poolMembers(address);
   const member = response?.unwrapOr(undefined);
 
@@ -26,7 +26,7 @@ export async function getPooledBalance(api, address) {
     api.query.nominationPools.bondedPools(poolId),
     api.query.nominationPools.metadata(poolId),
     api.derive.staking.account(accounts.stashId),
-    api.call.nominationPoolsApi.pendingRewards(address)
+    api.call.nominationPoolsApi?.pendingRewards(address) // not available on paseo hub
   ]);
 
   const active = member.points.isZero()
@@ -48,7 +48,7 @@ export async function getPooledBalance(api, address) {
 
   return {
     poolName,
-    poolReward: rewards,
-    pooledBalance: active.add(unlockingValue)
+    poolReward: rewards.toString(),
+    pooledBalance: active.add(unlockingValue).toString()
   };
 }

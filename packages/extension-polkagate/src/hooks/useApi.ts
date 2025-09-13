@@ -44,7 +44,7 @@ const apiReducer = (state: ApiState, action: ApiAction): ApiState => {
 const endpointManager = new EndpointManager();
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
 
-export default function useApi(genesisHash: string | null | undefined, stateApi?: ApiPromise, _endpoint?: string): ApiPromise | undefined {
+export default function useApi (genesisHash: string | null | undefined, stateApi?: ApiPromise, _endpoint?: string): ApiPromise | undefined {
   const { checkForNewOne, endpoint } = useEndpoint(genesisHash, _endpoint);
   const apisContext = useContext(APIContext);
   const endpoints = useEndpoints(genesisHash);

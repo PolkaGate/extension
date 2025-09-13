@@ -65,7 +65,7 @@ export default function SendFund (): React.ReactElement {
   const isLoading = useMemo(() =>
     (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee))
     ,
-    [inputStep, inputs, inputTransaction]);
+    [inputStep, inputs?.amount, inputTransaction, inputs?.fee]);
 
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||

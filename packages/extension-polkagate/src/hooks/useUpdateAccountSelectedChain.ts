@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { isValidGenesis, updateStorage } from '../util';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 
 /**
  * Updates the selected chain for a given account address in storage and optionally changes the URL.
@@ -20,16 +21,20 @@ import { isValidGenesis, updateStorage } from '../util';
  * @param {boolean} changeUrl - Whether to change the URL after updating the selected chain.
  * @param {() => void} [onClose] - Optional callback to execute after updating and changing the URL.
  */
-export default function useUpdateAccountSelectedChain (address: string | undefined, genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
+export default function useUpdateAccountSelectedChain (address: string | undefined, _genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
 
   const adjustStakingPath = useCallback(async () => {
     const pathParts = location.pathname.split('/');
     const maybeGenesisIndex = pathParts.findIndex((p) => isValidGenesis(p));
 
     if (maybeGenesisIndex !== -1 && genesisHash) {
-      pathParts[maybeGenesisIndex] = genesisHash;
+      const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(genesisHash) ?? '';
+
+      pathParts[maybeGenesisIndex] = stakingGenesisHash;
     }
 
     const newPath = pathParts.join('/');

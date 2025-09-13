@@ -120,7 +120,10 @@ export const NFT_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  ...RELAY_CHAINS_GENESISHASH
+  POLKADOT_GENESIS_HASH,
+  KUSAMA_GENESIS_HASH,
+  WESTMINT_GENESIS_HASH,
+  PASEO_ASSET_HUB_GENESIS_HASH
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
@@ -145,13 +148,6 @@ export const IDENTITY_CHAINS = [
   '0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736', // Phala
   '0x6811a339673c9daa897944dcdac99c6e2939cc88245ed21951a0a3c9a2be75bc', // Picaso
   '0x6d8d9f145c2177fa83512492cdd80a71e29f22473f4a8943a6292149ac319fb9' // SORA
-];
-
-export const INITIAL_RECENT_CHAINS_GENESISHASH = [
-  POLKADOT_GENESIS_HASH,
-  WESTEND_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  ACALA_GENESIS_HASH // ACALA
 ];
 
 // used in history to categorize transactions
@@ -310,14 +306,13 @@ export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
 export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
 export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
 export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
-export const ASSETS_NAME_IN_STORAGE = 'assets';
 
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
-  ASSETS: 'assets',
+  ASSETS: 'migrated-assets',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',

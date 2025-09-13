@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import ReservedLockedPopup from '@polkadot/extension-polkagate/src/popup/tokens/partial/ReservedLockedPopup';
 import { useTokenInfoDetails } from '@polkadot/extension-polkagate/src/popup/tokens/useTokenInfoDetails';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style/index';
+import { isStakingChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../../../hooks';
@@ -22,12 +23,11 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
+function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-    const {
-      closeMenu,
+    const { closeMenu,
       displayPopup,
       hasAmount,
       lockedBalance,
@@ -43,7 +43,7 @@ function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
   }, [address, genesisHash, navigate]);
 
   const stakings = useMemo(() => {
-    if (!token) {
+    if (!token || !isStakingChain(genesisHash)) {
       return undefined;
     }
 
@@ -53,7 +53,7 @@ function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
       maybePoolStake: token?.pooledBalance?.add(token?.poolReward ?? BN_ZERO) ?? BN_ZERO,
       maybeSoloStake: token?.soloTotal ?? BN_ZERO
     };
-  }, [token]);
+  }, [genesisHash, token]);
 
   const BOX_BG = '#05091C';
   const ICON_SIZE = '20';

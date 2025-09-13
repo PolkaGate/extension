@@ -12,7 +12,7 @@ import SelectedProvider from './contexts/SelectedProvider';
 import AppRoutes from './routes/RouteDefinitions';
 import { AccountAssetProvider, AccountIconThemeProvider, AccountProvider, ActionProvider, AlertProvider, ApiProvider, CurrencyProvider, FetchingProvider, GenesisHashOptionsProvider, MediaProvider, ReferendaProvider, RequestsProvider, SettingsProvider, UserAddedChainsProvider, WorkerProvider } from './contexts';
 
-export default function Popup(): React.ReactElement {
+export default function Popup (): React.ReactElement {
   return (
     <AnimatePresence mode='wait'>
       <ExtensionLockProvider>

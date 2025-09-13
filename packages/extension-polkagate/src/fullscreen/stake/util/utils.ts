@@ -213,8 +213,6 @@ export function positionsReducer (state: PositionsState, action: PositionsAction
 export function getTokenUnit (value: number | string | BN | bigint, decimals: number, token: string): string {
   const formatted = formatBalance(value, { decimals, withSi: true, withUnit: token });
 
-  console.log('formatted:', formatted);
-
   const match = formatted.match(/[\d,.]+\s*([a-zA-Z]+)$/);
 
   return match?.[1] || '';

@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
+import { isMigratedHub } from '../util/migrateHubUtils';
 
 const RELAY_CHAIN = 'Relay Chain';
 
@@ -42,6 +43,8 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
       }))
         // remove the relay chains, they are at the top already
         .filter(({ text }) => !text.includes(RELAY_CHAIN))
+        // remove the migrated hub system chains,we address them by ecosystem chain
+        .filter(({ value }) => !isMigratedHub(value))
         .concat(
           // get any chain present in the metadata and not already part of chains
           ...metadataChains.filter(

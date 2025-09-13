@@ -77,9 +77,6 @@ const getAvailableToStake = (balances: BalancesInfo | undefined) => {
 
   const _availableToStake = balances.freeBalance;
 
-  // the reserved balance can be considered here as the amount which can be staked as well in solo,
-  // but since pooled balance are migrating to the reserved balance. and also the pallet has issue to accept reserved,
-  // hence it needs more workaround on it
   return bnMax(BN_ZERO, _availableToStake);
 };
 
@@ -99,7 +96,7 @@ export interface PoolStakingInfo {
  * @param refresh - refresh
  * @returns Consolidated staking information including available balance, rewards, and more
  */
-export default function usePoolStakingInfo(address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
+export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
   const { api } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash, refresh, setRefresh);
   const pool = usePool(address, genesisHash, undefined, refresh, setRefresh);

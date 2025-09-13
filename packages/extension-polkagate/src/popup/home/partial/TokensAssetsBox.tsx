@@ -16,7 +16,7 @@ import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
-import { useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
+import { useIsDark, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import allChains from '../../../util/chains';
 import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
 import Drawer from './Drawer';
@@ -81,8 +81,8 @@ const MemoizedTokensItems = memo(TokensItems);
 function TokenBox ({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
+  const isDark = useIsDark();
 
-  const isDark = theme.palette.mode === 'dark';
   const bgColor = isDark ? '#05091C' : '#EDF1FF';
   const badgeBgColor = isDark ? '#05091C' : '#F5F4FF';
   const closeColor = isDark ? '#674394' : '#CCD2EA';

@@ -30,7 +30,7 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
     case 'Kusama':
       return KUSAMA_PEOPLE_GENESIS_HASH;
     case 'Polkadot':
-      return POLKADOT_PEOPLE_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
+      return POLKADOT_PEOPLE_GENESIS_HASH;
     case 'Paseo':
       return PASEO_GENESIS_HASH;
     default:

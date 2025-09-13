@@ -4,6 +4,8 @@
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
+import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
+
 import { ChainLogo, Identity2 } from '../../../components';
 
 interface Props {
@@ -23,7 +25,7 @@ export default function FromToBox ({ address, chainName, genesisHash, label }: P
         <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='start' sx={{ bgcolor: '#1B133C', border: '1px solid #2D1E4A', borderRadius: '6px', height: 'fit-content', px: '7px', textAlign: 'left' }}>
           <ChainLogo chainName={chainName} size={14} />
           <Typography color='primary.main' variant='B-1'>
-            {chainName}
+            {toTitleCase(chainName)}
           </Typography>
         </Stack>
       </Stack>

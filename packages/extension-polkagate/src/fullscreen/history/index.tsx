@@ -10,6 +10,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import HistoryTabs from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryTabs';
 import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
+import { isSystemChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -24,6 +25,13 @@ const DEFAULT_EXTRA_FILTERS = {
   status: ANY_STATUS,
   type: ALL_TYPES
 };
+
+const options = [
+  { text: '8', value: 8 },
+  { text: '10', value: 10 },
+  { text: '20', value: 20 },
+  { text: '50', value: 50 }
+];
 
 function HistoryFs (): React.ReactElement {
   const { t } = useTranslation();
@@ -63,8 +71,10 @@ function HistoryFs (): React.ReactElement {
     }
 
     const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
+    const historyGenesisHash = flattenedHistories[0]?.chain?.genesisHash;
+    const isHistoryRecordsRelatedToSelectedChain = historyGenesisHash === savedSelectedChain || isSystemChain(historyGenesisHash, savedSelectedChain as string | undefined); // TODO: We may need to fetch people system chain history as well
 
-    if (savedSelectedChain && flattenedHistories[0]?.chain?.genesisHash !== savedSelectedChain) {
+    if (savedSelectedChain && !isHistoryRecordsRelatedToSelectedChain) {
       return null;
     }
 
@@ -95,13 +105,6 @@ function HistoryFs (): React.ReactElement {
     setExtraFilters(DEFAULT_EXTRA_FILTERS);
     setCount(0);
   }, [tab, savedSelectedChain, selectedAccount]);
-
-  const options = [
-    { text: '8', value: 8 },
-    { text: '10', value: 10 },
-    { text: '20', value: 20 },
-    { text: '50', value: 50 }
-  ];
 
   return (
     <HomeLayout>
