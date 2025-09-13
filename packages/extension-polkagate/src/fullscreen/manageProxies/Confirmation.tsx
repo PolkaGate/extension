@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { BN } from '@polkadot/util';
 import type { TransactionDetail } from '../../util/types';
+import type { FeeInfo } from '../sendFund/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
@@ -183,7 +183,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
     return fieldsToDisplay
       .map((field) => [field, transactionDetail[field as keyof TransactionDetail]])
-      .filter(([_, value]) => value !== undefined && value !== null) as [string, any][];
+      .filter(([_, value]) => value !== undefined && value !== null) as [string, TransactionDetail[keyof TransactionDetail]][];
   }, [showDate, transactionDetail]);
 
   const extraEntries = useMemo(() => {
@@ -194,7 +194,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
     return [];
   }, [transactionDetail]);
 
-  const getContentTypeAndColor = useCallback((key: string, content: any) => {
+  const getContentTypeAndColor = useCallback((key: string, content: TransactionDetail[keyof TransactionDetail]) => {
     const isHash = key === 'txHash';
     const isBlock = key === 'block';
     const isFee = ['fee'].includes(key);
@@ -242,7 +242,9 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                         ? (
                           <FormatBalance2
                             decimalPoint={4}
-                            decimals={[(isFee ? (content?.decimal ?? nativeAssetDecimal) : _decimal) ?? 0]}
+                            decimals={[(isFee && typeof content === 'object' && 'decimal' in (content as any)
+                              ? (content as FeeInfo).decimal
+                              : isFee ? nativeAssetDecimal : _decimal) ?? 0]}
                             style={{
                               color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
                               fontFamily: 'Inter',
@@ -250,12 +252,18 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                               fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[(isFee ? (content?.token ?? nativeToken) : _token) ?? '']}
-                            value={content?.fee as BN ?? content as string}
+                            tokens={[(isFee && typeof content === 'object' && 'token' in (content as any)
+                              ? (content as FeeInfo).token
+                              : isFee ? nativeToken : _token) ?? '']}
+                            value={
+                              isFee && typeof content === 'object' && 'fee' in (content as any)
+                                ? (content as FeeInfo).fee
+                                : (content as string)
+                            }
                           />)
                         : isDate
-                          ? new Date(content).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
-                          : content
+                          ? new Date(content as number).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
+                          : content as string
                     }
                   </Typography>
                 </Stack>

@@ -161,8 +161,8 @@ export interface TransactionDetail extends TxResult {
   calls?: string[];
   class?: number;
   conviction?: string;
-  description?: string; // a short description which can be replace with 'Completed' text on success
   date: number;
+  description?: string; // a short description which can be replace with 'Completed' text on success
   decimal?: number;
   delegatee?: string;
   deposit?: string;
