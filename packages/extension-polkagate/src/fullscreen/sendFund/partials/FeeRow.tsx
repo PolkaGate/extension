@@ -12,7 +12,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { AssetLogo, ShowBalance4 } from '../../../components';
-import { useChainInfo, useFormatted, useTranslation } from '../../../hooks';
+import { useAccount, useChainInfo, useFormatted, useTranslation } from '../../../hooks';
 import { UnableToPayFee } from '../../../partials';
 import usePartialFee from '../usePartialFee';
 import usePayWithAsset from '../usePayWithAsset';
@@ -34,6 +34,7 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
   const { api, decimal, token } = useChainInfo(genesisHash);
   const feeAssets = usePayWithAsset(genesisHash);
   const formatted = useFormatted(address, genesisHash);
+  const account = useAccount(address);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
   const [selectedAssetId, setSelectedAssetId] = useState<string>();
@@ -94,13 +95,15 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
     setOpenTokenList(false);
   }, []);
 
+  const showFeeSelector = !!feeAssets?.length && !account?.isExternal;
+
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '22px', px: '15px' }}>
       <Typography color='primary.main' sx={{ textAlign: 'left' }} variant='B-1'>
         {t('Estimated fee')}
       </Typography>
       <ClickAwayListener onClickAway={handleClickAway}>
-        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' ref={containerRef} sx={{ transform: feeAssets?.length ? 'translateX(0)' : 'translateX(10px)', transition: 'all 400ms ease-out' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' ref={containerRef} sx={{ transform: showFeeSelector ? 'translateX(0)' : 'translateX(10px)', transition: 'all 400ms ease-out' }}>
           {canPayFee.isAbleToPay === false && canPayFee.warning &&
             <UnableToPayFee warningText={canPayFee.warning} />
           }
@@ -113,7 +116,7 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
             />
           </Typography>
           <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
-          {!!feeAssets?.length &&
+          {showFeeSelector &&
             <OpenerButton
               flip
               onClick={onToggleTokenSelection}
