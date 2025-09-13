@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-//@ts-ignore
+// @ts-ignore
 import type { PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
 import type { AnyNumber } from '@polkadot/types-codec/types';
 import type { FeeAssetInfo } from './types';
@@ -27,7 +27,7 @@ const getFeeAssetLocation = (api: ApiPromise, id: BN): AnyNumber | object => {
   };
 };
 
-export default function usePayWithAsset (genesisHash: string | undefined): FeeAssetInfo[] | undefined {
+export default function usePayWithAsset(genesisHash: string | undefined): FeeAssetInfo[] | undefined {
   const { api } = useChainInfo(genesisHash);
   const [feeAssetsInfo, setFeeAssetsInfo] = useState<FeeAssetInfo[]>();
   const [sufficientAssetIds, setSufficientAssetIds] = useState<BN[]>();
@@ -41,15 +41,27 @@ export default function usePayWithAsset (genesisHash: string | undefined): FeeAs
 
     api.query['assets']?.['asset'].entries().then((res) => {
       const isSufficientAssets = res.filter(([, asset]) => {
-        //@ts-ignore
+        // @ts-ignore
         return asset.toPrimitive()?.isSufficient;
       });
 
       const ids = isSufficientAssets.map(([id, _]) => {
         const assetIdInHuman = id.toHuman() as string[];
 
-        return new BN(assetIdInHuman[0].replaceAll(',', ''));
-      });
+        if (!assetIdInHuman?.[0]) {
+          console.warn('Invalid asset ID format:', id.toHuman());
+
+          return null;
+        }
+
+        try {
+          return new BN(assetIdInHuman[0].replaceAll(',', ''));
+        } catch (error) {
+          console.error('Failed to parse asset ID:', assetIdInHuman[0], error);
+
+          return null;
+        }
+      }).filter((id): id is BN => id !== null);
 
       setSufficientAssetIds(ids);
     }).catch(console.error);
