@@ -27,7 +27,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function FeeRow({ address, canPayFee, genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 

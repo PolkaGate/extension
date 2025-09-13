@@ -30,17 +30,41 @@ export default function usePartialFee (
           const info = await inputTransaction.paymentInfo(formatted, signerOptions);
 
           if (signerOptions?.assetId) {
-            const convertedFee = new BN((await api.call['assetConversionApi']['quotePriceTokensForExactTokens'](
-              signerOptions?.assetId as string,
-              {
+         try {
+              if (!api.call['assetConversionApi']?.['quotePriceTokensForExactTokens']) {
+                console.warn('Asset conversion API not available');
+                setPartialFee(info.partialFee);
+
+                return;
+              }
+
+              const assetLocation = {
                 interior: 'Here',
                 parents: 1
-              } as unknown as string,
-              info.partialFee,
-              true
-            )).toString());
+              };
 
-            setPartialFee(convertedFee);
+              const result = await api.call['assetConversionApi']['quotePriceTokensForExactTokens'](
+                signerOptions.assetId,
+                assetLocation,
+                info.partialFee,
+                true
+              );
+
+              if (!result) {
+                console.error('No conversion result received');
+                setPartialFee(null);
+
+                return;
+              }
+
+              const convertedFee = new BN(result.toString());
+
+              setPartialFee(convertedFee);
+            } catch (conversionError) {
+              console.error('Asset conversion failed:', conversionError);
+              // Fall back to native fee display
+              setPartialFee(info.partialFee);
+            }
           } else {
             setPartialFee(info.partialFee);
           }
