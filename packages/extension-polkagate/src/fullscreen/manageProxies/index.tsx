@@ -5,7 +5,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Proxy, ProxyItem } from '../../util/types';
 
 import { Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
