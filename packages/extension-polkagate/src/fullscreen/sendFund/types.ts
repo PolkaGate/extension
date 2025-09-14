@@ -9,13 +9,14 @@ import type { BN } from '@polkadot/util';
 export interface Inputs {
   amount?: string | undefined;
   amountAsBN?: BN;
+  assetId?: string | number;
   decimal?: number;
   fee?: BN;
   paraSpellFee?: BN;
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   recipientAddress?: string | undefined;
-  recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesis hash or para id!
+  recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesishash or para id!
   recipientGenesisHashOrParaId?: string | undefined;
   token?: string;
 }
