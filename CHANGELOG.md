@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.6.2](https://github.com/polkagate/extension/compare/v1.6.1...v1.6.2) (2025-09-14)
+
+
+### Bug Fixes
+
+* resolve duplicate token name issue in Polkadot Asset Hub ([#1851](https://github.com/polkagate/extension/issues/1851)) ([4b33407](https://github.com/polkagate/extension/commit/4b3340718f6debe805237c9d417bae846fac1648))
+
 ## [1.6.1](https://github.com/polkagate/extension/compare/v1.6.0...v1.6.1) (2025-09-11)
 
 
