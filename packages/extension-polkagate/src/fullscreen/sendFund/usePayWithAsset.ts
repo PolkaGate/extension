@@ -27,7 +27,7 @@ const getFeeAssetLocation = (api: ApiPromise, id: BN): AnyNumber | object => {
   };
 };
 
-export default function usePayWithAsset(genesisHash: string | undefined): FeeAssetInfo[] | undefined {
+export default function usePayWithAsset (genesisHash: string | undefined): FeeAssetInfo[] | undefined {
   const { api } = useChainInfo(genesisHash);
   const [feeAssetsInfo, setFeeAssetsInfo] = useState<FeeAssetInfo[]>();
   const [sufficientAssetIds, setSufficientAssetIds] = useState<BN[]>();

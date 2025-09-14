@@ -8,7 +8,7 @@ import { getParaId, getRelayChainSymbol, hasSupportForAsset, NODES_WITH_RELAY_CH
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export function reorderAssetHubLabel (label: string): string {
+export function normalizeChainName (label: string): string {
   if (label.endsWith('AssetHub')) {
     return 'AssetHub' + label.replace('AssetHub', '');
   }
@@ -29,8 +29,8 @@ export const isOnSameChain = (senderChainName: string | undefined, recipientChai
     return;
   }
 
-  const _senderChainName = reorderAssetHubLabel(senderChainName);
-  const _recipientChainName = reorderAssetHubLabel(recipientChainName);
+  const _senderChainName = normalizeChainName(senderChainName);
+  const _recipientChainName = normalizeChainName(recipientChainName);
 
   return _senderChainName === _recipientChainName;
 };
@@ -40,7 +40,7 @@ export function getSupportedDestinations (sourceChain: TNodeWithRelayChains | st
     return [];
   }
 
-  const _sourceChainName = reorderAssetHubLabel(sourceChain) as TNodeWithRelayChains;
+  const _sourceChainName = normalizeChainName(sourceChain) as TNodeWithRelayChains;
   const destinationChains = [{ text: _sourceChainName, value: getParaId(_sourceChainName) }];
   const sourceRelayChainSymbol = getRelayChainSymbol(_sourceChainName);
 

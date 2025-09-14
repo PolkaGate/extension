@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
-import { isOnSameChain, reorderAssetHubLabel } from './utils';
+import { isOnSameChain, normalizeChainName } from './utils';
 
 export default function useParaSpellFeeCall (address: string | undefined, amountAsBN: BN | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, senderChainName: string | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
   const [paraSpellFee, setParaSpellFee] = useState<BN>();
@@ -25,7 +25,7 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
       return;
     }
 
-    const _senderChainName = reorderAssetHubLabel(senderChainName);
+    const _senderChainName = normalizeChainName(senderChainName);
 
     if (isOnSameChain(senderChainName, _recipientChainName)) {
       console.info('No need to PS, only use it for xcm ...');
