@@ -6,7 +6,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { Inputs } from './types';
 
-import { Builder, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
+import { Builder, Native, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
@@ -33,10 +33,16 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
       return;
     }
 
+    const symbolOrId = inputs.assetId !== undefined
+      ? inputs.assetId === -1
+        ? { symbol: Native(inputs.token) }
+        : { id: inputs.assetId }
+      : { symbol: inputs.token };
+
     const builder = Builder(/* node api/ws_url_string/ws_url_array - optional*/)
       .from(_senderChainName as TNodeDotKsmWithRelayChains)
       .to(_recipientChainName as TNodeDotKsmWithRelayChains)
-      .currency({ amount: amountAsBN.toString(), symbol: inputs.token }) // Optional, to set fee asset
+      .currency({ amount: amountAsBN.toString(), ...symbolOrId })
       /* .feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
       .address(inputs.recipientAddress)
       .senderAddress(address);

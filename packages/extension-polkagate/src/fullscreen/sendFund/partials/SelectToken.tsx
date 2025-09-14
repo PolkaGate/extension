@@ -44,10 +44,11 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
     const asset = accountAssetsOnCurrentChain?.find((asset) => String(asset.assetId) === String(assetId));
 
     if (asset) {
-      const { decimal, token } = asset;
+      const { assetId, decimal, token } = asset;
 
       token && setInputs((prev) => ({
         ...(prev || {}),
+        assetId,
         decimal, // this is sending token decimal, can be different from the source chain fee/native token decimal
         token
       }));
