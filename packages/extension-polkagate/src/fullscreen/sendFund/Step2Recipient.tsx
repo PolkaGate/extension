@@ -30,7 +30,12 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
-  const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: chainName ?? '', value: genesisHash ?? '' });
+  const [selectedChain, setSelectedChain] = useState<DropdownOption>();
+
+  useEffect(() => {
+    !inputs?.recipientChain?.text && setSelectedChain({ text: chainName ?? '', value: genesisHash ?? '' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const destinationOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {
