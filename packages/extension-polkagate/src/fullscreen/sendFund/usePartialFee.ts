@@ -30,7 +30,7 @@ export default function usePartialFee (
           const info = await inputTransaction.paymentInfo(formatted, signerOptions);
 
           if (signerOptions?.assetId) {
-         try {
+            try {
               if (!api.call['assetConversionApi']?.['quotePriceTokensForExactTokens']) {
                 console.warn('Asset conversion API not available');
                 setPartialFee(info.partialFee);
