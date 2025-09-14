@@ -1,5 +1,19 @@
 # Change Log
 
+# [1.7.0](https://github.com/polkagate/extension/compare/v1.6.2...v1.7.0) (2025-09-14)
+
+
+### Features
+
+* support paying fees with non-native assets ([#1848](https://github.com/polkagate/extension/issues/1848)) ([564617f](https://github.com/polkagate/extension/commit/564617fb48b62668d63389a22cd59b4822a18157))
+
+## [1.6.2](https://github.com/polkagate/extension/compare/v1.6.1...v1.6.2) (2025-09-14)
+
+
+### Bug Fixes
+
+* resolve duplicate token name issue in Polkadot Asset Hub ([#1851](https://github.com/polkagate/extension/issues/1851)) ([4b33407](https://github.com/polkagate/extension/commit/4b3340718f6debe805237c9d417bae846fac1648))
+
 ## [1.6.1](https://github.com/polkagate/extension/compare/v1.6.0...v1.6.1) (2025-09-11)
 
 

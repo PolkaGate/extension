@@ -41,15 +41,16 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
   useUpdateAccountSelectedAsset(address, genesisHash, _urlAssetId, true);
 
   useEffect(() => {
-    if (!asset?.token) {
-      return;
-    }
+    if (asset) {
+      const { assetId, decimal, token } = asset;
 
-    setInputs((prev) => ({
-      ...(prev || {}),
-      decimal: asset.decimal,
-      token: asset.token
-    }));
+      token && setInputs((prev) => ({
+        ...(prev || {}),
+        assetId,
+        decimal, // this is sending token decimal, can be different from the source chain fee/native token decimal
+        token
+      }));
+    }
   }, [asset, setInputs]);
 
   const logoInfo = useMemo(() => inputs?.token && getLogo2(genesisHash, inputs.token), [genesisHash, inputs?.token]);

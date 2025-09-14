@@ -24,7 +24,7 @@ import NumberedTitle from './partials/NumberedTitle';
 import useLimitedFeeCall from './useLimitedFeeCall';
 import useParaSpellFeeCall from './useParaSpellFeeCall';
 import useWarningMessage from './useWarningMessage';
-import { isOnSameChain, reorderAssetHubLabel } from './utils';
+import { isOnSameChain, normalizeChainName } from './utils';
 
 interface Props {
   inputs: Inputs | undefined;
@@ -152,7 +152,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
       let mayBeEDasBN;
 
       if (senderChainName && inputs?.token && !TEST_NETS.includes(genesisHash ?? '')) {
-        const _senderChainName = reorderAssetHubLabel(senderChainName);
+        const _senderChainName = normalizeChainName(senderChainName);
 
         mayBeEDasBN = getExistentialDeposit(_senderChainName as TNodeWithRelayChains, { symbol: inputs.token });
       } else {

@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { FeeInfo } from '../fullscreen/sendFund/types';
 import type { TransactionDetail } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -70,15 +71,12 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
             {token}
           </Typography>
         </Stack>
-        {/* <Typography color='text.highlight' variant='B-2'>
-          {transactionDetail}
-        </Typography> */}
       </Stack>
     </GlowBox>
   );
 };
 
-interface ListItemType { content: string | number | undefined; title: string; }
+interface ListItemType { content: FeeInfo | string | number | undefined; title: string; }
 
 const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
   const { t } = useTranslation();
@@ -114,7 +112,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
                   {content === undefined
                     ? '--'
                     : isHash
-                      ? toShortAddress(content.toString(), 6)
+                      ? toShortAddress(String(content), 6)
                       : (isFee || isAmount)
                         ? (
                           <FormatBalance2
@@ -130,7 +128,7 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
                             tokens={[token ?? '']}
                             value={content as string}
                           />)
-                        : content
+                        : content as string
                   }
                 </Typography>
               </Container>

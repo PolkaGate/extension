@@ -1,14 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ApiPromise } from '@polkadot/api';
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
 import { getParaId, getRelayChainSymbol, hasSupportForAsset, NODES_WITH_RELAY_CHAINS_DOT_KSM, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 
+import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
+import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util/utils';
+
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-export function reorderAssetHubLabel (label: string): string {
+export function normalizeChainName (label: string): string {
   if (label.endsWith('AssetHub')) {
     return 'AssetHub' + label.replace('AssetHub', '');
   }
@@ -29,8 +33,8 @@ export const isOnSameChain = (senderChainName: string | undefined, recipientChai
     return;
   }
 
-  const _senderChainName = reorderAssetHubLabel(senderChainName);
-  const _recipientChainName = reorderAssetHubLabel(recipientChainName);
+  const _senderChainName = normalizeChainName(senderChainName);
+  const _recipientChainName = normalizeChainName(recipientChainName);
 
   return _senderChainName === _recipientChainName;
 };
@@ -40,7 +44,7 @@ export function getSupportedDestinations (sourceChain: TNodeWithRelayChains | st
     return [];
   }
 
-  const _sourceChainName = reorderAssetHubLabel(sourceChain) as TNodeWithRelayChains;
+  const _sourceChainName = normalizeChainName(sourceChain) as TNodeWithRelayChains;
   const destinationChains = [{ text: _sourceChainName, value: getParaId(_sourceChainName) }];
   const sourceRelayChainSymbol = getRelayChainSymbol(_sourceChainName);
 
@@ -60,4 +64,16 @@ export function getSupportedDestinations (sourceChain: TNodeWithRelayChains | st
   }
 
   return destinationChains;
+}
+
+export function isNativeAsset (api: ApiPromise, token: string, assetId: number | string) {
+  const isAssetHub = isOnAssetHub(api.genesisHash.toHex());
+
+  if (isAssetHub && Number(assetId) === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB) {
+    return true;
+  }
+
+  const nativeTokens = api.registry.chainTokens; // e.g., ['KSM']
+
+  return nativeTokens.includes(token);
 }
