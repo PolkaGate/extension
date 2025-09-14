@@ -69,7 +69,7 @@ export function getSupportedDestinations (sourceChain: TNodeWithRelayChains | st
 export function isNativeAsset (api: ApiPromise, token: string, assetId: number | string) {
   const isAssetHub = isOnAssetHub(api.genesisHash.toHex());
 
-  if (isAssetHub && assetId === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB) {
+  if (isAssetHub && Number(assetId) === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB) {
     return true;
   }
 
