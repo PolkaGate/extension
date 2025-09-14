@@ -9,16 +9,22 @@ import type { Inputs } from './types';
 import { Builder, Native, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
+import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
-import { isOnSameChain, normalizeChainName } from './utils';
+import { isNativeAsset, isOnSameChain, normalizeChainName } from './utils';
 
 export default function useParaSpellFeeCall (address: string | undefined, amountAsBN: BN | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, senderChainName: string | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
+  const { api } = useChainInfo(genesisHash);
   const [paraSpellFee, setParaSpellFee] = useState<BN>();
   const [paraSpellTransaction, setParaSpellTransaction] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
   useEffect(() => {
+    if (!api || amountAsBN?.isZero()) {
+      return;
+    }
+
     const _recipientChainName = inputs?.recipientChain?.text;
 
     if (TEST_NETS.includes(genesisHash ?? '') || !senderChainName || !amountAsBN || !address || !inputs?.token || !_recipientChainName || !inputs?.recipientAddress || !inputs?.amount || !address) {
@@ -34,7 +40,7 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
     }
 
     const symbolOrId = inputs.assetId !== undefined
-      ? inputs.assetId === -1
+      ? isNativeAsset(api, inputs.token, inputs.assetId)
         ? { symbol: Native(inputs.token) }
         : { id: inputs.assetId }
       : { symbol: inputs.token };
