@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { useAccount, useChainInfo, useTranslation, useUpdateSelectedAccount } from '../../hooks';
+import { useChainInfo, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { PROXY_CHAINS } from '../../util/constants';
 import { NotSupportedBox } from '../components';
 import HomeLayout from '../components/layout';
@@ -23,7 +23,6 @@ import { type ProxyFlowStep } from './types';
 function ManageProxies (): React.ReactElement {
   const { t } = useTranslation();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
-  const account = useAccount(address);
   const { api, chain, decimal, token } = useChainInfo(genesisHash);
 
   useUpdateSelectedAccount(address);
@@ -34,8 +33,6 @@ function ManageProxies (): React.ReactElement {
   const [newDepositValue, setNewDepositedValue] = useState<BN | undefined>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
-
-  const isDisabledAddProxyButton = useMemo(() => !account || proxyItems === undefined, [account, proxyItems]);
 
   const fetchProxies = useCallback((_address: string, _api: ApiPromise) => {
     setRefresh(false);
@@ -68,6 +65,7 @@ function ManageProxies (): React.ReactElement {
   }, [genesisHash, chain, refresh]);
 
   useEffect(() => {
+    // Reset UI state on chain switch while the API might still be fetching data from the old chain
     setProxyItems(undefined);
     setDepositedValue(undefined);
   }, [chain?.genesisHash, refresh]);
@@ -108,7 +106,7 @@ function ManageProxies (): React.ReactElement {
             chain={chain}
             decimal={decimal}
             depositedValue={depositedValue}
-            isDisabledAddProxyButton={!!isDisabledAddProxyButton}
+            isDisabledAddProxyButton={proxyItems === undefined}
             newDepositValue={newDepositValue}
             proxyItems={proxyItems}
             setNewDepositedValue={setNewDepositedValue}
