@@ -61,7 +61,7 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
         setError('Something went wrong while calculating estimated fee!');
         console.error('Something went wrong while getting fee', err);
       });
-  }, [address, senderChainName, amountAsBN, genesisHash, setError, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress, inputs?.amount, inputs?.recipientChain?.value]);
+  }, [address, senderChainName, amountAsBN, genesisHash, setError, inputs?.assetId, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress, inputs?.amount, inputs?.recipientChain?.value]);
 
   return {
     paraSpellFee,
