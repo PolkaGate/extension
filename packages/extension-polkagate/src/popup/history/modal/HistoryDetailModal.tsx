@@ -25,7 +25,7 @@ interface Props {
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function HistoryDetailModal({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
+export default function HistoryDetailModal ({ chainName, decimal, info, setShowDetail, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const options = { day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', second: 'numeric', weekday: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
@@ -92,7 +92,7 @@ export default function HistoryDetailModal({ chainName, decimal, info, setShowDe
           <Item item={`${t('Track Id')}: #${info.class}`} noDivider />
         }
         {info?.fee &&
-          <Amount amount={info?.fee} decimal={decimal} label={t('Fee')} token={token} />
+          <Amount amount={info?.fee as string} decimal={decimal} label={t('Fee')} token={token} />
         }
         <Divider
           sx={{

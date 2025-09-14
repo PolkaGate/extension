@@ -30,7 +30,7 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
-  const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: chainName ?? '', value: genesisHash ?? '' });
+  const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
 
   const destinationOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {

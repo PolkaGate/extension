@@ -10,34 +10,33 @@ import { ArrowCircleRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router';
 
-import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { AssetLogo, Motion, ShowBalance4 } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
-import { UnableToPayFee } from '../../partials';
+import FeeRow from './partials/FeeRow';
 import FromToBox from './partials/FromToBox';
 
 interface Props {
   canPayFee: CanPayFee;
   inputs: Inputs;
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
   teleportState: Teleport;
 }
 
-export default function Step4Summary ({ canPayFee, inputs }: Props): React.ReactElement {
+export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
-  const { chainName, token: sourceChainNativeToken } = useChainInfo(genesisHash);
+  const { chainName } = useChainInfo(genesisHash);
 
   const assetToTransfer = useMemo(() =>
     accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId),
-  [accountAssets, assetId, genesisHash]);
+    [accountAssets, assetId, genesisHash]);
 
   const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
-  const feeLogoInfo = useMemo(() => getLogo2(genesisHash, sourceChainNativeToken), [genesisHash, sourceChainNativeToken]);
 
   return (
     <Motion variant='fade'>
@@ -78,24 +77,13 @@ export default function Step4Summary ({ canPayFee, inputs }: Props): React.React
         />
       </Stack>
       <Stack direction='column' sx={{ m: '25px 10px 20px', width: '766px' }}>
-        <Stack direction='row' justifyContent='space-between' sx={{ px: '15px' }}>
-          <Typography color='primary.main' sx={{ textAlign: 'left' }} variant='B-1'>
-            {t('Estimated fee')}
-          </Typography>
-          <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end'>
-            {canPayFee.isAbleToPay === false && canPayFee.warning &&
-              <UnableToPayFee warningText={canPayFee.warning} />
-            }
-            <Typography color='text.primary' sx={{ ml: '5px', textAlign: 'left' }} variant='B-1'>
-              <ShowBalance4
-                balance={inputs.paraSpellFee ?? inputs.fee}
-                decimalPoint={FLOATING_POINT_DIGIT}
-                genesisHash={genesisHash}
-              />
-            </Typography>
-            <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
-          </Stack>
-        </Stack>
+        <FeeRow
+          address={address}
+          canPayFee={canPayFee}
+          genesisHash={genesisHash}
+          inputs={inputs}
+          setInputs={setInputs}
+        />
         <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
       </Stack>
     </Motion>

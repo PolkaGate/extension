@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../util/types';
+import type { FeeInfo } from '../sendFund/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
@@ -29,16 +30,20 @@ const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
 interface AmountProps {
   amount: string | undefined;
   genesisHash: string | undefined;
+  assetDecimal: number | undefined;
   token: string | undefined;
 }
 
-const Amount = ({ amount, genesisHash, token }: AmountProps) => {
-  const { decimal, token: nativeToken } = useChainInfo(genesisHash, true);
-  const _token = token ?? nativeToken;
-  const price = useTokenPriceBySymbol(token, genesisHash);
+const Amount = ({ amount, assetDecimal, genesisHash, token }: AmountProps) => {
+  const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
+
   const currency = useCurrency();
 
-  const amountInHuman = amountToHuman((amount ?? '0'), decimal);
+  const _decimal = assetDecimal ?? nativeAssetDecimal;
+  const _token = token ?? nativeToken;
+  const price = useTokenPriceBySymbol(_token, genesisHash);
+
+  const amountInHuman = amountToHuman((amount ?? '0'), _decimal);
 
   const value = ((price.price ?? 0) * parseFloat(amountInHuman)).toFixed(2);
   const [integerPart, decimalPart] = amountInHuman.split('.');
@@ -105,7 +110,7 @@ interface HeaderProps {
 const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
   const { t } = useTranslation();
 
-  const { accounts, amount, description, success, token } = transactionDetail;
+  const { accounts, amount, assetDecimal, description, success, token } = transactionDetail;
 
   return (
     <GlowBox style={{ m: 0, width: '100%' }}>
@@ -147,6 +152,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
             </>
             : <Amount
               amount={amount}
+              assetDecimal={assetDecimal}
               genesisHash={genesisHash}
               token={token}
               />
@@ -168,7 +174,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
   const theme = useTheme();
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const _decimal = transactionDetail?.decimal ?? nativeAssetDecimal;
+  const _decimal = transactionDetail?.assetDecimal ?? transactionDetail?.decimal ?? nativeAssetDecimal;
   const _token = transactionDetail?.token ?? nativeToken;
 
   const mainEntries = useMemo(() => {
@@ -177,7 +183,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
     return fieldsToDisplay
       .map((field) => [field, transactionDetail[field as keyof TransactionDetail]])
-      .filter(([_, value]) => value !== undefined && value !== null) as [string, any][];
+      .filter(([_, value]) => value !== undefined && value !== null) as [string, TransactionDetail[keyof TransactionDetail]][];
   }, [showDate, transactionDetail]);
 
   const extraEntries = useMemo(() => {
@@ -188,11 +194,11 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
     return [];
   }, [transactionDetail]);
 
-  const getContentTypeAndColor = useCallback((key: string, content: any) => {
+  const getContentTypeAndColor = useCallback((key: string, content: TransactionDetail[keyof TransactionDetail]) => {
     const isHash = key === 'txHash';
     const isBlock = key === 'block';
-    const isBalance = ['amount', 'deposit', 'fee'].includes(key);
     const isFee = ['fee'].includes(key);
+    const isBalance = isFee || ['amount', 'deposit'].includes(key);
     const isAddress = isValidAddress(content as string);
     const isFromAddress = key === 'from' && isAddress;
     const isDate = showDate && key === 'date';
@@ -236,7 +242,9 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                         ? (
                           <FormatBalance2
                             decimalPoint={4}
-                            decimals={[(isFee ? nativeAssetDecimal : _decimal) ?? 0]}
+                            decimals={[(isFee && typeof content === 'object' && 'decimal' in (content as any)
+                              ? (content as FeeInfo).decimal
+                              : isFee ? nativeAssetDecimal : _decimal) ?? 0]}
                             style={{
                               color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
                               fontFamily: 'Inter',
@@ -244,12 +252,18 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                               fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[(isFee ? nativeToken : _token) ?? '']}
-                            value={content as string}
+                            tokens={[(isFee && typeof content === 'object' && 'token' in (content as any)
+                              ? (content as FeeInfo).token
+                              : isFee ? nativeToken : _token) ?? '']}
+                            value={
+                              isFee && typeof content === 'object' && 'fee' in (content as any)
+                                ? (content as FeeInfo).fee
+                                : (content as string)
+                            }
                           />)
                         : isDate
-                          ? new Date(content).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
-                          : content
+                          ? new Date(content as number).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
+                          : content as string
                     }
                   </Typography>
                 </Stack>

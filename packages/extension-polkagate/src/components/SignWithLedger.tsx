@@ -61,6 +61,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
             account={account}
             error={error}
             onCancel={onSecondaryClick}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSignature={onLedgerGenericSignature}
             payload={signerPayload}
             setError={setError}
@@ -72,6 +73,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
             error={error}
             genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
             onCancel={onSecondaryClick} // TODO: should be fixed later
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSignature={onSignature}
             payload={payload}
             setError={setError}
