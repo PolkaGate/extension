@@ -17,7 +17,7 @@ interface Props {
   destinationOptions?: DropdownOption[];
   chainName: string | undefined;
   withTitle?: boolean;
-  setSelectedChain?: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
+  setSelectedChain?: React.Dispatch<React.SetStateAction<DropdownOption>>;
   style?: React.CSSProperties;
 }
 
