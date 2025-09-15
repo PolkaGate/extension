@@ -70,19 +70,14 @@ export default function useStakingAccount (address: AccountId | string | undefin
   }, [api, stashId, token, decimal, genesisHash, refresh, setRefresh]);
 
   useEffect(() => {
-    if (!api || refresh) {
+    if (!api) {
       return;
     }
 
-    fetch().catch(console.error);
-  }, [api, fetch, refresh, stashId]);
-
-  useEffect(() => {
-    if (!api || !refresh) {
-      return;
+    if (refresh) {
+      setStakingInfo(undefined);
     }
 
-    setStakingInfo(undefined);
     fetch().catch(console.error);
   }, [api, fetch, refresh, stashId]);
 

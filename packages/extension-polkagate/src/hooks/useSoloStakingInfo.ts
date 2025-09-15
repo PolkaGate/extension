@@ -168,7 +168,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   const rewards = useSoloStakingTotalReward(chainName, stakingAccount); // total reward
   const stakingConsts = useStakingConsts(genesisHash);
 
-  const [soloStakingInfoLoaded, setSoloStakingInfoLoaded] = useState<SoloStakingInfo | undefined>(undefined);
+  const [soloStakingInfoStorage, setSoloStakingInfoStorage] = useState<SoloStakingInfo | undefined>(undefined);
   const [soloStakingInfo, setSoloStakingInfo] = useState<SoloStakingInfo | undefined>(undefined);
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
 
@@ -268,7 +268,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
         if (parsedInfo?.currentEra === currentEra) {
           const revived = reviveSoloStakingInfoBNs(parsedInfo);
 
-          setSoloStakingInfoLoaded(revived);
+          setSoloStakingInfoStorage(revived);
           needsStorageUpdate.current = false;
         }
       }).catch(console.error);
@@ -278,21 +278,27 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   // Refresh staking-related state when the chain changes,
   // which also changes the token value.
   useEffect(() => {
-    if ((!soloStakingInfo && !soloStakingInfoLoaded) || !token) {
+    if ((!soloStakingInfo && !soloStakingInfoStorage) || !token) {
       return;
     }
 
-    const infoToken = (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token?.toLowerCase();
+    const infoToken = (soloStakingInfo || soloStakingInfoStorage)?.stakingAccount?.token?.toLowerCase();
 
-    if (infoToken && token.toLowerCase() !== infoToken) {
-      console.log('reset on change');
-      fetchingFlag.current = true;
-      setSoloStakingInfoLoaded(undefined);
+    if (infoToken && token.toLowerCase() !== infoToken && !fetchingFlag.current) {
+      console.log(
+        '[useSoloStakingInfo] Resetting staking state due to token mismatch:',
+        {
+          currentToken: token,
+          storageToken: soloStakingInfoStorage?.stakingAccount?.token,
+          storedToken: soloStakingInfo?.stakingAccount?.token
+        }
+      ); fetchingFlag.current = true;
+      setSoloStakingInfoStorage(undefined);
       setSoloStakingInfo(undefined);
       setSessionInfo(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soloStakingInfo?.stakingConsts?.token, soloStakingInfoLoaded?.stakingConsts?.token, token]);
+  }, [soloStakingInfo?.stakingAccount?.token, soloStakingInfoStorage?.stakingAccount?.token, token]);
 
-  return useMemo(() => soloStakingInfo || soloStakingInfoLoaded || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoLoaded]);
+  return useMemo(() => soloStakingInfo || soloStakingInfoStorage || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoStorage]);
 }
