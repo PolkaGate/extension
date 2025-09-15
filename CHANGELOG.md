@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.1](https://github.com/polkagate/extension/compare/v1.8.0...v1.8.1) (2025-09-15)
+
+
+### Bug Fixes
+
+* prevent rare repeated reset on token change in staking page ([#1855](https://github.com/polkagate/extension/issues/1855)) ([689ad19](https://github.com/polkagate/extension/commit/689ad19f6c76c464e3d25a16168db15a5edc951c))
+
 # [1.8.0](https://github.com/polkagate/extension/compare/v1.7.2...v1.8.0) (2025-09-15)
 
 
