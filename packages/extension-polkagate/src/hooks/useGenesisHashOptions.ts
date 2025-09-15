@@ -8,7 +8,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
-import { isMigratedHub } from '../util/migrateHubUtils';
 
 const RELAY_CHAIN = 'Relay Chain';
 
