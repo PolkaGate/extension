@@ -43,7 +43,8 @@ function ReceiveGeneral ({ closePopup, openPopup }: Props): React.ReactElement {
         <Receive
           address={address}
           closePopup={closePopup}
-          onClose={onClose}
+          open={!!address}
+          setAddress={setAddress}
         />
       }
     </Grid>
