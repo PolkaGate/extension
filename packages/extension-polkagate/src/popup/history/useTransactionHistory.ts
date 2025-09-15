@@ -7,6 +7,8 @@ import type { FilterOptions, RecordTabStatus, RecordTabStatusGov, TransactionHis
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
+import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+
 import { useChainInfo } from '../../hooks';
 import { getTxTransfers } from '../../util/api/getTransfers';
 import { getTXsHistory } from '../../util/api/getTXsHistory';
@@ -15,7 +17,8 @@ import { getHistoryFromStorage } from './hookUtils/getHistoryFromStorage';
 import { saveHistoryToStorage } from './hookUtils/saveHistoryToStorage';
 import { extrinsicsReducer, formatString, log, receivedReducer } from './hookUtils/utils';
 
-export default function useTransactionHistory (address: AccountId | string | undefined, genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory(address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+  const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -285,9 +288,10 @@ export default function useTransactionHistory (address: AccountId | string | und
 
       // Take the MAX_LOCAL_HISTORY_ITEMS most recent transactions
       const latestTransactions = allHistories.slice(0, MAX_LOCAL_HISTORY_ITEMS);
+      const historyGenesisToSave = latestTransactions[0].chain?.genesisHash; // @AMIRKHANEF , a guard to do not save history for a wrong chain! TODO: needs an approach to avoid redundant writing
 
       // Save to local storage with chain information
-      saveHistoryToStorage(String(address), String(genesisHash), latestTransactions)
+      historyGenesisToSave && saveHistoryToStorage(String(address), historyGenesisToSave, latestTransactions)
         .then(() => {
           log('Successfully saved latest transactions to local storage');
         })

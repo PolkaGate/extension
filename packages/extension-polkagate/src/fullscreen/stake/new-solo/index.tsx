@@ -7,6 +7,7 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
@@ -15,7 +16,7 @@ import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
 import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
-import PopUpHandler from './PopUpHandler';
+import PopUpHandlerSolo from './PopUpHandlerSolo';
 
 export default function SoloFullScreen (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -32,13 +33,11 @@ export default function SoloFullScreen (): React.ReactElement {
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, genesisHash), [accountAssets, genesisHash]);
 
   const notStaked = useMemo(() => (
     Boolean(accountAssets === null || (accountAssets && asset === undefined)) ||
-    (asset?.soloTotal && asset.soloTotal.isZero())
+    (asset?.soloTotal?.isZero())
   ), [accountAssets, asset]);
 
   const tokenPrice = useMemo(() => pricesInCurrency?.prices[asset?.priceId ?? '']?.value ?? 0, [asset?.priceId, pricesInCurrency?.prices]);
@@ -95,7 +94,7 @@ export default function SoloFullScreen (): React.ReactElement {
           />
         </Stack>
       </HomeLayout>
-      <PopUpHandler
+      <PopUpHandlerSolo
         address={address}
         genesisHash={genesisHash}
         popupCloser={popupCloser}

@@ -9,8 +9,9 @@ import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
-import { ExtensionPopups, GOVERNANCE_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, GOVERNANCE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
+import { isStakingChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo, useStakingPositions, useTranslation } from '../../../hooks';
 import GovernanceModal from '../../components/GovernanceModal';
@@ -74,7 +75,7 @@ function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactEl
               label={t('Governance')}
               onClick={extensionPopupOpener(ExtensionPopups.GOVERNANCE)}
             />}
-          {STAKING_CHAINS.includes(genesisHash ?? '') &&
+          {isStakingChain(genesisHash) &&
             <ActionBox
               Icon={BuyCrypto}
               label={t('Staking')}

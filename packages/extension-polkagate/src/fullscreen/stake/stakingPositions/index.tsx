@@ -7,14 +7,13 @@ import { Stack } from '@mui/material';
 import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router';
 
-import { BN_ZERO } from '@polkadot/util';
+import { getEarningOptions } from '@polkadot/extension-polkagate/src/popup/staking/utils';
+import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { FadeOnScroll, Motion } from '../../../components';
 import { useAccountAssets, useIsTestnetEnabled, usePrices, useSelectedAccount } from '../../../hooks';
-import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS, TEST_NETS } from '../../../util/constants';
+import { TEST_NETS } from '../../../util/constants';
 import { fetchStaking } from '../../../util/fetchStaking';
-import getChain from '../../../util/getChain';
-import { sanitizeChainName } from '../../../util/utils';
 import { type PopupOpener, POSITION_TABS, positionsInitialState, positionsReducer, type PositionsState } from '../util/utils';
 import EarningItem from './EarningItem';
 import PositionItem from './PositionItem';
@@ -79,7 +78,8 @@ const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rat
   <>
     {earningItems?.map((token) => {
       const { chainName, genesisHash, tokenSymbol } = token;
-      const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0, suggestedValidators: allSuggestedValidators?.[chainName.toLowerCase()] || [] } as PositionInfo;
+      const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
+      const info = { ...token, rate: rates?.[relayChainName] || 0, suggestedValidators: allSuggestedValidators?.[relayChainName] || [] } as PositionInfo;
 
       if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
         return <Fragment key={`${genesisHash}_${tokenSymbol}_fragment`} />;
@@ -106,7 +106,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
   const selectedAccount = useSelectedAccount();
   const containerRef = useRef(null);
   const isTestnetEnabled = useIsTestnetEnabled();
-  
+
   const accountAssets = useAccountAssets(selectedAccount?.address);
   const { pathname } = useLocation();
   const { genesisHash: urlGenesisHash } = useParams<{ genesisHash: string }>();
@@ -156,31 +156,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
     });
   }, [positions, state.searchQuery, state.tab]);
 
-  const earning = useMemo(() => {
-    const _stakingChains = isTestnetEnabled ? STAKING_CHAINS : STAKING_CHAINS.filter((genesisHash) => !TEST_NETS.includes(genesisHash)) ;
-    return _stakingChains.map((genesisHash) => {
-      const chain = getChain(genesisHash);
-
-      if (!chain) {
-        return undefined;
-      }
-
-      const nativeTokenBalance = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && assetId === NATIVE_TOKEN_ASSET_ID);
-
-      if ( // filter staked tokens
-        (nativeTokenBalance?.soloTotal && !nativeTokenBalance?.soloTotal.isZero()) ||
-        (nativeTokenBalance?.pooledBalance && !nativeTokenBalance?.pooledBalance.isZero())) {
-        return undefined;
-      }
-
-      return {
-        ...chain,
-        ...nativeTokenBalance,
-        availableBalance: nativeTokenBalance ? nativeTokenBalance.availableBalance : BN_ZERO,
-        chainName: sanitizeChainName(chain?.name || '') ?? 'Unknown'
-      } as unknown as PositionInfo;
-    }).filter((item) => !!item);
-  }, [accountAssets, isTestnetEnabled]);
+  const earning = useMemo(() => getEarningOptions(accountAssets, isTestnetEnabled), [accountAssets, isTestnetEnabled]);
 
   const earningItems = useMemo(() => {
     return state.searchQuery
@@ -193,7 +169,7 @@ function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
       return;
     }
 
-    (!positions ||positions?.length === 0)
+    (!positions || positions?.length === 0)
       ? dispatch({ payload: POSITION_TABS.EXPLORE, type: 'SET_TAB' })
       : dispatch({ payload: POSITION_TABS.POSITIONS, type: 'SET_TAB' });
   }, [positions, accountAssets]);

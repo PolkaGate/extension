@@ -940,8 +940,6 @@ export interface FastestConnectionType {
   selectedEndpoint: string | undefined;
 }
 
-export type RecentChainsType = Record<string, string[]>;
-
 export type NftItemsType = Record<string, ItemInformation[]>;
 
 export interface FetchedBalance {

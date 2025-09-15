@@ -141,6 +141,7 @@ interface Props {
 
 export default function StakingPortfolioAndTiles ({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
+  const { api } = useChainInfo(genesisHash);
 
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
@@ -158,7 +159,7 @@ export default function StakingPortfolioAndTiles ({ availableBalanceToStake, dis
             onClick: popupOpener(StakingPopUps.UNSTAKE),
             text: t('Unstake')
           },
-          ...(type === 'solo'
+          ...(type === 'solo' && api?.tx['fastUnstake']?.['registerFastUnstake']
             ? [{
               Icon: Timer1,
               onClick: popupOpener(StakingPopUps.FAST_UNSTAKE),

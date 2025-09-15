@@ -9,17 +9,16 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { BackWithLabel, ChainLogo, FadeOnScroll, FormatBalance2, Motion, SearchField } from '../../components';
-import { useAccountAssets, useBackground, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useBackground, useIsDark, useIsTestnetEnabled, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
-import { NATIVE_TOKEN_ASSET_ID, STAKING_CHAINS } from '../../util/constants';
 import { fetchStaking } from '../../util/fetchStaking';
-import getChain from '../../util/getChain';
-import { sanitizeChainName } from '../../util/utils';
 import StakingInfo from './stakingInfo';
+import { getEarningOptions } from './utils';
 
 export default function EarningOptions (): React.ReactElement {
   useBackground('default');
@@ -30,6 +29,7 @@ export default function EarningOptions (): React.ReactElement {
   const accountAssets = useAccountAssets(account?.address);
   const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   const [rates, setRates] = useState<Record<string, number>>();
   const [searchKeyWord, setSearchKeyWord] = useState<string>();
@@ -41,33 +41,13 @@ export default function EarningOptions (): React.ReactElement {
     }).catch(console.error);
   }, []);
 
-  const stakingTokens = useMemo(() => STAKING_CHAINS.map((genesisHash) => {
-    const chain = getChain(genesisHash);
+  const earning = useMemo(() => getEarningOptions(accountAssets, isTestnetEnabled), [accountAssets, isTestnetEnabled]);
 
-    if (!chain) {
-      return undefined;
-    }
-
-    const nativeTokenBalance = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && assetId === NATIVE_TOKEN_ASSET_ID);
-
-    if ( // filter staked tokens
-      (nativeTokenBalance?.soloTotal && !nativeTokenBalance?.soloTotal.isZero()) ||
-      (nativeTokenBalance?.pooledBalance && !nativeTokenBalance?.pooledBalance.isZero())) {
-      return undefined;
-    }
-
-    return {
-      ...chain,
-      ...nativeTokenBalance,
-      chainName: sanitizeChainName(chain?.name || '') ?? 'Unknown'
-    } as unknown as PositionInfo;
-  }).filter((item) => !!item), [accountAssets]);
-
-  const filteredToken = useMemo(() => {
+  const earningItems = useMemo(() => {
     return searchKeyWord
-      ? stakingTokens.filter((item) => item?.tokenSymbol?.toLowerCase().includes(searchKeyWord))
-      : stakingTokens;
-  }, [searchKeyWord, stakingTokens]);
+      ? earning.filter((item) => item?.tokenSymbol?.toLowerCase().includes(searchKeyWord))
+      : earning;
+  }, [searchKeyWord, earning]);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
@@ -101,9 +81,10 @@ export default function EarningOptions (): React.ReactElement {
           />
           <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
-              {filteredToken?.map((token, index) => {
+              {earningItems?.map((token, index) => {
                 const { availableBalance, chainName, decimal, freeBalance, genesisHash, tokenSymbol } = token;
-                const info = { ...token, rate: rates?.[chainName.toLowerCase()] || 0 } as PositionInfo;
+                const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
+                const info = { ...token, rate: rates?.[relayChainName] || 0 } as PositionInfo;
 
                 return (
                   <Grid alignItems='center' container item justifyContent='space-between' key={index}
@@ -113,8 +94,8 @@ export default function EarningOptions (): React.ReactElement {
                       ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
                       bgcolor: '#05091C',
                       borderBottom: '1px solid #1B133C',
-                      borderBottomLeftRadius: index === filteredToken.length - 1 ? '14px' : 0,
-                      borderBottomRightRadius: index === filteredToken.length - 1 ? '14px' : 0,
+                      borderBottomLeftRadius: index === earningItems.length - 1 ? '14px' : 0,
+                      borderBottomRightRadius: index === earningItems.length - 1 ? '14px' : 0,
                       borderTopLeftRadius: index === 0 ? '14px' : 0,
                       borderTopRightRadius: index === 0 ? '14px' : 0,
                       cursor: 'pointer',
@@ -145,7 +126,7 @@ export default function EarningOptions (): React.ReactElement {
                           {t('up to')}
                         </Typography>
                         <Typography color='#82FFA5' sx={{ lineHeight: '17px' }} variant='B-2'>
-                          {rates?.[chainName.toLowerCase()] || 0}%
+                          {info.rate }%
                         </Typography>
                         <Typography color='#EAEBF1' fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
                           {t('per year')}

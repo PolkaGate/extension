@@ -33,7 +33,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandlerPool ({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   const handleClose = useCallback(() => {
     popupCloser();
     setSelectedPosition(undefined);
@@ -142,4 +142,4 @@ function PopUpHandler ({ address, genesisHash, poolInfo, popupCloser, popupOpene
   }, [address, genesisHash, handleClose, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased]);
 }
 
-export default React.memo(PopUpHandler);
+export default React.memo(PopUpHandlerPool);

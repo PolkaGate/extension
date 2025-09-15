@@ -55,15 +55,17 @@ export default function useUpdateAccountSelectedAsset (address: string | undefin
       return;
     }
 
-    changeUrl && changePath().then(() => {
-      onClose && onClose();
-    }).catch(console.error);
-
-    onClose && onClose();
+    if (changeUrl) {
+      changePath()
+        .then(() => onClose?.())
+        .catch(console.error);
+    } else {
+      onClose?.();
+    }
   }, [address, assetId, changePath, changeUrl, onClose]);
 
   useEffect(() => {
-    if (!address || !assetId || !genesisHash) {
+    if (!address || assetId === undefined || !genesisHash) {
       console.warn('useUpdateAccountSelectedAsset: Missing address, assetId, or genesisHash');
 
       return;

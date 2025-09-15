@@ -11,7 +11,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { noop } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
-import { useAccountAssets, useChainInfo, useTranslation } from '../../../hooks';
+import { useAccountAssets, useTranslation } from '../../../hooks';
 import CustomizedDropDown from './CustomizedDropDown';
 import OpenerButton from './OpenerButton';
 
@@ -27,22 +27,24 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const accountAssets = useAccountAssets(address);
-  const { chainName } = useChainInfo(genesisHash, true);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
-  const [selectedAsset, setSelectedAsset] = useState<string>();
-
-  useUpdateAccountSelectedAsset(address, genesisHash, selectedAsset, true);
+  const [selectedAssetId, setSelectedAsset] = useState<string>();
 
   const accountAssetsOnCurrentChain = useMemo(() => accountAssets?.filter((asset) => asset.genesisHash === genesisHash), [accountAssets, genesisHash]);
 
+  const asset = useMemo(() => {
+    const list = accountAssetsOnCurrentChain ?? [];
+    const id = selectedAssetId ?? assetId;
+
+    return list.find((a) => String(a.assetId) === String(id)) ?? list[0];
+  }, [accountAssetsOnCurrentChain, assetId, selectedAssetId]);
+
+  const _urlAssetId = useMemo(() => selectedAssetId ?? asset?.assetId, [asset?.assetId, selectedAssetId]);
+
+  useUpdateAccountSelectedAsset(address, genesisHash, _urlAssetId, true);
+
   useEffect(() => {
-    if (!chainName) {
-      return;
-    }
-
-    const asset = accountAssetsOnCurrentChain?.find((asset) => String(asset.assetId) === String(assetId));
-
     if (asset) {
       const { assetId, decimal, token } = asset;
 
@@ -53,7 +55,7 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
         token
       }));
     }
-  }, [accountAssetsOnCurrentChain, assetId, chainName, setInputs]);
+  }, [asset, setInputs]);
 
   const logoInfo = useMemo(() => inputs?.token && getLogo2(genesisHash, inputs.token), [genesisHash, inputs?.token]);
 

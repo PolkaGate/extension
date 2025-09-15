@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
-import type { Chain } from '../../../extension-chains/src/types';
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
+import getChainName from './getChainName';
 import getNetworkMap from './getNetworkMap';
+import { isMigratedHub, mapRelayToSystemGenesisIfMigrated, mapSystemToRelay } from './migrateHubUtils';
 import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
 
@@ -20,32 +21,49 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-// info can be a chain, chain name, genesis hash or even an external dapp or web site name, but if info is a genesishash we must have the token as well
-export default function getLogo2 (info: string | undefined | null | Chain, token?: string): LogoInfo | undefined {
+// info can be a chain name, genesishash or even an external dapp or web site name, but if info is a genesishash we must have the token as well
+export default function getLogo2 (info: string | undefined | null, token?: string): LogoInfo | undefined {
+  if (!info) {
+    return;
+  }
+
   let chainNameFromGenesisHash;
+
+  const _info = mapRelayToSystemGenesisIfMigrated(info);
 
   if (token) {
     const networkMap = getNetworkMap();
 
-    chainNameFromGenesisHash = networkMap.get(info as string || '');
+    chainNameFromGenesisHash = networkMap.get(_info || '');
 
     if (!chainNameFromGenesisHash) {
       return undefined;
     }
 
-    const assets = createAssets();
+    const assets = createAssets(); // to fetch assets list from multi-asset chains
 
     const chainAssets = assets[toCamelCase(sanitizeChainName(chainNameFromGenesisHash) || '')];
 
     const found = chainAssets?.find(({ symbol }) => symbol.toUpperCase() === token.toUpperCase())?.ui;
+    const subLogo = found?.subLogo && !isMigratedHub(_info)
+      ? getLogo2(chainNameFromGenesisHash)?.logo
+      : undefined;
 
     if (found) {
-      return { ...found, subLogo: found.subLogo ? getLogo2(chainNameFromGenesisHash)?.logo : undefined };
+      return { ...found, subLogo };
+    }
+
+    // if it is not an asset on multi asset chain but a token on a system chain like people chain
+    const relayGenesis = mapSystemToRelay(info, false);
+
+    if (relayGenesis && relayGenesis !== info) {
+      chainNameFromGenesisHash = getChainName(relayGenesis);
     }
   }
 
   let maybeExternalLogo;
-  const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
+  const chainName = chainNameFromGenesisHash || getChainName(_info) || _info;
+  const iconName = sanitizeChainName(chainName)?.toLowerCase();
 
   const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
 

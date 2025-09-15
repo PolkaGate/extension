@@ -5,7 +5,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { fastestEndpoint, getChainEndpoints, metadataFromApi } from '../utils';
-import { getPooledBalance } from './getPooledBalance.js';
+import { getStakingBalances } from './getStakingBalances';
 
 /**
  *
@@ -37,22 +37,7 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
         frozenBalance: systemBalance.data.frozen
       };
 
-      let soloTotal = BN_ZERO;
-      let pooled;
-
-      if (api.query['nominationPools']) {
-        pooled = await getPooledBalance(api, address);
-      }
-
-      if (api.query['staking']?.['ledger']) {
-        const ledger = await api.query['staking']['ledger'](address);
-
-        // @ts-ignore
-        if (ledger.isSome) {
-          // @ts-ignore
-          soloTotal = ledger?.unwrap()?.total?.toString();
-        }
-      }
+      const { pooled, soloTotal } = await getStakingBalances(address, api);
 
       return {
         address,

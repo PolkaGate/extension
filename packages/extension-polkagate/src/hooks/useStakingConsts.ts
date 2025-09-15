@@ -7,34 +7,35 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { MAX_NOMINATIONS } from '../util/constants';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
+import useStakingConstRelay from './useStakingConstRelay';
 
 export default function useStakingConsts (genesisHash: string | undefined): StakingConsts | null | undefined {
   const { api, chainName } = useChainInfo(genesisHash);
   const eraIndex = useCurrentEraIndex(genesisHash);
+  const stakingConsts = useStakingConstRelay(genesisHash);
 
   const [newConsts, setNewConsts] = useState<StakingConsts | undefined | null>();
   const [savedConsts, setSavedConsts] = useState<StakingConsts | undefined | null>();
 
   const getStakingConsts = useCallback(async () => {
     try {
-      if (!api || !chainName) {
+      if (!api || !chainName || !stakingConsts) {
         return;
       }
 
       const at = await api.rpc.chain.getFinalizedHead();
       const apiAt = await api.at(at);
 
-      const maxNominations = apiAt.consts['electionProviderMultiPhase']['minerMaxVotesPerVoter']?.toPrimitive() as number || MAX_NOMINATIONS;
       const maxNominatorRewardedPerValidator = apiAt.consts['staking']['maxExposurePageSize'].toPrimitive() as number;
       const existentialDepositString = apiAt.consts['balances']['existentialDeposit'].toString();
       const existentialDeposit = new BN(existentialDepositString);
       const bondingDuration = apiAt.consts['staking']['bondingDuration'].toPrimitive() as number;
       const sessionsPerEra = apiAt.consts['staking']['sessionsPerEra'].toPrimitive() as number;
-      const epochDuration = apiAt.consts['babe']['epochDuration'].toPrimitive() as number;
-      const expectedBlockTime = api.consts['babe']['expectedBlockTime'].toPrimitive() as number;
+
+      const { epochDuration, expectedBlockTime, maxNominations } = stakingConsts;
+
       const epochDurationInHours = epochDuration * expectedBlockTime / 3600000; // 1000 milSec * 60sec * 60min
       const [minNominatorBond, currentEraIndex] = await Promise.all([
         apiAt.query['staking']['minNominatorBond'](),
@@ -63,7 +64,7 @@ export default function useStakingConsts (genesisHash: string | undefined): Stak
       console.log('something went wrong while getStakingConsts. err: ', error);
       setNewConsts(null);
     }
-  }, [api, chainName]);
+  }, [api, chainName, stakingConsts]);
 
   useEffect(() => {
     if (!chainName) {

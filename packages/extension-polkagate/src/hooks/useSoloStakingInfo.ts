@@ -94,7 +94,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
   return { toBeReleased, unlockingAmount };
 };
 
-function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStakingInfo {
+function reviveSoloStakingInfoBNs(info: SavedSoloStakingInfo): SavedSoloStakingInfo {
   return {
     ...info,
     availableBalanceToStake: info.availableBalanceToStake ? isHexToBn(info.availableBalanceToStake as unknown as string) : undefined,
@@ -202,16 +202,14 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [fetchSessionInfo, sessionInfo]);
 
-  const availableBalanceToStake = balances?.freeBalance;
-
   // Separate effect for updating the state
   useEffect(() => {
-    if (fetchingFlag.current === false || currentEra === undefined || !availableBalanceToStake || !stakingAccount || !sessionInfo || !rewardDestinationAddress || !genesisHash || !address || refresh) {
+    if (fetchingFlag.current === false || currentEra === undefined || !balances || !stakingAccount || !sessionInfo || !rewardDestinationAddress || !genesisHash || !address || refresh) {
       return;
     }
 
     const info = {
-      availableBalanceToStake,
+      availableBalanceToStake: balances.freeBalance,
       rewardDestinationAddress,
       rewards,
       sessionInfo,
@@ -224,7 +222,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     );
 
     setSoloStakingInfo((pre) => ({ ...pre, ...nonUndefinedInfo }) as SoloStakingInfo);
-  }, [address, availableBalanceToStake, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
+  }, [address, balances, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
 
   useEffect(() => {
     if (rewards && soloStakingInfo && rewardsFetchingFlag.current) {
@@ -280,11 +278,13 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   // Refresh staking-related state when the chain changes,
   // which also changes the token value.
   useEffect(() => {
-    if (!soloStakingInfo && !soloStakingInfoLoaded) {
+    if ((!soloStakingInfo && !soloStakingInfoLoaded) || !token) {
       return;
     }
 
-    if (token?.toLowerCase() !== (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token.toLowerCase()) {
+    const infoToken = (soloStakingInfo || soloStakingInfoLoaded)?.stakingConsts?.token?.toLowerCase();
+
+    if (infoToken && token.toLowerCase() !== infoToken) {
       console.log('reset on change');
       fetchingFlag.current = true;
       setSoloStakingInfoLoaded(undefined);

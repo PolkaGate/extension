@@ -7,36 +7,34 @@ import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useSelectedAccount, useStakingRewardsChart } from '../../../hooks';
+import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
 import { isHexToBn } from '../../../util/utils';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
 import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
-import PopUpHandler from './PopUpHandler';
+import PopUpHandlerPool from './PopUpHandlerPool';
 
-export default function PoolFullScreen (): React.ReactElement {
+export default function PoolFullScreen(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
 
-  const { genesisHash } = useParams<{ genesisHash: string }>();
+  const { address, genesisHash } = useParams<{ address: string, genesisHash: string }>();
   const { token } = useChainInfo(genesisHash, true);
-  const selectedAccount = useSelectedAccount();
-  const stakingInfo = usePoolStakingInfo(selectedAccount?.address, genesisHash, refresh, setRefresh);
-  const accountAssets = useAccountAssets(selectedAccount?.address);
+  const stakingInfo = usePoolStakingInfo(address, genesisHash, refresh, setRefresh);
+  const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
-  const rewardInfo = useStakingRewardsChart(selectedAccount?.address, genesisHash, 'pool', true);
+  const rewardInfo = useStakingRewardsChart(address, genesisHash, 'pool', true);
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
-  const asset = useMemo(() =>
-    accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+  const asset = useMemo(() => getStakingAsset(accountAssets, genesisHash), [accountAssets, genesisHash]);
 
   const notStaked = useMemo(() => (
     Boolean(accountAssets === null || (accountAssets && asset === undefined)) ||
@@ -96,8 +94,8 @@ export default function PoolFullScreen (): React.ReactElement {
           />
         </Stack>
       </HomeLayout>
-      <PopUpHandler
-        address={selectedAccount?.address}
+      <PopUpHandlerPool
+        address={address}
         genesisHash={genesisHash}
         poolInfo={stakingInfo.pool}
         popupCloser={popupCloser}

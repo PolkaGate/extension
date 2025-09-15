@@ -9,7 +9,7 @@ import { AccountContext, AccountsAssetsContext, AlertContext, GenesisHashOptions
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
-import { ASSETS_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export default function AccountAssetProvider ({ children }: { children: React.ReactNode }) {
   const { accounts } = useContext(AccountContext);
@@ -30,16 +30,20 @@ export default function AccountAssetProvider ({ children }: { children: React.Re
   }, [assetsOnChains?.timeStamp]);
 
   useEffect(() => {
-    /** remove forgotten accounts from assetChains if any */
+    /** remove forgotten accounts from assets if any */
     if (accounts && assetsOnChains?.balances) {
-      Object.keys(assetsOnChains.balances).forEach((_address) => {
-        const found = accounts.find(({ address }) => address === _address);
+      const updatedBalances = { ...assetsOnChains.balances };
 
-        if (!found) {
-          delete assetsOnChains.balances[_address];
-          setStorage(ASSETS_NAME_IN_STORAGE, assetsOnChains, true).catch(console.error);
+      Object.keys(updatedBalances).forEach((_address) => {
+        const exists = accounts.some(({ address }) => address === _address);
+
+        if (!exists) {
+          delete updatedBalances[_address];
         }
       });
+      const updated = { ...assetsOnChains, balances: updatedBalances };
+
+      setStorage(STORAGE_KEY.ASSETS, updated, true).catch(console.error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, assetsOnChains?.timeStamp]);
