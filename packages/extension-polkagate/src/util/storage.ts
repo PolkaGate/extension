@@ -75,3 +75,37 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
     });
   });
 };
+
+/**
+ * Updates storage for a label only if the value has changed.
+ *
+ * @param label Storage key.
+ * @param data New value to store.
+ * @param parse If true, JSON.parse is applied to the stored value when retrieved for comparison.
+ * @param stringify If true, JSON.stringify is applied to the new value before saving.
+ * @returns True if the value was changed and updated, otherwise false.
+ */
+export const setStorageIfChanged = async (
+  label: string,
+  data: unknown,
+  parse = false,
+  stringify = false
+): Promise<boolean> => {
+  try {
+    const current = await getStorage(label, parse);
+    const currentStr = typeof current === 'string' ? current : JSON.stringify(current);
+    const newStr = typeof data === 'string' ? data : JSON.stringify(data);
+
+    if (currentStr === newStr) {
+      return false;
+    }
+
+    await setStorage(label, data, stringify);
+
+    return true;
+  } catch (error) {
+    console.error('Error in setStorageIfChanged:', error);
+
+    return false;
+  }
+};

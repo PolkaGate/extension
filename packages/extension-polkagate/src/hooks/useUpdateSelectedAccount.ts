@@ -11,6 +11,25 @@ import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
 import useStakingPositions from './useStakingPositions';
 
+/**
+ * React hook that updates the currently selected account in storage
+ * and optionally updates the application URL or triggers a callback
+ * when the selected account changes.
+ *
+ * Responsibilities:
+ * - Persists the selected account address into `SELECTED_ACCOUNT_IN_STORAGE`.
+ * - Optionally updates the browser URL with the new address and chain info.
+ * - Handles staking path logic, ensuring correct genesis hash and staking type.
+ * - Calls `onClose` callback after updating, if provided.
+ *
+ * @param {string | undefined} address - The account address to set as selected.
+ * @param {boolean} [changeUrl=false] - If true, updates the current route
+ *   with the new account address (and staking details if applicable).
+ * @param {() => void} [onClose] - Optional callback to run after updating
+ *   storage and/or URL.
+ *
+ * @returns {void} - This hook performs side-effects but does not return a value.
+ */
 export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,6 +99,8 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    setStorage(SELECTED_ACCOUNT_IN_STORAGE, address).finally(() => handleExit()).catch(console.error);
+    setStorage(SELECTED_ACCOUNT_IN_STORAGE, address)
+      .finally(() => handleExit())
+      .catch(console.error);
   }, [address, handleExit]);
 }
