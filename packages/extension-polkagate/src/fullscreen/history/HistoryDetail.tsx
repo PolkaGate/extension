@@ -1,10 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TransitionProps } from '@mui/material/transitions';
 import type { TransactionDetail } from '../../util/types';
 
-import { Avatar, Collapse, Container, Dialog, Grid, Slide, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Collapse, Container, Dialog, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
@@ -12,7 +11,7 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/com
 import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { BN_ZERO } from '@polkadot/util';
 
-import { FadeOnScroll, FormatBalance2, FormatPrice, GradientButton } from '../../components';
+import { FadeOnScroll, FormatBalance2, FormatPrice, GradientButton, Transition } from '../../components';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
@@ -20,10 +19,6 @@ import { getVoteType, isReward, toTitleCase } from '../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../util/constants';
 import getLogo from '../../util/getLogo';
 import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../util/utils';
-
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 interface Props {
   historyItem: TransactionDetail;

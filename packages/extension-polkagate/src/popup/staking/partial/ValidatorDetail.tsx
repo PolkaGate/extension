@@ -3,16 +3,16 @@
 
 //@ts-nocheck
 
-import type { TransitionProps } from '@mui/material/transitions';
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Dialog, Grid, Link, Slide, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Dialog, Grid, Link, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import Riot from '@polkadot/extension-polkagate/src/assets/icons/Riot';
 import Subscan from '@polkadot/extension-polkagate/src/assets/icons/Subscan';
 
+import { Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
@@ -23,10 +23,6 @@ import BlueGradient from '../stakingStyles/BlueGradient';
 import DetailGradientBox from '../stakingStyles/DetailGradientBox';
 import AccountsTable from './AccountsTable';
 import { StakingInfoStack } from './NominatorsTable';
-
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 interface ValidatorDetailProps {
   validatorDetail: ValidatorInformation | undefined;
