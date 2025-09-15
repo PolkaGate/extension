@@ -21,7 +21,7 @@ interface TokenInfoProps {
 }
 
 export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
-  const { displayName, token } = useChainInfo(genesisHash, true);
+  const { chainName, token } = useChainInfo(genesisHash, true);
   const _genesisHash = mapHubToRelay(genesisHash);
 
   return (
@@ -32,7 +32,7 @@ export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
           {token}
         </Typography>
         <Typography color='#AA83DC' variant='B-5'>
-          {displayName}
+          {chainName}
         </Typography>
       </Grid>
     </Grid>
