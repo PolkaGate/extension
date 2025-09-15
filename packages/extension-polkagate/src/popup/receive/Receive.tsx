@@ -1,10 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TransitionProps } from '@mui/material/transitions';
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
-import { Container, Dialog, Grid, Slide, styled, Typography } from '@mui/material';
+import { Container, Dialog, Grid, styled, Typography } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
@@ -13,16 +12,12 @@ import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { ChainLogo, NeonButton, SearchField } from '../../components';
+import { ChainLogo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util/utils';
-
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 const ListItem = styled(Grid)(() => ({
   '&:hover': {
@@ -157,10 +152,9 @@ interface QrCodeProps {
   address: string;
   selectedChain: NetworkInfo;
   setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
-  onBackToAccount: () => void;
 }
 
-function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
+function QrCode ({ address, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
 
   const formattedAddress = useMemo(() => {
@@ -213,7 +207,7 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
       </Grid>
       <NeonButton
         contentPlacement='center'
-        onClick={onBackToAccount}
+        onClick={onBack}
         style={{
           height: '44px',
           width: '320px'
@@ -280,7 +274,6 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
             {selectedChain && selectedAddress?.address &&
               <QrCode
                 address={selectedAddress.address}
-                onBackToAccount={handleClose}
                 selectedChain={selectedChain}
                 setSelectedChain={setSelectedChain}
               />
