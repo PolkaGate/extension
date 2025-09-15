@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.8.0](https://github.com/polkagate/extension/compare/v1.7.2...v1.8.0) (2025-09-15)
+
+
+### Features
+
+* implement hubs staking and balance migration ([#1807](https://github.com/polkagate/extension/issues/1807)) ([413bc5e](https://github.com/polkagate/extension/commit/413bc5eca77e84a28492ac191b226ffed6a6e818)), closes [#1844](https://github.com/polkagate/extension/issues/1844)
+
 ## [1.7.2](https://github.com/polkagate/extension/compare/v1.7.1...v1.7.2) (2025-09-15)
 
 
