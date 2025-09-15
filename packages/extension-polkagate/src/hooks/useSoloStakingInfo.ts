@@ -292,7 +292,8 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
           storageToken: soloStakingInfoStorage?.stakingAccount?.token,
           storedToken: soloStakingInfo?.stakingAccount?.token
         }
-      ); fetchingFlag.current = true;
+      );
+      fetchingFlag.current = true;
       setSoloStakingInfoStorage(undefined);
       setSoloStakingInfo(undefined);
       setSessionInfo(undefined);
