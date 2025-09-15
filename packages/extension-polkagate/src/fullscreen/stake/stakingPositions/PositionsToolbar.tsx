@@ -69,7 +69,7 @@ const PositionsExplore = ({ earningsCount, positionsCount, selectedTab, setter }
   const { t } = useTranslation();
   const positionsRef = React.useRef<HTMLDivElement>(null);
   const exploreRef = React.useRef<HTMLDivElement>(null);
-  const [indicatorStyle, setIndicatorStyle] = React.useState<{ left: number; width: number }>({ left: 4, width: 105 });
+  const [indicatorStyle, setIndicatorStyle] = React.useState<{ left: number; width: number }>({ left: 4, width: 0 });
 
   const isSelected = useCallback((tabName: POSITION_TABS) => tabName === selectedTab, [selectedTab]);
 
@@ -120,7 +120,8 @@ const PositionsExplore = ({ earningsCount, positionsCount, selectedTab, setter }
           position: 'absolute',
           top: '4px',
           transition: 'all ease-in-out 150ms',
-          width: `${indicatorStyle.width}px`,
+          visibility: indicatorStyle.width ? 'visible' : 'hidden',
+          width: indicatorStyle.width ? `${indicatorStyle.width}px` : 0,
           zIndex: 0
         }}
       />
