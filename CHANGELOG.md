@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.7.1](https://github.com/polkagate/extension/compare/v1.7.0...v1.7.1) (2025-09-15)
+
+
+### Bug Fixes
+
+* resolve URL flicker in Manage Proxy when navigated from Home menu ([#1853](https://github.com/polkagate/extension/issues/1853)) ([90ca5c5](https://github.com/polkagate/extension/commit/90ca5c5748d1858a91bc59471f7e7a4d98413fd8))
+
 # [1.7.0](https://github.com/polkagate/extension/compare/v1.6.2...v1.7.0) (2025-09-14)
 
 

@@ -29,10 +29,10 @@ export default function OpenerButton ({ flip, onClick, style = {} }: Props): Rea
         borderRadius: '12px',
         color: '#AA83DC',
         display: 'flex',
-        height: '36px',
+        height: '40px',
         justifyContent: 'center',
         transition: 'all 250ms ease-out',
-        width: '36px',
+        width: '40px',
         ...style
       }}
     >
