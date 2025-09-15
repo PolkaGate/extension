@@ -32,9 +32,13 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
   const [selectedAssetId, setSelectedAsset] = useState<string>();
 
   const accountAssetsOnCurrentChain = useMemo(() => accountAssets?.filter((asset) => asset.genesisHash === genesisHash), [accountAssets, genesisHash]);
-  const asset = useMemo(() =>
-    accountAssetsOnCurrentChain?.find((a) => String(a.assetId) === String(assetId)) || accountAssetsOnCurrentChain?.[0]
-    , [accountAssetsOnCurrentChain, assetId]);
+
+  const asset = useMemo(() => {
+    const list = accountAssetsOnCurrentChain ?? [];
+    const id = selectedAssetId ?? assetId;
+
+    return list.find((a) => String(a.assetId) === String(id)) ?? list[0];
+  }, [accountAssetsOnCurrentChain, assetId, selectedAssetId]);
 
   const _urlAssetId = useMemo(() => selectedAssetId ?? asset?.assetId, [asset?.assetId, selectedAssetId]);
 
