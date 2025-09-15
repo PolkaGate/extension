@@ -102,14 +102,17 @@ function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () =>
   );
 }
 
-function AccountSelect ({ noSelection = false, onClick }: { noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
+function AccountSelect ({ modalToOpen, noSelection = false, onClick }: { modalToOpen: MODAL_TO_OPEN, noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
   const selectedAccount = useSelectedAccount();
   const { address } = useParams<{ address: string; genesisHash: string }>();
 
-  useUpdateSelectedAccount(selectedAccount?.address, address != selectedAccount?.address);
+  // Update the URL if it contains an address, the address has changed, and the account modal is open
+  const changeUrl = Boolean(address && address !== selectedAccount?.address && modalToOpen === MODAL_TO_OPEN.ACCOUNTS);
+
+  useUpdateSelectedAccount(selectedAccount?.address, changeUrl);
 
   return (
     <Grid container direction='row' item onClick={onClick(MODAL_TO_OPEN.ACCOUNTS)}
@@ -180,7 +183,11 @@ export default function AccountChainSelect ({ noSelection = false }: Props): Rea
           width: '145px'
         }}
       >
-        <AccountSelect noSelection={noSelection} onClick={onClick} />
+        <AccountSelect
+          modalToOpen={modalToOpen}
+          noSelection={noSelection}
+          onClick={onClick}
+        />
         <ChainSwitcher onClick={onClick} />
       </Container>
       <AccountListModal

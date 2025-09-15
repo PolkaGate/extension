@@ -43,7 +43,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
     handleClose();
   }, [handleClose]);
 
-  useUpdateSelectedAccount(appliedAddress, true, _handleClose);
+  useUpdateSelectedAccount(appliedAddress, open, _handleClose);
 
   useEffect(() => {
     setCategorizedAccounts(initialCategorizedAccounts);
