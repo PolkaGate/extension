@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
-import { isMigratedHub } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { ChainLogo, GlowCheck, GradientButton, SearchField } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
@@ -70,6 +70,10 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
   const initialChainsGenesisHashes = useMemo(() => {
     if (pathname?.includes('stake')) {
       return STAKING_CHAINS;
+    }
+
+    if (pathname?.includes('send')) {
+      return selectedChains?.map((g) => mapRelayToSystemGenesisIfMigrated(g))?.filter((g) => !isMigratedRelay(g ?? ''));
     }
 
     return selectedChains;
