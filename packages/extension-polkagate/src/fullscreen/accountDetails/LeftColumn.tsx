@@ -47,10 +47,10 @@ export default function LeftColumn (): React.ReactElement {
         />
         <AccountProfileLabel label={profile ?? t('Unknown')} style={{ position: 'absolute', right: '8px', top: '0' }} />
         <Stack direction='row' justifyContent='space-between' sx={{ bottom: '18px', left: '20px', position: 'absolute', width: '94%' }}>
-          <Stack columnGap='5px' direction='row'>
+          <Stack columnGap='8px' direction='row'>
             <AccountVisibilityToggler
               size={20}
-              style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '100%', margin: 0 }}
+              style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '40px', margin: 0, width: '40px' }}
             />
             <Recoverability />
             <HasProxyIndicator />

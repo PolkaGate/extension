@@ -32,7 +32,7 @@ export default function RecipientAddress ({ genesisHash, inputs, setInputs }: Pr
 
   return (
     <Stack direction='column'>
-      <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', overflow: 'hidden', p: '15px', width: '379px' }}>
+      <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>
         <NumberedTitle
           number={1}
           textPartInColor={t('Recipient')}

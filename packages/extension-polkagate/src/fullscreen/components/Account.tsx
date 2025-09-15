@@ -188,7 +188,7 @@ function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, v
             left: '2px',
             position: 'absolute',
             top: '-2px',
-            width: '10px'
+            width: '11px'
           }}
         />
         <FormatPrice
