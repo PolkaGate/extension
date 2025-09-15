@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.7.2](https://github.com/polkagate/extension/compare/v1.7.1...v1.7.2) (2025-09-15)
+
+
+### Performance Improvements
+
+* optimize hooks ([45e47fb](https://github.com/polkagate/extension/commit/45e47fb0c1f5b4d73f3b08f29ecf8b51493dcd87))
+
 ## [1.7.1](https://github.com/polkagate/extension/compare/v1.7.0...v1.7.1) (2025-09-15)
 
 
