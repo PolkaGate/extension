@@ -9,6 +9,7 @@ import { Stack, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
+import { migratedRelayNames } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { Motion } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
@@ -40,7 +41,7 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
     try {
       const destinations = getSupportedDestinations(chainName, inputs.token);
 
-      return destinations;
+      return destinations.filter(({ text }) => !migratedRelayNames.includes(text.toLowerCase()));
     } catch (error) {
       console.warn('Error getting supported destinations:', error);
       // Fallback to current network and teleport destinations
