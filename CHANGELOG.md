@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.3](https://github.com/polkagate/extension/compare/v1.8.2...v1.8.3) (2025-09-16)
+
+
+### Bug Fixes
+
+* resolve back button unresponsiveness caused by snackbar overlay ([5500ff4](https://github.com/polkagate/extension/commit/5500ff488167c63037e101181508f2eed0d877ca))
+
 ## [1.8.2](https://github.com/polkagate/extension/compare/v1.8.1...v1.8.2) (2025-09-16)
 
 
