@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.5](https://github.com/polkagate/extension/compare/v1.8.4...v1.8.5) (2025-09-16)
+
+
+### Bug Fixes
+
+* replace back button with 'Done' in extension mode on receive page ([#1861](https://github.com/polkagate/extension/issues/1861)) ([dd694e1](https://github.com/polkagate/extension/commit/dd694e16403d49e6527b0abea3cd8e964a19ff47))
+
 ## [1.8.4](https://github.com/polkagate/extension/compare/v1.8.3...v1.8.4) (2025-09-16)
 
 
