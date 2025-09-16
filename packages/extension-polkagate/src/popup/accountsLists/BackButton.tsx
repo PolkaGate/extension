@@ -3,9 +3,9 @@
 
 import { Box, type SxProps, type Theme } from '@mui/material';
 import { ArrowCircleLeft } from 'iconsax-react';
-import React, { useRef } from 'react';
+import React from 'react';
 
-import { useIsHovered } from '../../hooks';
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 
 interface DynamicBackButtonProps {
   onClick: () => void;
@@ -13,18 +13,17 @@ interface DynamicBackButtonProps {
 }
 
 function BackButton ({ onClick, style }: DynamicBackButtonProps) {
-  const refContainer = useRef(null);
-  const hovered = useIsHovered(refContainer);
+  const { isHovered, ref } = useIsHovered();
 
   return (
     <Box
       alignItems='center'
       display='flex'
       onClick={onClick}
-      ref={refContainer}
+      ref={ref}
       sx={{ cursor: 'pointer', width: 'fit-content', ...style }}
     >
-      <ArrowCircleLeft color='#FF4FB9' size='24' variant={hovered ? 'Bold' : 'Bulk'} />
+      <ArrowCircleLeft color='#FF4FB9' size='24' variant={isHovered ? 'Bold' : 'Bulk'} />
     </Box>
   );
 }

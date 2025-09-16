@@ -38,7 +38,7 @@ function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicB
   const { t } = useTranslation();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
-  const staking = useIsBlueish();
+  const isBlueish = useIsBlueish();
 
   const renderContent = useMemo(() => {
     if (content) {
@@ -61,7 +61,7 @@ function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicB
       sx={{ cursor: 'pointer', justifyContent: 'space-between', px: '15px', py: '8px', width: '100%', ...style }}
     >
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', flexDirection: 'row', width: 'fit-content' }}>
-        <ArrowCircleLeft color={!staking ? '#FF4FB9' : '#809ACB'} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
+        <ArrowCircleLeft color={isBlueish ? '#809ACB' : '#FF4FB9'} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
         {renderContent}
       </Grid>
       {stepCounter && <StepCounter stepCounter={stepCounter} />}
