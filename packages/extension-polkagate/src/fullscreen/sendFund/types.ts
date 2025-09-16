@@ -9,7 +9,7 @@ import type { BN } from '@polkadot/util';
 
 export interface Inputs {
   amount?: string | undefined;
-  amountAsBN?: BN;
+  amountAsBN?: BN | undefined;
   assetId?: string | number;
   decimal?: number;
   fee?: BN;

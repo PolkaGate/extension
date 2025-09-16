@@ -45,14 +45,33 @@ export default function SendFund (): React.ReactElement {
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee ? toBN(inputs?.fee) : undefined);
 
   useEffect(() => {
-  if (!address || !genesisHash) {
-    return;
-  }
+    if (!address || !genesisHash) {
+      return;
+    }
 
-  // Reset to the initial step if either address or genesisHash changes
-  setInputStep(INPUT_STEPS.SENDER);
-}, [address, genesisHash]);
+    const RESET_INPUTS: Partial<Inputs> = {
+      amount: undefined,
+      amountAsBN: undefined,
+      fee: undefined,
+      feeInfo: undefined,
+      paraSpellTransaction: undefined,
+      recipientAddress: undefined,
+      recipientChain: undefined,
+      recipientGenesisHashOrParaId: undefined,
+      transaction: undefined
+    };
 
+    // Reset the entire send flow on sender/network change
+    setInputStep(INPUT_STEPS.SENDER);
+    setInputs((prev) => ({
+      ...(prev || {}),
+      ...RESET_INPUTS
+    }));
+    setSelectedProxy(undefined);
+    setTxInfo(undefined);
+    setFlowStep(TRANSACTION_FLOW_STEPS.REVIEW);
+    setShowProxySelection(false);
+  }, [address, genesisHash]);
   useEffect(() => {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
