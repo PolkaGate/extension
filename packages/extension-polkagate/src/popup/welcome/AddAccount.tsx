@@ -1,14 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TransitionProps } from '@mui/material/transitions';
-
-import { Box, Container, Dialog, Grid, Slide, Typography } from '@mui/material';
+import { Box, Container, Dialog, Grid, Typography } from '@mui/material';
 import { Check, ColorSwatch, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../components';
+import { ActionButton, Transition } from '../../components';
 import { CustomCloseSquare } from '../../components/SVG/CustomCloseSquare';
 import { useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
@@ -20,10 +18,6 @@ interface Props {
   setPopup: React.Dispatch<React.SetStateAction<Popups>>;
   openMenu: boolean;
 }
-
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();

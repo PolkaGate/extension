@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
-import type { TransitionProps } from '@mui/material/transitions';
 import type { OverridableStringUnion } from '@mui/types';
 
-import { Box, Container, Dialog, Grid, Slide, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
+import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
 import { ArrowCircleLeft, type Icon } from 'iconsax-react';
 import React from 'react';
 
@@ -13,6 +12,7 @@ import { useIsBlueish, useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import BlueGradient from '../style/BlueGradient';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
+import { Transition } from '.';
 
 export interface ExtensionPopupProps {
   TitleIcon?: Icon;
@@ -39,10 +39,6 @@ export interface ExtensionPopupProps {
   RightItem?: React.ReactNode;
   darkBackground?: boolean;
 }
-
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { pt?: number, withoutBackground?: boolean }) {
   const isBlueish = useIsBlueish();
