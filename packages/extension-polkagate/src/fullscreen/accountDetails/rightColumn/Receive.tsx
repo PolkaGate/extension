@@ -9,6 +9,7 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
@@ -108,6 +109,8 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
 }
 
 function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
+    const { isHovered, ref } = useIsHovered();
+
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
       <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
@@ -116,8 +119,8 @@ function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp)
           {toShortAddress(address, 12)}
         </Typography>
       </Grid>
-      <Grid container item onClick={onCopy} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
-        <DocumentCopy color='#fff' size='17' variant='Bold' />
+      <Grid container item onClick={onCopy} ref={ref} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
+        <DocumentCopy color='#fff' size='17' variant={isHovered ? 'Bulk' : 'Bold'} />
       </Grid>
     </Grid>
   );
