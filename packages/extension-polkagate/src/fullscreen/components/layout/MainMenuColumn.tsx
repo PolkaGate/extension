@@ -108,6 +108,7 @@ function MainMenuColumn (): React.ReactElement {
       <MenuButton
         Icon={BuyCrypto}
         onClick={setStakingChain}
+        path='/fullscreen-stake'
         text={t('Staking')}
       />
       <MenuButton
