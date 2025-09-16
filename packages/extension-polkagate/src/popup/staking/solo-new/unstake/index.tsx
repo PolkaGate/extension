@@ -5,7 +5,7 @@
 
 import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useTransactionFlow, useTranslation, useUnstakingSolo } from '../../../../hooks';

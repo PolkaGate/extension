@@ -7,7 +7,7 @@ import type { PoolInfo } from '../../../util/types';
 import { Container, Grid, styled, useTheme } from '@mui/material';
 import { AddSquare, Book, Discover, Menu, Setting2, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { MyTooltip } from '../../../components';
 import { useIsHovered, useTranslation } from '../../../hooks';

@@ -3,7 +3,7 @@
 
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useCreatePool, useFormatted, useIsExtensionPopup, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';

@@ -5,7 +5,7 @@ import type { Icon } from 'iconsax-react';
 
 import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { noop } from '@polkadot/util';
 

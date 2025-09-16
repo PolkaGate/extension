@@ -4,7 +4,7 @@
 import type { AuthorizeRequest, MetadataRequest, SigningRequest } from '@polkadot/extension-base/background/types';
 
 import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { ActionContext, AuthorizeReqContext, MetadataReqContext, SigningReqContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { subscribeAuthorizeRequests, subscribeMetadataRequests, subscribeSigningRequests } from '@polkadot/extension-polkagate/src/messaging';

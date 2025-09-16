@@ -9,7 +9,7 @@ import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 import { Collapse, Stack } from '@mui/material';
 import { Menu, Star1, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 

@@ -4,7 +4,7 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import { ActionContext } from '../components';
 import useTranslation from '../hooks/useTranslation';

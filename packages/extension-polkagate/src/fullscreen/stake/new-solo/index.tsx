@@ -5,7 +5,7 @@ import type { PositionInfo } from '../../../util/types';
 
 import { Stack } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { type BN, BN_ZERO } from '@polkadot/util';

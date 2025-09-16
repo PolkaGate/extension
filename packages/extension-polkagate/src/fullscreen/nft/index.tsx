@@ -5,7 +5,7 @@ import type { ItemInformation } from './utils/types';
 
 import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import NftManager from '../../class/nftManager';
 import { useTranslation } from '../../hooks';

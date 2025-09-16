@@ -3,7 +3,7 @@
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Motion } from '../../../../components';
 import { useBackground, useJoinPool, usePools, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';

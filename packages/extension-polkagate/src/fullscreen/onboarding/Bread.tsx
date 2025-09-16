@@ -4,7 +4,7 @@
 import { Grid, Stack, Typography } from '@mui/material';
 import { UserOctagon } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '../../hooks';
 

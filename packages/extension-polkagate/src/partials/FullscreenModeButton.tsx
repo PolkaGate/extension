@@ -5,7 +5,7 @@ import { Box, Grid, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Maximize4 } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { MyTooltip } from '../components';
 import { useIsBlueish, useIsDark, useIsHovered, useSelectedAccount, useTranslation } from '../hooks';

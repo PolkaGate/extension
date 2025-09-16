@@ -9,7 +9,7 @@ import type { RewardDestinationType } from '../../../../util/types';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 
 import { BackWithLabel, Motion, VariantButton } from '../../../../components';

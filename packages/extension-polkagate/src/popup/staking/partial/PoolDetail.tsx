@@ -10,7 +10,7 @@ import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Subscan from '../../../assets/icons/Subscan';
 import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2, Progress } from '../../../components';

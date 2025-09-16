@@ -4,7 +4,7 @@
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, Container, Grid, Skeleton, Stack, styled, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
