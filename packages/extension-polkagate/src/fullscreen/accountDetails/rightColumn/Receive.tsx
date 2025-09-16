@@ -22,6 +22,7 @@ interface Props {
   address: string | undefined;
   onClose?: () => void;
   closePopup: ExtensionPopupCloser;
+  setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }
 
 interface AddressComponentProp {
@@ -126,7 +127,7 @@ function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp)
   );
 }
 
-function Receive ({ address, closePopup, onClose }: Props): React.ReactElement {
+function Receive ({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -159,11 +160,15 @@ function Receive ({ address, closePopup, onClose }: Props): React.ReactElement {
     }
 
     if (selectedChain) {
-      setSelectedChain(undefined);
-    } else {
-      closePopup();
+      return setSelectedChain(undefined);
     }
-  }, [onClose, selectedChain, closePopup]);
+
+    if (!selectedChain && setAddress) {
+      return setAddress(undefined);
+    }
+
+    closePopup();
+  }, [onClose, selectedChain, setAddress, closePopup]);
 
   const onDone = useCallback(() => {
     onClose && onClose();
