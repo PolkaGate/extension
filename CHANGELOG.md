@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.4](https://github.com/polkagate/extension/compare/v1.8.3...v1.8.4) (2025-09-16)
+
+
+### Bug Fixes
+
+* resolve back button issue in full-screen mode on Receive page ([#1863](https://github.com/polkagate/extension/issues/1863)) ([f05af41](https://github.com/polkagate/extension/commit/f05af415276870cf3201b072bcf677c2b7caaee4))
+
 ## [1.8.3](https://github.com/polkagate/extension/compare/v1.8.2...v1.8.3) (2025-09-16)
 
 
