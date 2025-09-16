@@ -8,6 +8,7 @@ import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -18,6 +19,7 @@ import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util/utils';
+import BackButton from '../accountsLists/BackButton';
 
 const ListItem = styled(Grid)(() => ({
   '&:hover': {
@@ -40,7 +42,7 @@ interface AddressComponentProp {
 
 function AddressComponent ({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
-
+  const { isHovered, ref } = useIsHovered();
   const [showSnackbar, setShowSnackbar] = useState(false);
 
   const chainName = useMemo(() => chainNameSanitizer(chain.name), [chain.name]);
@@ -61,8 +63,8 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
             {toShortAddress(address, 12)}
           </Typography>
         </Grid>
-        <Grid container item onClick={onCopy} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
-          <DocumentCopy color='#fff' size='17' variant='Bold' />
+        <Grid container item onClick={onCopy} ref={ref} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
+          <DocumentCopy color='#fff' size='17' variant={isHovered ? 'Bulk' : 'Bold'} />
         </Grid>
       </Grid>
       <MySnackbar
@@ -175,7 +177,9 @@ function QrCode ({ address, selectedChain, setSelectedChain }: QrCodeProps) {
   return (
     <Grid container item justifyContent='center'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '8px 6px' }}>
-        <ArrowCircleLeft color='#FF4FB9' onClick={onBack} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
+          <BackButton
+            onClick={onBack}
+          />
         <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
           <ChainLogo chainName={selectedChain.name} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>

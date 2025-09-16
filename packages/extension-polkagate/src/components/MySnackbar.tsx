@@ -56,7 +56,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
       TransitionComponent={(props) => <Slide {...props} direction={direction} />}
       anchorOrigin={{ horizontal: anchorOriginHorizontal, vertical: 'top' }}
       open={open}
-      sx={{ top: '90px !important' }}
+      sx={{ pointerEvents: 'none', top: '90px !important' }}
     >
       <Box
         sx={{
@@ -71,6 +71,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
           justifyContent: 'center',
           overflow: 'hidden',
           position: 'relative',
+          pointerEvents: 'auto',
           py: 1.5,
           textAlign: 'center',
           width: '330px'

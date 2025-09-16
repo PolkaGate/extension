@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { ChainLogo, GlowCheck, GradientButton, SearchField } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
@@ -71,6 +72,10 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
       return STAKING_CHAINS;
     }
 
+    if (pathname?.includes('send')) {
+      return selectedChains?.map((g) => mapRelayToSystemGenesisIfMigrated(g))?.filter((g) => !isMigratedRelay(g ?? ''));
+    }
+
     return selectedChains;
   }, [pathname, selectedChains]);
 
@@ -117,6 +122,8 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {filteredChainsToList.map(({ text, value }, index) => {
+              const normalizedChainName = isMigratedHub(String(value)) ? text.replace('Asset Hub', '') : text.replace('Relay Chain', '');
+
               return (
                 <Grid
                   alignItems='center'
@@ -131,7 +138,7 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
                   <Stack alignItems='center' direction='row'>
                     <ChainLogo chainName={text} genesisHash={value as string} size={24} />
                     <Typography color='#EAEBF1' ml='8px' sx={{ userSelect: 'none' }} variant='B-1'>
-                      {toTitleCase(text)}
+                      {toTitleCase(normalizedChainName)}
                     </Typography>
                   </Stack>
                   <GlowCheck
