@@ -1,19 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TransitionProps } from '@mui/material/transitions';
 import type { Compact } from '@polkadot/types';
 import type { INumber } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
-import { Collapse, Container, Dialog, Grid, Link, Slide, Stack, Typography, useTheme } from '@mui/material';
+import { Collapse, Container, Dialog, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 import Subscan from '../../../assets/icons/Subscan';
-import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2, Progress } from '../../../components';
+import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2, Progress, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../hooks';
@@ -25,10 +24,6 @@ import BlueGradient from '../stakingStyles/BlueGradient';
 import DetailGradientBox from '../stakingStyles/DetailGradientBox';
 import { StakingInfoStack } from './NominatorsTable';
 import { PoolIdenticon } from './PoolIdenticon';
-
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
-  return <Slide direction='up' easing='ease-in-out' ref={ref} timeout={250} {...props} />;
-});
 
 interface StakingInfoStackWithIconProps {
   Icon: React.ReactNode;

@@ -112,6 +112,7 @@ export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { Input } from './TextInputs';
 export { default as ToggleDots } from './ToggleDots';
 export { default as Tooltip } from './Tooltip';
+export { default as Transition } from './Transition';
 export { default as TwoButtons } from './TwoButtons';
 export { default as TwoToneText } from './TwoToneText';
 export { default as VariantButton } from './VariantButton';
