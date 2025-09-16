@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.6](https://github.com/polkagate/extension/compare/v1.8.5...v1.8.6) (2025-09-16)
+
+
+### Bug Fixes
+
+* resolve staking chain selection ([#1859](https://github.com/polkagate/extension/issues/1859)) ([f346c56](https://github.com/polkagate/extension/commit/f346c569bc42a21d92e4f2a8500d304ad0115479))
+
 ## [1.8.5](https://github.com/polkagate/extension/compare/v1.8.4...v1.8.5) (2025-09-16)
 
 
