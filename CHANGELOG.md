@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.2](https://github.com/polkagate/extension/compare/v1.8.1...v1.8.2) (2025-09-16)
+
+
+### Bug Fixes
+
+* update staking chain options in select chain modal ([#1857](https://github.com/polkagate/extension/issues/1857)) ([84adf78](https://github.com/polkagate/extension/commit/84adf78009d348678b9cab7b4cce1b8b7ac98aa7))
+
 ## [1.8.1](https://github.com/polkagate/extension/compare/v1.8.0...v1.8.1) (2025-09-15)
 
 
