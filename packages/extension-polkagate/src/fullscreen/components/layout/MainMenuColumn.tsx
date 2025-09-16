@@ -3,12 +3,14 @@
 
 import { Box, Grid, Link, Stack } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
-import { ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util';
+import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -39,20 +41,38 @@ function Shining (): React.ReactElement {
 function MainMenuColumn (): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
+  const navigate = useNavigate();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const { maxPosition, maxPositionType } = useStakingPositions(selectedAccount?.address, true);
 
-  const stakingPath = useMemo(() => {
-    if (maxPosition && maxPositionType) {
-      return `/fullscreen-stake/${maxPositionType}/${selectedAccount?.address}/${maxPosition.genesisHash}`;
+  const setStakingChain = useCallback(() => {
+    const addressKey = selectedAccount?.address;
+
+    if (!addressKey) {
+      return;
     }
 
-    const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash);
+    let genesisHashKey: string;
+    let stakeType: string;
 
-    return `/fullscreen-stake/solo/${selectedAccount?.address}/${stakingGenesisHash}`;
-  }, [maxPosition, maxPositionType, selectedAccount?.address, selectedGenesisHash]);
+    if (maxPosition && maxPositionType) {
+      // Use max position if available
+      genesisHashKey = maxPosition.genesisHash;
+      stakeType = maxPositionType;
+    } else {
+      // Otherwise fall back to selected chain
+      genesisHashKey = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash) ?? selectedGenesisHash ?? '';
+      stakeType = 'solo';
+    }
+
+    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [addressKey]: genesisHashKey })
+      .then(() =>
+        navigate(`/fullscreen-stake/${stakeType}/${addressKey}/${genesisHashKey}`) as void
+      )
+      .catch(console.error);
+  }, [maxPosition, maxPositionType, navigate, selectedAccount?.address, selectedGenesisHash]);
 
   return (
     <Grid
@@ -87,7 +107,8 @@ function MainMenuColumn (): React.ReactElement {
       />
       <MenuButton
         Icon={BuyCrypto}
-        path={stakingPath}
+        onClick={setStakingChain}
+        path='/fullscreen-stake'
         text={t('Staking')}
       />
       <MenuButton
