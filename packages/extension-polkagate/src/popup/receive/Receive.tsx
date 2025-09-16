@@ -222,7 +222,7 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
           height: '44px',
           width: '320px'
         }}
-        text={t('Back')}
+        text={t('Done')}
       />
     </Grid>
   );
