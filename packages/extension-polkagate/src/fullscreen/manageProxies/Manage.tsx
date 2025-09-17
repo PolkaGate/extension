@@ -71,23 +71,32 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
   }, [setStep]);
 
   const handleDelete = useCallback((proxyItem: ProxyItem) => {
-    const updatedProxyItems = proxyItems?.map((_proxyItem) => {
-      if (proxyItem.proxy.delegate === _proxyItem.proxy.delegate && proxyItem.proxy.proxyType === _proxyItem.proxy.proxyType) {
-        if (_proxyItem.status === 'new') {
-          return undefined;
-        } else if (_proxyItem.status === 'current') {
-          _proxyItem.status = 'remove';
+    if (!proxyItems) {
+      return;
+    }
 
-          return _proxyItem;
-        } else {
-          _proxyItem.status = 'current';
+    const updatedProxyItems = proxyItems
+      .map((_proxyItem) => {
+        const isTarget =
+          proxyItem.proxy.delegate === _proxyItem.proxy.delegate &&
+          proxyItem.proxy.proxyType === _proxyItem.proxy.proxyType;
 
+        if (!isTarget) {
           return _proxyItem;
         }
-      }
 
-      return _proxyItem;
-    }).filter((item) => !!item);
+        switch (_proxyItem.status) {
+          case 'new':
+            return null; // Remove newly added proxy
+          case 'current':
+            return { ..._proxyItem, status: 'remove' };// Mark current proxy for removal
+          case 'remove':
+            return { ..._proxyItem, status: 'current' };// Undo removal
+          default:
+            return _proxyItem;
+        }
+      })
+      .filter(Boolean) as ProxyItem[]; // remove nulls
 
     setProxyItems(updatedProxyItems);
   }, [proxyItems, setProxyItems]);

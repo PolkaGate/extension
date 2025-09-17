@@ -39,13 +39,11 @@ export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck =
   const { t } = useTranslation();
   const genesisHash = useAccountSelectedChain(proxyItem.proxy.delegate);
 
-  const [selected, setSelected] = useState(false);
+  const [selected, setSelected] = useState(proxyItem.status === 'remove');
 
   useEffect(() => {
-    if (proxyItem.status !== 'remove' && selected) {
-      setSelected(false);
-    }
-  }, [proxyItem.status, selected]);
+      setSelected(proxyItem.status === 'remove');
+  }, [proxyItem.status]);
 
   const handleCheck = useCallback((checked: boolean) => {
     handleDelete(proxyItem);
