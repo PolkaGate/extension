@@ -4,8 +4,7 @@
 import type { FeeInfo } from '../fullscreen/sendFund/types';
 import type { TransactionDetail } from '../util/types';
 
-import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { CloseCircle, TickCircle } from 'iconsax-react';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -14,6 +13,7 @@ import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polk
 import Subscan from '../assets/icons/Subscan';
 import { ActionButton, FormatBalance2, NeonButton } from '../components';
 import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
+import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
 import { toTitleCase, updateStorage } from '../util';
@@ -26,11 +26,11 @@ interface SubProps {
 }
 
 const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
-  const { t } = useTranslation();
   const isBlueish = useIsBlueish();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const amountInHuman = amountToHuman((transactionDetail?.amount ?? '0'), decimal);
+  const { amount, failureText, success } = transactionDetail;
+  const amountInHuman = amountToHuman((amount ?? '0'), decimal);
 
   const [integerPart, decimalPart] = amountInHuman.split('.');
 
@@ -47,31 +47,23 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
 
   return (
     <GlowBox isBlueish style={{ m: 0, width: '100%' }}>
-      <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
-        <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
-          {transactionDetail.success
-            ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-            : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-          }
-        </Grid>
-        <Typography color= {isBlueish ? 'text.highlight' : 'primary.main'} pt='8px' textTransform='capitalize' variant='B-2'>
-          {transactionDetail.success
-            ? t('Completed')
-            : t('Failed')
-          }
-        </Typography>
+      <FailSuccessIcon
+        failureText={failureText}
+        isBlueish={isBlueish}
+        success={success}
+      >
         <Stack alignItems='flex-end' direction='row' py='4px'>
           <Typography color='text.primary' lineHeight='normal' variant='H-1'>
             {integerPart}
           </Typography>
-          <Typography color= { isBlueish ? 'text.highlight' : 'text.secondary'} variant='H-3'>
+          <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} variant='H-3'>
             {decimalToShow}
           </Typography>
-          <Typography color= { isBlueish ? 'text.highlight' : 'text.secondary'} pl='3px' variant='H-3'>
+          <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} pl='3px' variant='H-3'>
             {token}
           </Typography>
         </Stack>
-      </Stack>
+      </FailSuccessIcon>
     </GlowBox>
   );
 };
@@ -83,12 +75,13 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
+  const { amount, block, fee, txHash } = transactionDetail;
   const listItem: ListItemType[] = useMemo(() => ([
-    { content: transactionDetail.block, title: t('block') },
-    { content: transactionDetail.txHash, title: t('hash') },
-    { content: transactionDetail.amount, title: t('amount') },
-    { content: transactionDetail.fee, title: t('fee') }
-  ]), [t, transactionDetail.amount, transactionDetail.block, transactionDetail.fee, transactionDetail.txHash]);
+    { content: block, title: t('block') },
+    { content: txHash, title: t('hash') },
+    { content: amount, title: t('amount') },
+    { content: fee, title: t('fee') }
+  ]), [amount, block, fee, t, txHash]);
 
   return (
     <VelvetBox noGlowBall>
@@ -188,11 +181,10 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
     close && redirectToSamePath
       ? close()
       : navigate(redirectPath, { replace: true }) as void
-  , [close, navigate, redirectPath, redirectToSamePath]);
+    , [close, navigate, redirectPath, redirectToSamePath]);
 
   const goToExplorer = useCallback(() => {
-  const network = getSubscanChainName(chainName);
-
+    const network = getSubscanChainName(chainName);
     const url = `https://${network}.subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
@@ -228,8 +220,8 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
           startIcon={
             <Subscan
               color='#ffffff'
-              height = {13}
-              width = {13}
+              height={13}
+              width={13}
             />}
           style={{ width: '345px' }}
           text={t('View on Explorer')}

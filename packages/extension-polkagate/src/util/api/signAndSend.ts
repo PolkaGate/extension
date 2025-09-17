@@ -140,9 +140,11 @@ export async function send (
 
         resolve({ block: Number(blockNumber), failureText, fee, success, txHash });
       }
-    }).catch((e) => {
-      console.log('catch error', e);
-      resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
+    }).catch((e: unknown) => {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+
+      console.log('catch error', errorMessage);
+      resolve({ block: 0, failureText: errorMessage, fee: '', success: false, txHash: '' });
     });
   });
 }

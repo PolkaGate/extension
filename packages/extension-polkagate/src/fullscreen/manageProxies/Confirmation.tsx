@@ -6,9 +6,9 @@ import type { FeeInfo } from '../sendFund/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { subscan } from '../../assets/icons';
@@ -108,26 +108,15 @@ interface HeaderProps {
 }
 
 const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
-  const { t } = useTranslation();
-
-  const { accounts, amount, assetDecimal, description, success, token } = transactionDetail;
+  const { accounts, amount, assetDecimal, description, failureText, success, token } = transactionDetail;
 
   return (
     <GlowBox style={{ m: 0, width: '100%' }}>
-      <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
-        <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
-          {success
-            ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-            : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-          }
-        </Grid>
-        <Typography color='primary.main' pt='8px' textTransform='capitalize' variant='B-2'>
-          {
-            description && success
-              ? description
-              : success ? t('Completed') : t('Failed')
-          }
-        </Typography>
+      <FailSuccessIcon
+        description={description}
+        failureText={failureText}
+        success={success}
+      >
         {
           accounts && genesisHash
             ? <>
@@ -140,7 +129,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                   : <Identity2
                     address={accounts[0]}
                     addressStyle={{ color: '#AA83DC' }}
-                    charsCount={12}
+                    charsCount={5}
                     genesisHash={genesisHash}
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
                     noIdenticon
@@ -157,7 +146,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
               token={token}
               />
         }
-      </Stack>
+      </FailSuccessIcon>
     </GlowBox>
   );
 };
