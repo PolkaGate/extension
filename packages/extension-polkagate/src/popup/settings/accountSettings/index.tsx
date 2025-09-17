@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
+import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handl
 import { noop } from '@polkadot/util';
 
 import { ActionCard, BackWithLabel, Motion } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useAccountSelectedChain, useTranslation } from '../../../hooks';
 import { UserDashboardHeader, WebsitesAccess } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import RemoveAccount from '../../../partials/RemoveAccount';
@@ -26,6 +26,7 @@ function AccountSettings (): React.ReactElement {
   const location = useLocation();
   const navigate = useNavigate();
   const { address } = useParams<{ address: string }>();
+  const selectedChain = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   useEffect(() => {
@@ -41,6 +42,7 @@ function AccountSettings (): React.ReactElement {
 
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
+  const onManageProxy = useCallback(() => windowOpen(`/proxyManagement/${address}/${selectedChain}`) as unknown as void, [address, selectedChain]);
   const onCloseRemove = useCallback(() => {
     navigate('/') as void;
   }, [navigate]);
@@ -61,10 +63,23 @@ function AccountSettings (): React.ReactElement {
           onClick={noop}
           style={{
             alignItems: 'center',
-            height: '64px',
+            height: '55px',
             mt: '8px'
           }}
           title={t('Notifications')}
+        />
+        <ActionCard
+          Icon={Data}
+          iconColor='#FF4FB9'
+          iconSize={24}
+          iconWithoutTransform
+          onClick={onManageProxy}
+          style={{
+            alignItems: 'center',
+            height: '55px',
+            mt: '8px'
+          }}
+          title={t('Manage Proxies')}
         />
         <ActionCard
           Icon={Edit2}
@@ -74,7 +89,7 @@ function AccountSettings (): React.ReactElement {
           onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
           style={{
             alignItems: 'center',
-            height: '64px',
+            height: '55px',
             mt: '8px'
           }}
           title={t('Rename Account')}
@@ -87,7 +102,7 @@ function AccountSettings (): React.ReactElement {
           onClick={onImport}
           style={{
             alignItems: 'center',
-            height: '64px',
+            height: '55px',
             mt: '8px'
           }}
           title={t('Import Account')}
@@ -100,7 +115,7 @@ function AccountSettings (): React.ReactElement {
           onClick={onExport}
           style={{
             alignItems: 'center',
-            height: '64px',
+            height: '55px',
             mt: '8px'
           }}
           title={t('Export Account')}
@@ -113,7 +128,7 @@ function AccountSettings (): React.ReactElement {
           onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
           style={{
             alignItems: 'center',
-            height: '64px',
+            height: '55px',
             mt: '8px'
           }}
           title={t('Websites Access')}
