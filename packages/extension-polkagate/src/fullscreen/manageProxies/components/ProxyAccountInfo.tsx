@@ -5,7 +5,7 @@ import type { ProxyItem } from '../../../util/types';
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
@@ -39,7 +39,11 @@ export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck =
   const { t } = useTranslation();
   const genesisHash = useAccountSelectedChain(proxyItem.proxy.delegate);
 
-  const [selected, setSelected] = useState(false);
+  const [selected, setSelected] = useState(proxyItem.status === 'remove');
+
+  useEffect(() => {
+      setSelected(proxyItem.status === 'remove');
+  }, [proxyItem.status]);
 
   const handleCheck = useCallback((checked: boolean) => {
     handleDelete(proxyItem);

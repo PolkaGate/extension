@@ -1,27 +1,45 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Add, ArrowLeft, type Icon } from 'iconsax-react';
 import React, { memo } from 'react';
 
 import { ActionButton, GradientButton, GradientDivider } from '../../../components';
 import { useTranslation } from '../../../hooks';
 
-interface Props {
-  onBack: () => void;
-  onReset: () => void;
-  onNext: () => void;
+interface SelectionStatusProps {
+  Icon: Icon;
   selectedCount: number | undefined;
   maxSelectable: number | undefined;
+  onReset: () => void;
+}
+
+export const SelectionStatus = ({ Icon, maxSelectable, onReset, selectedCount }: SelectionStatusProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
+      <Icon color='#674394' size='18' variant='Bold' />
+      <Typography color='#AA83DC' ml='4px' variant='B-2'>
+        <span style={{ color: theme.palette.text.primary }}>{selectedCount || 0}</span>
+        {t(' / {{maxSelectable}} selected', { replace: { maxSelectable } })}
+      </Typography>
+      <Add color='#674394' onClick={onReset} size='28' style={{ cursor: 'pointer', rotate: '45deg' }} />
+    </Grid>
+  );
+};
+
+interface Props extends SelectionStatusProps {
+  onBack: () => void;
+  onNext: () => void;
   isNextDisabled: boolean;
-  Icon: Icon;
   style?: SxProps<Theme>;
 }
 
 function FooterControls ({ Icon, isNextDisabled, maxSelectable, onBack, onNext, onReset, selectedCount, style }: Props) {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', pt: '26px', width: '100%', zIndex: 1, ...style }}>
@@ -44,12 +62,12 @@ function FooterControls ({ Icon, isNextDisabled, maxSelectable, onBack, onNext, 
           orientation='vertical'
           style={{ height: '40px', mx: '4px' }}
         />
-        <Icon color='#674394' size='18' variant='Bold' />
-        <Typography color='#AA83DC' variant='B-2'>
-          <span style={{ color: theme.palette.text.primary }}>{selectedCount || 0}</span>
-          {t(' / {{maxSelectable}} selected', { replace: { maxSelectable } })}
-        </Typography>
-        <Add color='#674394' onClick={onReset} size='28' style={{ cursor: 'pointer', rotate: '45deg' }} />
+        <SelectionStatus
+          Icon={Icon}
+          maxSelectable={maxSelectable}
+          onReset={onReset}
+          selectedCount={selectedCount}
+        />
       </Container>
       <GradientButton
         disabled={isNextDisabled}

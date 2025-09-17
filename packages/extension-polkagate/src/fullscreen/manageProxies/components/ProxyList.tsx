@@ -4,7 +4,7 @@
 import type { ProxyItem } from '../../../util/types';
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useTranslation } from '../../../components/translate';
 import { EmptyListBox } from '../../components';
@@ -21,11 +21,12 @@ export default function ProxyList ({ handleDelete, proxyItems, style }: Props): 
   const { t } = useTranslation();
   const _handleDelete = useCallback((proxyItem: ProxyItem) => handleDelete && handleDelete(proxyItem), [handleDelete]);
 
-  const isDeleting = proxyItems?.find(({ status }) => status === 'remove');
+  const isDeleting = useMemo(() => proxyItems?.find(({ status }) => status === 'remove'), [proxyItems]);
+  const itemsToShow = useMemo(() => proxyItems?.filter(({ status }) => status !== 'new'), [proxyItems]);
 
   return (
     <Grid alignItems='start' container gap='10px' item sx={{ maxHeight: isDeleting ? '464px' : '600px', mt: '10px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...style }}>
-      {proxyItems?.filter(({ status }) => status !== 'new').map((proxyItem, index) => {
+      {itemsToShow?.map((proxyItem, index) => {
         return (
           <ProxyAccountInfo
             handleDelete={_handleDelete}
