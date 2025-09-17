@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
+import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handl
 import { noop } from '@polkadot/util';
 
 import { ActionCard, BackWithLabel, Motion } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useAccountSelectedChain, useTranslation } from '../../../hooks';
 import { UserDashboardHeader, WebsitesAccess } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import RemoveAccount from '../../../partials/RemoveAccount';
@@ -26,6 +26,7 @@ function AccountSettings (): React.ReactElement {
   const location = useLocation();
   const navigate = useNavigate();
   const { address } = useParams<{ address: string }>();
+  const selectedChain = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   useEffect(() => {
@@ -41,9 +42,12 @@ function AccountSettings (): React.ReactElement {
 
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
+  const onManageProxy = useCallback(() => windowOpen(`/proxyManagement/${address}/${selectedChain}`) as unknown as void, [address, selectedChain]);
   const onCloseRemove = useCallback(() => {
     navigate('/') as void;
   }, [navigate]);
+
+  const CARD_STYLE = { alignItems: 'center', height: '58px', mt: '5px' };
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
@@ -59,12 +63,17 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={noop}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Notifications')}
+        />
+        <ActionCard
+          Icon={Data}
+          iconColor='#FF4FB9'
+          iconSize={24}
+          iconWithoutTransform
+          onClick={onManageProxy}
+          style={{ ...CARD_STYLE }}
+          title={t('Manage Proxies')}
         />
         <ActionCard
           Icon={Edit2}
@@ -72,11 +81,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Rename Account')}
         />
         <ActionCard
@@ -85,11 +90,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={onImport}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Import Account')}
         />
         <ActionCard
@@ -98,11 +99,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={onExport}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Export Account')}
         />
         <ActionCard
@@ -111,11 +108,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
-          style={{
-            alignItems: 'center',
-            height: '64px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Websites Access')}
         />
         <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ cursor: 'pointer', mt: '25px' }}>
