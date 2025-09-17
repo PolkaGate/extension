@@ -31,7 +31,7 @@ export default function FailSuccessIcon ({ children, description, failureText, i
       </Grid>
       {showLabel &&
         <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} padding='8px 5px 0' textTransform='capitalize' variant={failureText ? 'B-1' : 'B-2'}>
-          {failureText ?? description ?? (success
+          {failureText || description || (success
             ? t('Completed')
             : t('Failed'))
           }
