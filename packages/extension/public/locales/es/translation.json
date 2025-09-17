@@ -98,9 +98,6 @@
   "Metadata": "Metadatos",
   "Method": "Método",
   "Reset": "Restablecer",
-  "Already have a wallet": "Ya tienes una cartera",
-  "have a wallet": "tener una cartera",
-  "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "Si ya tienes una cuenta, puedes importarla usando tu método preferido. Para importaciones por lotes, puedes restaurar varias cuentas desde un archivo.",
   "Restore from File": "Restaurar desde archivo",
   "Import from Recovery Phrase": "Importar desde frase de recuperación",
   "Import from Raw Seed": "Importar desde semilla cruda",
@@ -432,7 +429,6 @@
   "Generated 12-word recovery phrase": "Frase de recuperación de 12 palabras generada",
   "12-word recovery phrase": "Frase de recuperación de 12 palabras",
   "a new account": "una nueva cuenta",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.": "Para crear una nueva cuenta se te proporciona una frase de recuperación de 12 palabras que debe ser registrada y guardada en un lugar seguro. La frase de recuperación puede usarse para restaurar tu billetera. Guárdala cuidadosamente para no perder tus activos.",
   "I have saved my recovery phrase safely": "He guardado mi frase de recuperación de forma segura",
   "my recovery phrase safely": "mi frase de recuperación de forma segura",
   "Create account": "Crear cuenta",
@@ -850,5 +846,9 @@
   "Your Address": "Tu dirección",
   "keep me signed in for 15 minutes": "Mantenerme conectado durante 15 minutos",
   "15 minutes": "15 minutos",
-  "No-password session active — {{remainingTimeInMinute}} left.": "Sesión sin contraseña activa — quedan {{remainingTimeInMinute}} minutos."
+  "No-password session active — {{remainingTimeInMinute}} left.": "Sesión sin contraseña activa — quedan {{remainingTimeInMinute}} minutos.",
+  "Already have accounts": "¿Ya tienes cuentas?",
+  "have accounts": "tienes cuentas",
+  "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "Si ya tienes cuentas, puedes importarlas usando tu método preferido. Para importaciones en lote, puedes restaurar varias cuentas desde un archivo.",
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "Para crear una nueva cuenta se te proporciona una frase de recuperación de 12 palabras que debe registrarse y guardarse en un lugar seguro. La frase de recuperación se puede usar para restaurar tu cuenta. Guárdala con cuidado para no perder tus activos."
 }

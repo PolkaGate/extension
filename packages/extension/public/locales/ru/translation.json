@@ -98,9 +98,6 @@
   "Metadata": "Метаданные",
   "Method": "Метод",
   "Reset": "Сбросить",
-  "Already have a wallet": "Уже есть кошелёк",
-  "have a wallet": "есть кошелёк",
-  "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "Если у вас уже есть аккаунт, вы можете импортировать его любым удобным способом. Для массового импорта можно восстановить несколько аккаунтов из файла.",
   "Restore from File": "Восстановить из файла",
   "Import from Recovery Phrase": "По фразе восстановления",
   "Import from Raw Seed": "Импорт сид-фразы",
@@ -431,7 +428,6 @@
   "Generated 12-word recovery phrase": "Сгенерированная 12-словная фраза восстановления",
   "12-word recovery phrase": "12-словная фраза восстановления",
   "a new account": "новый аккаунт",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.": "Для создания нового аккаунта вам предоставляется 12-словная фраза восстановления, которую необходимо записать и хранить в безопасном месте. Фраза восстановления может быть использована для восстановления вашего кошелька. Храните её тщательно, чтобы не потерять свои активы.",
   "I have saved my recovery phrase safely": "Я безопасно сохранил свою фразу восстановления",
   "my recovery phrase safely": "мою фразу восстановления безопасно",
   "Create account": "Создать аккаунт",
@@ -849,5 +845,9 @@
   "Your Address": "Ваш адрес",
   "keep me signed in for 15 minutes": "Оставаться в системе 15 минут",
   "15 minutes": "15 минут",
-  "No-password session active — {{remainingTimeInMinute}} left.": "Сессия без пароля активна — осталось {{remainingTimeInMinute}} минут."
+  "No-password session active — {{remainingTimeInMinute}} left.": "Сессия без пароля активна — осталось {{remainingTimeInMinute}} минут.",
+  "Already have accounts": "Уже есть аккаунты",
+  "have accounts": "есть аккаунты",
+  "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "Если у вас уже есть аккаунты, вы можете импортировать их удобным для вас способом. Для пакетного импорта вы можете восстановить несколько аккаунтов из файла.",
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "Чтобы создать новый аккаунт, вам предоставляется фраза восстановления из 12 слов, которую необходимо записать и сохранить в надежном месте. Фраза восстановления может использоваться для восстановления вашего аккаунта. Храните её тщательно, чтобы не потерять свои активы."
 }

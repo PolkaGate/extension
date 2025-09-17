@@ -98,9 +98,6 @@
   "Metadata": "元数据",
   "Method": "方法",
   "Reset": "重置",
-  "Already have a wallet": "已有钱包",
-  "have a wallet": "有钱包",
-  "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "如果您已有账户，可以使用您喜欢的方式导入。对于批量导入，您可以从文件中恢复多个账户。",
   "Restore from File": "从文件恢复",
   "Import from Recovery Phrase": "通过助记词导入",
   "Import from Raw Seed": "通过原始种子导入",
@@ -431,7 +428,6 @@
   "Generated 12-word recovery phrase": "生成的 12 个单词恢复短语",
   "12-word recovery phrase": "12 个单词恢复短语",
   "a new account": "一个新账户",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.": "要创建新账户，您将获得一个 12 个单词的恢复短语，需要记录并保存在安全的地方。恢复短语可用于恢复您的钱包，请妥善保管以避免资产丢失。",
   "I have saved my recovery phrase safely": "我已安全保存恢复短语",
   "my recovery phrase safely": "我的恢复短语已安全保存",
   "Create account": "创建账户",
@@ -843,5 +839,9 @@
   "Your Address": "您的地址",
   "keep me signed in for 15 minutes": "保持登录状态15分钟",
   "15 minutes": "15分钟",
-  "No-password session active — {{remainingTimeInMinute}} left.": "无密码会话已激活 — 还剩 {{remainingTimeInMinute}} 分钟。"
+  "No-password session active — {{remainingTimeInMinute}} left.": "无密码会话已激活 — 还剩 {{remainingTimeInMinute}} 分钟。",
+  "Already have accounts": "已有账户",
+  "have accounts": "有账户",
+  "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "如果您已有账户，可以使用您偏好的方式导入。对于批量导入，您可以通过文件恢复多个账户。",
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "为了创建一个新账户，您将获得一个12个单词的恢复短语，需要记录并保存在安全的地方。恢复短语可用于恢复您的账户。请妥善保存，以免丢失资产。"
 }

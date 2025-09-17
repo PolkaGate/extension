@@ -88,9 +88,6 @@
   "Metadata": "",
   "Method": "",
   "Reset": "",
-  "Already have a wallet": "",
-  "have a wallet": "",
-  "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "",
   "Restore from File": "",
   "Import from Recovery Phrase": "",
   "Import from Raw Seed": "",
@@ -402,7 +399,6 @@
   "Generated 12-word recovery phrase": "",
   "12-word recovery phrase": "",
   "a new account": "",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.": "",
   "I have saved my recovery phrase safely": "",
   "my recovery phrase safely": "",
   "Create account": "",
@@ -807,5 +803,9 @@
   "Your Address": "",
   "keep me signed in for 15 minutes": "",
   "15 minutes": "",
-  "No-password session active — {{remainingTimeInMinute}} left.": ""
+  "No-password session active — {{remainingTimeInMinute}} left.": "",
+  "Already have accounts": "",
+  "have accounts": "",
+  "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "",
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": ""
 }

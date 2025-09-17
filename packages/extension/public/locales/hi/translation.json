@@ -98,9 +98,6 @@
   "Metadata": "मेटाडाटा",
   "Method": "विधि",
   "Reset": "रीसेट",
-  "Already have a wallet": "पहले से वॉलेट है",
-  "have a wallet": "वॉलेट है",
-  "If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.": "यदि आपके पास पहले से खाता है, तो आप इसे अपनी पसंदीदा विधि से आयात कर सकते हैं। बैच आयात के लिए, आप फ़ाइल से कई खाते पुनर्स्थापित कर सकते हैं।",
   "Restore from File": "फ़ाइल से पुनर्स्थापित करें",
   "Import from Recovery Phrase": "रिकवरी वाक्यांश से आयात करें",
   "Import from Raw Seed": "रॉ सीड से आयात करें",
@@ -431,7 +428,6 @@
   "Generated 12-word recovery phrase": "जनरेट किया गया 12-शब्दों का रिकवरी फ़्रेज़",
   "12-word recovery phrase": "12-शब्दों का रिकवरी फ़्रेज़",
   "a new account": "नया खाता",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.": "नया खाता बनाने के लिए आपको 12-शब्दों का रिकवरी फ़्रेज़ दिया जाता है जिसे सुरक्षित स्थान पर रिकॉर्ड और सहेजना आवश्यक है। इस रिकवरी फ़्रेज़ का उपयोग आपके वॉलेट को पुनर्स्थापित करने के लिए किया जा सकता है। इसे सावधानीपूर्वक रखें ताकि आपकी संपत्तियाँ न खो जाएँ।",
   "I have saved my recovery phrase safely": "मैंने अपना रिकवरी फ़्रेज़ सुरक्षित रूप से सहेज लिया है",
   "my recovery phrase safely": "मेरा रिकवरी फ़्रेज़ सुरक्षित रूप से",
   "Create account": "खाता बनाएँ",
@@ -849,5 +845,9 @@
   "Your Address": "आपका पता",
   "keep me signed in for 15 minutes": "मुझे 15 मिनट के लिए साइन इन रखें",
   "15 minutes": "15 मिनट",
-  "No-password session active — {{remainingTimeInMinute}} left.": "नो-पासवर्ड सत्र सक्रिय — {{remainingTimeInMinute}} बचे हैं।"
+  "No-password session active — {{remainingTimeInMinute}} left.": "नो-पासवर्ड सत्र सक्रिय — {{remainingTimeInMinute}} बचे हैं।",
+  "Already have accounts": "पहले से खाते हैं",
+  "have accounts": "खाते हैं",
+  "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "यदि आपके पास पहले से खाते हैं, तो आप उन्हें अपनी पसंदीदा विधि का उपयोग करके आयात कर सकते हैं। बैच आयात के लिए, आप फ़ाइल से कई खातों को पुनर्स्थापित कर सकते हैं।",
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "नया खाता बनाने के लिए आपको 12 शब्दों का एक रिकवरी वाक्यांश दिया जाता है जिसे लिखकर सुरक्षित स्थान पर रखना आवश्यक है। इस रिकवरी वाक्यांश का उपयोग करके आप अपना खाता पुनः प्राप्त कर सकते हैं। इसे सावधानीपूर्वक सुरक्षित रखें ताकि आप अपनी संपत्ति न खोएं।"
 }
