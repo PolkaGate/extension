@@ -3,11 +3,11 @@
 
 import type { TransactionDetail } from '../../../util/types';
 
-import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Container, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
+import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
@@ -93,26 +93,15 @@ interface HeaderProps {
 }
 
 const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
-  const { t } = useTranslation();
-
-  const { amount, description, nominators, success, token } = transactionDetail;
+  const { amount, description, failureText, nominators, success, token } = transactionDetail;
 
   return (
     <GlowBox style={{ m: 0, width: '100%' }}>
-      <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
-        <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
-          {success
-            ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-            : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-          }
-        </Grid>
-        <Typography color='primary.main' pt='8px' textTransform='capitalize' variant='B-2'>
-          {
-            description && success
-              ? description
-              : success ? t('Completed') : t('Failed')
-          }
-        </Typography>
+      <FailSuccessIcon
+        description={description}
+        failureText={failureText}
+        success={success}
+      >
         {nominators &&
           <ValidatorsConfirm
             genesisHash={genesisHash}
@@ -125,7 +114,7 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
             genesisHash={genesisHash}
             token={token}
           />}
-      </Stack>
+      </FailSuccessIcon>
     </GlowBox>
   );
 };

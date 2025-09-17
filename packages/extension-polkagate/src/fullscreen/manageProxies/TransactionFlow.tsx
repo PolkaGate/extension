@@ -192,6 +192,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       noDivider
       onClose={handleClose}
       open={true}
+      showBackIconAsClose
       style={{ backgroundColor: '#1B133C', minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${540 + extraHeight}px`, padding: '20px 15px 10px' }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
