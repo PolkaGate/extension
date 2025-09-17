@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.7](https://github.com/polkagate/extension/compare/v1.8.6...v1.8.7) (2025-09-17)
+
+
+### Bug Fixes
+
+* enforce fullscreen lock when reset wallet is dismissed ([#1881](https://github.com/polkagate/extension/issues/1881)) ([3ce8b52](https://github.com/polkagate/extension/commit/3ce8b5208fe9c6d90a5fb637ad1b8c02828230a3))
+
 ## [1.8.6](https://github.com/polkagate/extension/compare/v1.8.5...v1.8.6) (2025-09-16)
 
 
