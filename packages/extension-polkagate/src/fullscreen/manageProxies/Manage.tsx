@@ -92,7 +92,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
     setProxyItems(updatedProxyItems);
   }, [proxyItems, setProxyItems]);
 
-  const restoreRemovedItems = useCallback(() => {
+  const clearRemoveChecks = useCallback(() => {
     setProxyItems((prev) =>
       prev?.map((item) =>
         item.status === 'remove'
@@ -162,7 +162,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
           <SelectionStatus
             Icon={Firstline}
             maxSelectable={proxyItems?.length}
-            onReset={restoreRemovedItems}
+            onReset={clearRemoveChecks}
             selectedCount={toBeDeletedProxies?.length}
           />
           <GradientButton
