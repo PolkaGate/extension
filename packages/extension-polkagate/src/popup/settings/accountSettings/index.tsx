@@ -47,7 +47,7 @@ function AccountSettings (): React.ReactElement {
     navigate('/') as void;
   }, [navigate]);
 
-  const CARD_STYLE = { alignItems: 'center', height: '55px', mt: '8px' };
+  const CARD_STYLE = { alignItems: 'center', height: '58px', mt: '5px' };
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
