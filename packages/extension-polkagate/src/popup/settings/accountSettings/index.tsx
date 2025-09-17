@@ -47,6 +47,8 @@ function AccountSettings (): React.ReactElement {
     navigate('/') as void;
   }, [navigate]);
 
+  const CARD_STYLE = { alignItems: 'center', height: '55px', mt: '8px' };
+
   return (
     <Container disableGutters sx={{ position: 'relative' }}>
       <UserDashboardHeader fullscreenURL='/settingsfs/account' homeType='default' />
@@ -61,11 +63,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={noop}
-          style={{
-            alignItems: 'center',
-            height: '55px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Notifications')}
         />
         <ActionCard
@@ -74,11 +72,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={onManageProxy}
-          style={{
-            alignItems: 'center',
-            height: '55px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Manage Proxies')}
         />
         <ActionCard
@@ -87,11 +81,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
-          style={{
-            alignItems: 'center',
-            height: '55px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Rename Account')}
         />
         <ActionCard
@@ -100,11 +90,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={onImport}
-          style={{
-            alignItems: 'center',
-            height: '55px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Import Account')}
         />
         <ActionCard
@@ -113,11 +99,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={onExport}
-          style={{
-            alignItems: 'center',
-            height: '55px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Export Account')}
         />
         <ActionCard
@@ -126,11 +108,7 @@ function AccountSettings (): React.ReactElement {
           iconSize={24}
           iconWithoutTransform
           onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
-          style={{
-            alignItems: 'center',
-            height: '55px',
-            mt: '8px'
-          }}
+          style={{ ...CARD_STYLE }}
           title={t('Websites Access')}
         />
         <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ cursor: 'pointer', mt: '25px' }}>
