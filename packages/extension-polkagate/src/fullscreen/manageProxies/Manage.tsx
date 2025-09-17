@@ -15,6 +15,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { ChainLogo, GradientButton, ShowBalance, ShowBalance4 } from '../../components';
 import { useTranslation } from '../../hooks';
+import { SelectionStatus } from '../stake/partials/FooterControls';
 import ProxyList from './components/ProxyList';
 import { STEPS } from './consts';
 import { type ProxyFlowStep } from './types';
@@ -91,6 +92,16 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
     setProxyItems(updatedProxyItems);
   }, [proxyItems, setProxyItems]);
 
+  const restoreRemovedItems = useCallback(() => {
+    setProxyItems((prev) =>
+      prev?.map((item) =>
+        item.status === 'remove'
+          ? { ...item, status: 'current' }
+          : item
+      )
+    );
+  }, [setProxyItems]);
+
   const toBeDeletedProxies = useMemo(() => proxyItems?.filter(({ status }) => status === 'remove'), [proxyItems]);
 
   return (
@@ -124,7 +135,7 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
               />}
           </Typography>
           {newDepositValue && depositedValue &&
-            <Stack columnGap= '3px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '10px', px: '5px' }}>
+            <Stack columnGap='3px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '10px', px: '5px' }}>
               <Typography color='primary.main' variant='B-1'>
                 {newDepositValue && !newDepositValue.isZero() && (newDepositValue.gt(depositedValue) ? '+' : '-')}
               </Typography>
@@ -148,18 +159,12 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
       {
         !!toBeDeletedProxies?.length &&
         <Stack alignItems='end' direction='row' justifyContent='space-between' sx={{ bottom: '0', position: 'absolute', width: '100%' }}>
-          <Stack alignItems='center' columnGap='10px' direction='row'>
-            <Firstline color='#674394' size='18px' variant='Bold' />
-            <Typography color='#EAEBF1' variant='B-2'>
-              {toBeDeletedProxies?.length}
-            </Typography>
-            <Typography color='#AA83DC' variant='B-4'>
-              {`/ ${proxyItems?.length} selected`}
-            </Typography>
-            <Typography color='#AA83DC' variant='H-4'>
-              X
-            </Typography>
-          </Stack>
+          <SelectionStatus
+            Icon={Firstline}
+            maxSelectable={proxyItems?.length}
+            onReset={restoreRemovedItems}
+            selectedCount={toBeDeletedProxies?.length}
+          />
           <GradientButton
             contentPlacement='center'
             disabled={isDisabledAddProxyButton}
