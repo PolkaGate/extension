@@ -18,12 +18,12 @@ function HaveWallet (): React.ReactElement {
     <AdaptiveLayout style={{ maxWidth: '622px', width: '622px' }}>
       <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ zIndex: 1 }}>
         <OnboardTitle
-          label={t('Already have a wallet')}
-          labelPartInColor={t('have a wallet')}
+          label={t('Already have accounts')}
+          labelPartInColor={t('have accounts')}
           url='/onboarding'
         />
         <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1' width='480px'>
-          {t('If you already have an account, you can import it using your preferred method. For batch imports, you can restore multiple accounts from a file.')}
+          {t('If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.')}
         </Typography>
         <Grid columnGap='10px' container item rowGap='10px' sx={{ mb: '20px', mt: '10px' }}>
           <CreationButton
