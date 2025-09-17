@@ -133,7 +133,7 @@ function CreateAccount (): React.ReactElement {
         {step === STEP.SEED &&
           <>
             <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1' width='480px'>
-              {t('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your wallet. Keep it carefully to not lose your assets.')}
+              {t('In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.')}
             </Typography>
             <MnemonicSeedDisplay seed={seed} style={{ marginBlock: '20px' }} />
             <Stack alignItems='center' columnGap='20px' direction='row' sx={{ marginTop: '25px' }}>

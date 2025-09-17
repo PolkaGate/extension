@@ -87,7 +87,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
           <GradientBorder />
           <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
             <Typography color='#fff' textTransform='uppercase' variant='H-2'>
-              {t('Already have a wallet')}
+              {t('Already have accounts')}
             </Typography>
           </Grid>
           <RedGradient style={{ top: '-130px' }} />

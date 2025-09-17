@@ -93,8 +93,8 @@ function Onboarding (): React.ReactElement {
             width: '100%'
           }}
           text={{
-            text: t('Already have an account'),
-            textPartInColor: t('have an account')
+            text: t('Already have accounts'),
+            textPartInColor: t('have accounts')
           }}
           variant='contained'
         />
