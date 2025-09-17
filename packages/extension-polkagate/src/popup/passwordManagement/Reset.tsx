@@ -14,7 +14,7 @@ import { Lock } from '../../assets/gif';
 import { ActionButton, ActionCard, ActionContext, BackWithLabel } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useBackground, useIsExtensionPopup, useTranslation } from '../../hooks';
-import { windowOpen } from '../../messaging';
+import { lockExtension, windowOpen } from '../../messaging';
 import { Version } from '../../partials';
 import Header from './Header';
 import { LOGIN_STATUS } from './types';
@@ -114,6 +114,7 @@ function Reset (): React.ReactElement {
       .finally(() => {
         setExtensionLock(true);
         onAction('/');
+        lockExtension().catch(console.error);
       })
       .catch(console.error);
   }, [onAction, setExtensionLock]);
