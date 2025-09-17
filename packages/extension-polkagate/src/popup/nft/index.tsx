@@ -5,7 +5,7 @@ import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/n
 
 import { Box, Grid } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import NftManager from '../../class/nftManager';
 import { ActionContext, BackWithLabel, Motion } from '../../components';

@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 import { Grid, Typography, useTheme } from '@mui/material';
 import { Coin, People } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';

@@ -7,7 +7,7 @@ import type { Pages } from '../popup/home/type';
 import { Container, Grid, styled, useTheme } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Record, Setting } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Tooltip from '../components/Tooltip';
 import { useTranslation } from '../components/translate';

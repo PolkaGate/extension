@@ -8,7 +8,7 @@ import { Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/mat
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';

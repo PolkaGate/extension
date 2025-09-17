@@ -6,7 +6,7 @@ import type { PoolInfo } from '../../../../util/types';
 import { Stack } from '@mui/material';
 import { People } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useJoinPool, usePools, useSelectedAccount, useTranslation } from '../../../../hooks';
 import { SORTED_BY } from '../../../../popup/staking/partial/PoolFilter';

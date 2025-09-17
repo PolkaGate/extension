@@ -3349,7 +3349,6 @@ __metadata:
     "@types/file-saver": "npm:^2.0.5"
     "@types/react-copy-to-clipboard": "npm:^5.0.2"
     "@types/react-dom": "npm:^18.0.5"
-    "@types/react-router": "npm:^5.1.18"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/sinon-chrome": "npm:^2.2.11"
     "@types/styled-components": "npm:^5.1.25"
@@ -3399,7 +3398,6 @@ __metadata:
     "@types/file-saver": "npm:^2.0.5"
     "@types/react-copy-to-clipboard": "npm:^5.0.2"
     "@types/react-dom": "npm:^18.0.5"
-    "@types/react-router": "npm:^5.1.18"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/sinon-chrome": "npm:^2.2.11"
     "@types/styled-components": "npm:^5.1.25"
@@ -5812,7 +5810,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-router@npm:*, @types/react-router@npm:^5.1.18":
+"@types/react-router@npm:*":
   version: 5.1.20
   resolution: "@types/react-router@npm:5.1.20"
   dependencies:

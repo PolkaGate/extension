@@ -6,7 +6,7 @@ import type { BN } from '@polkadot/util';
 
 import { Grid, Stack } from '@mui/material';
 import React, { useContext, useRef } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import HasProxyIndicator from '@polkadot/extension-polkagate/src/components/HasProxyIndicator';
 import AssetsBox from '@polkadot/extension-polkagate/src/popup/home/partial/AssetsBox';

@@ -3,7 +3,7 @@
 
 import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import EasyStakeReviewHeader from '../../../fullscreen/stake/easyStake/partials/EasyStakeReviewHeader';
 import { EasyStakeSide } from '../../../fullscreen/stake/util/utils';

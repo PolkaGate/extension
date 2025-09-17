@@ -6,7 +6,7 @@ import type { ValidatorInformation } from '../../../../hooks/useValidatorsInform
 import { Stack, Typography } from '@mui/material';
 import { Firstline } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 

@@ -3,7 +3,7 @@
 
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, ChainLogo } from '../../../components';
 import MySwitch from '../../../components/MySwitch';

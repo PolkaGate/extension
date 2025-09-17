@@ -6,7 +6,7 @@ import type { PoolInfo } from '../../../../util/types';
 
 import { LinearProgress, Stack, type SxProps, type Theme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import { FadeOnScroll, Progress } from '../../../../components';
 import { sortingFunctions } from '../../../../fullscreen/stake/util/utils';

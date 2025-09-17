@@ -3,7 +3,7 @@
 
 import { Container, Grid } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
 import { useIsDark, useTranslation } from '../../../hooks';

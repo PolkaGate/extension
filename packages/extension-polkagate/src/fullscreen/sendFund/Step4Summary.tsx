@@ -8,7 +8,7 @@ import type { Inputs } from './types';
 import { Box, Divider, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 

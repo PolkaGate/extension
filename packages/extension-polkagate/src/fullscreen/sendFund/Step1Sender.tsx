@@ -5,7 +5,7 @@ import type { Inputs } from './types';
 
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import { Motion } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';

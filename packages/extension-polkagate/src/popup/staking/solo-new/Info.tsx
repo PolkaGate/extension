@@ -7,7 +7,7 @@ import type { BN } from '@polkadot/util';
 
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { isBn } from '@polkadot/util';
 

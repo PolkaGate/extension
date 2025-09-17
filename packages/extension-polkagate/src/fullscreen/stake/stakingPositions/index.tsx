@@ -5,7 +5,7 @@ import type { FetchedBalance, PositionInfo, Prices } from '../../../util/types';
 
 import { Stack } from '@mui/material';
 import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { useLocation, useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { getEarningOptions } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
