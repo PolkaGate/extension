@@ -9,8 +9,8 @@ import { useLocation } from 'react-router-dom';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
-import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
-import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { PROXY_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated, migratedRelays } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { ChainLogo, GlowCheck, GradientButton, SearchField } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
@@ -74,6 +74,10 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
 
     if (pathname?.includes('send')) {
       return selectedChains?.map((g) => mapRelayToSystemGenesisIfMigrated(g))?.filter((g) => !isMigratedRelay(g ?? ''));
+    }
+
+    if (pathname?.includes('proxyManagement')) {
+      return PROXY_CHAINS.filter((chain) => !migratedRelays.includes(chain));
     }
 
     return selectedChains;
