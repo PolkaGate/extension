@@ -44,14 +44,18 @@ function Breadcrumbs (): React.ReactElement {
     return !excludedPaths.some((path) => pathname.includes(path));
   }, [pathname]);
 
-  const breadcrumbMap = useMemo(() => [
-    { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
-    { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
+  const breadcrumbMap = useMemo(() => {
+    const redirect = `/accountfs/${selectedAccount?.address}/${genesisHash}/0`;
+
+    return [
+    { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect },
+    { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect },
     { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
-    { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
-    { check: (path: string) => path.includes('/solo'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` },
-    { check: (path: string) => path.includes('/pool'), icon: Money3, label: t('Account'), redirect: `/accountfs/${selectedAccount?.address}/${genesisHash}/0` }
-  ], [genesisHash, selectedAccount?.address, t]);
+    { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect },
+    { check: (path: string) => path.includes('/solo'), icon: Money3, label: t('Account'), redirect },
+    { check: (path: string) => path.includes('/pool'), icon: Money3, label: t('Account'), redirect }
+  ];
+}, [genesisHash, selectedAccount?.address, t]);
 
   const matchedBreadcrumb = useMemo(() => breadcrumbMap.find(({ check }) => check(pathname)), [breadcrumbMap, pathname]);
 
