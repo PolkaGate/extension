@@ -22,7 +22,6 @@ import { ActionButton, AssetLogo, Motion, MyTextField, ShowBalance4 } from '../.
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
 import useLimitedFeeCall from './useLimitedFeeCall';
-import useParaSpellFeeCall from './useParaSpellFeeCall';
 import useWarningMessage from './useWarningMessage';
 import { normalizeChainName } from './utils';
 
@@ -50,29 +49,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
   const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState, transferType);
-  const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, amountAsBN, genesisHash, inputs, senderChainName, setError);
-  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, paraSpellFee);
-
-  useEffect(() => {
-    if (!genesisHash) {
-      return;
-    }
-
-    paraSpellFee && setInputs((prevInputs) => {
-      if (prevInputs?.fee?.eq?.(paraSpellFee)) {
-        return prevInputs;
-      }
-
-      return { ...prevInputs, fee: paraSpellFee };
-    });
-  }, [genesisHash, inputs?.recipientChain?.text, paraSpellFee, senderChainName, setInputs]);
-
-  useEffect(() => {
-    paraSpellTransaction && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
-      paraSpellTransaction
-    }));
-  }, [paraSpellTransaction, setInputs]);
+  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, inputs?.fee);
 
   useEffect(() => {
     amountAsBN && setInputs((prevInputs) => ({
@@ -221,7 +198,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
           </Typography>
         </Stack>
       </Stack>
-      {(error || warningMessage) &&
+      {(inputs?.error || error || warningMessage) &&
         <Stack alignItems='center' columnGap='4px' direction='row' paddingTop='2px'>
           <Warning2 color='#FF4FB9' size='18px' variant='Bold' />
           <Typography color='#FF4FB9' variant='B-4'>

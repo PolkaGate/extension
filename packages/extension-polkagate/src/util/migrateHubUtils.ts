@@ -125,8 +125,8 @@ export function isMigrated (genesisHash: string): boolean {
 export function isMigratedByChainName (name: string): boolean {
   const lcName = name.toLowerCase();
 
-  // Check for "hub" suffix: match if any migrated relay name is included
-  if (lcName.includes('hub')) {
+  // Check for "assethub" suffix: match if any migrated relay name is included
+  if (lcName.includes('assethub')) {
     return migratedRelayNames.some((relayName) => lcName.includes(relayName));
   }
 

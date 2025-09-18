@@ -12,6 +12,7 @@ export interface Inputs {
   amountAsBN?: BN | undefined;
   assetId?: string | number;
   decimal?: number;
+  error?: string;
   fee?: BN;
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;

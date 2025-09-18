@@ -87,6 +87,7 @@ const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) =
 interface Props {
   address: string | undefined;
   direction?: 'horizontal' | 'vertical';
+  disabled?: boolean;
   genesisHash: string | null | undefined;
   ledgerStyle?: React.CSSProperties;
   onClose: () => void
@@ -101,7 +102,7 @@ interface Props {
   signUsingPasswordProps?: Partial<SignUsingPasswordProps>;
   signUsingQRProps?: Partial<SignUsingQRProps>;
   style?: React.CSSProperties;
-  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   withCancel?: boolean;
 }
 
@@ -111,7 +112,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -209,6 +210,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, pro
         alertText: t('This is a QR-attached account. To complete this transaction, you need to use your QR-signer.'),
         buttonText: t('Use QR-Signer'),
         icon: <ScanBarcode color={theme.palette.text.primary} size={18} variant='Bold' />,
+        isDisabled: disabled,
         onClick: toggleQrScan
       };
     }
@@ -219,6 +221,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, pro
           alertText: t('This is a watch-only account. To complete this transaction, you must use a proxy.'),
           buttonText: t('Use Proxy'),
           icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
+          isDisabled: disabled,
           onClick: toggleSelectProxy
         };
       }
@@ -233,7 +236,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, pro
     }
 
     return undefined;
-  }, [proxies?.length, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+  }, [disabled, proxies?.length, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
@@ -289,6 +292,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, pro
           <SignWithLedger
             address={address}
             api={api}
+            disabled={disabled}
             from={from}
             handleTxResult={handleTxResult}
             onSecondaryClick={onClose}
@@ -304,6 +308,7 @@ function SignArea3 ({ address, direction, genesisHash, ledgerStyle, onClose, pro
           <SignUsingPassword
             api={api}
             direction={direction}
+            disabled={disabled}
             from={from}
             handleTxResult={handleTxResult}
             onCancel={onClose}

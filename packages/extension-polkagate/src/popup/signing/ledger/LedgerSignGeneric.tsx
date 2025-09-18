@@ -16,6 +16,7 @@ import LedgerButtons from './LedgerButtons';
 
 interface Props {
   account: AccountJson;
+  disabled?: boolean;
   error: string | null | undefined;
   onSignature?: (signature: HexString, raw?: GenericExtrinsicPayload) => void;
   payload?: SignerPayloadJSON;
@@ -24,7 +25,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function LedgerSignGeneric ({ account, error, onCancel, onSignature, payload, setError, style }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, payload, setError, style }: Props): React.ReactElement<Props> {
   const { accountIndex, addressOffset, isGeneric } = account;
   const genesisHash = payload?.genesisHash;
   const { api } = useChainInfo(genesisHash);
@@ -83,6 +84,7 @@ function LedgerSignGeneric ({ account, error, onCancel, onSignature, payload, se
 
   return (
     <LedgerButtons
+      disabled={disabled}
       error={error}
       isBusy={isBusy || ledgerLoading}
       ledgerLocked={ledgerLocked}
