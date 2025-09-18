@@ -118,6 +118,22 @@ export function isMigrated (genesisHash: string): boolean {
   return isMigratedRelay(genesisHash) || isMigratedHub(genesisHash);
 }
 
+/**
+ * Checks if a chain is considered migrated based on its name.
+ * Returns true for chains like "westend" and "westendAssetHub".
+ */
+export function isMigratedByChainName (name: string): boolean {
+  const lcName = name.toLowerCase();
+
+  // Check for "hub" suffix: match if any migrated relay name is included
+  if (lcName.includes('hub')) {
+    return migratedRelayNames.some((relayName) => lcName.includes(relayName));
+  }
+
+  // Exact match for non-hub chains
+  return migratedRelayNames.some((relayName) => lcName === relayName);
+}
+
 /** Resolves the appropriate staking asset ID based on the provided genesis hash.
  * If the genesis hash corresponds to a migrated relay chain, it returns the asset ID for the
  * native token on AssetHub; otherwise, it returns the standard native token asset ID.

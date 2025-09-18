@@ -20,7 +20,7 @@ import { EXTRA_PRICE_IDS } from './api/getPrices';
 import { fastestEndpoint } from './workers/utils';
 import allChains from './chains';
 import { ASSET_HUBS, BLOCK_RATE, FLOATING_POINT_DIGIT, PROFILE_COLORS, RELAY_CHAINS_GENESISHASH, SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
-import { isMigrated, isMigratedHub } from './migrateHubUtils';
+import { isMigratedByChainName, isMigratedHub } from './migrateHubUtils';
 
 interface Meta {
   docs: Text[];
@@ -791,7 +791,7 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
 
   const lc = chainName.toLowerCase();
 
-  if (lc.includes('assethub') || isMigrated(lc)) {
+  if (lc.includes('assethub') || isMigratedByChainName(lc)) {
     // if already has 'assethub' at the end → reorder
     if (/(.*)assethub$/.test(lc)) {
       return lc.replace(/^(.*)assethub$/, 'assethub-$1');
