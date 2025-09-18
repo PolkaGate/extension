@@ -90,7 +90,7 @@ const MAX_WAITING_TIME = 1500; // ms
 
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const autoLockPeriod = useAutoLockPeriod();
-  const isPopupOpenedByExtension = useIsExtensionPopup();
+  const isExtension = useIsExtensionPopup();
 
   const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
   const [isFlying, setIsFlying] = useState(true);
@@ -107,8 +107,8 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
   }, []);
 
   useEffect(() => {
-    !isPopupOpenedByExtension && setIsFlying(false);
-  }, [isPopupOpenedByExtension]);
+    !isExtension && setIsFlying(false);
+  }, [isExtension]);
 
   useEffect(() => {
     const handleInitLoginInfo = async () => {
@@ -151,7 +151,9 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
       }
 
       if (info.status === LOGIN_STATUS.SET) {
-        if (info.lastLoginTime && (Date.now() > (info.lastLoginTime + autoLockPeriod))) {
+        const isLoginPeriodExpired = info.lastLoginTime && (Date.now() > (info.lastLoginTime + autoLockPeriod));
+
+        if (isLoginPeriodExpired) {
           setStep(STEPS.SHOW_LOGIN);
         } else {
           setStep(STEPS.IN_NO_LOGIN_PERIOD);
@@ -167,8 +169,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
     };
 
     handleInitLoginInfo().catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoLockPeriod]);
+  }, [autoLockPeriod, setExtensionLock]);
 
   useEffect(() => {
     if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {
@@ -182,12 +183,12 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
     const condition = isExtensionLocked || !children || isFlying;
 
-    return isPopupOpenedByExtension
+    return isExtension
       ? condition
       : step === STEPS.SHOW_LOGIN && ALLOWED_URL_ON_RESET_PASSWORD.includes(extensionUrl)
         ? false
         : condition;
-  }, [children, isExtensionLocked, isFlying, isPopupOpenedByExtension, step]);
+  }, [children, isExtensionLocked, isFlying, isExtension, step]);
 
   return (
     <>
@@ -202,7 +203,7 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
             }
             <Grid container item>
               {
-                isFlying && isPopupOpenedByExtension
+                isFlying && isExtension
                   ? <FlyingLogo />
                   : <>
                     {

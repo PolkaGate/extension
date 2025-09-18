@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountsContext } from '@polkadot/extension-base/background/types';
-import { LOGIN_STATUS, type LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
 
 import React, { useEffect, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { subscribeAccounts } from '@polkadot/extension-polkagate/src/messaging';
+import { LOGIN_STATUS, type LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
 import { getStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
