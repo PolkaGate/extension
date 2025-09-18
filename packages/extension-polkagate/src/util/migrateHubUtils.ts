@@ -109,8 +109,8 @@ export function isMigratedRelay (genesisHash: string): boolean {
  */
 export function isMigratedHub (info: string | undefined): boolean {
   return !!(info && (
-    (hubToRelay as Record<string, string>)?.[info] ||
-    migratedRelayNames.find((relayName) => info?.toLowerCase()?.includes(relayName))
+    (hubToRelay as Record<string, string>)?.[info] || // check by genesishash
+    (info.toLowerCase().includes('hub') && migratedRelayNames.find((relayName) => info?.toLowerCase()?.includes(relayName)))// check by chain name
   ));
 }
 
