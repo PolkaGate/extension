@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.8](https://github.com/polkagate/extension/compare/v1.8.7...v1.8.8) (2025-09-18)
+
+
+### Bug Fixes
+
+* correct migration check for People chain when comparing by chain name ([#1883](https://github.com/polkagate/extension/issues/1883)) ([d8a7901](https://github.com/polkagate/extension/commit/d8a7901be3e11b02221c3af18d184bf207f11cc5))
+
 ## [1.8.7](https://github.com/polkagate/extension/compare/v1.8.6...v1.8.7) (2025-09-17)
 
 
