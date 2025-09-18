@@ -7,7 +7,7 @@ import type { BN } from '@polkadot/util';
 import type { Inputs } from './types';
 
 import { Box, Stack, Typography } from '@mui/material';
-import { getExistentialDeposit, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import { getExistentialDeposit, type TChain } from '@paraspell/sdk-pjs';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -154,7 +154,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
       if (senderChainName && inputs?.token && !TEST_NETS.includes(genesisHash ?? '')) {
         const _senderChainName = normalizeChainName(senderChainName);
 
-        mayBeEDasBN = getExistentialDeposit(_senderChainName as TNodeWithRelayChains, { symbol: inputs.token });
+        mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, { symbol: inputs.token });
       } else {
         mayBeEDasBN = api?.consts['balances']['existentialDeposit'] as unknown as BN;
       }
