@@ -118,6 +118,22 @@ export function isMigrated (genesisHash: string): boolean {
   return isMigratedRelay(genesisHash) || isMigratedHub(genesisHash);
 }
 
+/**
+ * Checks if a chain is considered migrated based on its name.
+ * Returns true for chains like "westend" and "westendAssetHub".
+ */
+export function isMigratedByChainName (name: string): boolean {
+  const lcName = name.toLowerCase();
+
+  // Check for "hub" suffix: match if any migrated relay name is included
+  if (lcName.includes('hub')) {
+    return migratedRelayNames.some((relayName) => lcName.includes(relayName));
+  }
+
+  // Exact match for non-hub chains
+  return migratedRelayNames.some((relayName) => lcName === relayName);
+}
+
 /** Resolves the appropriate staking asset ID based on the provided genesis hash.
  * If the genesis hash corresponds to a migrated relay chain, it returns the asset ID for the
  * native token on AssetHub; otherwise, it returns the standard native token asset ID.
@@ -156,9 +172,25 @@ export function isSystemChain (systemChainGenesis: string | undefined, relayGene
   return Object.values(systemChains).includes(systemChainGenesis ?? '');
 }
 
-export function extractRelayChainName (systemChainName: string | undefined): string | undefined {
+/**
+ * Extracts the base relay chain name from a system chain name.
+ *
+ * For example, "westendAssetHub" or "westendPeople" will return "westend".
+ * Optionally, only performs extraction if the chain is considered migrated.
+ *
+ * @param systemChainName - The name of the system chain (e.g., "westendAssetHub").
+ * @param withMigrationCheck - If true, extraction occurs only for chains identified as migrated.
+ *                             If false or omitted, extraction is always performed.
+ * @returns The normalized relay chain name, or the original name if not migrated (when migration check is applied),
+ *          or `undefined` if `systemChainName` is not provided.
+ */
+export function extractRelayChainName (systemChainName: string | undefined, withMigrationCheck?: boolean): string | undefined {
   if (!systemChainName) {
     return;
+  }
+
+  if (withMigrationCheck && !isMigratedByChainName(systemChainName)) {
+    return systemChainName;
   }
 
   return systemChainName

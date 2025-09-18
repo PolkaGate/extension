@@ -10,10 +10,9 @@ import { Builder, Native, type TDestination, type TSubstrateChain } from '@paras
 import { useEffect, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
-import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN } from '@polkadot/util';
 
-import { isNativeAsset, isOnSameChain, normalizeChainName } from './utils';
+import { isNativeAsset, normalizeChainName } from './utils';
 
 export default function useParaSpellFeeCall (address: string | undefined, amountAsBN: BN | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, senderChainName: string | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
   const { api } = useChainInfo(genesisHash);
@@ -21,36 +20,32 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
   const [paraSpellTransaction, setParaSpellTransaction] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
 
   useEffect(() => {
-    if (!api || amountAsBN?.isZero()) {
+    if (!api || !inputs || amountAsBN?.isZero()) {
       return;
     }
 
-    const _recipientChainName = inputs?.recipientChain?.text;
+    const { assetId, recipientAddress, recipientChain, token } = inputs;
+    const _recipientChainName = recipientChain?.text;
 
-    if (TEST_NETS.includes(genesisHash ?? '') || !senderChainName || !amountAsBN || !address || !inputs?.token || !_recipientChainName || !inputs?.recipientAddress || !inputs?.amount || !address) {
+    if (!senderChainName || !amountAsBN || !address || !token || !_recipientChainName || !recipientAddress || !address) {
       return;
     }
 
-    const _senderChainName = normalizeChainName(senderChainName);
+    const fromChain = normalizeChainName(senderChainName);
+    const toChain = normalizeChainName(_recipientChainName);
 
-    if (isOnSameChain(senderChainName, _recipientChainName)) {
-      console.info('No need to PS, only use it for xcm ...');
-
-      return;
-    }
-
-    const symbolOrId = inputs.assetId !== undefined
-      ? isNativeAsset(api, inputs.token, inputs.assetId)
-        ? { symbol: Native(inputs.token) }
-        : { id: inputs.assetId }
-      : { symbol: inputs.token };
+    const symbolOrId = assetId !== undefined
+      ? isNativeAsset(api, token, assetId)
+        ? { symbol: Native(token) }
+        : { id: assetId }
+      : { symbol: token };
 
     const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
-      .from(_senderChainName as TSubstrateChain)
-      .to(_recipientChainName as TDestination)
+      .from(fromChain as TSubstrateChain)
+      .to(toChain as TDestination)
       .currency({ amount: amountAsBN.toString(), ...symbolOrId })
       /* .feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
-      .address(inputs.recipientAddress)
+      .address(recipientAddress)
       .senderAddress(address);
 
     builder.build().then((tx) => {
@@ -67,7 +62,7 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
         setError('Something went wrong while calculating estimated fee!');
         console.error('Something went wrong while getting fee', err);
       });
-  }, [api, address, senderChainName, amountAsBN, genesisHash, setError, inputs?.assetId, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress, inputs?.amount, inputs?.recipientChain?.value]);
+  }, [api, address, senderChainName, amountAsBN, genesisHash, setError, inputs?.assetId, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress]);
 
   return {
     paraSpellFee,
