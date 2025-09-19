@@ -4,7 +4,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
-import { getParaId, getRelayChainSymbol, hasSupportForAsset, NODES_WITH_RELAY_CHAINS_DOT_KSM, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import { getParaId, getRelayChainSymbol, hasSupportForAsset, SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util/utils';
@@ -39,16 +39,16 @@ export const isOnSameChain = (senderChainName: string | undefined, recipientChai
   return _senderChainName === _recipientChainName;
 };
 
-export function getSupportedDestinations (sourceChain: TNodeWithRelayChains | string, assetSymbol: string | undefined): DropdownOption[] {
+export function getSupportedDestinations (sourceChain: TSubstrateChain | string, assetSymbol: string | undefined): DropdownOption[] {
   if (!assetSymbol) {
     return [];
   }
 
-  const _sourceChainName = normalizeChainName(sourceChain) as TNodeWithRelayChains;
+  const _sourceChainName = normalizeChainName(sourceChain) as TSubstrateChain;
   const destinationChains = [{ text: _sourceChainName, value: getParaId(_sourceChainName) }];
   const sourceRelayChainSymbol = getRelayChainSymbol(_sourceChainName);
 
-  for (const chain of NODES_WITH_RELAY_CHAINS_DOT_KSM) {
+  for (const chain of SUBSTRATE_CHAINS) {
     if (chain !== _sourceChainName) {
       const isSupported = hasSupportForAsset(chain, assetSymbol);
 
