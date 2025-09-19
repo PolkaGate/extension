@@ -5,11 +5,12 @@ import { ClickAwayListener, Grid, styled, type SxProps, type Theme } from '@mui/
 import { AddCircle, ArrowDown2, Broom, ExportCurve, ImportCurve, Setting, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import DeriveAccount from '../fullscreen/home/DeriveAccount';
 import ExportAllAccounts from '../fullscreen/home/ExportAllAccounts';
 import { useTranslation } from '../hooks';
-import DropMenuContent from './DropMenuContent';
-import { useExtensionPopups } from '../util/handleExtensionPopup';
 import { ExtensionPopups } from '../util/constants';
+import { useExtensionPopups } from '../util/handleExtensionPopup';
+import DropMenuContent from './DropMenuContent';
 
 const DropSelectContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'focused'
@@ -55,7 +56,7 @@ function HomeAccountDropDown ({ style }: Props) {
       {
         Icon: Broom,
         text: t('Derive New Account'),
-        value: '/account/create'
+        value: extensionPopupOpener(ExtensionPopups.DERIVE)
       },
       {
         Icon: ExportCurve,
@@ -65,7 +66,7 @@ function HomeAccountDropDown ({ style }: Props) {
     ];
 
     return OPTIONS;
-  }, [t]);
+  }, [extensionPopupOpener, t]);
 
   const [open, setOpen] = useState<boolean>(false);
 
@@ -89,6 +90,11 @@ function HomeAccountDropDown ({ style }: Props) {
       {extensionPopup === ExtensionPopups.EXPORT &&
         <ExportAllAccounts
           onClose={extensionPopupCloser}
+        />
+      }
+      {extensionPopup === ExtensionPopups.DERIVE &&
+        <DeriveAccount
+          closePopup={extensionPopupCloser}
         />
       }
     </>

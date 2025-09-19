@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
+
 import React, { useCallback, useEffect, useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
@@ -11,7 +13,6 @@ import ChildInfo from './ChildInfo';
 import ParentInfo from './ParentInfo';
 import StepsRow from './StepsRow';
 import { DERIVATION_STEPS, type PathState } from './types';
-import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 interface Props {
   closePopup: ExtensionPopupCloser;
@@ -23,7 +24,7 @@ interface Props {
  *
  * Only has been used in full-screen mode!
  */
-function DeriveAccount({ closePopup }: Props): React.ReactElement {
+function DeriveAccount ({ closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const selectedGenesis = useAccountSelectedChain(selectedAccount?.address);
@@ -71,16 +72,16 @@ function DeriveAccount({ closePopup }: Props): React.ReactElement {
             setNewParentAddress={setNewParentAddress}
             setParentPassword={setParentPassword}
             setStep={setStep}
-          />
+            />
           : <ChildInfo
             genesisHash={selectedGenesis}
             maybeChidAccount={maybeChidAccount}
+            onClose={closePopup}
             parentAddress={parentAccount?.address}
             parentPassword={parentPassword}
-            onClose={closePopup}
             setMaybeChidAccount={setMaybeChidAccount}
             setStep={setStep}
-          />
+            />
         }
       </>
     </DraggableModal>
