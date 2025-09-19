@@ -41,7 +41,7 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
     // eslint-disable-next-line no-void
     void (async () => {
       try {
-        // migrate accounts to any chain if not done yet
+        // Migrate accounts to any chain if not already migrated
         const migrated = await getStorage(STORAGE_KEY.IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN);
 
         if (!migrated) {
