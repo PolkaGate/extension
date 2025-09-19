@@ -613,7 +613,7 @@ export interface ClaimedRewardInfo {
   timeStamp: number;
 }
 
-export type ProxyTypes = 'Any' | 'Auction' | 'CancelProxy' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
+export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner'| 'AssetManager' | 'Auction' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;
