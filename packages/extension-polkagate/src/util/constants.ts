@@ -164,6 +164,8 @@ const PROXY_TYPE_WESTEND = [...PROXY_TYPE_POLKADOT, 'SudoBalances'];
 const PROXY_TYPE_ASSET_HUBS = ['Any', 'Assets', 'AssetManager', 'AssetOwner', 'CancelProxy', 'Collator', 'NonTransfer'];
 const PROXY_TYPE_PASEO = [...PROXY_TYPE_POLKADOT];
 
+export const MIGRATED_PROXY_TYPES = ['Governance', 'NominationPools', 'Staking'];
+
 export const CHAIN_PROXY_TYPES = {
   AssetHubs: PROXY_TYPE_ASSET_HUBS,
   Kusama: PROXY_TYPE_KUSAMA,
