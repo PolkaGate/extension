@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.1](https://github.com/polkagate/extension/compare/v1.9.0...v1.9.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* fullscreen 'Derive New Account' menu opens correct modal ([#1894](https://github.com/polkagate/extension/issues/1894)) ([a2d99db](https://github.com/polkagate/extension/commit/a2d99db674cd57a7598337ae54656beccfdd127c))
+
 # [1.9.0](https://github.com/polkagate/extension/compare/v1.8.8...v1.9.0) (2025-09-19)
 
 
