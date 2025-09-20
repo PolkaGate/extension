@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.2](https://github.com/polkagate/extension/compare/v1.9.1...v1.9.2) (2025-09-20)
+
+
+### Bug Fixes
+
+* migrate accounts for compatibility with strict apps (e.g., Polkadot.js) ([#1895](https://github.com/polkagate/extension/issues/1895)) ([1b9c38c](https://github.com/polkagate/extension/commit/1b9c38c7e673e9a467ba70650f35c141754e0a0e)), closes [#1893](https://github.com/polkagate/extension/issues/1893)
+
 ## [1.9.1](https://github.com/polkagate/extension/compare/v1.9.0...v1.9.1) (2025-09-20)
 
 
