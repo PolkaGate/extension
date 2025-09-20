@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { Broom, Edit, ExportCurve, type Icon, ImportCurve, LogoutCurve, ShieldSecurity } from 'iconsax-react';
+import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -103,7 +103,7 @@ function AccountSettings (): React.ReactElement {
           </Typography>
           <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ margin: '20px 0', width: 'fit-content' }}>
             <ActionBox
-              Icon={Edit}
+              Icon={Edit2}
               label={t('Rename Account')}
               onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
             />
