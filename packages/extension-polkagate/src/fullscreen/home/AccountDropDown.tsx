@@ -48,6 +48,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, na
       // },
       {
         Icon: Data,
+        isFullscreen: true,
         text: t('Manage Proxies'),
         value: `/proxyManagement/${address}/${genesisHash}`
       }

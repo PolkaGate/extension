@@ -36,6 +36,7 @@ export { default as useFormatted } from './useFormatted';
 export { default as useFullscreen } from './useFullscreen';
 export { useGenericLedger } from './useGenericLedger';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';
+export { default as useHandleNavigation } from './useHandleNavigation';
 export { default as useHasDelegated } from './useHasDelegated';
 export { default as useIdentity } from './useIdentity';
 export { default as useIsAutoEndpoint } from './useIsAutoEndpoint';
